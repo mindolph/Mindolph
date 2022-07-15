@@ -6,11 +6,11 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph provides
 
 
 ### Main Features
-* Supports mindmap(mmd), markdown, plantuml... file format.
+* Create and manage your own files in separate projects and save in your local storage, which means you have full control of your knowledge.
+* Supports mindmap(mmd), markdown, plantuml... file formats.
 * Edit mindmap freely and import from/export to other file formats.
 * Syntax highlighting for markdown and plantuml files and instantly preview for them.
 * Templates and code snippets for plantuml file.
-* Create and manage your own files in different projects and save in your local storage, which means you have full control of your knowledge.
 * Quickly locate files and search text in files.
 * Supports multiple platforms including `MacOS`, `Windows` and `Linux`.
 
@@ -29,7 +29,7 @@ Version: 1.0 beta1
 
 * [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta1/mindolph-v1.0-beta1_amd64.deb)
 
-[Release Note](docs/release_note.md)
+[Release Note](docs/release_notes.md)
 
 
 > Welcome try Mindolph and send feedback to me if you have any issue with it, have fun!
