@@ -29,7 +29,7 @@ Version: 1.0 beta2
 
 * [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta2/mindolph_1.0-beta2_amd64.deb)
 
-[Release Note](docs/release_notes.md)
+[Release Notes](docs/release_notes.md)
 
 
 > Welcome try Mindolph and send feedback to me if you have any issue with it, have fun!
