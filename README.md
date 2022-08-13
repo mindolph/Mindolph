@@ -1,5 +1,7 @@
 ### Mindolph
 
+![](./DemoProject/app_30.png)
+
 Mindolph is a personal knowledge management software for desktop. 
 
 This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is developed based on JavaFX and provides more features and enhancements to edit and manage your knowledge easily.
