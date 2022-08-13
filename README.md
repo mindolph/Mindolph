@@ -3,7 +3,7 @@
 Mindolph is a personal knowledge management software for desktop. 
 
 This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is developed based on JavaFX and provides more features and enhancements to edit and manage your knowledge easily.
-
+                                              
 
 ### Features
 * Create and manage your own files in separate projects with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
@@ -25,13 +25,15 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta2
+Version: 1.0 beta3
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta2/Mindolph-1.0-beta2.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta2/Mindolph-1.0-beta2.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta2/mindolph_1.0-beta2_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/mindolph_1.0-beta3_amd64.deb)
+
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.jar)
 
 [Release Notes](docs/release_notes.md)
 
