@@ -27,15 +27,15 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta3
+Version: 1.0 beta4
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/mindolph_1.0-beta3_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph_1.0-beta4_amd64.deb)
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta3/Mindolph-1.0-beta3.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.jar)
 
 [Release Notes](docs/release_notes.md)
 
