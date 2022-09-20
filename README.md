@@ -35,6 +35,10 @@ Version: 1.0 beta4
 
 * [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph_1.0-beta4_amd64.deb)
 
+	> for supporting PlantUML, install graphviz first:
+	>
+	> `sudo apt install graphviz`
+
 * [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.jar)
 
 [Release Notes](docs/release_notes.md)
