@@ -8,13 +8,23 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
                                               
 
 ### Features
-* Create and manage your own files in separate projects with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
-* Organize your files as tree in your projects.
+* Create and manage your own files in separate workspaces with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
+* Organize your files as tree in your workspaces.
 * Supports mindmap(`*.mmd`), markdown(`*.md`), plantuml(`*.puml`) and plain text(`*.txt`) file formats, more formats will be supported in the future.
-* Edit mindmap easily and able to import from/export to other file formats.
 * Syntax highlighting for markdown and plantuml files and instantly preview for them.
-* Templates and code snippets for plantuml file.
 * Quickly navigate to file and search text in files under specific folder.
+* Mindmap:
+	* Edit mindmap easily and quickly.
+	* Supports note, file link, URI link, image and emoicon for node.
+	* Import from other file formats like Freemind, Mindmup, XMind, Coggle, Novamind.
+	* Eexport to other mindmap formats like Freemind, Markdown, image file, etc.
+* PlantUML:
+	* Preview result instantly while editing.
+	* Templates and code snippets for editing quickly.
+	* Export to image file and ascii image.
+* Markdown
+	* Preview result instantly while editing.
+	* Export to image file and HTML file.
 * Supports multiple platforms, including `macOS`, `Windows` and `Linux`.
 * Other features you would find out.
 
@@ -27,19 +37,19 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta4
+Version: 1.0 beta5
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta5/Mindolph-1.0-beta5.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta5/Mindolph-1.0-beta5.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph_1.0-beta4_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta5/Mindolph_1.0-beta5_amd64.deb)
 
 	> for supporting PlantUML, install graphviz first:
 	>
 	> `sudo apt install graphviz`
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta4/Mindolph-1.0-beta4.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta5/Mindolph-1.0-beta5.jar)
 
 [Release Notes](docs/release_notes.md)
 

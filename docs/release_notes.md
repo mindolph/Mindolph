@@ -1,5 +1,12 @@
 # Release Notes
 
+### v1.0 beta5
+* replace "project" with "workspace" globally.
+* minor UI improvement.
+* fix: missing siblings when multi-select topics under same left side topic.
+* fix: 'go to file' doesn't work when there is any workspace is deleted externally.
+* fix: add alert when 'find in files' on a externally deleted workspace.
+
 ### v1.0 beta4
 * Fixed the saving on note dialog of mindmap only available one time.
 * Fixed the issue that Chinese input method doesn't work on Ubuntu based Linux.
