@@ -14,10 +14,10 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 * Syntax highlighting for markdown and plantuml files and instantly preview for them.
 * Quickly navigate to file and search text in files under specific folder.
 * Mindmap:
-	* Edit mindmap easily and quickly.
+	* Edit mind map easily and quickly.
 	* Supports note, file link, URI link, image and emoicon for node.
 	* Import from other file formats like Freemind, Mindmup, XMind, Coggle, Novamind.
-	* Eexport to other mindmap formats like Freemind, Markdown, image file, etc.
+	* Export to other mind map formats like Freemind, Markdown, image file, etc.
 * PlantUML:
 	* Preview result instantly while editing.
 	* Templates and code snippets for editing quickly.

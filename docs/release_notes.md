@@ -1,7 +1,7 @@
 # Release Notes
 
 ### v1.0 beta5
-* replace "project" with "workspace" globally.
+* replace "project" with "workspace".
 * minor UI improvement.
 * fix: missing siblings when multi-select topics under same left side topic.
 * fix: 'go to file' doesn't work when there is any workspace is deleted externally.
