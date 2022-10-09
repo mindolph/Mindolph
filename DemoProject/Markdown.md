@@ -71,6 +71,4 @@ image 0
 image 1
 ![Image](/Users/allen/Workspace/github/Mindolph/DemoProject/app.png "image")
 
-image 2
-![Image](/Users/allen/Pictures/3277107.jpg)
 

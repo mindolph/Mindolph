@@ -1,11 +1,19 @@
 # Release Notes
 
+### v1.0 beta6
+* Add a new preference for Markdown to choose a ttf font file to export to PDF with non-latin characters like Chinease, Japanese and Korean.
+* Add new "Key Reference" dialog to show all shortcuts for editors.
+* Improved some status message to be more clear.
+* Fix: wrong format of HTML file exported from markdown file.
+* Fix: code editor doesn't work for files with Windows line breaks.
+* Dependencies update and code refactor.
+
 ### v1.0 beta5
-* replace "project" with "workspace".
-* minor UI improvement.
-* fix: missing siblings when multi-select topics under same left side topic.
-* fix: 'go to file' doesn't work when there is any workspace is deleted externally.
-* fix: add alert when 'find in files' on a externally deleted workspace.
+* Replace "project" with "workspace".
+* Minor UI improvement.
+* Fix: missing siblings when multi-select topics under same left side topic.
+* Fix: 'go to file' doesn't work when there is any workspace is deleted externally.
+* Fix: add alert when 'find in files' on a externally deleted workspace.
 
 ### v1.0 beta4
 * Fixed the saving on note dialog of mindmap only available one time.
