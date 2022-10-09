@@ -53,8 +53,9 @@ Version: 1.0 beta6
 
 	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this: 
 	>
-	> `java --module-path /mnt/javafx-sdk-17/lib \
---add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar Mindolph-1.0-beta6.jar`
+	> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
+	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
+	> Mindolph-1.0-beta6.jar`
 
 [Release Notes](docs/release_notes.md)
 
