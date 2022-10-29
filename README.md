@@ -5,7 +5,7 @@
 Mindolph is a personal knowledge management software for desktop. 
 
 This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is developed based on JavaFX and provides more features and enhancements to edit and manage your knowledge easily.
-                                              
+
 
 ### Features
 * Create and manage your own files in separate workspaces with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
@@ -37,25 +37,23 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta6
+Version: 1.0 beta7
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta6/Mindolph-1.0-beta6.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta7/Mindolph-1.0-beta7.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta6/Mindolph-1.0-beta6.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta7/Mindolph-1.0-beta7.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta6/Mindolph_1.0-beta6_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta7/Mindolph_1.0-beta7_amd64.deb)
 
-	> for supporting PlantUML, install graphviz first:
-	>
+	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta6/Mindolph-1.0-beta6.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta7/Mindolph-1.0-beta7.jar)
 
-	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this: 
-	>
+	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this:   
 	> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-	> Mindolph-1.0-beta6.jar`
+	> Mindolph-1.0-beta7.jar`
 
 [Release Notes](docs/release_notes.md)
 

@@ -1,5 +1,20 @@
 # Release Notes
 
+### v1.0 beta7
+* Enhancement: add JSON and YAML support to plantuml editor.
+* Enhancement: add auto scroll for markdown editor and preview panel.
+* Fix: wrong code snippets for plantuml.
+* Fix: plantuml preview image missing when any code error occurred.
+* Fix: exception when no matching for searching in plantuml code snippets.
+* Fix: exception when dragging a folder and drop to itself.
+* Fix: file or folder can't be drag&drop to a workspace node.
+* Fix: in mindmap, selection is cleared when a topic collapsed by shortcut.
+* Fix: the preview panel can't be refreshed in "Preview Only" mode.
+* Fix: the plantuml preview page can't switch in "Preview Only" mode.
+* Fix: exception when trying to show context menu by shortcut on non-selection in mind map.
+* Fix: the replace in mindmap searches within topics attributes, but only replaces the matching in the topics.
+* Some minor improvement and code refactor.
+
 ### v1.0 beta6
 * Add a new preference for Markdown to choose a ttf font file to export to PDF with non-latin characters like Chinease, Japanese and Korean.
 * Add new "Key Reference" dialog to show all shortcuts for editors.
