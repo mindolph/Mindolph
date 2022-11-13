@@ -27,7 +27,7 @@
 
 ### Quote
 
-> Hello, world.
+> Hello, world.  
 	
 ### Source Code
 
@@ -68,7 +68,6 @@ image 0
 ![Image](./app.png) 
 ![Image](app.png) 
 
-image 1
-![Image](/Users/allen/Workspace/github/Mindolph/DemoProject/app.png "image")
+
 
 
