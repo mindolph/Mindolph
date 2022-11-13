@@ -1,5 +1,13 @@
 # Release Notes
 
+
+### v1.0 beta8
+* Improvement: the performance of loading workspace tree is improved.
+* Fix: the tooltip of opened file doesn't change after any folder in the file path is renamed.
+* Fix: unable to clone topic and unable to copy/paste topic with sub-topics since last release.
+* Dependencies update: JDK 17.0.5, PlantUML 1.2022.12
+* Some code refactor.
+
 ### v1.0 beta7
 * Enhancement: add JSON and YAML support to plantuml editor.
 * Enhancement: add auto scroll for markdown editor and preview panel.
