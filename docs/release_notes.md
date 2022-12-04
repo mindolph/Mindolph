@@ -4,10 +4,10 @@
 * Improvement: add icon to preview pages and refine the title extraction.
 * Improvement: optimize the exception message dialog.
 * Fix: spelling in preference dialog panel.
-* Fix: exception when opening an already opened file which was changed from "find in files" serach result list.
+* Fix: exception when opening an already opened file which was changed from "find in files" search result list.
 * Fix: reloading a folder generates duplicate tree items.
 * Fix: select an opened file in workspace causes exception.
-* fix: exception when dragging graphic view with non-primary mouse buttons.
+* Fix: exception when dragging graphic view with non-primary mouse buttons.
 * Dependencies update: PlantUML 1.2022.13, RichTextFX 0.11.0.
 
 ### v1.0 beta8
