@@ -1,5 +1,13 @@
 # Release Notes
 
+### v1.0 beta10
+* Improvement: optimize "Go To File" and "Find in Files" by asynchronously searching.
+* Improvement: add preference for max size of undo/redo history of code editor.
+* Improvement: loading recent files lazily after clicked tab at the first time.
+* Fix: no topics focused after deleting one or more topics;
+* Fix: empty topic with children will be deleted when hits ESC during editing.
+* Performance optimizing and refactor.
+
 ### v1.0 beta9
 * Improvement: add icon to preview pages and refine the title extraction.
 * Improvement: optimize the exception message dialog.

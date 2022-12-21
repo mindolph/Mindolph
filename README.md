@@ -26,7 +26,7 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 	* Preview result instantly while editing.
 	* Export to image file and HTML file.
 * Supports multiple platforms, including `macOS`, `Windows` and `Linux`.
-* Other features you would find out.
+* Many other features you would find out.
 
 
 ### Screenshots
@@ -37,23 +37,23 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta9
+Version: 1.0 beta10
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta9/Mindolph-1.0-beta9.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta9/Mindolph-1.0-beta9.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta9/Mindolph_1.0-beta9_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph_1.0-beta10_amd64.deb)
 
 	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta9/Mindolph-1.0-beta9.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.jar)
 
 	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this:   
 	> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-	> Mindolph-1.0-beta9.jar`
+	> Mindolph-1.0-beta10.jar`
 
 [Release Notes](docs/release_notes.md)
 
