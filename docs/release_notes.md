@@ -1,5 +1,17 @@
 # Release Notes
 
+### v1.0 RC1
+* Improvement: auto scroll code editor to show the caret when it is out of view-port.
+* Improvement: take original file name as default export file name for mind map file. 
+* Improvement: add sorting toggle button for result list of "go to file".
+* Improvement: add status message for zoom in/out mind map, preview content or image file.
+* Improvement: use new icon for search bar, "find in files" dialog and result panel.
+* Fix: exception if none is selected from markdown font dialog.
+* Fix: code editor scrolls to bottom after file is loaded
+* Optimize performance of dragging element in mind map.
+* Some code refactor.
+
+
 ### v1.0 beta10
 * Improvement: optimize "Go To File" and "Find in Files" by asynchronously searching.
 * Improvement: add preference for max size of undo/redo history of code editor.

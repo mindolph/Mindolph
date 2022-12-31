@@ -37,23 +37,23 @@ This project is inspired by `netbeans-mmd-plugin` project, but Mindolph is devel
 
 ### Releases
 
-Version: 1.0 beta10
+Version: 1.0 RC1
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-RC1/Mindolph-1.0-RC1.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-RC1/Mindolph-1.0-RC1.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph_1.0-beta10_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC1/Mindolph_1.0-RC1_amd64.deb)
 
 	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-beta10/Mindolph-1.0-beta10.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC1/Mindolph-1.0-RC1.jar)
 
 	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this:   
 	> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-	> Mindolph-1.0-beta10.jar`
+	> Mindolph-1.0-RC1.jar`
 
 [Release Notes](docs/release_notes.md)
 
