@@ -1,5 +1,16 @@
 # Release Notes
 
+### V1.0 RC2
+* Improvement: add more emotions.
+* Improvement: optimize the performance of opening a file.
+* Improvement: consistent extension icons drawing on mind map.
+* Improvement: optimize the mind map editor's performance.
+* Fix: the order of workspaces on startup does not apply to what it was last time.
+* Fix: find/search bar shouldn't available when opening a unsearchable file.
+* Fix: undo doesn't work after import to a mind map.
+* Fix: project path in recent files view.
+* Some dependencies updates and code refactor.
+
 ### v1.0 RC1
 * Improvement: auto scroll code editor to show the caret when it is out of view-port.
 * Improvement: take original file name as default export file name for mind map file. 
