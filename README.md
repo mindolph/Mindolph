@@ -37,23 +37,23 @@ Mindolph is a personal knowledge management software for desktop.
 
 ### Releases
 
-Version: 1.0 RC2
+Version: 1.0 RC3
 
-* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-RC2/Mindolph-1.0-RC2.dmg)
+* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.0-RC3/Mindolph-1.0-RC3.dmg)
 
-* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-RC2/Mindolph-1.0-RC2.msi)
+* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.0-RC3/Mindolph-1.0-RC3.msi)
 
-* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC2/Mindolph_1.0-RC2_amd64.deb)
+* [Linux(.deb)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC3/Mindolph_1.0-RC3_amd64.deb)
 
 	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC2/Mindolph-1.0-RC2.jar)
+* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.0-RC3/Mindolph-1.0-RC3.jar)
 
 	> Download appropriate JavaFX SDK for your platform and extract to somewhere eg: `/mnt`, run the jar file like this:   
 	> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-	> Mindolph-1.0-RC2.jar`
+	> Mindolph-1.0-RC3.jar`
 
 [Release Notes](docs/release_notes.md)
 

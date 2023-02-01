@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.0 RC3
+* Fix: sub folders don't load during startup in some cases.
+* Fix: the mind map doesn't center in some cases.
+* Fix: wrong initial editor size for starting to edit mind map topic after dragging another larger topic.
+* Fix: "go to file" doesn't trim blank head and tail in keyword.
+* Dependencies update: PlantUML 1.2023.1.
+
 ### V1.0 RC2
 * Improvement: add more emotions.
 * Improvement: optimize the performance of opening a file.
