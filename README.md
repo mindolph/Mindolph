@@ -14,15 +14,15 @@ Mindolph is a personal knowledge management software for desktop.
 * Mindmap:
 	* Edit mind map easily and quickly.
 	* Supports note, file link, URI link, image and emoicon for node.
-	* Import from other file formats like Freemind, Mindmup, XMind, Coggle, Novamind.
-	* Export to other mind map formats like Freemind, Markdown, image file, etc.
+	* Import from other mind map formats like Freemind, Mindmup, XMind, Coggle, Novamind.
+	* Export to other file formats like Freemind, Markdown, image file, etc.
 * PlantUML:
 	* Preview result instantly while editing.
 	* Templates and code snippets for editing quickly.
 	* Export to image file and ascii image.
 * Markdown
 	* Preview result instantly while editing.
-	* Export to image file and HTML file.
+	* Export to PDF and HTML file.
 * Supports multiple platforms, including `macOS`, `Windows` and `Linux`.
 * Many other features you would find out.
 
