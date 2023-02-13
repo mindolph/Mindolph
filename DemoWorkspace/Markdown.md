@@ -4,6 +4,10 @@
 
 `Hello`, world.
 
+你好，世界
+
+こんにちは
+
 ### Bullet List
 
 - Hello

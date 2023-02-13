@@ -1,5 +1,16 @@
 # Release Notes
 
+### V1.0 Stable
+
+* Improvement: add shortcut for quick comment for markdown.
+* Fix: closed workspace will be restored after restarting.
+* Fix: some functionality breaks after closing a workspace.
+* Fix: "save as" failed to overwrite existing file if user choose "overwrite".
+* Fix: for mindmap, convert a topic which has siblings at the top place will result as new sub-topics created at the end of siblings.
+* Fix: the first opened file can't get message shows on status bar.
+* Some minor UI/UX optimization, eg: context menu 'find files for text" renamed to 'find in files'.
+
+
 ### V1.0 RC3
 * Fix: sub folders don't load during startup in some cases.
 * Fix: the mind map doesn't center in some cases.
