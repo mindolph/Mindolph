@@ -1,8 +1,8 @@
 ### Mindolph
 
-![](./DemoProject/app_30.png)
+![](./DemoWorkspace/app_30.png)
 
-Mindolph is a personal knowledge management software for desktop. 
+Mindolph is an open source personal knowledge management software for all desktop platforms. 
 
 
 ### Features
@@ -60,8 +60,4 @@ Version: 1.0 Stable
 
 ### Development
 
-The source code would be uploaded once the stable version released.
-
-For now welcome try Mindolph and send feedback to me if you have any issue with it.
-
-Have fun!
+See [code/README.md](code/README.md)

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+      <Pane fx:id="floatPane" layoutX="100.0" layoutY="100.0" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: gray;" visible="false" />
+        <VBox fx:id="searchReplacePane" layoutX="39.0" layoutY="21.0" prefHeight="317.0" prefWidth="396.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <AnchorPane fx:id="anchorPane" VBox.vgrow="ALWAYS" />
+            <HBox fx:id="statusBar">
+               <children>
+                  <Label fx:id="lbMsgBar">
+                     <HBox.margin>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <Hyperlink fx:id="hyperlink" />
+               </children>
+            </HBox>
+            </children>
+        </VBox>
+    </children>
+</fx:root>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.PreferenceItem?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root prefHeight="400.0" prefWidth="900.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <PreferenceItem name="Confirm before quitting application:">
+                <CheckBox fx:id="cbConfirmBeforeQuitting" mnemonicParsing="false" />
+            </PreferenceItem>
+            <PreferenceItem name="Open last editing files on startup:">
+               <CheckBox fx:id="cbOpenLastFiles" mnemonicParsing="false" />
+            </PreferenceItem>
+<!--            <PreferenceItem name="Enable auto-creation .projectKnowledge folder:">-->
+<!--               <items>-->
+<!--                  <CheckBox fx:id="ckbEnableAutoCreateProjectFolder" />-->
+<!--               </items>-->
+<!--            </PreferenceItem>-->
+            <PreferenceItem name="Show hidden files(needs folder reload):">
+               <items>
+                  <CheckBox fx:id="ckbShowHiddenFiles" />
+               </items>
+            </PreferenceItem>
+            <Separator prefWidth="200.0" />
+            <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="120.0">
+               <items>
+                  <TableView fx:id="tvOrientation" minHeight="60.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
+                  </TableView>
+               </items>
+            </PreferenceItem>
+
+<!--            <PreferenceItem name="Auto backup last edit:">-->
+<!--               <items>-->
+<!--                  <CheckBox fx:id="ckbAutoBackupLastEdit" />-->
+<!--               </items>-->
+<!--            </PreferenceItem>-->
+         </children>
+      </VBox>
+   </children>
+</fx:root>

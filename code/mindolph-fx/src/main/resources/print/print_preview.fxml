@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.ScalableScrollPane?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import de.jensd.fx.glyphs.materialicons.MaterialIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox prefWidth="200.0" spacing="8.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onPrint" text="Print">
+                     <graphic>
+                        <MaterialIconView glyphName="PRINT" size="16px"/>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onPageSetup" text="Page Setup">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="FILE_TEXT_ALT" size="16px"/>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onOptions" text="Print Options">
+                     <graphic>
+                        <MaterialIconView glyphName="SETTINGS" size="16px"/>
+                     </graphic>
+                  </Button>
+                  <ChoiceBox fx:id="cbScale" prefWidth="100.0" onAction="#onScale"/>
+                  <CheckBox mnemonicParsing="false" selected="true" text="Draw Border" fx:id="cbDrawBorder" onAction="#onDrawBorder"/>
+                  <CheckBox mnemonicParsing="false" text="Print as Image" />
+               </children>
+            </HBox>
+            <ScalableScrollPane fx:id="scrollPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

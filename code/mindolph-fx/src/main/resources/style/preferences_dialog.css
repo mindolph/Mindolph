@@ -1,0 +1,8 @@
+.pref_tab {
+    /*-fx-padding: 3em 0.5em 3em 0.5em;*/
+    -fx-tab-min-height: 100;
+    -fx-tab-max-height: 100;
+    -fx-tab-min-width: 40;
+    -fx-tab-max-width: 40;
+    -fx-border-width: 0;
+}

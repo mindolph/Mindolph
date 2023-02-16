@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import com.mindolph.fx.control.FileFilterButtonGroup?>
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <VBox spacing="8.0">
+      <children>
+          <HBox spacing="8.0" alignment="CENTER_LEFT">
+              <Label text="Keyword: " />
+              <TextField fx:id="tfKeywords" prefWidth="300.0" />
+          </HBox>
+         <HBox spacing="8.0" alignment="CENTER_LEFT">
+            <children>
+                <Label text="Options: " />
+                <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
+                </ToggleButton>
+                <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>
+            </children>
+         </HBox>
+          <Label text="Search files in: " />
+          <Label fx:id="lbDesc" style="-fx-font-weight: bold; -fx-font-size: 15">
+              <VBox.margin>
+                  <Insets left="16.0"/>
+              </VBox.margin>
+          </Label>
+      </children>
+      <padding>
+         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+      </padding>
+   </VBox>
+</AnchorPane>

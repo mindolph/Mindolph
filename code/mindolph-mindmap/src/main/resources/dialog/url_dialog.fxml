@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                <Button fx:id="btnClear" mnemonicParsing="false" onAction="#onClear" text="Clear" />
+                  <Button fx:id="btnBrowse" mnemonicParsing="false" onAction="#onOpenInBrowser" text="Open in Browser" />
+              </items>
+            </ToolBar>
+            <TextField fx:id="textField" VBox.vgrow="NEVER" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

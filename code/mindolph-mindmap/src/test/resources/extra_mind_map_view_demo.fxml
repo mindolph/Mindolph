@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.ScalableScrollPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.mindmap.ExtraMindMapViewDemo">
+    <children>
+        <VBox layoutX="50.0" layoutY="31.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                <Button mnemonicParsing="false" onAction="#onBig" text="Big" />
+                  <Button mnemonicParsing="false" onAction="#onSmall" text="Small" />
+              </items>
+            </ToolBar>
+                <ScalableScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS">
+                </ScalableScrollPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

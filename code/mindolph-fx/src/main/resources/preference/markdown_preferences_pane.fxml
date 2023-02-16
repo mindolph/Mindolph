@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.PreferenceItem?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<fx:root prefHeight="400.0" prefWidth="900.0" type="AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <PreferenceItem name="Font File Path for Export to PDF:">
+               <HBox spacing="4">
+                  <TextField fx:id="tfFontFile" minWidth="200.0" prefWidth="400.0" />
+                  <Button fx:id="btnSelect" mnemonicParsing="false" text="Select" />
+               </HBox>
+
+            </PreferenceItem>
+         </children>
+      </VBox>
+   </children>
+</fx:root>

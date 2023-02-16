@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import org.controlsfx.control.SegmentedButton?>
+<fx:root type="SegmentedButton" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <buttons>
+        <ToggleButton mnemonicParsing="false" selected="true" text="all" userData="all"/>
+        <ToggleButton mnemonicParsing="false" text=".mmd" userData="mmd"/>
+        <ToggleButton mnemonicParsing="false" text=".puml" userData="puml"/>
+        <ToggleButton mnemonicParsing="false" text=".md" userData="md"/>
+        <ToggleButton mnemonicParsing="false" text=".txt" userData="txt"/>
+    </buttons>
+</fx:root>

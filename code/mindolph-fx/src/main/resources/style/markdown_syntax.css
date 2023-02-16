@@ -1,0 +1,28 @@
+.heading {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+
+.list {
+    -fx-fill: red;
+    -fx-font-weight: bold;
+}
+
+.code {
+    -fx-fill: green;
+    -fx-font-weight: bold;
+}
+
+.code-block {
+    -fx-fill: green;
+    -fx-font-weight: bold;
+}
+
+.quote {
+    -fx-fill: grey;
+    -fx-font-weight: bold;
+}
+
+.url {
+    -fx-fill: blue;
+}

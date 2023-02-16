@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xi="http://www.w3.org/2001/XInclude"
+               status="WARN" name="saas-main"
+               xmlns="http://logging.apache.org/log4j/2.0/config">
+
+    <xi:include href="log4j2-appenders.xml"/>
+    <Loggers>
+        <Logger name="com.mindolph" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="trace">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

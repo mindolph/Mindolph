@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.FixedSplitPane?>
+<?import com.mindolph.fx.view.FileTabView?>
+<?import com.mindolph.fx.view.RecentView?>
+<?import com.mindolph.fx.view.WorkspaceView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="551.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.fx.MainController">
+   <children>
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <MenuBar fx:id="menuBar">
+              <menus>
+                <Menu mnemonicParsing="true" text="_File">
+                  <items>
+                    <MenuItem mnemonicParsing="true" onAction="#onMenuNewWorkspace" text="New _Workspace" />
+<!--                      <MenuItem mnemonicParsing="true" fx:id="miNewFile" text="New File" disable="true">-->
+<!--                           <accelerator>-->
+<!--                              <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />-->
+<!--                           </accelerator></MenuItem>-->
+<!--                      <SeparatorMenuItem />-->
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuOpenWorkspace" text="_Open Workspace" />
+                      <Menu fx:id="menuRecentWorkspaces" mnemonicParsing="true" text="Open Recent Workspace" />
+<!--                      <MenuItem mnemonicParsing="true" fx:id="miOpenFile" accelerator="#onMenuOpenFile" text="Open File" disable="true"/>-->
+                        <SeparatorMenuItem />
+                      <MenuItem mnemonicParsing="true" fx:id="miSave" onAction="#onMenuSave" text="_Save" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <MenuItem mnemonicParsing="true" fx:id="miSaveAs" onAction="#onMenuSaveAs" text="Save _As" disable="true"/>
+                      <MenuItem mnemonicParsing="true" fx:id="miSaveAll" text="Save All" onAction="#onMenuSaveAll" disable="true">
+                          <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                          </accelerator>
+                      </MenuItem>
+<!--                      <MenuItem mnemonicParsing="true" fx:id="miPrint" onAction="#onMenuPrint" text="Pr_int"  disable="true">-->
+<!--                          <accelerator>-->
+<!--                              <KeyCodeCombination alt="UP" code="P" control="UP" meta="UP" shift="UP" shortcut="DOWN" />-->
+<!--                          </accelerator>-->
+<!--                      </MenuItem>-->
+                      <SeparatorMenuItem />
+                        <MenuItem mnemonicParsing="true" fx:id="miCloseTab" onAction="#onMenuClose" text="Close _Tab" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator>
+                        </MenuItem>
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuExit" text="_Exit">
+                          <accelerator>
+                              <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                          </accelerator>
+                      </MenuItem>
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="true" text="_Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="true" fx:id="miUndo" onAction="#onMenuUndo" text="_Undo" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <MenuItem mnemonicParsing="true" fx:id="miRedo" onAction="#onMenuRedo" text="_Redo" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <SeparatorMenuItem />
+                      <MenuItem mnemonicParsing="true" fx:id="miCut" onAction="#onMenuCut" text="Cut" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="X" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <MenuItem mnemonicParsing="true" fx:id="miCopy" onAction="#onMenuCopy" text="Copy" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="C" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <MenuItem mnemonicParsing="true" fx:id="miPaste" onAction="#onMenuPaste" text="Paste" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="V" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <SeparatorMenuItem />
+                      <MenuItem mnemonicParsing="true" fx:id="miFind" onAction="#onMenuFind" text="_Find" disable="true">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      <MenuItem mnemonicParsing="true" fx:id="miReplace" onAction="#onMenuReplace" text="_Replace" disable="true">
+                          <accelerator>
+                              <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                          </accelerator></MenuItem>
+                      <SeparatorMenuItem />
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuPreferences" text="_Preferences">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="COMMA" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                  </items>
+                </Menu>
+                  <Menu mnemonicParsing="true" text="_View">
+                      <items>
+                          <CheckMenuItem fx:id="miToggleWorkspaceView" onAction="#onMenuToggleWorkspaceView" mnemonicParsing="true" text="_Workspace View" selected="true"/>
+                      </items>
+                  </Menu>
+                  <Menu mnemonicParsing="true" text="_Navigate">
+                      <items>
+                          <MenuItem mnemonicParsing="true" onAction="#onMenuGotoFile" text="_Go to File">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="T" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                      </items>
+                  </Menu>
+                <Menu mnemonicParsing="true" text="_Help">
+                  <items>
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference" />
+                    <MenuItem mnemonicParsing="true" onAction="#onMenuAbout" text="_About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <FixedSplitPane fx:id="splitPane" VBox.vgrow="ALWAYS" fixedSize="250">
+              <primary>
+                <AnchorPane minHeight="0.0" minWidth="150.0" prefWidth="200.0">
+                     <children>
+                        <TabPane fx:id="leftTabPane" layoutX="-12.0" layoutY="62.0" minHeight="160.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <tabs>
+                            <Tab fx:id="tabWorkspaces" text="Workspaces">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AnchorPane layoutX="-215.0" layoutY="-87.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <WorkspaceView fx:id="workspaceView" layoutX="-29.0" layoutY="-35.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab fx:id="tabRecentFiles" text="Recent Files">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <RecentView fx:id="recentView" layoutX="24.0" layoutY="44.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children>
+                  </AnchorPane>
+              </primary>
+                <secondary>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="448.0" prefWidth="488.0">
+                     <children>
+                        <FileTabView fx:id="fileTabView" layoutX="25.0" layoutY="63.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+                </secondary>
+            </FixedSplitPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

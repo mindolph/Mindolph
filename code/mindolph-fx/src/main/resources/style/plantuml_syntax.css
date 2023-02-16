@@ -1,0 +1,24 @@
+.diagramkeyword {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.directive {
+    -fx-fill: indigo;
+    -fx-font-weight: bold;
+}
+
+.containing {
+    -fx-fill: crimson;
+    -fx-font-weight: bold;
+}
+
+.keyword {
+    -fx-fill: goldenrod;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-fill: grey;
+    -fx-font-style: italic;
+}

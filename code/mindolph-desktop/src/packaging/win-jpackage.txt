@@ -1,0 +1,17 @@
+--type msi
+--name ${app.name}
+--app-version ${app.version}
+--vendor '${app.vendor}'
+--description "${project.description}"
+--icon ${project.build.directory}\classes\icons\app.ico
+--copyright "(C) '${app.vendor}"
+--win-menu
+--win-menu-group ${app.name}
+--dest ${project.build.directory}
+--main-jar ${project.build.finalName}.jar
+--main-class ${main-class}
+--input ${project.build.directory}\dependency
+--runtime-image ${project.build.directory}\jvm-image
+--temp ${project.build.directory}\installer-work
+--java-options '-Dlog4j2.configurationFile=log4j2-prod.xml -Xms128M -Xmx512M'
+--win-upgrade-uuid 1db34ee9-fac4-4887-a91d-074b97d14ff1
