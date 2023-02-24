@@ -37,6 +37,11 @@ public class WorkspaceList {
         return projects.size();
     }
 
+    /**
+     * @deprecated maybe no need anymore
+     * @param file
+     * @return
+     */
     public boolean isWorkspaceOpened(File file) {
         return this.projects.contains(new WorkspaceMeta(file.getPath()));
     }
@@ -47,6 +52,14 @@ public class WorkspaceList {
 
     public void removeWorkspace(File workspaceBaseDir) {
         this.projects.remove(new WorkspaceMeta(workspaceBaseDir.getPath()));
+    }
+
+    public void addWorkspace(WorkspaceMeta workspaceMeta){
+        this.projects.add(workspaceMeta);
+    }
+
+    public void removeWorkspace(WorkspaceMeta workspaceMeta){
+        this.projects.remove(workspaceMeta);
     }
 
     public LinkedHashSet<WorkspaceMeta> getProjects() {

@@ -4,6 +4,7 @@ import com.mindolph.core.model.NodeData;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 @FunctionalInterface
 public interface WorkspaceClosedEventHandler {

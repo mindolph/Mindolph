@@ -37,6 +37,7 @@ public class FontIconManager {
 
     public FontIconManager() {
         // general
+        icons.put(IconKey.PLUS, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.PLUS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.RENAME, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.CLONE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_COPY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.DELETE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.DELETE, DEFAULT_ICON_SIZE));
@@ -79,6 +80,7 @@ public class FontIconManager {
         icons.put(IconKey.LOCK, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.LOCK, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FOLD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FOLDER, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNFOLD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FOLDER_OPEN, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.GEAR, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.GEAR, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNSELECT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.UNLINK, DEFAULT_ICON_SIZE));
 
         icons.put(IconKey.ALIGN, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_ALIGN_JUSTIFY, DEFAULT_ICON_SIZE));

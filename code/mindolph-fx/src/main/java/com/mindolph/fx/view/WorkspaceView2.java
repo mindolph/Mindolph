@@ -8,6 +8,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.*;
+import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
@@ -28,9 +29,9 @@ import com.mindolph.fx.helper.TreeExpandRestoreListener;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
-import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
+import com.mindolph.mindmap.util.MenuUtils;
 import com.mindolph.plantuml.PlantUmlTemplates;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -39,6 +40,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
+import javafx.util.StringConverter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -56,24 +60,24 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 
 /**
- * Load folders and files(with filters) in them lazily.
+ * Load workspaces.
+ * Load folders and files(with filters) for selected workspace to tree view lazily.
  * Open file by double-clicking.
  * Dra and drop single folder/file to another folder.
  * Context menu: rename, clone delete, open in system, find in files, new folder/mmd/plantuml/md/txt.
  *
  * @author mindolph.com@gmail.com
- * @deprecated kept for possible using in future
  */
-public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>,
+public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent>,
         TreeExpandRestoreListener {
 
-    private final Logger log = LoggerFactory.getLogger(WorkspaceView.class);
+    private final Logger log = LoggerFactory.getLogger(WorkspaceView2.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
@@ -94,18 +98,29 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     };
 
     @FXML
+    private ComboBox<Pair<String, WorkspaceMeta>> cbWorkspaces;
+    @FXML
     private TreeView<NodeData> treeView;
+    @FXML
+    private Button btnNew;
+    @FXML
+    private Button btnReload;
+    @FXML
+    private Button btnCollapseAll;
+    @FXML
+    private Button btnFindInFiles;
 
     private final TreeItem<NodeData> rootItem; // root node is not visible
     private List<String> expendedFileList; // set by event listener, used for tree expansion restore.
+    private NodeData activeWorkspaceData; // set during workspace loading, used for context menu.
 
+    private ContextMenu contextMenuNew; // context menu for button "New"
     private MenuItem miFolder;
     private MenuItem miMindMap;
     private MenuItem miTextFile;
     private Menu plantUmlMenu;
     private MenuItem miMarkdown;
     private MenuItem miRename;
-    private MenuItem miClose;
     private MenuItem miReload;
     private MenuItem miClone;
     private MenuItem miDelete;
@@ -117,14 +132,43 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     private SearchResultEventHandler searchEventHandler;
     private ExpandEventHandler expandEventHandler;
     private CollapseEventHandler collapseEventHandler;
-    private WorkspaceClosedEventHandler workspaceClosedEventHandler;
     private FileRenamedEventHandler fileRenamedEventHandler;
     private FileChangedEventHandler fileChangedEventHandler;
 
-    public WorkspaceView() {
-        super("/view/workspace_view.fxml");
+    public WorkspaceView2() {
+        super("/view/workspace_view2.fxml");
         log.info("Init workspace view");
-        rootItem = new TreeItem<>(new NodeData("Hidden Root", null));
+
+        cbWorkspaces.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Pair<String, WorkspaceMeta> pair) {
+                return pair == null ? "" : pair.getValue().getName();
+            }
+
+            @Override
+            public Pair<String, WorkspaceMeta> fromString(String string) {
+                return null;
+            }
+        });
+        cbWorkspaces.setCellFactory(pairListView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Pair<String, WorkspaceMeta> item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                }
+                else {
+                    setText(item.getValue().getName());
+                }
+            }
+        });
+        cbWorkspaces.getSelectionModel().selectedItemProperty().addListener((observableValue, workspaceMeta, selectedWorkspace) -> {
+            if (selectedWorkspace != null) {
+                loadWorkspace(selectedWorkspace.getValue());
+            }
+        });
+
+        rootItem = new TreeItem<>(new NodeData("Workspace Stub", null));
         rootItem.setExpanded(true);
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
@@ -206,14 +250,69 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
         });
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             log.debug("Selection changed: " + newValue);
-            Optional<NodeData> selectedValue = WorkspaceView.this.getSelectedValue();
+            Optional<NodeData> selectedValue = WorkspaceView2.this.getSelectedValue();
             EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.NEW_FILE,
                     selectedValue.isPresent()
                             && !selectedValue.get().isFile());
         });
+
+        btnNew.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
+        btnReload.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
+        btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
+        btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
+
+        EventHandler<MouseEvent> btnEventHandler = event -> {
+            treeView.getSelectionModel().select(rootItem); // root item is the item for workspace
+            Button btn = (Button) event.getSource();
+            if (btn == btnNew) {
+                if (contextMenuNew != null) {
+                    contextMenuNew.hide();
+                }
+                else {
+                    contextMenuNew = new ContextMenu();
+                    Menu menuNew = createMenuNew();
+                    contextMenuNew.getItems().addAll(menuNew.getItems());
+                    contextMenuNew.setAutoHide(true);// doesn't work but kept for reference
+//                    MenuUtils.traverseMenuItems(contextMenuNew.getItems(), mi -> {
+//                        mi.setUserData(activeWorkspaceData);
+//                    });
+                }
+                contextMenuNew.show(WorkspaceView2.this, event.getScreenX(), event.getScreenY());
+            }
+            else if (btn == btnReload) {
+                reloadTreeItem(rootItem, activeWorkspaceData);
+            }
+            else if (btn == btnCollapseAll) {
+                collapseTreeNodes(rootItem, false);
+            }
+            else if (btn == btnFindInFiles) {
+                launchFindInFilesDialog(activeWorkspaceData);
+            }
+        };
+
+        btnNew.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) contextMenuNew.hide();
+        });
+        btnNew.setOnMouseClicked(btnEventHandler);
+        btnReload.setOnMouseClicked(btnEventHandler);
+        btnCollapseAll.setOnMouseClicked(btnEventHandler);
+        btnFindInFiles.setOnMouseClicked(btnEventHandler);
+
         EventBus.getIns().subscribeNewFileToWorkspace(file -> {
             TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
             this.addFileAndSelect(parentTreeItem, new NodeData(file));
+        });
+        EventBus.getIns().subscribeWorkspaceRenamed(event -> {
+            loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
+        });
+        EventBus.getIns().subscribeWorkspaceClosed(closedWorkspaceMeta -> {
+            // TODO refactor?
+            if (closedWorkspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
+                activeWorkspaceData = null;
+                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, "");
+            }
+            SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
+            loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
         });
         this.initTreeViewContextMenu();
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
@@ -229,23 +328,27 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
         treeView.setContextMenu(contextMenu);
     }
 
+    /**
+     * Load all workspaces to combobox to let user select.
+     *
+     * @param workspaceList
+     */
     public void loadWorkspaces(WorkspaceList workspaceList) {
-        AtomicInteger count = new AtomicInteger();
-        EventBus.getIns().subscribeWorkspaceLoaded(workspaceList.getSize(), workspaceDataTreeItem -> {
-            rootItem.getChildren().add(workspaceDataTreeItem);
-            log.debug("Add workspace node (%d) '%s' to root".formatted(count.get(), workspaceDataTreeItem.getValue()));
-            if (count.incrementAndGet() == workspaceList.getSize()) {
-                log.debug("All workspaces are restored");
-                EventBus.getIns().notifyWorkspacesRestored(); // notify that all workspaces loaded.
-            }
-            Platform.runLater(() -> treeView.requestFocus());
-        });
-        new Thread(() -> {
-            log.debug("start a new thread to load workspaces: %d".formatted(workspaceList.getSize()));
-            for (WorkspaceMeta workspaceMeta : workspaceList.getProjects().stream().filter(workspaceMeta -> new File(workspaceMeta.getBaseDirPath()).exists()).toList()) {
-                createWorkspaceSubTree(workspaceMeta);
-            }
-        }, "Workspaces load thread").start();
+        cbWorkspaces.getItems().clear();
+        cbWorkspaces.getItems().addAll(workspaceList.getProjects().stream().map(workspaceMeta -> {
+            return new Pair<>(workspaceMeta.getBaseDirPath(), workspaceMeta);
+        }).toList());
+        // init the active workspace if the workspace exist
+        String activeWorkspacePath = fxPreferences.getPreference(MINDOLPH_ACTIVE_WORKSPACE, String.class);
+        log.debug("Last active workspace: " + activeWorkspacePath);
+        if (StringUtils.isNotBlank(activeWorkspacePath)
+                && cbWorkspaces.getItems().stream().anyMatch(p -> p.getKey().equals(activeWorkspacePath))) {
+            cbWorkspaces.setValue(new Pair<>(activeWorkspacePath, workspaceList.matchByFilePath(activeWorkspacePath)));
+        }
+        else {
+            Optional<WorkspaceMeta> first = workspaceList.getProjects().stream().findFirst();
+            first.ifPresent(workspaceMeta -> cbWorkspaces.setValue(new Pair<>(workspaceMeta.getBaseDirPath(), workspaceMeta)));
+        }
     }
 
     /**
@@ -255,12 +358,12 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
      */
     public void loadWorkspace(WorkspaceMeta workspaceMeta) {
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
-            rootItem.getChildren().add(workspaceDataTreeItem);
-            log.debug("Add workspace node '%s' to root".formatted(workspaceDataTreeItem.getValue()));
-            Platform.runLater(() -> {
-                treeView.requestFocus();
-            });
+            activeWorkspaceData = workspaceDataTreeItem.getValue();
+//            log.debug("Add workspace node '%s' to root".formatted(workspaceDataTreeItem.getValue()));
+            EventBus.getIns().notifyWorkspacesRestored(); // notify that one workspace loaded.
+            Platform.runLater(() -> treeView.requestFocus());
         });
+        fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, workspaceMeta.getBaseDirPath());
         asyncCreateWorkspaceSubTree(workspaceMeta);
     }
 
@@ -268,14 +371,13 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
      * Reload workspace sub-tree to specified position of tree.
      *
      * @param workspaceMeta
-     * @param index         original index in siblings.
      */
-    public void reloadWorkspace(WorkspaceMeta workspaceMeta, int index) {
+    public void reloadWorkspace(WorkspaceMeta workspaceMeta) {
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
-            rootItem.getChildren().add(index, workspaceDataTreeItem);
+            activeWorkspaceData = workspaceDataTreeItem.getValue();
             List<String> treeExpandedList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
             onTreeExpandRestore(treeExpandedList);
-            treeView.getSelectionModel().select(workspaceDataTreeItem);
+//            treeView.getSelectionModel().select(workspaceDataTreeItem);
             Platform.runLater(() -> treeView.requestFocus());
         });
         asyncCreateWorkspaceSubTree(workspaceMeta);
@@ -303,52 +405,54 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     private void createWorkspaceSubTree(WorkspaceMeta workspaceMeta) {
         NodeData workspaceData = new NodeData(NodeType.WORKSPACE, new File(workspaceMeta.getBaseDirPath()));
         workspaceData.setWorkspaceData(workspaceData);
+        rootItem.setValue(workspaceData);
         List<NodeData> childrenData = WorkspaceManager.getIns().loadWorkspace(workspaceData, workspaceConfig);
-        TreeItem<NodeData> workspaceItem = new TreeItem<>(workspaceData);
-        workspaceItem.expandedProperty().addListener((observable, oldExpanded, newExpanded) -> {
-            if (!oldExpanded.equals(newExpanded)) {
-                onTreeItemExpandOrCollapsed(newExpanded, workspaceItem);
-            }
-        });
         Platform.runLater(() -> {
-            this.loadTreeNode(workspaceItem, childrenData);
+            this.loadTreeNode(rootItem, childrenData);
+            rootItem.getChildren().forEach(nodeDataTreeItem -> {
+                NodeData folderData = nodeDataTreeItem.getValue();
+                if (folderData.isFolder()) {
+                    List<NodeData> grandChildrenData = WorkspaceManager.getIns().loadFolder(folderData, workspaceConfig);
+                    this.loadTreeNode(nodeDataTreeItem, grandChildrenData);
+                }
+            });
             log.debug("workspace loaded: " + workspaceMeta.getBaseDirPath());
-            EventBus.getIns().notifyWorkspaceLoaded(workspaceItem);
+            EventBus.getIns().notifyWorkspaceLoaded(rootItem);
         });
     }
 
     private void loadTreeNode(TreeItem<NodeData> parent, List<NodeData> childrenData) {
         // note: use name other than file path to match tree item and node data, because the file path changes when folder name changes.
-        log.debug("load folder item: %s/".formatted(parent));
+        log.trace("load folder item: %s/".formatted(parent));
         // remove not exists tree items for theirs file might be deleted.
         boolean isRemoved = parent.getChildren().removeIf(nodeDataTreeItem -> {
             return childrenData.stream().noneMatch(nodeData -> {
                 return nodeDataTreeItem.getValue().getName().equals(nodeData.getName());
             });
         });
-        if (isRemoved) log.debug("Some tree items are moved");
+        if (isRemoved) log.trace("Some tree items are moved");
 
         for (NodeData childNodeData : childrenData) {
             // already exists
             Optional<TreeItem<NodeData>> existing = parent.getChildren().stream().filter(nodeDataTreeItem -> childNodeData.getName().equals(nodeDataTreeItem.getValue().getName())).findFirst();
             if (existing.isPresent()) {
-                log.debug("already exists, ignore: %s".formatted(childNodeData));
+                log.trace("already exists, ignore: %s".formatted(childNodeData));
                 TreeItem<NodeData> existingItem = existing.get();
-                log.debug("existing tree item: %s, expanded: %s".formatted(existingItem.getValue().getFile(), existingItem.isExpanded()));
+                log.trace("existing tree item: %s, expanded: %s".formatted(existingItem.getValue().getFile(), existingItem.isExpanded()));
                 existingItem.setValue(childNodeData);
                 if (childNodeData.isFolder() && existingItem.isExpanded()) {
                     loadTreeNode(existingItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
                 }
                 continue;
             }
-            log.debug(childNodeData + " does not existed, try to create it.");
+            log.trace("%s does not existed, try to create it.".formatted(childNodeData));
             if (childNodeData.isFolder()) {
                 TreeItem<NodeData> folderItem = this.addFolder(parent, childNodeData);
-                log.debug("add folder: %s/".formatted(folderItem.getValue().getName()));
+                log.trace("add folder: %s/".formatted(folderItem.getValue().getName()));
             }
             else if (childNodeData.isFile()) {
                 TreeItem<NodeData> fileItem = this.addFile(parent, childNodeData);
-                log.debug("add file: %s".formatted(fileItem.getValue().getName()));
+                log.trace("add file: %s".formatted(fileItem.getValue().getName()));
             }
         }
     }
@@ -399,43 +503,23 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
         }
     }
 
+
     private ContextMenu createContextMenu(TreeItem<NodeData> treeItem, ContextMenu contextMenu) {
         contextMenu.getItems().clear();
         if (treeItem != null) {
             NodeData nodeData = treeItem.getValue();
-            boolean isWorkspaceOrFolder = !nodeData.isFile();
-            if (isWorkspaceOrFolder) {
-                Menu miNew = new Menu("New");
-                miFolder = new MenuItem("Folder", new IconBuilder().name(IconName.FOLDER).build());
-                miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
-                miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
-                plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
-                for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
-                    MenuItem mi = new MenuItem(template.getTitle());
-                    mi.setUserData(template);
-                    mi.setOnAction(this);
-                    plantUmlMenu.getItems().add(mi);
-                }
-                miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
-                miFolder.setOnAction(this);
-                miMindMap.setOnAction(this);
-                miMarkdown.setOnAction(this);
-                miTextFile.setOnAction(this);
-                miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile);
+            boolean isFolder = !nodeData.isFile();
+            if (isFolder) {
+                Menu miNew = createMenuNew();
                 contextMenu.getItems().add(miNew);
             }
             miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
             miRename.setOnAction(this);
             contextMenu.getItems().addAll(miRename);
-            if (isWorkspaceOrFolder) {
+            if (isFolder) {
                 miReload = new MenuItem("Reload", FontIconManager.getIns().getIcon(IconKey.REFRESH));
                 miReload.setOnAction(this);
                 contextMenu.getItems().addAll(miReload);
-            }
-            if (nodeData.isWorkspace()) {
-                miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
-                miClose.setOnAction(this);
-                contextMenu.getItems().addAll(miClose);
             }
             else if (nodeData.isFile()) {
                 miClone = new MenuItem("Clone", FontIconManager.getIns().getIcon(IconKey.CLONE));
@@ -449,11 +533,15 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             miOpenInSystem.setOnAction(this);
             miCollapseAll.setOnAction(this);
             contextMenu.getItems().addAll(miDelete, miOpenInSystem);
-            if (isWorkspaceOrFolder) {
+            if (isFolder) {
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
+            // set NodeData to menu item to be used for menu action handling.
+            MenuUtils.traverseMenuItems(contextMenu.getItems(), menuItem -> {
+                menuItem.setUserData(nodeData);
+            });
             return contextMenu;
         }
         else {
@@ -464,10 +552,54 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
         }
     }
 
+
+    private Menu createMenuNew() {
+        Menu miNew = new Menu("New");
+        miFolder = new MenuItem("Folder", new IconBuilder().name(IconName.FOLDER).build());
+        miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
+        miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
+        plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
+        for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
+            MenuItem mi = new MenuItem(template.getTitle());
+            mi.setUserData(template);
+            mi.setOnAction(this);
+            plantUmlMenu.getItems().add(mi);
+        }
+        miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
+        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile);
+        miFolder.setOnAction(this);
+        miMindMap.setOnAction(this);
+        miMarkdown.setOnAction(this);
+        miTextFile.setOnAction(this);
+        return miNew;
+    }
+
     @Override
     public void onTreeExpandRestore(List<String> expandedNodes) {
-        log.info("Restore tree expansion: " + StringUtils.join(expandedNodes, ", "));
+        log.info("Restore tree expansion: ");
         this.expandTreeNodes(expandedNodes);
+    }
+
+    /**
+     * Find and select a tree item by it's node data and expand it's path nodes.
+     *
+     * @param nodeData
+     */
+    public void selectByNodeDataInAppropriateWorkspace(NodeData nodeData) {
+        if (nodeData != null) {
+            NodeData workspaceData = nodeData.getWorkspaceData();
+            EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+                selectByNodeData(nodeData);
+            });
+            WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(workspaceData.getFile().getPath());
+            if (workspaceData.getFile().equals(activeWorkspaceData.getFile())) {
+                selectByNodeData(nodeData);
+            }
+            else {
+                log.debug("Select workspace: %s".formatted(workspaceData.getFile()));
+                cbWorkspaces.getSelectionModel().select(new Pair<>(workspaceMeta.getBaseDirPath(), workspaceMeta));
+            }
+        }
     }
 
     /**
@@ -512,7 +644,6 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             if (treeItem.getParent() != null && !treeItem.getParent().isExpanded()) {
                 return null;
             }
-            // excludes files
             if (treeItem.getValue().isFile()) {
                 return null;
             }
@@ -528,8 +659,9 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
      * Collapse node and all it's sub nodes.
      *
      * @param treeItem
+     * @param includeParent
      */
-    public void collapseTreeNodes(TreeItem<NodeData> treeItem) {
+    public void collapseTreeNodes(TreeItem<NodeData> treeItem, boolean includeParent) {
         log.debug("Collapse all expanded nodes under " + treeItem);
         TreeVisitor.dfsTraverse(treeItem, item -> {
             if (item.isExpanded()) {
@@ -538,7 +670,7 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             }
             return null;
         });
-        treeItem.setExpanded(false);
+        if (includeParent) treeItem.setExpanded(false);
     }
 
     /**
@@ -591,7 +723,7 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     public void handle(ActionEvent event) {
         MenuItem source = (MenuItem) event.getSource();
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
-        NodeData selectedData = selectedTreeItem.getValue();
+        NodeData selectedData = selectedTreeItem.getValue(); // use selected tree item as target even for workspace folder(the root item), because the user data of tree item might be used for other purpose.
         if (source == miFolder) {
             Dialog<String> dialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
@@ -638,6 +770,7 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
                                 FileUtils.writeStringToFile(newFile, text, StandardCharsets.UTF_8);
                             } catch (IOException e) {
                                 e.printStackTrace();
+                                throw new RuntimeException(e);
                             }
                         }
                     }
@@ -659,6 +792,7 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
                                 FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                             } catch (IOException e) {
                                 e.printStackTrace();
+                                throw new RuntimeException(e);
                             }
                         }
                     }
@@ -676,42 +810,21 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             }
         }
         else if (source == miRename) {
-            Optional<String> s = new TextDialogBuilder()
-                    .owner(DialogFactory.DEFAULT_WINDOW)
-                    .title("Rename %s".formatted(selectedData.getName()))
-                    .content("Input a new name")
-                    .text(FilenameUtils.getBaseName(selectedData.getName()))
-                    .width(400)
-                    .build().showAndWait();
-            if (s.isPresent()) {
-                String newName = s.get();
-                File origFile = selectedData.getFile();
+            this.requestRenameFolderOrFile(selectedData, newNameFile -> {
                 if (selectedData.isFile()) {
-                    newName = FileNameUtils.appendFileExtensionIfAbsent(newName, FilenameUtils.getExtension(origFile.getPath()));
+                    selectedTreeItem.setValue(new NodeData(newNameFile));
                 }
-                File newNameFile = new File(origFile.getParentFile(), newName);
-                if (newNameFile.exists()) {
-                    DialogFactory.errDialog("file %s already exists".formatted(newName));
+                else if (selectedData.isFolder()) {
+                    NodeData newFolderData = new NodeData(NodeType.FOLDER, newNameFile);
+                    newFolderData.setWorkspaceData(selectedData.getWorkspaceData());
+                    selectedTreeItem.setValue(newFolderData);
+                    this.reloadFolder(newFolderData);
                 }
-                else {
-                    if (origFile.renameTo(newNameFile)) {
-                        log.debug("Rename file from %s to %s".formatted(origFile.getPath(), newNameFile));
-                        if (selectedData.isFile()) {
-                            selectedTreeItem.setValue(new NodeData(newNameFile));
-                        }
-                        else if (selectedData.isFolder()) {
-                            NodeData newFolderData = new NodeData(NodeType.FOLDER, newNameFile);
-                            newFolderData.setWorkspaceData(selectedData.getWorkspaceData());
-                            selectedTreeItem.setValue(newFolderData);
-                            this.reloadFolder(newFolderData);
-                        }
-                        treeView.refresh();
-                        // remove old path from expanded list as well.
-                        SceneRestore.getInstance().removeFromExpandedList(origFile.getPath());
-                        fileRenamedEventHandler.onFileRenamed(selectedData, newNameFile);
-                    }
-                }
-            }
+                treeView.refresh();
+                // remove old path from expanded list as well.
+                SceneRestore.getInstance().removeFromExpandedList(selectedData.getFile().getPath());
+                fileRenamedEventHandler.onFileRenamed(selectedData, newNameFile);
+            });
         }
         else if (source == miClone) {
             if (selectedData != null) {
@@ -764,59 +877,81 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
                 }
             }
         }
-        else if (source == miClose) {
-            if (selectedData != null) {
-                if (selectedData.isWorkspace()) {
-                    rootItem.getChildren().remove(selectedTreeItem);
-                    workspaceClosedEventHandler.onWorkspaceClosed(selectedData);
-                }
-            }
-        }
         else if (source == miReload) {
-            if (selectedData != null) {
-                if (selectedData.isWorkspace()) {
-                    int originalIndex = rootItem.getChildren().indexOf(selectedTreeItem);
-                    rootItem.getChildren().remove(selectedTreeItem);
-                    WorkspaceMeta meta = new WorkspaceMeta(selectedData.getFile().getPath());
-                    reloadWorkspace(meta, originalIndex);
-                }
-                else if (selectedData.isFolder()) {
-                    this.reloadFolder(selectedData);
-                }
-            }
+            this.reloadTreeItem(selectedTreeItem, selectedData);
         }
         else if (source == miFindFiles) {
-            if (!selectedData.isFile()) {
-                if (!selectedData.getFile().exists()) {
-                    DialogFactory.errDialog("The workspace or folder you selected doesn't exist, probably be deleted externally.");
-                }
-                else {
-                    SearchParams searchParams = new FindInFilesDialog(selectedData.getWorkspaceData().getFile(), selectedData.getFile()).showAndWait();
-                    if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {
-                        IOFileFilter searchFilter = workspaceConfig.makeFileFilter();
-                        searchParams.setWorkspaceDir(selectedData.getWorkspaceData().getFile());
-                        searchParams.setSearchInDir(selectedData.getFile());
-                        searchParams.setSearchFilter(searchFilter);
-                        fxPreferences.savePreference(MINDOLPH_FIND_FILES_KEYWORD, searchParams.getKeywords());
-                        fxPreferences.savePreference(MINDOLPH_FIND_FILES_CASE_SENSITIVITY, searchParams.isCaseSensitive());
-                        fxPreferences.savePreference(MINDOLPH_FIND_FILES_OPTIONS, searchParams.getFileTypeName());
-                        searchEventHandler.onSearchStart(searchParams);
-                    }
-                }
-            }
+            this.launchFindInFilesDialog(selectedData);
         }
         else if (source == miOpenInSystem) {
             if (selectedData != null) {
                 log.info("Try to open file: " + selectedData.getFile());
-                try {
-                    DesktopUtils.openInSystem(selectedData.getFile(), false);
-                } catch (Exception e) {
-                    DialogFactory.warnDialog("Can't open this file in system");
-                }
+                MindolphFileUtils.openFileInSystem(selectedData.getFile());
             }
         }
         else if (source == miCollapseAll) {
-            collapseTreeNodes(treeView.getSelectionModel().getSelectedItem());
+            this.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
+        }
+    }
+
+    private void requestRenameFolderOrFile(NodeData selectedData, Consumer<File> consumer) {
+        Optional<String> s = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Rename %s".formatted(selectedData.getName()))
+                .content("Input a new name")
+                .text(selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName())
+                .width(400)
+                .build().showAndWait();
+        if (s.isPresent()) {
+            String newName = s.get();
+            File origFile = selectedData.getFile();
+            if (selectedData.isFile()) {
+                newName = FileNameUtils.appendFileExtensionIfAbsent(newName, FilenameUtils.getExtension(origFile.getPath()));
+            }
+            File newNameFile = new File(origFile.getParentFile(), newName);
+            if (newNameFile.exists()) {
+                DialogFactory.errDialog("file %s already exists".formatted(newName));
+            }
+            else {
+                if (origFile.renameTo(newNameFile)) {
+                    log.debug("Rename file from %s to %s".formatted(origFile.getPath(), newNameFile));
+                    consumer.accept(newNameFile);
+                }
+            }
+        }
+    }
+
+    private void reloadTreeItem(TreeItem<NodeData> selectedTreeItem, NodeData selectedData) {
+        if (selectedData != null) {
+            if (selectedData.isWorkspace()) {
+                rootItem.getChildren().remove(selectedTreeItem);
+                WorkspaceMeta meta = new WorkspaceMeta(selectedData.getFile().getPath());
+                this.reloadWorkspace(meta);
+            }
+            else if (selectedData.isFolder()) {
+                this.reloadFolder(selectedData);
+            }
+        }
+    }
+
+    private void launchFindInFilesDialog(NodeData selectedData) {
+        if (!selectedData.isFile()) {
+            if (!selectedData.getFile().exists()) {
+                DialogFactory.errDialog("The workspace or folder you selected doesn't exist, probably be deleted externally.");
+            }
+            else {
+                SearchParams searchParams = new FindInFilesDialog(selectedData.getWorkspaceData().getFile(), selectedData.getFile()).showAndWait();
+                if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {
+                    IOFileFilter searchFilter = workspaceConfig.makeFileFilter();
+                    searchParams.setWorkspaceDir(selectedData.getWorkspaceData().getFile());
+                    searchParams.setSearchInDir(selectedData.getFile());
+                    searchParams.setSearchFilter(searchFilter);
+                    fxPreferences.savePreference(MINDOLPH_FIND_FILES_KEYWORD, searchParams.getKeywords());
+                    fxPreferences.savePreference(MINDOLPH_FIND_FILES_CASE_SENSITIVITY, searchParams.isCaseSensitive());
+                    fxPreferences.savePreference(MINDOLPH_FIND_FILES_OPTIONS, searchParams.getFileTypeName());
+                    searchEventHandler.onSearchStart(searchParams);
+                }
+            }
         }
     }
 
@@ -931,10 +1066,6 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
 
     public void setSearchEventHandler(SearchResultEventHandler searchEventHandler) {
         this.searchEventHandler = searchEventHandler;
-    }
-
-    public void setWorkspaceClosedEventHandler(WorkspaceClosedEventHandler workspaceClosedEventHandler) {
-        this.workspaceClosedEventHandler = workspaceClosedEventHandler;
     }
 
     public void setFileRenamedEventHandler(FileRenamedEventHandler fileRenamedEventHandler) {

@@ -1,6 +1,5 @@
 package com.mindolph.fx;
 
-import com.google.gson.Gson;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.container.FixedSplitPane;
@@ -16,10 +15,7 @@ import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.constant.IconName;
-import com.mindolph.fx.dialog.AboutDialog;
-import com.mindolph.fx.dialog.GotoFileDialog;
-import com.mindolph.fx.dialog.PreferencesDialog;
-import com.mindolph.fx.dialog.ShortcutsDialog;
+import com.mindolph.fx.dialog.*;
 import com.mindolph.fx.helper.OpenedFileRestoreListener;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.fx.helper.WorkspaceRestoreListener;
@@ -53,7 +49,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_PROJECTS;
+import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_ACTIVE_WORKSPACE;
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_PROJECTS_RECENT;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.length;
@@ -63,7 +59,7 @@ import static org.apache.commons.lang3.StringUtils.length;
  */
 public class MainController extends BaseController implements Initializable,
         SearchResultEventHandler,
-        WorkspaceRestoreListener, OpenedFileRestoreListener, WorkspaceClosedEventHandler,
+        WorkspaceRestoreListener, OpenedFileRestoreListener,
         FileRenamedEventHandler, FileChangedEventHandler,
         WorkspaceViewSizeRestoreListener, PreferenceChangedEventHandler {
 
@@ -76,13 +72,15 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private FixedSplitPane splitPane;
     @FXML
-    private WorkspaceView workspaceView;
+    private WorkspaceView2 workspaceView;
     @FXML
     private RecentView recentView;
     @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuRecentWorkspaces;
+    @FXML
+    private MenuItem menuManageWorkspaces;
     @FXML
     private TabPane leftTabPane;
     @FXML
@@ -136,11 +134,13 @@ public class MainController extends BaseController implements Initializable,
         tabRecentFiles.setGraphic(new IconBuilder().name(IconName.FILE_TXT).build());
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getFile(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.setSearchEventHandler(this);
-        workspaceView.setWorkspaceClosedEventHandler(this);
-        workspaceView.setFileRenamedEventHandler(this);
         workspaceView.setFileChangedEventHandler(this);
         workspaceView.setExpandEventHandler(sceneRestore);
         workspaceView.setCollapseEventHandler(sceneRestore);
+        workspaceView.setFileRenamedEventHandler(this);
+        EventBus.getIns().subscribeWorkspaceRenamed(event -> {
+            onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
+        });
         // listen restore events
         sceneRestore.setWorkspacesRestoreListener(this);
         sceneRestore.setOpeningFileRestoreListener(this);
@@ -189,7 +189,7 @@ public class MainController extends BaseController implements Initializable,
             log.debug("Select file in workspace view: " + baseNodeData.getFile());
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
-                workspaceView.selectByNodeData(baseNodeData);
+                workspaceView.selectByNodeDataInAppropriateWorkspace(baseNodeData);
                 workspaceView.scrollToSelected();
                 workspaceView.requestFocus();
             });
@@ -231,6 +231,7 @@ public class MainController extends BaseController implements Initializable,
         this.workspaceList = workspaceList;
         if (workspaceList != null && workspaceList.getProjects() != null && !workspaceList.getProjects().isEmpty()) {
             log.info("Restore workspaces: %d".formatted(workspaceList.getSize()));
+            workspaceList.getProjects().forEach(ws -> {log.debug(ws.getBaseDirPath());});
             workspaceView.loadWorkspaces(workspaceList);
         } else {
             if (DialogFactory.yesNoConfirmDialog("Before starting to use Mindolph, you should create your first workspace, do you want to proceed?")) {
@@ -356,19 +357,23 @@ public class MainController extends BaseController implements Initializable,
         SceneRestore.getInstance().saveScene(this.workspaceList);
     }
 
+    @FXML
+    public void onMenuManageWorkspaces(ActionEvent event) {
+        WorkspaceDialog dialog = new WorkspaceDialog();
+        dialog.showAndWait();
+    }
+
+
 //    @FXML
 //    public void onMenuOpenFile(ActionEvent event) {
 //        // should open external file
 //    }
 
     private void openWorkspace(File workspaceDir, boolean saveToRecent) {
-        if (workspaceList.isWorkspaceOpened(workspaceDir)) {
-            workspaceView.selectByNodeData(new NodeData(NodeType.WORKSPACE, workspaceDir));
-            return;
-        }
-        WorkspaceMeta meta = new WorkspaceMeta(workspaceDir.getPath());
-        this.workspaceView.loadWorkspace(meta);
-        this.workspaceList.getProjects().add(meta);
+        WorkspaceMeta workspaceMeta = new WorkspaceMeta(workspaceDir.getPath());
+        fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, workspaceDir.getPath());
+        this.workspaceList.getProjects().add(workspaceMeta);
+        this.workspaceView.loadWorkspaces(this.workspaceList);
         if (saveToRecent) {
             // save recent workspaces
             List<String> recentWorkspacePaths = fxPreferences.getPreference(MINDOLPH_PROJECTS_RECENT, new LinkedList<>());
@@ -377,13 +382,6 @@ public class MainController extends BaseController implements Initializable,
             fxPreferences.savePreference(MINDOLPH_PROJECTS_RECENT, recentWorkspacePaths);
             initRecentWorkspacesMenu();
         }
-    }
-
-
-    @Override
-    public void onWorkspaceClosed(NodeData workspaceData) {
-        this.workspaceList.removeWorkspace(workspaceData.getFile());
-        fxPreferences.savePreference(MINDOLPH_PROJECTS, new Gson().toJson(this.workspaceList));
     }
 
     @Override
@@ -404,7 +402,7 @@ public class MainController extends BaseController implements Initializable,
         log.debug("file renamed from %s to %s".formatted(nodeData.getFile(), renamedFile));
         if (nodeData.isFile()) {
             fileTabView.updateOpenedTabAndEditor(nodeData, renamedFile);
-        } else if (nodeData.isFolder()) {
+        } else if (nodeData.isFolder() || nodeData.isWorkspace()) {
             // update all opened file under this folder.
             String origDirPath = nodeData.getFile().getAbsolutePath();
             String newDirPath = renamedFile.getAbsolutePath();

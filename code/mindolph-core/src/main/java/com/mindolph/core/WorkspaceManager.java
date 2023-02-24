@@ -23,6 +23,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ *
+ * @author mindolph.com@gmail.com
+ * @see WorkspaceMeta
+ * @see WorkspaceList
+ */
 public class WorkspaceManager {
 
     private final Logger log = LoggerFactory.getLogger(WorkspaceManager.class);
@@ -65,6 +71,13 @@ public class WorkspaceManager {
             nodeData.setWorkspaceData(parentData.getWorkspaceData());
             return nodeData;
         }).toList();
+    }
+
+    public WorkspaceMeta renameWorkspace(WorkspaceMeta origWorkspace, File newRenamedFile) {
+        workspaceList.removeWorkspace(origWorkspace);
+        WorkspaceMeta newWorkspaceMeta = new WorkspaceMeta(newRenamedFile.getPath());
+        workspaceList.addWorkspace(newWorkspaceMeta);
+        return newWorkspaceMeta;
     }
 
     public List<File> findDirsAndFilesByKeyword(String keyword) {

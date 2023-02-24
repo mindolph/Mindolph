@@ -64,6 +64,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 
 /**
+ * The implementation loads all files(recursively) for each workspace at a time.
  *
  * @author mindolph.com@gmail.com
  * @deprecated bug keep for reference

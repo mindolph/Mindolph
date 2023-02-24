@@ -1,6 +1,8 @@
 package com.mindolph.base.util;
 
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.DesktopUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
@@ -40,5 +42,13 @@ public class MindolphFileUtils {
             }
         }
         return false;
+    }
+
+    public static void openFileInSystem(File file) {
+        try {
+            DesktopUtils.openInSystem(file, false);
+        } catch (Exception e) {
+            DialogFactory.warnDialog("Can't open this file in system");
+        }
     }
 }

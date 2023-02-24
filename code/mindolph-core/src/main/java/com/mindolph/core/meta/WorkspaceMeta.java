@@ -1,5 +1,7 @@
 package com.mindolph.core.meta;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.util.Objects;
 
@@ -15,6 +17,10 @@ public class WorkspaceMeta {
 
     public WorkspaceMeta(String baseDirPath) {
         this.baseDirPath = baseDirPath;
+    }
+
+    public String getName() {
+        return FilenameUtils.getBaseName(baseDirPath);
     }
 
     public String getBaseDirPath() {

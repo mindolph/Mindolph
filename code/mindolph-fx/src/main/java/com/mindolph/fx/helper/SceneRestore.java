@@ -67,6 +67,7 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
         return ins;
     }
 
+    // TODO probably need refactor
     public void saveScene(WorkspaceList workspaceList) {
         String json = new Gson().toJson(workspaceList);
         fxPreferences.savePreference(SceneStatePrefs.MINDOLPH_PROJECTS, json);

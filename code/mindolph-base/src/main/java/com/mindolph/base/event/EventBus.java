@@ -1,5 +1,6 @@
 package com.mindolph.base.event;
 
+import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import javafx.scene.control.TreeItem;
 import org.reactfx.EventSource;
@@ -23,15 +24,20 @@ public class EventBus {
     private static final EventBus ins = new EventBus();
 
     private final EventSource<NotificationType> simpleNotification = new EventSource<>();
+    // Events for workspace
     private EventSource<String> workspacesRestored;
     private EventSource<TreeItem<NodeData>> workspaceLoaded;
+    private EventSource<WorkspaceRenameEvent> workspaceRenamed;
+    private EventSource<WorkspaceMeta> workspaceClosed;
+
+    // Events for files
     private final EventSource<List<File>> openedFileChange = new EventSource<>();
     private final EventSource<File> newFileToWorkspace = new EventSource<>();
-
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
     private final EventSource<NodeData> fileDeleted = new EventSource<>();
 
+    // Events for menu
     private final Map<MenuTag, EventStream<Boolean>> menuStateEvens = new HashMap<>(); // events to enable/disable menu items
 
     // file editor send status msg to anywhere listening
@@ -56,13 +62,22 @@ public class EventBus {
         workspacesRestored.push("");
     }
 
+    public void notifyWorkspaceRenamed(WorkspaceRenameEvent event) {
+        workspaceRenamed.push(event);
+    }
+
+    public void notifyWorkspaceClosed(WorkspaceMeta workspaceMeta) {
+        workspaceClosed.push(workspaceMeta);
+    }
+
     public void notifyMenuStateChange(MenuTag menuTag, boolean enable) {
         if (menuStateEvens.containsKey(menuTag)) {
             EventStream<Boolean> menuEventStream = menuStateEvens.get(menuTag);
             if (menuEventStream instanceof EventSource<Boolean> eventSource) {
                 eventSource.push(enable);
             }
-        } else {
+        }
+        else {
             log.warn("No listener registered for menu item: %s".formatted(menuTag));
         }
     }
@@ -85,7 +100,8 @@ public class EventBus {
             else {
                 eventSource.push(statusMsg);
             }
-        } else {
+        }
+        else {
             log.warn("Not found");
         }
     }
@@ -127,18 +143,23 @@ public class EventBus {
     }
 
     public void subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
-        log.debug("Subscriber " + subscriber);
-        if (workspaceLoaded == null) {
-            workspaceLoaded = new EventSource<>();
-        }
+        if (workspaceLoaded == null) workspaceLoaded = new EventSource<>();
         workspaceLoaded.subscribeFor(max, subscriber);
     }
 
     public void subscribeWorkspacesRestored(Consumer<String> subscriber) {
-        if (workspacesRestored == null) {
-            workspacesRestored = new EventSource<>();
-        }
+        if (workspacesRestored == null) workspacesRestored = new EventSource<>();
         workspacesRestored.subscribe(subscriber);
+    }
+
+    public void subscribeWorkspaceRenamed(Consumer<WorkspaceRenameEvent> subscriber) {
+        if (workspaceRenamed == null) workspaceRenamed = new EventSource<>();
+        workspaceRenamed.subscribe(subscriber);
+    }
+
+    public void subscribeWorkspaceClosed(Consumer<WorkspaceMeta> subscriber) {
+        if (workspaceClosed == null) workspaceClosed = new EventSource<>();
+        workspaceClosed.subscribe(subscriber);
     }
 
     public void subscribeMenuStateChange(MenuTag menuTag, Consumer<Boolean> subscriber) {
@@ -146,7 +167,8 @@ public class EventBus {
             EventSource<Boolean> eventSource = new EventSource<>();
             eventSource.subscribe(subscriber);
             menuStateEvens.put(menuTag, eventSource);
-        } else {
+        }
+        else {
             log.debug("Subscriber for %s already exists, no registration again".formatted(menuTag));
         }
     }

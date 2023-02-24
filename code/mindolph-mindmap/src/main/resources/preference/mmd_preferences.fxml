@@ -41,12 +41,6 @@
                                        <ColorPicker fx:id="cpBackgroundFillColor" />
                                    </items>
                                </PreferenceItem>
-<!--                              <Separator prefWidth="200.0" />-->
-<!--                               <PreferenceItem name="Render quality:">-->
-<!--                                   <items>-->
-<!--                                       <ComboBox fx:id="cbRenderQuality" prefWidth="150.0" />-->
-<!--                                   </items>-->
-<!--                               </PreferenceItem>-->
                            </children>
                         </VBox>
                      </children></AnchorPane>

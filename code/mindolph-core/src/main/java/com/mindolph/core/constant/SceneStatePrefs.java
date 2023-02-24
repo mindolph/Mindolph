@@ -6,6 +6,7 @@ package com.mindolph.core.constant;
 public interface SceneStatePrefs {
     String MINDOLPH_PROJECTS = "mindolph.projects";
     String MINDOLPH_PROJECTS_RECENT = "mindolph.projects.recent";
+    String MINDOLPH_ACTIVE_WORKSPACE = "mindolph.workspace.active";
     String MINDOLPH_TREE_EXPANDED_LIST = "mindolph.tree.expanded";
     String MINDOLPH_WINDOW_RECTANGLE = "mindolph.window.rectangle";
     String MINDOLPH_RECENT_FILE_LIST = "mindolph.file.recent.list";

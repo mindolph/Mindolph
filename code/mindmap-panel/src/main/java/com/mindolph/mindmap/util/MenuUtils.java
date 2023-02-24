@@ -14,7 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.mindolph.mindmap.extension.ContextMenuSection.*;
 
@@ -23,6 +25,16 @@ import static com.mindolph.mindmap.extension.ContextMenuSection.*;
  */
 public class MenuUtils {
 
+    public static void traverseMenuItems(Collection<MenuItem> menuItems, Consumer<MenuItem> consumer) {
+        for (MenuItem menuItem : menuItems) {
+            if (menuItem instanceof Menu mi){
+                traverseMenuItems(mi.getItems(), consumer);
+            }
+            else {
+                consumer.accept(menuItem);
+            }
+        }
+    }
 
     public static ContextMenu makePopUp(ExtensionContext context, MindMap<TopicNode> model,
                                         boolean isFullScreen, TopicNode topicUnderMouse) {
