@@ -6,12 +6,12 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <VBox spacing="8.0">
+   <VBox spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <padding>
          <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
       </padding>
       <children>
-         <ListView fx:id="lvWorkspaces" prefHeight="320.0" prefWidth="560.0" />
+         <ListView fx:id="lvWorkspaces" prefHeight="320.0" prefWidth="560.0" VBox.vgrow="ALWAYS" />
       </children>
    </VBox>
 </AnchorPane>
