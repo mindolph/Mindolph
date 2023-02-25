@@ -153,7 +153,8 @@ public class MainController extends BaseController implements Initializable,
                 if (splitPane.isPrimaryHidden()) {
                     splitPane.showAll();
                     miToggleWorkspaceView.setSelected(true);
-                } else {
+                }
+                else {
                     splitPane.hidePrimary();
                     miToggleWorkspaceView.setSelected(false);
                 }
@@ -231,9 +232,12 @@ public class MainController extends BaseController implements Initializable,
         this.workspaceList = workspaceList;
         if (workspaceList != null && workspaceList.getProjects() != null && !workspaceList.getProjects().isEmpty()) {
             log.info("Restore workspaces: %d".formatted(workspaceList.getSize()));
-            workspaceList.getProjects().forEach(ws -> {log.debug(ws.getBaseDirPath());});
+            workspaceList.getProjects().forEach(ws -> {
+                log.debug(ws.getBaseDirPath());
+            });
             workspaceView.loadWorkspaces(workspaceList);
-        } else {
+        }
+        else {
             if (DialogFactory.yesNoConfirmDialog("Before starting to use Mindolph, you should create your first workspace, do you want to proceed?")) {
                 onMenuNewWorkspace();
             }
@@ -242,15 +246,17 @@ public class MainController extends BaseController implements Initializable,
 
     public void onOpenFile(File file, SearchParams searchParams, boolean visibleInWorkspace) {
         // the file existence should be validated before this handler for its consequences are different.
+        TreeItem<NodeData> selectedTreeItem = null;
         if (file.isFile()) {
             NodeData fileData = new NodeData(file);
             fileData.setSearchParams(searchParams);
             this.openFile(fileData, false);
-            workspaceView.selectByNodeData(fileData);
-        } else if (file.isDirectory()) {
-            workspaceView.selectByNodeData(new NodeData(NodeType.FOLDER, file));
+            selectedTreeItem = workspaceView.selectByNodeData(fileData);
         }
-        if (visibleInWorkspace) {
+        else if (file.isDirectory()) {
+            selectedTreeItem = workspaceView.selectByNodeData(new NodeData(NodeType.FOLDER, file));
+        }
+        if (visibleInWorkspace && selectedTreeItem != null) {
             splitPane.showAll();
             tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
             workspaceView.scrollToSelected();
@@ -337,7 +343,8 @@ public class MainController extends BaseController implements Initializable,
         if (saveDir != null) {
             if (saveDir.exists()) {
                 DialogFactory.warnDialog("Dir is already exist: " + saveDir);
-            } else {
+            }
+            else {
                 if (!saveDir.mkdirs()) {
                     DialogFactory.warnDialog("Failed create new workspace");
                     return;
@@ -402,7 +409,8 @@ public class MainController extends BaseController implements Initializable,
         log.debug("file renamed from %s to %s".formatted(nodeData.getFile(), renamedFile));
         if (nodeData.isFile()) {
             fileTabView.updateOpenedTabAndEditor(nodeData, renamedFile);
-        } else if (nodeData.isFolder() || nodeData.isWorkspace()) {
+        }
+        else if (nodeData.isFolder() || nodeData.isWorkspace()) {
             // update all opened file under this folder.
             String origDirPath = nodeData.getFile().getAbsolutePath();
             String newDirPath = renamedFile.getAbsolutePath();
@@ -445,19 +453,24 @@ public class MainController extends BaseController implements Initializable,
                 return;
             }
             printable = new MindMapPrintable(model, firstPrinter.getDefaultPageLayout());
-        } else if (editor instanceof PlantUmlEditor) {
+        }
+        else if (editor instanceof PlantUmlEditor) {
             Image image = ((PlantUmlEditor) editor).getImage();
             printable = new ImagePrintable(image, PrinterManager.getInstance().getFirstPrinter().getDefaultPageLayout());
-        } else if (editor instanceof MarkdownEditor) {
+        }
+        else if (editor instanceof MarkdownEditor) {
             ((MarkdownEditor) editor).print();
             return;
-        } else if (editor instanceof ImageViewerEditor) {
+        }
+        else if (editor instanceof ImageViewerEditor) {
             Image image = ((ImageViewerEditor) editor).getImage();
             printable = new ImagePrintable(image, PrinterManager.getInstance().getFirstPrinter().getDefaultPageLayout());
-        } else if (editor instanceof PlainTextEditor) {
+        }
+        else if (editor instanceof PlainTextEditor) {
             Image image = ((PlainTextEditor) editor).getImage();
             printable = new ImagePrintable(image, PrinterManager.getInstance().getFirstPrinter().getDefaultPageLayout());
-        } else {
+        }
+        else {
             return;
         }
         PrintPreviewDialog dialog = new PrintPreviewDialog(printable);
@@ -550,7 +563,8 @@ public class MainController extends BaseController implements Initializable,
         CheckMenuItem mi = (CheckMenuItem) event.getSource();
         if (mi.isSelected()) {
             splitPane.showAll();
-        } else {
+        }
+        else {
             splitPane.hidePrimary();
         }
     }

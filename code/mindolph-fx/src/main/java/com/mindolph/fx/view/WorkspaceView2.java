@@ -606,11 +606,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      * Find and select a tree item by it's node data and expand it's path nodes.
      *
      * @param nodeData
+     * @return TreeItem if selected.
      */
-    public void selectByNodeData(NodeData nodeData) {
+    public TreeItem<NodeData> selectByNodeData(NodeData nodeData) {
         if (nodeData != null) {
             log.debug("Select in tree: " + nodeData);
-            TreeVisitor.dfsTraverse(rootItem, treeItem -> {
+            return TreeVisitor.dfsSearch(rootItem, treeItem -> {
                 NodeData curNodeData = treeItem.getValue();
                 if (!treeItem.isLeaf() && curNodeData.isParentOf(nodeData)) {
                     treeItem.setExpanded(true);
@@ -619,11 +620,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     log.debug("Found tree item to select");
                     treeItem.setExpanded(true);
                     treeView.getSelectionModel().select(treeItem);
-                    return false;
+                    return treeItem; // stop traversing
                 }
-                return true;
+                return null; // keep traversing
             });
         }
+        return null;
     }
 
     public void scrollToSelected() {
