@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 @FunctionalInterface
 public interface TreeExpandRestoreListener {

@@ -144,7 +144,6 @@ public class MainController extends BaseController implements Initializable,
         // listen restore events
         sceneRestore.setWorkspacesRestoreListener(this);
         sceneRestore.setOpeningFileRestoreListener(this);
-        sceneRestore.setTreeExpandRestoreListener(workspaceView);
         sceneRestore.setWorkspaceViewSizeRestoreListener(this);
 
         // handle double click on file tabs.

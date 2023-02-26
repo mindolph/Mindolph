@@ -25,7 +25,6 @@ import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.helper.SceneRestore;
-import com.mindolph.fx.helper.TreeExpandRestoreListener;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -74,8 +73,7 @@ import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
  *
  * @author mindolph.com@gmail.com
  */
-public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent>,
-        TreeExpandRestoreListener {
+public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent> {
 
     private final Logger log = LoggerFactory.getLogger(WorkspaceView2.class);
 
@@ -165,6 +163,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         cbWorkspaces.getSelectionModel().selectedItemProperty().addListener((observableValue, workspaceMeta, selectedWorkspace) -> {
             if (selectedWorkspace != null) {
                 loadWorkspace(selectedWorkspace.getValue());
+                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getBaseDirPath());
             }
         });
 
@@ -273,9 +272,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     Menu menuNew = createMenuNew();
                     contextMenuNew.getItems().addAll(menuNew.getItems());
                     contextMenuNew.setAutoHide(true);// doesn't work but kept for reference
-//                    MenuUtils.traverseMenuItems(contextMenuNew.getItems(), mi -> {
-//                        mi.setUserData(activeWorkspaceData);
-//                    });
                 }
                 contextMenuNew.show(WorkspaceView2.this, event.getScreenX(), event.getScreenY());
             }
@@ -349,6 +345,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             Optional<WorkspaceMeta> first = workspaceList.getProjects().stream().findFirst();
             first.ifPresent(workspaceMeta -> cbWorkspaces.setValue(new Pair<>(workspaceMeta.getBaseDirPath(), workspaceMeta)));
         }
+        EventBus.getIns().notifyWorkspacesRestored(); // notify that all workspaces restored
     }
 
     /**
@@ -359,25 +356,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     public void loadWorkspace(WorkspaceMeta workspaceMeta) {
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
             activeWorkspaceData = workspaceDataTreeItem.getValue();
-//            log.debug("Add workspace node '%s' to root".formatted(workspaceDataTreeItem.getValue()));
-            EventBus.getIns().notifyWorkspacesRestored(); // notify that one workspace loaded.
-            Platform.runLater(() -> treeView.requestFocus());
-        });
-        fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, workspaceMeta.getBaseDirPath());
-        asyncCreateWorkspaceSubTree(workspaceMeta);
-    }
-
-    /**
-     * Reload workspace sub-tree to specified position of tree.
-     *
-     * @param workspaceMeta
-     */
-    public void reloadWorkspace(WorkspaceMeta workspaceMeta) {
-        EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
-            activeWorkspaceData = workspaceDataTreeItem.getValue();
             List<String> treeExpandedList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
-            onTreeExpandRestore(treeExpandedList);
-//            treeView.getSelectionModel().select(workspaceDataTreeItem);
+            this.expandTreeNodes(treeExpandedList);
             Platform.runLater(() -> treeView.requestFocus());
         });
         asyncCreateWorkspaceSubTree(workspaceMeta);
@@ -572,12 +552,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         miMarkdown.setOnAction(this);
         miTextFile.setOnAction(this);
         return miNew;
-    }
-
-    @Override
-    public void onTreeExpandRestore(List<String> expandedNodes) {
-        log.info("Restore tree expansion: ");
-        this.expandTreeNodes(expandedNodes);
     }
 
     /**
@@ -928,7 +902,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (selectedData.isWorkspace()) {
                 rootItem.getChildren().remove(selectedTreeItem);
                 WorkspaceMeta meta = new WorkspaceMeta(selectedData.getFile().getPath());
-                this.reloadWorkspace(meta);
+                this.loadWorkspace(meta);
             }
             else if (selectedData.isFolder()) {
                 this.reloadFolder(selectedData);

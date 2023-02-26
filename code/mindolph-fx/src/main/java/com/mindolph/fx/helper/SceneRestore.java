@@ -1,15 +1,11 @@
 package com.mindolph.fx.helper;
 
 import com.google.gson.Gson;
-import com.mindolph.base.event.CollapseEventHandler;
-import com.mindolph.base.event.ExpandEventHandler;
-import com.mindolph.base.event.WorkspaceViewResizedEventHandler;
-import com.mindolph.base.event.WindowEventHandler;
+import com.mindolph.base.event.*;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.model.NodeData;
-import com.mindolph.base.event.EventBus;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.RectangleUtils;
 import javafx.geometry.Rectangle2D;
@@ -49,7 +45,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
 
     // Listeners for restore scene, should be assigned before calling restoreScene()
     private WorkspaceRestoreListener workspaceRestoreListener;
-    private TreeExpandRestoreListener treeExpandRestoreListener;
     private OpenedFileRestoreListener openingFileRestoreListener;
     private WindowRestoreListener windowRestoreListener;
     private WorkspaceViewSizeRestoreListener workspaceViewSizeRestoreListener;
@@ -80,7 +75,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
         Boolean reopenLastFiles = fxPreferences.getPreference("general.openLastFiles", Boolean.class, Boolean.TRUE);
         String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
         Rectangle2D rectWindow = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_WINDOW_RECTANGLE, Rectangle2D.class, new Rectangle2D(0,0, 1000, 800));
-        List<String> treeExpandedList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
         double workspaceViewSize = fxPreferences.getPreference(MINDOLPH_LAYOUT_MAIN_TREE_SIZE, 150.0);
         WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
         if (!Boolean.parseBoolean(disableWindowResize)) {
@@ -90,7 +84,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
 
         EventBus.getIns().subscribeWorkspacesRestored(s -> {
             log.info("Workspaces restored");
-            treeExpandRestoreListener.onTreeExpandRestore(treeExpandedList);
             log.info("Reopen disabled?: " + disableReopen);
             if (reopenLastFiles && !Boolean.parseBoolean(disableReopen)) {
                 List<String> openedFiles = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
@@ -178,10 +171,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
 
     public void setWindowRestoreListener(WindowRestoreListener windowRestoreListener) {
         this.windowRestoreListener = windowRestoreListener;
-    }
-
-    public void setTreeExpandRestoreListener(TreeExpandRestoreListener treeExpandRestoreListener) {
-        this.treeExpandRestoreListener = treeExpandRestoreListener;
     }
 
     public void setWorkspaceViewSizeRestoreListener(WorkspaceViewSizeRestoreListener workspaceViewSizeRestoreListener) {
