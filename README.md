@@ -39,25 +39,25 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 * Unstable: v1.1 beta
 
-	* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.0-beta.dmg)
+	* [MacOS](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.dmg)
 	
-	* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.0-beta.msi)
+	* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.msi)
 	
-	* [Debian](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.0-beta.deb)
+	* [Debian](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.1-beta.deb)
 	
 		> for supporting PlantUML, install graphviz first:  
 		> `sudo apt install graphviz`
 	
-	* [Fedora](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.0-beta.rpm)
+	* [Fedora](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.1-beta.rpm)
 	
-	* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.0-beta.jar)
+	* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.jar)
 	
 		> If you are using Linux, run the jar like this:  
-		> `java -jar Mindolph-1.0-beta.jar`  
+		> `java -jar Mindolph-1.1-beta.jar`  
 		> If not, Download JavaFX SDK(17+) for your platform and extract to somewhere eg: `/mnt`, run the jar file like this:   
 		> `java --module-path /mnt/javafx-sdk-17/lib --add-modules 
 		> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-		> Mindolph-1.0-beta.jar`
+		> Mindolph-1.1-beta.jar`
 
 
 * Stable: v1.0
