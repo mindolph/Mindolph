@@ -48,7 +48,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 		> for supporting PlantUML, install graphviz first:  
 		> `sudo apt install graphviz`
 	
-	* [Fedora](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.1-beta.rpm)
+	* [Fedora](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.rpm)
 	
 	* [Java Executable(.jar)](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.jar)
 	
