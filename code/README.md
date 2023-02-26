@@ -49,7 +49,7 @@
 
     Set environment variable:
     ```shell
-    export JAVAFX_HOME=/usr/lib/jmods
+    export JAVAFX_HOME=/mnt/javafx-jmods-17/
     ```
 
 * Build Mindolph distribution for your operating system:  
