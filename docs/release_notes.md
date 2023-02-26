@@ -1,7 +1,11 @@
 # Release Notes
 
-### V1.0 Stable
+### V1.1 Beta
+* Re-designed the workspace panel to be more convenient to find your files.
+* Add new workspace management dialog to manage workspaces.
+* Fixed some minor bugs.
 
+### V1.0 Stable
 * Improvement: add shortcut for quick comment for markdown.
 * Fix: closed workspace will be restored after restarting.
 * Fix: some functionality breaks after closing a workspace.
