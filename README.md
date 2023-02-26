@@ -43,7 +43,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 	
 	* [Windows x64](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.msi)
 	
-	* [Debian](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph_1.1-beta.deb)
+	* [Debian](https://github.com/mindolph/Mindolph/releases/download/1.1-beta/Mindolph-1.1-beta.deb)
 	
 		> for supporting PlantUML, install graphviz first:  
 		> `sudo apt install graphviz`
