@@ -259,6 +259,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             }
         });
         contextMenu.getItems().addAll(new SeparatorMenuItem(), miExport, new SeparatorMenuItem(), miCopyImage, miCopyAscii, miCopyScript);
+        if (indicator.isEmpty()) contextMenu.getItems().forEach(mi -> mi.setDisable(true));
         log.debug("Context menu created with %d menu items".formatted(contextMenu.getItems().size()));
     }
 
@@ -271,7 +272,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 // return original plantuml code if no target
                 BlockUml blockUml = reader.getBlocks().get(indicator.page);
                 return StringUtils.join(blockUml.getDefinition(true), TextConstants.LINE_SEPARATOR);
-            } else {
+            }
+            else {
                 DiagramDescription description = reader
                         .outputImage(utfBuffer, indicator.page, new FileFormatOption(fileFormat, false));
                 String result = utfBuffer.toString(StandardCharsets.UTF_8);
@@ -374,7 +376,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else {
+                }
+                else {
                     // TODO to be refactored for multiline title.
                     List<String> definition = block.getDefinition(false);
                     List<String> prediction = definition.stream()
@@ -386,11 +389,13 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                             if (StringUtils.isBlank(title)) {
                                 // TODO
                             }
-                        } else {
+                        }
+                        else {
                             title = StringUtils.substringAfter(title, "caption");
                         }
                         indicator.addPageTitle(StringUtils.strip(title.trim(), "\"").trim());
-                    } else {
+                    }
+                    else {
                         indicator.addPageTitle(StringUtils.EMPTY);
                     }
                 }
@@ -399,6 +404,9 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             indicator.totalPages = reader.getBlocks().size();
             indicator.fitPage();
             log.debug("total pages %d, current page %d, error page count %d".formatted(indicator.totalPages, indicator.page, indicator.errPages.size()));
+            if (indicator.isEmpty()) {
+                return;// this is en empty file
+            }
 
             if (!indicator.isCurrentPageError()) {
                 Platform.runLater(() -> {
@@ -406,18 +414,21 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
                             new StatusMsg("Page %d/%d: %s".formatted(indicator.page + 1, indicator.totalPages, title)));
                 });
-                log.debug(reader.generateDiagramDescription().toString());
+                log.trace(String.valueOf(reader.generateDiagramDescription()));
                 try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
                     DiagramDescription diagramDescription = reader.outputImage(os, indicator.page);
-                    log.debug(diagramDescription.getDescription());
-                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
-                    image = new Image(byteArrayInputStream);
-                    byteArrayInputStream.close();
-                    previewConsumer.call(image);
+                    if (diagramDescription != null) {
+                        log.debug(diagramDescription.getDescription());
+                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
+                        image = new Image(byteArrayInputStream);
+                        byteArrayInputStream.close();
+                        previewConsumer.call(image);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
+            }
+            else {
                 previewConsumer.call(null);
             }
         });
@@ -463,6 +474,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
         public boolean isCurrentPageError() {
             return errPages.contains(page);
+        }
+
+        public boolean isEmpty() {
+            return totalPages <= 0;
         }
 
         public boolean nextPage() {

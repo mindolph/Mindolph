@@ -197,7 +197,7 @@ public class FileTabView extends BaseView {
                 });
                 editor.loadFile(() -> {
                     editor.setOnFileChangedListener(changedFileData -> {
-                        log.debug("File changed: %s".formatted(changedFileData.getFile()));
+                        log.trace("File changed: %s".formatted(changedFileData.getFile()));
                         Tab changedTab = openedFileMap.get(changedFileData);
                         changedTab.setText("*" + changedFileData.getName());
                         // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
