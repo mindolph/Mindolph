@@ -161,7 +161,7 @@ public class MainController extends BaseController implements Initializable,
             }
         });
         EventBus.getIns().subscribe(notificationType -> {
-            if (notificationType == NotificationType.NEW_WORKSPACE)
+            if (notificationType == NotificationType.NEW_WORKSPACE) // not used but kept for later
                 this.onMenuNewWorkspace();
         });
 

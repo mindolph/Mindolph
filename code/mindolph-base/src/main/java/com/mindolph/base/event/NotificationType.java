@@ -7,6 +7,7 @@ package com.mindolph.base.event;
  * @see EventBus
  */
 public enum NotificationType {
+    // to create a new workspace
     NEW_WORKSPACE,
     DOUBLE_CLICKED_TAB,
     FILE_LOADED,

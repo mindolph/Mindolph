@@ -30,7 +30,6 @@ import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
-import com.mindolph.mindmap.util.MenuUtils;
 import com.mindolph.plantuml.PlantUmlTemplates;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -39,6 +38,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
@@ -113,6 +113,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private NodeData activeWorkspaceData; // set during workspace loading, used for context menu.
 
     private ContextMenu contextMenuNew; // context menu for button "New"
+    private ContextMenu itemContextMenu = null;
     private MenuItem miFolder;
     private MenuItem miMindMap;
     private MenuItem miTextFile;
@@ -184,10 +185,20 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             WorkspaceViewCell cell = new WorkspaceViewCell();
             // handle double-click to open file
             cell.setOnMouseClicked(mouseEvent -> {
-                if (mouseEvent.getClickCount() == 2) {
+                if (itemContextMenu != null) itemContextMenu.hide();
+                if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                    TreeItem<NodeData> ti = cell.getTreeItem();
+                    itemContextMenu = createItemContextMenu(ti);
+                    itemContextMenu.show(treeView, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                }
+                else if (mouseEvent.getClickCount() == 2) {
                     this.openSelectedFile();
                 }
             });
+            cell.focusedProperty().addListener((observable, oldValue, isFocused) -> {
+                if (itemContextMenu != null && !isFocused) itemContextMenu.hide();
+            });
+
             cell.setOnMouseEntered(event -> {
                 TreeItem<NodeData> treeItem = cell.getTreeItem();
                 if (treeItem != null) {
@@ -305,23 +316,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             // TODO refactor?
             if (closedWorkspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
                 activeWorkspaceData = null;
-                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, "");
+                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, StringUtils.EMPTY);
             }
             SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
             loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
         });
-        this.initTreeViewContextMenu();
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
-    }
-
-    private void initTreeViewContextMenu() {
-        // create context menu when right click on tree.
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().add(new SeparatorMenuItem());// add to let it work.
-        contextMenu.setOnShowing(event -> {
-            this.createContextMenu(treeView.getSelectionModel().getSelectedItem(), contextMenu);
-        });
-        treeView.setContextMenu(contextMenu);
     }
 
     /**
@@ -484,9 +484,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
 
-    private ContextMenu createContextMenu(TreeItem<NodeData> treeItem, ContextMenu contextMenu) {
-        contextMenu.getItems().clear();
+    private ContextMenu createItemContextMenu(TreeItem<NodeData> treeItem) {
+        ContextMenu contextMenu = new ContextMenu();
         if (treeItem != null) {
+            log.debug("create context menu for item: " + treeItem.getValue().getName());
             NodeData nodeData = treeItem.getValue();
             boolean isFolder = !nodeData.isFile();
             if (isFolder) {
@@ -518,18 +519,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
-            // set NodeData to menu item to be used for menu action handling.
-            MenuUtils.traverseMenuItems(contextMenu.getItems(), menuItem -> {
-                menuItem.setUserData(nodeData);
-            });
-            return contextMenu;
         }
-        else {
-            MenuItem miNewWorkspace = new MenuItem("New Workspace");
-            miNewWorkspace.setOnAction(event -> EventBus.getIns().notify(NotificationType.NEW_WORKSPACE));
-            contextMenu.getItems().add(miNewWorkspace);
-            return contextMenu;
-        }
+        return contextMenu;
     }
 
 
