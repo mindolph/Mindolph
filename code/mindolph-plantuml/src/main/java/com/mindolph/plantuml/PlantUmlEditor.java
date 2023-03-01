@@ -469,7 +469,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         }
 
         public void fitPage() {
-            page = Math.min(page, totalPages - 1);
+            page = Math.min(page, Math.max(0, totalPages - 1));
         }
 
         public boolean isCurrentPageError() {

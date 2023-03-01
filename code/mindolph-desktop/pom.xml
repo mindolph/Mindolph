@@ -11,8 +11,7 @@
 
     <artifactId>mindolph-desktop</artifactId>
     <description>
-        Personal knowledge management tool based on mind map, markdown etc.&lt;br/&gt;website:
-        https://github.com/mindolph/Mindolph&lt;br/&gt;email: mindolph.com@gmail.com
+        Personal knowledge management tool based on mind map, markdown etc.&lt;br/&gt;website:https://github.com/mindolph/Mindolph&lt;br/&gt;email: mindolph.com@gmail.com
     </description>
 
     <properties>
