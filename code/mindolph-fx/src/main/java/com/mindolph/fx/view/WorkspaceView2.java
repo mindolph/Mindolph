@@ -37,6 +37,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.TreeViewSkin;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -174,7 +176,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         treeView.setShowRoot(false);
 
         treeView.setOnKeyPressed(event -> {
-            log.debug("key pressed: " + event.getCode());
+            log.debug("key pressed: %s".formatted(event.getCode()));
             if (event.getCode() == KeyCode.ENTER) {
                 openSelectedFile();
                 event.consume();
@@ -197,6 +199,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             });
             cell.focusedProperty().addListener((observable, oldValue, isFocused) -> {
                 if (itemContextMenu != null && !isFocused) itemContextMenu.hide();
+            });
+            // bind the cell index to a tree item for auto-scroll
+            cell.itemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) newValue.setDisplayIndex(cell.getIndex());
             });
 
             cell.setOnMouseEntered(event -> {
@@ -258,9 +264,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             });
             return cell;
         });
-        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("Selection changed: " + newValue);
-            Optional<NodeData> selectedValue = WorkspaceView2.this.getSelectedValue();
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedItem) -> {
+            log.debug("Selection changed: " + selectedItem);
+            Optional<NodeData> selectedValue = this.getSelectedValue();
             EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.NEW_FILE,
                     selectedValue.isPresent()
                             && !selectedValue.get().isFile());
@@ -552,16 +558,17 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      */
     public void selectByNodeDataInAppropriateWorkspace(NodeData nodeData) {
         if (nodeData != null) {
-            NodeData workspaceData = nodeData.getWorkspaceData();
-            EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+            WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(nodeData.getFile().getPath());
+            if (workspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
                 selectByNodeData(nodeData);
-            });
-            WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(workspaceData.getFile().getPath());
-            if (workspaceData.getFile().equals(activeWorkspaceData.getFile())) {
-                selectByNodeData(nodeData);
+                this.scrollToSelected();
             }
             else {
-                log.debug("Select workspace: %s".formatted(workspaceData.getFile()));
+                EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+                    selectByNodeData(nodeData);
+                    this.scrollToSelected();
+                });
+                log.debug("Select workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
                 cbWorkspaces.getSelectionModel().select(new Pair<>(workspaceMeta.getBaseDirPath(), workspaceMeta));
             }
         }
@@ -573,7 +580,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      * @param nodeData
      * @return TreeItem if selected.
      */
-    public TreeItem<NodeData> selectByNodeData(NodeData nodeData) {
+    private TreeItem<NodeData> selectByNodeData(NodeData nodeData) {
         if (nodeData != null) {
             log.debug("Select in tree: " + nodeData);
             return TreeVisitor.dfsSearch(rootItem, treeItem -> {
@@ -595,9 +602,23 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     public void scrollToSelected() {
         log.debug("Scroll to selected tree item");
-        treeView.scrollTo(treeView.getSelectionModel().getSelectedIndex());
-        treeView.refresh();
+        if (!isItemVisible(treeView.getSelectionModel().getSelectedItem())) {
+            Platform.runLater(() -> treeView.scrollTo(treeView.getSelectionModel().getSelectedIndex()));
+        }
+//        treeView.refresh();
     }
+
+    private boolean isItemVisible(TreeItem<NodeData> item) {
+        if (item == null) return false;
+        TreeViewSkin<?> skin = (TreeViewSkin<?>) treeView.getSkin();
+        VirtualFlow<?> vf = (VirtualFlow<?>) skin.getChildren().get(0);
+        int f = vf.getFirstVisibleCell().getIndex();
+        int l = vf.getLastVisibleCell().getIndex();
+        Integer i = item.getValue().getDisplayIndex();
+        log.trace("The index of target tree item " + i);
+        return i != null && (i >= f || i <= l);
+    }
+
 
     /**
      * Expand specified nodes in this workspace tree.

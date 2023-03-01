@@ -250,15 +250,14 @@ public class MainController extends BaseController implements Initializable,
             NodeData fileData = new NodeData(file);
             fileData.setSearchParams(searchParams);
             this.openFile(fileData, false);
-            selectedTreeItem = workspaceView.selectByNodeData(fileData);
+            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         else if (file.isDirectory()) {
-            selectedTreeItem = workspaceView.selectByNodeData(new NodeData(NodeType.FOLDER, file));
+            workspaceView.selectByNodeDataInAppropriateWorkspace(new NodeData(NodeType.FOLDER, file));
         }
-        if (visibleInWorkspace && selectedTreeItem != null) {
+        if (visibleInWorkspace) {
             splitPane.showAll();
             tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
-            workspaceView.scrollToSelected();
         }
     }
 

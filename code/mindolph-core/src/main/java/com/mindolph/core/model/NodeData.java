@@ -14,6 +14,9 @@ import java.util.Objects;
  */
 public class NodeData {
 
+    // This is used only for locating the tree item's position in the VirtualFlow of TreeView.
+    private transient Integer displayIndex;
+
     private NodeType nodeType;
 
     private String name;
@@ -40,6 +43,14 @@ public class NodeData {
         this.name = name;
         this.file = file;
         this.nodeType = NodeType.FILE;
+    }
+
+    public Integer getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Integer displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     public boolean isWorkspace() {

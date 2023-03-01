@@ -11,7 +11,8 @@
 
     <artifactId>mindolph-desktop</artifactId>
     <description>
-        Personal knowledge management tool based on mind map, markdown etc.&lt;br/&gt;website: https://github.com/mindolph/Mindolph&lt;br/&gt;email: mindolph.com@gmail.com
+        Personal knowledge management tool based on mind map, markdown etc.&lt;br/&gt;website:
+        https://github.com/mindolph/Mindolph&lt;br/&gt;email: mindolph.com@gmail.com
     </description>
 
     <properties>
@@ -48,39 +49,39 @@
             </resource>
         </resources>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <version>3.4.0</version>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; put your configurations here &ndash;&gt;-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <transformers>-->
-<!--                                <transformer-->
-<!--                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-<!--                                    <mainClass>${main-class}</mainClass>-->
-<!--                                </transformer>-->
-<!--                                <transformer-->
-<!--                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">-->
-<!--                                    <resources>-->
-<!--                                        <resource>.so</resource>-->
-<!--                                        <resource>.dylib</resource>-->
-<!--                                        <resource>.txt</resource>-->
-<!--                                        <resource>LICENSE</resource>-->
-<!--                                    </resources>-->
-<!--                                </transformer>-->
-<!--                            </transformers>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-shade-plugin</artifactId>-->
+            <!--                <version>3.4.0</version>-->
+            <!--                <configuration>-->
+            <!--                    &lt;!&ndash; put your configurations here &ndash;&gt;-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>shade</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <transformers>-->
+            <!--                                <transformer-->
+            <!--                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+            <!--                                    <mainClass>${main-class}</mainClass>-->
+            <!--                                </transformer>-->
+            <!--                                <transformer-->
+            <!--                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">-->
+            <!--                                    <resources>-->
+            <!--                                        <resource>.so</resource>-->
+            <!--                                        <resource>.dylib</resource>-->
+            <!--                                        <resource>.txt</resource>-->
+            <!--                                        <resource>LICENSE</resource>-->
+            <!--                                    </resources>-->
+            <!--                                </transformer>-->
+            <!--                            </transformers>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -176,8 +177,7 @@
                         <configuration>
                             <toolName>jlink</toolName>
                             <removeDirectories>${project.build.directory}/jvm-image/</removeDirectories>
-                            <modulePath>${env.JAVAFX_HOME}
-                            </modulePath>
+                            <modulePath>${env.JAVAFX_HOME}</modulePath>
                             <addModules>${jvm.modules}</addModules>
                             <output>${project.build.directory}/jvm-image</output>
                             <args>
