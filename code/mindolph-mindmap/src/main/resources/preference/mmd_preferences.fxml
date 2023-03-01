@@ -37,13 +37,13 @@
                                </PreferenceItem>
                                <Separator prefWidth="200.0" />
 
-                               <PreferenceItem name="Grid step:">
+                               <PreferenceItem name="Grid size:">
                                    <items>
                                        <Spinner fx:id="spnGridStep" editable="true" />
                                    </items>
                                </PreferenceItem>
 
-                               <PreferenceItem name="Connector width:">
+                               <PreferenceItem name="Topic connector width:">
                                    <items>
                                        <Spinner fx:id="spnConnectorWidth" editable="true" />
                                    </items>
@@ -64,7 +64,7 @@
                                    </items>
                                </PreferenceItem>
 
-                               <PreferenceItem name="Border width:">
+                               <PreferenceItem name="Topic border width:">
                                    <items>
                                        <Spinner fx:id="spnBorderWidth" editable="true" />
                                    </items>
@@ -143,7 +143,7 @@
                                        <ColorPicker fx:id="cpRootTextColor" />
                                    </items>
                                </PreferenceItem>
-                               <PreferenceItem name="1st level color:">
+                               <PreferenceItem name="1st level fill color:">
                                    <items>
                                        <ColorPicker fx:id="cp1stLevelColor" />
                                    </items>
@@ -153,7 +153,7 @@
                                        <ColorPicker fx:id="cp1stLevelTextColor" />
                                    </items>
                                </PreferenceItem>
-                               <PreferenceItem name="2nd level color:">
+                               <PreferenceItem name="2nd level fill color:">
                                    <items>
                                        <ColorPicker fx:id="cp2ndLevelColor" />
                                    </items>

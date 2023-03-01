@@ -37,7 +37,7 @@ public class RecentView extends BaseView {
                 NodeData selectedData = listView.getSelectionModel().getSelectedItem();
                 File file = selectedData.getFile();
                 if (!file.exists()) {
-                    DialogFactory.infoDialog("The file has already been deleted");
+                    DialogFactory.infoDialog("The file has already been deleted or moved");
                     removeRecentFile(file);
                 }
                 else {
