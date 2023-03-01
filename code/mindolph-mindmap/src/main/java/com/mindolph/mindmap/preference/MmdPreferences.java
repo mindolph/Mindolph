@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Consumer;
+
 /**
  * Composite control for Mind Map's preferences.
  *
@@ -185,11 +187,11 @@ public class MmdPreferences extends BasePrefsPane {
      * @param saveFunction
      * @param <T>
      */
-    protected <T> void bindPreference(ReadOnlyProperty<T> property, SetHandler<T> saveFunction) {
+    protected <T> void bindPreference(ReadOnlyProperty<T> property, Consumer<T> saveFunction) {
         property.addListener((observable, oldValue, newValue) -> {
             if (isLoaded) {
                 log.debug("Save preference: %s".formatted(property.getBean()));
-                saveFunction.apply(newValue);
+                saveFunction.accept(newValue);
                 save(); // save all or single? TODO
             }
         });
@@ -204,22 +206,13 @@ public class MmdPreferences extends BasePrefsPane {
     }
 
     public void save() {
-//        for (GetHandler<?> getHandler : getHandlers) {
+//        for (Consumer<?> getHandler : getHandlers) {
 //            getHandler.apply();
 //        }
         mindMapConfig.saveToPreferences();
 //        preferencesManager.flush();
         // notify reload config
         preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
-    }
-
-
-    public interface SetHandler<T> {
-        void apply(T t);
-    }
-
-    public interface GetHandler<T> {
-        T apply();
     }
 
 }

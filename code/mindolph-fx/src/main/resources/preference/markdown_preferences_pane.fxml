@@ -8,7 +8,7 @@
    <children>
       <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <PreferenceItem name="Font File Path for Export to PDF:">
+            <PreferenceItem name="Font file path for export to PDF:">
                <HBox spacing="4">
                   <TextField fx:id="tfFontFile" minWidth="200.0" prefWidth="400.0" />
                   <Button fx:id="btnSelect" mnemonicParsing="false" text="Select" />
