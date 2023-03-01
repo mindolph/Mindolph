@@ -1,0 +1,9 @@
+.icon_button {
+    -fx-padding: 3;
+    -fx-border-style: none;
+    -fx-background-color: transparent;
+}
+
+.icon_button:hover {
+    -fx-background-color: lightgray;
+}

@@ -9,19 +9,18 @@
 
 <fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <HBox>
+                <HBox alignment="CENTER">
                     <children>
-                        <ComboBox fx:id="cbWorkspaces" prefWidth="999.0" HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnNew" mnemonicParsing="false"/>
-                        <Button fx:id="btnReload" mnemonicParsing="false"/>
-                        <Button fx:id="btnCollapseAll" mnemonicParsing="false"/>
-                        <Button fx:id="btnFindInFiles" mnemonicParsing="false"/>
+                        <ComboBox fx:id="cbWorkspaces" prefWidth="999.0" style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnNew" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css" />
+                        <Button fx:id="btnReload" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css"  />
+                        <Button fx:id="btnCollapseAll" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css"  />
+                        <Button fx:id="btnFindInFiles" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css"  />
                     </children>
                 </HBox>
-                <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
     </children>
