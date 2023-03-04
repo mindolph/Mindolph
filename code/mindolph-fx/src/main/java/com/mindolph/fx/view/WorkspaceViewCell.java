@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,10 +52,11 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             if (draggedItem == null) return;
             NodeData value = draggedItem.getValue();
             this.draggingNodeData = value;
-            log.info("dragged: " + value.getFile());
+            log.trace("dragged: " + value.getFile());
             Dragboard dragboard = this.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
             content.putString(value.getFile().toString());
+            content.putFiles(Collections.singletonList(value.getFile()));
             dragboard.setContent(content);
             e.consume();
         });
@@ -65,12 +67,12 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     log.trace("ok to drop");
                 }
             } else {
-                log.debug("no string");
+                log.trace("no string");
             }
             dragEvent.consume();
         });
         this.setOnDragEntered(dragEvent -> {
-            log.debug("drag entered: " + this.getTreeItem().getValue());
+            log.trace("drag entered: " + this.getTreeItem().getValue());
             if (getTreeItemData() != null && (getTreeItemData().isFolder() || getTreeItemData().isWorkspace())) {
                 origBackground = this.getBackground();
                 this.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -78,7 +80,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             dragEvent.consume();
         });
         this.setOnDragExited(dragEvent -> {
-            log.debug("drag exited");
+            log.trace("drag exited");
             if (getTreeItemData() != null && (getTreeItemData().isFolder() || getTreeItemData().isWorkspace())) {
                 this.setBorder(null);
             }

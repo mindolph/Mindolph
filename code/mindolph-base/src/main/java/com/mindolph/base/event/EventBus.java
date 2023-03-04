@@ -36,6 +36,7 @@ public class EventBus {
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
     private final EventSource<NodeData> fileDeleted = new EventSource<>();
+    private final EventSource<FilePathChangedEvent> filePathChanged = new EventSource<>();
 
     // Events for menu
     private final Map<MenuTag, EventStream<Boolean>> menuStateEvens = new HashMap<>(); // events to enable/disable menu items
@@ -50,27 +51,42 @@ public class EventBus {
     private EventBus() {
     }
 
-    public void notify(NotificationType notificationType) {
+    public EventBus notify(NotificationType notificationType) {
         simpleNotification.push(notificationType);
+        return this;
     }
 
-    public void notifyWorkspaceLoaded(TreeItem<NodeData> treeItem) {
+    public EventBus notifyFilePathChanged(NodeData nodeData, File newFile) {
+        filePathChanged.push(new FilePathChangedEvent(nodeData, newFile));
+        return this;
+    }
+
+    public EventBus subscribeFilePathChanged(Consumer<FilePathChangedEvent> consumer) {
+        filePathChanged.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyWorkspaceLoaded(TreeItem<NodeData> treeItem) {
         workspaceLoaded.push(treeItem);
+        return this;
     }
 
-    public void notifyWorkspacesRestored() {
+    public EventBus notifyWorkspacesRestored() {
         workspacesRestored.push("");
+        return this;
     }
 
-    public void notifyWorkspaceRenamed(WorkspaceRenameEvent event) {
+    public EventBus notifyWorkspaceRenamed(WorkspaceRenameEvent event) {
         workspaceRenamed.push(event);
+        return this;
     }
 
-    public void notifyWorkspaceClosed(WorkspaceMeta workspaceMeta) {
+    public EventBus notifyWorkspaceClosed(WorkspaceMeta workspaceMeta) {
         workspaceClosed.push(workspaceMeta);
+        return this;
     }
 
-    public void notifyMenuStateChange(MenuTag menuTag, boolean enable) {
+    public EventBus notifyMenuStateChange(MenuTag menuTag, boolean enable) {
         if (menuStateEvens.containsKey(menuTag)) {
             EventStream<Boolean> menuEventStream = menuStateEvens.get(menuTag);
             if (menuEventStream instanceof EventSource<Boolean> eventSource) {
@@ -80,6 +96,7 @@ public class EventBus {
         else {
             log.warn("No listener registered for menu item: %s".formatted(menuTag));
         }
+        return this;
     }
 
     /**
@@ -87,11 +104,12 @@ public class EventBus {
      *
      * @param file
      */
-    public void notifyStatusMsg(File file) {
+    public EventBus notifyStatusMsg(File file) {
         notifyStatusMsg(file, new StatusMsg());
+        return this;
     }
 
-    public void notifyStatusMsg(File file, StatusMsg statusMsg) {
+    public EventBus notifyStatusMsg(File file, StatusMsg statusMsg) {
         EventSource<StatusMsg> eventSource = statusMsgEvents.get(file);
         if (eventSource != null) {
             if (!eventSource.isObservingInputs()) {
@@ -104,65 +122,78 @@ public class EventBus {
         else {
             log.warn("Not found");
         }
+        return this;
     }
 
-    public void disableMenuItems(MenuTag... menuTags) {
+    public EventBus disableMenuItems(MenuTag... menuTags) {
         for (MenuTag menuTag : menuTags) {
             notifyMenuStateChange(menuTag, false);
         }
+        return this;
     }
 
-    public void enableMenuItems(MenuTag... menuTags) {
+    public EventBus enableMenuItems(MenuTag... menuTags) {
         for (MenuTag menuTag : menuTags) {
             notifyMenuStateChange(menuTag, true);
         }
+        return this;
     }
 
-    public void notifyOpenedFileChange(List<File> openedFiles) {
+    public EventBus notifyOpenedFileChange(List<File> openedFiles) {
         openedFileChange.push(openedFiles);
+        return this;
     }
 
-    public void notifyNewFileToWorkspace(File file) {
+    public EventBus notifyNewFileToWorkspace(File file) {
         newFileToWorkspace.push(file);
+        return this;
     }
 
-    public void notifyOpenFile(OpenFileEvent event) {
+    public EventBus notifyOpenFile(OpenFileEvent event) {
         openFile.push(event);
+        return this;
     }
 
-    public void notifyLocateInWorkspace(NodeData data) {
+    public EventBus notifyLocateInWorkspace(NodeData data) {
         locateInWorkspace.push(data);
+        return this;
     }
 
-    public void notifyDeletedFile(NodeData fileData) {
+    public EventBus notifyDeletedFile(NodeData fileData) {
         fileDeleted.push(fileData);
+        return this;
     }
 
-    public void subscribe(Consumer<NotificationType> consumer) {
+    public EventBus subscribe(Consumer<NotificationType> consumer) {
         simpleNotification.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
+    public EventBus subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
         if (workspaceLoaded == null) workspaceLoaded = new EventSource<>();
         workspaceLoaded.subscribeFor(max, subscriber);
+        return this;
     }
 
-    public void subscribeWorkspacesRestored(Consumer<String> subscriber) {
+    public EventBus subscribeWorkspacesRestored(Consumer<String> subscriber) {
         if (workspacesRestored == null) workspacesRestored = new EventSource<>();
         workspacesRestored.subscribe(subscriber);
+        return this;
     }
 
-    public void subscribeWorkspaceRenamed(Consumer<WorkspaceRenameEvent> subscriber) {
+    public EventBus subscribeWorkspaceRenamed(Consumer<WorkspaceRenameEvent> subscriber) {
         if (workspaceRenamed == null) workspaceRenamed = new EventSource<>();
         workspaceRenamed.subscribe(subscriber);
+        return this;
     }
 
-    public void subscribeWorkspaceClosed(Consumer<WorkspaceMeta> subscriber) {
+    public EventBus subscribeWorkspaceClosed(Consumer<WorkspaceMeta> subscriber) {
         if (workspaceClosed == null) workspaceClosed = new EventSource<>();
         workspaceClosed.subscribe(subscriber);
+        return this;
     }
 
-    public void subscribeMenuStateChange(MenuTag menuTag, Consumer<Boolean> subscriber) {
+    public EventBus subscribeMenuStateChange(MenuTag menuTag, Consumer<Boolean> subscriber) {
         if (!menuStateEvens.containsKey(menuTag)) {
             EventSource<Boolean> eventSource = new EventSource<>();
             eventSource.subscribe(subscriber);
@@ -171,35 +202,42 @@ public class EventBus {
         else {
             log.debug("Subscriber for %s already exists, no registration again".formatted(menuTag));
         }
+        return this;
     }
 
-    public void subscribeStatusMsgEvent(File file, Consumer<StatusMsg> consumer) {
+    public EventBus subscribeStatusMsgEvent(File file, Consumer<StatusMsg> consumer) {
         EventSource<StatusMsg> eventSource = statusMsgEvents.get(file);
         if (eventSource == null) {
             eventSource = new EventSource<>();
             statusMsgEvents.put(file, eventSource);
         }
         eventSource.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeOpenedFileChanges(Consumer<List<File>> consumer) {
+    public EventBus subscribeOpenedFileChanges(Consumer<List<File>> consumer) {
         openedFileChange.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeNewFileToWorkspace(Consumer<File> consumer) {
+    public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
         newFileToWorkspace.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
+    public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
         openFile.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeLocateInWorkspace(Consumer<NodeData> consumer) {
+    public EventBus subscribeLocateInWorkspace(Consumer<NodeData> consumer) {
         locateInWorkspace.subscribe(consumer);
+        return this;
     }
 
-    public void subscribeDeletedFile(Consumer<NodeData> consumer) {
+    public EventBus subscribeDeletedFile(Consumer<NodeData> consumer) {
         fileDeleted.subscribe(consumer);
+        return this;
     }
 
     public enum MenuTag {

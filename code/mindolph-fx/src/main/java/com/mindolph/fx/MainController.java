@@ -134,12 +134,14 @@ public class MainController extends BaseController implements Initializable,
         tabRecentFiles.setGraphic(new IconBuilder().name(IconName.FILE_TXT).build());
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getFile(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.setSearchEventHandler(this);
-        workspaceView.setFileChangedEventHandler(this);
+//        workspaceView.setFileChangedEventHandler(this);
         workspaceView.setExpandEventHandler(sceneRestore);
         workspaceView.setCollapseEventHandler(sceneRestore);
-        workspaceView.setFileRenamedEventHandler(this);
+//        workspaceView.setFileRenamedEventHandler(this);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
             onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
+        }).subscribeFilePathChanged(filePathChangedEvent -> {
+            onFileRenamed(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile());
         });
         // listen restore events
         sceneRestore.setWorkspacesRestoreListener(this);
@@ -159,8 +161,7 @@ public class MainController extends BaseController implements Initializable,
                 }
                 fileTabView.requestFocusOnCurrentEditor();
             }
-        });
-        EventBus.getIns().subscribe(notificationType -> {
+        }).subscribe(notificationType -> {
             if (notificationType == NotificationType.NEW_WORKSPACE) // not used but kept for later
                 this.onMenuNewWorkspace();
         });
@@ -169,28 +170,28 @@ public class MainController extends BaseController implements Initializable,
 
         this.initRecentWorkspacesMenu();
 
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.UNDO, enable -> miUndo.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.REDO, enable -> miRedo.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.CUT, enable -> miCut.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.COPY, enable -> miCopy.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.PASTE, enable -> miPaste.setDisable(!enable));
+        EventBus.getIns().subscribeMenuStateChange(MenuTag.UNDO, enable -> miUndo.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.REDO, enable -> miRedo.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.CUT, enable -> miCut.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.COPY, enable -> miCopy.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.PASTE, enable -> miPaste.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.SAVE, enable -> miSave.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.SAVE_AS, enable -> miSaveAs.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.SAVE_ALL, enable -> miSaveAll.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.CLOSE_TAB, enable -> miCloseTab.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.FIND, enable -> miFind.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable));
+//        EventBus.getIns().subscribeMenuStateChange(MenuTag.PRINT, enable -> miPrint.setDisable(!enable))
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.NEW_FILE, enable -> miNewFile.setDisable(!enable));
-//        EventBus.getIns().subscribeMenuStateChange(MenuTag.OPEN_FILE, enable -> miOpenFile.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.SAVE, enable -> miSave.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.SAVE_AS, enable -> miSaveAs.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.SAVE_ALL, enable -> miSaveAll.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.CLOSE_TAB, enable -> miCloseTab.setDisable(!enable));
-//        EventBus.getIns().subscribeMenuStateChange(MenuTag.PRINT, enable -> miPrint.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.FIND, enable -> miFind.setDisable(!enable));
-        EventBus.getIns().subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable));
+//        EventBus.getIns().subscribeMenuStateChange(MenuTag.OPEN_FILE, enable -> miOpenFile.setDisable(!enable))
 
-        EventBus.getIns().subscribeLocateInWorkspace(baseNodeData -> {
+        EventBus.getIns().subscribeLocateInWorkspace(nodeData -> {
             splitPane.showAll(); // show project view if hidden
-            log.debug("Select file in workspace view: " + baseNodeData.getFile());
+            log.debug("Select file in workspace view: " + nodeData.getFile());
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
-                workspaceView.selectByNodeDataInAppropriateWorkspace(baseNodeData);
-                workspaceView.scrollToSelected();
+                workspaceView.selectByNodeDataInAppropriateWorkspace(nodeData);
+                workspaceView.scrollToSelected(); // force to scroll if current workspace is target workspace.
                 workspaceView.requestFocus();
             });
         });
@@ -261,7 +262,10 @@ public class MainController extends BaseController implements Initializable,
         }
     }
 
-
+    /**
+     * @param fileData
+     * @deprecated ??
+     */
     @Override
     public void onFileChanged(NodeData fileData) {
         fileTabView.closeFileTabSafely(fileData);

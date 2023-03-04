@@ -21,8 +21,6 @@ import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -79,7 +77,8 @@ public class FileTabView extends BaseView {
                         NodeData fileData = (NodeData) tabUserData;
                         this.loadEditorToTab(fileData, selectingTab);
                     }
-                } else {
+                }
+                else {
                     if (editor.isNeedReload()) {
                         editor.reload();
                         editor.setNeedReload(false);
@@ -87,7 +86,8 @@ public class FileTabView extends BaseView {
                     editor.requestFocus();
                     this.updateMenuState(editor);
                 }
-            } else {
+            }
+            else {
                 this.updateMenuState(null);
             }
         });
@@ -108,7 +108,8 @@ public class FileTabView extends BaseView {
     private void updateMenuState(BaseEditor editor) {
         if (editor == null) {
             EventBus.getIns().disableMenuItems(SAVE_AS, SAVE_ALL, CLOSE_TAB, FIND, REPLACE, UNDO, REDO, CUT, COPY, PASTE, PRINT);
-        } else {
+        }
+        else {
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
@@ -145,7 +146,8 @@ public class FileTabView extends BaseView {
                 tabPane.getSelectionModel().select(tab);
                 tabEditorMap.get(tab).requestFocus();
             }
-        } else {
+        }
+        else {
             log.debug("file tab already exists: %s".formatted(fileData.getFile()));
             log.debug(StringUtils.join(openedFileMap.keySet()));
             tabPane.getSelectionModel().select(tab);
@@ -249,8 +251,9 @@ public class FileTabView extends BaseView {
 
     public ContextMenu createContextMenuForTab(Tab selectedTab) {
         Object selectedTabUserData = selectedTab.getUserData();
+        log.debug(((NodeData) selectedTabUserData).getFile().getPath());
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miClose = new MenuItem("Close", FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CLOSE, "16"));
+        MenuItem miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
         MenuItem miCloseOthers = new MenuItem("Close Others");
         MenuItem miCloseAll = new MenuItem("Close All");
         MenuItem miSaveAs = new MenuItem("Save As..");
@@ -265,7 +268,7 @@ public class FileTabView extends BaseView {
             closeTab(selectedTab);
         });
         miCloseOthers.setOnAction(event -> {
-            List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != selectedTab).collect(Collectors.toList());
+            List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != selectedTab).toList();
             for (Tab otherTab : otherTabs) {
                 if (!closeTab(otherTab)) break;
             }
@@ -277,6 +280,7 @@ public class FileTabView extends BaseView {
             }
         });
         miSelectInTree.setOnAction(event -> {
+//            log.debug("selected tab user data: %s".formatted(((NodeData) selectedTabUserData).getFile().getPath()));
             log.debug(((NodeData) selectedTabUserData).getFile().getPath());
             EventBus.getIns().notifyLocateInWorkspace((NodeData) selectedTabUserData);
         });
@@ -293,7 +297,8 @@ public class FileTabView extends BaseView {
             contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll,
                     new SeparatorMenuItem(), miSaveAs,
                     new SeparatorMenuItem(), miSelectInTree, miOpenInSystem);
-        } else {
+        }
+        else {
             contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll);
         }
         Editable editor = tabEditorMap.get(selectedTab);
@@ -381,7 +386,8 @@ public class FileTabView extends BaseView {
                 "%sCopy.%s".formatted(FilenameUtils.getBaseName(origFile.getName()), extension), extensionFilter);
         if (saveAsFile == null) {
             log.debug("No file selected to save");
-        } else {
+        }
+        else {
             // append original extension if user deleted it, otherwise save as user input (which means user can change the extension)
             File saveAsFileWithExt = new File(FileNameUtils.appendFileExtensionIfAbsent(saveAsFile.getPath(), extension));
             log.info("Try to save file as :" + saveAsFileWithExt.getPath());
@@ -439,19 +445,23 @@ public class FileTabView extends BaseView {
     public void updateOpenedTabAndEditor(NodeData origNodeData, File newFile) {
         Tab tab = openedFileMap.get(origNodeData);
         if (tab != null) {
+            log.debug("Update opened file %s to new file %s".formatted(origNodeData.getFile(), newFile));
             // update opened file information.
             openedFileMap.remove(origNodeData);
             origNodeData.setFile(newFile);
-            tab.setUserData(origNodeData); // set user data again since the data is changed, otherwise the getUserData() gets outdated data.
-            tab.setText(newFile.getName());
+            // the userData of tab has already been referred by tab context menu, so replace the file instead of calling setUserData().
+            // otherwise the context menu cant manipulate the appropriate nodeData. In other word, the nodeData in tab might be equal but not same to the one in TreeView.
+            ((NodeData) tab.getUserData()).setFile(newFile);
             // re-add to mapping since the hash is already changed.
             openedFileMap.put(origNodeData, tab);
             // update the editor's context for saving content to new file(path)
             Editable editable = tabEditorMap.get(tab);
             editable.getEditorContext().setFileData(origNodeData);
+            tab.setText((editable.isChanged() ? "*" : StringUtils.EMPTY) + newFile.getName());
             tab.setTooltip(new Tooltip(newFile.getPath()));
-        } else {
-            log.warn("No tab opened for file: " + origNodeData.getFile());
+        }
+        else {
+            log.warn("No tab opened for file: %s".formatted(origNodeData.getFile()));
         }
     }
 
@@ -466,7 +476,8 @@ public class FileTabView extends BaseView {
             BaseEditor editor = (BaseEditor) tabEditorMap.get(tab);
             if (tab.isSelected()) {
                 editor.reload();
-            } else {
+            }
+            else {
                 if (editor.getFileType().equals(fileType)) {
                     editor.setNeedReload(true); // reload later.
                 }
@@ -519,7 +530,8 @@ public class FileTabView extends BaseView {
             }
             log.warn("The data of file tab is not a file");
             return true;
-        } else {
+        }
+        else {
             log.debug("Closing a non-file tab");
             tabPane.getTabs().remove(tab);
             tabPane.getSelectionModel().select(TabManager.getIns().previousTabFrom(tab));
@@ -545,7 +557,8 @@ public class FileTabView extends BaseView {
             }
             this.closeFileTab(tab, fileData);
             return true;
-        } else {
+        }
+        else {
             log.warn("No opened tab for file %s".formatted(fileData.getFile()));
         }
         return false;
@@ -567,7 +580,8 @@ public class FileTabView extends BaseView {
                 tabPane.getSelectionModel().select(nextTab);
             }
             closeFileTab(tab, fileData);
-        } else {
+        }
+        else {
             log.debug("This file is not opened");
         }
     }
@@ -624,7 +638,8 @@ public class FileTabView extends BaseView {
                 }
             }
             return true;
-        } else {
+        }
+        else {
             return true;
         }
     }

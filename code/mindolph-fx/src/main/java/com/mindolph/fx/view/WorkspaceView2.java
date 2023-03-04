@@ -42,6 +42,9 @@ import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.io.FileUtils;
@@ -133,12 +136,13 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private SearchResultEventHandler searchEventHandler;
     private ExpandEventHandler expandEventHandler;
     private CollapseEventHandler collapseEventHandler;
-    private FileRenamedEventHandler fileRenamedEventHandler;
-    private FileChangedEventHandler fileChangedEventHandler;
+//    private FileRenamedEventHandler fileRenamedEventHandler;
+//    private FileChangedEventHandler fileChangedEventHandler;
 
     public WorkspaceView2() {
         super("/view/workspace_view2.fxml");
         log.info("Init workspace view");
+        rootItem = new TreeItem<>(new NodeData("Workspace Stub", null));
 
         cbWorkspaces.setConverter(new StringConverter<>() {
             @Override
@@ -169,8 +173,29 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getBaseDirPath());
             }
         });
+        cbWorkspaces.setOnDragEntered(event -> {
+            cbWorkspaces.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            event.consume();
+        });
+        cbWorkspaces.setOnDragExited(event -> {
+            cbWorkspaces.setBorder(null);
+            log.debug("exit");
+        });
+        cbWorkspaces.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+        });
+        cbWorkspaces.setOnDragDropped(event -> {
+            log.debug("dropped");
+            if (event.getDragboard().hasString()) {
+                List<File> files = event.getDragboard().getFiles();
+                log.debug(StringUtils.join(files, ", "));
+                moveToTreeItem(files.stream().map(NodeData::new).toList(), rootItem);
+            }
+            event.consume();
+        });
 
-        rootItem = new TreeItem<>(new NodeData("Workspace Stub", null));
         rootItem.setExpanded(true);
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
@@ -217,50 +242,15 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     cell.setTooltip(null);
                 }
             });
-            cell.setDragFileEventHandler((files, target) -> {
+            cell.setDragFileEventHandler((nodeDatas, target) -> {
                 File toDir = target.getFile();
                 if (!toDir.isDirectory() || !toDir.exists()) {
                     log.warn("Target dir doesn't exist: %s".formatted(toDir.getPath()));
                     return;
                 }
-                log.debug("Drop %d files to %s".formatted(files.size(), toDir.getPath()));
-                for (NodeData fileData : files) {
-                    if (fileData.isFile()) {
-                        fileChangedEventHandler.onFileChanged(fileData);
-                    }
-                    File draggingFile = fileData.getFile();
-                    // update the tree
-                    TreeItem<NodeData> treeItemFile = findTreeItemByFile(draggingFile);
-                    TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
-                    if (treeItemFile == null || treeItemFolder == null
-                            || treeItemFile == treeItemFolder
-                            || treeItemFile.getParent() == treeItemFolder) {
-                        log.debug("Nothing to do");
-                    }
-                    else {
-                        log.debug("Move tree item %s to %s".formatted(treeItemFile.getValue(), treeItemFolder.getValue()));
-                        treeItemFile.getParent().getChildren().remove(treeItemFile);
-                        treeItemFolder.getChildren().add(treeItemFile);
-
-                        File newFilePath = new File(toDir, fileData.getName());
-                        try {
-                            if (fileData.isFile()) {
-                                FileUtils.moveFile(draggingFile, newFilePath);
-                                log.debug("File %s is moved".formatted(draggingFile.getName()));
-                            }
-                            else if (fileData.isFolder()) {
-                                FileUtils.moveDirectory(draggingFile, newFilePath);
-                                log.debug("Folder %s is moved".formatted(draggingFile.getName()));
-                            }
-                            fileData.setFile(newFilePath);
-                            FXCollections.sort(treeItemFolder.getChildren(), SORTING_TREE_ITEMS);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            throw new RuntimeException("Move file failed");
-                        }
-                    }
-                }
-                treeView.refresh();
+                log.debug("Drop %d files to %s".formatted(nodeDatas.size(), toDir.getPath()));
+                TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
+                moveToTreeItem(nodeDatas, treeItemFolder);
             });
             return cell;
         });
@@ -293,7 +283,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenuNew.show(WorkspaceView2.this, event.getScreenX(), event.getScreenY());
             }
             else if (btn == btnReload) {
-                reloadTreeItem(rootItem, activeWorkspaceData);
+                reloadWorkspace(rootItem, activeWorkspaceData);
             }
             else if (btn == btnCollapseAll) {
                 collapseTreeNodes(rootItem, false);
@@ -316,7 +306,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             this.addFileAndSelect(parentTreeItem, new NodeData(file));
         });
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
-            loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
+            this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
         });
         EventBus.getIns().subscribeWorkspaceClosed(closedWorkspaceMeta -> {
             // TODO refactor?
@@ -325,9 +315,63 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, StringUtils.EMPTY);
             }
             SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
-            loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
+            this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
         });
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
+    }
+
+    private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
+        if (targetTreeItem == null) {
+            log.warn("No tree item folder provided");
+            return;
+        }
+        boolean needReload = false;
+        for (NodeData nodeData : nodeDatas) {
+            File fileToBeMoved = nodeData.getFile();
+            // update the tree
+            TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
+            if (treeItemToBeMoved == null || targetTreeItem == null
+                    || treeItemToBeMoved == targetTreeItem
+                    || treeItemToBeMoved.getParent() == targetTreeItem) {
+                log.debug("Nothing to do");
+            }
+            else {
+                log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
+                treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
+
+                File newFile = new File(targetTreeItem.getValue().getFile(), nodeData.getName());
+                try {
+                    if (nodeData.isFile()) {
+                        FileUtils.moveFile(fileToBeMoved, newFile);
+                        log.debug("File %s is moved".formatted(fileToBeMoved.getName()));
+                    }
+                    else if (nodeData.isFolder()) {
+                        FileUtils.moveDirectory(fileToBeMoved, newFile);
+                        log.debug("Folder %s is moved".formatted(fileToBeMoved.getName()));
+                    }
+                    EventBus.getIns().notifyFilePathChanged(nodeData, newFile);
+                    nodeData.setFile(newFile);
+                    FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
+                    needReload = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("Moving file failed");
+                }
+            }
+        }
+        if (needReload) {
+            this.reloadFolder(targetTreeItem, targetTreeItem.getValue());
+            if (targetTreeItem == rootItem) {
+                // directly call this method because the root item is hidden
+                onTreeItemExpandOrCollapsed(true, targetTreeItem);
+            }
+            else {
+                // collapse and expand to activate the loading of sub-folders for the expanded target folder.
+                targetTreeItem.setExpanded(false);
+                targetTreeItem.setExpanded(true);
+            }
+            treeView.refresh();
+        }
     }
 
     /**
@@ -369,17 +413,27 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         asyncCreateWorkspaceSubTree(workspaceMeta);
     }
 
+    private void reloadWorkspace(TreeItem<NodeData> selectedTreeItem, NodeData selectedData) {
+        if (selectedData != null) {
+            if (selectedData.isWorkspace()) {
+                rootItem.getChildren().remove(selectedTreeItem);
+                WorkspaceMeta meta = new WorkspaceMeta(selectedData.getFile().getPath());
+                this.loadWorkspace(meta);
+            }
+        }
+    }
+
     /**
      * Reload folder and it's sub-tree to specified position of tree.
      *
+     * @param treeItem tree item to load data to
      * @param folderData
      */
-    public void reloadFolder(NodeData folderData) {
+    public void reloadFolder(TreeItem<NodeData> treeItem, NodeData folderData) {
         log.debug("reload folder: %s".formatted(folderData.getFile()));
         List<NodeData> childrenData = WorkspaceManager.getIns().loadFolder(folderData, workspaceConfig);
-        TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
-        this.loadTreeNode(selectedTreeItem, childrenData);
-        treeView.getSelectionModel().select(selectedTreeItem);
+        this.loadTreeNode(treeItem, childrenData);
+        treeView.getSelectionModel().select(treeItem);
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta) {
@@ -806,12 +860,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     NodeData newFolderData = new NodeData(NodeType.FOLDER, newNameFile);
                     newFolderData.setWorkspaceData(selectedData.getWorkspaceData());
                     selectedTreeItem.setValue(newFolderData);
-                    this.reloadFolder(newFolderData);
+                    this.reloadFolder(selectedTreeItem, newFolderData);
                 }
                 treeView.refresh();
                 // remove old path from expanded list as well.
                 SceneRestore.getInstance().removeFromExpandedList(selectedData.getFile().getPath());
-                fileRenamedEventHandler.onFileRenamed(selectedData, newNameFile);
+                EventBus.getIns().notifyFilePathChanged(selectedData, newNameFile);
             });
         }
         else if (source == miClone) {
@@ -866,7 +920,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             }
         }
         else if (source == miReload) {
-            this.reloadTreeItem(selectedTreeItem, selectedData);
+            this.reloadFolder(selectedTreeItem, selectedData);
         }
         else if (source == miFindFiles) {
             this.launchFindInFilesDialog(selectedData);
@@ -905,19 +959,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     log.debug("Rename file from %s to %s".formatted(origFile.getPath(), newNameFile));
                     consumer.accept(newNameFile);
                 }
-            }
-        }
-    }
-
-    private void reloadTreeItem(TreeItem<NodeData> selectedTreeItem, NodeData selectedData) {
-        if (selectedData != null) {
-            if (selectedData.isWorkspace()) {
-                rootItem.getChildren().remove(selectedTreeItem);
-                WorkspaceMeta meta = new WorkspaceMeta(selectedData.getFile().getPath());
-                this.loadWorkspace(meta);
-            }
-            else if (selectedData.isFolder()) {
-                this.reloadFolder(selectedData);
             }
         }
     }
@@ -1056,11 +1097,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         this.searchEventHandler = searchEventHandler;
     }
 
-    public void setFileRenamedEventHandler(FileRenamedEventHandler fileRenamedEventHandler) {
-        this.fileRenamedEventHandler = fileRenamedEventHandler;
-    }
+//    public void setFileRenamedEventHandler(FileRenamedEventHandler fileRenamedEventHandler) {
+//        this.fileRenamedEventHandler = fileRenamedEventHandler;
+//    }
 
-    public void setFileChangedEventHandler(FileChangedEventHandler fileChangedEventHandler) {
-        this.fileChangedEventHandler = fileChangedEventHandler;
-    }
+//    public void setFileChangedEventHandler(FileChangedEventHandler fileChangedEventHandler) {
+//        this.fileChangedEventHandler = fileChangedEventHandler;
+//    }
 }

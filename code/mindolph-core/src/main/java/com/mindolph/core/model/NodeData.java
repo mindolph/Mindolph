@@ -30,7 +30,7 @@ public class NodeData {
     public NodeData(File file) {
         this.file = file;
         this.name = file.getName();
-        this.nodeType = NodeType.FILE;
+        this.nodeType = file.isFile() ? NodeType.FILE : NodeType.FOLDER;
     }
 
     public NodeData(NodeType nodeType, File file) {
@@ -135,7 +135,7 @@ public class NodeData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(file);
+        return Objects.hash(file.getPath());
     }
 
     @Override

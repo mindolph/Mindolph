@@ -46,6 +46,8 @@ public class RecentView extends BaseView {
                 }
             }
         });
+        // listen and update path changed file
+        EventBus.getIns().subscribeFilePathChanged(filePathChangedEvent -> updateRecentFile(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile()));
     }
 
     public void load() {
@@ -99,6 +101,24 @@ public class RecentView extends BaseView {
             listView.getSelectionModel().clearSelection();
             listView.refresh();
         });
+    }
+
+    /**
+     * Update record in recent file list with new file path.
+     *
+     * @param nodeData
+     * @param newFile
+     */
+    public void updateRecentFile(NodeData nodeData, File newFile) {
+        RecentManager.getInstance().removeFromRecent(nodeData.getFile());
+        RecentManager.getInstance().addToRecent(newFile);
+        int idx = listView.getItems().indexOf(nodeData);
+        if (idx >= 0) {
+            listView.getItems().remove(nodeData);
+            listView.getSelectionModel().clearSelection();
+            listView.getItems().add(idx, new NodeData(newFile));
+            listView.refresh();
+        }
     }
 
     public boolean hasData() {

@@ -23,10 +23,10 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <javafx.version>17.0.6</javafx.version>
         <commons.lang.version>3.12.0</commons.lang.version>
         <commons.io.version>2.11.0</commons.io.version>
         <swstate.version>1.1</swstate.version>
-        <javafx.version>17.0.6</javafx.version>
         <plantuml.version>1.2023.1</plantuml.version>
         <swiftboot.version>2.3</swiftboot.version>
         <slf4j.version>1.7.36</slf4j.version>
