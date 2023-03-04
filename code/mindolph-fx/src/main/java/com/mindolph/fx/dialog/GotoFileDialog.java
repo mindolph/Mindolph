@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,9 +79,10 @@ public class GotoFileDialog extends BaseDialogController<Void> {
         EventStream<Change<String>> textChanged = EventStreams.changesOf(textField.textProperty());
         EventStream<Change<String>> optionChanged = EventStreams.changesOf(fileFilterButtonGroup.selectedFileTypeProperty());
         EventStream<Tuple2<Change<String>, Change<String>>> combine = EventStreams.combine(textChanged, optionChanged);
-        combine.subscribe(changeChangeTuple2 -> {
-            searchFiles(StringUtils.trim(textField.getText()), fileFilterButtonGroup.getSelectedFileType());
-        });
+        combine.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(1000))
+                .subscribe(tuple2 -> {
+                    searchFiles(StringUtils.trim(textField.getText()), fileFilterButtonGroup.getSelectedFileType());
+                });
 
         String lastKeyword = fxPreferences.getPreference(MINDOLPH_NAVIGATE_KEYWORD, String.class);
         textField.setText(lastKeyword);

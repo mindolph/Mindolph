@@ -37,6 +37,7 @@
         <controlsfx.version>11.1.2</controlsfx.version>
         <richtextfx.version>0.11.0</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
+<!--        <reactor.version>3.5.3</reactor.version>-->
         <jsoup.version>1.15.3</jsoup.version>
         <json.version>20220924</json.version>
     </properties>
@@ -195,6 +196,16 @@
                 <groupId>org.reactfx</groupId>
                 <artifactId>reactfx</artifactId>
                 <version>${reactfx.version}</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>io.projectreactor</groupId>-->
+<!--                <artifactId>reactor-core</artifactId>-->
+<!--                <version>${reactor.version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jsoup</groupId>
