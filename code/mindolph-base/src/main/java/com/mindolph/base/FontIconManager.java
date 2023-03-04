@@ -49,7 +49,7 @@ public class FontIconManager {
         icons.put(IconKey.REFRESH, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.REFRESH, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SEARCH, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SEARCH, DEFAULT_ICON_SIZE));
         icons.put(IconKey.REPLACE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SEARCH_PLUS, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.SORT, () -> FontAwesomeIconFactory.get().createIcon(MaterialIcon.SORT_BY_ALPHA, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.SORT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SORT_BY_ALPHA, DEFAULT_ICON_SIZE));
         icons.put(IconKey.CODE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CODE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PREVIEW, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.IMAGE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SWITCH_HORIZONTAL, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.ROTATE_LEFT, DEFAULT_ICON_SIZE));
