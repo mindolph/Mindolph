@@ -77,10 +77,11 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
             this.workspaceMeta = workspaceMeta;
         }
 
+        ContextMenu contextMenu;
         MenuItem miRename;
         MenuItem miClose;
         MenuItem miOpenInSys;
-//        MenuItem miDelete;
+        //        MenuItem miDelete;
 
         private void init() {
             lbWorkspaceName.setText(FilenameUtils.getBaseName(workspaceMeta.getBaseDirPath()));
@@ -90,7 +91,13 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
 
             btnActions.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
             btnActions.setOnMouseClicked(event -> {
-                ContextMenu contextMenu = new ContextMenu();
+                if (contextMenu == null) {
+                    contextMenu = new ContextMenu();
+                }
+                else {
+                    contextMenu.getItems().clear();
+                    contextMenu.hide();
+                }
                 miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
                 miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
                 miOpenInSys = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
@@ -138,7 +145,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                             WorkspaceMeta newWorkspaceMeta = WorkspaceManager.getIns().renameWorkspace(workspaceMeta, newNameFile);
                             SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
                             EventBus.getIns().notifyWorkspaceRenamed(
-                                    new WorkspaceRenameEvent(workspaceMeta,newWorkspaceMeta));
+                                    new WorkspaceRenameEvent(workspaceMeta, newWorkspaceMeta));
                         }
                     }
                 }

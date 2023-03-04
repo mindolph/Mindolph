@@ -4,7 +4,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -54,10 +53,7 @@ public class WorkspaceDialog extends BaseDialogController<Void> {
         EventBus.getIns().subscribeWorkspaceClosed(workspaceMeta -> {
             loadWorkspaceListView();
         });
-        WorkspaceList workspaceList = WorkspaceManager.getIns().getWorkspaceList();
         loadWorkspaceListView();
-
-
     }
 
     private void loadWorkspaceListView() {
