@@ -79,7 +79,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
         EventStream<Change<String>> textChanged = EventStreams.changesOf(textField.textProperty());
         EventStream<Change<String>> optionChanged = EventStreams.changesOf(fileFilterButtonGroup.selectedFileTypeProperty());
         EventStream<Tuple2<Change<String>, Change<String>>> combine = EventStreams.combine(textChanged, optionChanged);
-        combine.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(1000))
+        combine.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(500))
                 .subscribe(tuple2 -> {
                     searchFiles(StringUtils.trim(textField.getText()), fileFilterButtonGroup.getSelectedFileType());
                 });
