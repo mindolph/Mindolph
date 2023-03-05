@@ -1,9 +1,18 @@
 # Release Notes
 
 ### V1.1 Beta
-* Re-designed the workspace panel to be more convenient to find your files.
+* Re-designed the workspace panel to be more convenient to manage and locate your files.
 * Add new workspace management dialog to manage workspaces.
+* Redesign UI of mind map preference dialog
+* Improvement: optimized the auto scroll for locating file in workspace.
+* Improvement: optimized the searching in go to file dialog
+* Improvement: recent file list update when files moved to another folder.
+* Fix: opened file will be closed when moving in workspace.
+* Fix: empty PlantUML file causes exception.
+* Some minor UI optimization and fix.
 * Fixed some minor bugs.
+* Update JavaFX to 17.0.6
+* Release bundled installer package for Fedora based distro.
 
 ### V1.0 Stable
 * Improvement: add shortcut for quick comment for markdown.
