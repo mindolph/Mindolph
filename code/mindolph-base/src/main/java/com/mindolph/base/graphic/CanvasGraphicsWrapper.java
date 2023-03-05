@@ -18,8 +18,8 @@ import javafx.scene.text.Text;
  */
 public class CanvasGraphicsWrapper implements Graphics {
 
-    private Canvas canvas;
-    private GraphicsContext gc;
+    private final Canvas canvas;
+    private final GraphicsContext gc;
     private Rectangle2D clipBounds;
 
     public static Graphics create(double width, double height) {
