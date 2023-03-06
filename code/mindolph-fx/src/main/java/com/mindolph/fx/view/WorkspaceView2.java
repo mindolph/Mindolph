@@ -124,6 +124,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private MenuItem miTextFile;
     private Menu plantUmlMenu;
     private MenuItem miMarkdown;
+    private MenuItem miCsvFile;
     private MenuItem miRename;
     private MenuItem miReload;
     private MenuItem miClone;
@@ -590,6 +591,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
         miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
         plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
+        miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_TXT).build());
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);
@@ -597,11 +599,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             plantUmlMenu.getItems().add(mi);
         }
         miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
-        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile);
+        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
         miFolder.setOnAction(this);
         miMindMap.setOnAction(this);
         miMarkdown.setOnAction(this);
         miTextFile.setOnAction(this);
+        miCsvFile.setOnAction(this);
         return miNew;
     }
 
@@ -785,7 +788,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 }
             }
         }
-        else if (source == miMindMap || source == miTextFile || source == miMarkdown
+        else if (source == miMindMap || source == miTextFile || source == miMarkdown || source == miCsvFile
                 || (source.getParentMenu() != null && source.getParentMenu() == plantUmlMenu)) {
             log.debug("New %s File".formatted(source.getText()));
             log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
@@ -837,6 +840,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                                 throw new RuntimeException(e);
                             }
                         }
+                    }
+                    else if (source == miCsvFile) {
+                        newFile = createEmptyFile(fileName, selectedData, "csv");
                     }
                     else {
                         log.warn("Not supported file type?");

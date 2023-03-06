@@ -18,6 +18,7 @@
         <module>mindmap-panel</module>
         <module>mindmap-model</module>
         <module>mindolph-markdown</module>
+        <module>mindolph-csv</module>
     </modules>
 
     <properties>

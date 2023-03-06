@@ -154,6 +154,11 @@ public class EventBus {
         return this;
     }
 
+    public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
+        openFile.subscribe(consumer);
+        return this;
+    }
+
     public EventBus notifyLocateInWorkspace(NodeData data) {
         locateInWorkspace.push(data);
         return this;
@@ -222,11 +227,6 @@ public class EventBus {
 
     public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
         newFileToWorkspace.subscribe(consumer);
-        return this;
-    }
-
-    public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
-        openFile.subscribe(consumer);
         return this;
     }
 

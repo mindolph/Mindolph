@@ -8,6 +8,7 @@ import com.mindolph.base.editor.ImageViewerEditor;
 import com.mindolph.base.editor.PlainTextEditor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.csv.CsvEditor;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.ExtraMindMapView;
@@ -64,6 +65,8 @@ public class EditorFactory {
             case TYPE_PLANTUML:
                 editorContext.setOrientation(FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ORIENTATION_PUML, Orientation.class, Orientation.VERTICAL));
                 return new PlantUmlEditor(editorContext);
+            case TYPE_CSV:
+                return new CsvEditor(editorContext);
             case TYPE_PLAIN_TEXT:
                 return new PlainTextEditor(editorContext);
             case TYPE_PLAIN_JPG:
