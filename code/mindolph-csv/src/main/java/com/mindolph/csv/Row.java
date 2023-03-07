@@ -15,7 +15,7 @@ public class Row {
     }
 
     public void updateValue(int colIdx, String value) {
-        if (colIdx > 0 && colIdx < data.size()) {
+        if (colIdx >= 0 && colIdx < data.size()) {
             data.remove(colIdx);
             data.add(colIdx, value);
         }
