@@ -251,7 +251,7 @@ public class FileTabView extends BaseView {
 
     public ContextMenu createContextMenuForTab(Tab selectedTab) {
         Object selectedTabUserData = selectedTab.getUserData();
-        log.debug(((NodeData) selectedTabUserData).getFile().getPath());
+        if (selectedTabUserData != null) log.debug(((NodeData) selectedTabUserData).getFile().getPath());
         ContextMenu contextMenu = new ContextMenu();
         MenuItem miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
         MenuItem miCloseOthers = new MenuItem("Close Others");

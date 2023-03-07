@@ -5,6 +5,13 @@ import com.mindolph.mfx.preference.FxPreferences;
 import javafx.application.Application;
 
 /**
+ * Launch with possible environment variables:
+ * disable-reopen=True|false
+ * disable-window-resize=true|False
+ * dev=True|false
+ *
+ * If more log output required, add -Dlog4j2.configurationFile=log4j2-debug.xml to application arguments.
+ *
  * @author mindolph.com@gmail.com
  */
 public class Launcher {
