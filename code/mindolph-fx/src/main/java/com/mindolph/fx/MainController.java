@@ -246,7 +246,6 @@ public class MainController extends BaseController implements Initializable,
 
     public void onOpenFile(File file, SearchParams searchParams, boolean visibleInWorkspace) {
         // the file existence should be validated before this handler for its consequences are different.
-        TreeItem<NodeData> selectedTreeItem = null;
         if (file.isFile()) {
             NodeData fileData = new NodeData(file);
             fileData.setSearchParams(searchParams);

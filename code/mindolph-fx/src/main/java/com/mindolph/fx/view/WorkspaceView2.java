@@ -137,8 +137,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private SearchResultEventHandler searchEventHandler;
     private ExpandEventHandler expandEventHandler;
     private CollapseEventHandler collapseEventHandler;
-//    private FileRenamedEventHandler fileRenamedEventHandler;
-//    private FileChangedEventHandler fileChangedEventHandler;
 
     public WorkspaceView2() {
         super("/view/workspace_view2.fxml");
@@ -303,21 +301,21 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnFindInFiles.setOnMouseClicked(btnEventHandler);
 
         EventBus.getIns().subscribeNewFileToWorkspace(file -> {
-            TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
-            this.addFileAndSelect(parentTreeItem, new NodeData(file));
-        });
-        EventBus.getIns().subscribeWorkspaceRenamed(event -> {
-            this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
-        });
-        EventBus.getIns().subscribeWorkspaceClosed(closedWorkspaceMeta -> {
-            // TODO refactor?
-            if (closedWorkspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
-                activeWorkspaceData = null;
-                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, StringUtils.EMPTY);
-            }
-            SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
-            this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
-        });
+                    TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
+                    this.addFileAndSelect(parentTreeItem, new NodeData(file));
+                })
+                .subscribeWorkspaceRenamed(event -> {
+                    this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
+                })
+                .subscribeWorkspaceClosed(closedWorkspaceMeta -> {
+                    // TODO refactor?
+                    if (closedWorkspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
+                        activeWorkspaceData = null;
+                        fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, StringUtils.EMPTY);
+                    }
+                    SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
+                    this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
+                });
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
     }
 
@@ -331,9 +329,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             File fileToBeMoved = nodeData.getFile();
             // update the tree
             TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
-            if (treeItemToBeMoved == null || targetTreeItem == null
-                    || treeItemToBeMoved == targetTreeItem
-                    || treeItemToBeMoved.getParent() == targetTreeItem) {
+            if (treeItemToBeMoved == null || treeItemToBeMoved == targetTreeItem || treeItemToBeMoved.getParent() == targetTreeItem) {
                 log.debug("Nothing to do");
             }
             else {
@@ -427,7 +423,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     /**
      * Reload folder and it's sub-tree to specified position of tree.
      *
-     * @param treeItem tree item to load data to
+     * @param treeItem   tree item to load data to
      * @param folderData
      */
     public void reloadFolder(TreeItem<NodeData> treeItem, NodeData folderData) {
@@ -639,7 +635,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      */
     private TreeItem<NodeData> selectByNodeData(NodeData nodeData) {
         if (nodeData != null) {
-            log.debug("Select in tree: " + nodeData);
+            log.debug("Select in tree: %s".formatted(nodeData));
             return TreeVisitor.dfsSearch(rootItem, treeItem -> {
                 NodeData curNodeData = treeItem.getValue();
                 if (!treeItem.isLeaf() && curNodeData.isParentOf(nodeData)) {
@@ -658,11 +654,13 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     public void scrollToSelected() {
-        log.debug("Scroll to selected tree item");
-        if (!isItemVisible(treeView.getSelectionModel().getSelectedItem())) {
-            Platform.runLater(() -> treeView.scrollTo(treeView.getSelectionModel().getSelectedIndex()));
-        }
+        Platform.runLater(() -> {
+            if (!isItemVisible(treeView.getSelectionModel().getSelectedItem())) {
+                log.debug("Scroll to invisible selected tree item");
+                treeView.scrollTo(treeView.getSelectionModel().getSelectedIndex());
 //        treeView.refresh();
+            }
+        });
     }
 
     private boolean isItemVisible(TreeItem<NodeData> item) {
@@ -672,8 +670,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         int f = vf.getFirstVisibleCell().getIndex();
         int l = vf.getLastVisibleCell().getIndex();
         Integer i = item.getValue().getDisplayIndex();
-        log.trace("The index of target tree item " + i);
-        return i != null && (i >= f || i <= l);
+        log.trace("The index of target tree item %d".formatted(i));
+        log.trace("  is between %d and %d".formatted(f, l));
+        return i != null && (i >= f && i <= l);
     }
 
 
@@ -1103,11 +1102,4 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         this.searchEventHandler = searchEventHandler;
     }
 
-//    public void setFileRenamedEventHandler(FileRenamedEventHandler fileRenamedEventHandler) {
-//        this.fileRenamedEventHandler = fileRenamedEventHandler;
-//    }
-
-//    public void setFileChangedEventHandler(FileChangedEventHandler fileChangedEventHandler) {
-//        this.fileChangedEventHandler = fileChangedEventHandler;
-//    }
 }
