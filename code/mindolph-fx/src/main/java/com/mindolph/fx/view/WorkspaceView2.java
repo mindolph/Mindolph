@@ -291,8 +291,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             }
         };
 
-        btnNew.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) contextMenuNew.hide();
+        btnNew.focusedProperty().addListener((observable, oldValue, isFocused) -> {
+            if (!isFocused && contextMenuNew != null) contextMenuNew.hide();
         });
         btnNew.setOnMouseClicked(btnEventHandler);
         btnReload.setOnMouseClicked(btnEventHandler);
