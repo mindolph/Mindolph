@@ -2,13 +2,18 @@ package com.mindolph.csv;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.editor.BaseEditor;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.util.ClipBoardUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.text.TextAlignment;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,6 +27,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author mindolph.com@gmail.com
@@ -30,16 +40,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(CsvEditor.class);
     @FXML
     private TableView<Row> tableView;
-
-    private TextField activeInput;
-    private int activeRow;
-    private TableColumn<Row, TextField> activeColumn;
+    private ContextMenu contextMenu;
 
     private final CSVFormat csvFormat;
 
     private String text; // cache
     private int stubColIdx;
     private int stubRowIdx;
+    private int clickedRowIdx = -1;
 
     public CsvEditor(EditorContext editorContext) {
         super("/editor/csv_editor.fxml", editorContext);
@@ -57,7 +65,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.getSelectionModel().setCellSelectionEnabled(true);
-//        tableView.setFocusTraversable(true);
     }
 
     @Override
@@ -95,54 +102,43 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             this.saveToCache();
 
-//            Platform.runLater(() -> tableView.edit(activeRow, activeColumn));
-
             afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
         });
+
     }
 
     private void createIndexColumn() {
-        TableColumn<Row, String> indexCol = new TableColumn<>("");
+        TableColumn<Row, String> indexCol = new TableColumn<>(EMPTY);
+        indexCol.setSortable(false);
+        indexCol.setEditable(false);
         indexCol.setCellFactory(column -> {
-            TableCell<Row, String> cell = new TableCell<>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setText(null);
+            TableCell<Row, String> indexCell = new SimpleTextCell();
+            indexCell.setTextAlignment(TextAlignment.CENTER);
+            indexCell.setAlignment(Pos.BASELINE_CENTER);
+            indexCell.setOnMouseReleased(event -> {
+                log.debug("Mouse pressed");
+                Platform.runLater(() -> {
+                    TableView.TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
+                    if (event.isShiftDown()) {
+                        int start = Math.min(indexCell.getIndex(), clickedRowIdx);
+                        int end = Math.max(indexCell.getIndex(), clickedRowIdx);
+                        log.debug("Select rows from %d to %d".formatted(start, end));
+                        selectionModel.selectRange(start, end + 1);
                     }
                     else {
-                        setText(item);
+                        if (!selectionModel.isSelected(indexCell.getIndex())) {
+                            log.debug("Select row: " + indexCell.getIndex());
+                            tableView.getSelectionModel().select(indexCell.getIndex());
+                        }
+                        clickedRowIdx = indexCell.getIndex();
                     }
-                }
-            };
-            cell.focusedProperty().addListener((observable, oldValue, isFocused) -> {
-//                if (isFocused) {
-//                    int colIdx = tableView.getColumns().indexOf(cell.getTableColumn());
-//                    if (colIdx == 0) {
-//                        log.debug("Focused line: %d".formatted(cell.getIndex()));
-//                    }
-//                }
+                });
             });
-            cell.selectedProperty().addListener((observable, oldValue, isSelected) -> {
-                if (isSelected) {
-                    log.debug("Selected line: %d".formatted(cell.getIndex()));
-                    Platform.runLater(() -> {
-                        tableView.getSelectionModel().select(cell.getIndex());
-                    });
-                }
-                else {
-                    log.debug("Unselect line: %d".formatted(cell.getIndex()));
-                    tableView.getSelectionModel().clearSelection(cell.getIndex());
-                }
-            });
-            return cell;
+            indexCell.setContextMenu(createContextMenu());
+            return indexCell;
         });
-        indexCol.setCellValueFactory(cellDataFeatures -> {
-            return new SimpleStringProperty(String.valueOf(cellDataFeatures.getValue().getIndex() + 1));
-        });
-
+        indexCol.setCellValueFactory(cellDataFeatures -> new SimpleStringProperty(String.valueOf(cellDataFeatures.getValue().getIndex() + 1)));
         tableView.getColumns().add(indexCol);
     }
 
@@ -155,18 +151,18 @@ public class CsvEditor extends BaseEditor implements Initializable {
         column.setSortable(false);
         column.setCellFactory(param -> {
             EditCell<Row, String> textCell = EditCell.createStringEditCell();
+            textCell.setMinHeight(32);
             textCell.setEditable(true);
             // raise after editing committed.
             textCell.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
-                    log.debug("Text changed from '%s' to '%s'".formatted(oldValue, newValue));
+                    log.trace("Text changed from '%s' to '%s'".formatted(oldValue, newValue));
                     int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
                     int dataIdx = colIdx - 1;// -1 because of the index column.
                     int rowIdx = textCell.getIndex();
                     Row row = tableView.getItems().get(rowIdx);
                     row.updateValue(dataIdx, newValue);
                     Platform.runLater(() -> {
-
                         if (rowIdx == 0) {
                             textCell.getTableColumn().setText(newValue); // for all columns
                         }
@@ -174,24 +170,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             appendStubRow(); // last row editing activates new row.
                         }
                         if (colIdx == stubColIdx - 1) {
-                            appendColumn(""); // append a stub column
-                            Platform.runLater(() -> {
-                                if (activeInput == null) {
-                                    log.debug("No active input to focus");
-                                }
-                                else {
-                                    log.debug("Focus the active input at: %d %s".formatted(activeRow, activeColumn));
-                                    tableView.edit(activeRow, activeColumn);
-                                }
-                            });
+                            appendColumn(EMPTY); // append a stub column
                         }
                         fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                     });
                 }
             });
-            textCell.focusedProperty().addListener((observable1, oldValue1, isFocused) -> {
-                if (isFocused) {
-                }
+            textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
             });
             return textCell;
         });
@@ -211,12 +197,82 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private void appendStubRow() {
         String[] stubStrs = new String[stubColIdx]; // the stub cols index equals columns size.
-        Arrays.fill(stubStrs, "");
+        Arrays.fill(stubStrs, null);
         Row stubRow = new Row();
         stubRow.setIndex(stubRowIdx);
         Collections.addAll(stubRow.getData(), stubStrs);
         tableView.getItems().add(stubRow);
         stubRowIdx = tableView.getItems().size();
+    }
+
+    private ContextMenu createContextMenu() {
+        contextMenu = new ContextMenu();
+        MenuItem miCopy = new MenuItem("Copy Row(s)");
+        MenuItem miDelete = new MenuItem("Delete Row(s)");
+        miCopy.setOnAction(event -> {
+            this.copy();
+        });
+        miDelete.setOnAction(event -> {
+            // TODO last line should be kept back
+            deleteSelectedRows();
+        });
+        contextMenu.getItems().addAll(miCopy, miDelete);
+        return contextMenu;
+    }
+
+    @Override
+    public boolean copy() {
+        log.debug("Copy selected cells");
+        String selectionText = getSelectionText();
+        ClipBoardUtils.textToClipboard(selectionText);
+        return true;
+    }
+
+    @Override
+    public boolean paste() {
+        setFirstSelectedCell(ClipBoardUtils.textFromClipboard());
+        tableView.refresh();
+        return true;
+    }
+
+    @Override
+    public boolean cut() {
+        return false;
+    }
+
+    private void deleteSelectedRows() {
+        Platform.runLater(() -> {
+            ObservableList<Row> rowsToBeDeleted = getSelectedRows();
+            log.debug("Delete %d lines".formatted(rowsToBeDeleted.size()));
+            tableView.getItems().removeAll(rowsToBeDeleted);
+            ObservableList<Row> items = tableView.getItems();
+            for (int i = 0; i < items.size(); i++) {
+                Row item = items.get(i);
+                item.setIndex(i + 1);
+            }
+            tableView.getSelectionModel().clearSelection();
+        });
+    }
+
+    private ObservableList<Row> getSelectedRows() {
+        return tableView.getSelectionModel().getSelectedItems();
+    }
+
+    private ObservableList<TablePosition> getSelectedCells() {
+        return tableView.getSelectionModel().getSelectedCells();
+    }
+
+    private List<String> getSelectedCellsData() {
+        ObservableList<TablePosition> selectedCells = getSelectedCells();
+        System.out.println(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
+        return selectedCells.stream().map(pos -> {
+            List<String> data = tableView.getItems().get(pos.getRow()).getData();
+            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
+                if (pos.getColumn() < 0) return null;
+                return data.get(pos.getColumn());
+            }
+            return null;
+        }).toList();
     }
 
     @Override
@@ -264,13 +320,25 @@ public class CsvEditor extends BaseEditor implements Initializable {
         return false;
     }
 
-    private boolean saveToCache() {
-        Optional<String> reduced = tableView.getItems().stream().map(row -> StringUtils.join(row.getData(), ", "))
+    private String rowsToCsv(ObservableList<Row> rows) {
+        Optional<String> reduced = rows.stream().map(row -> {
+                    if (row.getData().stream().allMatch(StringUtils::isBlank)) {
+                        return EMPTY;
+                    }
+                    else {
+                        return StringUtils.join(row.getData(), ", ");
+                    }
+                })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
-        if (reduced.isPresent()) {
+        return reduced.orElse(EMPTY);
+    }
+
+    private boolean saveToCache() {
+        String csv = rowsToCsv(tableView.getItems());
+        if (isNotBlank(csv)) {
             log.debug("Save to cache:");
-            log.debug(reduced.get());
-            this.text = reduced.get();
+            log.debug(csv);
+            this.text = csv;
             return true;
         }
         return false;
@@ -300,7 +368,33 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public String getSelectionText() {
-        return null;
+        ObservableList<TablePosition> selectedCells = getSelectedCells();
+        System.out.println(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
+        LinkedHashMap<Integer, List<TablePosition>> map =
+                selectedCells.stream().collect(Collectors.groupingBy(TablePositionBase::getRow, LinkedHashMap::new, Collectors.toList()));
+        return map.values().stream().map(tablePositions -> {
+            return tablePositions.stream().map(pos -> {
+                List<String> data = tableView.getItems().get(pos.getRow()).getData();
+                if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
+                    if (pos.getColumn() < 0) return null;
+                    String ret = data.get(pos.getColumn());
+                    System.out.printf("[%d,%d]%s%n", pos.getRow(), pos.getColumn(), ret);
+                    return ret;
+                }
+                return null;
+            }).filter(Objects::nonNull).collect(Collectors.joining(", "));
+        }).collect(Collectors.joining(LINE_SEPARATOR));
+    }
+
+    private void setFirstSelectedCell(String text) {
+        Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
+        if (first.isPresent()) {
+            TablePosition pos = first.get();
+            List<String> data = tableView.getItems().get(pos.getRow()).getData();
+            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
+                data.set(Math.max(0, pos.getColumn() - 1), text);
+            }
+        }
     }
 
 }

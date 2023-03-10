@@ -1,9 +1,11 @@
 package com.mindolph.csv;
 
 import javafx.event.Event;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.TextAlignment;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import org.slf4j.Logger;
@@ -34,6 +36,8 @@ public class EditCell<S, T> extends TableCell<S, T> {
         });
         setGraphic(textField);
         setContentDisplay(ContentDisplay.TEXT_ONLY);
+        this.setTextAlignment(TextAlignment.CENTER);
+        this.setAlignment(Pos.BASELINE_CENTER);
 
         this.focusedProperty().addListener((observable, oldValue, isNowFocused) -> {
             log.trace("%s input focus changed: %s".formatted(this, isNowFocused));
