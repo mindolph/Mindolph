@@ -28,6 +28,7 @@ import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
 import com.mindolph.plantuml.PlantUmlTemplates;
@@ -39,10 +40,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.TreeViewSkin;
 import javafx.scene.control.skin.VirtualFlow;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -60,10 +58,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
@@ -124,6 +119,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private MenuItem miTextFile;
     private Menu plantUmlMenu;
     private MenuItem miMarkdown;
+    private MenuItem miCopyFile;
+    private MenuItem miPasteFile;
+    private MenuItem miCopyPathAbsolute;
+    private MenuItem miCopyPathRelative;
     private MenuItem miRename;
     private MenuItem miReload;
     private MenuItem miClone;
@@ -546,9 +545,27 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             log.debug("create context menu for item: " + treeItem.getValue().getName());
             NodeData nodeData = treeItem.getValue();
             boolean isFolder = !nodeData.isFile();
+            boolean isFile = nodeData.isFile();
             if (isFolder) {
                 Menu miNew = createMenuNew();
                 contextMenu.getItems().add(miNew);
+            }
+            if (isFile) {
+                Menu miCopy = new Menu("Copy");
+                miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
+                miCopyPathAbsolute = new MenuItem("Absolute Path");
+                miCopyPathRelative = new MenuItem("Relative Path");
+                miCopyFile.setOnAction(this);
+                miCopyPathAbsolute.setOnAction(this);
+                miCopyPathRelative.setOnAction(this);
+                miCopy.getItems().addAll(miCopyFile, miCopyPathAbsolute, miCopyPathRelative);
+                contextMenu.getItems().add(miCopy);
+            }
+            if (isFolder) {
+                miPasteFile = new MenuItem("Paste");
+                miPasteFile.setDisable(!Clipboard.getSystemClipboard().hasFiles());
+                miPasteFile.setOnAction(this);
+                contextMenu.getItems().add(miPasteFile);
             }
             miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
             miRename.setOnAction(this);
@@ -850,6 +867,19 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 }
             }
         }
+        else if (source == miCopyFile) {
+            ClipBoardUtils.filesToClipboard(Collections.singletonList(selectedData.getFile()));
+        }
+        else if (source == miCopyPathAbsolute) {
+            ClipBoardUtils.textToClipboard(selectedData.getFile().getAbsolutePath());
+        }
+        else if (source == miCopyPathRelative) {
+            String relativePath = StringUtils.substringAfter(selectedData.getFile().getParent(), selectedData.getWorkspaceData().getFile().getPath());
+            ClipBoardUtils.textToClipboard(relativePath);
+        }
+        else if (source == miPasteFile) {
+            this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
+        }
         else if (source == miRename) {
             this.requestRenameFolderOrFile(selectedData, newNameFile -> {
                 if (selectedData.isFile()) {
@@ -871,23 +901,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (selectedData != null) {
                 if (selectedData.isFile()) {
                     File file = selectedData.getFile();
-                    String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
-                    File cloneFile = new File(file.getParentFile(), cloneFileName);
-                    if (cloneFile.exists()) {
-                        DialogFactory.errDialog("File %s already exists".formatted(cloneFileName));
-                        return;
-                    }
-                    try {
-                        FileUtils.copyFile(file, cloneFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        DialogFactory.errDialog("Clone file failed: " + e.getLocalizedMessage());
-                        return;
-                    }
-                    NodeData newFileData = new NodeData(cloneFile);
-                    TreeItem<NodeData> folderItem = selectedTreeItem.getParent();
-                    addFile(folderItem, newFileData);
-                    treeView.refresh();
+                    this.copyFile(selectedTreeItem.getParent(), file);
                 }
             }
         }
@@ -933,6 +947,32 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miCollapseAll) {
             this.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
         }
+    }
+
+    /**
+     * Copy file to target folder of tree item with existence check.
+     *
+     * @param folderTreeItem
+     * @param file
+     */
+    private void copyFile(TreeItem<NodeData> folderTreeItem, File file) {
+        File targetDir = folderTreeItem.getValue().getFile();
+        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
+        File cloneFile = new File(targetDir, cloneFileName);
+        if (cloneFile.exists()) {
+            DialogFactory.errDialog("File %s already exists".formatted(cloneFileName));
+            return;
+        }
+        try {
+            FileUtils.copyFile(file, cloneFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            DialogFactory.errDialog("Clone file failed: " + e.getLocalizedMessage());
+            return;
+        }
+        NodeData newFileData = new NodeData(cloneFile);
+        addFile(folderTreeItem, newFileData);
+        treeView.refresh();
     }
 
     private void requestRenameFolderOrFile(NodeData selectedData, Consumer<File> consumer) {
