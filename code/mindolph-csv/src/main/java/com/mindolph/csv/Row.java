@@ -14,6 +14,11 @@ public class Row {
         return data.size();
     }
 
+    /**
+     *
+     * @param colIdx column index from 0 in data
+     * @param value
+     */
     public void updateValue(int colIdx, String value) {
         if (colIdx >= 0 && colIdx < data.size()) {
             data.remove(colIdx);

@@ -72,18 +72,20 @@ public class CsvEditor extends BaseEditor implements Initializable {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         CSVParser parsed = csvFormat.parse(fileReader);
         List<CSVRecord> records = parsed.getRecords();
-        if (records.isEmpty()) {
-            log.warn("No data in this csv file");
-            return;
-        }
+//        if (records.isEmpty()) {
+//            log.warn("No data in this csv file");
+//            return;
+//        }
         Platform.runLater(() -> {
             // == init headers ==
             // init index column
             createIndexColumn();
             // init data column
-            CSVRecord headers = records.get(0);
-            for (String header : headers) {
-                appendColumn(header);
+            if (!records.isEmpty()) {
+                CSVRecord headers = records.get(0);
+                for (String header : headers) {
+                    appendColumn(header);
+                }
             }
             // init stub column
             appendColumn("");
@@ -97,8 +99,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 tableView.getItems().add(row);
             }
             // stub row
-            stubRowIdx = records.size(); // init the index of stub row
+//            stubRowIdx = records.isEmpty() ? 0 : records.size(); // init the index of stub row
             appendStubRow();
+
+            log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
             this.saveToCache();
 
@@ -166,7 +170,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         if (rowIdx == 0) {
                             textCell.getTableColumn().setText(newValue); // for all columns
                         }
-                        else if (rowIdx == stubRowIdx - 1) {
+                        if (rowIdx == stubRowIdx) {
                             appendStubRow(); // last row editing activates new row.
                         }
                         if (colIdx == stubColIdx - 1) {
@@ -196,13 +200,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
 
     private void appendStubRow() {
+        log.debug("Append new row(stub)");
+        stubRowIdx = tableView.getItems().size();
         String[] stubStrs = new String[stubColIdx]; // the stub cols index equals columns size.
-        Arrays.fill(stubStrs, null);
+        Arrays.fill(stubStrs, EMPTY);
         Row stubRow = new Row();
         stubRow.setIndex(stubRowIdx);
         Collections.addAll(stubRow.getData(), stubStrs);
         tableView.getItems().add(stubRow);
-        stubRowIdx = tableView.getItems().size();
     }
 
     private ContextMenu createContextMenu() {
