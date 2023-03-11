@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
@@ -67,8 +68,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
         tableView.getSelectionModel().setCellSelectionEnabled(true);
     }
 
+    private AtomicBoolean isLoading = new AtomicBoolean(false);
+
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
+        isLoading.set(true);
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         CSVParser parsed = csvFormat.parse(fileReader);
         List<CSVRecord> records = parsed.getRecords();
@@ -91,16 +95,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
             appendColumn("");
 
             // init data content
+            List<Row> rows = new LinkedList<>();
             for (CSVRecord record : records) {
                 log.debug(StringUtils.join(record, ", "));
                 Row row = new Row();
                 row.setIndex(records.indexOf(record));
                 CollectionUtils.addAll(row.getData(), record);
-                tableView.getItems().add(row);
+                rows.add(row);
             }
             // stub row
-//            stubRowIdx = records.isEmpty() ? 0 : records.size(); // init the index of stub row
-            appendStubRow();
+            rows.add(appendStubRow());
+            tableView.getItems().addAll(rows);
 
             log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
@@ -110,6 +115,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.editorReadyEventHandler.onEditorReady();
         });
 
+        isLoading.set(false);
     }
 
     private void createIndexColumn() {
@@ -159,8 +165,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
             textCell.setEditable(true);
             // raise after editing committed.
             textCell.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (!StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
-                    log.trace("Text changed from '%s' to '%s'".formatted(oldValue, newValue));
+//                if (isLoading.get()) {
+//                    return;
+//                }
+                if (oldValue != null && !StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
+                    log.debug("Text changed from '%s' to '%s'".formatted(oldValue, newValue));
                     int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
                     int dataIdx = colIdx - 1;// -1 because of the index column.
                     int rowIdx = textCell.getIndex();
@@ -176,6 +185,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         if (colIdx == stubColIdx - 1) {
                             appendColumn(EMPTY); // append a stub column
                         }
+                        log.debug("Text of cell changed");
                         fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                     });
                 }
@@ -199,15 +209,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
 
-    private void appendStubRow() {
+    private Row appendStubRow() {
         log.debug("Append new row(stub)");
         stubRowIdx = tableView.getItems().size();
         String[] stubStrs = new String[stubColIdx]; // the stub cols index equals columns size.
-        Arrays.fill(stubStrs, EMPTY);
+        Arrays.fill(stubStrs, null); // set default to null because it will be used to indicate the empty line.
         Row stubRow = new Row();
         stubRow.setIndex(stubRowIdx);
         Collections.addAll(stubRow.getData(), stubStrs);
-        tableView.getItems().add(stubRow);
+        return stubRow;
     }
 
     private ContextMenu createContextMenu() {

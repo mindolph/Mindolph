@@ -105,6 +105,9 @@ public class EditCell<S, T> extends TableCell<S, T> {
         setContentDisplay(ContentDisplay.TEXT_ONLY);
     }
 
+    /**
+     * Really to cancel editing.
+     */
     public void cancelEditing() {
         super.cancelEdit();
         setContentDisplay(ContentDisplay.TEXT_ONLY);
