@@ -273,8 +273,8 @@
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>aliyun</id>
-                    <name>aliyun mirror</name>
+                    <id>aliyun-plugin</id>
+                    <name>aliyun plugin mirror</name>
                     <url>https://maven.aliyun.com/repository/central</url>
                 </pluginRepository>
             </pluginRepositories>

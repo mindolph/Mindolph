@@ -19,7 +19,7 @@
         <app.name>Mindolph</app.name>
         <app.version>1.1</app.version>
         <app.release>RC</app.release>
-        <jvm.modules>java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
+        <jvm.modules>javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>
@@ -169,7 +169,7 @@
                     this project with the JDK modules. -->
                     <execution>
                         <id>jlink</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>java-tool</goal>
                         </goals>
