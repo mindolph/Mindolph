@@ -37,6 +37,7 @@ public class FontIconManager {
 
     public FontIconManager() {
         // general
+        icons.put(IconKey.FILE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PLUS, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.PLUS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.RENAME, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.CLONE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_COPY, DEFAULT_ICON_SIZE));
