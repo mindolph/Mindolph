@@ -1,5 +1,13 @@
 # Release Notes
 
+
+### V1.1 RC
+* Feature: add copy/paste for file in workspace.
+* Feature: add copy file path(absolute or relative).
+* Fix: auto-scroll for workspace doesn't work well.
+* Fix: exception after "find in files" results showed.
+
+
 ### V1.1 Beta
 * Re-designed the workspace panel to be more convenient to manage and locate your files.
 * Add new workspace management dialog to manage workspaces.
