@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
@@ -50,6 +50,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private int stubRowIdx;
     private int clickedRowIdx = -1;
 
+    private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
+
     public CsvEditor(EditorContext editorContext) {
         super("/editor/csv_editor.fxml", editorContext);
         super.fileType = SupportFileTypes.TYPE_CSV;
@@ -68,18 +70,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
         tableView.getSelectionModel().setCellSelectionEnabled(true);
     }
 
-    private AtomicBoolean isLoading = new AtomicBoolean(false);
-
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
-        isLoading.set(true);
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         CSVParser parsed = csvFormat.parse(fileReader);
         List<CSVRecord> records = parsed.getRecords();
-//        if (records.isEmpty()) {
-//            log.warn("No data in this csv file");
-//            return;
-//        }
         Platform.runLater(() -> {
             // == init headers ==
             // init index column
@@ -104,8 +99,54 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 rows.add(row);
             }
             // stub row
-            rows.add(appendStubRow());
+            stubRowIdx = records.size();
+            rows.add(createStubRow());
             tableView.getItems().addAll(rows);
+
+            cellFactory = param -> {
+                EditCell<Row, String> textCell = EditCell.createStringEditCell();
+                textCell.setMinHeight(32);
+                textCell.setEditable(true);
+                textCell.textProperty().addListener((observable, oldValue, newValue) -> {
+                    log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldValue, newValue));
+                    if (oldValue != null && !StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
+                        int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
+                        int dataIdx = colIdx - 1;// -1 because of the index column.
+                        int rowIdx = textCell.getIndex();
+                        Row row = tableView.getItems().get(rowIdx);
+                        row.updateValue(dataIdx, newValue);
+                        Platform.runLater(() -> {
+                            if (rowIdx == 0) {
+                                textCell.getTableColumn().setText(newValue); // for all columns
+                            }
+                            if (rowIdx == stubRowIdx) {
+                                stubRowIdx++;
+                                Row stubRow = createStubRow();// last row editing activates new row.
+                                tableView.getItems().add(stubRow);
+                            }
+                            if (colIdx == stubColIdx - 1) {
+                                appendColumn(EMPTY).setCellFactory(cellFactory); // append a stub column
+                            }
+                            log.debug("Text of cell changed");
+                            fileChangedEventHandler.onFileChanged(editorContext.getFileData());
+                        });
+                    }
+                });
+                textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    // log.debug("Selection changed for %s, %d".formatted(textCell.getTableColumn().getText(), textCell.getIndex()));
+                    EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
+                });
+                return textCell;
+            };
+            // NOTE: call setCellFactory here otherwise the textProperty change event emitting messily.
+            Platform.runLater(() -> {
+                        ObservableList<TableColumn<Row, ?>> columns = tableView.getColumns();
+                        for (int i = 1; i < columns.size(); i++) {
+                            TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
+                            column.setCellFactory(cellFactory);
+                        }
+                    }
+            );
 
             log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
@@ -114,8 +155,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
         });
-
-        isLoading.set(false);
     }
 
     private void createIndexColumn() {
@@ -153,48 +192,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     // Append a new column to the end of table columns.
-    private void appendColumn(String header) {
+    private TableColumn<Row, String> appendColumn(String header) {
         log.debug("Append new column '%s'".formatted(header));
         TableColumn<Row, String> column = new TableColumn<>(header);
         column.setMinWidth(80);
         column.setEditable(true);
         column.setSortable(false);
-        column.setCellFactory(param -> {
-            EditCell<Row, String> textCell = EditCell.createStringEditCell();
-            textCell.setMinHeight(32);
-            textCell.setEditable(true);
-            // raise after editing committed.
-            textCell.textProperty().addListener((observable, oldValue, newValue) -> {
-//                if (isLoading.get()) {
-//                    return;
-//                }
-                if (oldValue != null && !StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
-                    log.debug("Text changed from '%s' to '%s'".formatted(oldValue, newValue));
-                    int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
-                    int dataIdx = colIdx - 1;// -1 because of the index column.
-                    int rowIdx = textCell.getIndex();
-                    Row row = tableView.getItems().get(rowIdx);
-                    row.updateValue(dataIdx, newValue);
-                    Platform.runLater(() -> {
-                        if (rowIdx == 0) {
-                            textCell.getTableColumn().setText(newValue); // for all columns
-                        }
-                        if (rowIdx == stubRowIdx) {
-                            appendStubRow(); // last row editing activates new row.
-                        }
-                        if (colIdx == stubColIdx - 1) {
-                            appendColumn(EMPTY); // append a stub column
-                        }
-                        log.debug("Text of cell changed");
-                        fileChangedEventHandler.onFileChanged(editorContext.getFileData());
-                    });
-                }
-            });
-            textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
-            });
-            return textCell;
-        });
         column.setCellValueFactory(cellData -> {
             Row row = cellData.getValue();
             int colIdx = cellData.getTableView().getColumns().indexOf(cellData.getTableColumn());
@@ -206,12 +209,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         });
         tableView.getColumns().add(column);
         stubColIdx = tableView.getColumns().size();
+        return column;
     }
 
 
-    private Row appendStubRow() {
+    private Row createStubRow() {
         log.debug("Append new row(stub)");
-        stubRowIdx = tableView.getItems().size();
         String[] stubStrs = new String[stubColIdx]; // the stub cols index equals columns size.
         Arrays.fill(stubStrs, null); // set default to null because it will be used to indicate the empty line.
         Row stubRow = new Row();
@@ -257,14 +260,18 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private void deleteSelectedRows() {
         Platform.runLater(() -> {
-            ObservableList<Row> rowsToBeDeleted = getSelectedRows();
-            log.debug("Delete %d lines".formatted(rowsToBeDeleted.size()));
-            tableView.getItems().removeAll(rowsToBeDeleted);
+            ObservableList<Row> selectedRows = getSelectedRows();
+            log.trace("stubRowIdx=" + stubRowIdx);
+            List<Row> rowsWithoutStub = selectedRows.stream().filter(r -> r.getIndex() != stubRowIdx).toList();
+            log.debug("Delete %d lines".formatted(rowsWithoutStub.size()));
+            tableView.getItems().removeAll(rowsWithoutStub);
             ObservableList<Row> items = tableView.getItems();
+            log.debug("%d rows left.".formatted(items.size()));
             for (int i = 0; i < items.size(); i++) {
                 Row item = items.get(i);
-                item.setIndex(i + 1);
+                item.setIndex(i);
             }
+            stubRowIdx = items.size() - 1;
             tableView.getSelectionModel().clearSelection();
         });
     }

@@ -24,16 +24,19 @@ public class EditCell<S, T> extends TableCell<S, T> {
     // Converter for converting the text in the text field to the user type, and vice-versa:
     private final StringConverter<T> converter;
 
+    @Override
+    protected void updateItem(T item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty) {
+            setText(null);
+        }
+        else {
+            setText(converter.toString(item));
+        }
+    }
+
     public EditCell(StringConverter<T> converter) {
         this.converter = converter;
-        itemProperty().addListener((obx, oldItem, newItem) -> {
-            if (newItem == null) {
-                setText(null);
-            }
-            else {
-                setText(converter.toString(newItem));
-            }
-        });
         setGraphic(textField);
         setContentDisplay(ContentDisplay.TEXT_ONLY);
         this.setTextAlignment(TextAlignment.CENTER);
