@@ -30,6 +30,11 @@
     ```
     Use your favourite IDE to create a new project in folder `Mindolph/code`.
 
+### How to build an executable fat jar file
+
+    ```shell
+    mvn package -Dmaven.test.skip=true
+    ```
 
 ### How to build platform dependent distribution
 
