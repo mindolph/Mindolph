@@ -3,7 +3,7 @@ package com.mindolph.csv;
 import javafx.scene.control.TableCell;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class SimpleTextCell extends TableCell<Row, String> {
     @Override

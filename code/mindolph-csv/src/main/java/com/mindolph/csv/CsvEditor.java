@@ -3,12 +3,17 @@ package com.mindolph.csv;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.base.event.EventBus.MenuTag;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.core.util.IoUtils;
+import com.mindolph.csv.undo.UndoService;
+import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -20,11 +25,13 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -45,6 +52,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final CSVFormat csvFormat;
 
+    private final EventSource<CsvCellChange> changesSource;
+    private final UndoService<String> undoService;
+
     private String text; // cache
     private int stubColIdx;
     private int stubRowIdx;
@@ -55,11 +65,26 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public CsvEditor(EditorContext editorContext) {
         super("/editor/csv_editor.fxml", editorContext);
         super.fileType = SupportFileTypes.TYPE_CSV;
-
+        this.undoService = new UndoServiceImpl<>(o -> {
+            this.text = o;
+            this.reload();
+        }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
+        this.changesSource = new EventSource<>();
         csvFormat = CSVFormat.DEFAULT.builder().build();
-
-        this.reload();
     }
+
+//    private void applyUndoRedo(CsvCellChange change) {
+//        CsvCellChange redoChange = new CsvCellChange();
+//        change.getChanges().forEach((key, value) -> {
+//            Row row = tableView.getItems().get(key.getRowIdx());
+//            int dataIdx = key.getColIdx() - 1;
+//            String ret = row.getData().get(dataIdx);
+//            log.debug("current: " + ret);
+//            redoChange.put(key, ret);
+//            row.getData().set(dataIdx, value);
+//        });
+//        tableView.refresh();
+//    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -73,7 +98,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
-        CSVParser parsed = csvFormat.parse(fileReader);
+        this.text = IoUtils.readAll(fileReader);
+        this.undoService.push(this.text);
+        this.initTableView();
+        Platform.runLater(() -> {
+            afterLoading.run();
+        });
+    }
+
+    private void initTableView() throws IOException {
+        StringReader stringReader = new StringReader(this.text);
+        CSVParser parsed = csvFormat.parse(stringReader);
         List<CSVRecord> records = parsed.getRecords();
         Platform.runLater(() -> {
             // == init headers ==
@@ -87,37 +122,34 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 }
             }
             // init stub column
-            appendColumn("");
+            appendColumn(EMPTY);
 
-            // init data content
-            List<Row> rows = new LinkedList<>();
-            for (CSVRecord record : records) {
-                log.debug(StringUtils.join(record, ", "));
-                Row row = new Row();
-                row.setIndex(records.indexOf(record));
-                CollectionUtils.addAll(row.getData(), record);
-                rows.add(row);
-            }
-            // stub row
-            stubRowIdx = records.size();
-            rows.add(createStubRow());
-            tableView.getItems().addAll(rows);
+            this.loadData(records);
 
+            EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditHandler = event -> {
+                Platform.runLater(() -> {
+                    if (saveToCache()) {
+                        undoService.push(text);
+                        EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
+                    }
+                });
+            };
+            // the cell factory will be used later.
             cellFactory = param -> {
-                EditCell<Row, String> textCell = EditCell.createStringEditCell();
+                EditTableCell<Row, String> textCell = EditTableCell.createStringEditCell();
                 textCell.setMinHeight(32);
                 textCell.setEditable(true);
-                textCell.textProperty().addListener((observable, oldValue, newValue) -> {
-                    log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldValue, newValue));
-                    if (oldValue != null && !StringUtils.equals(oldValue, newValue) && StringUtils.isNotBlank(newValue)) {
+                textCell.textProperty().addListener((observable, oldText, newText) -> {
+                    // log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldText, newText));
+                    if (oldText != null && !StringUtils.equals(oldText, newText) && StringUtils.isNotBlank(newText)) {
                         int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
                         int dataIdx = colIdx - 1;// -1 because of the index column.
                         int rowIdx = textCell.getIndex();
                         Row row = tableView.getItems().get(rowIdx);
-                        row.updateValue(dataIdx, newValue);
+                        row.updateValue(dataIdx, newText);
                         Platform.runLater(() -> {
                             if (rowIdx == 0) {
-                                textCell.getTableColumn().setText(newValue); // for all columns
+                                textCell.getTableColumn().setText(newText); // for all columns
                             }
                             if (rowIdx == stubRowIdx) {
                                 stubRowIdx++;
@@ -125,39 +157,88 @@ public class CsvEditor extends BaseEditor implements Initializable {
                                 tableView.getItems().add(stubRow);
                             }
                             if (colIdx == stubColIdx - 1) {
-                                appendColumn(EMPTY).setCellFactory(cellFactory); // append a stub column
+                                TableColumn<Row, String> stubCol = appendColumn(EMPTY);
+                                stubCol.setCellFactory(cellFactory); // append a stub column
+                                stubCol.setOnEditCommit(commitEditHandler);
                             }
-                            log.debug("Text of cell changed");
+                            log.debug("Text from '%s' to '%s'".formatted(oldText, newText));
                             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                         });
                     }
                 });
                 textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
                     // log.debug("Selection changed for %s, %d".formatted(textCell.getTableColumn().getText(), textCell.getIndex()));
-                    EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
+                    EventBus.getIns().notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
                 });
                 return textCell;
             };
             // NOTE: call setCellFactory here otherwise the textProperty change event emitting messily.
             Platform.runLater(() -> {
                         ObservableList<TableColumn<Row, ?>> columns = tableView.getColumns();
-                        for (int i = 1; i < columns.size(); i++) {
+                        for (int i = 1; i < columns.size(); i++) { // from 1 to exclude index column
                             TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
                             column.setCellFactory(cellFactory);
+                            column.setOnEditCommit(commitEditHandler);
                         }
                     }
             );
 
             log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
-            this.saveToCache();
-
-            afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
         });
     }
 
+
+    @Override
+    public void reload() {
+        log.debug("Reload data");
+        tableView.getItems().clear();
+        // reload all data from cached text;
+        StringReader stringReader = new StringReader(this.text);
+        try {
+            CSVParser parsed = csvFormat.parse(stringReader);
+            List<CSVRecord> records = parsed.getRecords();
+            loadData(records);
+            tableView.refresh();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        log.debug("done");
+    }
+
+    // update data with updating table columns.
+    private void loadData(List<CSVRecord> records) {
+        // update column title with records.
+        ObservableList<TableColumn<Row, ?>> columns = tableView.getColumns();
+        if (!records.isEmpty()) {
+            CSVRecord headers = records.get(0);
+            List<String> headerList = headers.stream().toList();
+            for (int i = 0; i < headerList.size(); i++) {
+                String header = headerList.get(i);
+                columns.get(i + 1).setText(header);
+            }
+        }
+        else {
+            columns.forEach(col -> col.setText(EMPTY));
+        }
+        // init data content
+        List<Row> rows = new LinkedList<>();
+        for (CSVRecord record : records) {
+            log.debug("* " + StringUtils.join(record, ", "));
+            Row row = new Row();
+            row.setIndex(records.indexOf(record));
+            CollectionUtils.addAll(row.getData(), record);
+            rows.add(row);
+        }
+        // stub row
+        stubRowIdx = records.size();
+        rows.add(createStubRow());
+        tableView.getItems().addAll(rows);
+    }
+
     private void createIndexColumn() {
+        log.debug("Create index column");
         TableColumn<Row, String> indexCol = new TableColumn<>(EMPTY);
         indexCol.setSortable(false);
         indexCol.setEditable(false);
@@ -286,7 +367,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private List<String> getSelectedCellsData() {
         ObservableList<TablePosition> selectedCells = getSelectedCells();
-        System.out.println(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
+        log.debug(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
         return selectedCells.stream().map(pos -> {
             List<String> data = tableView.getItems().get(pos.getRow()).getData();
             if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
@@ -319,12 +400,16 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void undo() {
-
+        this.undoService.undo();
+        EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable())
+                .notifyMenuStateChange(MenuTag.REDO, this.undoService.isRedoAvailable());
     }
 
     @Override
     public void redo() {
-
+        this.undoService.redo();
+        EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable())
+                .notifyMenuStateChange(MenuTag.REDO, this.undoService.isRedoAvailable());
     }
 
     @Override
@@ -334,12 +419,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public boolean isUndoAvailable() {
-        return false;
+        return this.undoService.isUndoAvailable();
     }
 
     @Override
     public boolean isRedoAvailable() {
-        return false;
+        return this.undoService.isRedoAvailable();
     }
 
     private String rowsToCsv(ObservableList<Row> rows) {
@@ -359,9 +444,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         String csv = rowsToCsv(tableView.getItems());
         if (isNotBlank(csv)) {
             log.debug("Save to cache:");
-            log.debug(csv);
+            log.trace(csv);
             this.text = csv;
             return true;
+        }
+        else {
+            log.debug("Nothing to save to cache");
         }
         return false;
     }
@@ -391,7 +479,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public String getSelectionText() {
         ObservableList<TablePosition> selectedCells = getSelectedCells();
-        System.out.println(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
+        log.debug(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
         LinkedHashMap<Integer, List<TablePosition>> map =
                 selectedCells.stream().collect(Collectors.groupingBy(TablePositionBase::getRow, LinkedHashMap::new, Collectors.toList()));
         return map.values().stream().map(tablePositions -> {
@@ -400,7 +488,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
                     if (pos.getColumn() < 0) return null;
                     String ret = data.get(pos.getColumn());
-                    System.out.printf("[%d,%d]%s%n", pos.getRow(), pos.getColumn(), ret);
+                    log.trace("[%d,%d]%s%n", pos.getRow(), pos.getColumn(), ret);
                     return ret;
                 }
                 return null;
