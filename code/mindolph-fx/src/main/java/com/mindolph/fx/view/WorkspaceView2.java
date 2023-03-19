@@ -133,8 +133,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     // Event handlers that handle events from me.
     private SearchResultEventHandler searchEventHandler;
-    private ExpandEventHandler expandEventHandler;
-    private CollapseEventHandler collapseEventHandler;
 
     public WorkspaceView2() {
         super("/view/workspace_view2.fxml");
@@ -401,8 +399,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     public void loadWorkspace(WorkspaceMeta workspaceMeta) {
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
             activeWorkspaceData = workspaceDataTreeItem.getValue();
-            List<String> treeExpandedList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
-            this.expandTreeNodes(treeExpandedList);
+            expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
+            this.expandTreeNodes();
             Platform.runLater(() -> treeView.requestFocus());
         });
         asyncCreateWorkspaceSubTree(workspaceMeta);
@@ -693,10 +691,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     /**
      * Expand specified nodes in this workspace tree.
      *
-     * @param expendedFileList
      */
-    public void expandTreeNodes(List<String> expendedFileList) {
-        this.expendedFileList = expendedFileList;
+    public void expandTreeNodes() {
         TreeVisitor.dfsTraverse(rootItem, treeItem -> {
             // excludes the nodes whose parent is collapsed.
             if (treeItem.getParent() != null && !treeItem.getParent().isExpanded()) {
@@ -739,7 +735,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      */
     private void onTreeItemExpandOrCollapsed(Boolean expanded, TreeItem<NodeData> treeItem) {
         if (expanded) {
-            expandEventHandler.onTreeItemExpanded(treeItem);
+            EventBus.getIns().notifyTreeExpandCollapse(treeItem, true);
             // if expanded, pre-load all children of each child of this tree item.
             for (TreeItem<NodeData> child : treeItem.getChildren()) {
                 File childFile = child.getValue().getFile();
@@ -747,6 +743,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     List<NodeData> childrenOfChild = WorkspaceManager.getIns().loadFolder(child.getValue(), workspaceConfig);
                     this.loadTreeNode(child, childrenOfChild);
                     // expand the child node if it should be restored to expanded.
+                    expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
                     if (expendedFileList != null && expendedFileList.contains(childFile.getPath())) {
                         child.setExpanded(true);
                     }
@@ -754,7 +751,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             }
         }
         else {
-            collapseEventHandler.onTreeItemCollapsed(treeItem);
+            EventBus.getIns().notifyTreeExpandCollapse(treeItem, false);
         }
     }
 
@@ -1122,14 +1119,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     @Override
     public void requestFocus() {
         treeView.requestFocus();
-    }
-
-    public void setExpandEventHandler(ExpandEventHandler expandEventHandler) {
-        this.expandEventHandler = expandEventHandler;
-    }
-
-    public void setCollapseEventHandler(CollapseEventHandler collapseEventHandler) {
-        this.collapseEventHandler = collapseEventHandler;
     }
 
     public void setSearchEventHandler(SearchResultEventHandler searchEventHandler) {
