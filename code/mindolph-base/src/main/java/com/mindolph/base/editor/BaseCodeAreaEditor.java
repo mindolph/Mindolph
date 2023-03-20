@@ -36,12 +36,13 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
  */
 public abstract class BaseCodeAreaEditor extends BaseEditor {
 
+    public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
     private final Logger log = LoggerFactory.getLogger(BaseCodeAreaEditor.class);
 
     @FXML
     protected SearchableCodeArea codeArea;
 
-    private EventSource<String> historySource = new EventSource<>();
+    private final EventSource<String> historySource = new EventSource<>();
 
 //    protected String fontPrefKey;
 
@@ -69,7 +70,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         codeArea.setWrapText(true);
         codeArea.setContextMenu(createCodeContextMenu());
 
-        historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(150))
+        historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> {
                     this.codeArea.getUndoManager().preventMerge();
                 });
@@ -108,7 +109,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             int i = 0;
             for (Paragraph<Collection<String>, String, Collection<String>> paragraph : codeArea.getParagraphs()) {
                 i++;
-                if (log.isTraceEnabled()) log.trace(i + ": " + paragraph.getText());
+                if (log.isTraceEnabled()) log.trace("%d: %s".formatted(i, paragraph.getText()));
             }
             afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
@@ -136,7 +137,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         if (getFontPrefKey() != null) {
             Font defFont = FontConstants.DEFAULT_FONTS.get(fontPrefKey);
             Font font = fxPreferences.getPreference(fontPrefKey, Font.class, defFont);
-            log.debug("set font: " + font);
+            log.debug("set font: %s".formatted(font));
             codeArea.setStyle(FontUtils.fontToCssStyle(font));
         }
     }
@@ -218,7 +219,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void dispose() {
-        log.info("Dispose editor: " + this.getClass().getName());
+        log.info("Dispose editor: %s".formatted(this.getClass().getName()));
         codeArea.dispose();
     }
 
