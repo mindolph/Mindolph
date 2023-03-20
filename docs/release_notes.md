@@ -4,7 +4,7 @@
 * Improvement: better merging for undo/redo history in code editor, it won't redo a lot of inputs now.
 * Fix: 'collapse all' does not really collapse all tree nodes for both workspace and folder.
 * Fix: exception occurred when mouse pressed after releasing out of mind map view port.
-* Fix: the change of font for editors doesn't work  unless restarts app.
+* Fix: the change of font for editors doesn't work unless restarting app.
 
 ### V1.1 RC
 * Feature: add copy/paste for file in workspace.
