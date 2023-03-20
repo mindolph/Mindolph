@@ -28,14 +28,14 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_LAYOUT_MAIN_TR
  * Size of layout.
  * Opened files.
  * Status of editor for each single file.
- *
+ * <p>
  * This class listens some evens to collect data and save to preferences,
  * and also call listeners, which was registered outside, to restore scene.
  *
  * @author mindolph.com@gmail.com
  * @see FxPreferences
  */
-public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, WindowEventHandler,
+public class SceneRestore implements WindowEventHandler,
         WorkspaceViewResizedEventHandler {
 
     private final Logger log = LoggerFactory.getLogger(SceneRestore.class);
@@ -74,7 +74,7 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
         String disableWindowResize = System.getenv("disable-window-resize");
         Boolean reopenLastFiles = fxPreferences.getPreference("general.openLastFiles", Boolean.class, Boolean.TRUE);
         String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
-        Rectangle2D rectWindow = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_WINDOW_RECTANGLE, Rectangle2D.class, new Rectangle2D(0,0, 1000, 800));
+        Rectangle2D rectWindow = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_WINDOW_RECTANGLE, Rectangle2D.class, new Rectangle2D(0, 0, 1000, 800));
         double workspaceViewSize = fxPreferences.getPreference(MINDOLPH_LAYOUT_MAIN_TREE_SIZE, 150.0);
         WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
         if (!Boolean.parseBoolean(disableWindowResize)) {
@@ -102,6 +102,13 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
                 List<String> paths = openedFiles.stream().map(File::getPath).collect(Collectors.toList());
                 fxPreferences.savePreference(SceneStatePrefs.MINDOLPH_OPENED_FILE_LIST, paths);
             }
+        }).subscribeTreeExpandCollapse(event -> {
+            if (event.isExpand()) {
+                onTreeItemExpanded(event.getTreeItem());
+            }
+            else {
+                onTreeItemCollapsed(event.getTreeItem());
+            }
         });
     }
 
@@ -112,7 +119,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
         isStopped = true;
     }
 
-    @Override
     public void onTreeItemExpanded(TreeItem<?> treeItem) {
         if (!isStopped) {
             if (treeItem.isExpanded()) {
@@ -127,7 +133,6 @@ public class SceneRestore implements ExpandEventHandler, CollapseEventHandler, W
         }
     }
 
-    @Override
     public void onTreeItemCollapsed(TreeItem<?> treeItem) {
         if (!isStopped) {
             if (!treeItem.isExpanded()) {

@@ -17,11 +17,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collection;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
@@ -34,10 +36,13 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
  */
 public abstract class BaseCodeAreaEditor extends BaseEditor {
 
+    public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
     private final Logger log = LoggerFactory.getLogger(BaseCodeAreaEditor.class);
 
     @FXML
     protected SearchableCodeArea codeArea;
+
+    private final EventSource<String> historySource = new EventSource<>();
 
 //    protected String fontPrefKey;
 
@@ -65,6 +70,11 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         codeArea.setWrapText(true);
         codeArea.setContextMenu(createCodeContextMenu());
 
+        historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
+                .subscribe(s -> {
+                    this.codeArea.getUndoManager().preventMerge();
+                });
+
 //        if (!codeArea.addSelection(extraSelection)) {
 //            throw new IllegalStateException("selection was not added to area");
 //        }
@@ -85,6 +95,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             // add text change listener should after CodeArea init content.
             this.codeArea.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!StringUtils.equals(oldValue, newValue)) {
+                    historySource.push(newValue);
                     refresh(newValue);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
@@ -98,7 +109,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             int i = 0;
             for (Paragraph<Collection<String>, String, Collection<String>> paragraph : codeArea.getParagraphs()) {
                 i++;
-                if (log.isTraceEnabled()) log.trace(i + ": " + paragraph.getText());
+                if (log.isTraceEnabled()) log.trace("%d: %s".formatted(i, paragraph.getText()));
             }
             afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
@@ -126,7 +137,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         if (getFontPrefKey() != null) {
             Font defFont = FontConstants.DEFAULT_FONTS.get(fontPrefKey);
             Font font = fxPreferences.getPreference(fontPrefKey, Font.class, defFont);
-            log.debug("set font: " + font);
+            log.debug("set font: %s".formatted(font));
             codeArea.setStyle(FontUtils.fontToCssStyle(font));
         }
     }
@@ -150,7 +161,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         }
         if (!codeArea.replaceSelection(keywords, searchOptions.isCaseSensitive(), replacement)) {
             log.debug("no text replaced");
-        } else {
+        }
+        else {
             codeArea.searchNext(keywords, searchOptions);
         }
     }
@@ -207,7 +219,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void dispose() {
-        log.info("Dispose editor: " + this.getClass().getName());
+        log.info("Dispose editor: %s".formatted(this.getClass().getName()));
         codeArea.dispose();
     }
 

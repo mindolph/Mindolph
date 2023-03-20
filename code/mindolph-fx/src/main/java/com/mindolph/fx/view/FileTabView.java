@@ -466,6 +466,7 @@ public class FileTabView extends BaseView {
     }
 
     public void reloadEditorsByType(String fileType) {
+        log.debug("Reload editors for file: %s".formatted(fileType));
         // reload config for the type of editor.
         EditorConfig config = EditorFactory.getConfig(fileType);
         if (config != null) {

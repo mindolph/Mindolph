@@ -29,6 +29,7 @@ public class EventBus {
     private EventSource<TreeItem<NodeData>> workspaceLoaded;
     private EventSource<WorkspaceRenameEvent> workspaceRenamed;
     private EventSource<WorkspaceMeta> workspaceClosed;
+    private final EventSource<TreeExpandCollapseEvent> treeExpandCollapseEventEventSource = new EventSource<>();
 
     // Events for files
     private final EventSource<List<File>> openedFileChange = new EventSource<>();
@@ -53,6 +54,21 @@ public class EventBus {
 
     public EventBus notify(NotificationType notificationType) {
         simpleNotification.push(notificationType);
+        return this;
+    }
+
+    public EventBus subscribe(Consumer<NotificationType> consumer) {
+        simpleNotification.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyTreeExpandCollapse(TreeItem<?> treeItem, boolean isExpand) {
+        treeExpandCollapseEventEventSource.push(new TreeExpandCollapseEvent(treeItem, isExpand));
+        return this;
+    }
+
+    public EventBus subscribeTreeExpandCollapse(Consumer<TreeExpandCollapseEvent> consumer) {
+        treeExpandCollapseEventEventSource.subscribe(consumer);
         return this;
     }
 
@@ -169,10 +185,6 @@ public class EventBus {
         return this;
     }
 
-    public EventBus subscribe(Consumer<NotificationType> consumer) {
-        simpleNotification.subscribe(consumer);
-        return this;
-    }
 
     public EventBus subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
         if (workspaceLoaded == null) workspaceLoaded = new EventSource<>();

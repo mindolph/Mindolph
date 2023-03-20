@@ -2,7 +2,6 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.dialog.FontSelectDialog;
-import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +18,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.FontConstants.*;
+import static com.mindolph.core.constant.SupportFileTypes.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -30,7 +30,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     }
 
     @FXML
-    private ChoiceBox<Pair<String, String>> cbText;
+    private ChoiceBox<Pair<PrefKey, String>> cbText;
     @FXML
     private Label lbFont;
     @FXML
@@ -41,28 +41,28 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
         super.initialize(location, resources);
         cbText.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Pair<String, String> p) {
+            public String toString(Pair<PrefKey, String> p) {
                 return p.getValue();
             }
 
             @Override
-            public Pair<String, String> fromString(String s) {
+            public Pair<PrefKey, String> fromString(String s) {
                 return null;
             }
         });
         cbText.valueProperty().addListener((observableValue, old, newChoice) -> {
-            Font font = fxPreferences.getPreference(newChoice.getKey(), Font.class, DEFAULT_FONTS.get(newChoice.getKey()));
+            Font font = fxPreferences.getPreference(newChoice.getKey().getPrefId(), Font.class, DEFAULT_FONTS.get(newChoice.getKey().getPrefId()));
             lbFont.setText(FontUtils.fontToString(font));
             taPreview.setFont(font);
         });
         cbText.getItems().addAll(Arrays.asList(
-                new Pair<>(KEY_MMD_TOPIC_FONT, "Mind Map Topic"),
-                new Pair<>(KEY_MMD_NOTE_FONT, "Mind Map Note Editor"),
-                new Pair<>(KEY_PUML_EDITOR, "PlantUML Editor"),
-                new Pair<>(KEY_MD_EDITOR, "Markdown Editor"),
-                new Pair<>(KEY_TXT_EDITOR, "Plain Text Editor")
+                new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"),
+                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT, TYPE_MIND_MAP), "Mind Map Note Editor"),
+                new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), "PlantUML Editor"),
+                new Pair<>(new PrefKey(KEY_MD_EDITOR, TYPE_MARKDOWN), "Markdown Editor"),
+                new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), "Plain Text Editor")
         ));
-        cbText.setValue(new Pair<>(KEY_MMD_TOPIC_FONT, "Mind Map Topic"));
+        cbText.setValue(new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"));
     }
 
     @FXML
@@ -71,7 +71,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
         if (changedFont != null) {
             lbFont.setText(FontUtils.fontToString(changedFont));
             taPreview.setFont(changedFont);
-            fxPreferences.savePreference(cbText.getSelectionModel().getSelectedItem().getKey(), changedFont);
+            fxPreferences.savePreference(cbText.getSelectionModel().getSelectedItem().getKey().getPrefId(), changedFont);
             this.save();
         }
     }
@@ -79,9 +79,9 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     @Override
     public void resetToDefault() {
         super.resetToDefault();
-        for (Pair<String, String> item : cbText.getItems()) {
-            Font defaultFont = DEFAULT_FONTS.get(item.getKey());
-            fxPreferences.savePreference(item.getKey(), defaultFont);
+        for (Pair<PrefKey, String> item : cbText.getItems()) {
+            Font defaultFont = DEFAULT_FONTS.get(item.getKey().getPrefId());
+            fxPreferences.savePreference(item.getKey().getPrefId(), defaultFont);
             // update the preview for selected.
             if (item == cbText.getSelectionModel().getSelectedItem()) {
                 taPreview.setFont(defaultFont);
@@ -93,6 +93,28 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
 
     @Override
     protected void save() {
-        preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_PLAIN_TEXT);
+        String fileType = cbText.getSelectionModel().getSelectedItem().getKey().getFileType();
+        preferenceChangedEventHandler.onPreferenceChanged(fileType);
+    }
+
+    /**
+     * Preference key in choice box.
+     */
+    private static class PrefKey {
+        String prefId;
+        String fileType;
+
+        public PrefKey(String prefId, String fileType) {
+            this.prefId = prefId;
+            this.fileType = fileType;
+        }
+
+        public String getPrefId() {
+            return prefId;
+        }
+
+        public String getFileType() {
+            return fileType;
+        }
     }
 }

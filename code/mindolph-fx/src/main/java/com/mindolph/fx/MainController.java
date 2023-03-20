@@ -134,10 +134,6 @@ public class MainController extends BaseController implements Initializable,
         tabRecentFiles.setGraphic(new IconBuilder().name(IconName.FILE_TXT).build());
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getFile(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.setSearchEventHandler(this);
-//        workspaceView.setFileChangedEventHandler(this);
-        workspaceView.setExpandEventHandler(sceneRestore);
-        workspaceView.setCollapseEventHandler(sceneRestore);
-//        workspaceView.setFileRenamedEventHandler(this);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
             onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
         }).subscribeFilePathChanged(filePathChangedEvent -> {
