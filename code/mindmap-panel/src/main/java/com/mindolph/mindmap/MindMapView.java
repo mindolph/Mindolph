@@ -163,6 +163,7 @@ public class MindMapView extends BaseScalableView {
                 .action("mouse released with multi topics", DRAGGING, MULTI_SELECTED)
                 .action("mouse released with collapstor", DRAGGING, INITIAL)
                 .action("mouse pressed when selected multi topics", MULTI_SELECTED, MOUSE_PRESSED)
+                .action("this avoids exception when mouse release event failed to be received", MOUSE_PRESSED, MOUSE_PRESSED)
                 .state(INITIAL)
                 .in(payload -> {
                     mouseDragSelection = null;

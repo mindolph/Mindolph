@@ -719,7 +719,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         log.debug("Collapse all expanded nodes under " + treeItem);
         TreeVisitor.dfsTraverse(treeItem, item -> {
             if (item.isExpanded()) {
-                log.debug("Expand node: " + item);
+                log.debug("Collapse node: " + item);
                 item.setExpanded(false);
             }
             return null;
