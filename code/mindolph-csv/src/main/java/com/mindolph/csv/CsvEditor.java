@@ -25,7 +25,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final CSVFormat csvFormat;
 
-    private final EventSource<CsvCellChange> changesSource;
     private final UndoService<String> undoService;
 
     private String text; // cache
@@ -69,22 +67,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.text = o;
             this.reload();
         }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
-        this.changesSource = new EventSource<>();
         csvFormat = CSVFormat.DEFAULT.builder().build();
     }
-
-//    private void applyUndoRedo(CsvCellChange change) {
-//        CsvCellChange redoChange = new CsvCellChange();
-//        change.getChanges().forEach((key, value) -> {
-//            Row row = tableView.getItems().get(key.getRowIdx());
-//            int dataIdx = key.getColIdx() - 1;
-//            String ret = row.getData().get(dataIdx);
-//            log.debug("current: " + ret);
-//            redoChange.put(key, ret);
-//            row.getData().set(dataIdx, value);
-//        });
-//        tableView.refresh();
-//    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -128,10 +112,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditHandler = event -> {
                 Platform.runLater(() -> {
-                    if (saveToCache()) {
-                        undoService.push(text);
-                        EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
-                    }
+                    saveToCache();
                 });
             };
             // the cell factory will be used later.
@@ -258,7 +239,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     }
                     else {
                         if (!selectionModel.isSelected(indexCell.getIndex())) {
-                            log.debug("Select row: " + indexCell.getIndex());
+                            log.debug("Select row: %d".formatted(indexCell.getIndex()));
                             tableView.getSelectionModel().select(indexCell.getIndex());
                         }
                         clickedRowIdx = indexCell.getIndex();
@@ -331,6 +312,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public boolean paste() {
         setFirstSelectedCell(ClipBoardUtils.textFromClipboard());
         tableView.refresh();
+        this.saveToCache();
         return true;
     }
 
@@ -354,6 +336,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             }
             stubRowIdx = items.size() - 1;
             tableView.getSelectionModel().clearSelection();
+            saveToCache();
         });
     }
 
@@ -446,6 +429,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
             log.debug("Save to cache:");
             log.trace(csv);
             this.text = csv;
+            undoService.push(text);
+            EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
             return true;
         }
         else {

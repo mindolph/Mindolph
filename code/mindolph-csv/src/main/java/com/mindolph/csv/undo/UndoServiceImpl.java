@@ -36,6 +36,10 @@ public class UndoServiceImpl<T> implements UndoService<T> {
 
     @Override
     public void push(T t) {
+        if (!queue.isEmpty() && queue.get(currentPos).getCommand().equals(t)) {
+            log.debug("No actual changes");
+            return;
+        }
         if (currentPos < queue.size()) {
             queue.subList(currentPos + 1, queue.size()).clear();
         }
