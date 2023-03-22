@@ -4,6 +4,7 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.EventBus.MenuTag;
+import com.mindolph.base.event.StatusMsg;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.core.util.IoUtils;
@@ -34,7 +35,9 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -57,6 +60,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private int stubColIdx;
     private int stubRowIdx;
     private int clickedRowIdx = -1;
+    private CellPos selectedCellPos;
 
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
 
@@ -134,7 +138,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             }
                             if (rowIdx == stubRowIdx) {
                                 stubRowIdx++;
-                                Row stubRow = createStubRow();// last row editing activates new row.
+                                Row stubRow = createStubRow(tableView.getColumns().size() - 1 -1);// last row editing activates new row.
                                 tableView.getItems().add(stubRow);
                             }
                             if (colIdx == stubColIdx - 1) {
@@ -148,8 +152,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     }
                 });
                 textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    // log.debug("Selection changed for %s, %d".formatted(textCell.getTableColumn().getText(), textCell.getIndex()));
-                    EventBus.getIns().notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
+                    selectedCellPos = new CellPos(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
+                    log.debug("selectedCellPos: " + selectedCellPos);
+                    EventBus.getIns()
+                            .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected cell [%d-%d]".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)))
+                            .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
                 });
                 return textCell;
             };
@@ -214,7 +221,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         }
         // stub row
         stubRowIdx = records.size();
-        rows.add(createStubRow());
+        rows.add(createStubRow(columns.size() - 1 - 1)); // excludes index column and stub column
         tableView.getItems().addAll(rows);
     }
 
@@ -275,9 +282,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
 
-    private Row createStubRow() {
+    private Row createStubRow(int size) {
         log.debug("Append new row(stub)");
-        String[] stubStrs = new String[stubColIdx]; // the stub cols index equals columns size.
+        String[] stubStrs = new String[size]; // the stub cols index equals columns size.
         Arrays.fill(stubStrs, null); // set default to null because it will be used to indicate the empty line.
         Row stubRow = new Row();
         stubRow.setIndex(stubRowIdx);
@@ -303,21 +310,26 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public boolean copy() {
         log.debug("Copy selected cells");
-        String selectionText = getSelectionText();
-        ClipBoardUtils.textToClipboard(selectionText);
+        if (tableView.isFocused()) {
+            String selectionText = getSelectionText();
+            ClipBoardUtils.textToClipboard(selectionText);
+        }
         return true;
     }
 
     @Override
     public boolean paste() {
-        setFirstSelectedCell(ClipBoardUtils.textFromClipboard());
-        tableView.refresh();
-        this.saveToCache();
+        if (tableView.isFocused()) {
+            setFirstSelectedCell(ClipBoardUtils.textFromClipboard());
+            tableView.refresh();
+            this.saveToCache();
+        }
         return true;
     }
 
     @Override
     public boolean cut() {
+        // TODO
         return false;
     }
 
@@ -361,14 +373,73 @@ public class CsvEditor extends BaseEditor implements Initializable {
         }).toList();
     }
 
+    private Stream<String> stream() {
+        return tableView.getItems().stream().flatMap(row -> row.getData().stream());
+    }
+
+    private CellPos getSelectedCellPosition() {
+        Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
+        if (first.isPresent()) {
+            return CellPos.fromTablePosition(first.get());
+        }
+        return null;
+    }
+
+    private void doSearch(String keyword, TextSearchOptions options, boolean reverse) {
+        BiFunction<String, String, Boolean> contains = options.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        ObservableList<Row> items = tableView.getItems();
+        CellPos startPos = selectedCellPos;
+        int startIdx = 0;
+        int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
+        if (startPos == null) {
+            startPos = CellPos.zero();
+        }
+        else {
+            startIdx = CellPos.getIndexOfAll(startPos, rowSize) + (reverse ? -1 : 1);//from previous/next of current position
+        }
+        int total = items.size() * rowSize;
+        log.debug("Start search from %d%s in total %d".formatted(startIdx, startPos, total));
+        log.debug("Row size: %d".formatted(rowSize));
+
+        int idxFound = -1;
+        List<String> all = this.stream().filter(Objects::nonNull).toList();
+        // all.forEach(System.out::println);
+        if (reverse) {
+            List<String> reversed = new LinkedList<>();
+            CollectionUtils.addAll(reversed, all);
+            Collections.reverse(reversed); // reverse for search back
+            all = reversed;
+            startIdx = total - startIdx; // reverse start position
+        }
+        log.debug("String list size: %d".formatted(all.size()));
+        for (int i = startIdx; i < all.size(); i++) {
+            String s = all.get(i);
+            if (contains.apply(s, keyword)) {
+                idxFound = i;
+                break;
+            }
+        }
+        log.debug("Found at index: %d".formatted(idxFound));
+        if (reverse) idxFound = (total - idxFound - 1);
+        if (idxFound >= 0) {
+            CellPos foundCellPos = CellPos.fromIndexOfAll(idxFound, rowSize);
+            log.debug("Found matched at: %d %s".formatted(idxFound, foundCellPos));
+            tableView.getSelectionModel().clearSelection();
+            tableView.getSelectionModel().select(foundCellPos.getRowIdx(), tableView.getColumns().get(foundCellPos.getColIdx() + 1));
+        }
+        else {
+            selectedCellPos = null;
+        }
+    }
+
     @Override
     public void searchNext(String keyword, TextSearchOptions options) {
-
+        this.doSearch(keyword, options, false);
     }
 
     @Override
     public void searchPrev(String keyword, TextSearchOptions options) {
-
+        this.doSearch(keyword, options, true);
     }
 
     @Override
@@ -472,7 +543,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 List<String> data = tableView.getItems().get(pos.getRow()).getData();
                 if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
                     if (pos.getColumn() < 0) return null;
-                    String ret = data.get(pos.getColumn());
+                    String ret = data.get(pos.getColumn() - 1);
                     log.trace("[%d,%d]%s%n", pos.getRow(), pos.getColumn(), ret);
                     return ret;
                 }
