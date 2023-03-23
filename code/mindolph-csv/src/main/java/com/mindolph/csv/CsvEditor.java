@@ -138,7 +138,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             }
                             if (rowIdx == stubRowIdx) {
                                 stubRowIdx++;
-                                Row stubRow = createStubRow(tableView.getColumns().size() - 1 -1);// last row editing activates new row.
+                                Row stubRow = createStubRow(tableView.getColumns().size() - 1 - 1);// last row editing activates new row.
                                 tableView.getItems().add(stubRow);
                             }
                             if (colIdx == stubColIdx - 1) {
@@ -151,12 +151,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         });
                     }
                 });
-                textCell.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    selectedCellPos = new CellPos(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
-                    log.debug("selectedCellPos: " + selectedCellPos);
-                    EventBus.getIns()
-                            .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected cell [%d-%d]".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)))
-                            .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
+                textCell.selectedProperty().addListener((observable, oldValue, newSelected) -> {
+                    if (newSelected) {
+                        selectedCellPos = new CellPos(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
+                        log.debug("selectedCellPos: " + selectedCellPos);
+                        EventBus.getIns()
+                                .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected cell [%d-%d]".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)))
+                                .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
+                    }
                 });
                 return textCell;
             };
@@ -392,26 +394,25 @@ public class CsvEditor extends BaseEditor implements Initializable {
         int startIdx = 0;
         int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
         if (startPos == null) {
+//            startPos = reverse ? new CellPos(items.size() - 1, rowSize - 1) : CellPos.zero();
             startPos = CellPos.zero();
         }
         else {
             startIdx = CellPos.getIndexOfAll(startPos, rowSize) + (reverse ? -1 : 1);//from previous/next of current position
         }
-        int total = items.size() * rowSize;
-        log.debug("Start search from %d%s in total %d".formatted(startIdx, startPos, total));
-        log.debug("Row size: %d".formatted(rowSize));
-
+        log.trace("Row size: %d".formatted(rowSize));
         int idxFound = -1;
         List<String> all = this.stream().filter(Objects::nonNull).toList();
         // all.forEach(System.out::println);
+        int total = all.size();
         if (reverse) {
             List<String> reversed = new LinkedList<>();
             CollectionUtils.addAll(reversed, all);
             Collections.reverse(reversed); // reverse for search back
             all = reversed;
-            startIdx = total - startIdx; // reverse start position
+            startIdx = total - startIdx - 1; // reverse start position
         }
-        log.debug("String list size: %d".formatted(all.size()));
+        log.debug("Start search from %d%s in total %d".formatted(startIdx, startPos, total));
         for (int i = startIdx; i < all.size(); i++) {
             String s = all.get(i);
             if (contains.apply(s, keyword)) {
@@ -420,14 +421,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
             }
         }
         log.debug("Found at index: %d".formatted(idxFound));
-        if (reverse) idxFound = (total - idxFound - 1);
         if (idxFound >= 0) {
+            if (reverse) idxFound = (total - idxFound - 1);
             CellPos foundCellPos = CellPos.fromIndexOfAll(idxFound, rowSize);
             log.debug("Found matched at: %d %s".formatted(idxFound, foundCellPos));
             tableView.getSelectionModel().clearSelection();
             tableView.getSelectionModel().select(foundCellPos.getRowIdx(), tableView.getColumns().get(foundCellPos.getColIdx() + 1));
         }
         else {
+            tableView.getSelectionModel().clearSelection();
             selectedCellPos = null;
         }
     }
@@ -468,7 +470,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public boolean isSelected() {
-        return false;
+        return !tableView.getSelectionModel().isEmpty();
     }
 
     @Override
@@ -544,7 +546,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
                     if (pos.getColumn() < 0) return null;
                     String ret = data.get(pos.getColumn() - 1);
-                    log.trace("[%d,%d]%s%n", pos.getRow(), pos.getColumn(), ret);
+                    log.trace("[%d,%d] %s%n", pos.getRow(), pos.getColumn(), ret);
                     return ret;
                 }
                 return null;
