@@ -96,7 +96,7 @@ public class TextNavigator {
         int start = this.locate(keyword, caseSensitive ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase);
         int end = start + keyword.length() - 1;
         cursor = end + 1;
-        return convert(start, end);
+        return this.convert(start, end);
     }
 
     /**
@@ -111,7 +111,7 @@ public class TextNavigator {
         int start = locate(keyword, caseSensitive ? TextUtils::lastIndexOf : TextUtils::lastIndexOfIgnoreCase);
         int end = start + keyword.length() - 1;
         cursor = start - 1;
-        return convert(start, end);
+        return this.convert(start, end);
     }
 
     /**

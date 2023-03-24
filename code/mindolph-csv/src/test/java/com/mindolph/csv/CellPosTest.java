@@ -19,6 +19,7 @@ public class CellPosTest {
 
     @Test
     public void fromIndexOfAll() {
+        Assertions.assertEquals(null, CellPos.fromIndexOfAll(-1, COLUMNS));
         Assertions.assertEquals(l0c0, CellPos.fromIndexOfAll(0, COLUMNS));
         Assertions.assertEquals(l1c0, CellPos.fromIndexOfAll(10, COLUMNS));
         System.out.println(CellPos.fromIndexOfAll(8, 5));

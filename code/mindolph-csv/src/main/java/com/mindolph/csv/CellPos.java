@@ -13,22 +13,22 @@ public class CellPos {
     private int rowIdx;
     private int colIdx;
 
-    public static CellPos zero(){
-        return new CellPos(0,0);
+    public static CellPos zero() {
+        return new CellPos(0, 0);
     }
 
     public static CellPos fromTablePosition(TablePosition<?, ?> tablePosition) {
         return new CellPos(tablePosition.getRow(), tablePosition.getColumn());
     }
 
-    public static int getIndexOfAll(CellPos cellPos, int columns) {
-        return cellPos.getRowIdx() * columns + cellPos.getColIdx();
+    public static int getIndexOfAll(CellPos cellPos, int rowSize) {
+        return cellPos.getRowIdx() * rowSize + cellPos.getColIdx();
     }
 
-    public static CellPos fromIndexOfAll(int idx, int columns) {
-        return new CellPos(idx / columns, idx % columns);
+    public static CellPos fromIndexOfAll(int idx, int rowSize) {
+        if (idx < 0) return null;
+        return new CellPos(idx / rowSize, idx % rowSize);
     }
-
 
     public CellPos(int rowIdx, int colIdx) {
         this.rowIdx = rowIdx;

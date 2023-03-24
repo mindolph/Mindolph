@@ -1,6 +1,8 @@
 package com.mindolph.csv;
 
 import com.mindolph.base.EditorContext;
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.EventBus.MenuTag;
@@ -35,7 +37,6 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,6 +62,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private int stubRowIdx;
     private int clickedRowIdx = -1;
     private CellPos selectedCellPos;
+    private CsvNavigator csvNavigator;
 
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
 
@@ -155,6 +157,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     if (newSelected) {
                         selectedCellPos = new CellPos(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
                         log.debug("selectedCellPos: " + selectedCellPos);
+                        if (csvNavigator != null) {
+                            csvNavigator.moveCursor(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
+                        }
                         EventBus.getIns()
                                 .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected cell [%d-%d]".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)))
                                 .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty());
@@ -296,16 +301,25 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private ContextMenu createContextMenu() {
         contextMenu = new ContextMenu();
+        MenuItem miInsertBefore = new MenuItem("Insert New Line Before");
+        MenuItem miInsertAfter = new MenuItem("Insert New Line After");
         MenuItem miCopy = new MenuItem("Copy Row(s)");
         MenuItem miDelete = new MenuItem("Delete Row(s)");
+        miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        miInsertBefore.setOnAction(event -> {
+
+        });
+        miInsertAfter.setOnAction(event -> {
+
+        });
         miCopy.setOnAction(event -> {
             this.copy();
         });
         miDelete.setOnAction(event -> {
             // TODO last line should be kept back
-            deleteSelectedRows();
+            this.deleteSelectedRows();
         });
-        contextMenu.getItems().addAll(miCopy, miDelete);
+        contextMenu.getItems().addAll(miInsertBefore, miInsertAfter, miCopy, miDelete);
         return contextMenu;
     }
 
@@ -387,61 +401,44 @@ public class CsvEditor extends BaseEditor implements Initializable {
         return null;
     }
 
-    private void doSearch(String keyword, TextSearchOptions options, boolean reverse) {
-        BiFunction<String, String, Boolean> contains = options.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
-        ObservableList<Row> items = tableView.getItems();
-        CellPos startPos = selectedCellPos;
-        int startIdx = 0;
-        int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
-        if (startPos == null) {
-//            startPos = reverse ? new CellPos(items.size() - 1, rowSize - 1) : CellPos.zero();
-            startPos = CellPos.zero();
-        }
-        else {
-            startIdx = CellPos.getIndexOfAll(startPos, rowSize) + (reverse ? -1 : 1);//from previous/next of current position
-        }
-        log.trace("Row size: %d".formatted(rowSize));
-        int idxFound = -1;
-        List<String> all = this.stream().filter(Objects::nonNull).toList();
-        // all.forEach(System.out::println);
-        int total = all.size();
-        if (reverse) {
-            List<String> reversed = new LinkedList<>();
-            CollectionUtils.addAll(reversed, all);
-            Collections.reverse(reversed); // reverse for search back
-            all = reversed;
-            startIdx = total - startIdx - 1; // reverse start position
-        }
-        log.debug("Start search from %d%s in total %d".formatted(startIdx, startPos, total));
-        for (int i = startIdx; i < all.size(); i++) {
-            String s = all.get(i);
-            if (contains.apply(s, keyword)) {
-                idxFound = i;
-                break;
-            }
-        }
-        log.debug("Found at index: %d".formatted(idxFound));
-        if (idxFound >= 0) {
-            if (reverse) idxFound = (total - idxFound - 1);
-            CellPos foundCellPos = CellPos.fromIndexOfAll(idxFound, rowSize);
-            log.debug("Found matched at: %d %s".formatted(idxFound, foundCellPos));
-            tableView.getSelectionModel().clearSelection();
-            tableView.getSelectionModel().select(foundCellPos.getRowIdx(), tableView.getColumns().get(foundCellPos.getColIdx() + 1));
-        }
-        else {
-            tableView.getSelectionModel().clearSelection();
-            selectedCellPos = null;
-        }
-    }
-
     @Override
     public void searchNext(String keyword, TextSearchOptions options) {
-        this.doSearch(keyword, options, false);
+        this.search(keyword, options, false);
     }
 
     @Override
     public void searchPrev(String keyword, TextSearchOptions options) {
-        this.doSearch(keyword, options, true);
+        this.search(keyword, options, true);
+    }
+
+    private void search(String keyword, TextSearchOptions options, boolean reverse) {
+        int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
+        if (csvNavigator == null) {
+            csvNavigator = new CsvNavigator(this.stream().filter(Objects::nonNull).toList(), rowSize);
+        }
+        CellPos startPos = selectedCellPos;
+        CellPos foundCellPos;
+        if (startPos == null) {
+            csvNavigator.moveCursor(reverse ? csvNavigator.getTotal() - 1 : 0);
+        }
+        else {
+            if (reverse) csvNavigator.moveCursorPrev();
+            else csvNavigator.moveCursorNext();
+        }
+        if (reverse) {
+            foundCellPos = csvNavigator.locatePrev(keyword, options.isCaseSensitive());
+        }
+        else {
+            foundCellPos = csvNavigator.locateNext(keyword, options.isCaseSensitive());
+        }
+        log.debug("Found cell: %s".formatted(foundCellPos));
+        if (foundCellPos != null) {
+            tableView.getSelectionModel().clearSelection();
+            tableView.getSelectionModel().select(foundCellPos.getRowIdx(), tableView.getColumns().get(foundCellPos.getColIdx() + 1));
+        }
+        else {
+            selectedCellPos = null;
+        }
     }
 
     @Override
