@@ -97,6 +97,10 @@ public class NodeData {
         return file;
     }
 
+    public String getFileRelativePath() {
+        return FileNameUtils.getRelativePath(file, workspaceData.getFile());
+    }
+
     public void setFile(File file) {
         this.file = file;
     }

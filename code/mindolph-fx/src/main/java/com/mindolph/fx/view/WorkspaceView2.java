@@ -551,8 +551,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (isFile) {
                 Menu miCopy = new Menu("Copy");
                 miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
-                miCopyPathAbsolute = new MenuItem("Absolute Path");
-                miCopyPathRelative = new MenuItem("Relative Path");
+                miCopyPathAbsolute = new MenuItem("Absolute Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32));
+                miCopyPathRelative = new MenuItem("Relative Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32));
                 miCopyFile.setOnAction(this);
                 miCopyPathAbsolute.setOnAction(this);
                 miCopyPathRelative.setOnAction(this);
@@ -690,7 +690,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     /**
      * Expand specified nodes in this workspace tree.
-     *
      */
     public void expandTreeNodes() {
         TreeVisitor.dfsTraverse(rootItem, treeItem -> {
@@ -871,8 +870,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             ClipBoardUtils.textToClipboard(selectedData.getFile().getAbsolutePath());
         }
         else if (source == miCopyPathRelative) {
-            String relativePath = StringUtils.substringAfter(selectedData.getFile().getParent(), selectedData.getWorkspaceData().getFile().getPath());
-            ClipBoardUtils.textToClipboard(relativePath);
+            ClipBoardUtils.textToClipboard(selectedData.getFileRelativePath());
         }
         else if (source == miPasteFile) {
             this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
