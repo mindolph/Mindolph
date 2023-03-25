@@ -28,6 +28,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.function.TriFunction;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,17 +57,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private ContextMenu contextMenu;
 
     private final CSVFormat csvFormat;
+    private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
 
     private final UndoService<String> undoService;
+    private final EventSource<Void> dataChangedEvent = new EventSource<>();
+    private CellPos selectedCellPos;
+    private CsvNavigator csvNavigator;
 
     private String text; // cache
     private int stubColIdx;
     private int stubRowIdx;
     private int clickedRowIdx = -1;
-    private CellPos selectedCellPos;
-    private CsvNavigator csvNavigator;
-
-    private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
 
     public CsvEditor(EditorContext editorContext) {
         super("/editor/csv_editor.fxml", editorContext);
@@ -72,6 +75,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.undoService = new UndoServiceImpl<>(o -> {
             this.text = o;
             this.reload();
+            this.dataChangedEvent.push(null);
         }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
         csvFormat = CSVFormat.DEFAULT.builder().build();
     }
@@ -91,6 +95,16 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.text = IoUtils.readAll(fileReader);
         this.undoService.push(this.text);
         this.initTableView();
+        dataChangedEvent.subscribe(unused -> {
+            // todo only available for searching
+            int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
+            if (csvNavigator == null) {
+                csvNavigator = new CsvNavigator(this.stream().filter(Objects::nonNull).toList(), rowSize);
+            }
+            else {
+                csvNavigator.setData(this.stream().filter(Objects::nonNull).toList(), rowSize);
+            }
+        });
         Platform.runLater(() -> {
             afterLoading.run();
         });
@@ -140,7 +154,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             }
                             if (rowIdx == stubRowIdx) {
                                 stubRowIdx++;
-                                Row stubRow = createStubRow(tableView.getColumns().size() - 1 - 1);// last row editing activates new row.
+                                Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
                                 tableView.getItems().add(stubRow);
                             }
                             if (colIdx == stubColIdx - 1) {
@@ -156,7 +170,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.selectedProperty().addListener((observable, oldValue, newSelected) -> {
                     if (newSelected) {
                         selectedCellPos = new CellPos(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
-                        log.debug("selectedCellPos: " + selectedCellPos);
+                        log.trace("selectedCellPos: %s".formatted(selectedCellPos));
                         if (csvNavigator != null) {
                             csvNavigator.moveCursor(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
                         }
@@ -224,11 +238,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
             Row row = new Row();
             row.setIndex(records.indexOf(record));
             CollectionUtils.addAll(row.getData(), record);
+            row.getData().add(null); // for stub column
             rows.add(row);
         }
         // stub row
         stubRowIdx = records.size();
-        rows.add(createStubRow(columns.size() - 1 - 1)); // excludes index column and stub column
+        rows.add(createStubRow(columns.size() - 1)); // excludes index column
         tableView.getItems().addAll(rows);
     }
 
@@ -307,10 +322,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
         MenuItem miDelete = new MenuItem("Delete Row(s)");
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         miInsertBefore.setOnAction(event -> {
-
+            this.insertNewRow(0); // replace current actually
         });
         miInsertAfter.setOnAction(event -> {
-
+            this.insertNewRow(1); // insert to next
         });
         miCopy.setOnAction(event -> {
             this.copy();
@@ -349,23 +364,45 @@ public class CsvEditor extends BaseEditor implements Initializable {
         return false;
     }
 
+    private void insertNewRow(int offset) {
+        Row selectedRow = tableView.getSelectionModel().getSelectedItem();
+        if (selectedRow != null) {
+            int newIdx = selectedRow.getIndex() + offset;
+            if (newIdx >= 0 && newIdx < tableView.getItems().size()) {
+                Row newRow = createStubRow(tableView.getColumns().size() - 1);
+                newRow.setIndex(newIdx);
+                tableView.getSelectionModel().clearSelection();
+                System.out.println(tableView.getItems().size());
+                tableView.getItems().add(newIdx, newRow);
+                System.out.println(tableView.getItems().size());
+                this.reOrder();
+                tableView.refresh();
+                this.saveToCache();
+            }
+        }
+    }
+
     private void deleteSelectedRows() {
         Platform.runLater(() -> {
             ObservableList<Row> selectedRows = getSelectedRows();
-            log.trace("stubRowIdx=" + stubRowIdx);
+            log.trace("stubRowIdx=%d".formatted(stubRowIdx));
             List<Row> rowsWithoutStub = selectedRows.stream().filter(r -> r.getIndex() != stubRowIdx).toList();
             log.debug("Delete %d lines".formatted(rowsWithoutStub.size()));
             tableView.getItems().removeAll(rowsWithoutStub);
-            ObservableList<Row> items = tableView.getItems();
-            log.debug("%d rows left.".formatted(items.size()));
-            for (int i = 0; i < items.size(); i++) {
-                Row item = items.get(i);
-                item.setIndex(i);
-            }
-            stubRowIdx = items.size() - 1;
+            this.reOrder();
+            stubRowIdx = tableView.getItems().size() - 1;
             tableView.getSelectionModel().clearSelection();
             saveToCache();
         });
+    }
+
+    private void reOrder() {
+        ObservableList<Row> items = tableView.getItems();
+        log.debug("%d rows left.".formatted(items.size()));
+        for (int i = 0; i < items.size(); i++) {
+            Row item = items.get(i);
+            item.setIndex(i);
+        }
     }
 
     private ObservableList<Row> getSelectedRows() {
@@ -425,12 +462,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
             if (reverse) csvNavigator.moveCursorPrev();
             else csvNavigator.moveCursorNext();
         }
-        if (reverse) {
-            foundCellPos = csvNavigator.locatePrev(keyword, options.isCaseSensitive());
-        }
-        else {
-            foundCellPos = csvNavigator.locateNext(keyword, options.isCaseSensitive());
-        }
+        BiFunction<String, Boolean, CellPos> locate = reverse ? csvNavigator::locatePrev : csvNavigator::locateNext;
+        foundCellPos = locate.apply(keyword, options.isCaseSensitive());
         log.debug("Found cell: %s".formatted(foundCellPos));
         if (foundCellPos != null) {
             tableView.getSelectionModel().clearSelection();
@@ -443,12 +476,28 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
-
+        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        String firstSelectedText = getFirstSelectedText();
+        if (contains.apply(firstSelectedText, keywords)) {
+            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
+            String applied = replace.apply(getFirstSelectedText(), keywords, replacement);
+            this.setFirstSelectedCell(applied);
+            this.saveToCache();
+            tableView.refresh();
+        }
+        this.searchNext(keywords, searchOptions);
     }
 
     @Override
     public void replaceAll(String keywords, TextSearchOptions searchOptions, String replacement) {
-
+        // replace in cache
+        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        if (contains.apply(this.text, keywords)) {
+            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
+            this.text = replace.apply(this.text, keywords, replacement);
+            this.emmitEventsSinceCacheChanged();
+            this.reload();
+        }
     }
 
     @Override
@@ -499,15 +548,22 @@ public class CsvEditor extends BaseEditor implements Initializable {
             log.debug("Save to cache:");
             log.trace(csv);
             this.text = csv;
-            undoService.push(text);
-            EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
+            this.emmitEventsSinceCacheChanged();
             return true;
         }
         else {
+            // TODO need save anyway??
             log.debug("Nothing to save to cache");
         }
         return false;
     }
+
+    private void emmitEventsSinceCacheChanged() {
+        undoService.push(text);
+        dataChangedEvent.push(null);
+        EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
+    }
+
 
     @Override
     public void save() throws IOException {
@@ -551,13 +607,29 @@ public class CsvEditor extends BaseEditor implements Initializable {
         }).collect(Collectors.joining(LINE_SEPARATOR));
     }
 
+    private String getFirstSelectedText() {
+        Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
+        if (first.isPresent()) {
+            TablePosition pos = first.get();
+            Row row = tableView.getItems().get(pos.getRow());
+            return row.getData().get(pos.getColumn() - 1);
+        }
+        return EMPTY;
+    }
+
     private void setFirstSelectedCell(String text) {
         Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
         if (first.isPresent()) {
             TablePosition pos = first.get();
             List<String> data = tableView.getItems().get(pos.getRow()).getData();
-            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
-                data.set(Math.max(0, pos.getColumn() - 1), text);
+            int dataPos = pos.getColumn() - 1;
+            if (CollectionUtils.isNotEmpty(data) && dataPos < data.size()) {
+                data.set(Math.max(0, dataPos), text);
+            }
+            if (pos.getRow() == stubRowIdx) {
+                stubRowIdx++;
+                Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
+                tableView.getItems().add(stubRow);
             }
         }
     }

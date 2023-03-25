@@ -17,13 +17,17 @@ public class CsvNavigator {
 
     private static final Logger log = LoggerFactory.getLogger(CsvNavigator.class);
 
-    private final List<String> cells; // cells in total
-    private final List<String> reversedCells;
-    private final int rowSize;
-    private final int total;
+    private List<String> cells; // cells in total
+    private List<String> reversedCells;
+    private int rowSize;
+    private int total;
     private Integer cursor = 0;
 
     public CsvNavigator(List<String> cells, int rowSize) {
+        this.setData(cells, rowSize);
+    }
+
+    public void setData(List<String> cells, int rowSize) {
         this.cells = cells;
         this.rowSize = rowSize;
         this.total = cells.size();
