@@ -59,6 +59,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final CSVFormat csvFormat;
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
+    private EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditHandler;
 
     private final UndoService<String> undoService;
     private final EventSource<Void> dataChangedEvent = new EventSource<>();
@@ -131,7 +132,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             this.loadData(records);
 
-            EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditHandler = event -> {
+            commitEditHandler = event -> {
                 Platform.runLater(() -> {
                     saveToCache();
                 });
@@ -144,28 +145,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.textProperty().addListener((observable, oldText, newText) -> {
                     // log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldText, newText));
                     if (oldText != null && !StringUtils.equals(oldText, newText) && StringUtils.isNotBlank(newText)) {
-                        int colIdx = tableView.getColumns().indexOf(textCell.getTableColumn());
-                        int dataIdx = colIdx - 1;// -1 because of the index column.
-                        int rowIdx = textCell.getIndex();
-                        Row row = tableView.getItems().get(rowIdx);
-                        row.updateValue(dataIdx, newText);
-                        Platform.runLater(() -> {
-                            if (rowIdx == 0) {
-                                textCell.getTableColumn().setText(newText); // for all columns
-                            }
-                            if (rowIdx == stubRowIdx) {
-                                stubRowIdx++;
-                                Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
-                                tableView.getItems().add(stubRow);
-                            }
-                            if (colIdx == stubColIdx - 1) {
-                                TableColumn<Row, String> stubCol = appendColumn(EMPTY);
-                                stubCol.setCellFactory(cellFactory); // append a stub column
-                                stubCol.setOnEditCommit(commitEditHandler);
-                            }
-                            log.debug("Text from '%s' to '%s'".formatted(oldText, newText));
-                            fileChangedEventHandler.onFileChanged(editorContext.getFileData());
-                        });
+                        log.debug("Text from '%s' to '%s'".formatted(oldText, newText));
+                        this.onCellTextChanged(textCell.getIndex(), textCell.getTableColumn(), newText);
                     }
                 });
                 textCell.selectedProperty().addListener((observable, oldValue, newSelected) -> {
@@ -196,6 +177,30 @@ public class CsvEditor extends BaseEditor implements Initializable {
             log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
             this.editorReadyEventHandler.onEditorReady();
+        });
+    }
+
+    // wherever text changed, this will be called. like commit editing or paste text to cell.
+    private void onCellTextChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
+        int colIdx = tableView.getColumns().indexOf(column);
+        int dataIdx = colIdx - 1;// -1 because of the index column.
+        Row row = tableView.getItems().get(rowIdx);
+        row.updateValue(dataIdx, newText);
+        Platform.runLater(() -> {
+            if (rowIdx == 0) {
+                column.setText(newText); // for all columns
+            }
+            if (rowIdx == stubRowIdx) {
+                stubRowIdx++;
+                Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
+                tableView.getItems().add(stubRow);
+            }
+            if (colIdx == stubColIdx - 1) {
+                TableColumn<Row, String> stubCol = appendColumn(EMPTY);
+                stubCol.setCellFactory(cellFactory); // append a stub column
+                stubCol.setOnEditCommit(commitEditHandler);
+            }
+            fileChangedEventHandler.onFileChanged(editorContext.getFileData());
         });
     }
 
@@ -621,17 +626,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private void setFirstSelectedCell(String text) {
         Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
         if (first.isPresent()) {
-            TablePosition pos = first.get();
+            TablePosition<Row, String> pos = first.get();
             List<String> data = tableView.getItems().get(pos.getRow()).getData();
             int dataPos = pos.getColumn() - 1;
             if (CollectionUtils.isNotEmpty(data) && dataPos < data.size()) {
                 data.set(Math.max(0, dataPos), text);
             }
-            if (pos.getRow() == stubRowIdx) {
-                stubRowIdx++;
-                Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
-                tableView.getItems().add(stubRow);
-            }
+            // replacing text causes whole updating
+            this.onCellTextChanged(pos.getRow(), pos.getTableColumn(), text);
         }
     }
 
