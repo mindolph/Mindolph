@@ -102,6 +102,7 @@ public class SearchableCodeArea extends ExtCodeArea {
                 super.deleteText(super.getSelection());
             }
             else {
+                textNavigator.moveCursor(super.getSelection().getStart()); // make sure that the cursor is initialized if no searching was executed before replacing.
                 int offset = replacement.length() - super.getSelection().getLength();
                 super.replaceSelection(replacement);
                 textNavigator.adjustCursor(offset);
