@@ -28,7 +28,8 @@
     ```shell
     git clone https://github.com/mindolph/Mindolph.git
     ```
-    Use your favourite IDE to create a new project in folder `Mindolph/code`.
+
+    Use your favourite IDE to create a new project in folder `Mindolph/code`, after compiling completed, launch the application by executing main method in class `com.mindolph.fx.Launcher`.
 
 ### How to build an executable fat jar file
 
