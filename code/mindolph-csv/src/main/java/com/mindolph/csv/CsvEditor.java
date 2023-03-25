@@ -27,6 +27,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.TriFunction;
 import org.reactfx.EventSource;
@@ -371,10 +372,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
             if (newIdx >= 0 && newIdx < tableView.getItems().size()) {
                 Row newRow = createStubRow(tableView.getColumns().size() - 1);
                 newRow.setIndex(newIdx);
+                stubRowIdx++; //must increase stub row index before insert new row, otherwise the last row's moving will trigger redundant new stub row created.
                 tableView.getSelectionModel().clearSelection();
-                System.out.println(tableView.getItems().size());
                 tableView.getItems().add(newIdx, newRow);
-                System.out.println(tableView.getItems().size());
                 this.reOrder();
                 tableView.refresh();
                 this.saveToCache();
@@ -535,7 +535,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         return EMPTY;
                     }
                     else {
-                        return StringUtils.join(row.getData(), ", ");
+                        return row.getData().stream().filter(Objects::nonNull)
+                                .map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(","));
                     }
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
