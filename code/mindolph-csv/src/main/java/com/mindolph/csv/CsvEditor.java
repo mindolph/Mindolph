@@ -535,14 +535,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     private String rowsToCsv(ObservableList<Row> rows) {
-        Optional<String> reduced = rows.stream().map(row -> {
-                    if (row.getData().stream().allMatch(StringUtils::isBlank)) {
-                        return EMPTY;
-                    }
-                    else {
-                        return row.getData().stream().filter(Objects::nonNull)
-                                .map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(","));
-                    }
+        Optional<String> reduced = rows.stream()
+                .filter(row -> row.getIndex() != stubRowIdx)
+                .map(row -> {
+                    return row.getData().stream().map(s -> s == null ? EMPTY : s)
+                            .map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(","));
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
         return reduced.orElse(EMPTY);
@@ -603,7 +600,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             return tablePositions.stream().map(pos -> {
                 List<String> data = tableView.getItems().get(pos.getRow()).getData();
                 if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
-                    if (pos.getColumn() < 0) return null;
+                    if (pos.getColumn() <= 0) return null;
                     String ret = data.get(pos.getColumn() - 1);
                     log.trace("[%d,%d] %s%n", pos.getRow(), pos.getColumn(), ret);
                     return ret;
