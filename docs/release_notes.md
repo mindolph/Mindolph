@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.1.1 Release
+* Improvement: always open mmd file in Mindolph.
+* Improvement: enlarge code editor line spacing to make reading more comfortable.
+* Fix: copy relative path missing file name.
+* Fix: exception when replacing text without searching first.
+* Fix: searching stops when replacing fail.
+
 ### V1.1 Stable
 * Improvement: better merging for undo/redo history in code editor, it won't redo a lot of inputs now.
 * Fix: 'collapse all' does not really collapse all tree nodes for both workspace and folder.

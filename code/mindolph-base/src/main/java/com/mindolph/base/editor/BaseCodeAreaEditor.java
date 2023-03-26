@@ -162,9 +162,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         if (!codeArea.replaceSelection(keywords, searchOptions.isCaseSensitive(), replacement)) {
             log.debug("no text replaced");
         }
-        else {
-            codeArea.searchNext(keywords, searchOptions);
-        }
+        codeArea.searchNext(keywords, searchOptions);
     }
 
     @Override

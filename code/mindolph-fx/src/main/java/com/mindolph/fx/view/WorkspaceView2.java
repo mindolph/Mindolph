@@ -552,8 +552,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (isFile) {
                 Menu miCopy = new Menu("Copy");
                 miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
-                miCopyPathAbsolute = new MenuItem("Absolute Path");
-                miCopyPathRelative = new MenuItem("Relative Path");
+                miCopyPathAbsolute = new MenuItem("Absolute Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32));
+                miCopyPathRelative = new MenuItem("Relative Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32));
                 miCopyFile.setOnAction(this);
                 miCopyPathAbsolute.setOnAction(this);
                 miCopyPathRelative.setOnAction(this);
@@ -580,13 +580,16 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenu.getItems().add(miClone);
             }
             miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
-            miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
-            miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
             miDelete.setOnAction(this);
-            miOpenInSystem.setOnAction(this);
-            miCollapseAll.setOnAction(this);
-            contextMenu.getItems().addAll(miDelete, miOpenInSystem);
+            contextMenu.getItems().addAll(miDelete);
+            if (!nodeData.isMindMap()){
+                miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+                miOpenInSystem.setOnAction(this);
+                contextMenu.getItems().add(miOpenInSystem);
+            }
             if (isFolder) {
+                miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
+                miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
@@ -693,7 +696,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     /**
      * Expand specified nodes in this workspace tree.
-     *
      */
     public void expandTreeNodes() {
         TreeVisitor.dfsTraverse(rootItem, treeItem -> {
@@ -877,8 +879,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             ClipBoardUtils.textToClipboard(selectedData.getFile().getAbsolutePath());
         }
         else if (source == miCopyPathRelative) {
-            String relativePath = StringUtils.substringAfter(selectedData.getFile().getParent(), selectedData.getWorkspaceData().getFile().getPath());
-            ClipBoardUtils.textToClipboard(relativePath);
+            ClipBoardUtils.textToClipboard(selectedData.getFileRelativePath());
         }
         else if (source == miPasteFile) {
             this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
@@ -944,7 +945,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miOpenInSystem) {
             if (selectedData != null) {
                 log.info("Try to open file: " + selectedData.getFile());
-                MindolphFileUtils.openFileInSystem(selectedData.getFile());
+                if (selectedData.isMindMap()) {
+                    this.openSelectedFile(); // always open mmd file in Mindolph
+                }
+                else {
+                    MindolphFileUtils.openFileInSystem(selectedData.getFile());
+                }
             }
         }
         else if (source == miCollapseAll) {
