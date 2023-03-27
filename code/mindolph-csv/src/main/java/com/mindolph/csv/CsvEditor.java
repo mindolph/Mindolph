@@ -265,6 +265,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         TableColumn<Row, String> indexCol = new TableColumn<>(EMPTY);
         indexCol.setSortable(false);
         indexCol.setEditable(false);
+//        indexCol.setStyle("-fx-background-color: lightgrey;");
         indexCol.setCellFactory(column -> {
             TableCell<Row, String> indexCell = new SimpleTextCell();
             indexCell.setTextAlignment(TextAlignment.CENTER);
@@ -553,7 +554,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private boolean saveToCache() {
         String csv = rowsToCsv(tableView.getItems());
-        if (isNotBlank(csv)) {
+        if (!StringUtils.equals(csv, this.text)) {
             log.debug("Save to cache:");
             log.trace(csv);
             this.text = csv;
@@ -561,16 +562,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
             return true;
         }
         else {
-            // TODO need save anyway??
-            log.debug("Nothing to save to cache");
+            log.debug("Nothing new to save to cache");
         }
         return false;
     }
 
     private void emmitEventsSinceCacheChanged() {
+        super.isChanged = true;
         undoService.push(text);
         dataChangedEvent.push(null);
         EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
+        fileChangedEventHandler.onFileChanged(editorContext.getFileData());
     }
 
 
