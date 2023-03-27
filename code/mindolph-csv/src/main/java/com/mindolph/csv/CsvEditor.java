@@ -82,6 +82,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.text = o;
             this.reload();
             this.dataChangedEvent.push(null);
+            fileChangedEventHandler.onFileChanged(editorContext.getFileData());
         }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
         csvFormat = CSVFormat.DEFAULT.builder().build();
     }
@@ -235,7 +236,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
             List<String> headerList = headers.stream().toList();
             for (int i = 0; i < headerList.size(); i++) {
                 String header = headerList.get(i);
-                columns.get(i + 1).setText(header);
+                if (i < columns.size() - 1) {
+                    columns.get(i + 1).setText(header);
+                }
             }
         }
         else {
@@ -574,12 +577,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void save() throws IOException {
         log.info("Save cache to file: %s".formatted(editorContext.getFileData().getFile()));
-        if (saveToCache()) {
-            FileUtils.write(editorContext.getFileData().getFile(),
-                    TextUtils.convertToWindows(this.text), StandardCharsets.UTF_8);
-            super.isChanged = false;
-            fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
-        }
+        FileUtils.write(editorContext.getFileData().getFile(),
+                TextUtils.convertToWindows(this.text), StandardCharsets.UTF_8);
+        super.isChanged = false;
+        fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
     }
 
     @Override

@@ -19,6 +19,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
     private final List<Command<T>> queue = new LinkedList<>();
     private int currentPos = 0; // point to the element that current on UI
 
+    // applier for undo/redo
     private final Consumer<T> applier;
 
     private final AtomicBoolean isPerforming = new AtomicBoolean(false);
