@@ -48,7 +48,6 @@ import java.util.stream.Stream;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author mindolph.com@gmail.com
@@ -59,6 +58,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public static final int ROW_NEXT = 1;
     @FXML
     private TableView<Row> tableView;
+    private TableColumn<Row, String> indexCol;
     private ContextMenu contextMenu;
 
     private final CSVFormat csvFormat;
@@ -262,9 +262,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private void createIndexColumn() {
         log.debug("Create index column");
-        TableColumn<Row, String> indexCol = new TableColumn<>(EMPTY);
+        indexCol = new TableColumn<>(EMPTY);
         indexCol.setSortable(false);
         indexCol.setEditable(false);
+        indexCol.setResizable(false);
 //        indexCol.setStyle("-fx-background-color: lightgrey;");
         indexCol.setCellFactory(column -> {
             TableCell<Row, String> indexCell = new SimpleTextCell();
