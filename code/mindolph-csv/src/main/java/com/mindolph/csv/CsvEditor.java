@@ -13,6 +13,7 @@ import com.mindolph.core.util.IoUtils;
 import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
+import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.TriFunction;
@@ -53,6 +55,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 public class CsvEditor extends BaseEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(CsvEditor.class);
+    public static final int ROW_CURRENT = 0;
+    public static final int ROW_NEXT = 1;
     @FXML
     private TableView<Row> tableView;
     private ContextMenu contextMenu;
@@ -328,10 +332,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
         MenuItem miDelete = new MenuItem("Delete Row(s)");
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         miInsertBefore.setOnAction(event -> {
-            this.insertNewRow(0); // replace current actually
+            this.insertNewRow(ROW_CURRENT); // replace current actually
         });
         miInsertAfter.setOnAction(event -> {
-            this.insertNewRow(1); // insert to next
+            this.insertNewRow(ROW_NEXT); // insert to next
         });
         miCopy.setOnAction(event -> {
             this.copy();
@@ -458,9 +462,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
         if (csvNavigator == null) {
             csvNavigator = new CsvNavigator(this.stream().filter(Objects::nonNull).toList(), rowSize);
         }
-        CellPos startPos = selectedCellPos;
         CellPos foundCellPos;
-        if (startPos == null) {
+        if (selectedCellPos == null) {
             csvNavigator.moveCursor(reverse ? csvNavigator.getTotal() - 1 : 0);
         }
         else {
@@ -570,11 +573,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void save() throws IOException {
-        log.info("Save file: " + editorContext.getFileData().getFile());
+        log.info("Save cache to file: %s".formatted(editorContext.getFileData().getFile()));
         if (saveToCache()) {
-            // TODO
-//            FileUtils.write(editorContext.getFileData().getFile(),
-//                    TextUtils.convertToWindows(this.text), StandardCharsets.UTF_8);
+            FileUtils.write(editorContext.getFileData().getFile(),
+                    TextUtils.convertToWindows(this.text), StandardCharsets.UTF_8);
             super.isChanged = false;
             fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
         }
@@ -606,7 +608,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     return ret;
                 }
                 return null;
-            }).filter(Objects::nonNull).collect(Collectors.joining(", "));
+            }).filter(Objects::nonNull).map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(", "));
         }).collect(Collectors.joining(LINE_SEPARATOR));
     }
 
