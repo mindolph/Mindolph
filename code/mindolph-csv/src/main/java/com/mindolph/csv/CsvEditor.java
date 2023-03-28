@@ -102,6 +102,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.text = IoUtils.readAll(fileReader);
         this.undoService.push(this.text);
         this.initTableView();
+        // set index column width after data loaded.
+        Platform.runLater(() -> {
+            int width = String.valueOf(tableView.getItems().size()).length() * 16;
+            indexCol.setPrefWidth(width);
+        });
         dataChangedEvent.subscribe(unused -> {
             // todo only available for searching
             int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
@@ -266,26 +271,30 @@ public class CsvEditor extends BaseEditor implements Initializable {
         indexCol.setSortable(false);
         indexCol.setEditable(false);
         indexCol.setResizable(false);
-//        indexCol.setStyle("-fx-background-color: lightgrey;");
+        indexCol.setReorderable(false);
         indexCol.setCellFactory(column -> {
             TableCell<Row, String> indexCell = new SimpleTextCell();
             indexCell.setTextAlignment(TextAlignment.CENTER);
             indexCell.setAlignment(Pos.BASELINE_CENTER);
+            // indexCell.setStyle("-fx-background-color: lightgrey;");
             indexCell.setOnMouseReleased(event -> {
                 log.debug("Mouse pressed");
                 Platform.runLater(() -> {
                     TableView.TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
                     if (event.isShiftDown()) {
+                        log.debug("Multi rows selection");
                         int start = Math.min(indexCell.getIndex(), clickedRowIdx);
                         int end = Math.max(indexCell.getIndex(), clickedRowIdx);
                         log.debug("Select rows from %d to %d".formatted(start, end));
                         selectionModel.selectRange(start, end + 1);
                     }
                     else {
-                        if (!selectionModel.isSelected(indexCell.getIndex())) {
-                            log.debug("Select row: %d".formatted(indexCell.getIndex()));
-                            tableView.getSelectionModel().select(indexCell.getIndex());
-                        }
+                        log.debug("Single row selection");
+                        // comment since JFX 20
+//                        if (!selectionModel.isSelected(indexCell.getIndex())) {
+                        log.debug("Select row: %d".formatted(indexCell.getIndex()));
+                        tableView.getSelectionModel().select(indexCell.getIndex());
+//                        }
                         clickedRowIdx = indexCell.getIndex();
                     }
                 });
@@ -304,6 +313,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         column.setMinWidth(80);
         column.setEditable(true);
         column.setSortable(false);
+        column.setReorderable(false);
         column.setCellValueFactory(cellData -> {
             Row row = cellData.getValue();
             int colIdx = cellData.getTableView().getColumns().indexOf(cellData.getTableColumn());
