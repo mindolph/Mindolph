@@ -56,7 +56,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
 
     @Override
     public void reload() {
-        // do nothing.
+        // inherit me
     }
 
     @Override
