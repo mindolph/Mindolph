@@ -17,7 +17,6 @@ import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -63,7 +62,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final CSVFormat csvFormat;
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
-    private EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditHandler;
 
     private final UndoService<String> undoService;
     private final EventSource<Void> dataChangedEvent = new EventSource<>();
@@ -153,7 +151,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.textProperty().addListener((observable, oldText, newText) -> {
                     // log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldText, newText));
                     if (oldText != null && !StringUtils.equals(oldText, newText) && textCell.getIndex() >= 0) {
-                        log.debug("Text from '%s' to '%s' in %d, %s".formatted(oldText, newText, textCell.getIndex(), textCell.getTableColumn()));
+                        log.debug("Text from '%s' to '%s' in %d, %s".formatted(oldText, newText, textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn())));
                     }
                 });
                 textCell.selectedProperty().addListener((observable, oldValue, newSelected) -> {
@@ -213,7 +211,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     log.debug("Add new stub column since the stub column is changed");
                     TableColumn<Row, String> stubCol = appendColumn(EMPTY);
                     stubCol.setCellFactory(cellFactory); // append a stub column
-                    stubCol.setOnEditCommit(commitEditHandler);
                 }
             }
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
