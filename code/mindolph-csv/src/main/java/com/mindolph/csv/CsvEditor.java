@@ -145,9 +145,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.text = rowsToCsv(tableView.getItems());
             log.debug(this.text);
 
-            commitEditHandler = event -> {
-                Platform.runLater(this::saveToCache);
-            };
             // the cell factory will be used later.
             cellFactory = param -> {
                 EditTableCell<Row, String> textCell = EditTableCell.createStringEditCell();
@@ -155,10 +152,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.setEditable(true);
                 textCell.textProperty().addListener((observable, oldText, newText) -> {
                     // log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldText, newText));
-                    //
                     if (oldText != null && !StringUtils.equals(oldText, newText) && textCell.getIndex() >= 0) {
                         log.debug("Text from '%s' to '%s' in %d, %s".formatted(oldText, newText, textCell.getIndex(), textCell.getTableColumn()));
-                        this.onCellTextChanged(textCell.getIndex(), textCell.getTableColumn(), newText);
                     }
                 });
                 textCell.selectedProperty().addListener((observable, oldValue, newSelected) -> {
@@ -181,7 +176,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         for (int i = 1; i < columns.size(); i++) { // from 1 to exclude index column
                             TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
                             column.setCellFactory(cellFactory);
-                            column.setOnEditCommit(commitEditHandler);
                         }
                     }
             );
@@ -192,7 +186,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         });
     }
 
-    // wherever text changed, this will be called. like commit editing or paste text to cell.
+    // this will be call when editing committed
+    private void onCellTextChanged(TablePosition<Row, String> tablePosition, String text) {
+        this.onCellTextChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
+    }
+
+    // this will be called when pasting text to cell.
     private void onCellTextChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
         int colIdx = tableView.getColumns().indexOf(column);
         int dataIdx = colIdx - 1;// -1 because of the index column.
@@ -335,6 +334,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
             }
             return null;
         });
+        column.setOnEditCommit(event -> {
+            this.onCellTextChanged(event.getTablePosition(), event.getNewValue());
+            Platform.runLater(this::saveToCache);
+        });
         tableView.getColumns().add(column);
         stubColIdx = tableView.getColumns().size();
         return column;
@@ -468,10 +471,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private CellPos getSelectedCellPosition() {
         Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
-        if (first.isPresent()) {
-            return CellPos.fromTablePosition(first.get());
-        }
-        return null;
+        return first.map(CellPos::fromTablePosition).orElse(null);
     }
 
     @Override
