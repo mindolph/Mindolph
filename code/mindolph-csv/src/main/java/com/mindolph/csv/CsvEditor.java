@@ -3,6 +3,9 @@ package com.mindolph.csv;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.control.ExtTableView;
+import com.mindolph.base.control.Row;
+import com.mindolph.base.control.SimpleTextCell;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.EventBus.MenuTag;
@@ -15,12 +18,11 @@ import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,7 +45,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -55,8 +56,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(CsvEditor.class);
     public static final int ROW_CURRENT = 0;
     public static final int ROW_NEXT = 1;
-    @FXML
-    private TableView<Row> tableView;
+    //    @FXML
+    private ExtTableView tableView;
     private TableColumn<Row, String> indexCol;
     private ContextMenu contextMenu;
 
@@ -69,8 +70,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private CsvNavigator csvNavigator;
 
     private String text; // cache
-    private int stubColIdx;
-    private int stubRowIdx;
     private int clickedRowIdx = -1;
 
     public CsvEditor(EditorContext editorContext) {
@@ -88,10 +87,44 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         log.info("Initialize");
+        tableView = new ExtTableView() {
+            @Override
+            protected Callback<TableColumn<Row, String>, TableCell<Row, String>> createIndexCellFactory() {
+                return rowStringTableColumn -> {
+                    TableCell<Row, String> indexCell = new SimpleTextCell();
+                    indexCell.setTextAlignment(TextAlignment.CENTER);
+                    indexCell.setAlignment(Pos.BASELINE_CENTER);
+                    // indexCell.setStyle("-fx-background-color: lightgrey;");
+                    indexCell.setOnMouseReleased(event -> {
+                        log.debug("Mouse pressed");
+                        Platform.runLater(() -> {
+                            TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
+                            if (event.isShiftDown()) {
+                                log.debug("Multi rows selection");
+                                int start = Math.min(indexCell.getIndex(), clickedRowIdx);
+                                int end = Math.max(indexCell.getIndex(), clickedRowIdx);
+                                log.debug("Select rows from %d to %d".formatted(start, end));
+                                selectionModel.selectRange(start, end + 1);
+                            }
+                            else {
+                                log.debug("Single row selection");
+                                log.debug("Select row: %d".formatted(indexCell.getIndex()));
+                                tableView.getSelectionModel().select(indexCell.getIndex());
+                                clickedRowIdx = indexCell.getIndex();
+                            }
+                        });
+                    });
+                    indexCell.setContextMenu(createContextMenu());
+                    return indexCell;
+                };
+            }
+        };
+        AnchorPane.setLeftAnchor(tableView, 0d);
+        AnchorPane.setRightAnchor(tableView, 0d);
+        AnchorPane.setTopAnchor(tableView, 0d);
+        AnchorPane.setBottomAnchor(tableView, 0d);
         tableView.setPlaceholder(new Label("No content of this CSV file"));
-        tableView.setEditable(true);
-        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        tableView.getSelectionModel().setCellSelectionEnabled(true);
+        super.getChildren().add(tableView);
     }
 
     @Override
@@ -100,19 +133,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.text = IoUtils.readAll(fileReader);
         this.undoService.push(this.text);
         this.initTableView();
-        // set index column width after data loaded.
-        Platform.runLater(() -> {
-            int width = String.valueOf(tableView.getItems().size()).length() * 18;
-            indexCol.setPrefWidth(width);
-        });
         dataChangedEvent.subscribe(unused -> {
             // todo only available for searching
             int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
             if (csvNavigator == null) {
-                csvNavigator = new CsvNavigator(this.stream().filter(Objects::nonNull).toList(), rowSize);
+                csvNavigator = new CsvNavigator(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
             }
             else {
-                csvNavigator.setData(this.stream().filter(Objects::nonNull).toList(), rowSize);
+                csvNavigator.setData(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
             }
         });
         Platform.runLater(afterLoading);
@@ -124,17 +152,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
         List<CSVRecord> records = parsed.getRecords();
         Platform.runLater(() -> {
             // == init headers ==
-            // init index column
-            createIndexColumn();
             // init data column
             if (!records.isEmpty()) {
                 CSVRecord headers = records.get(0);
                 for (String header : headers) {
-                    appendColumn(header);
+                    tableView.appendColumn(header);
                 }
             }
             // init stub column
-            appendColumn(EMPTY);
+            tableView.appendColumn(EMPTY);
 
             this.loadData(records);
 
@@ -174,6 +200,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         for (int i = 1; i < columns.size(); i++) { // from 1 to exclude index column
                             TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
                             column.setCellFactory(cellFactory);
+                            column.setOnEditCommit(event -> {
+                                this.onDataChanged(event.getTablePosition(), event.getNewValue());
+                                Platform.runLater(this::saveToCache);
+                            });
                         }
                     }
             );
@@ -185,12 +215,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     // this will be call when editing committed
-    private void onCellTextChanged(TablePosition<Row, String> tablePosition, String text) {
-        this.onCellTextChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
+    private void onDataChanged(TablePosition<Row, String> tablePosition, String text) {
+        this.onDataChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
     }
 
     // this will be called when pasting text to cell.
-    private void onCellTextChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
+    private void onDataChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
+        log.debug("onDataChanged()");
+        log.debug("stubRowIdx: %d - stubColIdx: %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
         int colIdx = tableView.getColumns().indexOf(column);
         int dataIdx = colIdx - 1;// -1 because of the index column.
         Row row = tableView.getItems().get(rowIdx);
@@ -200,17 +232,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 column.setText(newText); // update text for any columns
             }
             if (StringUtils.isNotBlank(newText)) {
-                if (rowIdx == stubRowIdx) {
+                if (rowIdx == tableView.getStubRowIdx()) {
                     log.debug("Add new stub row since the stub row is changed");
-                    stubRowIdx++;
-                    Row stubRow = createStubRow(tableView.getColumns().size() - 1);// last row editing activates new row.
-                    tableView.getItems().add(stubRow);
+                    tableView.appendStubRow();
                     tableView.refresh();
                 }
-                if (colIdx == stubColIdx - 1) {
+                if (colIdx == tableView.getStubColIdx() - 1) {
                     log.debug("Add new stub column since the stub column is changed");
-                    TableColumn<Row, String> stubCol = appendColumn(EMPTY);
-                    stubCol.setCellFactory(cellFactory); // append a stub column
+                    TableColumn<Row, String> stubCol = tableView.appendColumn(EMPTY);
+                    stubCol.setCellFactory(cellFactory);
                 }
             }
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
@@ -262,93 +292,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
             row.getData().add(null); // for stub column
             rows.add(row);
         }
-        // stub row
-        stubRowIdx = records.size();
-        rows.add(createStubRow(columns.size() - 1)); // excludes index column
 //        Platform.runLater(() -> {
-        tableView.getItems().addAll(rows);
+        tableView.appendRows(rows);
+        // stub row
+        tableView.appendStubRow();
 //        });
-    }
-
-    private void createIndexColumn() {
-        log.debug("Create index column");
-        indexCol = new TableColumn<>(EMPTY);
-        indexCol.setSortable(false);
-        indexCol.setEditable(false);
-        indexCol.setResizable(false);
-        indexCol.setReorderable(false);
-        indexCol.setCellFactory(column -> {
-            TableCell<Row, String> indexCell = new SimpleTextCell();
-            indexCell.setTextAlignment(TextAlignment.CENTER);
-            indexCell.setAlignment(Pos.BASELINE_CENTER);
-            // indexCell.setStyle("-fx-background-color: lightgrey;");
-            indexCell.setOnMouseReleased(event -> {
-                log.debug("Mouse pressed");
-                Platform.runLater(() -> {
-                    TableView.TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
-                    if (event.isShiftDown()) {
-                        log.debug("Multi rows selection");
-                        int start = Math.min(indexCell.getIndex(), clickedRowIdx);
-                        int end = Math.max(indexCell.getIndex(), clickedRowIdx);
-                        log.debug("Select rows from %d to %d".formatted(start, end));
-                        selectionModel.selectRange(start, end + 1);
-                    }
-                    else {
-                        log.debug("Single row selection");
-                        // comment since JFX 20
-//                        if (!selectionModel.isSelected(indexCell.getIndex())) {
-                        log.debug("Select row: %d".formatted(indexCell.getIndex()));
-                        tableView.getSelectionModel().select(indexCell.getIndex());
-//                        }
-                        clickedRowIdx = indexCell.getIndex();
-                    }
-                });
-            });
-            indexCell.setContextMenu(createContextMenu());
-            return indexCell;
-        });
-        indexCol.setCellValueFactory(cellDataFeatures -> {
-            int idxRow = cellDataFeatures.getValue().getIndex();
-            return idxRow != stubRowIdx ? new SimpleStringProperty(String.valueOf(cellDataFeatures.getValue().getIndex() + 1)) : null;
-        });
-        tableView.getColumns().add(indexCol);
-    }
-
-    // Append a new column to the end of table columns.
-    private TableColumn<Row, String> appendColumn(String header) {
-        log.debug("Append new column '%s'".formatted(header));
-        TableColumn<Row, String> column = new TableColumn<>(header);
-        column.setMinWidth(80);
-        column.setEditable(true);
-        column.setSortable(false);
-        column.setReorderable(false);
-        column.setCellValueFactory(cellData -> {
-            Row row = cellData.getValue();
-            int colIdx = cellData.getTableView().getColumns().indexOf(cellData.getTableColumn());
-            int dataIdx = colIdx - 1;// -1 because of the index column.
-            if (dataIdx >= 0 && dataIdx < row.size()) {
-                return new SimpleStringProperty(row.getData().get(dataIdx));
-            }
-            return null;
-        });
-        column.setOnEditCommit(event -> {
-            this.onCellTextChanged(event.getTablePosition(), event.getNewValue());
-            Platform.runLater(this::saveToCache);
-        });
-        tableView.getColumns().add(column);
-        stubColIdx = tableView.getColumns().size();
-        return column;
-    }
-
-
-    private Row createStubRow(int size) {
-        log.debug("Append new row(stub)");
-        String[] stubStrs = new String[size]; // the stub cols index equals columns size.
-        Arrays.fill(stubStrs, null); // set default to null because it will be used to indicate the empty line.
-        Row stubRow = new Row();
-        stubRow.setIndex(stubRowIdx);
-        Collections.addAll(stubRow.getData(), stubStrs);
-        return stubRow;
     }
 
     private ContextMenu createContextMenu() {
@@ -368,8 +316,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.copy();
         });
         miDelete.setOnAction(event -> {
-            // TODO last line should be kept back
-            this.deleteSelectedRows();
+            tableView.deleteSelectedRows();
+            saveToCache();
         });
         contextMenu.getItems().addAll(miInsertBefore, miInsertAfter, miCopy, miDelete);
         return contextMenu;
@@ -388,7 +336,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public boolean paste() {
         if (tableView.isFocused()) {
-            setFirstSelectedCell(ClipBoardUtils.textFromClipboard());
+            String text = ClipBoardUtils.textFromClipboard();
+            TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
+            this.onDataChanged(pos.getRow(), pos.getTableColumn(), text);
             tableView.refresh();
             this.saveToCache();
         }
@@ -406,65 +356,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
         if (selectedRow != null) {
             int newIdx = selectedRow.getIndex() + offset;
             if (newIdx >= 0 && newIdx < tableView.getItems().size()) {
-                Row newRow = createStubRow(tableView.getColumns().size() - 1);
-                newRow.setIndex(newIdx);
-                stubRowIdx++; //must increase stub row index before insert new row, otherwise the last row's moving will trigger redundant new stub row created.
-                tableView.getSelectionModel().clearSelection();
-                tableView.getItems().add(newIdx, newRow);
-                this.reOrder();
+                tableView.insertNewRow(newIdx);
                 tableView.refresh();
                 this.saveToCache();
             }
         }
     }
 
-    private void deleteSelectedRows() {
-        Platform.runLater(() -> {
-            ObservableList<Row> selectedRows = getSelectedRows();
-            log.trace("stubRowIdx=%d".formatted(stubRowIdx));
-            List<Row> rowsWithoutStub = selectedRows.stream().filter(r -> r.getIndex() != stubRowIdx).toList();
-            log.debug("Delete %d lines".formatted(rowsWithoutStub.size()));
-            tableView.getItems().removeAll(rowsWithoutStub);
-            this.reOrder();
-            stubRowIdx = tableView.getItems().size() - 1;
-            tableView.getSelectionModel().clearSelection();
-            saveToCache();
-        });
-    }
 
-    private void reOrder() {
-        ObservableList<Row> items = tableView.getItems();
-        log.debug("%d rows left.".formatted(items.size()));
-        for (int i = 0; i < items.size(); i++) {
-            Row item = items.get(i);
-            item.setIndex(i);
-        }
-    }
-
-    private ObservableList<Row> getSelectedRows() {
-        return tableView.getSelectionModel().getSelectedItems();
-    }
-
-    private ObservableList<TablePosition> getSelectedCells() {
-        return tableView.getSelectionModel().getSelectedCells();
-    }
-
-    private List<String> getSelectedCellsData() {
-        ObservableList<TablePosition> selectedCells = getSelectedCells();
-        log.debug(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
-        return selectedCells.stream().map(pos -> {
-            List<String> data = tableView.getItems().get(pos.getRow()).getData();
-            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
-                if (pos.getColumn() < 0) return null;
-                return data.get(pos.getColumn());
-            }
-            return null;
-        }).toList();
-    }
-
-    private Stream<String> stream() {
-        return tableView.getItems().stream().flatMap(row -> row.getData().stream());
-    }
+//    private Stream<String> stream() {
+//        return tableView.getItems().stream().flatMap(row -> row.getData().stream());
+//    }
 
     private CellPos getSelectedCellPosition() {
         Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
@@ -484,7 +386,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private void search(String keyword, TextSearchOptions options, boolean reverse) {
         int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
         if (csvNavigator == null) {
-            csvNavigator = new CsvNavigator(this.stream().filter(Objects::nonNull).toList(), rowSize);
+            csvNavigator = new CsvNavigator(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
         }
         CellPos foundCellPos;
         if (selectedCellPos == null) {
@@ -509,11 +411,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
         BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
-        String firstSelectedText = getFirstSelectedText();
+        String firstSelectedText = tableView.getFirstSelectedText();
         if (contains.apply(firstSelectedText, keywords)) {
             TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
-            String applied = replace.apply(getFirstSelectedText(), keywords, replacement);
-            this.setFirstSelectedCell(applied);
+            String applied = replace.apply(firstSelectedText, keywords, replacement);
+            TablePosition<Row, String> pos = tableView.setFirstSelectedCell(applied);
+            this.onDataChanged(pos.getRow(), pos.getTableColumn(), text);
             this.saveToCache();
             tableView.refresh();
         }
@@ -563,7 +466,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private String rowsToCsv(ObservableList<Row> rows) {
         Optional<String> reduced = rows.stream()
-                .filter(row -> row.getIndex() != stubRowIdx)
+                .filter(row -> row.getIndex() != tableView.getStubRowIdx())
                 .map(row -> {
                     return row.getData().stream().map(s -> s == null ? EMPTY : s)
                             .map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(","));
@@ -617,46 +520,19 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public String getSelectionText() {
-        ObservableList<TablePosition> selectedCells = getSelectedCells();
+        ObservableList<TablePosition> selectedCells = tableView.getSelectedCells();
         log.debug(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
         LinkedHashMap<Integer, List<TablePosition>> map =
                 selectedCells.stream().collect(Collectors.groupingBy(TablePositionBase::getRow, LinkedHashMap::new, Collectors.toList()));
-        return map.values().stream().map(tablePositions -> {
-            return tablePositions.stream().map(pos -> {
-                List<String> data = tableView.getItems().get(pos.getRow()).getData();
-                if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
-                    if (pos.getColumn() <= 0) return null;
-                    String ret = data.get(pos.getColumn() - 1);
-                    log.trace("[%d,%d] %s%n", pos.getRow(), pos.getColumn(), ret);
-                    return ret;
-                }
-                return null;
-            }).filter(Objects::nonNull).map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(", "));
-        }).collect(Collectors.joining(LINE_SEPARATOR));
-    }
-
-    private String getFirstSelectedText() {
-        Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
-        if (first.isPresent()) {
-            TablePosition pos = first.get();
-            Row row = tableView.getItems().get(pos.getRow());
-            return row.getData().get(pos.getColumn() - 1);
-        }
-        return EMPTY;
-    }
-
-    private void setFirstSelectedCell(String text) {
-        Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
-        if (first.isPresent()) {
-            TablePosition<Row, String> pos = first.get();
+        return map.values().stream().map(tablePositions -> tablePositions.stream().map(pos -> {
             List<String> data = tableView.getItems().get(pos.getRow()).getData();
-            int dataPos = pos.getColumn() - 1;
-            if (CollectionUtils.isNotEmpty(data) && dataPos < data.size()) {
-                data.set(Math.max(0, dataPos), text);
+            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
+                if (pos.getColumn() <= 0) return null;
+                String ret = data.get(pos.getColumn() - 1);
+                log.trace("[%d,%d] %s", pos.getRow(), pos.getColumn(), ret);
+                return ret;
             }
-            // replacing text causes whole updating
-            this.onCellTextChanged(pos.getRow(), pos.getTableColumn(), text);
-        }
+            return null;
+        }).filter(Objects::nonNull).map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(", "))).collect(Collectors.joining(LINE_SEPARATOR));
     }
-
 }

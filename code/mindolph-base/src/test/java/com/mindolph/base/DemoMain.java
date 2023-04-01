@@ -1,7 +1,6 @@
 package com.mindolph.base;
 
 import com.mindolph.base.util.FxImageUtils;
-import com.mindolph.mfx.util.FxmlUtils;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
+
+import static com.mindolph.mfx.util.FxmlUtils.loadUriToStage;
 
 /**
  * Main entrance of demo for mindolph-core.
@@ -30,35 +31,40 @@ public class DemoMain extends Application {
 
     @FXML
     public void onDialogTest(ActionEvent event) {
-        FxmlUtils.loadUriToStage("/dialog/dialog_demo.fxml").show();
+        loadUriToStage("/dialog/dialog_demo.fxml").show();
     }
 
 
     @FXML
-    public void onFixedSplitPaneTest(ActionEvent event){
-        FxmlUtils.loadUriToStage("/container/fixed_splitpane_demo.fxml").show();
+    public void onFixedSplitPaneTest(ActionEvent event) {
+        loadUriToStage("/container/fixed_splitpane_demo.fxml").show();
     }
 
     @FXML
     public void onSplitPaneTest(ActionEvent event) {
-        FxmlUtils.loadUriToStage("/container/hidden_splitpane_demo.fxml").show();
+        loadUriToStage("/container/hidden_splitpane_demo.fxml").show();
     }
 
     @FXML
     public void onScrollableImageView(ActionEvent event) {
-        FxmlUtils.loadUriToStage("/control/scrollable_image_view_demo.fxml").show();
+        loadUriToStage("/control/scrollable_image_view_demo.fxml").show();
     }
 
     @FXML
     public void onScalableView(ActionEvent event) {
-        FxmlUtils.loadUriToStage("/control/scalable_view_demo.fxml").show();
+        loadUriToStage("/control/scalable_view_demo.fxml").show();
     }
 
     @FXML
     private void onCanvasDemo() {
-        FxmlUtils.loadUriToStage("/canvas/canvas_demo.fxml").show();
+        loadUriToStage("/canvas/canvas_demo.fxml").show();
     }
 
+    @FXML
+    private void onExtTableView() {
+        Stage stage = loadUriToStage("/control/ext_table_view_demo.fxml");
+        stage.show();
+    }
 
     public static class TestLauncher {
 
