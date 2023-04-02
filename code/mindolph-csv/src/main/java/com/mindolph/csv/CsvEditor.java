@@ -66,7 +66,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
 
     private final UndoService<String> undoService;
-    private final EventSource<Void> dataChangedEvent = new EventSource<>();
+    private final EventSource<Void> prepareSearchingEvent = new EventSource<>();
     private CellPos selectedCellPos;
     private CsvNavigator csvNavigator;
 
@@ -79,7 +79,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.undoService = new UndoServiceImpl<>(o -> {
             this.text = o;
             this.reload();
-            this.dataChangedEvent.push(null);
+            this.prepareSearchingEvent.push(null);
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
         }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
         csvFormat = CSVFormat.DEFAULT.builder().build();
@@ -141,9 +141,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.text = IoUtils.readAll(fileReader);
         this.undoService.push(this.text);
         this.initTableView();
-        dataChangedEvent.subscribe(unused -> {
+        prepareSearchingEvent.subscribe(unused -> {
             // todo only available for searching
-            int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
+            int rowSize = tableView.getColumns().size() - 1; // excludes index column.
             if (csvNavigator == null) {
                 csvNavigator = new CsvNavigator(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
             }
@@ -215,26 +215,26 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
                             column.setCellFactory(cellFactory);
                             column.setOnEditCommit(event -> {
-                                this.onDataChanged(event.getTablePosition(), event.getNewValue());
+                                this.onCellDataChanged(event.getTablePosition(), event.getNewValue());
                                 Platform.runLater(this::saveToCache);
                             });
                         }
                     }
             );
 
-            log.debug("%d columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
+            log.debug("%d data columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
 
             this.editorReadyEventHandler.onEditorReady();
         });
     }
 
     // this is call when editing committed
-    private void onDataChanged(TablePosition<Row, String> tablePosition, String text) {
-        this.onDataChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
+    private void onCellDataChanged(TablePosition<Row, String> tablePosition, String text) {
+        this.onCellDataChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
     }
 
     // this is called when pasting text to cell.
-    private void onDataChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
+    private void onCellDataChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
         log.debug("onDataChanged()");
         log.debug("stubRowIdx: %d - stubColIdx: %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
         int colIdx = tableView.getColumns().indexOf(column);
@@ -373,7 +373,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         if (tableView.isFocused()) {
             String text = ClipBoardUtils.textFromClipboard();
             TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
-            this.onDataChanged(pos.getRow(), pos.getTableColumn(), text);
+            this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), text);
             tableView.refresh();
             this.saveToCache();
         }
@@ -398,7 +398,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             int newIdx = selectedRow.getIndex() + offset;
             if (newIdx >= 0 && newIdx < tableView.getItems().size()) {
                 tableView.insertNewRow(newIdx);
-//                tableView.refresh();
                 this.saveToCache();
             }
         }
@@ -416,9 +415,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     private void search(String keyword, TextSearchOptions options, boolean reverse) {
-        int rowSize = tableView.getColumns().size() - 1 - 1; // excludes index column and stub column
         if (csvNavigator == null) {
-            csvNavigator = new CsvNavigator(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
+            prepareSearchingEvent.push(null);
         }
         CellPos foundCellPos;
         if (selectedCellPos == null) {
@@ -445,10 +443,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
         BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
         String firstSelectedText = tableView.getFirstSelectedText();
         if (contains.apply(firstSelectedText, keywords)) {
+            replacement = replacement == null ? EMPTY : replacement;
             TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
             String applied = replace.apply(firstSelectedText, keywords, replacement);
             TablePosition<Row, String> pos = tableView.setFirstSelectedCell(applied);
-            this.onDataChanged(pos.getRow(), pos.getTableColumn(), text);
+            this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), applied);
             this.saveToCache();
             tableView.refresh();
         }
@@ -525,7 +524,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private void emmitEventsSinceCacheChanged() {
         super.isChanged = true;
         undoService.push(text);
-        dataChangedEvent.push(null);
+        prepareSearchingEvent.push(null);
         EventBus.getIns().notifyMenuStateChange(MenuTag.UNDO, this.undoService.isUndoAvailable());
         fileChangedEventHandler.onFileChanged(editorContext.getFileData());
     }

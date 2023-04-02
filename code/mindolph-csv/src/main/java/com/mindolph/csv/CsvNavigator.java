@@ -34,6 +34,7 @@ public class CsvNavigator {
         this.reversedCells = new LinkedList<>();
         CollectionUtils.addAll(reversedCells, cells);
         Collections.reverse(reversedCells); // reverse for search back
+        log.trace("Initialized CSV navigator as [%s] with row size %d".formatted(StringUtils.join(cells, ","), rowSize));
     }
 
     public void moveCursor(int pos) {
@@ -82,6 +83,7 @@ public class CsvNavigator {
              i++) {
             String s = (reverse ? reversedCells : cells).get(i);
             if (contains.apply(s, keyword)) {
+                log.trace("at index: %d".formatted(i));
                 return i;
             }
         }
