@@ -99,6 +99,7 @@ public class ExtTableView extends TableView<Row> {
         super.getItems().add(index, newRow);
         this.afterRowAdded();
         this.reOrder();
+        super.refresh();
         return newRow;
     }
 
@@ -221,6 +222,7 @@ public class ExtTableView extends TableView<Row> {
             if (CollectionUtils.isNotEmpty(data) && dataPos < data.size()) {
                 data.set(Math.max(0, dataPos), text);
             }
+            super.refresh();
             return pos;
         }
         return null;
@@ -235,6 +237,7 @@ public class ExtTableView extends TableView<Row> {
                 data.set(Math.max(0, dataPos), text);
             }
         }
+        super.refresh();
         return selected;
     }
 

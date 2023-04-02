@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
@@ -56,10 +57,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(CsvEditor.class);
     public static final int ROW_CURRENT = 0;
     public static final int ROW_NEXT = 1;
-    //    @FXML
+
     private ExtTableView tableView;
-    private TableColumn<Row, String> indexCol;
-    private ContextMenu contextMenu;
+    private ContextMenu rowContextMenu;
+    private ContextMenu cellContextMenu;
 
     private final CSVFormat csvFormat;
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
@@ -124,6 +125,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
         AnchorPane.setTopAnchor(tableView, 0d);
         AnchorPane.setBottomAnchor(tableView, 0d);
         tableView.setPlaceholder(new Label("No content of this CSV file"));
+        tableView.setOnKeyPressed(keyEvent -> {
+            log.debug("Key pressed: " + keyEvent.getCode());
+            if (keyEvent.getCode() == KeyCode.DELETE) {
+                tableView.setAllSelectedCells(EMPTY);
+                keyEvent.consume();
+            }
+        });
         super.getChildren().add(tableView);
     }
 
@@ -197,6 +205,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                                 .notifyMenuStateChange(MenuTag.CUT, !textCell.getTableView().getSelectionModel().isEmpty());
                     }
                 });
+                textCell.setContextMenu(this.createCellContextMenu());
                 return textCell;
             };
             // NOTE: call setCellFactory here(in runLater()) otherwise the textProperty change event emitting messily.
@@ -297,15 +306,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
             row.getData().add(null); // for stub column
             rows.add(row);
         }
-//        Platform.runLater(() -> {
         tableView.appendRows(rows);
         // stub row
         tableView.appendStubRow();
-//        });
     }
 
     private ContextMenu createRowContextMenu() {
-        contextMenu = new ContextMenu();
+        rowContextMenu = new ContextMenu();
         MenuItem miInsertBefore = new MenuItem("Insert New Line Before");
         MenuItem miInsertAfter = new MenuItem("Insert New Line After");
         MenuItem miCopy = new MenuItem("Copy Row(s)");
@@ -324,13 +331,31 @@ public class CsvEditor extends BaseEditor implements Initializable {
             tableView.deleteSelectedRows();
             saveToCache();
         });
-        contextMenu.getItems().addAll(miInsertBefore, miInsertAfter, miCopy, miDelete);
-        return contextMenu;
+        rowContextMenu.getItems().addAll(miInsertBefore, miInsertAfter, miCopy, miDelete);
+        return rowContextMenu;
     }
 
     private ContextMenu createCellContextMenu() {
-        // TODO
-        return null;
+        cellContextMenu = new ContextMenu();
+        MenuItem miCut = new MenuItem("Cut");
+        MenuItem miCopy = new MenuItem("Copy");
+        MenuItem miPaste = new MenuItem("Paste");
+        MenuItem miDelete = new MenuItem("Delete");
+        miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        miCut.setOnAction(event -> {
+            this.cut();
+        });
+        miCopy.setOnAction(event -> {
+            this.copy();
+        });
+        miPaste.setOnAction(event -> {
+            this.paste();
+        });
+        miDelete.setOnAction(event -> {
+            tableView.setAllSelectedCells(EMPTY);
+        });
+        cellContextMenu.getItems().addAll(miCut, miCopy, miPaste, new SeparatorMenuItem(), miDelete);
+        return cellContextMenu;
     }
 
     @Override
@@ -362,7 +387,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             String selectionText = getSelectionText();
             ClipBoardUtils.textToClipboard(selectionText);
             tableView.setAllSelectedCells(EMPTY);
-            tableView.refresh();
             this.saveToCache();
         }
         return false;
@@ -374,7 +398,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             int newIdx = selectedRow.getIndex() + offset;
             if (newIdx >= 0 && newIdx < tableView.getItems().size()) {
                 tableView.insertNewRow(newIdx);
-                tableView.refresh();
+//                tableView.refresh();
                 this.saveToCache();
             }
         }
