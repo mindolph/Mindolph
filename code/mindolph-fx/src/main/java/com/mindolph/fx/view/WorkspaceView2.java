@@ -881,7 +881,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miRename) {
             this.requestRenameFolderOrFile(selectedData, newNameFile -> {
                 if (selectedData.isFile()) {
-                    selectedTreeItem.setValue(new NodeData(newNameFile));
+                    NodeData newFileData = new NodeData(newNameFile);
+                    newFileData.setWorkspaceData(selectedData.getWorkspaceData());
+                    selectedTreeItem.setValue(newFileData);
                 }
                 else if (selectedData.isFolder()) {
                     NodeData newFolderData = new NodeData(NodeType.FOLDER, newNameFile);
