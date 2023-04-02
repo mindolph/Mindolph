@@ -27,6 +27,11 @@
         <javafx.version>20</javafx.version>
         <commons.lang.version>3.12.0</commons.lang.version>
         <commons.io.version>2.11.0</commons.io.version>
+        <commons.text.version>1.10.0</commons.text.version>
+        <commons.collections.version>4.4</commons.collections.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <commons.validator.version>1.6</commons.validator.version>
+        <commons.csv.version>1.10.0</commons.csv.version>
         <swstate.version>1.1</swstate.version>
         <plantuml.version>1.2023.5</plantuml.version>
         <swiftboot.version>2.3</swiftboot.version>
@@ -127,17 +132,27 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.4</version>
+                <version>${commons.collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
+                <version>${commons.codec.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.6</version>
+                <version>${commons.validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${commons.csv.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fxmisc.richtext</groupId>

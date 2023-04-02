@@ -11,10 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -27,6 +25,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  * Streaming.
  *
  * @author mindolph.com@gmail.com
+ * @see Row
+ * @see SimpleTextCell
  */
 public class ExtTableView extends TableView<Row> {
     private static final Logger log = LoggerFactory.getLogger(ExtTableView.class);
@@ -77,7 +77,7 @@ public class ExtTableView extends TableView<Row> {
     }
 
     /**
-     * Create new row without index.
+     * Create new row without index, null value for elements.
      *
      * @param size
      * @return
@@ -144,6 +144,14 @@ public class ExtTableView extends TableView<Row> {
         return column;
     }
 
+    public boolean isStubColumn(TableColumn<Row,String> column) {
+        return super.getColumns().indexOf(column) == stubColIdx;
+    }
+
+    public boolean isStubColumn(int colIdx) {
+        return stubColIdx == colIdx;
+    }
+
     public boolean deleteSelectedRows() {
         ObservableList<Row> selectedRows = getSelectedRows();
         log.trace("stubRowIdx=%d".formatted(stubRowIdx));
@@ -171,6 +179,14 @@ public class ExtTableView extends TableView<Row> {
 
     public ObservableList<TablePosition> getSelectedCells() {
         return super.getSelectionModel().getSelectedCells();
+    }
+
+    public Map<Integer, List<TablePosition>> getSelectedCellsByRow() {
+        ObservableList<TablePosition> selectedCells = this.getSelectedCells();
+        log.debug(StringUtils.join(selectedCells.stream().map(tablePosition -> "[%d,%d]".formatted(tablePosition.getRow(), tablePosition.getColumn())).toList(), " "));
+        LinkedHashMap<Integer, List<TablePosition>> map =
+                selectedCells.stream().collect(Collectors.groupingBy(TablePositionBase::getRow, LinkedHashMap::new, Collectors.toList()));
+        return map;
     }
 
     public List<String> getSelectedCellsData() {
@@ -210,6 +226,18 @@ public class ExtTableView extends TableView<Row> {
         return null;
     }
 
+    public List<TablePosition> setAllSelectedCells(String text) {
+        List<TablePosition> selected = super.getSelectionModel().getSelectedCells().stream().toList();
+        for (TablePosition pos : selected) {
+            List<String> data = super.getItems().get(pos.getRow()).getData();
+            int dataPos = pos.getColumn() - 1;
+            if (CollectionUtils.isNotEmpty(data) && dataPos < data.size()) {
+                data.set(Math.max(0, dataPos), text);
+            }
+        }
+        return selected;
+    }
+
     /**
      * Stream all data
      *
@@ -219,8 +247,12 @@ public class ExtTableView extends TableView<Row> {
         return super.getItems().stream().flatMap(row -> row.getData().stream());
     }
 
+    /**
+     * Return the index of data columns (excludes the index column)
+     * @return
+     */
     public int getStubColIdx() {
-        return stubColIdx;
+        return stubColIdx - 1;
     }
 
     public int getStubRowIdx() {
