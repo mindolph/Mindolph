@@ -19,6 +19,7 @@ import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -64,6 +65,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final CSVFormat csvFormat;
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
+    private EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditCallback;
 
     private final UndoService<String> undoService;
     private final EventSource<Void> prepareSearchingEvent = new EventSource<>();
@@ -129,6 +131,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             log.debug("Key pressed: " + keyEvent.getCode());
             if (keyEvent.getCode() == KeyCode.DELETE) {
                 tableView.setAllSelectedCells(EMPTY);
+                this.saveToCache();
                 keyEvent.consume();
             }
         });
@@ -155,16 +158,28 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     private void initTableView() throws IOException {
+        commitEditCallback = event -> {
+            this.onCellDataChanged(event.getTablePosition(), event.getNewValue());
+            Platform.runLater(this::saveToCache);
+        };
         StringReader stringReader = new StringReader(this.text);
         CSVParser parsed = csvFormat.parse(stringReader);
         List<CSVRecord> records = parsed.getRecords();
         Platform.runLater(() -> {
             // == init headers ==
             // init data columns
-            boolean isNeedStubCol = records.stream().anyMatch(r -> StringUtils.isNotBlank(r.get(r.size() - 1)));
+            boolean isNeedStubCol = CollectionUtils.isEmpty(records)
+                    || records.stream().anyMatch(r -> StringUtils.isNotBlank(r.get(r.size() - 1)));
             if (!records.isEmpty()) {
+                // how many columns depends on the max size row.
+                Optional<CSVRecord> opt = records.stream().reduce((r1, r2) -> r1.size() > r2.size() ? r1 : r2);
+                int columns = opt.get().size();
                 CSVRecord headers = records.get(0);
-                for (String header : headers) {
+                for (int i = 0; i < columns; i++) {
+                    String header = EMPTY;
+                    if (i < headers.size()) {
+                        header = headers.get(i);
+                    }
                     tableView.appendColumn(header);
                 }
             }
@@ -179,7 +194,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             // text content loaded from file might be not the same with generated,
             // so it's necessary to reset the cached text to avoid redundant undo history.
             this.text = rowsToCsv(tableView.getItems());
-            log.debug(this.text);
+            log.debug("cache: \n%s".formatted(this.text));
 
             // the cell factory will be used later.
             cellFactory = param -> {
@@ -214,10 +229,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         for (int i = 1; i < columns.size(); i++) { // from 1 to exclude index column
                             TableColumn<Row, String> column = (TableColumn<Row, String>) columns.get(i);
                             column.setCellFactory(cellFactory);
-                            column.setOnEditCommit(event -> {
-                                this.onCellDataChanged(event.getTablePosition(), event.getNewValue());
-                                Platform.runLater(this::saveToCache);
-                            });
+                            column.setOnEditCommit(commitEditCallback);
                         }
                     }
             );
@@ -255,6 +267,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     log.debug("Add new stub column since the stub column is changed");
                     TableColumn<Row, String> stubCol = tableView.appendColumn(EMPTY);
                     stubCol.setCellFactory(cellFactory);
+                    stubCol.setOnEditCommit(commitEditCallback);
                 }
             }
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
@@ -299,7 +312,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         // init data content
         List<Row> rows = new LinkedList<>();
         for (CSVRecord record : records) {
-            log.debug("* " + StringUtils.join(record, ", "));
+            log.debug("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
             Row row = new Row();
             row.setIndex(records.indexOf(record));
             CollectionUtils.addAll(row.getData(), record);
@@ -496,11 +509,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     private String rowsToCsv(ObservableList<Row> rows) {
+        log.debug("convert rows to csv without stub row %d and col %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
         Optional<String> reduced = rows.stream()
-                .filter(row -> row.getIndex() != tableView.getStubRowIdx())
+                .filter(row -> row.getIndex() != tableView.getStubRowIdx()) // exclude stub row
                 .map(row -> {
-                    return row.getData().stream().filter(e -> row.getData().indexOf(e) != tableView.getStubColIdx())
-                            .map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(","));
+                    return row.getData().stream().filter(e -> row.getData().indexOf(e) != tableView.getStubColIdx()) // exclude stub column
+                            .map(s -> s == null ? EMPTY : s).map(StringEscapeUtils::escapeCsv)
+                            .collect(Collectors.joining(","));
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
         return reduced.orElse(EMPTY);

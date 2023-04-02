@@ -141,11 +141,11 @@ public class ExtTableView extends TableView<Row> {
             return null;
         });
         super.getColumns().add(column);
-        stubColIdx = super.getColumns().size();
+        stubColIdx = super.getColumns().size() - 1;
         return column;
     }
 
-    public boolean isStubColumn(TableColumn<Row,String> column) {
+    public boolean isStubColumn(TableColumn<Row, String> column) {
         return super.getColumns().indexOf(column) == stubColIdx;
     }
 
@@ -252,6 +252,7 @@ public class ExtTableView extends TableView<Row> {
 
     /**
      * Return the index of data columns (excludes the index column)
+     *
      * @return
      */
     public int getStubColIdx() {
