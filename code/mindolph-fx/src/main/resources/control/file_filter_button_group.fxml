@@ -8,6 +8,7 @@
         <ToggleButton mnemonicParsing="false" text=".mmd" userData="mmd"/>
         <ToggleButton mnemonicParsing="false" text=".puml" userData="puml"/>
         <ToggleButton mnemonicParsing="false" text=".md" userData="md"/>
+        <ToggleButton mnemonicParsing="false" text=".csv" userData="csv"/>
         <ToggleButton mnemonicParsing="false" text=".txt" userData="txt"/>
     </buttons>
 </fx:root>
