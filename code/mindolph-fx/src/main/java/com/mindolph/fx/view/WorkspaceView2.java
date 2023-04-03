@@ -605,7 +605,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
         miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
         plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
-        miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_TXT).build());
+        miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_CSV).build());
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);

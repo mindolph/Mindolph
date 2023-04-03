@@ -108,12 +108,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
                                 int end = Math.max(indexCell.getIndex(), clickedRowIdx);
                                 log.debug("Select rows from %d to %d".formatted(start, end));
                                 selectionModel.selectRange(start, end + 1);
+                                EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected rows: (%d-%d)".formatted(start + 1, end + 1)));
                             }
                             else {
                                 log.debug("Single row selection");
                                 log.debug("Select row: %d".formatted(indexCell.getIndex()));
                                 tableView.getSelectionModel().select(indexCell.getIndex());
                                 clickedRowIdx = indexCell.getIndex();
+                                EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected row: %d".formatted(clickedRowIdx + 1)));
                             }
                         });
                     });
@@ -194,7 +196,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             // text content loaded from file might be not the same with generated,
             // so it's necessary to reset the cached text to avoid redundant undo history.
             this.text = rowsToCsv(tableView.getItems());
-            log.debug("cache: \n%s".formatted(this.text));
+            log.trace("cache: \n%s".formatted(this.text));
 
             // the cell factory will be used later.
             cellFactory = param -> {
@@ -214,8 +216,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         if (csvNavigator != null) {
                             csvNavigator.moveCursor(textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn()) - 1);
                         }
+                        ObservableList<TablePosition> selectedCells = tableView.getSelectedCells();
+                        String msg = selectedCells.size() == 1
+                                ? "Selected cell (%d,%d)".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)
+                                : "Selected %d cells".formatted(selectedCells.size());
                         EventBus.getIns()
-                                .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected cell [%d-%d]".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)))
+                                .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(msg))
                                 .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty())
                                 .notifyMenuStateChange(MenuTag.CUT, !textCell.getTableView().getSelectionModel().isEmpty());
                     }
@@ -312,7 +318,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         // init data content
         List<Row> rows = new LinkedList<>();
         for (CSVRecord record : records) {
-            log.debug("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
+            log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
             Row row = new Row();
             row.setIndex(records.indexOf(record));
             CollectionUtils.addAll(row.getData(), record);
@@ -513,12 +519,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
         Optional<String> reduced = rows.stream()
                 .filter(row -> row.getIndex() != tableView.getStubRowIdx()) // exclude stub row
                 .map(row -> {
-                    return row.getData().stream().filter(e -> row.getData().indexOf(e) != tableView.getStubColIdx()) // exclude stub column
+                    return row.getData().stream().filter(e -> row.getData().indexOf(e) < tableView.getStubColIdx()) // exclude stub column
                             .map(s -> s == null ? EMPTY : s).map(StringEscapeUtils::escapeCsv)
                             .collect(Collectors.joining(","));
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
         return reduced.orElse(EMPTY);
+    }
+
+    public static void main(String[] args) {
+        List<String> l = Arrays.asList("a", "b", "c");
+        System.out.println(l.stream().filter(s -> l.indexOf(s) != 2).collect(Collectors.joining(",")));
     }
 
     private boolean saveToCache() {
