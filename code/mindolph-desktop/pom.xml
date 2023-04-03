@@ -18,7 +18,7 @@
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
         <app.version>1.2</app.version>
-        <app.release>Beta</app.release>
+        <app.release>beta</app.release>
         <jvm.modules>javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
