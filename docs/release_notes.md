@@ -2,8 +2,8 @@
 
 ### V1.2 Beta
 * New Feature: add WYSIWYG CSV file editor. 
-* Fix: exception when popup menu on a renamed file
-* Update JavaFX to 20, PlantUML to 1.2023.5
+* Fix: exception when popup menu on a renamed file.
+* Update JavaFX to 20, PlantUML to 1.2023.5 and some other dependencies.
 
 ### V1.1.1 Release
 * Improvement: always open mmd file in Mindolph.
