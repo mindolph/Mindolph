@@ -32,11 +32,13 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.*;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+
+import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
 
 public class TextExporter extends BaseExportExtension {
 
@@ -59,7 +61,8 @@ public class TextExporter extends BaseExportExtension {
         for (String s : lines) {
             if (nofirst) {
                 builder.append(State.NEXT_LINE);
-            } else {
+            }
+            else {
                 nofirst = true;
             }
             builder.append(line).append(s);
@@ -73,7 +76,8 @@ public class TextExporter extends BaseExportExtension {
         for (char c : text.toCharArray()) {
             if (Character.isISOControl(c)) {
                 result.append(' ');
-            } else {
+            }
+            else {
                 result.append(c);
             }
         }
@@ -90,8 +94,7 @@ public class TextExporter extends BaseExportExtension {
         return max;
     }
 
-    private void writeTopic(TopicNode topic, char ch, int shift,
-                            State state) {
+    private void writeTopic(TopicNode topic, char ch, int shift, State state) {
         int maxLen = getMaxLineWidth(topic.getText());
         state.append(shiftString(topic.getText(), ' ', shift)).nextLine()
                 .append(shiftString(StringUtils.repeat(ch, maxLen + 2), ' ', shift)).nextLine();
@@ -141,7 +144,8 @@ public class TextExporter extends BaseExportExtension {
 
                 if (!first) {
                     state.nextLine();
-                } else {
+                }
+                else {
                     first = false;
                 }
 
@@ -176,7 +180,7 @@ public class TextExporter extends BaseExportExtension {
         State state = new State();
 
         state.append("# ").append(VendorConstants.GENERATE_BY).nextLine();
-        state.append("# ").append(new Timestamp(new java.util.Date().getTime()).toString()).nextLine().nextLine();
+        state.append("# ").append(DateFormatUtils.format(System.currentTimeMillis(), DATE_TIME_FORMAT)).nextLine().nextLine();
 
         int shift = 0;
 

@@ -14,4 +14,6 @@ public interface TextConstants {
 
     String LINE_SEPARATOR2 = LINE_SEPARATOR + LINE_SEPARATOR;
 
+    String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 }
