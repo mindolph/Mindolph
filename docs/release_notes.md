@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.1.2 Release
+* Fix: rename an opened file and edit the file, the file name in tab will be recovered to the original. 
+* Fix: exception occasionally when locate file in workspace.
+* Fix: exception when exporting mindmap to freemind.
+* Fix: exception when popup menu on a renamed file.
+
+
 ### V1.1.1 Release
 * Improvement: always open mmd file in Mindolph.
 * Improvement: enlarge code editor line spacing to make reading more comfortable.
