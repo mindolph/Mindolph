@@ -456,7 +456,7 @@ public class FileTabView extends BaseView {
             openedFileMap.put(origNodeData, tab);
             // update the editor's context for saving content to new file(path)
             Editable editable = tabEditorMap.get(tab);
-            editable.getEditorContext().setFileData(origNodeData);
+            editable.getEditorContext().getFileData().setFile(newFile);
             tab.setText((editable.isChanged() ? "*" : StringUtils.EMPTY) + newFile.getName());
             tab.setTooltip(new Tooltip(newFile.getPath()));
         }
