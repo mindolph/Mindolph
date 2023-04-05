@@ -581,7 +581,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setOnAction(this);
             contextMenu.getItems().addAll(miDelete);
-            if (!nodeData.isMindMap()){
+            if (!nodeData.isMindMap()) {
                 miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
                 miOpenInSystem.setOnAction(this);
                 contextMenu.getItems().add(miOpenInSystem);
@@ -682,6 +682,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (item == null) return false;
         TreeViewSkin<?> skin = (TreeViewSkin<?>) treeView.getSkin();
         VirtualFlow<?> vf = (VirtualFlow<?>) skin.getChildren().get(0);
+        if (vf == null || vf.getFirstVisibleCell() == null || vf.getLastVisibleCell() == null) {
+            return false;
+        }
         int f = vf.getFirstVisibleCell().getIndex();
         int l = vf.getLastVisibleCell().getIndex();
         Integer i = item.getValue().getDisplayIndex();
