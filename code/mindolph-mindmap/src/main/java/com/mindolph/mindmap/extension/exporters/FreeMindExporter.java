@@ -36,12 +36,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import javax.swing.*;
 import java.io.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
 
 public class FreeMindExporter extends BaseExportExtension {
 
@@ -170,7 +172,7 @@ public class FreeMindExporter extends BaseExportExtension {
         state.append("<map version=\"1.0.1\">").nextLine();
 
         state.append("<!--").nextLine().append(VendorConstants.GENERATE_BY).nextLine();
-        state.append(new Timestamp(new java.util.Date().getTime()).toString()).nextLine().append("-->").nextLine();
+        state.append(DateFormatUtils.format(System.currentTimeMillis(), DATE_TIME_FORMAT)).nextLine().append("-->").nextLine();
 
         TopicNode root = context.getModel().getRoot();
         if (root != null) {

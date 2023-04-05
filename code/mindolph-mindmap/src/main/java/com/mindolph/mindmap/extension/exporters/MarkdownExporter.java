@@ -33,10 +33,13 @@ import javafx.scene.input.ClipboardContent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.*;
 import java.util.List;
 import java.util.Map;
+
+import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
 
 public class MarkdownExporter extends BaseExportExtension {
 
@@ -188,7 +191,7 @@ public class MarkdownExporter extends BaseExportExtension {
                 .nextLine()
                 .append(VendorConstants.GENERATE_BY)
                 .nextLine();
-        state.append(DATE_FORMAT.format(new java.util.Date().getTime())).nextLine().append("-->").nextLine();
+        state.append(DateFormatUtils.format(System.currentTimeMillis(), DATE_TIME_FORMAT)).nextLine().append("-->").nextLine();
 
         TopicNode  root = model.getRoot();
         if (root != null) {

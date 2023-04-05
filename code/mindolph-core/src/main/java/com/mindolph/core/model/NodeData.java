@@ -107,6 +107,7 @@ public class NodeData {
 
     public void setFile(File file) {
         this.file = file;
+        this.name = file.getName();
     }
 
     public NodeType getNodeType() {
