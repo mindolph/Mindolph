@@ -1,6 +1,6 @@
 ### Mindolph
 
-![](./DemoWorkspace/app_30.png)
+![](../DemoWorkspace/app_30.png)
 
 Mindolph 是一个支持多平台的开源的个人知识库管理软件。
 
@@ -34,9 +34,9 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。
 
 
 ### 界面
-![](docs/main.png)
+![](main.png)
 
-[更多](docs/screenshots.md)
+[更多](screenshots.md)
 
 
 ### 安装
@@ -64,9 +64,9 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。
 
 
 
-[发布历史](docs/release_notes.md)
+[发布历史](release_notes.md)
 
 
 ### 开发
 
-[code/README.md](code/README.md)
+[code/README.md](../code/README.md)
