@@ -533,16 +533,16 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private void openSelectedFile() {
         Optional<NodeData> selectedValue = getSelectedValue();
         if (selectedValue.isPresent()) {
-            NodeData nodeObject = selectedValue.get();
-            if (nodeObject.isFile()) {
-                if (!nodeObject.getFile().exists()) {
+            NodeData nodeData = selectedValue.get();
+            if (nodeData.isFile()) {
+                if (!nodeData.getFile().exists()) {
                     DialogFactory.errDialog("File doesn't exist, it might be deleted or moved externally.");
-                    removeTreeNode(nodeObject);
-                    EventBus.getIns().notifyDeletedFile(nodeObject);
+                    removeTreeNode(nodeData);
+                    EventBus.getIns().notifyDeletedFile(nodeData);
                     return;
                 }
-                log.info("Open file: " + nodeObject.getFile());
-                EventBus.getIns().notifyOpenFile(new OpenFileEvent(nodeObject.getFile()));
+                log.info("Open file: " + nodeData.getFile());
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(nodeData.getFile()));
             }
         }
     }
@@ -641,12 +641,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (nodeData != null) {
             WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(nodeData.getFile().getPath());
             if (workspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
-                selectByNodeData(nodeData);
+                this.selectByNodeData(nodeData);
                 this.scrollToSelected();
             }
             else {
                 EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
-                    selectByNodeData(nodeData);
+                    this.selectByNodeData(nodeData);
                     this.scrollToSelected();
                 });
                 log.debug("Select workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
