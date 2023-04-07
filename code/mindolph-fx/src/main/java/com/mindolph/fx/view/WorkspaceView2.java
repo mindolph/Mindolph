@@ -7,7 +7,9 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
-import com.mindolph.base.event.*;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.base.event.SearchResultEventHandler;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.config.WorkspaceConfig;
@@ -297,9 +299,18 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnCollapseAll.setOnMouseClicked(btnEventHandler);
         btnFindInFiles.setOnMouseClicked(btnEventHandler);
 
-        EventBus.getIns().subscribeNewFileToWorkspace(file -> {
-                    TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
-                    this.addFileAndSelect(parentTreeItem, new NodeData(file));
+        EventBus.getIns()
+                // for "save as"
+                .subscribeNewFileToWorkspace(file -> {
+                    NodeData newFileData = new NodeData(file);
+                    newFileData.setWorkspaceData(activeWorkspaceData);
+                    if (activeWorkspaceData.getFile().equals(file.getParentFile())) {
+                        this.addFileAndSelect(rootItem, newFileData);
+                    }
+                    else {
+                        TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
+                        this.addFileAndSelect(parentTreeItem, newFileData);
+                    }
                 })
                 .subscribeWorkspaceRenamed(event -> {
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
@@ -523,16 +534,16 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private void openSelectedFile() {
         Optional<NodeData> selectedValue = getSelectedValue();
         if (selectedValue.isPresent()) {
-            NodeData nodeObject = selectedValue.get();
-            if (nodeObject.isFile()) {
-                if (!nodeObject.getFile().exists()) {
+            NodeData nodeData = selectedValue.get();
+            if (nodeData.isFile()) {
+                if (!nodeData.getFile().exists()) {
                     DialogFactory.errDialog("File doesn't exist, it might be deleted or moved externally.");
-                    removeTreeNode(nodeObject);
-                    EventBus.getIns().notifyDeletedFile(nodeObject);
+                    removeTreeNode(nodeData);
+                    EventBus.getIns().notifyDeletedFile(nodeData);
                     return;
                 }
-                log.info("Open file: " + nodeObject.getFile());
-                EventBus.getIns().notifyOpenFile(new OpenFileEvent(nodeObject.getFile()));
+                log.info("Open file: " + nodeData.getFile());
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(nodeData.getFile()));
             }
         }
     }
@@ -633,12 +644,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (nodeData != null) {
             WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(nodeData.getFile().getPath());
             if (workspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
-                selectByNodeData(nodeData);
+                this.selectByNodeData(nodeData);
                 this.scrollToSelected();
             }
             else {
                 EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
-                    selectByNodeData(nodeData);
+                    this.selectByNodeData(nodeData);
                     this.scrollToSelected();
                 });
                 log.debug("Select workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
@@ -1114,7 +1125,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      * because it's faster than traversing the whole tree.
      *
      * @param file
-     * @return
+     * @return tree item that matches the file, root tree item is always excluded.
      */
     public TreeItem<NodeData> findTreeItemByFile(File file) {
         return TreeFinder.findTreeItemPathMatch(rootItem, treeItem -> {

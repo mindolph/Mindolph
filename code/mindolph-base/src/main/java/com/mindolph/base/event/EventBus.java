@@ -160,20 +160,7 @@ public class EventBus {
         return this;
     }
 
-    public EventBus notifyNewFileToWorkspace(File file) {
-        newFileToWorkspace.push(file);
-        return this;
-    }
 
-    public EventBus notifyOpenFile(OpenFileEvent event) {
-        openFile.push(event);
-        return this;
-    }
-
-    public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
-        openFile.subscribe(consumer);
-        return this;
-    }
 
     public EventBus notifyLocateInWorkspace(NodeData data) {
         locateInWorkspace.push(data);
@@ -239,6 +226,21 @@ public class EventBus {
 
     public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
         newFileToWorkspace.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyNewFileToWorkspace(File file) {
+        newFileToWorkspace.push(file);
+        return this;
+    }
+
+    public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
+        openFile.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyOpenFile(OpenFileEvent event) {
+        openFile.push(event);
         return this;
     }
 

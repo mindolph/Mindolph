@@ -48,7 +48,7 @@ public class FileNameUtils {
     }
 
     public static boolean isParentFolder(File folder, File file) {
-        return file.getPath().startsWith(folder.getPath());
+        return StringUtils.startsWith(file.getParentFile().getPath(), folder.getPath());
     }
 
     public static String getRelativePath(String fullPath, String ancestorPath) {
