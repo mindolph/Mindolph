@@ -39,10 +39,9 @@ public class NodeData {
         this.name = file.getName();
     }
 
-    public NodeData(String name, File file) {
+    public NodeData(String name) {
         this.name = name;
-        this.file = file;
-        this.nodeType = NodeType.FILE;
+        this.nodeType = NodeType.WORKSPACE;
     }
 
     public Integer getDisplayIndex() {

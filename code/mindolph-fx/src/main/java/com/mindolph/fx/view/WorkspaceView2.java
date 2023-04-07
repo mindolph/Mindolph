@@ -138,7 +138,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     public WorkspaceView2() {
         super("/view/workspace_view2.fxml");
         log.info("Init workspace view");
-        rootItem = new TreeItem<>(new NodeData("Workspace Stub", null));
+        rootItem = new TreeItem<>(new NodeData("Workspace Stub"));
 
         cbWorkspaces.setConverter(new StringConverter<>() {
             @Override
@@ -554,6 +554,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
                 miCopyPathAbsolute = new MenuItem("Absolute Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32));
                 miCopyPathRelative = new MenuItem("Relative Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32));
+                miCopyPathAbsolute.setMnemonicParsing(false);
+                miCopyPathRelative.setMnemonicParsing(false);
                 miCopyFile.setOnAction(this);
                 miCopyPathAbsolute.setOnAction(this);
                 miCopyPathRelative.setOnAction(this);
@@ -869,7 +871,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     // add new file to tree view
                     if (newFile != null && newFile.exists()) {
                         selectedTreeItem.setExpanded(true);
-                        addFile(selectedTreeItem, new NodeData(newFile));
+                        NodeData nodeData = new NodeData(newFile);
+                        nodeData.setWorkspaceData(selectedData.getWorkspaceData());
+                        addFile(selectedTreeItem, nodeData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newFile));
                     }
                 }
@@ -985,6 +989,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             return;
         }
         NodeData newFileData = new NodeData(cloneFile);
+        newFileData.setWorkspaceData(activeWorkspaceData);
         addFile(folderTreeItem, newFileData);
         treeView.refresh();
     }

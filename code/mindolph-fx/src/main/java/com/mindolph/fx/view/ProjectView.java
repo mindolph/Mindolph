@@ -122,7 +122,7 @@ public class ProjectView extends BaseView implements EventHandler<ActionEvent>,
     public ProjectView() {
         super("/view/workspace_view.fxml");
         log.info("Init project view");
-        rootItem = new TreeItem<>(new NodeData("Hidden Root", null));
+        rootItem = new TreeItem<>(new NodeData("Hidden Root"));
         rootItem.setExpanded(true);
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
