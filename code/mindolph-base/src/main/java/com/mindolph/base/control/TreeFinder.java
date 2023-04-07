@@ -42,7 +42,9 @@ public class TreeFinder {
      * @param targetPredicate predicate the target item.
      * @return
      */
-    public static <T> TreeItem<T> findTreeItemPathMatch(TreeItem<T> parent, Predicate<TreeItem<T>> pathPredicate, Predicate<TreeItem<T>> targetPredicate) {
+    public static <T> TreeItem<T> findTreeItemPathMatch(TreeItem<T> parent,
+                                                        Predicate<TreeItem<T>> pathPredicate,
+                                                        Predicate<TreeItem<T>> targetPredicate) {
         if (targetPredicate.test(parent)) {
             return parent;
         }

@@ -7,7 +7,9 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
-import com.mindolph.base.event.*;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.base.event.SearchResultEventHandler;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.config.WorkspaceConfig;
@@ -296,9 +298,18 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnCollapseAll.setOnMouseClicked(btnEventHandler);
         btnFindInFiles.setOnMouseClicked(btnEventHandler);
 
-        EventBus.getIns().subscribeNewFileToWorkspace(file -> {
-                    TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
-                    this.addFileAndSelect(parentTreeItem, new NodeData(file));
+        EventBus.getIns()
+                // for "save as"
+                .subscribeNewFileToWorkspace(file -> {
+                    NodeData newFileData = new NodeData(file);
+                    newFileData.setWorkspaceData(activeWorkspaceData);
+                    if (activeWorkspaceData.getFile().equals(file.getParentFile())) {
+                        this.addFileAndSelect(rootItem, newFileData);
+                    }
+                    else {
+                        TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
+                        this.addFileAndSelect(parentTreeItem, newFileData);
+                    }
                 })
                 .subscribeWorkspaceRenamed(event -> {
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
@@ -1108,7 +1119,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      * because it's faster than traversing the whole tree.
      *
      * @param file
-     * @return
+     * @return tree item that matches the file, root tree item is always excluded.
      */
     public TreeItem<NodeData> findTreeItemByFile(File file) {
         return TreeFinder.findTreeItemPathMatch(rootItem, treeItem -> {

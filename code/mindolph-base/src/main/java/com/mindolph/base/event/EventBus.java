@@ -160,10 +160,6 @@ public class EventBus {
         return this;
     }
 
-    public EventBus notifyNewFileToWorkspace(File file) {
-        newFileToWorkspace.push(file);
-        return this;
-    }
 
     public EventBus notifyOpenFile(OpenFileEvent event) {
         openFile.push(event);
@@ -234,6 +230,11 @@ public class EventBus {
 
     public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
         newFileToWorkspace.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyNewFileToWorkspace(File file) {
+        newFileToWorkspace.push(file);
         return this;
     }
 
