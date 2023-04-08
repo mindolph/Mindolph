@@ -67,6 +67,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
     private EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditCallback;
 
+    private EditTableCell<Row, String> focusedCell;
+
     private final UndoService<String> undoService;
     private final EventSource<Void> prepareSearchingEvent = new EventSource<>();
     private CellPos selectedCellPos;
@@ -227,6 +229,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     }
                 });
                 textCell.setContextMenu(this.createCellContextMenu());
+                textCell.focusedProperty().addListener((observableValue, aBoolean, t1) -> {
+                    if (t1) {
+                        focusedCell = textCell;
+                    }
+                });
                 return textCell;
             };
             // NOTE: call setCellFactory here(in runLater()) otherwise the textProperty change event emitting messily.
@@ -356,11 +363,17 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private ContextMenu createCellContextMenu() {
         cellContextMenu = new ContextMenu();
+        MenuItem miEdit = new MenuItem("Edit");
         MenuItem miCut = new MenuItem("Cut");
         MenuItem miCopy = new MenuItem("Copy");
         MenuItem miPaste = new MenuItem("Paste");
         MenuItem miDelete = new MenuItem("Delete");
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        miEdit.setOnAction(event -> {
+            if (focusedCell != null) {
+                focusedCell.startEdit();
+            }
+        });
         miCut.setOnAction(event -> {
             this.cut();
         });
@@ -373,7 +386,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         miDelete.setOnAction(event -> {
             tableView.setAllSelectedCells(EMPTY);
         });
-        cellContextMenu.getItems().addAll(miCut, miCopy, miPaste, new SeparatorMenuItem(), miDelete);
+        cellContextMenu.getItems().addAll(miEdit, miCut, miCopy, miPaste, new SeparatorMenuItem(), miDelete);
         return cellContextMenu;
     }
 
@@ -593,9 +606,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 .collect(Collectors.joining(LINE_SEPARATOR));
     }
 
+    private CellPos getFocusedCellPosition() {
+        return CellPos.fromTablePosition(tableView.getFocusModel().getFocusedCell());
+    }
 
     private CellPos getSelectedCellPosition() {
         Optional<TablePosition> first = tableView.getSelectionModel().getSelectedCells().stream().findFirst();
         return first.map(CellPos::fromTablePosition).orElse(null);
     }
+
 }

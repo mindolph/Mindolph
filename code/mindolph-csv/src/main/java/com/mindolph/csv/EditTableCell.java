@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * https://gist.github.com/james-d/be5bbd6255a4640a5357
+ *
  * @author mindolph.com@gmail.com
  */
 public class EditTableCell<S, T> extends TableCell<S, T> {
