@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.1.3 Release
+* Fix: selecting file in workspace expends the folder with same name.
+* Fix: "save as" a file to the root of current workspace doesn't show immediately.
+* Fix: exception when popup context menu on new created file and pasted file.
+* Fix: wrong displaying path in context menu from file in workspace.
+
 ### V1.1.2 Release
 * Fix: rename an opened file and edit the file, the file name in tab will be recovered to the original. 
 * Fix: exception occasionally when locate file in workspace.
