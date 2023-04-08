@@ -114,6 +114,7 @@ public class Main extends Application implements WindowRestoreListener {
             scene.getStylesheets().add(getClass().getResource("/style/plantuml_syntax.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/style/editor.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/text_editor.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/editor/csv_editor.css").toExternalForm());
             //scene.getStylesheets().add(getClass().getResource("/style/dark.css").toExternalForm());
 
             primaryStage.setScene(scene);

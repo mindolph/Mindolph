@@ -55,6 +55,7 @@ public class ExtTableView extends TableView<Row> {
             log.trace("row idx: %d and stub row id: %d".formatted(idxRow, stubRowIdx));
             return idxRow != stubRowIdx ? new SimpleStringProperty(String.valueOf(idxRow + 1)) : null;
         });
+        indexCol.getStyleClass().add("index-column");
         super.getColumns().add(indexCol);
     }
 
@@ -71,7 +72,7 @@ public class ExtTableView extends TableView<Row> {
         stubRowIdx = super.getItems().size() - 1;
         Platform.runLater(() -> {
             // set index column width after data loaded.
-            int width = String.valueOf(super.getItems().size()).length() * 18;
+            int width = String.valueOf(super.getItems().size()).length() * 20;
             indexCol.setPrefWidth(width);
         });
     }
