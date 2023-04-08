@@ -12,6 +12,5 @@
 --java-options '${log4j.config} -Xms128M -Xmx512M -Djdk.gtk.version=2'
 --linux-menu-group 'Office'
 --linux-deb-maintainer 'awsksupport@gmail.com'
---linux-app-release '${app.release}'
 --linux-app-category 'Office'
 --linux-package-deps
