@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.2.0
+* feat: add 'Edit' to context menu in csv editor.
+* feat: index column background and border.
+* fix: paste from multiple empty cells turns out comma(s).
+* fix: paste empty content to a cell causes file changed.
+* merge bug fixes from v1.1.2 and v1.1.3
+
 ### V1.1.3 Release
 * Fix: selecting file in workspace expends the folder with same name.
 * Fix: "save as" a file to the root of current workspace doesn't show immediately.

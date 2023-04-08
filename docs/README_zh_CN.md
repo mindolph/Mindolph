@@ -41,18 +41,18 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。[Engl
 
 ### 安装
 
-* MacOS [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.2 beta](https://github.com/mindolph/Mindolph/releases/download/1.2-beta/Mindolph-1.2-beta.dmg)
+* MacOS [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.dmg)
 
-* Windows x64 [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2 beta](https://github.com/mindolph/Mindolph/releases/download/1.2-beta/Mindolph-1.2-beta.msi)
+* Windows x64 [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.msi)
 
-* Debian [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2 beta](https://github.com/mindolph/Mindolph/releases/download/1.2-beta/Mindolph-1.2-beta.deb)
+* Debian [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.deb)
 
 	> 显示 PlantUML 图需要先安装 graphviz:  
 	> `sudo apt install graphviz`
 
-* Fedora [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2 beta](https://github.com/mindolph/Mindolph/releases/download/1.2-beta/Mindolph-1.2-beta.rpm)
+* Fedora [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.rpm)
 
-* Java Executable(.jar) [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2 beta](https://github.com/mindolph/Mindolph/releases/download/1.2-beta/Mindolph-1.2-beta.jar)
+* Java Executable(.jar) [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.jar)
 
 	> Java 17 是运行 Mindolph 的最低版本要求.  
 	> 如果您在 Linux 上运行:  
