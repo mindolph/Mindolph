@@ -391,7 +391,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public boolean paste() {
         if (tableView.isFocused()) {
             String text = ClipBoardUtils.textFromClipboard();
-            if (StringUtils.isNotBlank(text)) {
+            if (StringUtils.isNotBlank(text) && !StringUtils.containsOnly(text, ", ")) {
                 TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
                 this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), text);
                 this.saveToCache();
@@ -578,16 +578,19 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public String getSelectionText() {
         Map<Integer, List<TablePosition>> map = tableView.getSelectedCellsByRow();
-        return map.values().stream().map(tablePositions -> tablePositions.stream().map(pos -> {
-            List<String> data = tableView.getItems().get(pos.getRow()).getData();
-            if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
-                if (pos.getColumn() <= 0) return null;
-                String ret = data.get(pos.getColumn() - 1);
-                log.trace("[%d,%d] %s", pos.getRow(), pos.getColumn(), ret);
-                return ret;
-            }
-            return null;
-        }).filter(Objects::nonNull).map(StringEscapeUtils::escapeCsv).collect(Collectors.joining(", "))).collect(Collectors.joining(LINE_SEPARATOR));
+        return map.values().stream().map(tablePositions ->
+                        tablePositions.stream().map(pos -> {
+                                    List<String> data = tableView.getItems().get(pos.getRow()).getData();
+                                    if (CollectionUtils.isNotEmpty(data) && pos.getColumn() < data.size()) {
+                                        if (pos.getColumn() <= 0) return null;
+                                        String ret = data.get(pos.getColumn() - 1);
+                                        log.trace("[%d,%d] %s", pos.getRow(), pos.getColumn(), ret);
+                                        return ret;
+                                    }
+                                    return null;
+                                }).filter(Objects::nonNull).map(StringEscapeUtils::escapeCsv)
+                                .collect(Collectors.joining(", ")))
+                .collect(Collectors.joining(LINE_SEPARATOR));
     }
 
 
