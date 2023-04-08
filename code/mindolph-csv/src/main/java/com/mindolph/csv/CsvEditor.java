@@ -276,7 +276,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     stubCol.setOnEditCommit(commitEditCallback);
                 }
             }
-            fileChangedEventHandler.onFileChanged(editorContext.getFileData());
+            tableView.refresh();
         });
     }
 
@@ -391,10 +391,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public boolean paste() {
         if (tableView.isFocused()) {
             String text = ClipBoardUtils.textFromClipboard();
-            TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
-            this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), text);
-            tableView.refresh();
-            this.saveToCache();
+            if (StringUtils.isNotBlank(text)) {
+                TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
+                this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), text);
+                this.saveToCache();
+            }
         }
         return true;
     }
@@ -468,7 +469,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             TablePosition<Row, String> pos = tableView.setFirstSelectedCell(applied);
             this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), applied);
             this.saveToCache();
-            tableView.refresh();
         }
         this.searchNext(keywords, searchOptions);
     }
