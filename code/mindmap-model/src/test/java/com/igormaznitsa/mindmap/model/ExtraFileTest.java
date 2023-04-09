@@ -41,7 +41,7 @@ public class ExtraFileTest {
     assertFalse(new ExtraFile("file:///item1/item2/item2.txt").hasParent(null, new MMapURI("file:///item")));
     assertFalse(new ExtraFile("file:///item1/item2.txt").hasParent(null, new MMapURI("file:///item1/item2/")));
 
-    final File base = new File("/some/base");
+    File base = new File("/some/base");
 
     assertFalse(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).hasParent(base, new MMapURI(base, new File("chunga/changa.txt"), null)));
     assertFalse(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).hasParent(base, new MMapURI(base, new File("chunga/changa.tx"), null)));
@@ -65,7 +65,7 @@ public class ExtraFileTest {
     assertFalse(new ExtraFile("file:///item1/item2/item2.txt").isSame(null, new MMapURI("file:///item")));
     assertFalse(new ExtraFile("file:///item1/item2.txt").isSame(null, new MMapURI("file:///item1/item2/")));
 
-    final File base = new File("/some/base");
+    File base = new File("/some/base");
 
     assertTrue(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).isSame(base, new MMapURI(base, new File("chunga/changa.txt"), null)));
     assertFalse(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).isSame(base, new MMapURI(base, new File("chunga/changa.tx"), null)));
@@ -89,7 +89,7 @@ public class ExtraFileTest {
     assertFalse(new ExtraFile("file:///item1/item2/item2.txt").isSameOrHasParent(null, new MMapURI("file:///item")));
     assertFalse(new ExtraFile("file:///item1/item2.txt").isSameOrHasParent(null, new MMapURI("file:///item1/item2/")));
  
-    final File base = new File("/some/base");
+    File base = new File("/some/base");
     
     assertTrue(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).isSameOrHasParent(base, new MMapURI(base,new File("chunga/changa.txt"),null)));
     assertFalse(new ExtraFile(MMapURI.makeFromFilePath(base, "chunga/changa.txt", null)).isSameOrHasParent(base, new MMapURI(base,new File("chunga/changa.tx"),null)));

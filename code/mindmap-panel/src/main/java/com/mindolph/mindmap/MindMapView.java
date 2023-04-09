@@ -1332,7 +1332,7 @@ public class MindMapView extends BaseScalableView {
         TopicNode draggedTopic = dragged.getModel();
         Point2D dropPoint = draggedElement.getPosition();
 
-        boolean ignore = draggedTopic == destination.getModel() || dragged.getBounds().contains(dropPoint) || destination.getModel().hasAncestor(draggedTopic);
+        boolean ignore = draggedTopic == destination.getModel() || dragged.getBounds().contains(dropPoint) || destination.getModel().isAncestor(draggedTopic);
         if (ignore) {
             return false;
         }
@@ -1572,7 +1572,7 @@ public class MindMapView extends BaseScalableView {
 
 
     public void copy() {
-        boolean result = copyTopicsToClipboard(MindMapUtils.removeSuccessorsAndDuplications(this.getSelectedTopics()), false);
+        boolean result = copyTopicsToClipboard(MindMapUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), false);
         log.debug("topics copied: " + result);
     }
 
@@ -1582,7 +1582,7 @@ public class MindMapView extends BaseScalableView {
     }
 
     public void cut() {
-        boolean result = this.copyTopicsToClipboard(MindMapUtils.removeSuccessorsAndDuplications(this.getSelectedTopics()), true);
+        boolean result = this.copyTopicsToClipboard(MindMapUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), true);
         log.debug("topics cut: " + result);
     }
 
@@ -1640,7 +1640,15 @@ public class MindMapView extends BaseScalableView {
                         List<TopicNode> selected = this.getSelectedTopics();
                         if (selected.size() > 0) {
                             for (TopicNode s : selected) { // paste to all selected topics.
+                                // paste topics in clipboard
                                 for (TopicNode t : container.getTopics()) {
+                                    log.debug("Topic: " + t.getText());
+                                    if (Arrays.stream(container.getTopics()).anyMatch(topicNode -> {
+                                        return t.isAncestor(topicNode);
+                                    })) {
+                                        log.debug("Skip redundant topic: " + t.getText());
+                                        continue;// excludes topic that is child of any selected topic.
+                                    }
                                     TopicNode newTopic = t.cloneTopic(this.model, true);
                                     newTopic.removeExtra(Extra.ExtraType.TOPIC);
                                     newTopic.moveToNewParent(s);
@@ -1649,6 +1657,9 @@ public class MindMapView extends BaseScalableView {
                             }
                         }
                         result = true;
+                    }
+                    else {
+                        log.warn("Data from clipboard is null");
                     }
                 } catch (Exception ex) {
                     log.error("Failed to paste from clipboard", ex);

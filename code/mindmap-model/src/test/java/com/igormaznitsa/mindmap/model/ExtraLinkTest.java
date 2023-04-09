@@ -33,7 +33,7 @@ public class ExtraLinkTest {
   
   @Test
   public void testContainsPattern() throws Exception {
-    final ExtraLink link = new ExtraLink("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344");
+    ExtraLink link = new ExtraLink("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344");
     assertTrue(link.containsPattern(null, Pattern.compile(Pattern.quote("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344"))));
     assertTrue(link.containsPattern(new File(System.getProperty("user.home")), Pattern.compile(Pattern.quote("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344"))));
     assertTrue(link.containsPattern(null, Pattern.compile(Pattern.quote("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344"),Pattern.CASE_INSENSITIVE)));

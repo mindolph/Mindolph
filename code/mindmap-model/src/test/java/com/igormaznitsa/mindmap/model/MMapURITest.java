@@ -257,7 +257,7 @@ public class MMapURITest {
   @Test
   public void testCreate_AbsFile_NotWindows_OutsideBase_Props() {
     assumeNotWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
@@ -273,7 +273,7 @@ public class MMapURITest {
   @Test
   public void testCreate_AbsFile_Windows_OutsideBase_Props() {
     assumeWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
@@ -289,47 +289,47 @@ public class MMapURITest {
   @Test
   public void testMakeFromFilePath_NotWindows_NoBase_NoProps() throws Exception {
     assumeNotWindows();
-    final MMapURI uri = MMapURI.makeFromFilePath(null, "/hello/igor and larisa.txt", null);
+    MMapURI uri = MMapURI.makeFromFilePath(null, "/hello/igor and larisa.txt", null);
     assertEquals(new URI("file:///hello/igor%20and%20larisa.txt"), uri.asURI());
   }
 
   @Test
   public void testMakeFromFilePath_Windows_NoBase_NoProps() throws Exception {
     assumeWindows();
-    final MMapURI uri = MMapURI.makeFromFilePath(null, "C:\\hello\\igor and larisa.txt", null);
+    MMapURI uri = MMapURI.makeFromFilePath(null, "C:\\hello\\igor and larisa.txt", null);
     assertEquals(new URI("file://C:/hello/igor%20and%20larisa.txt"), uri.asURI());
   }
 
   @Test
   public void testMakeFromFilePath_NotWindows_NoBase_Props() throws Exception {
     assumeNotWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
-    final MMapURI uri = MMapURI.makeFromFilePath(null, "/hello/igor and larisa.txt", props);
+    MMapURI uri = MMapURI.makeFromFilePath(null, "/hello/igor and larisa.txt", props);
     assertEquals(new URI("file:///hello/igor%20and%20larisa.txt?hello=world&%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82=%D0%BE%D1%82+%D0%B8%D0%B3%D0%BE%D1%80%D1%8F"), uri.asURI());
   }
 
   @Test
   public void testMakeFromFilePath_Windows_NoBase_Props() throws Exception {
     assumeWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
-    final MMapURI uri = MMapURI.makeFromFilePath(null, "C:\\hello\\igor and larisa.txt", props);
+    MMapURI uri = MMapURI.makeFromFilePath(null, "C:\\hello\\igor and larisa.txt", props);
     assertEquals(new URI("file://C:/hello/igor%20and%20larisa.txt?hello=world&%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82=%D0%BE%D1%82+%D0%B8%D0%B3%D0%BE%D1%80%D1%8F"), uri.asURI());
   }
 
   @Test
   public void testMakeFromFilePath_NotWindows_Base_Props() throws Exception {
     assumeNotWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
-    final MMapURI uri = MMapURI.makeFromFilePath(new File("/hello"), "/hello/igor and larisa.txt", props);
+    MMapURI uri = MMapURI.makeFromFilePath(new File("/hello"), "/hello/igor and larisa.txt", props);
     assertEquals(new URI("igor%20and%20larisa.txt?hello=world&%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82=%D0%BE%D1%82+%D0%B8%D0%B3%D0%BE%D1%80%D1%8F"), uri.asURI());
     assertFalse(uri.isAbsolute());
   }
@@ -337,19 +337,19 @@ public class MMapURITest {
   @Test
   public void testMakeFromFilePath_Windows_Base_Props() throws Exception {
     assumeWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("привет", "от игоря");
     props.put("hello", "world");
 
-    final MMapURI uri = MMapURI.makeFromFilePath(new File("C:\\hello"), "C:\\hello\\igor and larisa.txt", props);
+    MMapURI uri = MMapURI.makeFromFilePath(new File("C:\\hello"), "C:\\hello\\igor and larisa.txt", props);
     assertEquals(new URI("igor%20and%20larisa.txt?hello=world&%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82=%D0%BE%D1%82+%D0%B8%D0%B3%D0%BE%D1%80%D1%8F"), uri.asURI());
     assertFalse(uri.isAbsolute());
   }
 
   @Test
   public void testAsURI_CreatedAsURI() throws Exception {
-    final URI baseUri = new URI("http://www.igormaznitsa.com?test=one");
-    final MMapURI uri = new MMapURI(baseUri);
+    URI baseUri = new URI("http://www.igormaznitsa.com?test=one");
+    MMapURI uri = new MMapURI(baseUri);
     assertSame(baseUri, uri.asURI());
     assertEquals("one", uri.getParameters().getProperty("test"));
   }
@@ -357,10 +357,10 @@ public class MMapURITest {
   @Test
   public void testAsURI_Linux_CreatedAsFile() throws Exception {
     if (SystemUtils.IS_OS_LINUX) {
-      final Properties props = new Properties();
+      Properties props = new Properties();
       props.put("Kõik või", "tere");
 
-      final MMapURI uri = new MMapURI(null, new File("/Kõik/või/mitte/midagi.txt"), props);
+      MMapURI uri = new MMapURI(null, new File("/Kõik/või/mitte/midagi.txt"), props);
       assertEquals(new URI("file:///K%C3%B5ik/v%C3%B5i/mitte/midagi.txt?K%C3%B5ik+v%C3%B5i=tere"), uri.asURI());
       assertEquals("tere", uri.getParameters().getProperty("Kõik või"));
       assertEquals(new File("/Kõik/või/mitte/midagi.txt"), uri.asFile(null));
@@ -370,10 +370,10 @@ public class MMapURITest {
   @Test
   public void testAsURI_Windows_CreatedAsFile() throws Exception {
     assumeWindows();
-    final Properties props = new Properties();
+    Properties props = new Properties();
     props.put("Kõik või", "tere");
 
-    final MMapURI uri = new MMapURI(null, new File("C:\\Kõik\\või\\mitte\\midagi.txt"), props);
+    MMapURI uri = new MMapURI(null, new File("C:\\Kõik\\või\\mitte\\midagi.txt"), props);
     assertEquals(new URI("file://C:/K%C3%B5ik/v%C3%B5i/mitte/midagi.txt?K%C3%B5ik+v%C3%B5i=tere"), uri.asURI());
     assertEquals("tere", uri.getParameters().getProperty("Kõik või"));
     assertEquals(new File("C:\\Kõik\\või\\mitte\\midagi.txt"), uri.asFile(null));
