@@ -1642,13 +1642,6 @@ public class MindMapView extends BaseScalableView {
                             for (TopicNode s : selected) { // paste to all selected topics.
                                 // paste topics in clipboard
                                 for (TopicNode t : container.getTopics()) {
-                                    log.debug("Topic: " + t.getText());
-                                    if (Arrays.stream(container.getTopics()).anyMatch(topicNode -> {
-                                        return t.isAncestor(topicNode);
-                                    })) {
-                                        log.debug("Skip redundant topic: " + t.getText());
-                                        continue;// excludes topic that is child of any selected topic.
-                                    }
                                     TopicNode newTopic = t.cloneTopic(this.model, true);
                                     newTopic.removeExtra(Extra.ExtraType.TOPIC);
                                     newTopic.moveToNewParent(s);
