@@ -163,8 +163,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private void initTableView() throws IOException {
         commitEditCallback = event -> {
-            this.onCellDataChanged(event.getTablePosition(), event.getNewValue());
-            Platform.runLater(this::saveToCache);
+            if (event.getTablePosition() != null) {
+                this.onCellDataChanged(event.getTablePosition(), event.getNewValue());
+                Platform.runLater(this::saveToCache);
+            }
         };
         StringReader stringReader = new StringReader(this.text);
         CSVParser parsed = csvFormat.parse(stringReader);
