@@ -192,7 +192,7 @@ public class MindMapView extends BaseScalableView {
                         Point2D mouseOffset = new Point2D(point.getX() - elementUnderMouse.getBounds().getMinX(),
                                 point.getY() - elementUnderMouse.getBounds().getMinY());
                         draggedElement = new DraggedElement(elementUnderMouse, mouseOffset,
-                                e.isControlDown() || e.isMetaDown() ? DraggedElement.Modifier.MAKE_JUMP : DraggedElement.Modifier.NONE);
+                                e.isAltDown() ? DraggedElement.Modifier.MAKE_JUMP : DraggedElement.Modifier.NONE);
                         draggedElement.updatePosition(point);
                         log.debug("Dragged element: " + draggedElement);
                         TopicNode draggedTopic = draggedElement.getElement().getModel();
@@ -1332,7 +1332,9 @@ public class MindMapView extends BaseScalableView {
         TopicNode draggedTopic = dragged.getModel();
         Point2D dropPoint = draggedElement.getPosition();
 
-        boolean ignore = draggedTopic == destination.getModel() || dragged.getBounds().contains(dropPoint) || destination.getModel().isAncestor(draggedTopic);
+        boolean ignore = draggedTopic == destination.getModel()
+                || dragged.getBounds().contains(dropPoint)
+                || destination.getModel().isAncestor(draggedTopic);
         if (ignore) {
             return false;
         }
@@ -1416,6 +1418,7 @@ public class MindMapView extends BaseScalableView {
 
     private boolean processDropTopicToAnotherTopic(MindMap<TopicNode> model, TopicNode draggedTopic, TopicNode destinationTopic) {
         if (draggedTopic != null && destinationTopic != null && draggedTopic != destinationTopic) {
+            log.debug("Make link from %s to %s".formatted(draggedTopic.getText(), destinationTopic.getText()));
             if (destinationTopic.getExtras().containsKey(Extra.ExtraType.TOPIC)) {
                 if (DialogFactory.yesNoConfirmDialog("One link already exists, keep the original one?")) {
                     return false;
@@ -1424,6 +1427,9 @@ public class MindMapView extends BaseScalableView {
             ExtraTopic topicLink = ExtraTopic.makeLinkTo(model, draggedTopic);
             destinationTopic.setExtra(topicLink);
             return true;
+        }
+        else {
+            log.debug("Unable to make link");
         }
         return false;
     }

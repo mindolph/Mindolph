@@ -59,6 +59,9 @@ public class DraggedElement {
         element.doPaint(x, y, 0.55f);
     }
 
+    /**
+     * Modifier states to indicate the modifier key pressed or not.
+     */
     public enum Modifier {
         NONE,
         MAKE_JUMP
