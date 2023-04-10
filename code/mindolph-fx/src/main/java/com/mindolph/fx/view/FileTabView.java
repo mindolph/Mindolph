@@ -606,12 +606,19 @@ public class FileTabView extends BaseView {
         EventBus.getIns().notifyMenuStateChange(FIND, getCurrentTab() != null);
     }
 
-    public void closeAllTabs() {
+    /**
+     *
+     * @return false if any tab cancels closing by user.
+     */
+    public boolean closeAllTabs() {
         LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabEditorMap.keySet());
         for (Tab tab : tabs) {
             log.trace("Closing tab: " + tab.getText());
-            if (!this.closeTab(tab)) return;
+            if (!this.closeTab(tab)) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
