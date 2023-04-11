@@ -491,9 +491,10 @@ public class MainController extends BaseController implements Initializable,
         log.debug("exit Mindolph");
         event.consume(); // this probably avoid the default quitting action, but actually doesn't work.
         SceneRestore.getInstance().stop(); // stop store state to avoid clean all the opened files state.
-        fileTabView.closeAllTabs();
-        this.dispose();
-        System.exit(0);
+        if (fileTabView.closeAllTabs()) {
+            this.dispose();
+            System.exit(0);
+        }
     }
 
     @FXML

@@ -120,16 +120,18 @@ public abstract class BaseScalableView extends Control {
         });
 
         this.setOnMouseDragged(mouseEvent -> {
-            log.debug("%s".formatted(PointUtils.pointInStr(mousePressedPos)));
+            log.trace("%s".formatted(PointUtils.pointInStr(mousePressedPos)));
             if (sm.isMouseWithModifier(mouseEvent, ShortcutConstants.KEY_MODIFIER_DRAGGING)) {
                 if (this.mousePressedPos != null) {
                     mouseEvent.consume();
                     this.setCursor(Cursor.HAND);
-                    log.debug("Scroll by mouse: %s, %s".formatted(mouseEvent.getX(), mouseEvent.getY()));
+                    log.trace("Scroll by mouse: %s, %s".formatted(mouseEvent.getX(), mouseEvent.getY()));
                     scrollTo(mouseEvent);
                 }
             }
-            this.onMouseDragged(mouseEvent);
+            if (!mouseEvent.isConsumed()) {
+                this.onMouseDragged(mouseEvent);
+            }
         });
         this.setOnMouseDragReleased(event -> {
             this.setCursor(Cursor.DEFAULT);

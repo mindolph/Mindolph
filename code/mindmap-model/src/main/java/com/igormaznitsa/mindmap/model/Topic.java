@@ -570,7 +570,7 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         }
     }
 
-    public boolean hasAncestor(T topic) {
+    public boolean isAncestor(T topic) {
         T parent = this.parent;
         while (parent != null) {
             if (parent == topic) {

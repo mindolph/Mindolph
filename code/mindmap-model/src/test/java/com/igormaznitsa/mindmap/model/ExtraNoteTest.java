@@ -47,7 +47,7 @@ public class ExtraNoteTest {
 
   @Test
   public void testContainsPattern() {
-    final ExtraNote note = new ExtraNote(
+    ExtraNote note = new ExtraNote(
         "domr dsf sdf sdf \n sdf http://www.1cpp.ru/forum/YaBB.pl?num=1341507344 fsdf sdfd \n");
     assertTrue(note.containsPattern(null,
         Pattern.compile(Pattern.quote("http://www.1cpp.ru/forum/YaBB.pl?num=1341507344"))));

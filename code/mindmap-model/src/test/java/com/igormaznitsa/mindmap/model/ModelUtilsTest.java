@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 public class ModelUtilsTest {
 
-  private void assertEscapeUnescapePre(@Nonnull final String text) {
+  private void assertEscapeUnescapePre(String text) {
     assertEquals(text, StringEscapeUtils.unescapeHtml3(ModelUtils.escapeTextForPreBlock(text)));
   }
   
@@ -45,7 +45,7 @@ public class ModelUtilsTest {
   
   @Test
   public void testExtractQueryParameters() throws Exception {
-    final Properties properties = ModelUtils.extractQueryPropertiesFromURI(new URI("file://hello?some=test&other=&misc=%26ffsdsd&h=1"));
+    Properties properties = ModelUtils.extractQueryPropertiesFromURI(new URI("file://hello?some=test&other=&misc=%26ffsdsd&h=1"));
     assertEquals(4, properties.size());
     assertEquals("test", properties.get("some"));
     assertEquals("", properties.get("other"));
@@ -55,13 +55,13 @@ public class ModelUtilsTest {
 
   @Test
   public void testExtractQueryParameters_Empty() throws Exception {
-    final Properties properties = ModelUtils.extractQueryPropertiesFromURI(new URI("file://hello"));
+    Properties properties = ModelUtils.extractQueryPropertiesFromURI(new URI("file://hello"));
     assertTrue(properties.isEmpty());
   }
 
   @Test
   public void testMakeQueryStringForURI() {
-    final Properties props = new Properties();
+    Properties props = new Properties();
     assertEquals("", ModelUtils.makeQueryStringForURI(null));
     assertEquals("", ModelUtils.makeQueryStringForURI(props));
     props.put("test", "hello test");

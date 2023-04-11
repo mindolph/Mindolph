@@ -91,16 +91,17 @@ public final class MindMapUtils {
     }
 
     /**
-     * Remove duplications and successors for presented topics in array.
+     * Remove duplicated and descendant.
      *
      * @param topics array to be processed
-     * @return resulted array
+     * @return
      */
-    public static List<TopicNode> removeSuccessorsAndDuplications(List<TopicNode> topics) {
+    public static List<TopicNode> removeDuplicatedAndDescendants(List<TopicNode> topics) {
         List<TopicNode> result = new ArrayList<>();
-
         for (TopicNode t : topics) {
-            result.removeIf(listed -> listed == t || listed.hasAncestor(t));
+            if (result.contains(t) || topics.stream().anyMatch(t::isAncestor)) {
+                continue; // exclude if has ancestor
+            }
             result.add(t);
         }
         return result;

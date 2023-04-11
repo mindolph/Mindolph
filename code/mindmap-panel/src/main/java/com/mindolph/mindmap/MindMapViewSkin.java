@@ -237,7 +237,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
 
             int position = ElementUtils.calcDropPosition(destinationElement, draggedElement.getPosition());
 
-            boolean draw = !draggedElement.isPositionInside() && !destinationElement.getModel().hasAncestor(draggedElement.getElement().getModel());
+            boolean draw = !draggedElement.isPositionInside() && !destinationElement.getModel().isAncestor(draggedElement.getElement().getModel());
 
             if (log.isTraceEnabled())
                 log.trace(String.format("dragged modifier and position: %s %d", draggedElement.getModifier(), position));
