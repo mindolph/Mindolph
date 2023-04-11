@@ -251,6 +251,10 @@ public class ExtTableView extends TableView<Row> {
         return super.getItems().stream().flatMap(row -> row.getData().stream());
     }
 
+    public int getColumnSize() {
+        return this.getColumns().size() - 1;
+    }
+
     /**
      * Return the index of data columns (excludes the index column)
      *

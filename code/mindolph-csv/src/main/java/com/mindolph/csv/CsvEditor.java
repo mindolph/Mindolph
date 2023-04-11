@@ -150,12 +150,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.initTableView();
         prepareSearchingEvent.subscribe(unused -> {
             // todo only available for searching
-            int rowSize = tableView.getColumns().size() - 1; // excludes index column.
+            int rowSize = tableView.getColumnSize(); // excludes index column.
             if (csvNavigator == null) {
-                csvNavigator = new CsvNavigator(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
+                csvNavigator = new CsvNavigator(tableView.stream().toList(), rowSize);
             }
             else {
-                csvNavigator.setData(tableView.stream().filter(Objects::nonNull).toList(), rowSize);
+                csvNavigator.setData(tableView.stream().toList(), rowSize);
             }
         });
         Platform.runLater(afterLoading);
@@ -249,7 +249,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     }
             );
 
-            log.debug("%d data columns and %d row initialized".formatted(tableView.getColumns().size() - 1, tableView.getItems().size()));
+            log.debug("%d data columns and %d row initialized".formatted(tableView.getColumnSize(), tableView.getItems().size()));
 
             this.editorReadyEventHandler.onEditorReady();
         });
@@ -328,11 +328,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         List<Row> rows = new LinkedList<>();
         for (CSVRecord record : records) {
             log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
-            Row row = new Row();
-            row.setIndex(records.indexOf(record));
-            CollectionUtils.addAll(row.getData(), record);
-            row.getData().add(null); // for stub column
-            rows.add(row);
+            Row newRow = ExtTableView.createRow(tableView.getColumnSize());
+            newRow.setIndex(records.indexOf(record));
+            for (int i = 0; i < record.size(); i++) {
+                newRow.getData().set(i, record.get(i));
+            }
+            rows.add(newRow);
         }
         tableView.appendRows(rows);
         // stub row
@@ -469,7 +470,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         }
         CellPos foundCellPos;
         if (selectedCellPos == null) {
-            csvNavigator.moveCursor(reverse ? csvNavigator.getTotal() - 1 : 0);
+            csvNavigator.moveCursor(reverse ? csvNavigator.getTotal() - 1 : 0); // reset the cursor
         }
         else {
             if (reverse) csvNavigator.moveCursorPrev();
