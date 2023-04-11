@@ -85,7 +85,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.reload();
             this.prepareSearchingEvent.push(null);
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
-        }, s -> "%s[%d]".formatted(StringUtils.abbreviate(s, 5), s.length()));
+        }, s -> "%s[%d]".formatted(StringUtils.abbreviateMiddle(s, ".", 5), s.length()));
         csvFormat = CSVFormat.DEFAULT.builder().build();
     }
 
@@ -268,25 +268,25 @@ public class CsvEditor extends BaseEditor implements Initializable {
         int dataIdx = colIdx - 1;// -1 because of the index column.
         Row row = tableView.getItems().get(rowIdx);
         row.updateValue(dataIdx, newText);
-        Platform.runLater(() -> {
-            if (rowIdx == 0) {
-                column.setText(newText); // update text for any columns
+//        Platform.runLater(() -> {
+        if (rowIdx == 0) {
+            column.setText(newText); // update text for any columns
+        }
+        if (StringUtils.isNotBlank(newText)) {
+            if (rowIdx == tableView.getStubRowIdx()) {
+                log.debug("Add new stub row since the stub row is changed");
+                tableView.appendStubRow();
+                tableView.refresh();
             }
-            if (StringUtils.isNotBlank(newText)) {
-                if (rowIdx == tableView.getStubRowIdx()) {
-                    log.debug("Add new stub row since the stub row is changed");
-                    tableView.appendStubRow();
-                    tableView.refresh();
-                }
-                if (tableView.isStubColumn(column)) {
-                    log.debug("Add new stub column since the stub column is changed");
-                    TableColumn<Row, String> stubCol = tableView.appendColumn(EMPTY);
-                    stubCol.setCellFactory(cellFactory);
-                    stubCol.setOnEditCommit(commitEditCallback);
-                }
+            if (tableView.isStubColumn(column)) {
+                log.debug("Add new stub column since the stub column is changed");
+                TableColumn<Row, String> stubCol = tableView.appendColumn(EMPTY);
+                stubCol.setCellFactory(cellFactory);
+                stubCol.setOnEditCommit(commitEditCallback);
             }
-            tableView.refresh();
-        });
+        }
+        tableView.refresh();
+//        });
     }
 
 
@@ -407,9 +407,23 @@ public class CsvEditor extends BaseEditor implements Initializable {
         if (tableView.isFocused()) {
             String text = ClipBoardUtils.textFromClipboard();
             if (StringUtils.isNotBlank(text) && !StringUtils.containsOnly(text, ", ")) {
-                TablePosition<Row, String> pos = tableView.setFirstSelectedCell(text);
-                this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), text);
-                this.saveToCache();
+                try {
+                    StringReader stringReader = new StringReader(text);
+                    CSVParser parsed = csvFormat.parse(stringReader);
+                    List<CSVRecord> records = parsed.getRecords();
+                    TablePosition pos = tableView.getFocusModel().getFocusedCell();
+                    for (int i = 0; i < records.size(); i++) {
+                        CSVRecord record = records.get(i);
+                        for (int j = 0; j < record.size(); j++) {
+                            String newValue = record.get(j);
+                            TableColumn<Row, String> column = (TableColumn<Row, String>) tableView.getColumns().get(pos.getColumn() + j);
+                            this.onCellDataChanged(pos.getRow() + i, column, newValue);
+                        }
+                    }
+                    this.saveToCache();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return true;

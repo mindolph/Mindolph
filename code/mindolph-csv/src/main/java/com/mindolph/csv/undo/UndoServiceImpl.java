@@ -54,7 +54,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
         if (!isUndoAvailable()) {
             return false;
         }
-        log.debug("Undo");
+        log.debug("Undo to %d".formatted(currentPos - 1));
         isPerforming.set(true);
         Command<T> cmd = queue.get(currentPos - 1);
         currentPos -= 1;
@@ -69,7 +69,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
         if (!isRedoAvailable()) {
             return false;
         }
-        log.debug("Redo");
+        log.debug("Redo to %d".formatted(currentPos + 1));
         isPerforming.set(true);
         Command<T> cmd = queue.get(currentPos + 1);
         currentPos += 1;
@@ -113,7 +113,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
     String printQueue() {
         StringBuilder buf = new StringBuilder();
         for (Command<T> cmd : queue) {
-            String abb = abbreviate == null ? StringUtils.abbreviate(cmd.getCommand().toString(), 5) : abbreviate.apply(cmd.getCommand().toString());
+            String abb = abbreviate == null ? StringUtils.abbreviateMiddle(cmd.getCommand().toString(), ".", 5) : abbreviate.apply(cmd.getCommand().toString());
             buf.append(" (").append(abb).append(")");
             if (queue.indexOf(cmd) == currentPos) {
                 buf.append("<");
