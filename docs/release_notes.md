@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.1.4 Release
+
+* Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
+* Fix: cancel unsaved file during closing application doesn't stop that.
+* Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
+
+
 ### V1.1.3 Release
 * Fix: selecting file in workspace expends the folder with same name.
 * Fix: "save as" a file to the root of current workspace doesn't show immediately.
