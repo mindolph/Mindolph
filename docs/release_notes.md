@@ -1,7 +1,7 @@
 # Release Notes
 
 ### V1.1.4 Release
-
+* Fix: zooming on image viewer stops when width&height are both smaller than viewport.
 * Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
 * Fix: cancel unsaved file during closing application doesn't stop that.
 * Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
