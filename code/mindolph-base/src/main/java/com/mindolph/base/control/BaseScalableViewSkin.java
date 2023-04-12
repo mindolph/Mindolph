@@ -28,9 +28,10 @@ public abstract class BaseScalableViewSkin<T extends BaseScalableView> extends S
 
     protected T control;
     protected Canvas canvas;
+    protected GraphicsContext gc;
     // Listeners
     protected ChangeListener<Number> scaleListener;
-    protected GraphicsContext gc;
+
     int GRID_SIZE = 100;
 
     public BaseScalableViewSkin(T control) {
@@ -65,7 +66,7 @@ public abstract class BaseScalableViewSkin<T extends BaseScalableView> extends S
         });
         //
         scaleListener = (observableValue, oldScale, newScale) -> {
-            reLayout(newScale.doubleValue());
+            this.reLayout(newScale.doubleValue());
         };
         this.control.scaleProperty().addListener(scaleListener);
     }

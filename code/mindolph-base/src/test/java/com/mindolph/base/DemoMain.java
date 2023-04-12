@@ -17,6 +17,12 @@ import static com.mindolph.mfx.util.FxmlUtils.loadUriToStage;
  */
 public class DemoMain extends Application {
 
+    public static class TestLauncher {
+        public static void main(String[] args) {
+            launch(DemoMain.class, args);
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/demo_main.fxml"));
@@ -64,12 +70,5 @@ public class DemoMain extends Application {
     private void onExtTableView() {
         Stage stage = loadUriToStage("/control/ext_table_view_demo.fxml");
         stage.show();
-    }
-
-    public static class TestLauncher {
-
-        public static void main(String[] args) {
-            launch(DemoMain.class, args);
-        }
     }
 }
