@@ -16,6 +16,12 @@ import javafx.stage.Stage;
  */
 public class DemoMain extends Application {
 
+    public static class TestLauncher {
+        public static void main(String[] args) {
+            launch(DemoMain.class, args);
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/demo_main.fxml"));
@@ -59,11 +65,4 @@ public class DemoMain extends Application {
         FxmlUtils.loadUriToStage("/canvas/canvas_demo.fxml").show();
     }
 
-
-    public static class TestLauncher {
-
-        public static void main(String[] args) {
-            launch(DemoMain.class, args);
-        }
-    }
 }

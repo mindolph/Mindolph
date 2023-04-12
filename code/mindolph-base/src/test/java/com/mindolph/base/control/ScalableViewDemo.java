@@ -123,6 +123,7 @@ public class ScalableViewDemo implements Initializable {
                 this.control.setPrefSize(w, h);
                 this.control.getParent().layout(); // this is important, may cause parent container aware that the bounds is changed.
                 this.control.setDimension(new Dimension2D(w, h)); // listeners will act by the dimension changes.
+                this.control.fitViewport();
             }
         }
 
