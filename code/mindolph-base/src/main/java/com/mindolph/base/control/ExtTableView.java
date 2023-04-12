@@ -39,6 +39,7 @@ public class ExtTableView extends TableView<Row> {
         super.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         super.getSelectionModel().setCellSelectionEnabled(true);
         this.createIndexColumn();
+        this.disableIndexColumnKeyEvents();
     }
 
 
@@ -57,6 +58,17 @@ public class ExtTableView extends TableView<Row> {
         });
         indexCol.getStyleClass().add("index-column");
         super.getColumns().add(indexCol);
+    }
+
+    private void disableIndexColumnKeyEvents() {
+        this.getFocusModel().focusedCellProperty().addListener((observableValue, number, focused) -> {
+            log.debug("Focused changed %d-%d".formatted(focused.getRow(), focused.getColumn()));
+            if (focused.getColumn() == 0) {
+                getSelectionModel().clearSelection(focused.getRow(), indexCol);
+                getSelectionModel().selectRightCell();
+                refresh();
+            }
+        });
     }
 
     protected Callback<TableColumn<Row, String>, TableCell<Row, String>> createIndexCellFactory() {

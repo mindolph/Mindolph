@@ -99,7 +99,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     TableCell<Row, String> indexCell = new SimpleTextCell();
                     indexCell.setTextAlignment(TextAlignment.CENTER);
                     indexCell.setAlignment(Pos.BASELINE_CENTER);
-                    // indexCell.setStyle("-fx-background-color: lightgrey;");
                     indexCell.setOnMouseReleased(event -> {
                         log.debug("Mouse pressed");
                         Platform.runLater(() -> {
@@ -131,7 +130,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         AnchorPane.setTopAnchor(tableView, 0d);
         AnchorPane.setBottomAnchor(tableView, 0d);
         tableView.setPlaceholder(new Label("No content of this CSV file"));
-        tableView.setOnKeyPressed(keyEvent -> {
+        tableView.setOnKeyReleased(keyEvent -> {
             log.debug("Key pressed: " + keyEvent.getCode());
             if (keyEvent.getCode() == KeyCode.DELETE) {
                 tableView.setAllSelectedCells(EMPTY);
@@ -141,6 +140,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         });
         super.getChildren().add(tableView);
     }
+
 
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
