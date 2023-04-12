@@ -41,26 +41,26 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Releases
 
-* MacOS [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.dmg)
+* MacOS [v1.1.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.4-stable/Mindolph-1.1.4.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.dmg)
 
-* Windows x64 [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.msi)
+* Windows x64 [v1.1.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.4-stable/Mindolph-1.1.4.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.msi)
 
-* Debian [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.deb)
+* Debian [v1.1.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.4-stable/Mindolph-1.1.4.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.deb)
 
 	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* Fedora [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.rpm)
+* Fedora [v1.1.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.4-stable/Mindolph-1.1.4.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.rpm)
 
-* Java Executable(.jar) [v1.1.3 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.3-stable/Mindolph-1.1.3.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.jar)
+* Java Executable(.jar) [v1.1.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.1.4-stable/Mindolph-1.1.4.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.2.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.2.0/Mindolph-1.2.0.jar)
 
 	> Java 17 is the minimum requirement to run this application.  
 	> If you are using Linux, run the jar like this:  
-	> `java -jar Mindolph-1.1.3.jar`  
+	> `java -jar Mindolph-1.1.4.jar`  
 	> If not, Download JavaFX SDK(20+) for your platform and extract to somewhere eg: `c:\javafx-sdk-20`, run the jar file like this:   
 	> `java --module-path c:\javafx-sdk-20\lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
-	> Mindolph-1.1.3.jar`
+	> Mindolph-1.1.4.jar`
 
 
 
