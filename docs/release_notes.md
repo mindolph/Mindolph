@@ -1,5 +1,12 @@
 # Release Notes
 
+### V1.2.1 Release
+* feat: unable to locate matched cell correctly in searching.
+* feat: paste csv format text from clipboard to multiple cells as it is.
+* feat: disable cells navigation by keys when editing.
+* fix: index column shouldn't be selected by left arrow key.
+* merge bug fixes from v1.1.4.
+
 ### V1.1.4 Release
 * Fix: zooming on image viewer stops when width&height are both smaller than viewport.
 * Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
