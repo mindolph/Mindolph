@@ -156,7 +156,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         Nodes.addInputMap(this, comment);
 
         // handles drag&drop files
-        codeArea.setOnDragDropped(dragEvent -> log.debug(dragEvent.getDragboard().getFiles().stream().map(File::getPath).collect(Collectors.joining(","))));
         codeArea.setOnDragOver(dragEvent -> {
             if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
                 return;
