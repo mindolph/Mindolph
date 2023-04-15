@@ -51,8 +51,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     private final AtomicLong scrollStartTime = new AtomicLong(0);
     private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
-    public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext) {
-        super(fxmlResourcePath, editorContext);
+    public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
+        super(fxmlResourcePath, editorContext, acceptDraggingFiles);
         if (fixedSplitPane == null) {
             throw new RuntimeException("Your should add SplitPane in to FXML with name 'splitPanel'");
         }

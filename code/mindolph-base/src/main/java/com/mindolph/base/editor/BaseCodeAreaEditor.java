@@ -12,19 +12,24 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.input.TransferMode;
 import javafx.scene.text.Font;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.fxmisc.richtext.CharacterHit;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Optional;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 
@@ -42,12 +47,15 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     @FXML
     protected SearchableCodeArea codeArea;
 
+    protected boolean acceptDraggingFiles = false;
+
     private final EventSource<String> historySource = new EventSource<>();
 
 //    protected String fontPrefKey;
 
-    public BaseCodeAreaEditor(String fxmlResourcePath, EditorContext editorContext) {
+    public BaseCodeAreaEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext);
+        this.acceptDraggingFiles = acceptDraggingFiles;
 //        codeArea.setShowCaret(Caret.CaretVisibility.ON);
         codeArea.getUndoManager().preventMerge();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -70,6 +78,34 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         codeArea.setWrapText(true);
         codeArea.setContextMenu(createCodeContextMenu());
 
+        if (acceptDraggingFiles) {
+            // handles drag&drop files
+            codeArea.setOnDragOver(dragEvent -> {
+                if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
+                    return;
+                }
+                Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
+                if (optPath.isPresent()) {
+                    dragEvent.acceptTransferModes(TransferMode.LINK);
+                    CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
+                    codeArea.requestFocus();
+                    codeArea.moveTo(hit.getInsertionIndex());
+                }
+            });
+            codeArea.setOnDragDropped(dragEvent -> {
+                CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
+                for (File file : dragEvent.getDragboard().getFiles()) {
+                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
+                    if (optPath.isPresent()) {
+                        onFilesDropped(hit, file, optPath.get());
+                    }
+                    else {
+                        log.warn("Link files not in same workspace are not supported yet");
+                    }
+                }
+            });
+        }
+
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> {
                     this.codeArea.getUndoManager().preventMerge();
@@ -78,6 +114,14 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 //        if (!codeArea.addSelection(extraSelection)) {
 //            throw new IllegalStateException("selection was not added to area");
 //        }
+    }
+
+    /**
+     * @param file
+     * @param filePath final path to present the provided file in this editor.
+     */
+    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+        // INHERIT ME
     }
 
     @Override

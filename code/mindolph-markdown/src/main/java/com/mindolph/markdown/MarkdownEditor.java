@@ -89,7 +89,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
@@ -137,7 +136,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
 
     public MarkdownEditor(EditorContext editorContext) {
-        super("/editor/markdown_editor.fxml", editorContext);
+        super("/editor/markdown_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
         pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
@@ -154,33 +153,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             codeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("> ")); // TODO add tail
         });
         Nodes.addInputMap(this, comment);
-
-        // handles drag&drop files
-        codeArea.setOnDragOver(dragEvent -> {
-            if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
-                return;
-            }
-            Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
-            if (optPath.isPresent()) {
-                dragEvent.acceptTransferModes(TransferMode.LINK);
-                CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
-                codeArea.requestFocus();
-                codeArea.moveTo(hit.getInsertionIndex());
-            }
-        });
-        codeArea.setOnDragDropped(dragEvent -> {
-            CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
-            for (File file : dragEvent.getDragboard().getFiles()) {
-                Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
-                if (optPath.isPresent()) {
-                    String mdFileMarkup = "[%s](%s)".formatted(file.getName(), optPath.get());
-                    codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
-                }
-                else {
-                    log.warn("Link files not in same workspace are not supported yet");
-                }
-            }
-        });
 
         EventBus.getIns().subscribe(notificationType -> {
             if (notificationType == NotificationType.FILE_LOADED) {
@@ -299,6 +271,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                 log.error(e.getLocalizedMessage());
             }
         });
+    }
+
+    @Override
+    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+        String mdFileMarkup = "[%s](%s)".formatted(file.getName(), filePath);
+        codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
     }
 
     // this method will be called from javascript inside the webview.

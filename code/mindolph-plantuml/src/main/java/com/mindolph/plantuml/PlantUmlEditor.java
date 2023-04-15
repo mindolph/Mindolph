@@ -125,7 +125,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private final Indicator indicator = new Indicator();
 
     public PlantUmlEditor(EditorContext editorContext) {
-        super("/editor/plant_uml_editor.fxml", editorContext);
+        super("/editor/plant_uml_editor.fxml", editorContext, false);
         super.fileType = SupportFileTypes.TYPE_PLANTUML;
         log.info("initialize plantuml editor");
         pattern = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
