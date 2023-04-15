@@ -11,6 +11,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.SearchResultEventHandler;
 import com.mindolph.base.util.MindolphFileUtils;
+import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
@@ -172,7 +173,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             }
         });
         cbWorkspaces.setOnDragEntered(event -> {
-            cbWorkspaces.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            RegionUtils.applyDragDropBorder(cbWorkspaces);
             event.consume();
         });
         cbWorkspaces.setOnDragExited(event -> {
