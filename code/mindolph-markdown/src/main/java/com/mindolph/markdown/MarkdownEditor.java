@@ -47,12 +47,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import netscape.javascript.JSObject;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -60,6 +62,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CharacterHit;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.fxmisc.wellbehaved.event.EventPattern;
@@ -83,12 +86,10 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
@@ -149,15 +150,43 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         timestamp = String.valueOf(System.currentTimeMillis());
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, BACK_QUOTE, AUTO_INDENT);
-        InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)),keyEvent -> {
+        InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)), keyEvent -> {
             codeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("> ")); // TODO add tail
         });
         Nodes.addInputMap(this, comment);
 
+        // handles drag&drop files
+        codeArea.setOnDragDropped(dragEvent -> log.debug(dragEvent.getDragboard().getFiles().stream().map(File::getPath).collect(Collectors.joining(","))));
+        codeArea.setOnDragOver(dragEvent -> {
+            if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
+                return;
+            }
+            Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
+            if (optPath.isPresent()) {
+                dragEvent.acceptTransferModes(TransferMode.LINK);
+                CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
+                codeArea.requestFocus();
+                codeArea.moveTo(hit.getInsertionIndex());
+            }
+        });
+        codeArea.setOnDragDropped(dragEvent -> {
+            CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
+            for (File file : dragEvent.getDragboard().getFiles()) {
+                Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
+                if (optPath.isPresent()) {
+                    String mdFileMarkup = "[%s](%s)".formatted(file.getName(), optPath.get());
+                    codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
+                }
+                else {
+                    log.warn("Link files not in same workspace are not supported yet");
+                }
+            }
+        });
+
         EventBus.getIns().subscribe(notificationType -> {
             if (notificationType == NotificationType.FILE_LOADED) {
                 // scroll to top when file loaded.
-                Platform.runLater(()-> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
+                Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
             }
         });
 
@@ -189,7 +218,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         webView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 contextMenu.show(webView, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            } else {
+            }
+            else {
                 contextMenu.hide();
             }
         });
@@ -239,8 +269,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             JSObject window = (JSObject) webView.getEngine().executeScript("window");
             if (window == null) {
                 log.warn("web window is null");
-            } else {
+            }
+            else {
                 window.setMember("scrollListener", this);
+                window.setMember("hoverListener", this);
             }
         });
 
@@ -268,6 +300,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                 log.error(e.getLocalizedMessage());
             }
         });
+    }
+
+    // this method will be called from javascript inside the webview.
+    public void onHover(String content) {
+        log.debug("Hover content: %s".formatted(content));
+        EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
     }
 
     private void interceptLinks(Document document) {
@@ -474,7 +512,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         });
         if (Env.isDevelopment) {
             contextMenu.getItems().addAll(miRefresh, miViewSource, miExportHtml, miExportPdf);
-        } else {
+        }
+        else {
             contextMenu.getItems().addAll(miRefresh, miExportHtml, miExportPdf);
         }
         return contextMenu;

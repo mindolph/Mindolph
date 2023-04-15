@@ -264,6 +264,14 @@ public final class HtmlBuilder {
                                 window.scrollListener.onWebviewScroll(scrolling.scrollLeft, scrolling.scrollTop);
                             }
                         }, 500); // setTimeout is workaround to let scroll goes before listening.
+                        // register hover event for all links
+                        const v = document.getElementsByTagName("a")
+                        for (let i = 0; i < v.length; i++) {
+                            let link = v.item(i);
+                            link.onmouseenter = () => {
+                                window.hoverListener.onHover(link.href)
+                            }
+                        }
                     }
                     </script>
                     %s
