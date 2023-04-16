@@ -269,7 +269,10 @@ public final class HtmlBuilder {
                         for (let i = 0; i < v.length; i++) {
                             let link = v.item(i);
                             link.onmouseenter = () => {
-                                window.hoverListener.onHover(link.href)
+                                window.hoverListener.onHover(link.href);
+                            }
+                            link.onclick = () => {
+                                window.clickListener.onFileLinkClicked(link.href);
                             }
                         }
                     }

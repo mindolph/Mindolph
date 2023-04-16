@@ -66,7 +66,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     protected Optional<String> getRelatedPathInCurrentWorkspace(File file) {
         boolean isSameWorkspace = FileNameUtils.isParentFolder(editorContext.getWorkspaceData().getFile(), file);
         if (isSameWorkspace){
-            return Optional.ofNullable(FileNameUtils.getRelativePath(file, editorContext.getWorkspaceData().getFile()));
+            return Optional.of(FileNameUtils.getRelativePath(file, editorContext.getFileData().getFile().getParentFile()));
         }
         else {
             return Optional.empty();

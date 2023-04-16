@@ -12,6 +12,7 @@ import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.NotificationType;
+import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.print.PrinterManager;
 import com.mindolph.base.util.FxImageUtils;
@@ -19,6 +20,7 @@ import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.template.HtmlBuilder;
+import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.markdown.constant.ShortcutConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextBlockDialog;
@@ -107,6 +109,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     private static final String CODE_BLOCK_PATTERN = "[\\`]{3}[\\s\\S]*?[\\`]{3}";
     private static final String QUOTE_PATTERN = "> [\\s\\S]*?" + TextConstants.LINE_SEPARATOR;
     private static final String URL_PATTERN = "([\\!]?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
+
+    public static final String URL_MARKUP = "[%s](%s)";
+    public static final String IMG_MARKUP = "![%s](%s)";
+
 
     private static final String initScrollScript = """
             function initScrollPos(){
@@ -245,6 +251,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             else {
                 window.setMember("scrollListener", this);
                 window.setMember("hoverListener", this);
+                window.setMember("clickListener", this);
             }
         });
 
@@ -276,7 +283,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
-        String mdFileMarkup = "[%s](%s)".formatted(file.getName(), filePath);
+        String markup = FileNameUtils.isImageFile(file) ? IMG_MARKUP : URL_MARKUP;
+        String mdFileMarkup = markup.formatted(file.getName(), filePath);
         codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
     }
 
@@ -284,6 +292,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     public void onHover(String content) {
         log.debug("Hover content: %s".formatted(content));
         EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
+    }
+
+    public void onFileLinkClicked(String url) {
+        File f = new File(editorContext.getFileData().getFile().getParentFile(), url);
+        log.debug("Try to open file: " + f.getPath());
+        EventBus.getIns().notifyOpenFile(new OpenFileEvent(f, true));
     }
 
     private void interceptLinks(Document document) {
