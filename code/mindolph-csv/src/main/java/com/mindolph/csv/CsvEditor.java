@@ -102,23 +102,23 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     indexCell.setOnMouseReleased(event -> {
                         log.debug("Mouse pressed");
                         Platform.runLater(() -> {
-                            TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
                             if (event.isShiftDown()) {
                                 log.debug("Multi rows selection");
                                 int start = Math.min(indexCell.getIndex(), clickedRowIdx);
                                 int end = Math.max(indexCell.getIndex(), clickedRowIdx);
                                 log.debug("Select rows from %d to %d".formatted(start, end));
-                                selectionModel.selectRange(start, end + 1);
+                                tableView.selectRows(start, end);
                                 EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected rows: (%d-%d)".formatted(start + 1, end + 1)));
                             }
                             else {
                                 log.debug("Single row selection");
                                 log.debug("Select row: %d".formatted(indexCell.getIndex()));
-                                tableView.getSelectionModel().select(indexCell.getIndex());
+                                tableView.selectRow(indexCell.getIndex());
                                 clickedRowIdx = indexCell.getIndex();
                                 EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected row: %d".formatted(clickedRowIdx + 1)));
                             }
                         });
+                        event.consume();
                     });
                     indexCell.setContextMenu(createRowContextMenu());
                     return indexCell;

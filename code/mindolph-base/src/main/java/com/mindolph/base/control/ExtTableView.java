@@ -62,8 +62,9 @@ public class ExtTableView extends TableView<Row> {
 
     private void disableIndexColumnKeyEvents() {
         this.getFocusModel().focusedCellProperty().addListener((observableValue, number, focused) -> {
-            log.debug("Focused changed %d-%d".formatted(focused.getRow(), focused.getColumn()));
+            log.trace("Focused changed %d-%d".formatted(focused.getRow(), focused.getColumn()));
             if (focused.getColumn() == 0) {
+                log.debug("Unable to select cells of index column");
                 getSelectionModel().clearSelection(focused.getRow(), indexCol);
                 getSelectionModel().selectRightCell();
                 refresh();
@@ -185,6 +186,32 @@ public class ExtTableView extends TableView<Row> {
             Row item = items.get(i);
             item.setIndex(i);
         }
+    }
+
+    public boolean isFirstColumn(TableColumn<Row, String> column) {
+        return super.getColumns().indexOf(column) == 1;
+    }
+
+    public void selectRow(int rowIdx) {
+        this.selectRows(rowIdx, rowIdx);
+    }
+
+    /**
+     * @param rowIdxFrom
+     * @param rowIdxTo   inclusive
+     */
+    public void selectRows(int rowIdxFrom, int rowIdxTo) {
+        ObservableList<TableColumn<Row, ?>> columns = super.getColumns();
+        if (columns.size() <= 1) {
+            return;
+        }
+        TableViewSelectionModel<Row> selectionModel = super.getSelectionModel();
+        if (rowIdxFrom < 0 || rowIdxTo >= super.getItems().size()) {
+            return;
+        }
+
+        log.debug("Select from %d,%d to %d,%d".formatted(rowIdxFrom, columns.indexOf(columns.get(1)), rowIdxTo, columns.indexOf(columns.get(columns.size() - 1))));
+        selectionModel.selectRange(rowIdxFrom, columns.get(1), rowIdxTo, columns.get(columns.size() - 1));
     }
 
     public ObservableList<Row> getSelectedRows() {
