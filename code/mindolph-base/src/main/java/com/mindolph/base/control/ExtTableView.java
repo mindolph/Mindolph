@@ -2,6 +2,7 @@ package com.mindolph.base.control;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
@@ -67,7 +68,6 @@ public class ExtTableView extends TableView<Row> {
                 log.debug("Unable to select cells of index column");
                 getSelectionModel().clearSelection(focused.getRow(), indexCol);
                 getSelectionModel().selectRightCell();
-                refresh();
             }
         });
     }
@@ -123,12 +123,17 @@ public class ExtTableView extends TableView<Row> {
      * @return
      */
     public Row appendStubRow() {
+        ListChangeListener<Row> l = c -> {
+            super.scrollTo(c.getList().size() - 1); //scroll to bottom after append a new row
+        };
+        super.getItems().addListener(l);
         Row newRow = createRow(super.getColumns().size() - 1); // excludes index column
         newRow.setIndex(++stubRowIdx);
         super.getSelectionModel().clearSelection();
         super.getItems().add(newRow);
 //        super.refresh();
         this.afterRowAdded();
+        super.getItems().removeListener(l);
         return newRow;
     }
 
@@ -212,6 +217,7 @@ public class ExtTableView extends TableView<Row> {
 
         log.debug("Select from %d,%d to %d,%d".formatted(rowIdxFrom, columns.indexOf(columns.get(1)), rowIdxTo, columns.indexOf(columns.get(columns.size() - 1))));
         selectionModel.selectRange(rowIdxFrom, columns.get(1), rowIdxTo, columns.get(columns.size() - 1));
+        super.getFocusModel().focus(rowIdxFrom, columns.get(1));
     }
 
     public ObservableList<Row> getSelectedRows() {
