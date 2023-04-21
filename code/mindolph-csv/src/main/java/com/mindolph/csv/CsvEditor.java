@@ -302,15 +302,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
         int dataIdx = colIdx - 1;// -1 because of the index column.
         Row row = tableView.getItems().get(rowIdx);
         row.updateValue(dataIdx, newText);
-//        Platform.runLater(() -> {
         if (rowIdx == 0) {
             column.setText(newText); // update text for any columns
         }
         if (StringUtils.isNotBlank(newText)) {
             if (rowIdx == tableView.getStubRowIdx()) {
                 log.debug("Add new stub row since the stub row is changed");
-                tableView.appendStubRow();
-                tableView.refresh();
+                tableView.appendStubRowAndScrollToBottom();
             }
             if (tableView.isStubColumn(column)) {
                 log.debug("Add new stub column since the stub column is changed");
@@ -320,7 +318,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             }
         }
         tableView.refresh();
-//        });
     }
 
 
@@ -378,11 +375,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
         rowContextMenu = new ContextMenu();
         MenuItem miInsertBefore = new MenuItem("Insert New Line Before");
         MenuItem miInsertAfter = new MenuItem("Insert New Line After");
-        MenuItem miCopy = new MenuItem("Copy");
-        MenuItem miPaste = new MenuItem("Paste");
-        MenuItem miCut = new MenuItem("Cut");
-        MenuItem miDelete = new MenuItem("Delete Row(s)");
-        miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miDelete = new MenuItem("Delete Row(s)", FontIconManager.getIns().getIcon(IconKey.DELETE));
         miInsertBefore.setOnAction(event -> {
             this.insertNewRow(ROW_CURRENT); // replace current actually
         });
@@ -410,11 +406,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private ContextMenu createCellContextMenu() {
         cellContextMenu = new ContextMenu();
-        MenuItem miEdit = new MenuItem("Edit");
-        MenuItem miCut = new MenuItem("Cut");
-        MenuItem miCopy = new MenuItem("Copy");
-        MenuItem miPaste = new MenuItem("Paste");
-        MenuItem miDelete = new MenuItem("Delete");
+        MenuItem miEdit = new MenuItem("Edit", FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         miEdit.setOnAction(event -> {
             if (focusedCell != null) {

@@ -117,23 +117,27 @@ public class ExtTableView extends TableView<Row> {
         return newRow;
     }
 
+    public Row appendStubRowAndScrollToBottom() {
+        ListChangeListener<Row> l = c -> {
+            super.scrollTo(c.getList().size() - 1); //scroll to bottom after append a new row
+        };
+        super.getItems().addListener(l);
+        Row row = this.appendStubRow();
+        super.getItems().removeListener(l);
+        return row;
+    }
+
     /**
      * All columns must be defined before calling this method.
      *
      * @return
      */
     public Row appendStubRow() {
-        ListChangeListener<Row> l = c -> {
-            super.scrollTo(c.getList().size() - 1); //scroll to bottom after append a new row
-        };
-        super.getItems().addListener(l);
         Row newRow = createRow(super.getColumns().size() - 1); // excludes index column
         newRow.setIndex(++stubRowIdx);
         super.getSelectionModel().clearSelection();
         super.getItems().add(newRow);
-//        super.refresh();
         this.afterRowAdded();
-        super.getItems().removeListener(l);
         return newRow;
     }
 
