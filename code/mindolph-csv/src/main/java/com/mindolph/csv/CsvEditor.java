@@ -105,23 +105,25 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     indexCell.setOnMouseReleased(event -> {
                         log.debug("Mouse pressed");
                         Platform.runLater(() -> {
-                            TableViewSelectionModel<Row> selectionModel = tableView.getSelectionModel();
                             if (event.isShiftDown()) {
                                 log.debug("Multi rows selection");
                                 int start = Math.min(indexCell.getIndex(), clickedRowIdx);
                                 int end = Math.max(indexCell.getIndex(), clickedRowIdx);
                                 log.debug("Select rows from %d to %d".formatted(start, end));
-                                selectionModel.selectRange(start, end + 1);
+                                tableView.selectRows(start, end);
                                 EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected rows: (%d-%d)".formatted(start + 1, end + 1)));
                             }
                             else {
                                 log.debug("Single row selection");
-                                log.debug("Select row: %d".formatted(indexCell.getIndex()));
-                                tableView.getSelectionModel().select(indexCell.getIndex());
-                                clickedRowIdx = indexCell.getIndex();
-                                EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected row: %d".formatted(clickedRowIdx + 1)));
+                                if (indexCell.getIndex() >= 0) { // NOTE: weired that the index occasionally be -1
+                                    log.debug("Select row: %d".formatted(indexCell.getIndex()));
+                                    tableView.selectRow(indexCell.getIndex());
+                                    clickedRowIdx = indexCell.getIndex();
+                                    EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("Selected row: %d".formatted(clickedRowIdx + 1)));
+                                }
                             }
                         });
+                        event.consume();
                     });
                     indexCell.setContextMenu(createRowContextMenu());
                     return indexCell;
@@ -376,7 +378,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
         rowContextMenu = new ContextMenu();
         MenuItem miInsertBefore = new MenuItem("Insert New Line Before");
         MenuItem miInsertAfter = new MenuItem("Insert New Line After");
-        MenuItem miCopy = new MenuItem("Copy Row(s)");
+        MenuItem miCopy = new MenuItem("Copy");
+        MenuItem miPaste = new MenuItem("Paste");
+        MenuItem miCut = new MenuItem("Cut");
         MenuItem miDelete = new MenuItem("Delete Row(s)");
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         miInsertBefore.setOnAction(event -> {
@@ -385,14 +389,22 @@ public class CsvEditor extends BaseEditor implements Initializable {
         miInsertAfter.setOnAction(event -> {
             this.insertNewRow(ROW_NEXT); // insert to next
         });
+        miCut.setOnAction(event -> {
+            this.copy();
+            tableView.setAllSelectedCells(EMPTY);
+            saveToCache();
+        });
         miCopy.setOnAction(event -> {
             this.copy();
+        });
+        miPaste.setOnAction(event -> {
+            this.paste();
         });
         miDelete.setOnAction(event -> {
             tableView.deleteSelectedRows();
             saveToCache();
         });
-        rowContextMenu.getItems().addAll(miInsertBefore, miInsertAfter, miCopy, miDelete);
+        rowContextMenu.getItems().addAll(miCut, miCopy, miPaste, miInsertBefore, miInsertAfter, miDelete);
         return rowContextMenu;
     }
 
@@ -444,13 +456,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     StringReader stringReader = new StringReader(text);
                     CSVParser parsed = csvFormat.parse(stringReader);
                     List<CSVRecord> records = parsed.getRecords();
-                    TablePosition pos = tableView.getFocusModel().getFocusedCell();
+                    log.debug("Paste %d rows".formatted(records.size()));
+                    TablePosition startCell = tableView.getFocusModel().getFocusedCell();
                     for (int i = 0; i < records.size(); i++) {
                         CSVRecord record = records.get(i);
+                        log.debug("Paste row with %d cells".formatted(record.size()));
                         for (int j = 0; j < record.size(); j++) {
                             String newValue = record.get(j);
-                            TableColumn<Row, String> column = (TableColumn<Row, String>) tableView.getColumns().get(pos.getColumn() + j);
-                            this.onCellDataChanged(pos.getRow() + i, column, newValue);
+                            TableColumn<Row, String> column = (TableColumn<Row, String>) tableView.getColumns().get(startCell.getColumn() + j);
+                            this.onCellDataChanged(startCell.getRow() + i, column, newValue);
                         }
                     }
                     this.saveToCache();

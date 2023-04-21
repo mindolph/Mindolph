@@ -2,6 +2,7 @@ package com.mindolph.base.control;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
@@ -62,11 +63,11 @@ public class ExtTableView extends TableView<Row> {
 
     private void disableIndexColumnKeyEvents() {
         this.getFocusModel().focusedCellProperty().addListener((observableValue, number, focused) -> {
-            log.debug("Focused changed %d-%d".formatted(focused.getRow(), focused.getColumn()));
+            log.trace("Focused changed %d-%d".formatted(focused.getRow(), focused.getColumn()));
             if (focused.getColumn() == 0) {
+                log.debug("Unable to select cells of index column");
                 getSelectionModel().clearSelection(focused.getRow(), indexCol);
                 getSelectionModel().selectRightCell();
-                refresh();
             }
         });
     }
@@ -122,12 +123,17 @@ public class ExtTableView extends TableView<Row> {
      * @return
      */
     public Row appendStubRow() {
+        ListChangeListener<Row> l = c -> {
+            super.scrollTo(c.getList().size() - 1); //scroll to bottom after append a new row
+        };
+        super.getItems().addListener(l);
         Row newRow = createRow(super.getColumns().size() - 1); // excludes index column
         newRow.setIndex(++stubRowIdx);
         super.getSelectionModel().clearSelection();
         super.getItems().add(newRow);
 //        super.refresh();
         this.afterRowAdded();
+        super.getItems().removeListener(l);
         return newRow;
     }
 
@@ -185,6 +191,33 @@ public class ExtTableView extends TableView<Row> {
             Row item = items.get(i);
             item.setIndex(i);
         }
+    }
+
+    public boolean isFirstColumn(TableColumn<Row, String> column) {
+        return super.getColumns().indexOf(column) == 1;
+    }
+
+    public void selectRow(int rowIdx) {
+        this.selectRows(rowIdx, rowIdx);
+    }
+
+    /**
+     * @param rowIdxFrom
+     * @param rowIdxTo   inclusive
+     */
+    public void selectRows(int rowIdxFrom, int rowIdxTo) {
+        ObservableList<TableColumn<Row, ?>> columns = super.getColumns();
+        if (columns.size() <= 1) {
+            return;
+        }
+        TableViewSelectionModel<Row> selectionModel = super.getSelectionModel();
+        if (rowIdxFrom < 0 || rowIdxTo >= super.getItems().size()) {
+            return;
+        }
+
+        log.debug("Select from %d,%d to %d,%d".formatted(rowIdxFrom, columns.indexOf(columns.get(1)), rowIdxTo, columns.indexOf(columns.get(columns.size() - 1))));
+        selectionModel.selectRange(rowIdxFrom, columns.get(1), rowIdxTo, columns.get(columns.size() - 1));
+        super.getFocusModel().focus(rowIdxFrom, columns.get(1));
     }
 
     public ObservableList<Row> getSelectedRows() {
