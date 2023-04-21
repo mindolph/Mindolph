@@ -270,15 +270,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
         int dataIdx = colIdx - 1;// -1 because of the index column.
         Row row = tableView.getItems().get(rowIdx);
         row.updateValue(dataIdx, newText);
-//        Platform.runLater(() -> {
         if (rowIdx == 0) {
             column.setText(newText); // update text for any columns
         }
         if (StringUtils.isNotBlank(newText)) {
             if (rowIdx == tableView.getStubRowIdx()) {
                 log.debug("Add new stub row since the stub row is changed");
-                tableView.appendStubRow();
-                tableView.refresh();
+                tableView.appendStubRowAndScrollToBottom();
             }
             if (tableView.isStubColumn(column)) {
                 log.debug("Add new stub column since the stub column is changed");
@@ -288,7 +286,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
             }
         }
         tableView.refresh();
-//        });
     }
 
 
