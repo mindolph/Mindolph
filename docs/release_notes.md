@@ -1,9 +1,17 @@
 # Release Notes
 
+### V1.2.2 Release
+* Feature: add icons to context menu items for csv editor.
+* Feature: add cut and paste for selected rows.
+* Fix: occasionally can't select rows.
+* Refactor select row(s).
+* Update PlantUML to 1.2023.6.
+* Fixed some minor bugs.
+
 ### V1.2.1 Release
-* feat: unable to locate matched cell correctly in searching.
-* feat: paste csv format text from clipboard to multiple cells as it is.
-* feat: disable cells navigation by keys when editing.
+* Feature: unable to locate matched cell correctly in searching.
+* Feature: paste csv format text from clipboard to multiple cells as it is.
+* Feature: disable cells navigation by keys when editing.
 * fix: index column shouldn't be selected by left arrow key.
 * merge bug fixes from v1.1.4.
 
@@ -14,10 +22,10 @@
 * Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
 
 ### V1.2.0
-* feat: add 'Edit' to context menu in csv editor.
-* feat: index column background and border.
-* fix: paste from multiple empty cells turns out comma(s).
-* fix: paste empty content to a cell causes file changed.
+* Feature: add 'Edit' to context menu in csv editor.
+* Feature: index column background and border.
+* Fix: paste from multiple empty cells turns out comma(s).
+* Fix: paste empty content to a cell causes file changed.
 * merge bug fixes from v1.1.2 and v1.1.3
 
 ### V1.1.3 Release
