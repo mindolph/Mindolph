@@ -32,7 +32,13 @@ public class ElementLevelFirst extends BaseCollapsableElement {
     }
 
     protected Shape makeShape(double x, double y) {
-        return new Rectangle(x, y, this.bounds.getWidth(), this.bounds.getHeight());
+        Rectangle rect = new Rectangle(x, y, this.bounds.getWidth(), this.bounds.getHeight());
+        if (cfg.getRoundRadius() > 0) {
+            float round = mindMapContext.safeScale(cfg.getRoundRadius(), 0f);
+            rect.setArcWidth(round);
+            rect.setArcHeight(round);
+        }
+        return rect;
     }
 
     @Override

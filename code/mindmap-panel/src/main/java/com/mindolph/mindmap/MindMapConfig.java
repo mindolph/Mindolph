@@ -57,6 +57,7 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private float connectorWidth = 1.5f;
     private float selectLineWidth = 3.0f;
     private float jumpLinkWidth = 1.5f;
+    private float roundRadius = 8f;
     private boolean trimTopicText = true;
     private boolean unfoldCollapsedTarget = false;
     private boolean copyColorInfoToNewChild = false;
@@ -152,6 +153,13 @@ public final class MindMapConfig implements EditorConfig, Serializable {
         this.jumpLinkWidth = f;
     }
 
+    public float getRoundRadius() {
+        return roundRadius;
+    }
+
+    public void setRoundRadius(float roundRadius) {
+        this.roundRadius = roundRadius;
+    }
 
     public Color getJumpLinkColor() {
         return this.jumpLinkColor;

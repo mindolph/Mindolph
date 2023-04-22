@@ -36,6 +36,8 @@ public class MmdPreferences extends BasePrefsPane {
     @FXML
     private CheckBox ckbShowCollapsatorOnMouseHover;
     @FXML
+    private Spinner<Double> spnRoundRadius;
+    @FXML
     private Spinner<Double> spnJumpLinkWidth;
     @FXML
     private Spinner<Double> spnCollapsatorWidth;
@@ -119,7 +121,8 @@ public class MmdPreferences extends BasePrefsPane {
         this.bindPreference(cpConnectorColor.valueProperty(), mindMapConfig::setConnectorColor);
         this.bindPreference(cpJumpLinkColor.valueProperty(), mindMapConfig::setJumpLinkColor);
         this.bindPreference(ckbDropShadow.selectedProperty(), mindMapConfig::setDropShadow);
-        this.bindPreference(spnBorderWidth.valueProperty(), aDouble -> mindMapConfig.setElementBorderWidth(aDouble.floatValue()));
+        this.bindPreference(spnBorderWidth.valueProperty(), number -> mindMapConfig.setElementBorderWidth(number.floatValue()));
+        this.bindPreference(spnRoundRadius.valueProperty(), number -> mindMapConfig.setRoundRadius(number.floatValue()));
         this.bindPreference(cpRootFillColor.valueProperty(), mindMapConfig::setRootBackgroundColor);
         this.bindPreference(cpRootTextColor.valueProperty(), mindMapConfig::setRootTextColor);
         this.bindPreference(cp1stLevelColor.valueProperty(), mindMapConfig::setFirstLevelBackgroundColor);
@@ -162,6 +165,7 @@ public class MmdPreferences extends BasePrefsPane {
         cpJumpLinkColor.setValue(mindMapConfig.getJumpLinkColor());
         ckbDropShadow.setSelected(mindMapConfig.isDropShadow());
         spnBorderWidth.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 4f, mindMapConfig.getElementBorderWidth()));
+        spnRoundRadius.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0f, 20f, mindMapConfig.getRoundRadius()));
         cpRootFillColor.setValue(mindMapConfig.getRootBackgroundColor());
         cpRootTextColor.setValue(mindMapConfig.getRootTextColor());
         cp1stLevelColor.setValue(mindMapConfig.getFirstLevelBackgroundColor());
