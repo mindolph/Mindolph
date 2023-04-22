@@ -69,6 +69,11 @@
                                        <Spinner fx:id="spnBorderWidth" editable="true" />
                                    </items>
                                </PreferenceItem>
+                               <PreferenceItem name="Topic round radius:">
+                                   <items>
+                                       <Spinner fx:id="spnRoundRadius" editable="true" />
+                                   </items>
+                               </PreferenceItem>
 
                                <PreferenceItem name="Selection frame width:">
                                    <items>
