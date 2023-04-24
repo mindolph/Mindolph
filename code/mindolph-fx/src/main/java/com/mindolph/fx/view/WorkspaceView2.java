@@ -27,12 +27,14 @@ import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.dialog.FindInFilesDialog;
+import com.mindolph.fx.dialog.UsageDialog;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.search.FileLinkMindMapSearchMatcher;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
 import com.mindolph.plantuml.PlantUmlTemplates;
 import javafx.application.Platform;
@@ -44,8 +46,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.TreeViewSkin;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.io.FileUtils;
@@ -132,6 +132,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private MenuItem miClone;
     private MenuItem miDelete;
     private MenuItem miOpenInSystem;
+    private MenuItem miUsage;
     private MenuItem miFindFiles;
     private MenuItem miCollapseAll;
 
@@ -326,6 +327,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
                 });
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
+        SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
     }
 
     private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
@@ -606,8 +608,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
-                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
+                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(),miFindFiles);
             }
+            miUsage = new MenuItem("Find Usage", FontIconManager.getIns().getIcon(IconKey.SEARCH));
+            miUsage.setOnAction(this);
+            contextMenu.getItems().add(miUsage);
         }
         return contextMenu;
     }
@@ -963,6 +968,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miFindFiles) {
             this.launchFindInFilesDialog(selectedData);
         }
+        else if (source == miUsage) {
+            this.launchUsageDialog(selectedData);
+        }
         else if (source == miOpenInSystem) {
             if (selectedData != null) {
                 log.info("Try to open file: " + selectedData.getFile());
@@ -1051,6 +1059,18 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     searchEventHandler.onSearchStart(searchParams);
                 }
             }
+        }
+    }
+
+    private void launchUsageDialog(NodeData selectedData) {
+        if (selectedData.isFolder() || selectedData.isFile()) {
+            File workspaceDir = selectedData.getWorkspaceData().getFile();
+            SearchParams searchParams = new SearchParams();
+            searchParams.setKeywords(FileNameUtils.getRelativePath(selectedData.getFile(), workspaceDir));
+            searchParams.setSearchFilter(workspaceConfig.makeFileFilter());
+            searchParams.setSearchInDir(workspaceDir);
+            searchParams.setWorkspaceDir(workspaceDir);
+            new UsageDialog(searchParams).showAndWait();
         }
     }
 

@@ -25,7 +25,10 @@ public class SearchService {
 
     private final Logger log = LoggerFactory.getLogger(SearchService.class);
 
+    // for searching content in files
     private final Map<String, SearchMatcher> matchers = new HashMap<>();
+    // for searching file links in files
+    private final Map<String, SearchMatcher> fileLinkMatchers = new HashMap<>();
 
     public static SearchService getIns() {
         return ins;
@@ -55,6 +58,11 @@ public class SearchService {
         this.matchers.put(TYPE_MARKDOWN, pureFileMatcher);
         this.matchers.put(TYPE_PLANTUML, pureFileMatcher);
         this.matchers.put(TYPE_CSV, pureFileMatcher);
+        // for file links (plantuml is not supported yet)
+        FileLinkSearchMatcher fileLinkSearchMatcher = new FileLinkSearchMatcher();
+        this.fileLinkMatchers.put(TYPE_PLAIN_TEXT, fileLinkSearchMatcher);
+        this.fileLinkMatchers.put(TYPE_MARKDOWN, fileLinkSearchMatcher);
+        this.fileLinkMatchers.put(TYPE_CSV, fileLinkSearchMatcher);
     }
 
     /**
@@ -100,7 +108,41 @@ public class SearchService {
         return null;
     }
 
+
+    /**
+     * Search files with link(s) to the target file whose path is as the keyword.
+     *
+     * @param dir
+     * @param fileFilter
+     * @param searchParams
+     * @return
+     */
+    public List<File> searchLinksInFilesIn(File dir, IOFileFilter fileFilter, SearchParams searchParams) {
+        log.debug("Find in files by '%s' with file filters %s".formatted(searchParams, fileFilter));
+        Collection<File> files = FileUtils.listFilesAndDirs(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+        log.debug("Search in %d files".formatted(files.size()));
+        if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {
+            List<File> foundList = new ArrayList<>();
+            for (File file : files) {
+                SearchMatcher searchMatch = this.fileLinkMatchers.get(FilenameUtils.getExtension(file.getPath()));
+                if (searchMatch != null && searchMatch.matches(file, searchParams)) {
+                    foundList.add(file);
+                }
+            }
+            for (File file : foundList) {
+                log.debug(file.getPath());
+            }
+            log.debug("%d files matches".formatted(foundList.size()));
+            return foundList;
+        }
+        return null;
+    }
+
     public void registerMatcher(String fileType, SearchMatcher matcher) {
         this.matchers.put(fileType, matcher);
+    }
+
+    public void registerFileLinkMatcher(String fileType, SearchMatcher matcher) {
+        this.fileLinkMatchers.put(fileType, matcher);
     }
 }

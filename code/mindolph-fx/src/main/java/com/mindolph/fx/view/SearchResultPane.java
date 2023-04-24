@@ -4,13 +4,10 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
-import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
-import com.mindolph.fx.IconBuilder;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.control.FileFilterButtonGroup;
-import com.mindolph.fx.util.DisplayUtils;
+import com.mindolph.fx.control.FileTreeView;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.AsyncUtils;
 import com.mindolph.mfx.util.FxmlUtils;
@@ -19,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.Callback;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +47,7 @@ public class SearchResultPane extends AnchorPane {
     private Button btnSearch;
 
     @FXML
-    private TreeView<File> treeView;
+    private FileTreeView treeView;
     @FXML
     private FileFilterButtonGroup fileFilterButtonGroup;
     @FXML
@@ -83,39 +79,16 @@ public class SearchResultPane extends AnchorPane {
                 EventBus.getIns().notifyOpenFile(new OpenFileEvent(file, true, searchParams));
             }
         });
-        treeView.setCellFactory(new Callback<>() {
-            @Override
-            public TreeCell<File> call(TreeView<File> param) {
-                return new TreeCell<>() {
-                    @Override
-                    protected void updateItem(File item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null) {
-                            setText(DisplayUtils.displayFile(searchParams.getWorkspaceDir(), item));
-                            if (item.isFile()) {
-                                setGraphic(new IconBuilder().fileData(new NodeData(item)).build());
-                            }
-                            else if (item.isDirectory()) {
-                                setGraphic(new IconBuilder().name(IconName.FOLDER).build());
-                            }
-                        }
-                        else {
-                            setText(null);
-                            setGraphic(null);
-                        }
-                    }
-                };
-            }
-        });
+
         tfKeywords.textProperty().addListener((observableValue, s, t1) -> searchParams.setKeywords(t1));
         tfKeywords.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                this.research();
+                this.reSearch();
             }
         });
         tbCase.setGraphic(FontIconManager.getIns().getIcon(IconKey.CASE_SENSITIVITY));
         btnSearch.setOnAction(event -> {
-            this.research();
+            this.reSearch();
         });
         Platform.runLater(() -> {
             tfKeywords.requestFocus();
@@ -124,27 +97,28 @@ public class SearchResultPane extends AnchorPane {
 
     public void init(SearchParams searchParams) {
         this.searchParams = searchParams;
+        treeView.init(searchParams);
         tfKeywords.setText(searchParams.getKeywords());
         tbCase.setSelected(searchParams.isCaseSensitive());
         fileFilterButtonGroup.setSelectedFileType(searchParams.getFileTypeName());
         // start searching
-        this.research();
+        this.reSearch();
         // add listeners after search completed.
         tbCase.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
             log.debug("Case sensitive option changed to: %s".formatted(t1));
             searchParams.setCaseSensitive(t1);
-            this.research();
+            this.reSearch();
         });
         fileFilterButtonGroup.selectedFileTypeProperty().addListener((observableValue, s, fileTypeName) -> {
             log.debug("File type changed to: %s".formatted(fileTypeName));
             // may be filtering searched files instead of research again for file type switching TODO
             searchParams.setFileTypeName(fileFilterButtonGroup.getSelectedFileType());
-            research();
+            reSearch();
         });
     }
 
-    private void research() {
-        log.debug("research()");
+    private void reSearch() {
+        log.debug("reSearch()");
         progressIndicator.setVisible(true);
         String keyword = searchParams.getKeywords();
         IOFileFilter newFileFilter = searchParams.getSearchFilter();

@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 /**
@@ -48,14 +49,25 @@ public class FileNameUtils {
         return StringUtils.startsWith(file.getParentFile().getPath(), folder.getPath());
     }
 
+    /**
+     * Get real relative path even not in the save directory.
+     *
+     * @param file
+     * @param ancestorDir
+     * @return like "a/b/c" or "../a/b/c"
+     */
     public static String getRelativePath(File file, File ancestorDir) {
         return ancestorDir.toPath().relativize(file.toPath()).toString();
     }
 
-    public static String getRelativePath(String fullPath, String ancestorPath) {
-        String finalPath = StringUtils.substringAfter(fullPath, ancestorPath);
-        return StringUtils.stripStart(finalPath, File.separator);
+    public static String getRelativePath(String path, String ancestorPath){
+        return Path.of(ancestorPath).relativize(Path.of(path)).toString();
     }
+
+//    public static String getRelativePath(String fullPath, String ancestorPath) {
+//        String finalPath = StringUtils.substringAfter(fullPath, ancestorPath);
+//        return StringUtils.stripStart(finalPath, File.separator);
+//    }
 
     public static boolean isAbsolutePath(String path) {
         return StringUtils.startsWith(path, "/") || isWindowsPath(path);
