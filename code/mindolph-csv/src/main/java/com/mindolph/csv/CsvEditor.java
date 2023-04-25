@@ -23,6 +23,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
@@ -368,6 +370,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
             tableView.deleteSelectedRows();
             saveToCache();
         });
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        miPaste.setDisable(!clipboard.hasContent(DataFormat.PLAIN_TEXT));
         rowContextMenu.getItems().addAll(miCut, miCopy, miPaste, miInsertBefore, miInsertAfter, miDelete);
         return rowContextMenu;
     }
@@ -397,6 +401,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
         miDelete.setOnAction(event -> {
             tableView.setAllSelectedCells(EMPTY);
         });
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        miPaste.setDisable(!clipboard.hasContent(DataFormat.PLAIN_TEXT));
         cellContextMenu.getItems().addAll(miEdit, miCut, miCopy, miPaste, new SeparatorMenuItem(), miDelete);
         return cellContextMenu;
     }
