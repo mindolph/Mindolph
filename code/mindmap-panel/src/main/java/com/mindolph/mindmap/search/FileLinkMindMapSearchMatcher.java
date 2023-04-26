@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class FileLinkMindMapSearchMatcher implements SearchMatcher {
 
@@ -54,5 +54,10 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public String getMatchContext() {
+        return null;
     }
 }

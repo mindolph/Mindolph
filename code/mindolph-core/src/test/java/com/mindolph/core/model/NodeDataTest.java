@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class NodeDataTest {
 

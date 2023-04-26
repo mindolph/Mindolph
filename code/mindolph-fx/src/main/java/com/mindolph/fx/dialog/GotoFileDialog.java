@@ -117,7 +117,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
                     protected void updateItem(FileMeta item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
-                            setText(DisplayUtils.displayFile(item.getWorkspaceDir(), item.getDirOrFile()));
+                            setText(DisplayUtils.displayFileWithWorkspace(item.getWorkspaceDir(), item.getDirOrFile()));
                             if (item.getDirOrFile().isFile()) {
                                 setGraphic(new IconBuilder().fileData(new NodeData(item.getDirOrFile())).size(32).build());
                             }

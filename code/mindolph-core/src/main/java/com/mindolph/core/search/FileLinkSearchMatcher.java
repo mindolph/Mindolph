@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class FileLinkSearchMatcher implements SearchMatcher {
 
@@ -36,5 +36,10 @@ public class FileLinkSearchMatcher implements SearchMatcher {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public String getMatchContext() {
+        return null;
     }
 }

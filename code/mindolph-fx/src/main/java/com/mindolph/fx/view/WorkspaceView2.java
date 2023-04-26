@@ -326,7 +326,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
                 });
-        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
+        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
         SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
     }
 
@@ -610,7 +610,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(),miFindFiles);
             }
-            miUsage = new MenuItem("Find Usage", FontIconManager.getIns().getIcon(IconKey.SEARCH));
+            miUsage = new MenuItem("Find Usage");
             miUsage.setOnAction(this);
             contextMenu.getItems().add(miUsage);
         }

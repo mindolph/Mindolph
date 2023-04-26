@@ -4,10 +4,12 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.core.search.FoundFile;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.control.FileFilterButtonGroup;
 import com.mindolph.fx.control.FileTreeView;
+import com.mindolph.fx.control.FileTreeView.FileTreeViewData;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.AsyncUtils;
 import com.mindolph.mfx.util.FxmlUtils;
@@ -17,10 +19,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.List;
 
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_FIND_FILES_KEYWORD;
@@ -53,11 +55,11 @@ public class SearchResultPane extends AnchorPane {
     @FXML
     private ProgressIndicator progressIndicator;
 
-    private final TreeItem<File> rootItem;
+    private final TreeItem<FileTreeViewData> rootItem;
 
     private SearchParams searchParams;
 
-    private List<File> foundFiles;
+    private List<FoundFile> foundFiles;
 
     public SearchResultPane() {
         FxmlUtils.loadUri("/view/search_result_pane.fxml", this);
@@ -67,16 +69,20 @@ public class SearchResultPane extends AnchorPane {
         treeView.setShowRoot(false);
         treeView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
-                TreeItem<File> selectedItem = treeView.getSelectionModel().getSelectedItem();
-                File file = selectedItem.getValue();
-                EventBus.getIns().notifyOpenFile(new OpenFileEvent(file, true, searchParams));
+                TreeItem<FileTreeViewData> selectedItem = treeView.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    FileTreeViewData data = selectedItem.getValue();
+                    if (!data.isParent()) {
+                        EventBus.getIns().notifyOpenFile(new OpenFileEvent(data.getFile(), true, searchParams));
+                    }
+                }
             }
         });
         treeView.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                TreeItem<File> selectedItem = treeView.getSelectionModel().getSelectedItem();
-                File file = selectedItem.getValue();
-                EventBus.getIns().notifyOpenFile(new OpenFileEvent(file, true, searchParams));
+                TreeItem<FileTreeViewData> selectedItem = treeView.getSelectionModel().getSelectedItem();
+                FileTreeViewData file = selectedItem.getValue();
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(file.getFile(), true, searchParams));
             }
         });
 
@@ -134,10 +140,15 @@ public class SearchResultPane extends AnchorPane {
     private void updateSearchResult() {
         label.setText("Found following files %d in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
         rootItem.getChildren().clear();
-        for (File file : foundFiles) {
-            TreeItem<File> item = new TreeItem<>(file);
-            item.setValue(file);
+        for (FoundFile foundFile : foundFiles) {
+            TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile.getFile()));
+            item.setExpanded(true);
+//            item.setValue(file);
             rootItem.getChildren().add(item);
+            if (StringUtils.isNotBlank(foundFile.getInfo())) {
+                TreeItem<FileTreeViewData> infoNode = new TreeItem<>(new FileTreeViewData(false, foundFile.getFile(), foundFile.getInfo()));
+                item.getChildren().add(infoNode);
+            }
         }
     }
 

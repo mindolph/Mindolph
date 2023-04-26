@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.control.FileTreeView;
+import com.mindolph.fx.control.FileTreeView.FileTreeViewData;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -22,7 +23,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class UsageDialog extends BaseDialogController<SearchParams> {
 
@@ -38,7 +39,7 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
     @FXML
     private Label lblMsg;
 
-    private final TreeItem<File> rootItem;
+    private final TreeItem<FileTreeViewData> rootItem;
 
     private List<File> foundFiles;
 
@@ -59,6 +60,7 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
         rootItem.setExpanded(true);
         fileTreeView.setRoot(rootItem);
         fileTreeView.setShowRoot(false);
+        fileTreeView.init(searchParams);
         reSearch();
     }
 
@@ -73,10 +75,11 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
             progressIndicator.setVisible(false);
             rootItem.getChildren().clear();
             for (File foundFile : foundFiles) {
-                TreeItem<File> item = new TreeItem<>();
-                item.setValue(foundFile);
+                TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile));
+//                item.setValue(new FileTreeViewData(true, foundFile));
                 rootItem.getChildren().add(item);
             }
+
         });
     }
 

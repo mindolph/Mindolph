@@ -10,4 +10,6 @@ import java.io.File;
 public interface SearchMatcher {
 
     boolean matches(File file, SearchParams searchParams);
+
+    String getMatchContext();
 }

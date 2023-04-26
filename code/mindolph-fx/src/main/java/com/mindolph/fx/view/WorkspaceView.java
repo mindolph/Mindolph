@@ -216,7 +216,7 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             this.addFileAndSelect(parentTreeItem, new NodeData(file));
         });
         this.initTreeViewContextMenu();
-        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
+        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
     }
 
     private void initTreeViewContextMenu() {
