@@ -138,7 +138,7 @@ public class SearchResultPane extends AnchorPane {
     }
 
     private void updateSearchResult() {
-        label.setText("Found following files %d in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
+        label.setText("Found %d files in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
         rootItem.getChildren().clear();
         for (FoundFile foundFile : foundFiles) {
             TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile.getFile()));
