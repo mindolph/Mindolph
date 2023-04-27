@@ -819,7 +819,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     File newDir = new File(selectedData.getFile(), folderName);
                     if (newDir.mkdir()) {
                         selectedTreeItem.setExpanded(true);
-                        addFolder(selectedTreeItem, new NodeData(NodeType.FOLDER, newDir));
+                        NodeData folderData = new NodeData(NodeType.FOLDER, newDir);
+                        folderData.setWorkspaceData(selectedData.getWorkspaceData());
+                        addFolder(selectedTreeItem, folderData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
                     }
                 }
