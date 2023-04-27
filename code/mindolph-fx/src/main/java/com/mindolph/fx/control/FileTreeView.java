@@ -5,12 +5,19 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.util.DisplayUtils;
+import com.mindolph.mfx.util.FontUtils;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+
+import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
 /**
  * A simple tree view for displaying files.
@@ -44,8 +51,19 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                             // styleProperty().set("-fx-background-color: gainsboro");
                         }
                         else {
-                            setText(StringUtils.normalizeSpace(item.getInfo()));
-                            setGraphic(null);
+                            TextFlow textFlow = new TextFlow();
+                            String normalText = normalizeSpace(item.getInfo());
+                            String normalKeyword = normalizeSpace(searchParams.getKeywords());
+                            String pre = StringUtils.substringBefore(normalText, normalKeyword);
+                            String post = StringUtils.substringAfter(normalText, normalKeyword);
+                            textFlow.getChildren().add(new Text(pre));
+                            Text hit = new Text(normalKeyword);
+                            Font font = FontUtils.newFontWithSize(hit.getFont(), hit.getFont().getSize() * 1.1);
+                            hit.setFont(font);
+                            hit.setFill(Color.BLUE);
+                            textFlow.getChildren().add(hit);
+                            textFlow.getChildren().add(new Text(post));
+                            setGraphic(textFlow);
                         }
                     }
                     else {
