@@ -57,6 +57,15 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
                             .collect(Collectors.joining(" → "));
                     super.matchContext = path + " → " + next.getText();
+
+                    if (!next.getText().contains(searchParams.getKeywords())) {
+                        for (Extra<?> extra : next.getExtras().values()) {
+                            if (extra.containsPattern(file.getParentFile(), pattern)) {
+                                super.matchContext += " → " + extra.getAsString();
+                                break;
+                            }
+                        }
+                    }
                 }
                 return true;
             }

@@ -16,8 +16,11 @@ import javafx.scene.text.TextFlow;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.function.BiFunction;
 
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
+import static org.apache.commons.lang3.StringUtils.substring;
+
 
 /**
  * A simple tree view for displaying files.
@@ -51,19 +54,29 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                             // styleProperty().set("-fx-background-color: gainsboro");
                         }
                         else {
+                            BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase;
                             TextFlow textFlow = new TextFlow();
                             String normalText = normalizeSpace(item.getInfo());
                             String normalKeyword = normalizeSpace(searchParams.getKeywords());
-                            String pre = StringUtils.substringBefore(normalText, normalKeyword);
-                            String post = StringUtils.substringAfter(normalText, normalKeyword);
-                            textFlow.getChildren().add(new Text(pre));
-                            Text hit = new Text(normalKeyword);
-                            Font font = FontUtils.newFontWithSize(hit.getFont(), hit.getFont().getSize() * 1.1);
-                            hit.setFont(font);
-                            hit.setFill(Color.BLUE);
-                            textFlow.getChildren().add(hit);
-                            textFlow.getChildren().add(new Text(post));
-                            setGraphic(textFlow);
+                            int start = indexOf.apply(normalText, normalKeyword);
+                            if (start >= 0) {
+                                int end = start + normalKeyword.length();
+                                String pre = substring(normalText, 0, start);
+                                String center = substring(normalText, start, end);
+                                String post = substring(normalText, end);
+                                textFlow.getChildren().add(new Text(pre));
+                                Text hit = new Text(center);
+                                Font font = FontUtils.newFontWithSize(hit.getFont(), hit.getFont().getSize() * 1.1);
+                                hit.setFont(font);
+                                hit.setFill(Color.BLUE);
+                                textFlow.getChildren().add(hit);
+                                textFlow.getChildren().add(new Text(post));
+                                setGraphic(textFlow);
+                            }
+                            else {
+                                setText(normalText);
+                                setGraphic(null);
+                            }
                         }
                     }
                     else {

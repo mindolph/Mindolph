@@ -161,10 +161,12 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
                         if (detectedLevel == depth + 1) {
                             depth = detectedLevel;
                             topic = topic == null ? creator.createRoot(map, newTopicText) : topic.createChild(newTopicText);
-                        } else if (detectedLevel == depth) {
+                        }
+                        else if (detectedLevel == depth) {
 //                            topic = new Topic(map, topic == null ? null : topic.getParent(), newTopicText);
                             topic = topic == null ? creator.createRoot(map) : topic.getParent().createChild(newTopicText);
-                        } else if (detectedLevel < depth) {
+                        }
+                        else if (detectedLevel < depth) {
                             if (topic != null) {
                                 topic = topic.findParentForDepth(depth - detectedLevel);
 //                                topic = new Topic(map, topic, newTopicText);
@@ -220,7 +222,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
                                 String groupPre = extraType.preprocessString(text.substring(5, text.length() - 6));
                                 if (groupPre != null) {
                                     topic.setExtra(extraType.parseLoaded(groupPre, topic.getAttributes()));
-                                } else {
+                                }
+                                else {
                                     logger.error("Detected invalid extra data " + extraType);
                                 }
                             } catch (Exception ex) {
@@ -261,7 +264,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
         if (this == topic) {
             result = true;
-        } else {
+        }
+        else {
             for (T t : this.getChildren()) {
                 if (t.containTopic(topic)) {
                     result = true;
@@ -279,7 +283,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         T result;
         if (position < 0) {
             result = null;
-        } else {
+        }
+        else {
             List<T> all = this.parent.getChildren();
             int nextPosition = position + 1;
             result = all.size() > nextPosition ? all.get(nextPosition) : null;
@@ -294,7 +299,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         T result;
         if (position <= 0) {
             result = null;
-        } else {
+        }
+        else {
             List<T> all = this.parent.getChildren();
             result = all.get(position - 1);
         }
@@ -307,7 +313,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
         if (findInTopicText && pattern.matcher(this.text).find()) {
             result = true;
-        } else if (extrasForSearch != null && !extrasForSearch.isEmpty()) {
+        }
+        else if (extrasForSearch != null && !extrasForSearch.isEmpty()) {
             for (Extra<?> e : this.extras.values()) {
                 if (extrasForSearch.contains(e.getType()) && e.containsPattern(baseFolder, pattern)) {
                     result = true;
@@ -444,7 +451,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         try {
             if (value == null) {
                 return this.attributes.remove(name) != null;
-            } else {
+            }
+            else {
                 return !value.equals(this.attributes.put(name, value));
             }
         } finally {
@@ -461,7 +469,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         try {
             if (text == null) {
                 return this.codeSnippets.remove(language) != null;
-            } else {
+            }
+            else {
                 return !text.equals(this.codeSnippets.put(language, text));
             }
         } finally {
@@ -780,7 +789,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
             if (t == topic) {
                 iterator.remove();
                 return true;
-            } else if (t.removeTopic(topic)) {
+            }
+            else if (t.removeTopic(topic)) {
                 return true;
             }
         }
@@ -839,7 +849,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
                         if (checker == null) {
                             result = current.getChildren().get(i);
                             break;
-                        } else if (checker.check(current.getChildren().get(i))) {
+                        }
+                        else if (checker.check(current.getChildren().get(i))) {
                             result = current.getChildren().get(i);
                             break;
                         }
@@ -882,7 +893,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         try {
             if (extras == null || extras.length == 0) {
                 this.extras.clear();
-            } else {
+            }
+            else {
                 for (Extra<?> e : extras) {
                     if (e != null) {
                         this.extras.remove(e.getType());
@@ -945,7 +957,6 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
 
     /**
-     *
      * @return
      */
     public List<T> getPath() {
@@ -1037,7 +1048,8 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
             if (fileLink.isSame(baseFolder, oldFile)) {
                 replacement = new ExtraFile(newFile);
-            } else {
+            }
+            else {
                 replacement = fileLink.replaceParentPath(baseFolder, oldFile, newFile);
             }
 
@@ -1102,14 +1114,17 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
                     result = this.childTopic;
                     this.childTopic = null;
                     this.childIterator = result.iterator();
-                } else if (this.childIterator != null) {
+                }
+                else if (this.childIterator != null) {
                     if (this.childIterator.hasNext()) {
                         result = this.childIterator.next();
-                    } else {
+                    }
+                    else {
                         result = iter.next();
                         this.childIterator = result.iterator();
                     }
-                } else {
+                }
+                else {
                     throw new NoSuchElementException();
                 }
                 return result;
