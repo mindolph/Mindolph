@@ -2,6 +2,8 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.control.FileTreeView;
@@ -49,8 +51,8 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("File Usage")
                 .fxmlUri("dialog/usage_dialog.fxml")
-                .buttons(ButtonType.OK, ButtonType.CANCEL)
-                .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))
+                .buttons(ButtonType.CLOSE)
+                .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))
                 .defaultValue(null)
                 .resizable(true)
                 .controller(this)
@@ -61,6 +63,15 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
         fileTreeView.setRoot(rootItem);
         fileTreeView.setShowRoot(false);
         fileTreeView.init(searchParams);
+        fileTreeView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2){
+                TreeItem<FileTreeViewData> selectedItem = fileTreeView.getSelectionModel().getSelectedItem();
+                FileTreeViewData value = selectedItem.getValue();
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(value.getFile(), true, searchParams));
+                dialog.close();
+                event.consume();
+            }
+        });
         reSearch();
     }
 
@@ -76,7 +87,6 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
             rootItem.getChildren().clear();
             for (File foundFile : foundFiles) {
                 TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile));
-//                item.setValue(new FileTreeViewData(true, foundFile));
                 rootItem.getChildren().add(item);
             }
 
