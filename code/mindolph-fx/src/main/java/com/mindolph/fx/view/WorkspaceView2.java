@@ -440,7 +440,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     public void reloadFolder(TreeItem<NodeData> treeItem, NodeData folderData) {
         log.debug("reload folder: %s".formatted(folderData.getFile()));
         List<NodeData> childrenData = WorkspaceManager.getIns().loadFolder(folderData, workspaceConfig);
-        this.loadTreeNode(treeItem, childrenData);
+        this.populateTreeNode(treeItem, childrenData);
         treeView.getSelectionModel().select(treeItem);
     }
 
@@ -456,12 +456,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         rootItem.setValue(workspaceData);
         List<NodeData> childrenData = WorkspaceManager.getIns().loadWorkspace(workspaceData, workspaceConfig);
         Platform.runLater(() -> {
-            this.loadTreeNode(rootItem, childrenData);
+            this.populateTreeNode(rootItem, childrenData);
             rootItem.getChildren().forEach(nodeDataTreeItem -> {
                 NodeData folderData = nodeDataTreeItem.getValue();
                 if (folderData.isFolder()) {
                     List<NodeData> grandChildrenData = WorkspaceManager.getIns().loadFolder(folderData, workspaceConfig);
-                    this.loadTreeNode(nodeDataTreeItem, grandChildrenData);
+                    this.populateTreeNode(nodeDataTreeItem, grandChildrenData);
                 }
             });
             log.debug("workspace loaded: " + workspaceMeta.getBaseDirPath());
@@ -469,7 +469,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         });
     }
 
-    private void loadTreeNode(TreeItem<NodeData> parent, List<NodeData> childrenData) {
+    /**
+     * @param parent       The tree node populate children to
+     * @param childrenData
+     */
+    private void populateTreeNode(TreeItem<NodeData> parent, List<NodeData> childrenData) {
         // note: use name other than file path to match tree item and node data, because the file path changes when folder name changes.
         log.trace("load folder item: %s/".formatted(parent));
         // remove not exists tree items for theirs file might be deleted.
@@ -489,7 +493,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 log.trace("existing tree item: %s, expanded: %s".formatted(existingItem.getValue().getFile(), existingItem.isExpanded()));
                 existingItem.setValue(childNodeData);
                 if (childNodeData.isFolder() && existingItem.isExpanded()) {
-                    loadTreeNode(existingItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
+                    populateTreeNode(existingItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
                 }
                 continue;
             }
@@ -497,6 +501,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (childNodeData.isFolder()) {
                 TreeItem<NodeData> folderItem = this.addFolder(parent, childNodeData);
                 log.trace("add folder: %s/".formatted(folderItem.getValue().getName()));
+                if (parent.isExpanded()) {
+                    // this implements the case that re-load a folder whose parent is expanded and new sub-files created externally.
+                    // without this implementation, the folder will be empty.
+                    populateTreeNode(folderItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
+                }
             }
             else if (childNodeData.isFile()) {
                 TreeItem<NodeData> fileItem = this.addFile(parent, childNodeData);
@@ -768,7 +777,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 File childFile = child.getValue().getFile();
                 if (childFile.isDirectory()) {
                     List<NodeData> childrenOfChild = WorkspaceManager.getIns().loadFolder(child.getValue(), workspaceConfig);
-                    this.loadTreeNode(child, childrenOfChild);
+                    this.populateTreeNode(child, childrenOfChild);
                     // expand the child node if it should be restored to expanded.
                     expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
                     if (expendedFileList != null && expendedFileList.contains(childFile.getPath())) {
@@ -966,6 +975,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
         else if (source == miReload) {
             this.reloadFolder(selectedTreeItem, selectedData);
+//            // activate the folder loading by re-expanding the folder.
+//            if (selectedTreeItem.isExpanded()) {
+//                selectedTreeItem.setExpanded(false);
+//                selectedTreeItem.setExpanded(true);
+//            }
         }
         else if (source == miFindFiles) {
             this.launchFindInFilesDialog(selectedData);

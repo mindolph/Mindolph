@@ -58,6 +58,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.2.0
  */
 public class CsvEditor extends BaseEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(CsvEditor.class);

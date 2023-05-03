@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.2.3 Release
+* Improvement: add round corner (and settings) to mind map topics.
+* Fix: files created from external in sub-folders of expanded folder don't be loaded.
+* Fix: exception when right-click on a new created file in a new created folder.
+* Fix: disable "paste" menu item for CSV editor if clipboard is empty.
+
 ### V1.2.2 Release
 * Feature: add icons to context menu items for csv editor.
 * Feature: add cut and paste for selected rows.
