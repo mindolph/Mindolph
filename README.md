@@ -57,7 +57,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 	> Java 17 is the minimum requirement to run this application.  
 	> If you are using Linux, run the jar like this:  
 	> `java -jar Mindolph-1.1.5.jar`  
-	> If not, Download JavaFX SDK(20+) for your platform and extract to somewhere eg: `c:\javafx-sdk-20`, run the jar file like this:   
+	> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-20`, run the jar file like this:   
 	> `java --module-path c:\javafx-sdk-20\lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
 	> Mindolph-1.1.5.jar`

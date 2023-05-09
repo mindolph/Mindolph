@@ -57,7 +57,7 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。[Engl
 	> Java 17 是运行 Mindolph 的最低版本要求.  
 	> 如果您在 Linux 上运行:  
 	> `java -jar Mindolph-1.1.5.jar`  
-	> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK(20+) 并解压缩到某个目录，例如: `c:\javafx-sdk-20`, 按照以下方式运行:   
+	> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-20`, 按照以下方式运行:   
 	> `java --module-path c:\javafx-sdk-20\lib --add-modules 
 	> java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar 
 	> Mindolph-1.1.5.jar`
