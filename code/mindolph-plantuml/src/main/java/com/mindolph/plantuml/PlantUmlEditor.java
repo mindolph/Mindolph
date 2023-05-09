@@ -188,7 +188,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 )
         );
 
-        this.reload();// to set up the font
+        this.refresh();// to set up the font
 
         Platform.runLater(() -> {
             splitPaneCodeEditor.setFixedSize(180);

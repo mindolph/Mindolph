@@ -16,6 +16,7 @@ public interface FontConstants {
     String KEY_PUML_EDITOR = "puml.editorFont";
     String KEY_MD_EDITOR = "md.editorFont";
     String KEY_TXT_EDITOR = "txt.editorFont";
+    String KEY_CSV_EDITOR = "csv.editorFont";
 
     Map<String, Font> DEFAULT_FONTS = new HashMap<>() {{
         put(KEY_MMD_TOPIC_FONT, Font.font("serif", FontWeight.BOLD, 16));
@@ -23,6 +24,7 @@ public interface FontConstants {
         put(KEY_PUML_EDITOR, Font.font("monospaced", FontWeight.NORMAL, 15));
         put(KEY_MD_EDITOR, Font.font("monospaced", FontWeight.NORMAL, 15));
         put(KEY_TXT_EDITOR, Font.font("monospaced", FontWeight.NORMAL, 15));
+        put(KEY_CSV_EDITOR, Font.font("serif", FontWeight.NORMAL, 15));
     }};
 
 }
