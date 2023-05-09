@@ -176,7 +176,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     protected abstract void refresh(String text);
 
     @Override
-    public void reload() {
+    public void refresh() {
         String fontPrefKey = getFontPrefKey();
         if (getFontPrefKey() != null) {
             Font defFont = FontConstants.DEFAULT_FONTS.get(fontPrefKey);

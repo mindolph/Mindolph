@@ -79,9 +79,9 @@ public class FileTabView extends BaseView {
                     }
                 }
                 else {
-                    if (editor.isNeedReload()) {
-                        editor.reload();
-                        editor.setNeedReload(false);
+                    if (editor.isNeedRefresh()) {
+                        editor.refresh();
+                        editor.setNeedRefresh(false);
                     }
                     editor.requestFocus();
                     this.updateMenuState(editor);
@@ -476,11 +476,11 @@ public class FileTabView extends BaseView {
         for (Tab tab : tabEditorMap.keySet()) {
             BaseEditor editor = (BaseEditor) tabEditorMap.get(tab);
             if (tab.isSelected()) {
-                editor.reload();
+                editor.refresh();
             }
             else {
                 if (editor.getFileType().equals(fileType)) {
-                    editor.setNeedReload(true); // reload later.
+                    editor.setNeedRefresh(true); // reload later.
                 }
             }
         }

@@ -39,7 +39,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     /**
      * True if reload requested.
      */
-    protected boolean needReload = false;
+    protected boolean needRefresh = false;
 
     protected boolean isChanged = false;
 
@@ -74,7 +74,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     }
 
     @Override
-    public void reload() {
+    public void refresh() {
         // inherit me
     }
 
@@ -131,11 +131,11 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
         return fileType;
     }
 
-    public boolean isNeedReload() {
-        return needReload;
+    public boolean isNeedRefresh() {
+        return needRefresh;
     }
 
-    public void setNeedReload(boolean needReload) {
-        this.needReload = needReload;
+    public void setNeedRefresh(boolean needRefresh) {
+        this.needRefresh = needRefresh;
     }
 }

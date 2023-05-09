@@ -2,6 +2,7 @@ package com.mindolph.csv;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtTableView;
 import com.mindolph.base.control.Row;
@@ -17,6 +18,7 @@ import com.mindolph.core.util.IoUtils;
 import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
+import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -29,6 +31,7 @@ import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import org.apache.commons.collections4.CollectionUtils;
@@ -88,11 +91,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
         super.fileType = SupportFileTypes.TYPE_CSV;
         this.undoService = new UndoServiceImpl<>(o -> {
             this.text = o;
-            this.reload();
+            this.doReload();
             this.prepareSearchingEvent.push(null);
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
         }, s -> "%s[%d]".formatted(StringUtils.abbreviateMiddle(s, ".", 5), s.length()));
         csvFormat = CSVFormat.DEFAULT.builder().build();
+
+        this.refresh();
     }
 
     @Override
@@ -325,7 +330,13 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
 
     @Override
-    public void reload() {
+    public void refresh() {
+        Font defFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_CSV_EDITOR);
+        Font font = fxPreferences.getPreference(FontConstants.KEY_CSV_EDITOR, Font.class, defFont);
+        tableView.setStyle(FontUtils.fontToCssStyle(font));
+    }
+
+    private void doReload() {
         log.debug("Reload data");
         tableView.getItems().clear();
         // reload all data from cached text;
@@ -560,7 +571,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
             this.text = replace.apply(this.text, keywords, replacement);
             this.emmitEventsSinceCacheChanged();
-            this.reload();
+            this.doReload();
         }
     }
 

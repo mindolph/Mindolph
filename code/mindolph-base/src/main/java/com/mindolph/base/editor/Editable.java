@@ -22,9 +22,10 @@ public interface Editable {
     void loadFile(Runnable afterLoading) throws IOException;
 
     /**
-     * Reload in some cases like config changed.
+     * Refresh editor in some cases like config changed.
+     * Don't load data in the method.
      */
-    void reload();
+    void refresh();
 
     void setEditorReadyEventHandler(EditorReadyEventHandler editorReadyEventHandler);
 

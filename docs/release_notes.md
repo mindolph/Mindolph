@@ -1,5 +1,9 @@
 # Release Notes
 
+### V1.1.5 Release
+* Fix: files created from external in sub-folders of expanded folder don't be loaded.
+* Fix: exception when right-click on a new created file in a new created folder.
+
 ### V1.2.3 Release
 * Improvement: add round corner (and settings) to mind map topics.
 * Fix: files created from external in sub-folders of expanded folder don't be loaded.

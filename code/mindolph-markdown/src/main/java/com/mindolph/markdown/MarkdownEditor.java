@@ -217,7 +217,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         parser = Parser.builder(options).build();
         renderer = HtmlRenderer.builder(options).build();
-        this.reload();// to set up the font
+        this.refresh();// to set up the font
     }
 
     @Override
