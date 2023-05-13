@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
@@ -195,7 +196,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         miPaste.setDisable(!clipboard.hasContent(DataFormat.PLAIN_TEXT));
         miWordWrap.selectedProperty().bindBidirectional(codeArea.wrapTextProperty());
-        menu.getItems().add(miWordWrap);
+        menu.getItems().addAll(miCut, miCopy, miPaste, miDelete, new SeparatorMenuItem(), miWordWrap);
         return menu;
     }
 
