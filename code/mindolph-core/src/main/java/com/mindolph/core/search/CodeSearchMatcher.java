@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.BiFunction;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 /**
  * @author mindolph.com@gmail.com
  */
@@ -28,9 +26,7 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
                     searchParams.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
             if (contains.apply(s, searchParams.getKeywords())) {
                 if (returnContextEnabled) {
-                    BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase;
-                    Integer where = indexOf.apply(s, searchParams.getKeywords());
-                    super.matchContext = strip(substring(s, Math.max(0, where - 64), where + 64));
+                    super.matchContext = super.extractInText(searchParams, s, 64);
                 }
                 return true;
             }

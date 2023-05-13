@@ -1,6 +1,7 @@
 package com.mindolph.fx.control;
 
 import com.mindolph.core.model.NodeData;
+import com.mindolph.core.search.BaseSearchMatcher;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
@@ -13,10 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.function.BiFunction;
 
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 import static org.apache.commons.lang3.StringUtils.substring;
@@ -26,6 +25,7 @@ import static org.apache.commons.lang3.StringUtils.substring;
  * A simple tree view for displaying files.
  *
  * @author mindolph.com@gmail.com
+ * @since 1.3
  */
 public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
 
@@ -54,11 +54,12 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                             // styleProperty().set("-fx-background-color: gainsboro");
                         }
                         else {
-                            BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase;
+                            // highlight the searching keyword in the result.
                             TextFlow textFlow = new TextFlow();
                             String normalText = normalizeSpace(item.getInfo());
                             String normalKeyword = normalizeSpace(searchParams.getKeywords());
-                            int start = indexOf.apply(normalText, normalKeyword);
+                            int start = BaseSearchMatcher.indexOf(searchParams, normalText);
+
                             if (start >= 0) {
                                 int end = start + normalKeyword.length();
                                 String pre = substring(normalText, 0, start);

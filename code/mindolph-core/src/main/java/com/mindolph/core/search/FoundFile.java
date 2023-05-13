@@ -4,6 +4,7 @@ import java.io.File;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.3
  */
 public class FoundFile {
 

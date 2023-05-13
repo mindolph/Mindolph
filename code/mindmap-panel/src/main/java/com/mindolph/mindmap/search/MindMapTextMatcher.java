@@ -58,13 +58,13 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                             .collect(Collectors.joining(" → "));
 
                     if (next.getText().contains(searchParams.getKeywords())) {
-                        super.matchContext = path + " → " + next.getText();
+                        super.matchContext = path + " → " + super.extractInText(searchParams, next.getText(), 32);
                     }
                     else {
                         super.matchContext = path + " → " + StringUtils.abbreviate(next.getText(), 64);;
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
-                                super.matchContext += " → " + StringUtils.abbreviate(extra.getAsString(), 64);
+                                super.matchContext += " → " + super.extractInText(searchParams, extra.getAsString(), 32);
                                 break;
                             }
                         }
