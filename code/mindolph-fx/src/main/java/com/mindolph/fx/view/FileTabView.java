@@ -456,8 +456,14 @@ public class FileTabView extends BaseView {
             openedFileMap.put(origNodeData, tab);
             // update the editor's context for saving content to new file(path)
             Editable editable = tabEditorMap.get(tab);
-            editable.getEditorContext().getFileData().setFile(newFile);
-            tab.setText((editable.isChanged() ? "*" : StringUtils.EMPTY) + newFile.getName());
+            if (editable == null) {
+                log.info("Editor for '%s' probably has not been instantiated yet.".formatted(tab.getText()));
+                tab.setText(newFile.getName());
+            }
+            else {
+                editable.getEditorContext().getFileData().setFile(newFile);
+                tab.setText((editable.isChanged() ? "*" : StringUtils.EMPTY) + newFile.getName());
+            }
             tab.setTooltip(new Tooltip(newFile.getPath()));
         }
         else {
@@ -607,7 +613,6 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     *
      * @return false if any tab cancels closing by user.
      */
     public boolean closeAllTabs() {

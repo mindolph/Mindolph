@@ -26,6 +26,7 @@ import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
+import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.dialog.UsageDialog;
 import com.mindolph.fx.helper.SceneRestore;
@@ -48,6 +49,7 @@ import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -191,7 +193,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (event.getDragboard().hasString()) {
                 List<File> files = event.getDragboard().getFiles();
                 log.debug(StringUtils.join(files, ", "));
-                moveToTreeItem(files.stream().map(NodeData::new).toList(), rootItem);
+                List<NodeData> nodeDatas = files.stream().map(NodeData::new).toList();
+                nodeDatas.forEach(nd->nd.setWorkspaceData(activeWorkspaceData));
+                moveToTreeItem(nodeDatas, rootItem);
             }
             event.consume();
         });
@@ -330,6 +334,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
     }
 
+    /**
+     * Move file(s) to target tree node.
+     *
+     * @param nodeDatas
+     * @param targetTreeItem
+     */
     private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
         if (targetTreeItem == null) {
             log.warn("No tree item folder provided");
@@ -344,6 +354,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 log.debug("Nothing to do");
             }
             else {
+                if (!this.beforeFilePathChanged(nodeData)) {
+                    log.debug("Cancel moving file");
+                    break;
+                }
                 log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
                 treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
 
@@ -959,6 +973,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 }
                 boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
                 if (needDelete) {
+                    if (!this.beforeFilePathChanged(selectedData)) {
+                        log.debug("Cancel deleting file");
+                        return;
+                    }
                     log.info("Delete file: %s".formatted(selectedData.getFile()));
                     try {
                         FileUtils.delete(selectedData.getFile());
@@ -1031,6 +1049,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     private void requestRenameFolderOrFile(NodeData selectedData, Consumer<File> consumer) {
+        if (!this.beforeFilePathChanged(selectedData)) {
+            log.debug("Cancel renaming file");
+            return;
+        }
         Optional<String> s = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename %s".formatted(selectedData.getName()))
@@ -1184,6 +1206,30 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             selectedTreeItem.getParent().getChildren().remove(selectedTreeItem);
             treeView.refresh();
         }
+    }
+
+    private boolean beforeFilePathChanged(NodeData nodeData) {
+        SearchParams searchParams = new SearchParams();
+        File workspaceDir = nodeData.getWorkspaceData().getFile();
+        searchParams.setKeywords(FileNameUtils.getRelativePath(nodeData.getFile(), workspaceDir));
+        searchParams.setSearchFilter(new WorkspaceConfig().makeFileFilter());
+        searchParams.setSearchInDir(workspaceDir);
+        searchParams.setWorkspaceDir(workspaceDir);
+        return this.searchFileReferences(searchParams);
+    }
+
+    List<File> foundFiles;
+
+    private boolean searchFileReferences(SearchParams searchParams) {
+        log.debug("reSearch()");
+        IOFileFilter newFileFilter = searchParams.getSearchFilter();
+        foundFiles = SearchService.getIns().searchLinksInFilesIn(searchParams.getSearchInDir(), newFileFilter, searchParams);
+        if (CollectionUtils.isNotEmpty(foundFiles)) {
+            FileReferenceDialog dialog = new FileReferenceDialog(searchParams, foundFiles);
+            dialog.showAndWait();
+            return !dialog.isNegative();
+        }
+        return true;
     }
 
     @Override
