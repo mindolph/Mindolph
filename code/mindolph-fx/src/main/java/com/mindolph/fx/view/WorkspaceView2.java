@@ -30,6 +30,7 @@ import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.dialog.UsageDialog;
 import com.mindolph.fx.helper.SceneRestore;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -971,7 +972,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     e.printStackTrace();
                     return;
                 }
-                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
+                boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to delete %s".formatted(selectedData.getName())).showAndWait();
+//                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
                 if (needDelete) {
                     if (!this.beforeFilePathChanged(selectedData)) {
                         log.debug("Cancel deleting file");
