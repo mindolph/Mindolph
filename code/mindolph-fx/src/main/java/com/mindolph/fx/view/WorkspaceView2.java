@@ -189,7 +189,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (event.getDragboard().hasString()) {
                 List<File> files = event.getDragboard().getFiles();
                 log.debug(StringUtils.join(files, ", "));
-                moveToTreeItem(files.stream().map(NodeData::new).toList(), rootItem);
+                List<NodeData> nodeDatas = files.stream().map(NodeData::new).toList();
+                nodeDatas.forEach(nd->nd.setWorkspaceData(activeWorkspaceData));
+                moveToTreeItem(nodeDatas, rootItem);
             }
             event.consume();
         });
@@ -327,6 +329,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
     }
 
+    /**
+     * Move file(s) to target tree node.
+     *
+     * @param nodeDatas
+     * @param targetTreeItem
+     */
     private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
         if (targetTreeItem == null) {
             log.warn("No tree item folder provided");
