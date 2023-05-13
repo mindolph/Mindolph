@@ -27,6 +27,7 @@ import com.mindolph.fx.print.Printable;
 import com.mindolph.fx.view.*;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.BaseController;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.MindMapEditor;
@@ -484,7 +485,7 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuExit(ActionEvent event) {
         Boolean requireConfirm = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         if (requireConfirm) {
-            if (!DialogFactory.yesNoConfirmDialog("Are you sure to quit Mindolph?")) {
+            if (!new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to quit Mindolph?").showAndWait()){
                 return;
             }
         }
