@@ -1,16 +1,22 @@
 # Release Notes
 
+### V1.2.4 Release
+* Improvement: add missing context menu operations(cut, copy, paste, delete) to code editor.
+* Improvement: font configurable for CSV editor.
+* Fix: exception when moving a file, which is loaded to a tab but not instantiated , to other folder.
+* Update JavaFX to 20.0.1.
+
 ### V1.1.5 Release
 * Fix: files created from external in sub-folders of expanded folder don't be loaded.
 * Fix: exception when right-click on a new created file in a new created folder.
 
-### V1.2.3 Release
+### V1.2.3 unstable
 * Improvement: add round corner (and settings) to mind map topics.
 * Fix: files created from external in sub-folders of expanded folder don't be loaded.
 * Fix: exception when right-click on a new created file in a new created folder.
 * Fix: disable "paste" menu item for CSV editor if clipboard is empty.
 
-### V1.2.2 Release
+### V1.2.2 unstable
 * Feature: add icons to context menu items for csv editor.
 * Feature: add cut and paste for selected rows.
 * Fix: occasionally can't select rows.
@@ -18,7 +24,7 @@
 * Update PlantUML to 1.2023.6.
 * Fixed some minor bugs.
 
-### V1.2.1 Release
+### V1.2.1 unstable
 * Feature: unable to locate matched cell correctly in searching.
 * Feature: paste csv format text from clipboard to multiple cells as it is.
 * Feature: disable cells navigation by keys when editing.
@@ -31,7 +37,7 @@
 * Fix: cancel unsaved file during closing application doesn't stop that.
 * Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
 
-### V1.2.0
+### V1.2.0 unstable
 * Feature: add 'Edit' to context menu in csv editor.
 * Feature: index column background and border.
 * Fix: paste from multiple empty cells turns out comma(s).
