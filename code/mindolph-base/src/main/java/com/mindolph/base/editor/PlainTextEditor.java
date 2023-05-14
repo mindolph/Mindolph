@@ -6,8 +6,11 @@ import com.mindolph.core.constant.SupportFileTypes;
 import javafx.event.Event;
 import javafx.scene.image.Image;
 import javafx.scene.text.Text;
+import org.fxmisc.richtext.CharacterHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 
 /**
@@ -18,12 +21,17 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     private final Logger log = LoggerFactory.getLogger(PlainTextEditor.class);
 
     public PlainTextEditor(EditorContext editorContext) {
-        super("/editor/plain_text_editor.fxml", editorContext);
+        super("/editor/plain_text_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_PLAIN_TEXT;
         // consume here otherwise the parent container will receive the double click event
         codeArea.setOnMouseClicked(Event::consume);
 
         this.refresh();
+    }
+
+    @Override
+    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+        codeArea.insertText(hit.getInsertionIndex(), filePath);
     }
 
     @Override

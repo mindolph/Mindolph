@@ -11,6 +11,7 @@ import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.EventBus.MenuTag;
 import com.mindolph.base.event.StatusMsg;
+import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.core.util.IoUtils;
@@ -28,6 +29,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -44,6 +46,7 @@ import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -244,6 +247,35 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.focusedProperty().addListener((observableValue, aBoolean, t1) -> {
                     if (t1) {
                         focusedCell = textCell;
+                    }
+                });
+                // handler drag&drop files
+                textCell.setOnDragOver(dragEvent -> {
+                    if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
+                        return;
+                    }
+                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
+                    if (optPath.isPresent()) {
+                        if (textCell.getTableRow().getIndex() <= tableView.getStubRowIdx()) {
+                            dragEvent.acceptTransferModes(TransferMode.LINK);
+                            RegionUtils.applyDragDropBorder(textCell);
+                            Platform.runLater(textCell::requestFocus);
+                        }
+                    }
+                });
+                textCell.setOnDragExited(dragEvent -> {
+                    textCell.setBorder(null);
+                });
+                textCell.setOnDragDropped(dragEvent -> {
+                    for (File file : dragEvent.getDragboard().getFiles()) {
+                        Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
+                        if (optPath.isPresent()) {
+                            onCellDataChanged(textCell.getTableRow().getIndex(), textCell.getTableColumn(), optPath.get());
+                            saveToCache();
+                        }
+                        else {
+                            log.warn("Link files not in same workspace are not supported yet");
+                        }
                     }
                 });
                 return textCell;

@@ -613,7 +613,6 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     *
      * @return false if any tab cancels closing by user.
      */
     public boolean closeAllTabs() {

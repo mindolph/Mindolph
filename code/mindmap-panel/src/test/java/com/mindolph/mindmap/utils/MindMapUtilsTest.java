@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author allen
+ * @author mindolph.com@gmail.com
  */
 public class MindMapUtilsTest {
 

@@ -140,13 +140,10 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
 
-    public T findNext(
-            File baseFolder,
-            T start,
-            Pattern pattern,
-            boolean findInTopicText,
-            Set<Extra.ExtraType> extrasToFind,
-            Set<TopicFinder<T>> topicFinders) {
+    public T findNext(File baseFolder, T start,
+                      Pattern pattern, boolean findInTopicText,
+                      Set<Extra.ExtraType> extrasToFind,
+                      Set<TopicFinder<T>> topicFinders) {
         if (start != null && start.getMap() != this) {
             throw new IllegalArgumentException("Topic doesn't belong to the mind map");
         }

@@ -1,9 +1,11 @@
 package com.mindolph.core.util;
 
+import com.mindolph.core.constant.SupportFileTypes;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 /**
@@ -43,18 +45,29 @@ public class FileNameUtils {
         return fileName;
     }
 
-    public static String getRelativePath(File file, File ancestorDir) {
-        return getRelativePath(file.getPath(), ancestorDir.getPath());
-    }
-
     public static boolean isParentFolder(File folder, File file) {
         return StringUtils.startsWith(file.getParentFile().getPath(), folder.getPath());
     }
 
-    public static String getRelativePath(String fullPath, String ancestorPath) {
-        String finalPath = StringUtils.substringAfter(fullPath, ancestorPath);
-        return StringUtils.stripStart(finalPath, File.separator);
+    /**
+     * Get real relative path even not in the save directory.
+     *
+     * @param file
+     * @param ancestorDir
+     * @return like "a/b/c" or "../a/b/c"
+     */
+    public static String getRelativePath(File file, File ancestorDir) {
+        return ancestorDir.toPath().relativize(file.toPath()).toString();
     }
+
+    public static String getRelativePath(String path, String ancestorPath){
+        return Path.of(ancestorPath).relativize(Path.of(path)).toString();
+    }
+
+//    public static String getRelativePath(String fullPath, String ancestorPath) {
+//        String finalPath = StringUtils.substringAfter(fullPath, ancestorPath);
+//        return StringUtils.stripStart(finalPath, File.separator);
+//    }
 
     public static boolean isAbsolutePath(String path) {
         return StringUtils.startsWith(path, "/") || isWindowsPath(path);
@@ -62,6 +75,14 @@ public class FileNameUtils {
 
     public static boolean isWindowsPath(String path) {
         return winPathPattern.matcher(path).find();
+    }
+
+    public static boolean isImageFile(File file) {
+        return isImagePath(file.getPath());
+    }
+
+    public static boolean isImagePath(String path) {
+        return FilenameUtils.isExtension(path, SupportFileTypes.TYPE_PLAIN_JPG, SupportFileTypes.TYPE_PLAIN_PNG);
     }
 
 }

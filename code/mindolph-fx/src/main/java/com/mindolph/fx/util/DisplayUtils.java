@@ -17,8 +17,12 @@ public class DisplayUtils {
      * @param file
      * @return
      */
-    public static String displayFile(File workspaceDir, File file) {
+    public static String displayFileWithWorkspace(File workspaceDir, File file) {
         String workspaceName = FilenameUtils.getName(workspaceDir.getPath());
         return "%s(%s)".formatted(StringUtils.substringAfter(file.getPath(), workspaceDir.getPath()), workspaceName);
+    }
+
+    public static String displayFile(File workspaceDir, File file) {
+        return StringUtils.substringAfter(file.getPath(), workspaceDir.getPath());
     }
 }

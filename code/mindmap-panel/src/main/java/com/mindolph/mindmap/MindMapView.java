@@ -1043,6 +1043,16 @@ public class MindMapView extends BaseScalableView {
                 });
     }
 
+    /**
+     *
+     * @param dragEvent
+     * @return
+     */
+    public BaseElement findTopicForDragging(DragEvent dragEvent) {
+        Point2D p = withoutViewportPadding(dragEvent.getX(), dragEvent.getY());
+        return findTopicUnderPoint(p);
+    }
+
     public BaseElement findTopicUnderPoint(Point2D point) {
         BaseElement result = null;
         if (this.model != null) {

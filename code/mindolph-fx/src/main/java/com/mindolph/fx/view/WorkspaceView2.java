@@ -11,6 +11,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.SearchResultEventHandler;
 import com.mindolph.base.util.MindolphFileUtils;
+import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
@@ -25,13 +26,17 @@ import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.constant.IconName;
+import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
+import com.mindolph.fx.dialog.UsageDialog;
 import com.mindolph.fx.helper.SceneRestore;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.search.FileLinkMindMapSearchMatcher;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
 import com.mindolph.plantuml.PlantUmlTemplates;
 import javafx.application.Platform;
@@ -43,10 +48,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.TreeViewSkin;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -131,6 +135,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private MenuItem miClone;
     private MenuItem miDelete;
     private MenuItem miOpenInSystem;
+    private MenuItem miUsage;
     private MenuItem miFindFiles;
     private MenuItem miCollapseAll;
 
@@ -172,7 +177,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             }
         });
         cbWorkspaces.setOnDragEntered(event -> {
-            cbWorkspaces.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            RegionUtils.applyDragDropBorder(cbWorkspaces);
             event.consume();
         });
         cbWorkspaces.setOnDragExited(event -> {
@@ -326,7 +331,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
                 });
-        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher());
+        SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
+        SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
     }
 
     /**
@@ -349,6 +355,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 log.debug("Nothing to do");
             }
             else {
+                if (!this.beforeFilePathChanged(nodeData)) {
+                    log.debug("Cancel moving file");
+                    break;
+                }
                 log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
                 treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
 
@@ -622,8 +632,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
-                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
+                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(),miFindFiles);
             }
+            miUsage = new MenuItem("Find Usage");
+            miUsage.setOnAction(this);
+            contextMenu.getItems().add(miUsage);
         }
         return contextMenu;
     }
@@ -959,8 +972,13 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     e.printStackTrace();
                     return;
                 }
-                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
+                boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to delete %s".formatted(selectedData.getName())).showAndWait();
+//                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
                 if (needDelete) {
+                    if (!this.beforeFilePathChanged(selectedData)) {
+                        log.debug("Cancel deleting file");
+                        return;
+                    }
                     log.info("Delete file: %s".formatted(selectedData.getFile()));
                     try {
                         FileUtils.delete(selectedData.getFile());
@@ -985,6 +1003,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
         else if (source == miFindFiles) {
             this.launchFindInFilesDialog(selectedData);
+        }
+        else if (source == miUsage) {
+            this.launchUsageDialog(selectedData);
         }
         else if (source == miOpenInSystem) {
             if (selectedData != null) {
@@ -1030,6 +1051,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     private void requestRenameFolderOrFile(NodeData selectedData, Consumer<File> consumer) {
+        if (!this.beforeFilePathChanged(selectedData)) {
+            log.debug("Cancel renaming file");
+            return;
+        }
         Optional<String> s = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename %s".formatted(selectedData.getName()))
@@ -1074,6 +1099,18 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     searchEventHandler.onSearchStart(searchParams);
                 }
             }
+        }
+    }
+
+    private void launchUsageDialog(NodeData selectedData) {
+        if (selectedData.isFolder() || selectedData.isFile()) {
+            File workspaceDir = selectedData.getWorkspaceData().getFile();
+            SearchParams searchParams = new SearchParams();
+            searchParams.setKeywords(FileNameUtils.getRelativePath(selectedData.getFile(), workspaceDir));
+            searchParams.setSearchFilter(workspaceConfig.makeFileFilter());
+            searchParams.setSearchInDir(workspaceDir);
+            searchParams.setWorkspaceDir(workspaceDir);
+            new UsageDialog(searchParams).showAndWait();
         }
     }
 
@@ -1171,6 +1208,30 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             selectedTreeItem.getParent().getChildren().remove(selectedTreeItem);
             treeView.refresh();
         }
+    }
+
+    private boolean beforeFilePathChanged(NodeData nodeData) {
+        SearchParams searchParams = new SearchParams();
+        File workspaceDir = nodeData.getWorkspaceData().getFile();
+        searchParams.setKeywords(FileNameUtils.getRelativePath(nodeData.getFile(), workspaceDir));
+        searchParams.setSearchFilter(new WorkspaceConfig().makeFileFilter());
+        searchParams.setSearchInDir(workspaceDir);
+        searchParams.setWorkspaceDir(workspaceDir);
+        return this.searchFileReferences(searchParams);
+    }
+
+    List<File> foundFiles;
+
+    private boolean searchFileReferences(SearchParams searchParams) {
+        log.debug("reSearch()");
+        IOFileFilter newFileFilter = searchParams.getSearchFilter();
+        foundFiles = SearchService.getIns().searchLinksInFilesIn(searchParams.getSearchInDir(), newFileFilter, searchParams);
+        if (CollectionUtils.isNotEmpty(foundFiles)) {
+            FileReferenceDialog dialog = new FileReferenceDialog(searchParams, foundFiles);
+            dialog.showAndWait();
+            return !dialog.isNegative();
+        }
+        return true;
     }
 
     @Override

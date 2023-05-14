@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.fx.control.FileTreeView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ProgressIndicator?>
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="600" prefHeight="300">
+   <VBox spacing="8.0"
+         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+          <HBox spacing="8.0" alignment="CENTER_LEFT">
+              <Label fx:id="lblMsg" text="" />
+              <ProgressIndicator fx:id="progressIndicator" prefWidth="16" prefHeight="16"></ProgressIndicator>
+          </HBox>
+          <FileTreeView fx:id="fileTreeView" VBox.vgrow="ALWAYS" />
+      </children>
+      <padding>
+         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+      </padding>
+   </VBox>
+</AnchorPane>

@@ -1,5 +1,8 @@
 package com.mindolph.mindmap;
 
+import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraFile;
+import com.igormaznitsa.mindmap.model.MMapURI;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
@@ -10,23 +13,27 @@ import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.icon.IconID;
+import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.PatternUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.input.TransferMode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
 
 /**
  * @author mindolph.com@gmail.com
@@ -52,6 +59,52 @@ public class MindMapEditor extends BaseEditor {
             log.debug("Mind Map editor focused");
             if (wasFocused != isFocused && isFocused) {
                 mindMapView.forceRefresh();
+            }
+        });
+
+        this.mindMapView.setOnDragOver(dragEvent -> {
+            if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
+                return;
+            }
+            Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
+            if (optPath.isPresent()) {
+                BaseElement ele = mindMapView.findTopicForDragging(dragEvent);
+                if (ele != null) {
+                    dragEvent.acceptTransferModes(TransferMode.LINK);
+                    mindMapView.requestFocus();
+                    if (mindMapView.getSelectedTopics().size() > 1
+                            || !mindMapView.getSelectedTopics().contains(ele.getModel())) {
+                        mindMapView.removeAllSelection();
+                        mindMapView.selectAndUpdate(ele.getModel(), false);
+                    }
+                }
+            }
+        });
+        this.mindMapView.setOnDragDropped(dragEvent -> {
+            BaseElement ele = mindMapView.findTopicForDragging(dragEvent);
+            if (ele != null) {
+                for (File file : dragEvent.getDragboard().getFiles()) {
+                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
+                    if (optPath.isPresent()) {
+                        TopicNode topic = ele.getModel();
+                        ExtraFile extraFile = (ExtraFile) topic.getExtras().get(Extra.ExtraType.FILE);
+                        if (extraFile != null) {
+                            if (!DialogFactory.okCancelConfirmDialog("File already exist in this topic, are you sure to replace?")) {
+                                return;
+                            }
+                        }
+                        Properties props = new Properties();
+                        props.put(FILELINK_ATTR_OPEN_IN_SYSTEM, "false");
+                        MMapURI fileUri = MMapURI.makeFromFilePath(editorContext.getWorkspaceData().getFile(), optPath.get(), props);
+                        log.info(String.format("Path %s converted to uri: %s", optPath.get(), fileUri.asString(false, true)));
+                        topic.setExtra(new ExtraFile(fileUri));
+                        mindMapView.onMindMapModelChanged(true);
+                        mindMapView.updateStatusBarForTopic(topic);
+                    }
+                    else {
+                        log.warn("Link files not in same workspace are not supported yet");
+                    }
+                }
             }
         });
 

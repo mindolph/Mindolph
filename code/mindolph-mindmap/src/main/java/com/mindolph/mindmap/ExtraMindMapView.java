@@ -54,6 +54,7 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 /**
  * @author mindolph.com@gmail.com
  * @see MindMapView
+ * @see ExtraMindMapSkin
  */
 public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
@@ -261,7 +262,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                         try {
                             newNoteText = CryptoUtils.encrypt(newNoteData.getPassword(), newNoteData.getText());
                         } catch (RuntimeException ex) {
-                            DialogFactory.warnDialog("Can't encrypt text for error!\nExamine log and check JDK security policy for AES-256 support!");
+                            DialogFactory.warnDialog("Can't encrypt note!\nCheck JDK security policy for AES-256 support");
                             log.error("Can't encrypt note", ex);
                             return;
                         }
