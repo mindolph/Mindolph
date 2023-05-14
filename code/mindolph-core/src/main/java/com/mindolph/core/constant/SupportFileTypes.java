@@ -13,6 +13,7 @@ public interface SupportFileTypes {
     String TYPE_PLAIN_TEXT = "txt";
     String TYPE_PLAIN_JPG = "jpg";
     String TYPE_PLAIN_PNG = "png";
+    String TYPE_CSV = "csv";
 
     Set<String> EDITABLE_TYPES = new HashSet<>() {
         {
@@ -20,6 +21,7 @@ public interface SupportFileTypes {
             add(TYPE_MARKDOWN);
             add(TYPE_PLANTUML);
             add(TYPE_PLAIN_TEXT);
+            add(TYPE_CSV);
         }
     };
 }

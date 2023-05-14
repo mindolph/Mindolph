@@ -23,7 +23,7 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
         // consume here otherwise the parent container will receive the double click event
         codeArea.setOnMouseClicked(Event::consume);
 
-        this.reload();
+        this.refresh();
     }
 
     @Override

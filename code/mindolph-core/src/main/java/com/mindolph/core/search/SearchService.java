@@ -54,6 +54,7 @@ public class SearchService {
         this.matchers.put(TYPE_PLAIN_TEXT, pureFileMatcher);
         this.matchers.put(TYPE_MARKDOWN, pureFileMatcher);
         this.matchers.put(TYPE_PLANTUML, pureFileMatcher);
+        this.matchers.put(TYPE_CSV, pureFileMatcher);
     }
 
     /**

@@ -143,7 +143,7 @@ public class MindMapEditor extends BaseEditor {
     }
 
     @Override
-    public void reload() {
+    public void refresh() {
         mindMapView.reload();
     }
 

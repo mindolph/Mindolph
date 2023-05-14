@@ -1,0 +1,6 @@
+.index-column {
+    -fx-background-color: lightgray;
+    -fx-border-color: gray;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0.5 0.5 0.5;
+}

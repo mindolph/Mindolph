@@ -1,11 +1,42 @@
 # Release Notes
 
+### V1.1.5 Release
+* Fix: files created from external in sub-folders of expanded folder don't be loaded.
+* Fix: exception when right-click on a new created file in a new created folder.
+
+### V1.2.3 Release
+* Improvement: add round corner (and settings) to mind map topics.
+* Fix: files created from external in sub-folders of expanded folder don't be loaded.
+* Fix: exception when right-click on a new created file in a new created folder.
+* Fix: disable "paste" menu item for CSV editor if clipboard is empty.
+
+### V1.2.2 Release
+* Feature: add icons to context menu items for csv editor.
+* Feature: add cut and paste for selected rows.
+* Fix: occasionally can't select rows.
+* Refactor select row(s).
+* Update PlantUML to 1.2023.6.
+* Fixed some minor bugs.
+
+### V1.2.1 Release
+* Feature: unable to locate matched cell correctly in searching.
+* Feature: paste csv format text from clipboard to multiple cells as it is.
+* Feature: disable cells navigation by keys when editing.
+* fix: index column shouldn't be selected by left arrow key.
+* merge bug fixes from v1.1.4.
+
 ### V1.1.4 Release
 * Fix: zooming on image viewer stops when width&height are both smaller than viewport.
 * Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
 * Fix: cancel unsaved file during closing application doesn't stop that.
 * Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
 
+### V1.2.0
+* Feature: add 'Edit' to context menu in csv editor.
+* Feature: index column background and border.
+* Fix: paste from multiple empty cells turns out comma(s).
+* Fix: paste empty content to a cell causes file changed.
+* merge bug fixes from v1.1.2 and v1.1.3
 
 ### V1.1.3 Release
 * Fix: selecting file in workspace expends the folder with same name.
@@ -19,6 +50,10 @@
 * Fix: exception when exporting mindmap to freemind.
 * Fix: exception when popup menu on a renamed file.
 
+### V1.2 Beta
+* New Feature: add WYSIWYG CSV file editor. 
+* Fix: exception when popup menu on a renamed file.
+* Update JavaFX to 20, PlantUML to 1.2023.5 and some other dependencies.
 
 ### V1.1.1 Release
 * Improvement: always open mmd file in Mindolph.

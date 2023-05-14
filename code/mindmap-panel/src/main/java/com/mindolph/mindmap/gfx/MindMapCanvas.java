@@ -19,9 +19,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.apache.commons.collections4.CollectionUtils;
@@ -216,7 +214,14 @@ public class MindMapCanvas {
                     double y = Math.round(e.getBounds().getMinY() - selectLineGap);
                     double w = Math.round(e.getBounds().getWidth() + selectLineGapX2);
                     double h = Math.round(e.getBounds().getHeight() + selectLineGapX2);
-                    g.drawRect(x, y, w, h, selectLineColor, null);
+
+                    Rectangle rect = new Rectangle(x, y, w, h);
+                    if (config.getRoundRadius() > 0) {
+                        float round = mindMapContext.safeScale((e instanceof ElementRoot) ? 10f : config.getRoundRadius(), 0f);
+                        rect.setArcWidth(round);
+                        rect.setArcHeight(round);
+                    }
+                    g.draw(rect, selectLineColor, null);
                 }
             }
             // force resetting stroke or the background drawing will be affected.

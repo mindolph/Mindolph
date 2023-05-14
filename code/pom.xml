@@ -7,7 +7,7 @@
     <groupId>com.mindolph</groupId>
     <artifactId>mindolph</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.5</version>
+    <version>1.2.4</version>
     <modules>
         <module>mindolph-fx</module>
         <module>mindolph-core</module>
@@ -18,28 +18,34 @@
         <module>mindmap-panel</module>
         <module>mindmap-model</module>
         <module>mindolph-markdown</module>
+        <module>mindolph-csv</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <javafx.version>17.0.6</javafx.version>
+        <javafx.version>20.0.1</javafx.version>
         <commons.lang.version>3.12.0</commons.lang.version>
         <commons.io.version>2.11.0</commons.io.version>
+        <commons.text.version>1.10.0</commons.text.version>
+        <commons.collections.version>4.4</commons.collections.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <commons.validator.version>1.6</commons.validator.version>
+        <commons.csv.version>1.10.0</commons.csv.version>
         <swstate.version>1.1</swstate.version>
-        <plantuml.version>1.2023.1</plantuml.version>
+        <plantuml.version>1.2023.6</plantuml.version>
         <swiftboot.version>2.3</swiftboot.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <log4j2.version>2.19.0</log4j2.version>
-        <junit.version>5.9.0</junit.version>
+        <log4j2.version>2.20.0</log4j2.version>
+        <junit.version>5.9.2</junit.version>
         <mfx.version>1.1</mfx.version>
         <gson.version>2.10.1</gson.version>
         <controlsfx.version>11.1.2</controlsfx.version>
         <richtextfx.version>0.11.0</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
-        <jsoup.version>1.15.3</jsoup.version>
-        <json.version>20220924</json.version>
+        <jsoup.version>1.15.4</jsoup.version>
+        <json.version>20230227</json.version>
     </properties>
 
     <dependencies>
@@ -126,17 +132,27 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.4</version>
+                <version>${commons.collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
+                <version>${commons.codec.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.6</version>
+                <version>${commons.validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${commons.csv.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fxmisc.richtext</groupId>

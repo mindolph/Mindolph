@@ -84,6 +84,10 @@ public class NodeData {
         return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_TEXT);
     }
 
+    public boolean isCsv() {
+        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_CSV);
+    }
+
     public String getName() {
         return name;
     }

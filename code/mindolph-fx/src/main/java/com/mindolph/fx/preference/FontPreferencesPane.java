@@ -60,7 +60,8 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
                 new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT, TYPE_MIND_MAP), "Mind Map Note Editor"),
                 new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), "PlantUML Editor"),
                 new Pair<>(new PrefKey(KEY_MD_EDITOR, TYPE_MARKDOWN), "Markdown Editor"),
-                new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), "Plain Text Editor")
+                new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), "Plain Text Editor"),
+                new Pair<>(new PrefKey(KEY_CSV_EDITOR, TYPE_PLAIN_TEXT), "CSV Editor")
         ));
         cbText.setValue(new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"));
     }

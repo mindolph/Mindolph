@@ -32,6 +32,7 @@ public class IconManager {
             iconMap.put(IconName.FILE_PUML, new Image(getClass().getResource("/icons/file_puml.png").openStream()));
             iconMap.put(IconName.FILE_TXT, new Image(getClass().getResource("/icons/blank_file.png").openStream()));
             iconMap.put(IconName.FILE_MARKDOWN, new Image(getClass().getResource("/icons/file_md.png").openStream()));
+            iconMap.put(IconName.FILE_CSV, new Image(getClass().getResource("/icons/file_csv.png").openStream()));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to load icon resources");
@@ -54,6 +55,9 @@ public class IconManager {
         }
         else if (fileData.isMarkdown()) {
             return getIcon(IconName.FILE_MARKDOWN);
+        }
+        else if (fileData.isCsv()) {
+            return getIcon(IconName.FILE_CSV);
         }
         else {
             return getIcon(IconName.FILE_TXT); // as default icon
