@@ -58,7 +58,7 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                             TextFlow textFlow = new TextFlow();
                             String normalText = normalizeSpace(item.getInfo());
                             String normalKeyword = normalizeSpace(searchParams.getKeywords());
-                            int start = BaseSearchMatcher.indexOf(searchParams, normalText);
+                            int start = BaseSearchMatcher.lastIndexOf(searchParams, normalText);
 
                             if (start >= 0) {
                                 int end = start + normalKeyword.length();

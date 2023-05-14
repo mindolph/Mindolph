@@ -29,21 +29,21 @@ public abstract class BaseSearchMatcher implements SearchMatcher{
      *
      * @param searchParams
      * @param text
-     * @param span
+     * @param padding
      * @return
      */
-    protected String extractInText(SearchParams searchParams, String text, int span) {
+    protected String extractInText(SearchParams searchParams, String text, int padding) {
         String normalText = normalizeSpace(text);
         String normalKeyword = normalizeSpace(searchParams.getKeywords());
         int start = indexOf(searchParams, normalText);
 
-        String extracted = strip(substring(normalText, Math.max(0, start - span), start + normalKeyword.length() + span));
+        String extracted = strip(substring(normalText, Math.max(0, start - padding), start + normalKeyword.length() + padding));
         StringBuilder buf = new StringBuilder();
-        if (start - span > 0) {
+        if (start - padding > 0) {
             buf.append("...");
         }
         buf.append(extracted);
-        if (start + normalKeyword.length() + span < normalText.length()){
+        if (start + normalKeyword.length() + padding < normalText.length()){
             buf.append("...");
         }
         return buf.toString();
@@ -57,6 +57,13 @@ public abstract class BaseSearchMatcher implements SearchMatcher{
      */
     public static int indexOf(SearchParams searchParams, String text) {
         BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase;
+        String normalText = normalizeSpace(text);
+        String normalKeyword = normalizeSpace(searchParams.getKeywords());
+        return indexOf.apply(normalText, normalKeyword);
+    }
+
+    public static int lastIndexOf(SearchParams searchParams, String text) {
+        BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::lastIndexOf : StringUtils::lastIndexOfIgnoreCase;
         String normalText = normalizeSpace(text);
         String normalKeyword = normalizeSpace(searchParams.getKeywords());
         return indexOf.apply(normalText, normalKeyword);
