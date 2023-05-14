@@ -41,18 +41,18 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Releases
 
-* MacOS [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.2.4/Mindolph-1.2.4.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.3.0/Mindolph-1.3.0.dmg)
+* MacOS [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/v1.2.4/Mindolph-1.2.4.dmg) &nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/v1.3.0/Mindolph-1.3.0.dmg)
 
-* Windows x64 [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.2.4/Mindolph-1.2.4.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.3.0/Mindolph-1.3.0.msi)
+* Windows x64 [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/v1.2.4/Mindolph-1.2.4.msi)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/v1.3.0/Mindolph-1.3.0.msi)
 
-* Debian [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.2.4/Mindolph-1.2.4.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.3.0/Mindolph-1.3.0.deb)
+* Debian [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/v1.2.4/Mindolph-1.2.4.deb)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/v1.3.0/Mindolph-1.3.0.deb)
 
 	> for supporting PlantUML, install graphviz first:  
 	> `sudo apt install graphviz`
 
-* Fedora [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.2.4/Mindolph-1.2.4.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.3.0/Mindolph-1.3.0.rpm)
+* Fedora [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/v1.2.4/Mindolph-1.2.4.rpm)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/v1.3.0/Mindolph-1.3.0.rpm)
 
-* Java Executable(.jar) [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/1.2.4/Mindolph-1.2.4.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/1.3.0/Mindolph-1.3.0.jar)
+* Java Executable(.jar) [v1.2.4 stable](https://github.com/mindolph/Mindolph/releases/download/v1.2.4/Mindolph-1.2.4.jar)&nbsp;&nbsp;&nbsp;&nbsp;[v1.3.0 unstable](https://github.com/mindolph/Mindolph/releases/download/v1.3.0/Mindolph-1.3.0.jar)
 
 	> Java 17 is the minimum requirement to run this application.  
 	> If you are using Linux, run the jar like this:  
