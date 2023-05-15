@@ -3,6 +3,7 @@ package com.mindolph.base.control;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.TextUtils;
+import javafx.event.Event;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -38,6 +39,11 @@ public class ExtCodeArea extends CodeArea {
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
+//        super.setOnKeyPressed(keyEvent -> {
+//            if (keyEvent.isMetaDown()){
+//                keyEvent.consume();
+//            }
+//        });
     }
 
     public void addFeatures(FEATURE... features) {
@@ -128,6 +134,10 @@ public class ExtCodeArea extends CodeArea {
                 default:
                     break;
             }
+            // disable PASTE shortcut to avoid conflict with global.
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+            ));
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
         }
     }

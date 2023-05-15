@@ -22,6 +22,8 @@ public interface ShortcutConstants {
     ShortcutKey KEY_EDITOR_DELETE_LINE = ShortcutKey.newShortcutKey("global.editor.deleteLine", "delete line");
     ShortcutKey KEY_EDITOR_MOVE_LINE_UP = ShortcutKey.newShortcutKey("global.editor.moveLineUp", "move line up");
     ShortcutKey KEY_EDITOR_MOVE_LINE_DOWN = ShortcutKey.newShortcutKey("global.editor.moveLineDown", "move line down");
+    // THIS IS USED TO DISABLE PASTE SHORTCUT IN EDITOR TO AVOID CONFLICT WITH GLOBAL.
+    ShortcutKey KEY_EDITOR_PASTE = ShortcutKey.newShortcutKey("global.editor.paste", "paste");
 
 
     // modifier for dragging view

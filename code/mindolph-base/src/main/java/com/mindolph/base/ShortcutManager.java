@@ -57,6 +57,7 @@ public class ShortcutManager {
             shortcutMap.put(KEY_EDITOR_MOVE_LINE_DOWN, new KeyCodeCombination(DOWN, META_DOWN, SHIFT_DOWN));
             shortcutMap.put(KEY_SHOW_POPUP, new KeyCodeCombination(SPACE, META_DOWN, ALT_DOWN));
             modifierMap.put(KEY_MODIFIER_DRAGGING, new KeyCodeCombination(SPACE, META_DOWN));// KeyCode is not used.
+            shortcutMap.put(KEY_EDITOR_PASTE, new KeyCodeCombination(V, META_DOWN));
         }
         else if (SystemUtils.IS_OS_LINUX) {
             // linux specific
@@ -68,6 +69,7 @@ public class ShortcutManager {
             shortcutMap.put(KEY_EDITOR_MOVE_LINE_DOWN, new KeyCodeCombination(DOWN, SHIFT_DOWN, CONTROL_DOWN));
             shortcutMap.put(KEY_SHOW_POPUP, new KeyCodeCombination(SPACE, CONTROL_DOWN));
             modifierMap.put(KEY_MODIFIER_DRAGGING, new KeyCodeCombination(SPACE, CONTROL_DOWN));// KeyCode is not used.
+            shortcutMap.put(KEY_EDITOR_PASTE, new KeyCodeCombination(V, CONTROL_DOWN));
         }
         else if (SystemUtils.IS_OS_WINDOWS) {
             // windows specific
@@ -79,6 +81,7 @@ public class ShortcutManager {
             shortcutMap.put(KEY_EDITOR_MOVE_LINE_DOWN, new KeyCodeCombination(DOWN, SHIFT_DOWN, CONTROL_DOWN));
             shortcutMap.put(KEY_SHOW_POPUP, new KeyCodeCombination(SPACE, CONTROL_DOWN));
             modifierMap.put(KEY_MODIFIER_DRAGGING, new KeyCodeCombination(SPACE, CONTROL_DOWN));// KeyCode is not used.
+            shortcutMap.put(KEY_EDITOR_PASTE, new KeyCodeCombination(V, CONTROL_DOWN));
         }
     }
 
