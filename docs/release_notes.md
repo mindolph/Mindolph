@@ -1,5 +1,8 @@
 # Release Notes
 
+### V1.2.5 Release
+* Fix: paste shortcut conflict with code editor.
+
 ### V1.3.0 unstable
 * New Feature: create relative file link by dragging&dropping file to Mind Map, Markdown, CSV or plain text files.
 * New Feature: find file links to any file or folder in workspace.
