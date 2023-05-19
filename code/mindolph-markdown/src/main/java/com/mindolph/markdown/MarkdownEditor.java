@@ -7,7 +7,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.control.ExtCodeArea;
+import com.mindolph.base.control.ExtCodeArea.Replacement;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.event.EventBus;
@@ -22,9 +22,12 @@ import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.markdown.constant.ShortcutConstants;
+import com.mindolph.markdown.dialog.TableDialog;
+import com.mindolph.markdown.dialog.TableOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextBlockDialog;
 import com.mindolph.mfx.util.BoundsUtils;
+import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mfx.util.UrlUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
@@ -38,11 +41,14 @@ import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.print.PrinterJob;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -90,6 +96,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,7 +106,7 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 /**
  * @author mindolph.com@gmail.com
  */
-public class MarkdownEditor extends BasePreviewEditor implements Initializable {
+public class MarkdownEditor extends BasePreviewEditor implements Initializable, EventHandler<ActionEvent> {
 
     private final Logger log = LoggerFactory.getLogger(MarkdownEditor.class);
 
@@ -127,6 +134,19 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @FXML
     private VirtualizedScrollPane<SearchableCodeArea> codeScrollPane;
+
+    @FXML
+    private Button btnBullet;
+    @FXML
+    private Button btnNumber;
+    @FXML
+    private Button btnLink;
+    @FXML
+    private Button btnQuote;
+    @FXML
+    private Button btnCode;
+    @FXML
+    private Button btnTable;
 
     @FXML
     private WebView webView;
@@ -157,7 +177,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, BACK_QUOTE, AUTO_INDENT);
         InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)), keyEvent -> {
-            codeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("> ")); // TODO add tail
+            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ")); // TODO add tail
         });
         Nodes.addInputMap(this, comment);
 
@@ -167,6 +187,21 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                 Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
             }
         });
+
+        FontIconManager fim = FontIconManager.getIns();
+        btnBullet.setGraphic(fim.getIcon(IconKey.BULLET_LIST));
+        btnNumber.setGraphic(fim.getIcon(IconKey.NUMBER_LIST));
+        btnLink.setGraphic(fim.getIcon(IconKey.URI));
+        btnQuote.setGraphic(fim.getIcon(IconKey.QUOTE));
+        btnCode.setGraphic(fim.getIcon(IconKey.CODE_TAG));
+        btnTable.setGraphic(fim.getIcon(IconKey.TABLE));
+
+        btnBullet.setOnAction(this);
+        btnNumber.setOnAction(this);
+        btnLink.setOnAction(this);
+        btnQuote.setOnAction(this);
+        btnCode.setOnAction(this);
+        btnTable.setOnAction(this);
 
         webEngine = webView.getEngine();
         webView.setContextMenuEnabled(false);
@@ -550,7 +585,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         Bounds boundsInLocal = webView.getBoundsInLocal();
         log.debug(BoundsUtils.boundsInString(boundsInLocal));
         params.setViewport(GeometryConvertUtils.boundsToRectangle2D(boundsInLocal));
-        // this only export whats in viewport
+        // this only export what's in viewport
         return webView.snapshot(params, null);
     }
 
@@ -572,5 +607,46 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         webEngine.load(null);
         webEngine = null;
         webView = null;
+    }
+
+    @Override
+    public void handle(ActionEvent event) {
+        Object node = event.getSource();
+        if (node == btnBullet) {
+            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* "));
+        }
+        else if (node == btnNumber) {
+
+        }
+        else if (node == btnQuote) {
+            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> "));
+        }
+        else if (node == btnCode) {
+            codeArea.addToSelectionHeadAndTail("```");
+        }
+        else if (node == btnLink) {
+            String link = "[](%s)".formatted(ClipBoardUtils.textFromClipboard());
+            codeArea.replaceSelection(link);
+        }
+        else if (node == btnTable) {
+            TableOptions to = new TableOptions();
+            to.setRows(3);
+            to.setCols(3);
+            new TableDialog(to).show(tableOptions -> {
+                if (tableOptions != null) {
+                    String[] emptyRow = new String[tableOptions.getCols()];
+                    String[] separatorRow = new String[tableOptions.getCols()];
+                    Arrays.fill(emptyRow, "    ");
+                    Arrays.fill(separatorRow, "----");
+                    String content = String.join("\n",
+                            "|" + StringUtils.join(emptyRow, "|") + "|",
+                            "|" + StringUtils.join(separatorRow, "|") + "|"
+                    );
+                    content = "\n" + content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
+                    codeArea.replaceSelection(content);
+                }
+            });
+
+        }
     }
 }

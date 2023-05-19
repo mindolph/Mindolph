@@ -338,7 +338,9 @@ public class ExtCodeArea extends CodeArea {
     }
 
     public static class Replacement {
+        // substitute to be added
         String substitute;
+        // targets to be trimmed.
         String[] targets;
 
         public Replacement(String substitute, String... targets) {

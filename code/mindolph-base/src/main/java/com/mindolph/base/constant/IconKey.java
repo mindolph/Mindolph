@@ -1,6 +1,7 @@
 package com.mindolph.base.constant;
 
 /**
+ *
  * @author mindolph.com@gmail.com
  * @see com.mindolph.base.FontIconManager
  */
@@ -17,5 +18,6 @@ public enum IconKey {
     NOTE, FILE_LINK, URI, JUMP, EMOTICONS, EXPORT, IMPORT, IMAGE,
     NEXT, PREVIOUS, CASE_SENSITIVITY,
     PRINTER, PAGE,
-    PDF
+    PDF,
+    INDENT_DECREASE, INDENT_INCREASE, BULLET_LIST, NUMBER_LIST, QUOTE, TABLE, CODE_TAG
 }

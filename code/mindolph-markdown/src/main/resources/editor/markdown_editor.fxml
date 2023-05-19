@@ -5,17 +5,47 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tooltip?>
 <fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300"  layoutX="281.0" layoutY="71.0" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <primary>
             <AnchorPane>
                <children>
-                  <VirtualizedScrollPane fx:id="codeScrollPane" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <content>
-                     <SearchableCodeArea fx:id="codeArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  </content>
-                  </VirtualizedScrollPane>
+                  <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <HBox alignment="BASELINE_LEFT">
+                        <Button fx:id="btnBullet" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                           <Tooltip text="Bullet List" />
+                        </tooltip></Button>
+                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Number List" />
+                           </tooltip></Button>
+                        <Button fx:id="btnLink" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Link" />
+                           </tooltip></Button>
+                        <Button fx:id="btnQuote" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Quote" />
+                           </tooltip></Button>
+                        <Button fx:id="btnCode" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Code" />
+                           </tooltip></Button>
+                        <Button fx:id="btnTable" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Table" />
+                           </tooltip></Button>
+                     </HBox>
+                     <VirtualizedScrollPane fx:id="codeScrollPane" minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS" >
+                        <content>
+                           <SearchableCodeArea fx:id="codeArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        </content>
+                     </VirtualizedScrollPane>
+                  </VBox>
                </children>
             </AnchorPane>
          </primary>
