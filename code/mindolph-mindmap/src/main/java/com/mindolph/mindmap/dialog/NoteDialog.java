@@ -221,6 +221,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         textArea.undoAvailableProperty().addListener((observableValue, aBoolean, newValue) -> btnUndo.setDisable(!newValue));
         textArea.redoAvailableProperty().addListener((observableValue, aBoolean, newValue) -> btnRedo.setDisable(!newValue));
         textArea.selectionProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("%s-%s within %d".formatted(newValue.getStart(), newValue.getEnd(), textArea.getText().length()));
+            if (newValue.getEnd() > textArea.getText().length()) {
+                return; // there is a bug in RichTextFx, which is, when selection to the end of text, this listener will be called twice, and the first one is wrong.
+            }
             String selectedText = textArea.getText(newValue);
             btnBrowse.setDisable(!UrlUtils.isValid(selectedText));
         });

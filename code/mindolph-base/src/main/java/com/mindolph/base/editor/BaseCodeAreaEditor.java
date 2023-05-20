@@ -114,6 +114,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 }
             });
             this.codeArea.selectionProperty().addListener((observable, oldValue, newValue) -> {
+                log.debug("%s-%s within %d".formatted(newValue.getStart(), newValue.getEnd(), codeArea.getText().length()));
+                if (newValue.getEnd() > codeArea.getText().length()) {
+                    return; // there is a bug in RichTextFx, which is, when selection to the end of text, this listener will be called twice, and the first one is wrong.
+                }
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.CUT, newValue.getLength() > 0);
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, newValue.getLength() > 0);
             });
@@ -229,19 +233,25 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public boolean cut() {
-        codeArea.cut();
+        if (codeArea.isFocused()) {
+            codeArea.cut();
+        }
         return true;
     }
 
     @Override
     public boolean copy() {
-        codeArea.copy();
+        if (codeArea.isFocused()) {
+            codeArea.copy();
+        }
         return true;
     }
 
     @Override
     public boolean paste() {
-        codeArea.paste();
+        if (codeArea.isFocused()) {
+            codeArea.paste();
+        }
         return true;
     }
 
