@@ -142,6 +142,11 @@ public class ExtCodeArea extends CodeArea {
         }
     }
 
+    /**
+     * Move caret selected paragraphs up/down.
+     *
+     * @param isUp
+     */
     private void moveCaretSelection(boolean isUp) {
         CaretSelectionBind<Collection<String>, String, Collection<String>> selectionBind = getCaretSelectionBind();
         int caretCol = this.getCaretColumn();
