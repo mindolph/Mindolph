@@ -1,5 +1,8 @@
 # Release Notes
 
+### V1.3.1 Unstable Release
+* Merged bug fixes from v1.2.5 and v1.2.6.
+
 ### V1.2.6 Release
 * Fix: copy/paste/cut in search bar text field causes same actions in code editor.
 * Fix: exception when select text to the end in note editor of mind map.
