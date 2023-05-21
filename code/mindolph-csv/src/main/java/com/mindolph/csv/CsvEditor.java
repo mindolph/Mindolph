@@ -20,6 +20,8 @@ import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.TextUtils;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialdesignicons.utils.MaterialDesignIconFactory;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -56,6 +58,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static com.mindolph.base.FontIconManager.DEFAULT_ICON_SIZE;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -388,7 +391,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private ContextMenu createRowContextMenu() {
         rowContextMenu = new ContextMenu();
         MenuItem miInsertBefore = new MenuItem("Insert New Line Before");
+        miInsertBefore.setGraphic(MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_ROW_PLUS_BEFORE, DEFAULT_ICON_SIZE));
         MenuItem miInsertAfter = new MenuItem("Insert New Line After");
+        miInsertAfter.setGraphic(MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_ROW_PLUS_AFTER, DEFAULT_ICON_SIZE));
         MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
         MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
         MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));

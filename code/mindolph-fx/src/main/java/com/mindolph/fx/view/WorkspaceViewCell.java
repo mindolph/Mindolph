@@ -1,5 +1,6 @@
 package com.mindolph.fx.view;
 
+import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.IconManager;
 import com.mindolph.fx.constant.IconName;
@@ -123,10 +124,10 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             Image icon = null;
             if (item.isFile()) {
 //                setFont(defaultFont);
-                icon = IconManager.getInstance().getFileIcon(item);
+                setGraphic(FontIconManager.getIns().getIconForFile(item));
             } else if (item.isFolder()) {
 //                setFont(defaultFont);
-                icon = IconManager.getInstance().getIcon(IconName.FOLDER);
+                setGraphic(FontIconManager.getIns().getIconForFile(item));
             } else if (item.isWorkspace()) {
 //                setFont(boldFont);
                 icon = IconManager.getInstance().getIcon(IconName.WORKSPACE);
@@ -135,8 +136,10 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                 setGraphic(null);
                 return; // no icon for this cell.
             }
-            iconView.setImage(icon);
-            setGraphic(iconView);
+            if (icon != null) {
+                iconView.setImage(icon);
+                setGraphic(iconView);
+            }
         }
     }
 

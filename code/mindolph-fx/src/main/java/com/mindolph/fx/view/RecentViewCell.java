@@ -1,9 +1,9 @@
 package com.mindolph.fx.view;
 
+import com.mindolph.base.FontIconManager;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
-import com.mindolph.fx.IconManager;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,8 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +41,7 @@ public class RecentViewCell extends ListCell<NodeData> {
 
     private static class ItemController extends AnchorPane implements Initializable {
         @FXML
-        ImageView imageView;
+        private Label lbIcon;
         @FXML
         Label lbFileName;
         @FXML
@@ -71,8 +69,7 @@ public class RecentViewCell extends ListCell<NodeData> {
             }
             lbFileName.setText(fileData.getName());
             lbFilePath.setText(desc);
-            Image icon = IconManager.getInstance().getFileIcon(fileData);
-            imageView.setImage(icon);
+            lbIcon.setGraphic(FontIconManager.getIns().getIconForFile(fileData, 24));
         }
 
         @Override

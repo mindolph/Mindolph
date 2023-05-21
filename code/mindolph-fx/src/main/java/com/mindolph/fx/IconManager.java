@@ -10,6 +10,7 @@ import java.util.Map;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 public class IconManager {
 

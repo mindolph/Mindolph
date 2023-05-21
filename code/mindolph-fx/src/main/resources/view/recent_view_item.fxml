@@ -12,7 +12,7 @@
    <children>
       <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fx:id="imageView" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="lbIcon" prefHeight="24" prefWidth="24"/>
             <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="lbFileName" text="File Name">

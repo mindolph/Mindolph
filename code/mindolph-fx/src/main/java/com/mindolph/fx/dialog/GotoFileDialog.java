@@ -10,8 +10,6 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.FileMeta;
 import com.mindolph.core.model.NodeData;
-import com.mindolph.fx.IconBuilder;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.control.FileFilterButtonGroup;
 import com.mindolph.fx.util.DisplayUtils;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -119,10 +117,10 @@ public class GotoFileDialog extends BaseDialogController<Void> {
                         if (item != null) {
                             setText(DisplayUtils.displayFileWithWorkspace(item.getWorkspaceDir(), item.getDirOrFile()));
                             if (item.getDirOrFile().isFile()) {
-                                setGraphic(new IconBuilder().fileData(new NodeData(item.getDirOrFile())).size(32).build());
+                                setGraphic(FontIconManager.getIns().getIconForFile(new NodeData(item.getDirOrFile()), 24));
                             }
                             else if (item.getDirOrFile().isDirectory()) {
-                                setGraphic(new IconBuilder().name(IconName.FOLDER).size(32).build());
+                                setGraphic(FontIconManager.getIns().getIconForFile(new NodeData(item.getDirOrFile()), 24));
                             }
                         }
                         else {
