@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.richtext.CaretSelectionBind;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.Paragraph;
@@ -134,10 +135,14 @@ public class ExtCodeArea extends CodeArea {
                 default:
                     break;
             }
-            // disable PASTE shortcut to avoid conflict with global.
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
-            ));
+            // somehow on macOS, the shortcut event not only consumed by editor, but also consumed by application,
+            // which causes the paste action be performed twice.
+            // so disable PASTE shortcut on macOS to avoid conflict with global.
+            if (SystemUtils.IS_OS_MAC) {
+                inputMaps.add(InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+                ));
+            }
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
         }
     }
