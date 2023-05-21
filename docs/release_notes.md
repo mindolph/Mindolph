@@ -1,9 +1,13 @@
 # Release Notes
 
-### V1.2.5 Release
-* Fix: paste shortcut conflict with code editor.
+### V1.2.6 Release
+* Fix: copy/paste/cut in search bar text field causes same actions in code editor.
+* Fix: exception when select text to the end in note editor of mind map.
 
-### V1.3.0 unstable
+### V1.2.5 Release
+* Fix: paste shortcut has a conflict with code editor, which causes redundant text pasted.
+
+### V1.3.0 Unstable Release
 * New Feature: create relative file link by dragging&dropping file to Mind Map, Markdown, CSV or plain text files.
 * New Feature: find file links to any file or folder in workspace.
 * New Feature: show context text with search word highlighted in search result from "find in files".
@@ -21,13 +25,13 @@
 * Fix: files created from external in sub-folders of expanded folder don't be loaded.
 * Fix: exception when right-click on a new created file in a new created folder.
 
-### V1.2.3 Release
+### V1.2.3 Unstable Release
 * Improvement: add round corner (and settings) to mind map topics.
 * Fix: files created from external in sub-folders of expanded folder don't be loaded.
 * Fix: exception when right-click on a new created file in a new created folder.
 * Fix: disable "paste" menu item for CSV editor if clipboard is empty.
 
-### V1.2.2 Release
+### V1.2.2 Unstable Release
 * Feature: add icons to context menu items for csv editor.
 * Feature: add cut and paste for selected rows.
 * Fix: occasionally can't select rows.
@@ -35,7 +39,7 @@
 * Update PlantUML to 1.2023.6.
 * Fixed some minor bugs.
 
-### V1.2.1 Release
+### V1.2.1 Unstable Release
 * Feature: unable to locate matched cell correctly in searching.
 * Feature: paste csv format text from clipboard to multiple cells as it is.
 * Feature: disable cells navigation by keys when editing.
@@ -44,11 +48,11 @@
 
 ### V1.1.4 Release
 * Fix: zooming on image viewer stops when width&height are both smaller than viewport.
-* Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
+* Fix: dragging topic to make link doesn't work since it has a conflict with dragging mindmap operation.
 * Fix: cancel unsaved file during closing application doesn't stop that.
 * Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics. https://github.com/mindolph/Mindolph/issues/4
 
-### V1.2.0
+### V1.2.0 Unstable Release
 * Feature: add 'Edit' to context menu in csv editor.
 * Feature: index column background and border.
 * Fix: paste from multiple empty cells turns out comma(s).
