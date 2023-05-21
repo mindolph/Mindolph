@@ -644,18 +644,18 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     private Menu createMenuNew() {
         Menu miNew = new Menu("New");
-        miFolder = new MenuItem("Folder", new IconBuilder().name(IconName.FOLDER).build());
-        miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
-        miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
-        plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
-        miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_CSV).build());
+        miFolder = new MenuItem("Folder", FontIconManager.getIns().getIcon(IconKey.FOLDER));
+        miMindMap = new MenuItem("Mind Map(.mmd)", FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
+        miMarkdown = new MenuItem("Markdown(.md)", FontIconManager.getIns().getIcon(IconKey.FILE_MD));
+        plantUmlMenu = new Menu("PlantUML(.puml)", FontIconManager.getIns().getIcon(IconKey.FILE_PUML));
+        miCsvFile = new MenuItem("Sheet(.csv)", FontIconManager.getIns().getIcon(IconKey.FILE_CSV));
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);
             mi.setOnAction(this);
             plantUmlMenu.getItems().add(mi);
         }
-        miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
+        miTextFile = new MenuItem("Text(.txt)", FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
         miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
         miFolder.setOnAction(this);
         miMindMap.setOnAction(this);

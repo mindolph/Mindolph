@@ -66,7 +66,8 @@ public class FontIconManager {
         icons.put(IconKey.PRINTER, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PRINT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PAGE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FILE_TEXT_ALT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PDF, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FILE_PDF_ALT, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.FILE_MMD, () -> EmojiOneFactory.get().createIcon(EmojiOne.SPIDER_WEB, DEFAULT_ICON_SIZE));
+//        icons.put(IconKey.FILE_MMD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SITEMAP, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.FILE_MMD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SNOWFLAKE_ALT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_PUML, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FACTORY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_MD, () -> OctIconFactory.get().createIcon(OctIcon.MARKDOWN, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_CSV, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, DEFAULT_ICON_SIZE));
@@ -106,7 +107,7 @@ public class FontIconManager {
         icons.put(IconKey.PASTE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_PASTE, DEFAULT_ICON_SIZE));
 
         icons.put(IconKey.EDIT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.ADD_CHILD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.ADD_CIRCLE_OUTLINE, DEFAULT_ICON_SIZE));
+//        icons.put(IconKey.ADD_CHILD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PLUS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.EDIT_COLORS, () -> MaterialIconFactory.get().createIcon(MaterialIcon.COLOR_LENS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SHOW_JUMPS, () -> MaterialIconFactory.get().createIcon(MaterialIcon.LINK, DEFAULT_ICON_SIZE));
         icons.put(IconKey.EXPAND_ALL, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.PLUS_CIRCLE_OUTLINE, DEFAULT_ICON_SIZE));
@@ -145,7 +146,7 @@ public class FontIconManager {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE, iconSize);
         }
         else if (fileData.isMindMap()) {
-            return EmojiOneFactory.get().createIcon(EmojiOne.SPIDER_WEB, iconSize);
+            return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SNOWFLAKE_ALT, iconSize);
         }
         else if (fileData.isPlantUml()) {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FACTORY, iconSize);
