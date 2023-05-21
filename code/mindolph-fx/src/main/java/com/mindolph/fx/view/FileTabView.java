@@ -131,7 +131,7 @@ public class FileTabView extends BaseView {
             fileData.setWorkspaceData(workspaceData); // just workaround
             tab.setUserData(fileData); //
             tab.setTooltip(new Tooltip(fileData.getFile().getPath()));
-            tab.setGraphic(new IconBuilder().fileData(fileData).build());
+            tab.setGraphic(FontIconManager.getIns().getIconForFile(fileData));
             tab.setOnCloseRequest(event -> {
                 log.debug("On closing tab");
                 // retrieve fileData from event because the original fileData is mutable

@@ -87,17 +87,22 @@
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-materialicons</artifactId>
-            <version>2.2.0-9.1.2</version>
+            <version>2.2.0-17</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-materialdesignfont</artifactId>
-            <version>2.0.26-9.1.2</version>
+            <version>1.7.22-17</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-octicons</artifactId>
-            <version>4.3.0-9.1.2</version>
+            <version>4.3.0-17</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-emojione</artifactId>
+            <version>2.2.7-17</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
 <!--        <dependency>-->

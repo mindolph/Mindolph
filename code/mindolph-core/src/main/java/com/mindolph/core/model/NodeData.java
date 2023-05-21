@@ -4,10 +4,11 @@ import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.util.FileNameUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.Objects;
+
+import static org.apache.commons.io.FilenameUtils.isExtension;
 
 /**
  * @author mindolph.com@gmail.com
@@ -69,23 +70,28 @@ public class NodeData {
     }
 
     public boolean isMindMap() {
-        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_MIND_MAP);
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_MIND_MAP);
     }
 
     public boolean isPlantUml() {
-        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_PLANTUML);
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_PLANTUML);
     }
 
     public boolean isMarkdown() {
-        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_MARKDOWN);
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_MARKDOWN);
     }
 
     public boolean isPlainText() {
-        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_TEXT);
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_TEXT);
     }
 
     public boolean isCsv() {
-        return FilenameUtils.isExtension(getFile().getName(), SupportFileTypes.TYPE_CSV);
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_CSV);
+    }
+
+    public boolean isImage() {
+        return isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_JPG)
+                || isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_PNG);
     }
 
     public String getName() {

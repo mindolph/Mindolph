@@ -25,6 +25,12 @@ public class IconBuilder {
         return this;
     }
 
+    /**
+     *
+     * @param fileData
+     * @return
+     * @deprecated
+     */
     public IconBuilder fileData(NodeData fileData) {
         this.icon = IconManager.getInstance().getFileIcon(fileData);
         return this;

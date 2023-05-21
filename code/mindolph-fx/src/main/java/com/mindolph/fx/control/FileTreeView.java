@@ -1,5 +1,6 @@
 package com.mindolph.fx.control;
 
+import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.BaseSearchMatcher;
 import com.mindolph.core.search.SearchParams;
@@ -46,7 +47,7 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                         if (item.isParent) {
                             setText(DisplayUtils.displayFile(searchParams.getWorkspaceDir(), item.getFile()));
                             if (item.getFile().isFile()) {
-                                setGraphic(new IconBuilder().fileData(new NodeData(item.getFile())).build());
+                                setGraphic(FontIconManager.getIns().getIconForFile(new NodeData(item.getFile())));
                             }
                             else if (item.getFile().isDirectory()) {
                                 setGraphic(new IconBuilder().name(IconName.FOLDER).build());
