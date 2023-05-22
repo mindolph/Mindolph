@@ -99,11 +99,11 @@
             <artifactId>fontawesomefx-octicons</artifactId>
             <version>4.3.0-17</version>
         </dependency>
-        <dependency>
-            <groupId>de.jensd</groupId>
-            <artifactId>fontawesomefx-emojione</artifactId>
-            <version>2.2.7-17</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>de.jensd</groupId>-->
+<!--            <artifactId>fontawesomefx-emojione</artifactId>-->
+<!--            <version>2.2.7-17</version>-->
+<!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
 <!--        <dependency>-->
 <!--            <groupId>org.controlsfx</groupId>-->
