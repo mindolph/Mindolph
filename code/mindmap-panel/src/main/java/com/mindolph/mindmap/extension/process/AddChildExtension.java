@@ -18,7 +18,7 @@ public class AddChildExtension extends BaseTopicExtension {
 
     @Override
     protected Text getIcon(ExtensionContext context, TopicNode activeTopic) {
-        return FontIconManager.getIns().getIcon(IconKey.ADD_CHILD);
+        return FontIconManager.getIns().getIcon(IconKey.PLUS);
     }
 
     @Override
