@@ -2,8 +2,6 @@ package com.mindolph.base;
 
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.model.NodeData;
-import de.jensd.fx.glyphs.emojione.EmojiOne;
-import de.jensd.fx.glyphs.emojione.utils.EmojiOneFactory;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
