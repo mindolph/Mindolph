@@ -3,6 +3,8 @@ package com.mindolph.base.control;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.TextUtils;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.KeyCode;
@@ -36,6 +38,9 @@ public class ExtCodeArea extends CodeArea {
     private final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
     private final ShortcutManager sm = ShortcutManager.getIns();
+
+    // disable 'paste' shortcut in code area control, just a workaround for the shortcut conflict on macOS.
+    private final BooleanProperty disablePaste = new SimpleBooleanProperty(false);
 
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
@@ -138,7 +143,7 @@ public class ExtCodeArea extends CodeArea {
             // somehow on macOS, the shortcut event not only consumed by editor, but also consumed by application,
             // which causes the paste action be performed twice.
             // so disable PASTE shortcut on macOS to avoid conflict with global.
-            if (SystemUtils.IS_OS_MAC) {
+            if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
                 inputMaps.add(InputMap.consume(
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
                 ));
@@ -328,6 +333,18 @@ public class ExtCodeArea extends CodeArea {
         String selectedText = super.getSelectedText();
         super.replaceSelection(text + selectedText + text);
         this.selectRange(selection.getStart(), selection.getEnd() + text.length() * 2);
+    }
+
+    public boolean isDisablePaste() {
+        return disablePaste.get();
+    }
+
+    public BooleanProperty disablePasteProperty() {
+        return disablePaste;
+    }
+
+    public void setDisablePaste(boolean disablePaste) {
+        this.disablePaste.set(disablePaste);
     }
 
     public enum FEATURE {

@@ -66,6 +66,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 //        codeArea.setShowCaret(Caret.CaretVisibility.ON);
         codeArea.getUndoManager().preventMerge();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.setDisablePaste(true); // only works for macOS
 //        codeArea.setStyle("-fx-tab-size: 2"); doesn't work
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
