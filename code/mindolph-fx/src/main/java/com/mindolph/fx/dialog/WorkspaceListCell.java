@@ -7,13 +7,13 @@ import com.mindolph.base.event.WorkspaceRenameEvent;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.meta.WorkspaceMeta;
-import com.mindolph.fx.IconManager;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.FxmlUtils;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,8 +21,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -59,7 +57,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
     private static class ItemController extends AnchorPane implements Initializable, EventHandler<ActionEvent> {
         private static final Logger log = LoggerFactory.getLogger(ItemController.class);
         @FXML
-        ImageView imageView;
+        Label lblIcon;
         @FXML
         Label lbWorkspaceName;
         @FXML
@@ -86,8 +84,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         private void init() {
             lbWorkspaceName.setText(FilenameUtils.getBaseName(workspaceMeta.getBaseDirPath()));
             lbWorkspacePath.setText(workspaceMeta.getBaseDirPath());
-            Image icon = IconManager.getInstance().getIcon(IconName.WORKSPACE);
-            imageView.setImage(icon);
+            lblIcon.setGraphic(FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.BRIEFCASE, "24"));
 
             btnActions.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
             btnActions.setOnMouseClicked(event -> {

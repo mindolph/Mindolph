@@ -7,6 +7,8 @@ import java.util.Set;
  * @author mindolph.com@gmail.com
  */
 public interface SupportFileTypes {
+    String TYPE_FOLDER = "folder"; // special file type
+
     String TYPE_MIND_MAP = "mmd";
     String TYPE_PLANTUML = "puml";
     String TYPE_MARKDOWN = "md";

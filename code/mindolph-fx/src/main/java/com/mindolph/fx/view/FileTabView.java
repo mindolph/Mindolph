@@ -257,7 +257,7 @@ public class FileTabView extends BaseView {
         MenuItem miCloseOthers = new MenuItem("Close Others");
         MenuItem miCloseAll = new MenuItem("Close All");
         MenuItem miSaveAs = new MenuItem("Save As..");
-        MenuItem miSelectInTree = new MenuItem("Select in Workspace", new IconBuilder().name(IconName.WORKSPACE).build());
+        MenuItem miSelectInTree = new MenuItem("Select in Workspace", FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
         MenuItem miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
 
         // actions

@@ -1,6 +1,8 @@
 package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.editor.Editable;
@@ -14,7 +16,6 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.SearchParams;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.dialog.*;
 import com.mindolph.fx.helper.OpenedFileRestoreListener;
 import com.mindolph.fx.helper.SceneRestore;
@@ -131,8 +132,9 @@ public class MainController extends BaseController implements Initializable,
 
         // register state changes to store.
         workspaceViewResizedEventHandler = sceneRestore;
-        tabWorkspaces.setGraphic(new IconBuilder().name(IconName.WORKSPACE).build());
-        tabRecentFiles.setGraphic(new IconBuilder().name(IconName.FILE_TXT).build());
+        tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
+        tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
+
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getFile(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.setSearchEventHandler(this);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {

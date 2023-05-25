@@ -24,8 +24,6 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
-import com.mindolph.fx.IconBuilder;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.dialog.UsageDialog;
@@ -68,7 +66,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
-import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
+import static com.mindolph.core.constant.SupportFileTypes.*;
 
 /**
  * Load workspaces.
@@ -195,7 +193,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 List<File> files = event.getDragboard().getFiles();
                 log.debug(StringUtils.join(files, ", "));
                 List<NodeData> nodeDatas = files.stream().map(NodeData::new).toList();
-                nodeDatas.forEach(nd->nd.setWorkspaceData(activeWorkspaceData));
+                nodeDatas.forEach(nd -> nd.setWorkspaceData(activeWorkspaceData));
                 moveToTreeItem(nodeDatas, rootItem);
             }
             event.consume();
@@ -272,6 +270,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
         btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
 
+        // event handler for toolbar buttons.
         EventHandler<MouseEvent> btnEventHandler = event -> {
             treeView.getSelectionModel().select(rootItem); // root item is the item for workspace
             Button btn = (Button) event.getSource();
@@ -632,7 +631,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
-                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(),miFindFiles);
+                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
             miUsage = new MenuItem("Find Usage");
             miUsage.setOnAction(this);
@@ -640,7 +639,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
         return contextMenu;
     }
-
 
     private Menu createMenuNew() {
         Menu miNew = new Menu("New");
@@ -656,12 +654,19 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             plantUmlMenu.getItems().add(mi);
         }
         miTextFile = new MenuItem("Text(.txt)", FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
-        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
+        miFolder.setUserData(TYPE_FOLDER);
+        miMindMap.setUserData(TYPE_MIND_MAP);
+        miMarkdown.setUserData(TYPE_MARKDOWN);
+        plantUmlMenu.setUserData(TYPE_PLANTUML);
+        miCsvFile.setUserData(TYPE_CSV);
+        miTextFile.setUserData(TYPE_PLAIN_TEXT);
+
         miFolder.setOnAction(this);
         miMindMap.setOnAction(this);
         miMarkdown.setOnAction(this);
         miTextFile.setOnAction(this);
         miCsvFile.setOnAction(this);
+        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
         return miNew;
     }
 
@@ -836,6 +841,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     .title("New Folder Name")
                     .width(300)
                     .build();
+            dialog.setGraphic(FontIconManager.getIns().getIconForFile(TYPE_FOLDER, 32));
             Optional<String> opt = dialog.showAndWait();
             if (opt.isPresent()) {
                 String folderName = opt.get();
@@ -859,6 +865,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     .owner(DialogFactory.DEFAULT_WINDOW)
                     .width(300)
                     .title("New %s Name".formatted(source.getText())).build();
+            String iconType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
+            dialog.setGraphic(FontIconManager.getIns().getIconForFile(iconType, 32));
             Optional<String> opt = dialog.showAndWait();
             if (opt.isPresent()) {
                 String fileName = opt.get();
@@ -1020,6 +1028,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
         else if (source == miCollapseAll) {
             this.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
+        }
+        else {
+            log.debug("Unknown event source: " + source);
         }
     }
 
