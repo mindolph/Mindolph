@@ -64,7 +64,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
-import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
+import static com.mindolph.core.constant.SupportFileTypes.*;
 
 /**
  * Load workspaces.
@@ -116,12 +116,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     private ContextMenu contextMenuNew; // context menu for button "New"
     private ContextMenu itemContextMenu = null;
-    private MenuItem miFolder;
-    private MenuItem miMindMap;
-    private MenuItem miTextFile;
-    private Menu plantUmlMenu;
-    private MenuItem miMarkdown;
-    private MenuItem miCsvFile;
     private MenuItem miCopyFile;
     private MenuItem miPasteFile;
     private MenuItem miCopyPathAbsolute;
@@ -190,7 +184,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 List<File> files = event.getDragboard().getFiles();
                 log.debug(StringUtils.join(files, ", "));
                 List<NodeData> nodeDatas = files.stream().map(NodeData::new).toList();
-                nodeDatas.forEach(nd->nd.setWorkspaceData(activeWorkspaceData));
+                nodeDatas.forEach(nd -> nd.setWorkspaceData(activeWorkspaceData));
                 moveToTreeItem(nodeDatas, rootItem);
             }
             event.consume();
@@ -267,6 +261,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
         btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
 
+        // event handler for toolbar buttons.
         EventHandler<MouseEvent> btnEventHandler = event -> {
             treeView.getSelectionModel().select(rootItem); // root item is the item for workspace
             Button btn = (Button) event.getSource();
@@ -631,24 +626,31 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     private Menu createMenuNew() {
         Menu miNew = new Menu("New");
-        miFolder = new MenuItem("Folder", new IconBuilder().name(IconName.FOLDER).build());
-        miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
-        miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
-        plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
-        miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_CSV).build());
+        MenuItem miFolder = new MenuItem("Folder", new IconBuilder().name(IconName.FOLDER).build());
+        MenuItem miMindMap = new MenuItem("Mind Map(.mmd)", new IconBuilder().name(IconName.FILE_MMD).build());
+        MenuItem miMarkdown = new MenuItem("Markdown(.md)", new IconBuilder().name(IconName.FILE_MARKDOWN).build());
+        Menu plantUmlMenu = new Menu("PlantUML(.puml)", new IconBuilder().name(IconName.FILE_PUML).build());
+        MenuItem miCsvFile = new MenuItem("Sheet(.csv)", new IconBuilder().name(IconName.FILE_CSV).build());
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);
             mi.setOnAction(this);
             plantUmlMenu.getItems().add(mi);
         }
-        miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
-        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
+        MenuItem miTextFile = new MenuItem("Text(.txt)", new IconBuilder().name(IconName.FILE_TXT).build());
+        miFolder.setUserData(TYPE_FOLDER);
+        miMindMap.setUserData(TYPE_MIND_MAP);
+        miMarkdown.setUserData(TYPE_MARKDOWN);
+        plantUmlMenu.setUserData(TYPE_PLANTUML);
+        miCsvFile.setUserData(TYPE_CSV);
+        miTextFile.setUserData(TYPE_PLAIN_TEXT);
+
         miFolder.setOnAction(this);
         miMindMap.setOnAction(this);
         miMarkdown.setOnAction(this);
         miTextFile.setOnAction(this);
         miCsvFile.setOnAction(this);
+        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
         return miNew;
     }
 
@@ -815,9 +817,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     @Override
     public void handle(ActionEvent event) {
         MenuItem source = (MenuItem) event.getSource();
+        System.out.println(source);
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
         NodeData selectedData = selectedTreeItem.getValue(); // use selected tree item as target even for workspace folder(the root item), because the user data of tree item might be used for other purpose.
-        if (source == miFolder) {
+        String fileType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
+        if (TYPE_FOLDER.equals(fileType)) {
             Dialog<String> dialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
                     .title("New Folder Name")
@@ -838,8 +842,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 }
             }
         }
-        else if (source == miMindMap || source == miTextFile || source == miMarkdown || source == miCsvFile
-                || (source.getParentMenu() != null && source.getParentMenu() == plantUmlMenu)) {
+        else if (StringUtils.equalsAny(fileType, TYPE_MIND_MAP, TYPE_MARKDOWN, TYPE_CSV, TYPE_PLANTUML, TYPE_PLAIN_TEXT)) {
             log.debug("New %s File".formatted(source.getText()));
             log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
             Dialog<String> dialog = new TextDialogBuilder()
@@ -852,7 +855,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
                 if (selectedData.getFile().isDirectory()) {
                     File newFile = null;
-                    if (source == miMindMap) {
+                    if (TYPE_MIND_MAP.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "mmd");
                         if (newFile != null) {
                             final MindMap<TopicNode> mindMap = new MindMap<>();
@@ -869,17 +872,17 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             }
                         }
                     }
-                    else if (source == miTextFile) {
+                    else if (TYPE_PLAIN_TEXT.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "txt");
                     }
-                    else if (source.getParentMenu() == plantUmlMenu) {
+                    else if (TYPE_PLANTUML.equals(fileType)) {
                         log.debug("Handle dynamic menu item: " + source.getText());
                         newFile = createEmptyFile(fileName, selectedData, "puml");
                         if (newFile != null) {
                             this.handlePlantumlCreation(source, newFile);
                         }
                     }
-                    else if (source == miMarkdown) {
+                    else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
                             String snippet = Templates.MARKDOWN_TEMPLATE.formatted(fileName);
@@ -891,7 +894,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             }
                         }
                     }
-                    else if (source == miCsvFile) {
+                    else if (TYPE_CSV.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "csv");
                     }
                     else {
