@@ -26,18 +26,18 @@ public class IconManager {
     }
 
     private IconManager() {
-        try {
-            iconMap.put(IconName.WORKSPACE, new Image(getClass().getResource("/icons/project.png").openStream()));
-            iconMap.put(IconName.FOLDER, new Image(getClass().getResource("/icons/folder.png").openStream()));
-            iconMap.put(IconName.FILE_MMD, new Image(getClass().getResource("/icons/file_mmd.png").openStream()));
-            iconMap.put(IconName.FILE_PUML, new Image(getClass().getResource("/icons/file_puml.png").openStream()));
-            iconMap.put(IconName.FILE_TXT, new Image(getClass().getResource("/icons/blank_file.png").openStream()));
-            iconMap.put(IconName.FILE_MARKDOWN, new Image(getClass().getResource("/icons/file_md.png").openStream()));
-            iconMap.put(IconName.FILE_CSV, new Image(getClass().getResource("/icons/file_csv.png").openStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load icon resources");
-        }
+//        try {
+//            iconMap.put(IconName.WORKSPACE, new Image(getClass().getResource("/icons/project.png").openStream()));
+//            iconMap.put(IconName.FOLDER, new Image(getClass().getResource("/icons/folder.png").openStream()));
+//            iconMap.put(IconName.FILE_MMD, new Image(getClass().getResource("/icons/file_mmd.png").openStream()));
+//            iconMap.put(IconName.FILE_PUML, new Image(getClass().getResource("/icons/file_puml.png").openStream()));
+//            iconMap.put(IconName.FILE_TXT, new Image(getClass().getResource("/icons/blank_file.png").openStream()));
+//            iconMap.put(IconName.FILE_MARKDOWN, new Image(getClass().getResource("/icons/file_md.png").openStream()));
+//            iconMap.put(IconName.FILE_CSV, new Image(getClass().getResource("/icons/file_csv.png").openStream()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Failed to load icon resources");
+//        }
     }
 
     public Image getIcon(IconName iconName) {

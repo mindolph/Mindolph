@@ -1,5 +1,9 @@
 # Release Notes
 
+### V1.2.7 Release
+* Fix: menu items to create folder or files doesn't work in some cases. 
+* Fix: the relative file link is unable to be located in mind map.
+
 ### V1.3.1 Unstable Release
 * Merged bug fixes from v1.2.5 and v1.2.6.
 

@@ -1,6 +1,7 @@
 package com.mindolph.base;
 
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.model.NodeData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
@@ -64,7 +65,9 @@ public class FontIconManager {
         icons.put(IconKey.PRINTER, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PRINT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PAGE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FILE_TEXT_ALT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PDF, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FILE_PDF_ALT, DEFAULT_ICON_SIZE));
-//        icons.put(IconKey.FILE_MMD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SITEMAP, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.WORKSPACE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.WORKSPACE_TREE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_TREE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.RECENT_LIST, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.HISTORY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_MMD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SNOWFLAKE_ALT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_PUML, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FACTORY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FILE_MD, () -> OctIconFactory.get().createIcon(OctIcon.MARKDOWN, DEFAULT_ICON_SIZE));
@@ -125,8 +128,8 @@ public class FontIconManager {
         icons.put(IconKey.JUMP, () -> OctIconFactory.get().createIcon(OctIcon.FILE_SYMLINK_FILE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.IMAGE, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FILE_IMAGE_ALT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.EMOTICONS, () -> MaterialIconFactory.get().createIcon(MaterialIcon.INSERT_EMOTICON, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.EXPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_EXPORT, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.IMPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_IMPORT, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.EXPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.EXPORT, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.IMPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.IMPORT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.TOPIC, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CHAT_BUBBLE_OUTLINE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FOLDER, ()-> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE));
     }
@@ -137,6 +140,41 @@ public class FontIconManager {
             return null;
         }
         return textSupplier.get();
+    }
+
+    /**
+     *
+     * @param fileType
+     * @param size
+     * @return
+     * @since 1.3.2
+     */
+    public Text getIconForFile(String fileType, double size) {
+        String iconSize = String.valueOf(size);
+        if (SupportFileTypes.TYPE_FOLDER.equals(fileType)) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_MIND_MAP.equals(fileType)) {
+            return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.SNOWFLAKE_ALT, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_PLANTUML.equals(fileType)) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FACTORY, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_PLAIN_TEXT.equals(fileType)) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_TEXT, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_MARKDOWN.equals(fileType)) {
+            return OctIconFactory.get().createIcon(OctIcon.MARKDOWN, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_CSV.equals(fileType)) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, iconSize);
+        }
+        else if(SupportFileTypes.TYPE_PLAIN_JPG.equals(fileType) || SupportFileTypes.TYPE_PLAIN_PNG.equals(fileType)) {
+            return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.IMAGE, iconSize);
+        }
+        else {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_OUTLINE, iconSize); // as default icon
+        }
     }
 
     /**

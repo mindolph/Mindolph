@@ -24,8 +24,6 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
-import com.mindolph.fx.IconBuilder;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.dialog.UsageDialog;
@@ -68,7 +66,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
-import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
+import static com.mindolph.core.constant.SupportFileTypes.*;
 
 /**
  * Load workspaces.
@@ -120,12 +118,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     private ContextMenu contextMenuNew; // context menu for button "New"
     private ContextMenu itemContextMenu = null;
-    private MenuItem miFolder;
-    private MenuItem miMindMap;
-    private MenuItem miTextFile;
-    private Menu plantUmlMenu;
-    private MenuItem miMarkdown;
-    private MenuItem miCsvFile;
     private MenuItem miCopyFile;
     private MenuItem miPasteFile;
     private MenuItem miCopyPathAbsolute;
@@ -195,7 +187,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 List<File> files = event.getDragboard().getFiles();
                 log.debug(StringUtils.join(files, ", "));
                 List<NodeData> nodeDatas = files.stream().map(NodeData::new).toList();
-                nodeDatas.forEach(nd->nd.setWorkspaceData(activeWorkspaceData));
+                nodeDatas.forEach(nd -> nd.setWorkspaceData(activeWorkspaceData));
                 moveToTreeItem(nodeDatas, rootItem);
             }
             event.consume();
@@ -272,6 +264,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
         btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
 
+        // event handler for toolbar buttons.
         EventHandler<MouseEvent> btnEventHandler = event -> {
             treeView.getSelectionModel().select(rootItem); // root item is the item for workspace
             Button btn = (Button) event.getSource();
@@ -632,7 +625,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
-                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(),miFindFiles);
+                contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
             miUsage = new MenuItem("Find Usage");
             miUsage.setOnAction(this);
@@ -641,27 +634,33 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         return contextMenu;
     }
 
-
     private Menu createMenuNew() {
         Menu miNew = new Menu("New");
-        miFolder = new MenuItem("Folder", FontIconManager.getIns().getIcon(IconKey.FOLDER));
-        miMindMap = new MenuItem("Mind Map(.mmd)", FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
-        miMarkdown = new MenuItem("Markdown(.md)", FontIconManager.getIns().getIcon(IconKey.FILE_MD));
-        plantUmlMenu = new Menu("PlantUML(.puml)", FontIconManager.getIns().getIcon(IconKey.FILE_PUML));
-        miCsvFile = new MenuItem("Sheet(.csv)", FontIconManager.getIns().getIcon(IconKey.FILE_CSV));
+        MenuItem miFolder = new MenuItem("Folder", FontIconManager.getIns().getIcon(IconKey.FOLDER));
+        MenuItem miMindMap = new MenuItem("Mind Map(.mmd)", FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
+        MenuItem miMarkdown = new MenuItem("Markdown(.md)", FontIconManager.getIns().getIcon(IconKey.FILE_MD));
+        Menu plantUmlMenu = new Menu("PlantUML(.puml)", FontIconManager.getIns().getIcon(IconKey.FILE_PUML));
+        MenuItem miCsvFile = new MenuItem("Sheet(.csv)", FontIconManager.getIns().getIcon(IconKey.FILE_CSV));
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);
             mi.setOnAction(this);
             plantUmlMenu.getItems().add(mi);
         }
-        miTextFile = new MenuItem("Text(.txt)", FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
-        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
+        MenuItem miTextFile = new MenuItem("Text(.txt)", FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
+        miFolder.setUserData(TYPE_FOLDER);
+        miMindMap.setUserData(TYPE_MIND_MAP);
+        miMarkdown.setUserData(TYPE_MARKDOWN);
+        plantUmlMenu.setUserData(TYPE_PLANTUML);
+        miCsvFile.setUserData(TYPE_CSV);
+        miTextFile.setUserData(TYPE_PLAIN_TEXT);
+
         miFolder.setOnAction(this);
         miMindMap.setOnAction(this);
         miMarkdown.setOnAction(this);
         miTextFile.setOnAction(this);
         miCsvFile.setOnAction(this);
+        miNew.getItems().addAll(miFolder, miMindMap, miMarkdown, plantUmlMenu, miTextFile, miCsvFile);
         return miNew;
     }
 
@@ -830,12 +829,14 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         MenuItem source = (MenuItem) event.getSource();
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
         NodeData selectedData = selectedTreeItem.getValue(); // use selected tree item as target even for workspace folder(the root item), because the user data of tree item might be used for other purpose.
-        if (source == miFolder) {
+        String fileType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
+        if (TYPE_FOLDER.equals(fileType)) {
             Dialog<String> dialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
                     .title("New Folder Name")
                     .width(300)
                     .build();
+            dialog.setGraphic(FontIconManager.getIns().getIconForFile(TYPE_FOLDER, 32));
             Optional<String> opt = dialog.showAndWait();
             if (opt.isPresent()) {
                 String folderName = opt.get();
@@ -851,21 +852,22 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 }
             }
         }
-        else if (source == miMindMap || source == miTextFile || source == miMarkdown || source == miCsvFile
-                || (source.getParentMenu() != null && source.getParentMenu() == plantUmlMenu)) {
+        else if (StringUtils.equalsAny(fileType, TYPE_MIND_MAP, TYPE_MARKDOWN, TYPE_CSV, TYPE_PLANTUML, TYPE_PLAIN_TEXT)) {
             log.debug("New %s File".formatted(source.getText()));
             log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
             Dialog<String> dialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
                     .width(300)
                     .title("New %s Name".formatted(source.getText())).build();
+            String iconType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
+            dialog.setGraphic(FontIconManager.getIns().getIconForFile(iconType, 32));
             Optional<String> opt = dialog.showAndWait();
             if (opt.isPresent()) {
                 String fileName = opt.get();
 
                 if (selectedData.getFile().isDirectory()) {
                     File newFile = null;
-                    if (source == miMindMap) {
+                    if (TYPE_MIND_MAP.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "mmd");
                         if (newFile != null) {
                             final MindMap<TopicNode> mindMap = new MindMap<>();
@@ -882,17 +884,17 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             }
                         }
                     }
-                    else if (source == miTextFile) {
+                    else if (TYPE_PLAIN_TEXT.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "txt");
                     }
-                    else if (source.getParentMenu() == plantUmlMenu) {
+                    else if (TYPE_PLANTUML.equals(fileType)) {
                         log.debug("Handle dynamic menu item: " + source.getText());
                         newFile = createEmptyFile(fileName, selectedData, "puml");
                         if (newFile != null) {
                             this.handlePlantumlCreation(source, newFile);
                         }
                     }
-                    else if (source == miMarkdown) {
+                    else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
                             String snippet = Templates.MARKDOWN_TEMPLATE.formatted(fileName);
@@ -904,7 +906,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             }
                         }
                     }
-                    else if (source == miCsvFile) {
+                    else if (TYPE_CSV.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "csv");
                     }
                     else {
@@ -1020,6 +1022,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
         else if (source == miCollapseAll) {
             this.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
+        }
+        else {
+            log.debug("Unknown event source: " + source);
         }
     }
 

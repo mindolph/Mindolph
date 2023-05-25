@@ -3,6 +3,7 @@ package com.mindolph.mindmap;
 import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.igormaznitsa.mindmap.model.*;
+import com.igormaznitsa.mindmap.model.Extra.ExtraType;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.control.BaseScalableView;
 import com.mindolph.base.event.EventBus;
@@ -1140,9 +1141,9 @@ public class MindMapView extends BaseScalableView {
 
     protected void updateStatusBarForTopic(TopicNode topic) {
         if (topic == null) return;
-        ExtraNote note = (ExtraNote) topic.getExtras().get(Extra.ExtraType.NOTE);
-        ExtraLink link = (ExtraLink) topic.getExtras().get(Extra.ExtraType.LINK);
-        ExtraFile fileLink = (ExtraFile) topic.getExtras().get(Extra.ExtraType.FILE);
+        ExtraNote note = (ExtraNote) topic.getExtras().get(ExtraType.NOTE);
+        ExtraLink link = (ExtraLink) topic.getExtras().get(ExtraType.LINK);
+        ExtraFile fileLink = (ExtraFile) topic.getExtras().get(ExtraType.FILE);
         String emoticon = topic.getAttribute(EmoticonVisualAttributeExtension.ATTR_KEY);
         String msg = new TopicInfoBuilder(true).emoticon(emoticon).link(link, 64).file(fileLink, 64).note(note).build();
         if (StringUtils.isNotBlank(msg)) {
@@ -1429,7 +1430,7 @@ public class MindMapView extends BaseScalableView {
     private boolean processDropTopicToAnotherTopic(MindMap<TopicNode> model, TopicNode draggedTopic, TopicNode destinationTopic) {
         if (draggedTopic != null && destinationTopic != null && draggedTopic != destinationTopic) {
             log.debug("Make link from %s to %s".formatted(draggedTopic.getText(), destinationTopic.getText()));
-            if (destinationTopic.getExtras().containsKey(Extra.ExtraType.TOPIC)) {
+            if (destinationTopic.getExtras().containsKey(ExtraType.TOPIC)) {
                 if (DialogFactory.yesNoConfirmDialog("One link already exists, keep the original one?")) {
                     return false;
                 }
@@ -1462,15 +1463,15 @@ public class MindMapView extends BaseScalableView {
         log.debug("Find topic by pattern: " + pattern.toString());
         TopicNode startTopic = getLastSelectedTopic();
 
-        Set<Extra.ExtraType> extras = EnumSet.noneOf(Extra.ExtraType.class);
+        Set<ExtraType> extras = EnumSet.noneOf(ExtraType.class);
         if (options.isInNote()) {
-            extras.add(Extra.ExtraType.NOTE);
+            extras.add(ExtraType.NOTE);
         }
         if (options.isInFileLink()) {
-            extras.add(Extra.ExtraType.FILE);
+            extras.add(ExtraType.FILE);
         }
         if (options.isInUrl()) {
-            extras.add(Extra.ExtraType.LINK);
+            extras.add(ExtraType.LINK);
         }
         boolean inTopicText = options.isInTopic();
 
@@ -1659,7 +1660,7 @@ public class MindMapView extends BaseScalableView {
                                 // paste topics in clipboard
                                 for (TopicNode t : container.getTopics()) {
                                     TopicNode newTopic = t.cloneTopic(this.model, true);
-                                    newTopic.removeExtra(Extra.ExtraType.TOPIC);
+                                    newTopic.removeExtra(ExtraType.TOPIC);
                                     newTopic.moveToNewParent(s);
                                     newTopics.add(newTopic);
                                 }
