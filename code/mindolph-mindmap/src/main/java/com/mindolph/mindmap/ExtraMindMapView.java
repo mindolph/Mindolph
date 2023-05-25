@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
@@ -201,26 +202,31 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             switch (extra.getType()) {
                 case FILE -> {
                     MMapURI uri = (MMapURI) extra.getValue();
-                    File theFile = uri.asFile(workspaceDir);
-                    if (theFile.isFile()) {
-                        String openInSys = uri.getParameters().getProperty(FILELINK_ATTR_OPEN_IN_SYSTEM, "false");
-                        if (Boolean.parseBoolean(openInSys)) {
-                            log.debug("Open in System");
-                            try {
-                                DesktopUtils.openInSystem(theFile, false);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                DialogFactory.warnDialog("Unable to open file in system");
+                    File theFile = uri.asFile(this.getFile().getParentFile());
+                    try {
+                        File canonicalFile = theFile.getCanonicalFile();
+                        if (canonicalFile.isFile()) {
+                            String openInSys = uri.getParameters().getProperty(FILELINK_ATTR_OPEN_IN_SYSTEM, "false");
+                            if (Boolean.parseBoolean(openInSys)) {
+                                log.debug("Open in System");
+                                try {
+                                    DesktopUtils.openInSystem(theFile, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    DialogFactory.warnDialog("Unable to open file in system");
+                                }
+                            }
+                            else {
+                                Platform.runLater(() -> {
+                                    EventBus.getIns().notifyOpenFile(new OpenFileEvent(canonicalFile, true));
+                                });
                             }
                         }
                         else {
-                            Platform.runLater(() -> {
-                                EventBus.getIns().notifyOpenFile(new OpenFileEvent(theFile, true));
-                            });
+                            Platform.runLater(() -> DialogFactory.warnDialog("File not found: " + canonicalFile));
                         }
-                    }
-                    else {
-                        Platform.runLater(() -> DialogFactory.warnDialog("File not found: " + theFile));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 case LINK -> {
@@ -416,17 +422,24 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     log.info(String.format("Path %s converted to uri: %s", result.getFilePathWithLine(),
                             fileUri.asString(false, true)));
 
-                    File theFile = fileUri.asFile(workspaceDir);
+                    File theFile = fileUri.asFile(this.getFile().getParentFile());
                     log.debug("absolute file path: " + theFile);
-                    if (theFile.exists()) {
-                        if (extraFile == null) {
-                            FxPreferences.getInstance().savePreference(MINDOLPH_MMD_FILE_LINK_LAST_FOLDER, theFile.getParentFile().toString());
+                    try {
+                        File canonicalFile = theFile.getCanonicalFile();
+                        if (canonicalFile.exists()) {
+                            if (extraFile == null) {
+                                FxPreferences.getInstance().savePreference(MINDOLPH_MMD_FILE_LINK_LAST_FOLDER, canonicalFile.getParentFile().toString());
+                            }
+                            topic.setExtra(new ExtraFile(fileUri));
+                            valueChanged = true;
                         }
-                        topic.setExtra(new ExtraFile(fileUri));
-                        valueChanged = true;
-                    }
-                    else {
-                        DialogFactory.errDialog(String.format("File doesn't exit: %s", result.getFilePathWithLine().getPath()));
+                        else {
+                            DialogFactory.errDialog(String.format("File doesn't exit: %s", result.getFilePathWithLine().getPath()));
+                            valueChanged = false;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        log.error("Failed to save file link", e);
                         valueChanged = false;
                     }
                 }
