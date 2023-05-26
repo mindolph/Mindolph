@@ -96,6 +96,7 @@ public class FontIconManager {
         icons.put(IconKey.FOLD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FOLDER, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNFOLD, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FOLDER_OPEN, DEFAULT_ICON_SIZE));
         icons.put(IconKey.GEAR, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.GEAR, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.FONT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.FONT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNSELECT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.UNLINK, DEFAULT_ICON_SIZE));
 
         icons.put(IconKey.ALIGN, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_ALIGN_JUSTIFY, DEFAULT_ICON_SIZE));
@@ -123,7 +124,7 @@ public class FontIconManager {
         icons.put(IconKey.EXPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.EXPORT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.IMPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.IMPORT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.TOPIC, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CHAT_BUBBLE_OUTLINE, DEFAULT_ICON_SIZE));
-        icons.put(IconKey.FOLDER, ()-> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE));
+        icons.put(IconKey.FOLDER, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE));
     }
 
     public Text getIcon(IconKey iconKey) {
@@ -135,7 +136,6 @@ public class FontIconManager {
     }
 
     /**
-     *
      * @param fileType
      * @param size
      * @return
@@ -143,7 +143,10 @@ public class FontIconManager {
      */
     public Text getIconForFile(String fileType, double size) {
         String iconSize = String.valueOf(size);
-        if (SupportFileTypes.TYPE_FOLDER.equals(fileType)) {
+        if (SupportFileTypes.TYPE_WORKSPACE.equals(fileType)) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.CUBE, iconSize);
+        }
+        else if (SupportFileTypes.TYPE_FOLDER.equals(fileType)) {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE, iconSize);
         }
         else if (SupportFileTypes.TYPE_MIND_MAP.equals(fileType)) {
@@ -161,7 +164,7 @@ public class FontIconManager {
         else if (SupportFileTypes.TYPE_CSV.equals(fileType)) {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, iconSize);
         }
-        else if(SupportFileTypes.TYPE_PLAIN_JPG.equals(fileType) || SupportFileTypes.TYPE_PLAIN_PNG.equals(fileType)) {
+        else if (SupportFileTypes.TYPE_PLAIN_JPG.equals(fileType) || SupportFileTypes.TYPE_PLAIN_PNG.equals(fileType)) {
             return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.IMAGE, iconSize);
         }
         else {
@@ -170,7 +173,6 @@ public class FontIconManager {
     }
 
     /**
-     *
      * @param fileData
      * @param size
      * @return
@@ -196,7 +198,7 @@ public class FontIconManager {
         else if (fileData.isCsv()) {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, iconSize);
         }
-        else if(fileData.isImage()) {
+        else if (fileData.isImage()) {
             return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.IMAGE, iconSize);
         }
         else {
@@ -205,7 +207,6 @@ public class FontIconManager {
     }
 
     /**
-     *
      * @param fileData
      * @return
      * @since 1.3.2
@@ -229,7 +230,7 @@ public class FontIconManager {
         else if (fileData.isCsv()) {
             return getIcon(IconKey.FILE_CSV);
         }
-        else if(fileData.isImage()) {
+        else if (fileData.isImage()) {
             return getIcon(IconKey.FILE_IMG);
         }
         else {

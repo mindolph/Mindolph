@@ -11,6 +11,7 @@ import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.preference.MmdPreferences;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -40,6 +41,15 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 
 //    @FXML
 //    private PlantumlPreferences plantumlPreferences;
+
+    @FXML
+    private Tab tabGeneral;
+    @FXML
+    private Tab tabFont;
+    @FXML
+    private Tab tabMindMap;
+    @FXML
+    private Tab tabMarkdown;
 
     private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
 
@@ -74,6 +84,13 @@ public class PreferencesDialog extends BaseDialogController<Void> {
         mdPreferences.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
 //        plantumlPreferences.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
         fontPreferencesPane.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
+
+        Platform.runLater(() -> {
+            tabPane.setTabIcon(tabGeneral, FontIconManager.getIns().getIcon(IconKey.GEAR));
+            tabPane.setTabIcon(tabFont, FontIconManager.getIns().getIcon(IconKey.FONT));
+            tabPane.setTabIcon(tabMindMap, FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
+            tabPane.setTabIcon(tabMarkdown, FontIconManager.getIns().getIcon(IconKey.FILE_MD));
+        });
     }
 
     public void selectTab(int initialTabIndex) {
