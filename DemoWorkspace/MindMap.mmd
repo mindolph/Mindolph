@@ -72,21 +72,21 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 #### Debian based distribution
 
 ## Release Note
-> collapsed=`true`,leftSide=`true`,mmd.emoticon=`todo_list`
+> leftSide=`true`,mmd.emoticon=`todo_list`
 
 
-### Beta Release
-> collapsed=`true`,leftSide=`true`
+### V1\.0
+> collapsed=`true`,leftSide=`true`,mmd.emoticon=`rocket`
 
 
 #### v 1\.0 beta1
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>Initial Release</pre>
 
 #### V 1\.0 beta2
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Add feature dragging mind map by mouse with key modifier.
@@ -97,7 +97,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Code refactored.</pre>
 
 #### V 1\.0 beta3
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Open a file from search result list will automatically locate matching content.
@@ -106,7 +106,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * dependencies upgrade.</pre>
 
 #### V 1\.0 beta4
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* fixed the saving on note dialog of mindmap only available one time.
@@ -120,7 +120,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * some minor bug fixes and improvements.</pre>
 
 #### V1\.0 beta5
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* replace &quot;project&quot; with &quot;workspace&quot;.
@@ -130,7 +130,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * fix: add alert when 'find in files' on a externally deleted workspace.</pre>
 
 #### V1\.0 beta6
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Add a new preference for Markdown to choose a ttf font file to export to PDF with non-latin characters like Chinease, Japanese and Korean.
@@ -141,7 +141,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Dependencies update and code refactor.</pre>
 
 #### V1\.0 beta7
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Enhancement: add JSON and YAML support to plantuml editor.
@@ -159,7 +159,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Some minor improvement and code refactor.</pre>
 
 #### V1\.0 beta8
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Improvement: the performance of loading workspace tree is improved.
@@ -169,7 +169,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Some code refactor.</pre>
 
 #### V1\.0 beta9
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Improvement: add icon to preview pages and refine the title extraction.
@@ -182,7 +182,7 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Dependencies update: PlantUML 1.2022.13, RichTextFX 0.11.0.</pre>
 
 #### V1\.0 beta10
-> leftSide=`true`,mmd.emoticon=`yacht`
+> leftSide=`true`
 
 - NOTE
 <pre>* Improvement: optimize &quot;Go To File&quot; and &quot;Find in Files&quot; by asynchronously searching.
@@ -205,6 +205,239 @@ Mindolph runs on MacOS, Windows and Linux.</pre>
 * Fix: code editor scrolls to bottom after file is loaded
 * Optimize performance of dragging element in mind map.
 * Some code refactor.</pre>
+
+#### V1\.0 RC2
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Improvement: add more emotions.
+    Improvement: optimize the performance of opening a file.
+    Improvement: consistent extension icons drawing on mind map.
+    Improvement: optimize the mind map editor's performance.
+    Fix: the order of workspaces on startup does not apply to what it was last time.
+    Fix: find/search bar shouldn't available when opening a unsearchable file.
+    Fix: undo doesn't work after import to a mind map.
+    Fix: project path in recent files view.
+    Some dependencies updates and code refactor.
+</pre>
+
+#### V1\.0 RC3
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: sub folders don't load during startup in some cases.
+    Fix: the mind map doesn't center in some cases.
+    Fix: wrong initial editor size for starting to edit mind map topic after dragging another larger topic.
+    Fix: &quot;go to file&quot; doesn't trim blank head and tail in keyword.
+    Dependencies update: PlantUML 1.2023.1.
+</pre>
+
+#### V1\.0 Stable Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Improvement: add shortcut for quick comment for markdown.
+    Fix: closed workspace will be restored after restarting.
+    Fix: some functionality breaks after closing a workspace.
+    Fix: &quot;save as&quot; failed to overwrite existing file if user choose &quot;overwrite&quot;.
+    Fix: for mindmap, convert a topic which has siblings at the top place will result as new sub-topics created at the end of siblings.
+    Fix: the first opened file can't get message shows on status bar.
+    Some minor UI/UX optimization, eg: context menu 'find files for text&quot; renamed to 'find in files'.
+</pre>
+
+### V1\.1
+> collapsed=`true`,leftSide=`true`,mmd.emoticon=`books`
+
+
+#### V1\.1 Release 
+> leftSide=`true`
+
+- NOTE
+<pre>    Improvement: better merging for undo/redo history in code editor, it won't redo a lot of inputs now.
+    Fix: 'collapse all' does not really collapse all tree nodes for both workspace and folder.
+    Fix: exception occurred when mouse pressed after releasing out of mind map view port.
+    Fix: the change of font for editors doesn't work  unless restarting app.
+</pre>
+
+####  V1\.1\.1 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Improvement: always open mmd file in Mindolph.
+    Improvement: enlarge code editor line spacing to make reading more comfortable.
+    Fix: copy relative path missing file name.
+    Fix: exception when replacing text without searching first.
+    Fix: searching stops when replacing fail.
+</pre>
+
+####  V1\.1\.2 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: rename an opened file and edit the file, the file name in tab will be recovered to the original.
+    Fix: exception occasionally when locate file in workspace.
+    Fix: exception when exporting mindmap to freemind.
+    Fix: exception when popup menu on a renamed file.
+</pre>
+
+####  V1\.1\.3 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: selecting file in workspace expends the folder with same name.
+    Fix: &quot;save as&quot; a file to the root of current workspace doesn't show immediately.
+    Fix: exception when popup context menu on new created file and pasted file.
+    Fix: wrong displaying path in context menu from file in workspace.
+</pre>
+
+#### V1\.1\.4 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: zooming on image viewer stops when width&amp;height are both smaller than viewport.
+    Fix: dragging topic to make link doesn't work since it conflict with dragging mindmap operation.
+    Fix: cancel unsaved file during closing application doesn't stop that.
+    Fix: copy and paste topics that has ancestor-descendant relationship gets redundant topics.
+</pre>
+
+#### V1\.1\.5 Release
+> leftSide=`true`
+
+- NOTE
+<pre>    Fix: files created from external in sub-folders of expanded folder don't be loaded.
+    Fix: exception when right-click on a new created file in a new created folder.
+</pre>
+
+### V1\.2
+> collapsed=`true`,leftSide=`true`,mmd.emoticon=`table`
+
+
+#### V1\.2\.0 unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    feat: add 'Edit' to context menu in csv editor.
+    feat: index column background and border.
+    fix: paste from multiple empty cells turns out comma(s).
+    fix: paste empty content to a cell causes file changed.
+    merge bug fixes from v1.1.2 and v1.1.3
+</pre>
+
+#### V1\.2\.1 Unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    feat: unable to locate matched cell correctly in searching.
+    feat: paste csv format text from clipboard to multiple cells as it is.
+    feat: disable cells navigation by keys when editing.
+    fix: index column shouldn't be selected by left arrow key.
+    merge bug fixes from v1.1.4
+</pre>
+
+#### V1\.2\.2 Unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Feature: add icons to context menu items for csv editor.
+    Feature: add cut and paste for selected rows.
+    Fix: occasionally can't select rows.
+    Refactor select row(s).
+    Update PlantUML to 1.2023.6.
+    Fixed some minor bugs.
+</pre>
+
+#### V1\.2\.3 unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Improvement: add round corner (and settings) to mind map topics.
+    Fix: files created from external in sub-folders of expanded folder don't be loaded.
+    Fix: exception when right-click on a new created file in a new created folder.
+    Fix: disable &quot;paste&quot; menu item for CSV editor if clipboard is empty.
+</pre>
+
+#### V1\.2\.4 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Improvement: add missing context menu operations(cut, copy, paste, delete) to code editor.
+    Improvement: font configurable for CSV editor.
+    Fix: exception when moving a file, which is loaded to a tab but not instantiated , to other folder.
+    Update JavaFX to 20.0.1.
+</pre>
+
+#### V1\.2\.5 Release
+> leftSide=`true`
+
+- NOTE
+<pre>Fix: paste shortcut conflict with code editor.
+</pre>
+
+#### V1\.2\.6 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: copy/paste/cut in search bar text field causes same actions in code editor.
+    Fix: exception when select text to the end in note editor of mind map.
+</pre>
+
+#### V1\.2\.7 Release
+> leftSide=`true`
+
+- NOTE
+<pre>
+    Fix: menu items to create folder or files doesn't work in some cases.
+    Fix: the relative file link is unable to be located in mind map.
+</pre>
+
+### V1\.3
+> collapsed=`true`,leftSide=`true`,mmd.emoticon=`connect`
+
+
+#### V1\.3\.0 unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    New Feature: create relative file link by dragging&amp;dropping file to Mind Map, Markdown, CSV or plain text files.
+    New Feature: find file links to any file or folder in workspace.
+    New Feature: show context text with search word highlighted in search result from &quot;find in files&quot;.
+    Improvement: set default button to &quot;Cancel&quot; for closing application dialog and deleting file dialog.
+    Update mfx to 1.2.
+</pre>
+
+#### V1\.3\.1 unstable
+> leftSide=`true`
+
+- NOTE
+<pre>Merged bug fixes from v1.2.5 and v1.2.6.</pre>
+
+#### V1\.3\.2 unstable
+> leftSide=`true`
+
+- NOTE
+<pre>
+    New Feature: new icons for workspace, folder and all kinds of files.
+    New Feature: add more icons to editors and some dialogs.
+    New Feature: changed some icons for contexts menu and dialogs.
+    Fix: menu items to create folder or files doesn't work in some cases.
+    Fix: the relative file link is unable to be located.
+    Fix: paste doesn't work in note editor of mind map.
+    update plantuml to 1.2023.8 and other dependencies.
+</pre>
 
 ## Website
 > collapsed=`true`,leftSide=`true`,mmd.emoticon=`www`
