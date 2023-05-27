@@ -4,8 +4,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.BaseSearchMatcher;
 import com.mindolph.core.search.SearchParams;
-import com.mindolph.fx.IconBuilder;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.util.DisplayUtils;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.scene.control.TreeCell;
@@ -46,12 +44,7 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                     if (item != null) {
                         if (item.isParent) {
                             setText(DisplayUtils.displayFile(searchParams.getWorkspaceDir(), item.getFile()));
-                            if (item.getFile().isFile()) {
-                                setGraphic(FontIconManager.getIns().getIconForFile(new NodeData(item.getFile())));
-                            }
-                            else if (item.getFile().isDirectory()) {
-                                setGraphic(new IconBuilder().name(IconName.FOLDER).build());
-                            }
+                            setGraphic(FontIconManager.getIns().getIconForFile(new NodeData(item.getFile())));
                             // styleProperty().set("-fx-background-color: gainsboro");
                         }
                         else {
