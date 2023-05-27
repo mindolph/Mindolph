@@ -12,21 +12,21 @@
       <SideTabPane fx:id="tabPane" prefHeight="357.0" prefWidth="560.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
                    styleClass="pref_tab" stylesheets="@../style/preferences_dialog.css" rotateGraphic="true">
         <tabs>
-          <Tab text="General" userData="general">
+          <Tab fx:id="tabGeneral" text="General" userData="general">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" >
                 <GeneralPreferencesPane fx:id="generalPreferencesPane"/>
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Font" userData="font">
+          <Tab fx:id="tabFont" text="Font" userData="font">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" >
                 <FontPreferencesPane fx:id="fontPreferencesPane"/>
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Mind Map" userData="mmd">
+          <Tab fx:id="tabMindMap" text="Mind Map" userData="mmd">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0"  >
                 <MmdPreferences fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
@@ -34,7 +34,7 @@
               
             </content>
           </Tab>
-          <Tab text="Markdown" userData="md">
+          <Tab fx:id="tabMarkdown" text="Markdown" userData="md">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0"  >
                 <MarkdownPreferencesPane fx:id="mdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>

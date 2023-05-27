@@ -2,14 +2,10 @@ package com.mindolph.fx.view;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
-import com.mindolph.fx.IconManager;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.event.DragFileEventHandler;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -37,8 +33,6 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
     private static final Font defaultFont = Font.font("Roboto", FontWeight.NORMAL, FontPosture.REGULAR, Font.getDefault().getSize());
     private static final Font boldFont = FontUtils.newFontWithWeight(defaultFont, FontWeight.BOLD);
 
-    private final ImageView iconView = new ImageView();
-
     private DragFileEventHandler dragFileEventHandler;
 
     private static NodeData draggingNodeData;
@@ -46,8 +40,6 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
     private Background origBackground;// for drag&drop
 
     public WorkspaceViewCell() {
-        iconView.setFitWidth(16);
-        iconView.setFitHeight(16);
         this.setOnDragDetected(e -> {
             TreeItem<NodeData> draggedItem = this.getTreeItem();
             if (draggedItem == null) return;
@@ -121,24 +113,16 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             setGraphic(null);
         } else {
             setText(item.toString());
-            Image icon = null;
             if (item.isFile()) {
 //                setFont(defaultFont);
                 setGraphic(FontIconManager.getIns().getIconForFile(item));
             } else if (item.isFolder()) {
 //                setFont(defaultFont);
                 setGraphic(FontIconManager.getIns().getIconForFile(item));
-            } else if (item.isWorkspace()) {
-//                setFont(boldFont);
-                icon = IconManager.getInstance().getIcon(IconName.WORKSPACE);
             } else {
 //                setFont(defaultFont);
                 setGraphic(null);
                 return; // no icon for this cell.
-            }
-            if (icon != null) {
-                iconView.setImage(icon);
-                setGraphic(iconView);
             }
         }
     }

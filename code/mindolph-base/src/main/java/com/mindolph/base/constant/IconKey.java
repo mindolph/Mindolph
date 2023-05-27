@@ -6,7 +6,7 @@ package com.mindolph.base.constant;
  * @see com.mindolph.base.FontIconManager
  */
 public enum IconKey {
-    PLUS, OPEN, SAVE, REDO, UNDO, CLEAR, FOLD, UNFOLD, GEAR, FILE,
+    PLUS, OPEN, SAVE, REDO, UNDO, CLEAR, FOLD, UNFOLD, GEAR, FILE, FONT,
     BROWSE, LOCK, SELECT, UNSELECT, REFRESH, SEARCH, REPLACE, SORT,
     YES, NO, OK, CANCEL, CLOSE, EXIT, FINISH,
     TOPIC,

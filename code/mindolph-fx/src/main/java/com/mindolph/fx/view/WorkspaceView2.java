@@ -1060,13 +1060,15 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             log.debug("Cancel renaming file");
             return;
         }
-        Optional<String> s = new TextDialogBuilder()
+        Dialog dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename %s".formatted(selectedData.getName()))
                 .content("Input a new name")
                 .text(selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName())
                 .width(400)
-                .build().showAndWait();
+                .build();
+        dialog.setGraphic(FontIconManager.getIns().getIconForFile(selectedData, 32));
+        Optional<String> s = dialog.showAndWait();
         if (s.isPresent()) {
             String newName = s.get();
             File origFile = selectedData.getFile();

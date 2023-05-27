@@ -45,11 +45,6 @@ public class ExtCodeArea extends CodeArea {
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
-//        super.setOnKeyPressed(keyEvent -> {
-//            if (keyEvent.isMetaDown()){
-//                keyEvent.consume();
-//            }
-//        });
     }
 
     public void addFeatures(FEATURE... features) {

@@ -6,6 +6,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.WorkspaceRenameEvent;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -84,7 +85,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         private void init() {
             lbWorkspaceName.setText(FilenameUtils.getBaseName(workspaceMeta.getBaseDirPath()));
             lbWorkspacePath.setText(workspaceMeta.getBaseDirPath());
-            lblIcon.setGraphic(FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.BRIEFCASE, "24"));
+            lblIcon.setGraphic(FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE, "24"));
 
             btnActions.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
             btnActions.setOnMouseClicked(event -> {
@@ -116,13 +117,15 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         @Override
         public void handle(ActionEvent event) {
             if (event.getSource() == miRename) {
-                Optional<String> s = new TextDialogBuilder()
+                Dialog dialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
                         .title("Rename %s".formatted(workspaceMeta.getName()))
                         .content("Input a workspace name")
                         .text(FilenameUtils.getBaseName(workspaceMeta.getName()))
                         .width(400)
-                        .build().showAndWait();
+                        .build();
+                dialog.setGraphic(FontIconManager.getIns().getIconForFile(SupportFileTypes.TYPE_WORKSPACE, 32));
+                Optional<String> s = dialog.showAndWait();
                 if (s.isPresent()) {
                     String newName = s.get();
                     File origFile = new File(workspaceMeta.getBaseDirPath());

@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
  * Builder for icon's ImageView.
  *
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 public class IconBuilder {
     public static final int DEFAULT_ICON_SIZE = 16;

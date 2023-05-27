@@ -176,6 +176,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         });
     }
 
+    // TODO move the context menu implementation to a subclass of SearchableCodeArea
+    // to let other code editor implementation has context menu.
     private ContextMenu createCodeContextMenu() {
         ContextMenu menu = new ContextMenu();
         MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
