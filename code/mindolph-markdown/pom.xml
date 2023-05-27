@@ -11,10 +11,6 @@
 
     <artifactId>mindolph-markdown</artifactId>
 
-    <properties>
-        <flexmark.version>0.64.0</flexmark.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.mindolph</groupId>

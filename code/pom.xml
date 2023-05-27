@@ -46,6 +46,7 @@
 <!--        <reactor.version>3.5.3</reactor.version>-->
         <jsoup.version>1.16.1</jsoup.version>
         <json.version>20230227</json.version>
+        <flexmark.version>0.64.6</flexmark.version>
     </properties>
 
     <dependencies>
