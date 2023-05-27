@@ -1,5 +1,14 @@
 # Release Notes
 
+### V1.3.2 Unstable Release
+* New Feature: new icons for workspace, folder and all kinds of files.
+* New Feature: add more icons to editors and some dialogs.
+* New Feature: changed some icons for contexts menu and dialogs.
+* Fix: menu items to create folder or files doesn't work in some cases. 
+* Fix: the relative file link is unable to be located. 
+* Fix: paste doesn't work in note editor of mind map.
+* update plantuml to 1.2023.8 and other dependencies.
+
 ### V1.2.7 Release
 * Fix: menu items to create folder or files doesn't work in some cases. 
 * Fix: the relative file link is unable to be located in mind map.
