@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.swiftboot.util.TextUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TextNavigator {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes());
             try {
                 lines = IOUtils.readLines(byteArrayInputStream, StandardCharsets.UTF_8);
-            } catch (IOException e) {
+            } catch (UncheckedIOException e) {
                 e.printStackTrace();
             }
             ranges.clear();
