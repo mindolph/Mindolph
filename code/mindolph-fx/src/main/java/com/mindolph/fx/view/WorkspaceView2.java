@@ -405,7 +405,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         log.debug("Last active workspace: " + activeWorkspacePath);
         if (StringUtils.isNotBlank(activeWorkspacePath)
                 && cbWorkspaces.getItems().stream().anyMatch(p -> p.getKey().equals(activeWorkspacePath))) {
-            cbWorkspaces.setValue(new Pair<>(activeWorkspacePath, workspaceList.matchByFilePath(activeWorkspacePath)));
+            // if the workspace dir is sub-dir of existing workspace, must exactly match the path.
+            // (the WorkspaceList.matchByFilePath() matches a workspace with the deepest path).
+            cbWorkspaces.setValue(new Pair<>(activeWorkspacePath, workspaceList.matchByExactPath(activeWorkspacePath)));
         }
         else {
             Optional<WorkspaceMeta> first = workspaceList.getProjects().stream().findFirst();

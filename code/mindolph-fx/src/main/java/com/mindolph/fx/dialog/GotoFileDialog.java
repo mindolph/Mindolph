@@ -180,6 +180,8 @@ public class GotoFileDialog extends BaseDialogController<Void> {
                     else {
                         allMatchFiles.sort(Comparators.NAVIGATION_DEFAULT_COMPARATOR);
                     }
+                    // since a sub-folder in workspace can be a new workspace, there must be duplicate items for searching files across workspaces.
+                    allMatchFiles = allMatchFiles.stream().distinct().toList();
                     for (File foundFile : allMatchFiles) {
                         log.debug("Matched file: " + foundFile);
                         WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(foundFile.getPath());
