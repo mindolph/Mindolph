@@ -1,9 +1,7 @@
 package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
-import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.FontConstants;
-import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.NotificationType;
@@ -12,13 +10,6 @@ import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
 import javafx.scene.text.Font;
 import org.apache.commons.collections4.CollectionUtils;
@@ -84,11 +75,6 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         });
 
         codeArea.setWrapText(true);
-        codeArea.setOnContextMenuRequested(event -> {
-            ContextMenu codeContextMenu = createCodeContextMenu();
-            Node node = (Node) event.getSource();
-            codeContextMenu.show(node.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-        });
 
         if (acceptDraggingFiles) {
             // handles drag&drop files
@@ -174,37 +160,6 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             afterLoading.run();
             this.editorReadyEventHandler.onEditorReady();
         });
-    }
-
-    // TODO move the context menu implementation to a subclass of SearchableCodeArea
-    // to let other code editor implementation has context menu.
-    private ContextMenu createCodeContextMenu() {
-        ContextMenu menu = new ContextMenu();
-        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
-        CheckMenuItem miWordWrap = new CheckMenuItem("Word Wrap");
-        miCut.setOnAction(event -> {
-            this.cut();
-        });
-        miCopy.setOnAction(event -> {
-            this.copy();
-        });
-        miPaste.setOnAction(event -> {
-            this.paste();
-        });
-        miDelete.setOnAction(event -> {
-            codeArea.replaceSelection(StringUtils.EMPTY);
-        });
-        miCut.setDisable(codeArea.getSelection().getLength() == 0);
-        miCopy.setDisable(codeArea.getSelection().getLength() == 0);
-        miDelete.setDisable(codeArea.getSelection().getLength() == 0);
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        miPaste.setDisable(!clipboard.hasContent(DataFormat.PLAIN_TEXT));
-        miWordWrap.selectedProperty().bindBidirectional(codeArea.wrapTextProperty());
-        menu.getItems().addAll(miCut, miCopy, miPaste, miDelete, new SeparatorMenuItem(), miWordWrap);
-        return menu;
     }
 
     /**

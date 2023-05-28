@@ -107,6 +107,7 @@ public class FontIconManager {
         icons.put(IconKey.COPY, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_COPY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.CUT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_CUT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.PASTE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_PASTE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.WRAP, () -> MaterialIconFactory.get().createIcon(MaterialIcon.WRAP_TEXT, DEFAULT_ICON_SIZE));
 
         icons.put(IconKey.EDIT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, DEFAULT_ICON_SIZE));
 //        icons.put(IconKey.ADD_CHILD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PLUS, DEFAULT_ICON_SIZE));

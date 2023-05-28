@@ -1,16 +1,16 @@
 package com.mindolph.base.control;
 
+import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
-import javafx.scene.control.IndexRange;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -31,6 +31,7 @@ import static com.mindolph.base.constant.ShortcutConstants.*;
 import static javafx.scene.input.KeyCode.TAB;
 
 /**
+ *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
@@ -45,6 +46,40 @@ public class ExtCodeArea extends CodeArea {
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
+        this.setOnContextMenuRequested(contextMenuEvent -> {
+            ContextMenu codeContextMenu = createContextMenu();
+            Node node = (Node) contextMenuEvent.getSource();
+            codeContextMenu.show(node.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+        });
+    }
+
+    private ContextMenu createContextMenu() {
+        ContextMenu menu = new ContextMenu();
+        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
+        CheckMenuItem miWordWrap = new CheckMenuItem("Word Wrap", FontIconManager.getIns().getIcon(IconKey.WRAP));
+        miCut.setOnAction(event -> {
+            this.cut();
+        });
+        miCopy.setOnAction(event -> {
+            this.copy();
+        });
+        miPaste.setOnAction(event -> {
+            this.paste();
+        });
+        miDelete.setOnAction(event -> {
+            this.replaceSelection(StringUtils.EMPTY);
+        });
+        miCut.setDisable(this.getSelection().getLength() == 0);
+        miCopy.setDisable(this.getSelection().getLength() == 0);
+        miDelete.setDisable(this.getSelection().getLength() == 0);
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        miPaste.setDisable(!clipboard.hasContent(DataFormat.PLAIN_TEXT));
+        miWordWrap.selectedProperty().bindBidirectional(this.wrapTextProperty());
+        menu.getItems().addAll(miCut, miCopy, miPaste, miDelete, new SeparatorMenuItem(), miWordWrap);
+        return menu;
     }
 
     public void addFeatures(FEATURE... features) {
@@ -60,10 +95,10 @@ public class ExtCodeArea extends CodeArea {
                             this.insertText(this.getCaretPosition(), "\t");
                         }
                     });
-                    InputMap<KeyEvent> unindent = InputMap.consume(EventPattern.keyPressed(new KeyCodeCombination(TAB, KeyCombination.SHIFT_DOWN)), e ->
+                    InputMap<KeyEvent> unIndent = InputMap.consume(EventPattern.keyPressed(new KeyCodeCombination(TAB, KeyCombination.SHIFT_DOWN)), e ->
                             addOrTrimHeadToParagraphs(false, new Replacement("\t", "\t", "  ", " ")));
                     inputMaps.add(indent);
-                    inputMaps.add(unindent);
+                    inputMaps.add(unIndent);
                     break;
                 case QUOTE:
                     InputMap<KeyEvent> quote2 = InputMap.consume(EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_QUOTE)), e -> {
