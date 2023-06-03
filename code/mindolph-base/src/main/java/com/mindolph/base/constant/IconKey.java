@@ -1,7 +1,6 @@
 package com.mindolph.base.constant;
 
 /**
- *
  * @author mindolph.com@gmail.com
  * @see com.mindolph.base.FontIconManager
  */
@@ -21,5 +20,5 @@ public enum IconKey {
     PRINTER, PAGE,
     WORKSPACE, RECENT_LIST, WORKSPACE_TREE,
     FOLDER, PDF, FILE_MMD, FILE_MD, FILE_CSV, FILE_PUML, FILE_IMG, FILE_TXT, UNKNOWN_FILE,
-    INDENT_DECREASE, INDENT_INCREASE, BULLET_LIST, NUMBER_LIST, QUOTE, TABLE, CODE_TAG
+    BOLD, ITALIC, INDENT_DECREASE, INDENT_INCREASE, BULLET_LIST, NUMBER_LIST, QUOTE, TABLE, CODE_TAG
 }

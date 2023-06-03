@@ -96,7 +96,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,6 +136,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
 
     @FXML
     private Button btnBullet;
+    @FXML
+    private Button btnBold;
+    @FXML
+    private Button btnItalic;
     @FXML
     private Button btnNumber;
     @FXML
@@ -189,6 +192,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         });
 
         FontIconManager fim = FontIconManager.getIns();
+        btnBold.setGraphic(fim.getIcon(IconKey.BOLD));
+        btnItalic.setGraphic(fim.getIcon(IconKey.ITALIC));
         btnBullet.setGraphic(fim.getIcon(IconKey.BULLET_LIST));
         btnNumber.setGraphic(fim.getIcon(IconKey.NUMBER_LIST));
         btnLink.setGraphic(fim.getIcon(IconKey.URI));
@@ -196,6 +201,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         btnCode.setGraphic(fim.getIcon(IconKey.CODE_TAG));
         btnTable.setGraphic(fim.getIcon(IconKey.TABLE));
 
+        btnBold.setOnAction(this);
+        btnItalic.setOnAction(this);
         btnBullet.setOnAction(this);
         btnNumber.setOnAction(this);
         btnLink.setOnAction(this);
@@ -612,7 +619,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     @Override
     public void handle(ActionEvent event) {
         Object node = event.getSource();
-        if (node == btnBullet) {
+        if (node == btnBold){
+            codeArea.addToSelectionHeadAndTail("**");
+        }
+        else if (node == btnItalic) {
+            codeArea.addToSelectionHeadAndTail("*");
+        }
+        else if (node == btnBullet) {
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* "));
         }
         else if (node == btnNumber) {

@@ -76,6 +76,8 @@ public class FontIconManager {
         icons.put(IconKey.FILE_TXT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_TEXT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNKNOWN_FILE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_OUTLINE, DEFAULT_ICON_SIZE));
 
+        icons.put(IconKey.BOLD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_BOLD, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.ITALIC, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_ITALIC, DEFAULT_ICON_SIZE));
         icons.put(IconKey.INDENT_INCREASE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_INDENT_INCREASE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.INDENT_DECREASE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_INDENT_DECREASE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.BULLET_LIST, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_LIST_BULLETED, DEFAULT_ICON_SIZE));

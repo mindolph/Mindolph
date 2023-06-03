@@ -15,6 +15,14 @@
                <children>
                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <HBox alignment="BASELINE_LEFT">
+                        <Button fx:id="btnBold" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Bold text" />
+                           </tooltip></Button>
+                        <Button fx:id="btnItalic" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Italic text" />
+                           </tooltip></Button>
                         <Button fx:id="btnBullet" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
                            <tooltip>
                            <Tooltip text="Bullet List" />
