@@ -33,9 +33,9 @@
 
 ### How to build an executable fat jar file
 
-    ```shell
-    mvn package -Dmaven.test.skip=true
-    ```
+```shell
+mvn package -Dmaven.test.skip=true
+```
 
 ### How to build platform dependent distribution
 
