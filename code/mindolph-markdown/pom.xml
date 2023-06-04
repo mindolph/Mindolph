@@ -22,6 +22,11 @@
             <artifactId>flexmark-all</artifactId>
             <version>${flexmark.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

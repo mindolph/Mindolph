@@ -23,15 +23,14 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 import static com.mindolph.base.constant.ShortcutConstants.*;
 import static javafx.scene.input.KeyCode.TAB;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
@@ -70,7 +69,7 @@ public class ExtCodeArea extends CodeArea {
             this.paste();
         });
         miDelete.setOnAction(event -> {
-            this.replaceSelection(StringUtils.EMPTY);
+            this.replaceSelection(EMPTY);
         });
         miCut.setDisable(this.getSelection().getLength() == 0);
         miCopy.setDisable(this.getSelection().getLength() == 0);
@@ -89,14 +88,14 @@ public class ExtCodeArea extends CodeArea {
                 case TAB_INDENT:
                     InputMap<KeyEvent> indent = InputMap.consume(EventPattern.keyPressed(TAB), e -> {
                         if (this.getSelection().getLength() > 0) {
-                            addOrTrimHeadToParagraphs(true, new Replacement("\t", "\t", "  "));
+                            addOrTrimHeadToParagraphs(new Replacement("\t", Arrays.asList("\t", "  ")), true);
                         }
                         else {
                             this.insertText(this.getCaretPosition(), "\t");
                         }
                     });
                     InputMap<KeyEvent> unIndent = InputMap.consume(EventPattern.keyPressed(new KeyCodeCombination(TAB, KeyCombination.SHIFT_DOWN)), e ->
-                            addOrTrimHeadToParagraphs(false, new Replacement("\t", "\t", "  ", " ")));
+                            addOrTrimHeadToParagraphs(new Replacement("\t", Arrays.asList("\t", "  ", " ")), false));
                     inputMaps.add(indent);
                     inputMaps.add(unIndent);
                     break;
@@ -280,21 +279,40 @@ public class ExtCodeArea extends CodeArea {
         boolean isAlreadyAdded = true;
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
-            if (!StringUtils.startsWithAny(p.getText(), params.getTargets())) {
+            if (params.getTargets() != null
+                    && !StringUtils.startsWithAny(p.getText(), params.getTargets().toArray(new String[]{}))) {
                 isAlreadyAdded = false;
             }
         }
-        boolean needAdd = !isAlreadyAdded;
-        addOrTrimHeadToParagraphs(needAdd, params);
+        boolean needAddToHead = !isAlreadyAdded;
+        this.addOrTrimHeadToParagraphs(params, needAddToHead);
+    }
+
+    public void addOrTrimHeadToParagraphs(Replacement params, boolean needAddToHead) {
+        String tail = params.getTail() == null ? EMPTY : params.getTail();
+        addOrTrimHeadToParagraphs(params, s -> {
+            String tailOfLine = (s.endsWith(tail) ? EMPTY : tail);
+            if (needAddToHead) {
+                return params.getSubstitute() + s + tailOfLine;
+            }
+            else {
+                for (String target : params.getTargets()) {
+                    if (StringUtils.startsWith(s, target)) {
+                        return StringUtils.replaceOnce(s, target, EMPTY) + tailOfLine;
+                    }
+                }
+            }
+            return s;
+        });
     }
 
     /**
      * Add or trim {@code text} to or from head of selected paragraphs.
      *
-     * @param isAdd  true to add, false to trim
      * @param params
+     * @parm callback Convert the text line,
      */
-    public void addOrTrimHeadToParagraphs(boolean isAdd, Replacement params) {
+    public void addOrTrimHeadToParagraphs(Replacement params, Function<String, String> callback) {
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
         int startPar = caretSelectionBind.getStartParagraphIndex();
         int endPar = caretSelectionBind.getEndParagraphIndex();
@@ -306,18 +324,7 @@ public class ExtCodeArea extends CodeArea {
         for (int i = startPar; i < endPar + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
             String newLine;
-            if (isAdd) {
-                newLine = params.getSubstitute() + p.getText();
-            }
-            else {
-                newLine = p.getText();
-                for (String target : params.getTargets()) {
-                    if (StringUtils.startsWith(p.getText(), target)) {
-                        newLine = StringUtils.replaceOnce(p.getText(), target, StringUtils.EMPTY);
-                        break;
-                    }
-                }
-            }
+            newLine = callback.apply(p.getText());// params.getSubstitute() + p.getText();
             newLines.add(newLine);
             offsets.add(newLine.length() - p.getText().length()); // calc offset for each line(but only head and tail will be used)
         }
@@ -395,15 +402,30 @@ public class ExtCodeArea extends CodeArea {
     }
 
     public static class Replacement {
-        // substitute to be added
+        // substitute to be added in the head.
         String substitute;
-        // targets to be trimmed.
-        String[] targets;
+        // targets to be trimmed in the head.
+        List<String> targets;
+        // tail to be added to the end (always add if not exist, no trimming).
+        String tail;
 
-        public Replacement(String substitute, String... targets) {
+        public Replacement(String substitute) {
+            this(substitute, null, null);
+        }
+
+        public Replacement(String substitute, String tail) {
+            this(substitute, tail, null);
+        }
+
+        public Replacement(String substitute, List<String> targets) {
+            this(substitute, null, targets);
+        }
+
+        public Replacement(String substitute, String tail, List<String> targets) {
             this.substitute = substitute;
-            if (targets == null || targets.length == 0) {
-                this.targets = new String[]{substitute};
+            this.tail = tail;
+            if (targets == null || targets.size() == 0) {
+                this.targets = Collections.singletonList(substitute);
             }
             else {
                 this.targets = targets;
@@ -418,12 +440,20 @@ public class ExtCodeArea extends CodeArea {
             this.substitute = substitute;
         }
 
-        public String[] getTargets() {
+        public List<String> getTargets() {
             return targets;
         }
 
-        public void setTargets(String[] targets) {
+        public void setTargets(List<String> targets) {
             this.targets = targets;
+        }
+
+        public String getTail() {
+            return tail;
+        }
+
+        public void setTail(String tail) {
+            this.tail = tail;
         }
     }
 }

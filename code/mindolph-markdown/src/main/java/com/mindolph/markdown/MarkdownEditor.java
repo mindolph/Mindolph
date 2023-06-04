@@ -18,7 +18,6 @@ import com.mindolph.base.print.PrinterManager;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
-import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.markdown.constant.ShortcutConstants;
@@ -101,6 +100,7 @@ import java.util.regex.Pattern;
 
 import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
+import static com.mindolph.markdown.constant.MarkdownConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -108,13 +108,6 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 public class MarkdownEditor extends BasePreviewEditor implements Initializable, EventHandler<ActionEvent> {
 
     private final Logger log = LoggerFactory.getLogger(MarkdownEditor.class);
-
-    private static final String HEADING_PATTERN = "#+[\\s\\S]*?" + TextConstants.LINE_SEPARATOR;
-    private static final String LIST_PATTERN = "(\\* )|(\\- )";
-    private static final String CODE_PATTERN = "\\`[\\s\\S]*?\\`";
-    private static final String CODE_BLOCK_PATTERN = "[\\`]{3}[\\s\\S]*?[\\`]{3}";
-    private static final String QUOTE_PATTERN = "> [\\s\\S]*?" + TextConstants.LINE_SEPARATOR;
-    private static final String URL_PATTERN = "([\\!]?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 
     public static final String URL_MARKUP = "[%s](%s)";
     public static final String IMG_MARKUP = "![%s](%s)";
@@ -150,6 +143,18 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     private Button btnCode;
     @FXML
     private Button btnTable;
+    @FXML
+    private Button btnHeader1;
+    @FXML
+    private Button btnHeader2;
+    @FXML
+    private Button btnHeader3;
+    @FXML
+    private Button btnHeader4;
+    @FXML
+    private Button btnHeader5;
+    @FXML
+    private Button btnHeader6;
 
     @FXML
     private WebView webView;
@@ -170,6 +175,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
         pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
+                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
+                        + "|(?<BOLD1>" + BOLD_PATTERN_1 + ")"
+                        + "|(?<BOLD2>" + BOLD_PATTERN_2 + ")"
+                        + "|(?<ITALIC1>" + ITALIC_PATTERN_1 + ")"
+                        + "|(?<ITALIC2>" + ITALIC_PATTERN_2 + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
                         + "|(?<CODE>" + CODE_PATTERN + ")"
                         + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
@@ -200,6 +210,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         btnQuote.setGraphic(fim.getIcon(IconKey.QUOTE));
         btnCode.setGraphic(fim.getIcon(IconKey.CODE_TAG));
         btnTable.setGraphic(fim.getIcon(IconKey.TABLE));
+        btnHeader1.setGraphic(fim.getIcon(IconKey.H1));
+        btnHeader2.setGraphic(fim.getIcon(IconKey.H2));
+        btnHeader3.setGraphic(fim.getIcon(IconKey.H3));
+        btnHeader4.setGraphic(fim.getIcon(IconKey.H4));
+        btnHeader5.setGraphic(fim.getIcon(IconKey.H5));
+        btnHeader6.setGraphic(fim.getIcon(IconKey.H6));
 
         btnBold.setOnAction(this);
         btnItalic.setOnAction(this);
@@ -209,6 +225,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         btnQuote.setOnAction(this);
         btnCode.setOnAction(this);
         btnTable.setOnAction(this);
+        btnHeader1.setOnAction(this);
+        btnHeader2.setOnAction(this);
+        btnHeader3.setOnAction(this);
+        btnHeader4.setOnAction(this);
+        btnHeader5.setOnAction(this);
+        btnHeader6.setOnAction(this);
 
         webEngine = webView.getEngine();
         webView.setContextMenuEnabled(false);
@@ -389,12 +411,18 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
                             matcher.group("LIST") != null ? "list" :
-                                    matcher.group("CODE") != null ? "code" :
-                                            matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                    matcher.group("QUOTE") != null ? "quote" :
-                                                            matcher.group("URL") != null ? "url" :
-                                                                    null; /* never happens */
+                                    matcher.group("BOLD1") != null ? "bold" :
+                                            matcher.group("BOLD2") != null ? "bold" :
+                                                    matcher.group("ITALIC1") != null ? "italic" :
+                                                            matcher.group("ITALIC2") != null ? "italic" :
+                                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                                            matcher.group("CODE") != null ? "code" :
+                                                                                    matcher.group("CODEBLOCK") != null ? "code-block" :
+                                                                                            matcher.group("QUOTE") != null ? "quote" :
+                                                                                                    matcher.group("URL") != null ? "url" :
+                                                                                                            null; /* never happens */
             assert styleClass != null;
+            System.out.println(styleClass);
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();
@@ -619,7 +647,25 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     @Override
     public void handle(ActionEvent event) {
         Object node = event.getSource();
-        if (node == btnBold){
+        if (node == btnHeader1) {
+            this.addHeader(1);
+        }
+        else if (node == btnHeader2) {
+            this.addHeader(2);
+        }
+        else if (node == btnHeader3) {
+            this.addHeader(3);
+        }
+        else if (node == btnHeader4) {
+            this.addHeader(4);
+        }
+        else if (node == btnHeader5) {
+            this.addHeader(5);
+        }
+        else if (node == btnHeader6) {
+            this.addHeader(6);
+        }
+        else if (node == btnBold) {
             codeArea.addToSelectionHeadAndTail("**");
         }
         else if (node == btnItalic) {
@@ -629,10 +675,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* "));
         }
         else if (node == btnNumber) {
-
+//            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement(""));
         }
         else if (node == btnQuote) {
-            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> "));
+            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  "));
         }
         else if (node == btnCode) {
             codeArea.addToSelectionHeadAndTail("```");
@@ -658,8 +704,18 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                     content = "\n" + content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
                     codeArea.replaceSelection(content);
                 }
+                codeArea.requestFocus();
             });
 
         }
     }
+
+    private void addHeader(int number) {
+        String newHead = StringUtils.repeat('#', number) + " ";
+        codeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), original -> {
+            return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)", StringUtils.EMPTY);
+        });
+        codeArea.requestFocus();
+    }
+
 }

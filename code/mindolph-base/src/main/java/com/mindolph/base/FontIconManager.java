@@ -85,6 +85,12 @@ public class FontIconManager {
         icons.put(IconKey.TABLE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.CODE_TAG, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.CODE_TAGS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.QUOTE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_QUOTE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H1, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_1, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H2, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_2, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H3, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_3, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H4, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_4, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H5, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_5, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, DEFAULT_ICON_SIZE));
 
         if (SystemUtils.IS_OS_MAC) {
             icons.put(IconKey.SYSTEM, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.APPLE, DEFAULT_ICON_SIZE));

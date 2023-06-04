@@ -15,6 +15,30 @@
                <children>
                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <HBox alignment="BASELINE_LEFT">
+                        <Button fx:id="btnHeader1" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 1" />
+                           </tooltip></Button>
+                        <Button fx:id="btnHeader2" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 2" />
+                           </tooltip></Button>
+                        <Button fx:id="btnHeader3" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 3" />
+                           </tooltip></Button>
+                        <Button fx:id="btnHeader4" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 4" />
+                           </tooltip></Button>
+                        <Button fx:id="btnHeader5" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 5" />
+                           </tooltip></Button>
+                        <Button fx:id="btnHeader6" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                           <tooltip>
+                              <Tooltip text="Header 6" />
+                           </tooltip></Button>
                         <Button fx:id="btnBold" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
                            <tooltip>
                               <Tooltip text="Bold text" />
