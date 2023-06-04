@@ -11,7 +11,8 @@ import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
  */
 public interface MarkdownConstants {
 
-    String EMPHASIS = "(()|(\\S[\\s\\S]*?\\S))"; // this can't be used to match
+    String EMPHASIS_KW = "[^*_\\r\\n\\t\\f\\v ]"; // visible letters but without '*' and '_
+    String EMPHASIS = "(()|(" + EMPHASIS_KW + "[\\s\\S]*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
     String HEADING_PATTERN = "#+[\\s\\S]*?" + LINE_SEPARATOR;
     String LIST_PATTERN = "[\\t ]*((\\* )|(- ))";

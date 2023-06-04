@@ -36,10 +36,25 @@ public class MdRegexTest {
     }
 
     @Test
-    public void emphasis() {
+    public void bold() {
+        Pattern p = Pattern.compile(BOLD_PATTERN_1);
+        Assertions.assertTrue(p.matcher("**bold**").matches());
+        Assertions.assertTrue(p.matcher("**is bold**").matches());
+        Assertions.assertFalse(p.matcher("***is bold**").matches());
+        Matcher matcher = p.matcher("""
+                ***
+                not valid bold
+                **x**
+                """);
+        if (matcher.find())
+            System.out.printf("%d %d%n", matcher.start(), matcher.end());
+        matcher.find();
+    }
+
+    @Test
+    public void boldItalic() {
         Pattern p = Pattern.compile(BOLD_ITALIC_PATTERN);
         Assertions.assertTrue(p.matcher("******").matches());
-        Matcher matcher = p.matcher("***emphasised***");
         Assertions.assertTrue(p.matcher("***emphasised***").matches());
         Assertions.assertTrue(p.matcher("___emphasised___").matches());
         Assertions.assertTrue(p.matcher("**_emphasised_**").matches());

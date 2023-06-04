@@ -675,7 +675,9 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* "));
         }
         else if (node == btnNumber) {
-//            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement(""));
+//            codeArea.addOrTrimHeadToParagraphs(new Replacement(""), s -> {
+//                return null;
+//            });
         }
         else if (node == btnQuote) {
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  "));
