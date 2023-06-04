@@ -133,7 +133,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     private Button btnBold;
     @FXML
     private Button btnItalic;
-//    @FXML
+    //    @FXML
 //    private Button btnNumber;
     @FXML
     private Button btnLink;
@@ -175,14 +175,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
         pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
+                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
                         + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                        + "|(?<BOLD1>" + BOLD_PATTERN_1 + ")"
-                        + "|(?<BOLD2>" + BOLD_PATTERN_2 + ")"
-                        + "|(?<ITALIC1>" + ITALIC_PATTERN_1 + ")"
-                        + "|(?<ITALIC2>" + ITALIC_PATTERN_2 + ")"
+                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
+                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
                         + "|(?<CODE>" + CODE_PATTERN + ")"
-                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
@@ -410,17 +408,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
-                            matcher.group("LIST") != null ? "list" :
-                                    matcher.group("BOLD1") != null ? "bold" :
-                                            matcher.group("BOLD2") != null ? "bold" :
-                                                    matcher.group("ITALIC1") != null ? "italic" :
-                                                            matcher.group("ITALIC2") != null ? "italic" :
-                                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                                            matcher.group("CODE") != null ? "code" :
-                                                                                    matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                                                            matcher.group("QUOTE") != null ? "quote" :
-                                                                                                    matcher.group("URL") != null ? "url" :
-                                                                                                            null; /* never happens */
+                            matcher.group("CODEBLOCK") != null ? "code-block" :
+                                    matcher.group("LIST") != null ? "list" :
+                                            matcher.group("BOLD") != null ? "bold" :
+                                                    matcher.group("ITALIC") != null ? "italic" :
+                                                            matcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                                    matcher.group("CODE") != null ? "code" :
+                                                                            matcher.group("QUOTE") != null ? "quote" :
+                                                                                    matcher.group("URL") != null ? "url" :
+                                                                                            null; /* never happens */
             assert styleClass != null;
             System.out.println(styleClass);
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);

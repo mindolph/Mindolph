@@ -37,7 +37,7 @@ public class MdRegexTest {
 
     @Test
     public void bold() {
-        Pattern p = Pattern.compile(BOLD_PATTERN_1);
+        Pattern p = Pattern.compile(BOLD_PATTERN);
         Assertions.assertTrue(p.matcher("**bold**").matches());
         Assertions.assertTrue(p.matcher("**is bold**").matches());
         Assertions.assertFalse(p.matcher("***is bold**").matches());
@@ -46,9 +46,26 @@ public class MdRegexTest {
                 not valid bold
                 **x**
                 """);
-        if (matcher.find())
+        if (matcher.find()) {
             System.out.printf("%d %d%n", matcher.start(), matcher.end());
-        matcher.find();
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void italic() {
+        Pattern p = Pattern.compile(ITALIC_PATTERN);
+        Assertions.assertTrue(p.matcher("*bold*").matches());
+        Assertions.assertTrue(p.matcher("_bold_").matches());
+        Assertions.assertFalse(p.matcher("_bold").matches());
+        Assertions.assertFalse(p.matcher("bold_").matches());
+        Matcher matcher = p.matcher("""
+                _not
+
+
+                italic_
+                """);
+        Assertions.assertFalse(matcher.find());
     }
 
     @Test
