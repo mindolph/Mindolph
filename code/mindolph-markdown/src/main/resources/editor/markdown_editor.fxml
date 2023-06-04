@@ -51,10 +51,10 @@
                            <tooltip>
                            <Tooltip text="Bullet List" />
                         </tooltip></Button>
-                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
-                           <tooltip>
-                              <Tooltip text="Number List" />
-                           </tooltip></Button>
+<!--                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">-->
+<!--                           <tooltip>-->
+<!--                              <Tooltip text="Number List" />-->
+<!--                           </tooltip></Button>-->
                         <Button fx:id="btnLink" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
                            <tooltip>
                               <Tooltip text="Link" />

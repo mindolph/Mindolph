@@ -15,7 +15,7 @@ public interface MarkdownConstants {
     String EMPHASIS = "(()|(" + EMPHASIS_KW + "[\\s\\S]*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
     String HEADING_PATTERN = "#+[\\s\\S]*?" + LINE_SEPARATOR;
-    String LIST_PATTERN = "[\\t ]*((\\* )|(- ))";
+    String LIST_PATTERN = "[\\t ]*((\\* )|(\\+ )|(- )|(\\d. ))";
     String BOLD_ITALIC_PATTERN = "((\\*\\*\\*)" + EMPHASIS + "(\\*\\*\\*))"
             + "|((\\*\\*_)" + EMPHASIS + "(_\\*\\*))"
             + "|((\\*__)" + EMPHASIS + "(__\\*))"
@@ -26,8 +26,8 @@ public interface MarkdownConstants {
     String BOLD_PATTERN_2 = "(__)" + EMPHASIS + "(__)";
     String ITALIC_PATTERN_1 = "\\*" + EMPHASIS + "\\*";
     String ITALIC_PATTERN_2 = "_" + EMPHASIS + "_";
-    String CODE_PATTERN = "\\`[\\s\\S]*?\\`";
-    String CODE_BLOCK_PATTERN = "\\`{3}[\\s\\S]*?\\`{3}";
+    String CODE_PATTERN = "`[\\s\\S]*?`";
+    String CODE_BLOCK_PATTERN = "`{3}[\\s\\S]*?`{3}";
     String QUOTE_PATTERN = "> [\\s\\S]*?" + LINE_SEPARATOR;
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 
