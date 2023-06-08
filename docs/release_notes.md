@@ -1,9 +1,16 @@
 # Release Notes
 
+### V1.3.3 Unstable Release
+* New Feature: add context menu for editing to note editor in mind map.
+* Fix: exception when dragging a file to the blank space in the workspace tree.
+* Fix: hidden left side panel will be forced to show when open a web link from markdown preivew.
+* Fix: the workspace list selection works not well when create a workspace in a sub-dir of another workspace, and also the file navigating goes with duplicate files in that situation.
+* update flexmark-java to 0.64.6.
+
 ### V1.3.2 Unstable Release
-* New Feature: new icons for workspace, folder and all kinds of files.
-* New Feature: add more icons to editors and some dialogs.
-* New Feature: changed some icons for contexts menu and dialogs.
+* Improvement: new icons for workspace, folder and all kinds of files.
+* Improvement: add more icons to editors and some dialogs.
+* Improvement: changed some icons for contexts menu and dialogs.
 * Fix: menu items to create folder or files doesn't work in some cases. 
 * Fix: the relative file link is unable to be located. 
 * Fix: paste doesn't work in note editor of mind map.
@@ -14,7 +21,7 @@
 * Fix: the relative file link is unable to be located in mind map.
 
 ### V1.3.1 Unstable Release
-* Merged bug fixes from v1.2.5 and v1.2.6.
+* Merged bug fixes from v1.2.5 and v1.2.6
 
 ### V1.2.6 Release
 * Fix: copy/paste/cut in search bar text field causes same actions in code editor.
