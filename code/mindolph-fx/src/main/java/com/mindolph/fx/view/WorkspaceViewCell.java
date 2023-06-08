@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 /**
  * A tree cell component for workspace tree,
  * supports drag and drops.
@@ -59,13 +61,14 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     dragEvent.acceptTransferModes(TransferMode.MOVE);
                     log.trace("ok to drop");
                 }
-            } else {
+            }
+            else {
                 log.trace("no string");
             }
             dragEvent.consume();
         });
         this.setOnDragEntered(dragEvent -> {
-            log.trace("drag entered: " + this.getTreeItem().getValue());
+            log.trace("drag entered: " + (this.getTreeItem() == null ? EMPTY : this.getTreeItem().getValue()));
             if (getTreeItemData() != null && (getTreeItemData().isFolder() || getTreeItemData().isWorkspace())) {
                 origBackground = this.getBackground();
                 this.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -85,13 +88,16 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     if (draggingNodeData != null) {
                         log.info(String.format("Drag %s and drop to %s", dragEvent.getDragboard().getString(), getTreeItemData().getFile().toString()));
                         dragFileEventHandler.onFilesDragged(List.of(draggingNodeData), getTreeItemData());
-                    } else {
+                    }
+                    else {
                         log.debug("No dragging node");
                     }
-                } else {
+                }
+                else {
                     log.debug("Dropped on a non folder node");
                 }
-            } else {
+            }
+            else {
                 log.warn("no string");
             }
             dragEvent.consume();
@@ -111,15 +117,18 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             setText(null);
 //            setFont(defaultFont);
             setGraphic(null);
-        } else {
+        }
+        else {
             setText(item.toString());
             if (item.isFile()) {
 //                setFont(defaultFont);
                 setGraphic(FontIconManager.getIns().getIconForFile(item));
-            } else if (item.isFolder()) {
+            }
+            else if (item.isFolder()) {
 //                setFont(defaultFont);
                 setGraphic(FontIconManager.getIns().getIconForFile(item));
-            } else {
+            }
+            else {
 //                setFont(defaultFont);
                 setGraphic(null);
                 return; // no icon for this cell.
