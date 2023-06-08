@@ -294,10 +294,19 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
     }
 
+    // this method will be called from javascript inside the webview.
     public void onFileLinkClicked(String url) {
-        File f = new File(editorContext.getFileData().getFile().getParentFile(), url);
-        log.debug("Try to open file: " + f.getPath());
-        EventBus.getIns().notifyOpenFile(new OpenFileEvent(f, true));
+        if (!UrlUtils.isValid(url)) {
+            File f;
+            if (FileNameUtils.isAbsolutePath(url)) {
+                f = new File(url);
+            }
+            else {
+                f = new File(editorContext.getFileData().getFile().getParentFile(), url);
+            }
+            log.debug("Try to open file: " + f.getPath());
+            EventBus.getIns().notifyOpenFile(new OpenFileEvent(f, true));
+        }
     }
 
     private void interceptLinks(Document document) {
