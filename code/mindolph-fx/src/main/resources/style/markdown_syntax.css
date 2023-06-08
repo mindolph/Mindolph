@@ -24,6 +24,11 @@
     -fx-font-weight: bold;
 }
 
+.table {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
 .code {
     -fx-fill: green;
     -fx-font-weight: bold;

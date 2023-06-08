@@ -16,7 +16,11 @@ public interface MarkdownConstants {
     String EMPHASIS = "(()|(" + EMPHASIS_KW + EMPHASIS_CONTENT + "*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
     String HEADING_PATTERN = "#+[\\s\\S]*?" + LINE_SEPARATOR;
-    String LIST_PATTERN = "[\\t ]*((\\* )|(\\+ )|(- )|(\\d. ))";
+    String LIST_PATTERN = "(^|" + LINE_SEPARATOR + ")[\\t ]*((\\* )|(\\+ )|(- )|(\\d. ))";
+    // "(\\|[\\s\\S]*?)+\\|" +
+    String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|-+)+\\|" + LINE_SEPARATOR;
+    String TABLE_PATTERN =  "(\\|)|(" + TABLE_SEPARATOR + ")";
+    
     String BOLD_ITALIC_PATTERN = "((\\*\\*\\*)" + EMPHASIS + "(\\*\\*\\*))"
             + "|((\\*\\*_)" + EMPHASIS + "(_\\*\\*))"
             + "|((\\*__)" + EMPHASIS + "(__\\*))"
@@ -40,6 +44,7 @@ public interface MarkdownConstants {
                         + "|(?<BOLD>" + BOLD_PATTERN + ")"
                         + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
+                        + "|(?<TABLE>" + TABLE_PATTERN + ")"
                         + "|(?<CODE>" + CODE_PATTERN + ")"
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
@@ -50,14 +55,15 @@ public interface MarkdownConstants {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
                             matcher.group("LIST") != null ? "list" :
-                                    matcher.group("BOLD") != null ? "bold" :
-                                            matcher.group("ITALIC") != null ? "italic" :
-                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                            matcher.group("CODE") != null ? "code" :
-                                                                    matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                                            matcher.group("QUOTE") != null ? "quote" :
-                                                                                    matcher.group("URL") != null ? "url" :
-                                                                                            "unknown";
+                                    matcher.group("TABLE") != null ? "table" :
+                                            matcher.group("BOLD") != null ? "bold" :
+                                                    matcher.group("ITALIC") != null ? "italic" :
+                                                            matcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                                    matcher.group("CODE") != null ? "code" :
+                                                                            matcher.group("CODEBLOCK") != null ? "code-block" :
+                                                                                    matcher.group("QUOTE") != null ? "quote" :
+                                                                                            matcher.group("URL") != null ? "url" :
+                                                                                                    "unknown";
             System.out.println(styleClass);
         }
     }

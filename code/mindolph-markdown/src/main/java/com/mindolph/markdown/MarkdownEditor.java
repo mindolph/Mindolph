@@ -180,6 +180,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                         + "|(?<BOLD>" + BOLD_PATTERN + ")"
                         + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
+                        + "|(?<TABLE>" + TABLE_PATTERN + ")"
                         + "|(?<CODE>" + CODE_PATTERN + ")"
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
@@ -419,13 +420,14 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                     matcher.group("HEADING") != null ? "heading" :
                             matcher.group("CODEBLOCK") != null ? "code-block" :
                                     matcher.group("LIST") != null ? "list" :
-                                            matcher.group("BOLD") != null ? "bold" :
-                                                    matcher.group("ITALIC") != null ? "italic" :
-                                                            matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                                    matcher.group("CODE") != null ? "code" :
-                                                                            matcher.group("QUOTE") != null ? "quote" :
-                                                                                    matcher.group("URL") != null ? "url" :
-                                                                                            null; /* never happens */
+                                            matcher.group("TABLE") != null ? "table" :
+                                                    matcher.group("BOLD") != null ? "bold" :
+                                                            matcher.group("ITALIC") != null ? "italic" :
+                                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                                            matcher.group("CODE") != null ? "code" :
+                                                                                    matcher.group("QUOTE") != null ? "quote" :
+                                                                                            matcher.group("URL") != null ? "url" :
+                                                                                                    null; /* never happens */
             assert styleClass != null;
             System.out.println(styleClass);
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
