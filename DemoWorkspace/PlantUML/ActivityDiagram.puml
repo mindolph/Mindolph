@@ -1,52 +1,36 @@
 @startuml
-title Servlet Container
 
-(*) --> "ClickServlet.handleRequest()"
---> "new Page"
+start
+:ClickServlet.handleRequest();
+:new page;
+if (Page.onSecurityCheck) then (true)
+  :Page.onInit();
+  if (isForward?) then (no)
+    :Process controls;
+    if (continue processing?) then (no)
+      stop
+    endif
 
-if "Page.onSecurityCheck" then
-  ->[true] "Page.onInit()"
-
-  if "isForward?" then
-   ->[no] "Process controls"
-
-   if "continue processing?" then
-     -->[yes] ===RENDERING===
-   else
-     -->[no] ===REDIRECT_CHECK===
-   endif
-
-  else
-   -->[yes] ===RENDERING===
+    if (isPost?) then (yes)
+      :Page.onPost();
+    else (no)
+      :Page.onGet();
+    endif
+    :Page.onRender();
   endif
-
-  if "is Post?" then
-    -->[yes] "Page.onPost()"
-    --> "Page.onRender()" as render
-    --> ===REDIRECT_CHECK===
-  else
-    -->[no] "Page.onGet()"
-    --> render
-  endif
-
-else
-  -->[false] ===REDIRECT_CHECK===
+else (false)
 endif
 
-if "Do redirect?" then
- ->[yes] "redirect request"
- --> ==BEFORE_DESTROY===
+if (do redirect?) then (yes)
+  :redirect process;
 else
- if "Do Forward?" then
-  -left->[yes] "Forward request"
-  --> ==BEFORE_DESTROY===
- else
-  -right->[no] "Render page template"
-  --> ==BEFORE_DESTROY===
- endif
+  if (do forward?) then (yes)
+    :Forward request;
+  else (no)
+    :Render page template;
+  endif
 endif
 
---> "Page.onDestroy()"
--->(*)
+stop
 
 @enduml
