@@ -60,6 +60,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
+import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -67,42 +68,6 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
 
-    private static final String[] DIAGRAM_KEYWORDS = new String[]{
-            "startsalt", "endsalt", "startgantt", "endgantt", "startlatex", "endlatex", "startmath", "endmath", "startdot", "enddot",
-            "startuml", "enduml", "startmindmap", "endmindmap", "startwbs", "endwbs", "startyaml", "endyaml", "startjson", "endjson"
-    };
-
-    private static final String[] DIRECTIVE = new String[]{
-            "include", "function", "endfunction", "procedure", "endprocedure", "\\$"
-    };
-
-    private static final String[] CONTAINING_KEYWORDS = new String[]{
-            "end",
-            "if", "then", "endif", "elseif", "repeat", "while", "endwhile", "loop", "switch", "case", "endswitch",
-            "header", "endheader", "legend", "endlegend",
-            "split again", "split", "end split",
-            "note", "endnote", "rnote", "endrnote", "hnote", "endhnote",
-            "activate", "deactivate",
-            "alt", "else", "opt", "group", "par"
-    };
-
-    private static final String[] KEYWORDS = new String[]{
-            "scale", "skinparam", "title", "usecase", "boundary", "caption", "control", "collections",
-            "entity", "database", "detach", "participant", "order", "as", "actor", "autonumber", "resume", "newpage", "is",
-            "break", "critical",
-            "over", "top", "bottom", "right", "left", "of", "ref", "create", "box", "hide", "footbox",
-            "skinparam", "sequence", "start", "state", "stop", "file", "folder", "frame", "fork", "interface", "class",
-            "namespace", "page", "node", "package", "queue", "stack", "rectangle", "storage", "card", "cloud", "component", "agent", "artifact",
-            "center", "footer", "return"
-    };
-
-
-    private static final String DIAGRAM_PATTERN = "@(" + String.join("|", DIAGRAM_KEYWORDS) + ")";
-    private static final String DIRECTIVE_PATTERN = "!(" + String.join("|", DIRECTIVE) + ")";
-    private static final String CONTAINING_PATTERN = "\\b(" + String.join("|", CONTAINING_KEYWORDS) + ")\\b";
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    private static final String COMMENT_PATTERN = "^[\\s ]*'.*";
-    private static final String BLOCK_COMMENT_PATTERN = "\\/'[.\\s\\S]+?'\\/";
 
     private final Pattern pattern;
 
@@ -129,6 +94,9 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         super.fileType = SupportFileTypes.TYPE_PLANTUML;
         log.info("initialize plantuml editor");
         pattern = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
+                        + "|(?<ACTIVITY>" + ACTIVITY + ")"
+                        + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
+                        + "|(?<CONNECTOR>" + CONNECTOR + ")"
                         + "|(?<BLOCKCOMMENT>" + BLOCK_COMMENT_PATTERN + ")"
                         + "|(?<DIAGRAMKEYWORDS>" + DIAGRAM_PATTERN + ")"
                         + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
@@ -297,13 +265,16 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while (matcher.find()) {
             String styleClass =
-                    matcher.group("DIAGRAMKEYWORDS") != null ? "diagramkeyword" :
-                            matcher.group("DIRECTIVE") != null ? "directive" :
-                                    matcher.group("CONTAININGKEYWORDS") != null ? "containing" :
-                                            matcher.group("COMMENT") != null ? "comment" :
-                                                    matcher.group("BLOCKCOMMENT") != null ? "comment" :
-                                                            matcher.group("KEYWORD") != null ? "keyword" :
-                                                                    null; /* never happens */
+                    matcher.group("ACTIVITY") != null ? "activity" :
+                            matcher.group("QUOTE") != null ? "quote" :
+                                    matcher.group("CONNECTOR") != null ? "connector" :
+                                            matcher.group("DIAGRAMKEYWORDS") != null ? "diagramkeyword" :
+                                                    matcher.group("DIRECTIVE") != null ? "directive" :
+                                                            matcher.group("CONTAININGKEYWORDS") != null ? "containing" :
+                                                                    matcher.group("COMMENT") != null ? "comment" :
+                                                                            matcher.group("BLOCKCOMMENT") != null ? "comment" :
+                                                                                    matcher.group("KEYWORD") != null ? "keyword" :
+                                                                                            null; /* never happens */
             assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
