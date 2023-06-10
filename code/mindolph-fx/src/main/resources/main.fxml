@@ -109,6 +109,7 @@
                 <Menu mnemonicParsing="true" text="_Help">
                   <items>
                       <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference" />
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="_Check for update..." />
                     <MenuItem mnemonicParsing="true" onAction="#onMenuAbout" text="_About" />
                   </items>
                 </Menu>

@@ -27,7 +27,6 @@ public class IconBuilder {
     }
 
     /**
-     *
      * @param fileData
      * @return
      * @deprecated
