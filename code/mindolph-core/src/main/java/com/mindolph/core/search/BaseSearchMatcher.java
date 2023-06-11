@@ -4,16 +4,20 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.BiFunction;
 
-import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * @author mindolph.com@gmail.com
  * @since 1.3
  */
-public abstract class BaseSearchMatcher implements SearchMatcher{
+public abstract class BaseSearchMatcher implements SearchMatcher {
 
+    private static final String GRAPHICAL_LINE_BREAKER = "⏎";
+    
     protected boolean returnContextEnabled;
 
+    /**
+     * Context string for matched text
+     */
     protected String matchContext;
 
     public BaseSearchMatcher(boolean returnContextEnabled) {
@@ -26,31 +30,31 @@ public abstract class BaseSearchMatcher implements SearchMatcher{
     }
 
     /**
+     * Extract more context text in provided text with searching keyword.
      *
      * @param searchParams
      * @param text
-     * @param padding
+     * @param extraSize
      * @return
      */
-    protected String extractInText(SearchParams searchParams, String text, int padding) {
+    protected String extractInText(SearchParams searchParams, String text, int extraSize) {
         String normalText = normalizeSpace(text);
         String normalKeyword = normalizeSpace(searchParams.getKeywords());
         int start = indexOf(searchParams, normalText);
 
-        String extracted = strip(substring(normalText, Math.max(0, start - padding), start + normalKeyword.length() + padding));
+        String extracted = StringUtils.strip(StringUtils.substring(normalText, Math.max(0, start - extraSize), start + normalKeyword.length() + extraSize));
         StringBuilder buf = new StringBuilder();
-        if (start - padding > 0) {
+        if (start - extraSize > 0) {
             buf.append("...");
         }
         buf.append(extracted);
-        if (start + normalKeyword.length() + padding < normalText.length()){
+        if (start + normalKeyword.length() + extraSize < normalText.length()) {
             buf.append("...");
         }
         return buf.toString();
     }
 
     /**
-     *
      * @param searchParams
      * @param text
      * @return
@@ -67,5 +71,10 @@ public abstract class BaseSearchMatcher implements SearchMatcher{
         String normalText = normalizeSpace(text);
         String normalKeyword = normalizeSpace(searchParams.getKeywords());
         return indexOf.apply(normalText, normalKeyword);
+    }
+
+    public static String normalizeSpace(String text) {
+        String replaced = StringUtils.replace(text, "\n", GRAPHICAL_LINE_BREAKER);
+        return StringUtils.normalizeSpace(replaced);
     }
 }

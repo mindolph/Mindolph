@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  */
 public class MindMapTextMatcher extends BaseSearchMatcher {
 
+    private static final String NODE_CONNECTOR = " → ";
     private Set<Extra.ExtraType> extras;
     private Set<TopicFinder<TopicNode>> TOPIC_FINDERS;
 
@@ -55,16 +56,16 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                     List<TopicNode> pathNodes = next.getPath();
                     pathNodes.remove(pathNodes.size() - 1);
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
-                            .collect(Collectors.joining(" → "));
+                            .collect(Collectors.joining(NODE_CONNECTOR));
 
                     if (next.getText().contains(searchParams.getKeywords())) {
-                        super.matchContext = path + " → " + super.extractInText(searchParams, next.getText(), 32);
+                        super.matchContext = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
                     }
                     else {
-                        super.matchContext = path + " → " + StringUtils.abbreviate(next.getText(), 64);;
+                        super.matchContext = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);;
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
-                                super.matchContext += " → " + super.extractInText(searchParams, extra.getAsString(), 32);
+                                super.matchContext += NODE_CONNECTOR + super.extractInText(searchParams, extra.getAsString(), 32);
                                 break;
                             }
                         }
