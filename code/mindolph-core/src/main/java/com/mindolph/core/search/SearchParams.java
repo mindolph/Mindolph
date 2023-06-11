@@ -6,12 +6,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author mindolph.com@gmail.com
  */
 public class SearchParams {
     private String keywords;
+    private String normalizedKeywords;
     private boolean caseSensitive;
     private String fileTypeName = "all"; // filter files by extension
     private String replacement;
@@ -22,12 +24,20 @@ public class SearchParams {
     private File searchInDir;
     private IOFileFilter searchFilter;
 
+    // patter with normalized searching keyword
+    private Pattern pattern;
+
     public SearchParams() {
     }
 
     public SearchParams(String keywords, boolean caseSensitive) {
-        this.keywords = keywords;
+//        this.keywords = keywords;
         this.caseSensitive = caseSensitive;
+        this.setKeywords(keywords);
+    }
+
+    public Pattern getPattern() {
+        return pattern;
     }
 
     public boolean canSearch() {
@@ -38,7 +48,15 @@ public class SearchParams {
         return keywords;
     }
 
+    public String getNormalizedKeyword() {
+        return normalizedKeywords;
+    }
+
     public void setKeywords(String keywords) {
+        if (!StringUtils.equals(this.keywords, keywords)) {
+            normalizedKeywords = SearchUtils.normalizeSpace(keywords);
+            this.pattern = SearchUtils.string2pattern(normalizedKeywords, this.caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+        }
         this.keywords = keywords;
     }
 
@@ -47,6 +65,10 @@ public class SearchParams {
     }
 
     public void setCaseSensitive(boolean caseSensitive) {
+        if (this.caseSensitive || caseSensitive) {
+            String normalKeyword = SearchUtils.normalizeSpace(keywords);
+            this.pattern = SearchUtils.string2pattern(normalKeyword, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+        }
         this.caseSensitive = caseSensitive;
     }
 

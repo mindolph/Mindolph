@@ -1,7 +1,12 @@
 package com.mindolph.core.search;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 
@@ -11,8 +16,8 @@ import java.util.function.BiFunction;
  */
 public abstract class BaseSearchMatcher implements SearchMatcher {
 
-    private static final String GRAPHICAL_LINE_BREAKER = "⏎";
-    
+    private final Logger log = LoggerFactory.getLogger(BaseSearchMatcher.class);
+
     protected boolean returnContextEnabled;
 
     /**
@@ -20,13 +25,31 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
      */
     protected String matchContext;
 
+    protected List<String> matched;
+
     public BaseSearchMatcher(boolean returnContextEnabled) {
         this.returnContextEnabled = returnContextEnabled;
     }
 
     @Override
-    public String getMatchContext() {
-        return matchContext;
+    public boolean matches(File file, SearchParams searchParams) {
+        this.matched = new ArrayList<>();
+        return false;
+    }
+
+
+    protected String extractInText(String text, int start, int end, int extraSize) {
+        String extracted = StringUtils.strip(StringUtils.substring(text, Math.max(0, start - extraSize), end + extraSize));
+        log.debug("extract from %d to %d: '%s'".formatted(start, end, extracted));
+        StringBuilder buf = new StringBuilder();
+        if (start - extraSize > 0) {
+            buf.append("...");
+        }
+        buf.append(extracted);
+        if (end + extraSize < text.length()) {
+            buf.append("...");
+        }
+        return buf.toString();
     }
 
     /**
@@ -38,21 +61,32 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
      * @return
      */
     protected String extractInText(SearchParams searchParams, String text, int extraSize) {
-        String normalText = normalizeSpace(text);
-        String normalKeyword = normalizeSpace(searchParams.getKeywords());
+        // normalize space before extracting rather than after because the context might contain with massive blank chars,
+        // which is meaningless for displaying them.
+        String normalText = SearchUtils.normalizeSpace(text);
+        String normalKeyword = searchParams.getNormalizedKeyword();
         int start = indexOf(searchParams, normalText);
-
-        String extracted = StringUtils.strip(StringUtils.substring(normalText, Math.max(0, start - extraSize), start + normalKeyword.length() + extraSize));
-        StringBuilder buf = new StringBuilder();
-        if (start - extraSize > 0) {
-            buf.append("...");
-        }
-        buf.append(extracted);
-        if (start + normalKeyword.length() + extraSize < normalText.length()) {
-            buf.append("...");
-        }
-        return buf.toString();
+        int end = start + normalKeyword.length();
+        return extractInText(normalText, start, end, extraSize);
     }
+
+
+    @Override
+    public String getMatchContext() {
+        return matchContext;
+    }
+
+    protected void addMatched(String matched) {
+        if (this.matched == null) {
+            this.matched = new ArrayList<>();
+        }
+        this.matched.add(matched);
+    }
+
+    public List<String> getMatched() {
+        return matched;
+    }
+
 
     /**
      * @param searchParams
@@ -61,20 +95,17 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
      */
     public static int indexOf(SearchParams searchParams, String text) {
         BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase;
-        String normalText = normalizeSpace(text);
-        String normalKeyword = normalizeSpace(searchParams.getKeywords());
+        String normalText = SearchUtils.normalizeSpace(text);
+        String normalKeyword = searchParams.getNormalizedKeyword();;
         return indexOf.apply(normalText, normalKeyword);
     }
 
     public static int lastIndexOf(SearchParams searchParams, String text) {
         BiFunction<CharSequence, CharSequence, Integer> indexOf = searchParams.isCaseSensitive() ? StringUtils::lastIndexOf : StringUtils::lastIndexOfIgnoreCase;
-        String normalText = normalizeSpace(text);
-        String normalKeyword = normalizeSpace(searchParams.getKeywords());
+        String normalText = SearchUtils.normalizeSpace(text);
+        String normalKeyword = searchParams.getNormalizedKeyword();;
         return indexOf.apply(normalText, normalKeyword);
     }
 
-    public static String normalizeSpace(String text) {
-        String replaced = StringUtils.replace(text, "\n", GRAPHICAL_LINE_BREAKER);
-        return StringUtils.normalizeSpace(replaced);
-    }
+
 }

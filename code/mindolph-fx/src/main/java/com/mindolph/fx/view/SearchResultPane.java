@@ -18,8 +18,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,6 +123,9 @@ public class SearchResultPane extends AnchorPane {
         });
     }
 
+    /**
+     * Do the searching asynchronously.
+     */
     private void reSearch() {
         log.debug("reSearch()");
         progressIndicator.setVisible(true);
@@ -145,9 +148,12 @@ public class SearchResultPane extends AnchorPane {
             item.setExpanded(true);
 //            item.setValue(file);
             rootItem.getChildren().add(item);
-            if (StringUtils.isNotBlank(foundFile.getInfo())) {
-                TreeItem<FileTreeViewData> infoNode = new TreeItem<>(new FileTreeViewData(false, foundFile.getFile(), foundFile.getInfo()));
-                item.getChildren().add(infoNode);
+            if (CollectionUtils.isNotEmpty(foundFile.getInfos())) {
+                for (String info : foundFile.getInfos()) {
+                    TreeItem<FileTreeViewData> infoNode = new TreeItem<>(new FileTreeViewData(false, foundFile.getFile(), info));
+                    item.getChildren().add(infoNode);
+                }
+
             }
         }
     }

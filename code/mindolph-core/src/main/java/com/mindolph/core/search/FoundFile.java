@@ -1,6 +1,7 @@
 package com.mindolph.core.search;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author mindolph.com@gmail.com
@@ -9,11 +10,11 @@ import java.io.File;
 public class FoundFile {
 
     private File file;
-    private String info;
+    private List<String> infos;
 
-    public FoundFile(File file, String info) {
+    public FoundFile(File file, List<String> infos) {
         this.file = file;
-        this.info = info;
+        this.infos = infos;
     }
 
     public File getFile() {
@@ -24,11 +25,11 @@ public class FoundFile {
         this.file = file;
     }
 
-    public String getInfo() {
-        return info;
+    public List<String> getInfos() {
+        return infos;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setInfos(List<String> infos) {
+        this.infos = infos;
     }
 }

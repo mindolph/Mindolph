@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @author mindolph.com@gmail.com
@@ -40,6 +41,11 @@ public class FileLinkSearchMatcher implements SearchMatcher {
 
     @Override
     public String getMatchContext() {
+        return null;
+    }
+
+    @Override
+    public List<String> getMatched() {
         return null;
     }
 }

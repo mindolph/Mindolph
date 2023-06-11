@@ -8,6 +8,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.control.BaseScalableView;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
+import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.RectangleUtils;
@@ -1533,7 +1534,7 @@ public class MindMapView extends BaseScalableView {
             element.setText(newText);
             replaced = true;
             log.debug("  with new text: " + newText);
-            Pattern pattern = PatternUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+            Pattern pattern = SearchUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
             found = this.getModel().findNext(null, found, pattern, true, null, TOPIC_FINDERS);
         }
         if (replaced) onMindMapModelChanged(true);
