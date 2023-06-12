@@ -67,6 +67,7 @@ public class PumlRegexTest {
 
     @Test
     public void quote() {
+        System.out.println(QUOTE_BLOCK);
         Pattern p = Pattern.compile(QUOTE_BLOCK);
         Assertions.assertTrue(p.matcher("\"\"").matches());
         Assertions.assertTrue(p.matcher("\"hello\"").matches());
@@ -74,6 +75,16 @@ public class PumlRegexTest {
         Assertions.assertTrue(p.matcher("[ hello world!]").matches());
 
         Assertions.assertFalse(p.matcher("\" hello world!").matches());
+        Assertions.assertFalse(p.matcher("\" hello world!\" everybody \"").matches());
         Assertions.assertFalse(p.matcher("[ hello world!").matches());
+    }
+
+    @Test
+    public void activity() {
+        System.out.println(ACTIVITY);
+        Pattern p = Pattern.compile(ACTIVITY);
+        Assertions.assertTrue(p.matcher(":;").matches());
+        Assertions.assertTrue(p.matcher(":hello;").matches());
+        Assertions.assertFalse(p.matcher(":hello; world;").matches());
     }
 }

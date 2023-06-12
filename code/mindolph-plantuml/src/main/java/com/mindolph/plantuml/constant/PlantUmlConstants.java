@@ -42,7 +42,7 @@ public interface PlantUmlConstants {
     String BAR = "-|\\.|(--)|(\\.\\.)";
     String CONNECTOR = "((%s)|(%s))*(%s)((%s)|(%s))*".formatted(ARROW2, ARROW1, BAR, ARROW2, ARROW1);
 
-    String QUOTE_BLOCK = "[\\[\"][\\s\\S]*?[\"\\]]";
+    String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])";
 
-    String ACTIVITY = ":[\\s\\S]*?;";
+    String ACTIVITY = ":[^;]*?;";
 }
