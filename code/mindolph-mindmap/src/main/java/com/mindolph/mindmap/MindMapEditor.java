@@ -19,7 +19,7 @@ import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.PatternUtils;
+import com.mindolph.core.search.SearchUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
@@ -203,21 +203,21 @@ public class MindMapEditor extends BaseEditor {
     @Override
     public void searchNext(String keyword, TextSearchOptions options) {
         // The case-sensitive is Weired here, but it works!
-        Pattern pattern = PatternUtils.string2pattern(keyword, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+        Pattern pattern = SearchUtils.string2pattern(keyword, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
         mindMapView.findTopicByPattern(pattern, options, false);
     }
 
     @Override
     public void searchPrev(String keyword, TextSearchOptions options) {
         // The case-sensitive is Weired here, but it works!
-        Pattern pattern = PatternUtils.string2pattern(keyword, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+        Pattern pattern = SearchUtils.string2pattern(keyword, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
         mindMapView.findTopicByPattern(pattern, options, true);
     }
 
     @Override
     public void replaceSelection(String keywords, TextSearchOptions options, String replacement) {
         mindMapView.replaceSelection(keywords, options, replacement);
-        Pattern pattern = PatternUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+        Pattern pattern = SearchUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
         mindMapView.findTopicByPattern(pattern, options, false);
     }
 

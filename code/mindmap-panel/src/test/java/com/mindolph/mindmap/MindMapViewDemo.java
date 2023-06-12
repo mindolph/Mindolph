@@ -5,7 +5,7 @@ import com.mindolph.base.container.ScalableScrollPane;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.PatternUtils;
+import com.mindolph.core.search.SearchUtils;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -122,7 +122,7 @@ public class MindMapViewDemo extends Application implements Initializable, Event
         btnFitToViewportHeight.setOnAction(event -> mindMapView.fitToViewportHeight());
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            Pattern pattern = PatternUtils.string2pattern(newValue, Pattern.CASE_INSENSITIVE);
+            Pattern pattern = SearchUtils.string2pattern(newValue, Pattern.CASE_INSENSITIVE);
             TextSearchOptions options = new TextSearchOptions();
             options.setCaseSensitive(true);
             options.setInTopic(true);

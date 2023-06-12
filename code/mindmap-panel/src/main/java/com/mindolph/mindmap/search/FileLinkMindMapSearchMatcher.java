@@ -8,7 +8,7 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.mindmap.RootTopicCreator;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.PatternUtils;
+import com.mindolph.core.search.SearchUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -45,7 +46,7 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
         MindMap<TopicNode> mindMap;
         try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
-            Pattern pattern = PatternUtils.string2pattern(absolutPathFile.getPath(), 0);
+            Pattern pattern = SearchUtils.string2pattern(absolutPathFile.getPath(), 0);
             if (mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS) != null) {
                 log.debug("Found");
                 return true;
@@ -58,6 +59,11 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
 
     @Override
     public String getMatchContext() {
+        return null;
+    }
+
+    @Override
+    public List<String> getMatched() {
         return null;
     }
 }

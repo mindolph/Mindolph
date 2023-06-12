@@ -1,12 +1,11 @@
 package com.mindolph.core.search;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.function.BiFunction;
+import java.util.regex.Matcher;
 
 /**
  * @author mindolph.com@gmail.com
@@ -19,17 +18,29 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
 
     @Override
     public boolean matches(File file, SearchParams searchParams) {
+        super.matches(file, searchParams);
         try {
-            // TODO to be optimized via some algorithm which doesn't need to read all of a file.
-            String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            BiFunction<CharSequence, CharSequence, Boolean> contains =
-                    searchParams.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
-            if (contains.apply(s, searchParams.getKeywords())) {
-                if (returnContextEnabled) {
-                    super.matchContext = super.extractInText(searchParams, s, 64);
+            String text = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            String normalText = SearchUtils.normalizeSpace(text);
+            String normalKeyword = searchParams.getNormalizedKeyword();
+            Matcher matcher = searchParams.getPattern().matcher(normalText);
+            boolean contains = false;
+            int last = 0;// to skip matched positions that already be extracted in previous.
+            while (matcher.find()) {
+                contains = true;
+                if (!returnContextEnabled) {
+                    return true;
                 }
-                return true;
+                int start = matcher.start();
+                int end = matcher.end();
+                if (start < last) {
+                    continue; // skip because it's already been extracted.
+                }
+                String matched = this.extractInText(normalText, start, end, 64);
+                super.addMatched(matched);
+                last = end + 64 - normalKeyword.length(); // 3 is for `...`
             }
+            return contains;
         } catch (IOException e) {
             e.printStackTrace();
         }

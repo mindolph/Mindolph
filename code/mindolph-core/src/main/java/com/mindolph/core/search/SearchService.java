@@ -75,7 +75,7 @@ public class SearchService {
             for (File file : files) {
                 SearchMatcher searchMatch = this.matchers.get(FilenameUtils.getExtension(file.getPath()));
                 if (searchMatch != null && searchMatch.matches(file, searchParams)) {
-                    foundList.add(new FoundFile(file, searchMatch.getMatchContext()));
+                    foundList.add(new FoundFile(file, searchMatch.getMatched()));
                 }
             }
             for (FoundFile foundFile : foundList) {

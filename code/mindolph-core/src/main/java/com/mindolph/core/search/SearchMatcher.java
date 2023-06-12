@@ -1,6 +1,7 @@
 package com.mindolph.core.search;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Matcher for searching in file, different file type might implement different instance.
@@ -11,5 +12,11 @@ public interface SearchMatcher {
 
     boolean matches(File file, SearchParams searchParams);
 
+    /**
+     * @deprecated
+     * @return
+     */
     String getMatchContext();
+
+    List<String> getMatched();
 }

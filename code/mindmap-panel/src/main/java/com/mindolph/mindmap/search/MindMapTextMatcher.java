@@ -8,7 +8,6 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.mindmap.RootTopicCreator;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.PatternUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
  */
 public class MindMapTextMatcher extends BaseSearchMatcher {
 
+    private static final String NODE_CONNECTOR = " → ";
     private Set<Extra.ExtraType> extras;
     private Set<TopicFinder<TopicNode>> TOPIC_FINDERS;
 
@@ -36,6 +36,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
 
     @Override
     public boolean matches(File file, SearchParams searchParams) {
+        super.matches(file, searchParams);
         if (this.extras == null) {
             this.extras = EnumSet.noneOf(Extra.ExtraType.class);
             extras.add(Extra.ExtraType.TOPIC);
@@ -48,30 +49,34 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
         MindMap<TopicNode> mindMap;
         try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
-            Pattern pattern = PatternUtils.string2pattern(searchParams.getKeywords(), searchParams.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
+            Pattern pattern = searchParams.getPattern();
             TopicNode next = mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS);
-            if (next != null) {
+            boolean contains = false;
+            while (next != null) {
+                contains = true;
                 if (returnContextEnabled) {
                     List<TopicNode> pathNodes = next.getPath();
                     pathNodes.remove(pathNodes.size() - 1);
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
-                            .collect(Collectors.joining(" → "));
+                            .collect(Collectors.joining(NODE_CONNECTOR));
 
                     if (next.getText().contains(searchParams.getKeywords())) {
-                        super.matchContext = path + " → " + super.extractInText(searchParams, next.getText(), 32);
+                        super.matchContext = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
                     }
                     else {
-                        super.matchContext = path + " → " + StringUtils.abbreviate(next.getText(), 64);;
+                        super.matchContext = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
-                                super.matchContext += " → " + super.extractInText(searchParams, extra.getAsString(), 32);
+                                super.matchContext += NODE_CONNECTOR + super.extractInText(searchParams, extra.getAsString(), 32);
                                 break;
                             }
                         }
                     }
+                    super.addMatched(super.matchContext);
                 }
-                return true;
+                next = mindMap.findNext(file.getParentFile(), next, pattern, true, extras, TOPIC_FINDERS);
             }
+            return contains;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
