@@ -425,11 +425,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                                                             matcher.group("ITALIC") != null ? "italic" :
                                                                     matcher.group("BOLDITALIC") != null ? "bold-italic" :
                                                                             matcher.group("CODE") != null ? "code" :
-                                                                                    matcher.group("QUOTE") != null ? "quote" :
+                                                                                    matcher.group("QUOTE") != null ? "md-quote" :
                                                                                             matcher.group("URL") != null ? "url" :
                                                                                                     null; /* never happens */
             assert styleClass != null;
-            System.out.println(styleClass);
+            System.out.printf("%s(%d-%d)%n", styleClass, matcher.start(), matcher.end());
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();

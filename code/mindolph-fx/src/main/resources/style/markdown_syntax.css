@@ -3,22 +3,6 @@
     -fx-font-weight: bold;
 }
 
-.bold {
-    -fx-fill: black;
-    -fx-font-weight: bold;
-}
-
-.italic {
-    -fx-fill: black;
-    -fx-font-style: italic;
-}
-
-.bold-italic {
-    -fx-fill: black;
-    -fx-font-weight: bold;
-    -fx-font-style: italic;
-}
-
 .list {
     -fx-fill: red;
     -fx-font-weight: bold;
@@ -39,11 +23,7 @@
     -fx-font-weight: bold;
 }
 
-.quote {
+.md-quote {
     -fx-fill: grey;
     -fx-font-weight: bold;
-}
-
-.url {
-    -fx-fill: blue;
 }

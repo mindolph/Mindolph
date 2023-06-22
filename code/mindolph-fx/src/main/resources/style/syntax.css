@@ -1,0 +1,21 @@
+
+.bold {
+    -fx-fill: black;
+    -fx-font-weight: bold;
+}
+
+.italic {
+    -fx-fill: black;
+    -fx-font-style: italic;
+}
+
+.bold-italic {
+    -fx-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+}
+
+
+.url {
+    -fx-fill: blue;
+}

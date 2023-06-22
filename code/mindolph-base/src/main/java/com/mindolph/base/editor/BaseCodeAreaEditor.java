@@ -145,7 +145,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 }
             });
             this.codeArea.selectionProperty().addListener((observable, oldValue, newValue) -> {
-                log.debug("%s-%s within %d".formatted(newValue.getStart(), newValue.getEnd(), codeArea.getText().length()));
+                log.trace("%s-%s within %d".formatted(newValue.getStart(), newValue.getEnd(), codeArea.getText().length()));
                 if (newValue.getEnd() > codeArea.getText().length()) {
                     return; // there is a bug in RichTextFx, which is, when selection to the end of text, this listener will be called twice, and the first one is wrong.
                 }
