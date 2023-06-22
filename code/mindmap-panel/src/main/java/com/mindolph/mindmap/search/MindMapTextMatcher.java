@@ -15,9 +15,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -50,6 +48,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
         try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
             Pattern pattern = searchParams.getPattern();
+            Map<TopicNode, String> foundMap = new HashMap<>();// store found topic and remove if it's sub-topic found.
             TopicNode next = mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS);
             boolean contains = false;
             while (next != null) {
@@ -61,25 +60,46 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                             .collect(Collectors.joining(NODE_CONNECTOR));
 
                     if (next.getText().contains(searchParams.getKeywords())) {
-                        super.matchContext = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
+                        String text = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
+                        removeAncestor(foundMap, next);
+                        foundMap.put(next, text);
                     }
                     else {
-                        super.matchContext = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);
+                        String text = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
-                                super.matchContext += NODE_CONNECTOR + super.extractInText(searchParams, extra.getAsString(), 32);
+                                text += NODE_CONNECTOR + super.extractInText(searchParams, extra.getAsString(), 32);
+                                removeAncestor(foundMap, next);
+                                foundMap.put(next, text);
                                 break;
                             }
                         }
                     }
-                    super.addMatched(super.matchContext);
                 }
                 next = mindMap.findNext(file.getParentFile(), next, pattern, true, extras, TOPIC_FINDERS);
             }
+            super.matched.addAll(foundMap.values());
             return contains;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * remove topicNode's ancestor;
+     *
+     * @param foundMap
+     * @param topicNode
+     */
+    private void removeAncestor(Map<TopicNode, String> foundMap, TopicNode topicNode) {
+        TopicNode ancestor = null;
+        for (TopicNode node : foundMap.keySet()) {
+            if (topicNode.isAncestor(node)) {
+                ancestor = node;
+                break;
+            }
+        }
+        if (ancestor != null) foundMap.remove(ancestor);
     }
 }

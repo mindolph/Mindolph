@@ -58,11 +58,6 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
     }
 
     @Override
-    public String getMatchContext() {
-        return null;
-    }
-
-    @Override
     public List<String> getMatched() {
         return null;
     }

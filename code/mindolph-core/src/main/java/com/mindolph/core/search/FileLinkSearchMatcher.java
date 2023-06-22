@@ -40,11 +40,6 @@ public class FileLinkSearchMatcher implements SearchMatcher {
     }
 
     @Override
-    public String getMatchContext() {
-        return null;
-    }
-
-    @Override
     public List<String> getMatched() {
         return null;
     }
