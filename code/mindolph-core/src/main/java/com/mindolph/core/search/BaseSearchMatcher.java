@@ -20,11 +20,6 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
 
     protected boolean returnContextEnabled;
 
-    /**
-     * Context string for matched text
-     */
-    protected String matchContext;
-
     protected List<String> matched;
 
     public BaseSearchMatcher(boolean returnContextEnabled) {
@@ -68,12 +63,6 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
         int start = indexOf(searchParams, normalText);
         int end = start + normalKeyword.length();
         return extractInText(normalText, start, end, extraSize);
-    }
-
-
-    @Override
-    public String getMatchContext() {
-        return matchContext;
     }
 
     protected void addMatched(String matched) {

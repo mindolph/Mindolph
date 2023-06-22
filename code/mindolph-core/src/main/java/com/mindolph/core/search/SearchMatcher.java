@@ -12,11 +12,5 @@ public interface SearchMatcher {
 
     boolean matches(File file, SearchParams searchParams);
 
-    /**
-     * @deprecated
-     * @return
-     */
-    String getMatchContext();
-
     List<String> getMatched();
 }
