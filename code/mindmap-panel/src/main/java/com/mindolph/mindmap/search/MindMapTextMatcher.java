@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -50,21 +51,22 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
             Pattern pattern = searchParams.getPattern();
             Map<TopicNode, String> foundMap = new HashMap<>();// store found topic and remove if it's sub-topic found.
             TopicNode next = mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS);
-            boolean contains = false;
+            boolean contained = false;
+            BiFunction<String, String, Boolean> contains = searchParams.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
             while (next != null) {
-                contains = true;
+                contained = true;
                 if (returnContextEnabled) {
                     List<TopicNode> pathNodes = next.getPath();
                     pathNodes.remove(pathNodes.size() - 1);
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
                             .collect(Collectors.joining(NODE_CONNECTOR));
 
-                    if (next.getText().contains(searchParams.getKeywords())) {
+                    if (contains.apply(next.getText(), searchParams.getKeywords())) {
                         String text = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
                         removeAncestor(foundMap, next);
                         foundMap.put(next, text);
                     }
-                    else {
+                    else{
                         String text = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
@@ -79,12 +81,13 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                 next = mindMap.findNext(file.getParentFile(), next, pattern, true, extras, TOPIC_FINDERS);
             }
             super.matched.addAll(foundMap.values());
-            return contains;
+            return contained;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return false;
     }
+
 
     /**
      * remove topicNode's ancestor;
