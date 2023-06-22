@@ -117,7 +117,7 @@ public class SearchResultPane extends AnchorPane {
         });
         fileFilterButtonGroup.selectedFileTypeProperty().addListener((observableValue, s, fileTypeName) -> {
             log.debug("File type changed to: %s".formatted(fileTypeName));
-            // may be filtering searched files instead of research again for file type switching TODO
+            // may be filtering searched files instead of research again for file type switching? TODO
             searchParams.setFileTypeName(fileFilterButtonGroup.getSelectedFileType());
             reSearch();
         });
@@ -153,7 +153,6 @@ public class SearchResultPane extends AnchorPane {
                     TreeItem<FileTreeViewData> infoNode = new TreeItem<>(new FileTreeViewData(false, foundFile.getFile(), info));
                     item.getChildren().add(infoNode);
                 }
-
             }
         }
     }
