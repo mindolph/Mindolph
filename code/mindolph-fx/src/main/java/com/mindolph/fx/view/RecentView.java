@@ -66,7 +66,7 @@ public class RecentView extends BaseView {
                 }
             });
             // listen file opening and fresh list with new opened file
-            EventBus.getIns().subscribeOpenFile(openedFile -> refresh(new NodeData(openedFile.getFile())));
+            EventBus.getIns().subscribeOpenFile(openedFile -> refresh(openedFile.getNodeData()));
             // listen file deletion and remove from recent list if file is deleted
             EventBus.getIns().subscribeDeletedFile(nodeData -> this.removeRecentFile(nodeData.getFile()));
         });

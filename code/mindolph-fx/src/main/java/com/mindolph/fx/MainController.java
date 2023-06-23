@@ -135,7 +135,7 @@ public class MainController extends BaseController implements Initializable,
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
 
-        EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getFile(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
+        EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.setSearchEventHandler(this);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
             onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
@@ -243,16 +243,16 @@ public class MainController extends BaseController implements Initializable,
         }
     }
 
-    public void onOpenFile(File file, SearchParams searchParams, boolean visibleInWorkspace) {
+    public void onOpenFile(NodeData fileData, SearchParams searchParams, boolean visibleInWorkspace) {
         // the file existence should be validated before this handler for its consequences are different.
-        if (file.isFile()) {
-            NodeData fileData = new NodeData(file);
+        if (fileData.getFile().isFile()) {
+//            NodeData fileData = new NodeData(file);
             fileData.setSearchParams(searchParams);
             this.openFile(fileData, false);
             workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
-        else if (file.isDirectory()) {
-            workspaceView.selectByNodeDataInAppropriateWorkspace(new NodeData(NodeType.FOLDER, file));
+        else if (fileData.getFile().isDirectory()) {
+            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         if (visibleInWorkspace) {
             splitPane.showAll();

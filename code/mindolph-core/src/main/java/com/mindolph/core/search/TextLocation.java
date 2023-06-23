@@ -1,5 +1,7 @@
 package com.mindolph.core.search;
 
+import java.util.Objects;
+
 /**
  * @author mindolph.com@gmail.com
  */
@@ -51,5 +53,18 @@ public class TextLocation {
     @Override
     public String toString() {
         return "%d %d %d %d".formatted(startRow, startCol, endRow, endCol);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TextLocation that = (TextLocation) o;
+        return startRow == that.startRow && startCol == that.startCol && endRow == that.endRow && endCol == that.endCol;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startRow, startCol, endRow, endCol);
     }
 }

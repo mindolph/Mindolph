@@ -36,6 +36,11 @@ public class SearchParams {
         this.setKeywords(keywords);
     }
 
+    /**
+     * Search pattern with normalized keyword.
+     *
+     * @return
+     */
     public Pattern getPattern() {
         return pattern;
     }

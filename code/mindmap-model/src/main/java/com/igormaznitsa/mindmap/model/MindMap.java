@@ -24,6 +24,8 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,9 +135,7 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
 
-    public T findNext(File baseFolder, T start,
-                      Pattern pattern, boolean findInTopicText,
-                      Set<Extra.ExtraType> extrasToFind) {
+    public T findNext(File baseFolder, T start, Pattern pattern, boolean findInTopicText, Set<Extra.ExtraType> extrasToFind) {
         return this.findNext(baseFolder, start, pattern, findInTopicText, extrasToFind, null);
     }
 
@@ -492,6 +492,67 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         }
     }
 
+    /**
+     * @param consumer
+     * @since 1.3.4
+     */
+    public void traverseTopicTree(Consumer<Topic<?>> consumer) {
+        traverseTopicTree(this.root, consumer);
+    }
+
+    public void traverseTopicTree(Topic<?> parent, Consumer<Topic<?>> consumer) {
+        consumer.accept(parent);
+        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        if (children != null) {
+            children.forEach(child -> traverseTopicTree(child, consumer));
+        }
+    }
+
+    /**
+     * @param predicate
+     * @since 1.3.4
+     */
+    public boolean anyMatchInTree(Predicate<Topic<?>> predicate) {
+        return this.anyMatchInTree(this.root, predicate);
+    }
+
+    public boolean anyMatchInTree(Topic<?> parent, Predicate<Topic<?>> predicate) {
+        if (predicate.test(parent)) {
+            return true;
+        }
+        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        if (children != null) {
+            for (Topic<?> child : children) {
+                if (anyMatchInTree(child, predicate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param predicate
+     * @since 1.3.4
+     */
+    public Optional<Topic<?>> findFirstInTree(Predicate<Topic<?>> predicate) {
+        return this.findFirstInTree(this.root, predicate);
+    }
+
+    public Optional<Topic<?>> findFirstInTree(Topic<?> parent, Predicate<Topic<?>> predicate) {
+        if (predicate.test(parent)) {
+            return Optional.ofNullable(parent);
+        }
+        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        if (children != null) {
+            for (Topic<?> child : children) {
+                if (findFirstInTree(child, predicate).isPresent()) {
+                    return Optional.ofNullable(child);
+                }
+            }
+        }
+        return Optional.empty();
+    }
 
     public T findTopicForLink(ExtraTopic link) {
         T result = null;
@@ -524,9 +585,7 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         return result;
     }
 
-    private void _findAllTopicsForExtraType(T topic,
-                                            Extra.ExtraType type,
-                                            List<T> result) {
+    private void _findAllTopicsForExtraType(T topic, Extra.ExtraType type, List<T> result) {
         if (topic.getExtras().containsKey(type)) {
             result.add(topic);
         }

@@ -2,6 +2,7 @@ package com.mindolph.core.model;
 
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.util.FileNameUtils;
 
@@ -27,6 +28,8 @@ public class NodeData {
     private NodeData workspaceData; // just a reference for workaround
 
     private transient SearchParams searchParams; // just a reference for workaround that be used to locate keyword in opened file.
+
+    private transient Anchor anchor;// just a reference be used to locate matched object precisely in opened file .
 
     public NodeData(File file) {
         this.file = file;
@@ -137,6 +140,15 @@ public class NodeData {
 
     public void setSearchParams(SearchParams searchParams) {
         this.searchParams = searchParams;
+    }
+
+    public Anchor getAnchor() {
+        return anchor;
+    }
+
+    public NodeData setAnchor(Anchor anchor) {
+        this.anchor = anchor;
+        return this;
     }
 
     @Override

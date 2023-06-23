@@ -40,7 +40,7 @@ public class FileLinkSearchMatcher implements SearchMatcher {
     }
 
     @Override
-    public List<String> getMatched() {
+    public List<MatchedItem> getMatched() {
         return null;
     }
 }

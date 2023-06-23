@@ -4,7 +4,9 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.FoundFile;
+import com.mindolph.core.search.MatchedItem;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.control.FileFilterButtonGroup;
@@ -73,7 +75,9 @@ public class SearchResultPane extends AnchorPane {
                 if (selectedItem != null) {
                     FileTreeViewData data = selectedItem.getValue();
                     if (!data.isParent()) {
-                        EventBus.getIns().notifyOpenFile(new OpenFileEvent(data.getFile(), true, searchParams));
+                        NodeData nodeData = new NodeData(data.getFile());
+                        nodeData.setAnchor(data.getMatchedItem().getAnchor());
+                        EventBus.getIns().notifyOpenFile(new OpenFileEvent(nodeData, true));
                     }
                 }
             }
@@ -149,7 +153,7 @@ public class SearchResultPane extends AnchorPane {
 //            item.setValue(file);
             rootItem.getChildren().add(item);
             if (CollectionUtils.isNotEmpty(foundFile.getInfos())) {
-                for (String info : foundFile.getInfos()) {
+                for (MatchedItem info : foundFile.getInfos()) {
                     TreeItem<FileTreeViewData> infoNode = new TreeItem<>(new FileTreeViewData(false, foundFile.getFile(), info));
                     item.getChildren().add(infoNode);
                 }

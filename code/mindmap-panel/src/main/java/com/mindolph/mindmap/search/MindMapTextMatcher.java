@@ -4,7 +4,9 @@ import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.TopicFinder;
 import com.mindolph.core.search.BaseSearchMatcher;
+import com.mindolph.core.search.MatchedItem;
 import com.mindolph.core.search.SearchParams;
+import com.mindolph.core.util.FunctionUtils;
 import com.mindolph.mindmap.RootTopicCreator;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.model.TopicNode;
@@ -52,7 +54,6 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
             Map<TopicNode, String> foundMap = new HashMap<>();// store found topic and remove if it's sub-topic found.
             TopicNode next = mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS);
             boolean contained = false;
-            BiFunction<String, String, Boolean> contains = searchParams.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
             while (next != null) {
                 contained = true;
                 if (returnContextEnabled) {
@@ -61,7 +62,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
                             .collect(Collectors.joining(NODE_CONNECTOR));
 
-                    if (contains.apply(next.getText(), searchParams.getKeywords())) {
+                    if (FunctionUtils.textContains(searchParams.isCaseSensitive()).apply(next.getText(), searchParams.getKeywords())) {
                         String text = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
                         removeAncestor(foundMap, next);
                         foundMap.put(next, text);
@@ -80,7 +81,8 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                 }
                 next = mindMap.findNext(file.getParentFile(), next, pattern, true, extras, TOPIC_FINDERS);
             }
-            super.matched.addAll(foundMap.values());
+            List<MatchedItem> matched = foundMap.keySet().stream().map(t -> new MatchedItem(foundMap.get(t), createAnchor(t))).toList();
+            super.matched.addAll(matched);
             return contained;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -88,6 +90,12 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
         return false;
     }
 
+    private MindMapAnchor createAnchor(TopicNode topicNode) {
+        MindMapAnchor anchor = new MindMapAnchor();
+        anchor.setText(topicNode.getText());
+        anchor.setParentText(topicNode.getParent().getText());
+        return anchor;
+    }
 
     /**
      * remove topicNode's ancestor;

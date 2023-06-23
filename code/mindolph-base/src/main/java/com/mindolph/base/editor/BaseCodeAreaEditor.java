@@ -5,6 +5,9 @@ import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.NotificationType;
+import com.mindolph.core.search.Anchor;
+import com.mindolph.core.search.TextAnchor;
+import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.TextUtils;
@@ -181,6 +184,20 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     }
 
     public abstract String getFontPrefKey();
+
+    @Override
+    public void locate(Anchor anchor) {
+        if (anchor instanceof TextAnchor ta) {
+            TextLocation tl = ta.getTextLocation();
+            log.debug("Select range:  " + tl);
+            codeArea.selectRange(tl.getStartRow(), tl.getStartCol(), tl.getEndRow(), tl.getEndCol());
+            codeArea.scrollXToPixel(0);
+            codeArea.requestFollowCaret();
+        }
+        else {
+            log.warn("No anchor to locate");
+        }
+    }
 
     @Override
     public void searchNext(String keyword, TextSearchOptions options) {
