@@ -11,11 +11,8 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
-import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.core.util.FileNameUtils;
-import com.mindolph.fx.IconBuilder;
 import com.mindolph.fx.TabManager;
-import com.mindolph.fx.constant.IconName;
 import com.mindolph.fx.editor.EditorFactory;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -238,15 +235,21 @@ public class FileTabView extends BaseView {
 
     private void locateInEditor(BaseEditor editor, NodeData fileData) {
         // locate searched keyword in file
-        if (fileData.getSearchParams() != null && StringUtils.isNotBlank(fileData.getSearchParams().getKeywords())) {
-            log.debug("Locate matched keyword in file: " + fileData.getSearchParams());
-            TextSearchOptions textSearchOptions = new TextSearchOptions(fileData.getSearchParams().isCaseSensitive());
-            textSearchOptions.setInTopic(true);
-            textSearchOptions.setInNote(true);
-            textSearchOptions.setInUrl(true);
-            textSearchOptions.setInFileLink(true);
-            editor.searchNext(fileData.getSearchParams().getKeywords(), textSearchOptions);
+        if (fileData.getAnchor() != null) {
+            editor.locate(fileData.getAnchor());
         }
+        else {
+            log.warn("No target to locate");
+        }
+//        if (fileData.getSearchParams() != null && StringUtils.isNotBlank(fileData.getSearchParams().getKeywords())) {
+//            log.debug("Locate matched keyword in file: " + fileData.getSearchParams());
+//            TextSearchOptions textSearchOptions = new TextSearchOptions(fileData.getSearchParams().isCaseSensitive());
+//            textSearchOptions.setInTopic(true);
+//            textSearchOptions.setInNote(true);
+//            textSearchOptions.setInUrl(true);
+//            textSearchOptions.setInFileLink(true);
+//            editor.searchNext(fileData.getSearchParams().getKeywords(), textSearchOptions);
+//        }
     }
 
     public ContextMenu createContextMenuForTab(Tab selectedTab) {

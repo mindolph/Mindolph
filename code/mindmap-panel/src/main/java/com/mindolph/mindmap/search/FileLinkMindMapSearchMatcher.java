@@ -3,6 +3,7 @@ package com.mindolph.mindmap.search;
 import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.TopicFinder;
+import com.mindolph.core.search.MatchedItem;
 import com.mindolph.core.search.SearchMatcher;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.mindmap.RootTopicCreator;
@@ -58,7 +59,7 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
     }
 
     @Override
-    public List<String> getMatched() {
+    public List<MatchedItem> getMatched() {
         return null;
     }
 }

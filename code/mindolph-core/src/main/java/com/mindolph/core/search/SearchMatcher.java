@@ -12,5 +12,5 @@ public interface SearchMatcher {
 
     boolean matches(File file, SearchParams searchParams);
 
-    List<String> getMatched();
+    List<MatchedItem> getMatched();
 }

@@ -259,6 +259,12 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         return result;
     }
 
+    /**
+     * Search in the tree.
+     *
+     * @param topic
+     * @return
+     */
     public boolean containTopic(T topic) {
         boolean result = false;
 
@@ -529,6 +535,10 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
     public boolean isLastChild(T t) {
         return !this.getChildren().isEmpty() && this.getChildren().get(this.getChildren().size() - 1) == t;
+    }
+
+    public boolean isLeaf() {
+        return !hasChildren();
     }
 
     public boolean removeExtra(Extra.ExtraType... types) {

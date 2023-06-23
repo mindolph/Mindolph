@@ -21,8 +21,8 @@ import java.util.List;
 public class TextNavigator {
 
     private String text;
-    private List<String> lines;
-    private final List<Range<Integer>> ranges = new ArrayList<>();
+    protected List<String> lines;
+    protected final List<Range<Integer>> ranges = new ArrayList<>();
     private Integer cursor;
 
     /**
@@ -130,7 +130,7 @@ public class TextNavigator {
      * @param end   end pos in text.
      * @return
      */
-    private TextLocation convert(int start, int end) {
+    public TextLocation convert(int start, int end) {
         Pair<Integer, Integer> pairStart = this.convert(start);
         Pair<Integer, Integer> pairEnd = this.convert(end);
         if (pairStart == null || pairEnd == null) {

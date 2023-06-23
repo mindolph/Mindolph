@@ -1,9 +1,6 @@
 package com.mindolph.mindmap;
 
-import com.igormaznitsa.mindmap.model.Extra;
-import com.igormaznitsa.mindmap.model.ExtraFile;
-import com.igormaznitsa.mindmap.model.MMapURI;
-import com.igormaznitsa.mindmap.model.MindMap;
+import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -12,6 +9,8 @@ import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.Anchor;
+import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.event.MindmapEvents;
@@ -19,7 +18,7 @@ import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.core.search.SearchUtils;
+import com.mindolph.mindmap.search.MindMapAnchor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
@@ -137,6 +136,25 @@ public class MindMapEditor extends BaseEditor {
             }
         }
         return extraOptions;
+    }
+
+    @Override
+    public void locate(Anchor anchor) {
+        Optional<TopicNode> firstInTree = Optional.empty();
+        if (anchor instanceof MindMapAnchor ma) {
+            log.debug("Try to locate topic: %s(%s)".formatted(ma.getText(), ma.getParentText()));
+            firstInTree = this.getMindMapModel().findFirstInTree(t -> {
+                log.debug("  %s".formatted(t.getText()));
+                return ma.getText().equals(t.getText()) && ma.getParentText().equals(t.getParent().getText());
+            });
+        }
+        if (firstInTree.isPresent()) {
+            log.debug("Find topic node: " + firstInTree.get().getText());
+            this.mindMapView.selectAndUpdate(firstInTree.get(), false);
+        }
+        else {
+            log.warn("Couldn't locate any topic for: " + anchor);
+        }
     }
 
     @Override

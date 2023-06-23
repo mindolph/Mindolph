@@ -13,6 +13,7 @@ import com.mindolph.base.event.EventBus.MenuTag;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.core.util.IoUtils;
 import com.mindolph.csv.undo.UndoService;
@@ -337,6 +338,18 @@ public class CsvEditor extends BaseEditor implements Initializable {
         Font defFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_CSV_EDITOR);
         Font font = fxPreferences.getPreference(FontConstants.KEY_CSV_EDITOR, Font.class, defFont);
         tableView.setStyle(FontUtils.fontToCssStyle(font));
+    }
+
+    @Override
+    public void locate(Anchor anchor) {
+        if (anchor instanceof CsvAnchor ca) {
+            log.debug("Select %d - %d".formatted(ca.getRow(), ca.getCol()));
+            tableView.getSelectionModel().clearSelection();
+            tableView.getSelectionModel().select(ca.getRow(), tableView.getColumns().get(ca.getCol()));
+        }
+        else {
+            log.warn("No anchor to locate");
+        }
     }
 
     private void doReload() {

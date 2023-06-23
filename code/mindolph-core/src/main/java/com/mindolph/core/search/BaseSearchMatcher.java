@@ -20,7 +20,7 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
 
     protected boolean returnContextEnabled;
 
-    protected List<String> matched;
+    protected List<MatchedItem> matched;
 
     public BaseSearchMatcher(boolean returnContextEnabled) {
         this.returnContextEnabled = returnContextEnabled;
@@ -65,14 +65,14 @@ public abstract class BaseSearchMatcher implements SearchMatcher {
         return extractInText(normalText, start, end, extraSize);
     }
 
-    protected void addMatched(String matched) {
+    protected void addMatched(MatchedItem matched) {
         if (this.matched == null) {
             this.matched = new ArrayList<>();
         }
         this.matched.add(matched);
     }
 
-    public List<String> getMatched() {
+    public List<MatchedItem> getMatched() {
         return matched;
     }
 

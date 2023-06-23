@@ -24,6 +24,7 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
+import com.mindolph.csv.CsvMatcher;
 import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
 import com.mindolph.fx.dialog.UsageDialog;
@@ -325,6 +326,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     this.loadWorkspaces(WorkspaceManager.getIns().getWorkspaceList());
                 });
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
+        SearchService.getIns().registerMatcher(TYPE_CSV, new CsvMatcher(true));
         SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
     }
 

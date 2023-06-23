@@ -2,6 +2,7 @@ package com.mindolph.fx.control;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.core.search.MatchedItem;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.util.DisplayUtils;
 import com.mindolph.mfx.util.FontUtils;
@@ -48,23 +49,26 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                     else {
                         // highlight the searching keyword in the result.
                         TextFlow textFlow = new TextFlow();
-                        String normalText = item.getInfo();
-                        Matcher matcher = searchParams.getPattern().matcher(normalText);
-                        int last = 0;
-                        while (matcher.find()) {
-                            int start = matcher.start();
-                            int end = matcher.end();
-                            if (start > 0) {
-                                String pre = substring(normalText, last, start);
-                                String kw = substring(normalText, start, end);
-                                textFlow.getChildren().add(new Text(pre));
-                                textFlow.getChildren().add(hitText(kw));
-                                last = end;
+                        MatchedItem matchedItem = item.getMatchedItem();
+                        if (matchedItem != null) {
+                            String normalText = matchedItem.getContextText();
+                            Matcher matcher = searchParams.getPattern().matcher(normalText);
+                            int last = 0;
+                            while (matcher.find()) {
+                                int start = matcher.start();
+                                int end = matcher.end();
+                                if (start > 0) {
+                                    String pre = substring(normalText, last, start);
+                                    String kw = substring(normalText, start, end);
+                                    textFlow.getChildren().add(new Text(pre));
+                                    textFlow.getChildren().add(hitText(kw));
+                                    last = end;
+                                }
                             }
+                            String past = substring(normalText, last, normalText.length());
+                            textFlow.getChildren().add(new Text(past));
+                            setGraphic(textFlow);
                         }
-                        String past = substring(normalText, last, normalText.length());
-                        textFlow.getChildren().add(new Text(past));
-                        setGraphic(textFlow);
                     }
                 }
                 else {
@@ -86,17 +90,17 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
     public static class FileTreeViewData {
         private final boolean isParent;
         private File file;
-        private String info;
+        private MatchedItem matchedItem;
 
         public FileTreeViewData(boolean isParent, File file) {
             this.isParent = isParent;
             this.file = file;
         }
 
-        public FileTreeViewData(boolean isParent, File file, String info) {
+        public FileTreeViewData(boolean isParent, File file, MatchedItem matchedItem) {
             this.isParent = isParent;
             this.file = file;
-            this.info = info;
+            this.matchedItem = matchedItem;
         }
 
         public boolean isParent() {
@@ -111,12 +115,12 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
             this.file = file;
         }
 
-        public String getInfo() {
-            return info;
+        public MatchedItem getMatchedItem() {
+            return matchedItem;
         }
 
-        public void setInfo(String info) {
-            this.info = info;
+        public void setMatchedItem(MatchedItem matchedItem) {
+            this.matchedItem = matchedItem;
         }
     }
 }

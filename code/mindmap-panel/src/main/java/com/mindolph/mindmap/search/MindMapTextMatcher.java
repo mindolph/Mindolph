@@ -4,11 +4,15 @@ import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.TopicFinder;
 import com.mindolph.core.search.BaseSearchMatcher;
+import com.mindolph.core.search.MatchedItem;
 import com.mindolph.core.search.SearchParams;
+import com.mindolph.core.util.FunctionUtils;
 import com.mindolph.mindmap.RootTopicCreator;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.model.TopicNode;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +20,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,8 @@ import java.util.stream.Collectors;
  * @author mindolph.com@gmail.com
  */
 public class MindMapTextMatcher extends BaseSearchMatcher {
+
+    private static final Logger log = LoggerFactory.getLogger(MindMapTextMatcher.class);
 
     private static final String NODE_CONNECTOR = " → ";
     private Set<Extra.ExtraType> extras;
@@ -36,6 +41,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
     @Override
     public boolean matches(File file, SearchParams searchParams) {
         super.matches(file, searchParams);
+        log.debug("try match in file: " + file);
         if (this.extras == null) {
             this.extras = EnumSet.noneOf(Extra.ExtraType.class);
             extras.add(Extra.ExtraType.TOPIC);
@@ -52,21 +58,21 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
             Map<TopicNode, String> foundMap = new HashMap<>();// store found topic and remove if it's sub-topic found.
             TopicNode next = mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS);
             boolean contained = false;
-            BiFunction<String, String, Boolean> contains = searchParams.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
             while (next != null) {
                 contained = true;
+                log.debug("found topic: " + StringUtils.abbreviate(next.getText(), 100));
                 if (returnContextEnabled) {
                     List<TopicNode> pathNodes = next.getPath();
                     pathNodes.remove(pathNodes.size() - 1);
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
                             .collect(Collectors.joining(NODE_CONNECTOR));
 
-                    if (contains.apply(next.getText(), searchParams.getKeywords())) {
+                    if (FunctionUtils.textContains(searchParams.isCaseSensitive()).apply(next.getText(), searchParams.getKeywords())) {
                         String text = path + NODE_CONNECTOR + super.extractInText(searchParams, next.getText(), 32);
                         removeAncestor(foundMap, next);
                         foundMap.put(next, text);
                     }
-                    else{
+                    else {
                         String text = path + NODE_CONNECTOR + StringUtils.abbreviate(next.getText(), 64);
                         for (Extra<?> extra : next.getExtras().values()) {
                             if (extra.containsPattern(file.getParentFile(), pattern)) {
@@ -80,7 +86,10 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                 }
                 next = mindMap.findNext(file.getParentFile(), next, pattern, true, extras, TOPIC_FINDERS);
             }
-            super.matched.addAll(foundMap.values());
+            if (returnContextEnabled) {
+                List<MatchedItem> matched = foundMap.keySet().stream().map(t -> new MatchedItem(foundMap.get(t), createAnchor(t))).toList();
+                super.matched.addAll(matched);
+            }
             return contained;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -88,6 +97,12 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
         return false;
     }
 
+    private MindMapAnchor createAnchor(TopicNode topicNode) {
+        MindMapAnchor anchor = new MindMapAnchor();
+        anchor.setText(topicNode.getText());
+        anchor.setParentText(topicNode.getParent().getText());
+        return anchor;
+    }
 
     /**
      * remove topicNode's ancestor;

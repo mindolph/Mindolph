@@ -10,9 +10,9 @@ import java.util.List;
 public class FoundFile {
 
     private File file;
-    private List<String> infos;
+    private List<MatchedItem> infos;
 
-    public FoundFile(File file, List<String> infos) {
+    public FoundFile(File file, List<MatchedItem> infos) {
         this.file = file;
         this.infos = infos;
     }
@@ -25,11 +25,11 @@ public class FoundFile {
         this.file = file;
     }
 
-    public List<String> getInfos() {
+    public List<MatchedItem> getInfos() {
         return infos;
     }
 
-    public void setInfos(List<String> infos) {
+    public void setInfos(List<MatchedItem> infos) {
         this.infos = infos;
     }
 }

@@ -4,6 +4,7 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.event.EditorReadyEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
+import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ public interface Editable {
      * @return
      */
     Map<String, SearchBar.ExtraOption> createSearchOptions(boolean[] enables);
+
+    void locate(Anchor anchor);
 
     void searchNext(String keyword, TextSearchOptions options);
 

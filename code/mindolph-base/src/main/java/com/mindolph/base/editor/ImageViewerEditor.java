@@ -4,6 +4,7 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.ImageScrollPane;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
+import com.mindolph.core.search.Anchor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -34,6 +35,11 @@ public class ImageViewerEditor extends BaseViewerEditor {
         this.scrollableImageView.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
             EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("%.0f%%".formatted(newValue.doubleValue() * 100)));
         });
+    }
+
+    @Override
+    public void locate(Anchor anchor) {
+        // DO NOTHING.
     }
 
     public Image getImage() {

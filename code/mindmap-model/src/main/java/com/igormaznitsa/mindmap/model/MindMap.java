@@ -24,6 +24,8 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -133,9 +135,7 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
 
-    public T findNext(File baseFolder, T start,
-                      Pattern pattern, boolean findInTopicText,
-                      Set<Extra.ExtraType> extrasToFind) {
+    public T findNext(File baseFolder, T start, Pattern pattern, boolean findInTopicText, Set<Extra.ExtraType> extrasToFind) {
         return this.findNext(baseFolder, start, pattern, findInTopicText, extrasToFind, null);
     }
 
@@ -149,11 +149,11 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         }
 
         boolean findPluginNote = (extrasToFind != null && !extrasToFind.isEmpty())
-                && (topicFinders != null && !topicFinders.isEmpty())
-                && extrasToFind.contains(Extra.ExtraType.NOTE);
+                                 && (topicFinders != null && !topicFinders.isEmpty())
+                                 && extrasToFind.contains(Extra.ExtraType.NOTE);
         boolean findPluginFile = (extrasToFind != null && !extrasToFind.isEmpty())
-                && (topicFinders != null && !topicFinders.isEmpty())
-                && extrasToFind.contains(Extra.ExtraType.FILE);
+                                 && (topicFinders != null && !topicFinders.isEmpty())
+                                 && extrasToFind.contains(Extra.ExtraType.FILE);
 
         T result = null;
 
@@ -356,25 +356,6 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
 
-    public List<T> removeNonExistingTopics(List<T> origList) {
-        List<T> result = new ArrayList<>();
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                for (T t : origList) {
-                    if (rootTopic.containTopic(t)) {
-                        result.add(t);
-                    }
-                }
-            } finally {
-                this.unlock();
-            }
-        }
-        return result;
-    }
-
-
     public T getRoot() {
         this.lock();
         try {
@@ -492,6 +473,73 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         }
     }
 
+    /**
+     * @param consumer
+     * @since 1.3.4
+     */
+    public void traverseTopicTree(Consumer<T> consumer) {
+        traverseTopicTree(this.root, consumer);
+    }
+
+    public void traverseTopicTree(T parent, Consumer<T> consumer) {
+        consumer.accept(parent);
+        List<T> children = parent.getChildren();
+        if (children != null) {
+            children.forEach(child -> traverseTopicTree(child, consumer));
+        }
+    }
+
+    /**
+     * @param predicate
+     * @since 1.3.4
+     */
+    public boolean anyMatchInTree(Predicate<T> predicate) {
+        return this.anyMatchInTree(this.root, predicate);
+    }
+
+    public boolean anyMatchInTree(T parent, Predicate<T> predicate) {
+        if (predicate.test(parent)) {
+            return true;
+        }
+        List<T> children = parent.getChildren();
+        if (children != null) {
+            for (T child : children) {
+                if (anyMatchInTree(child, predicate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param predicate
+     * @since 1.3.4
+     */
+    public Optional<T> findFirstInTree(Predicate<T> predicate) {
+        return this.findFirstInTree(this.root, predicate);
+    }
+
+    public Optional<T> findFirstInTree(T parent, Predicate<T> predicate) {
+        if (predicate.test(parent)) {
+            return Optional.ofNullable(parent);
+        }
+        List<T> children = parent.getChildren();
+        if (children != null) {
+            for (T child : children) {
+                if (predicate.test(child)) {
+                    return Optional.ofNullable(child);
+                }
+                else {
+                    Optional<T> inChildren = findFirstInTree(child, predicate);
+                    if (inChildren.isPresent()) {
+                        return inChildren;
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
 
     public T findTopicForLink(ExtraTopic link) {
         T result = null;
@@ -509,30 +557,19 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         return result;
     }
 
-
+    /**
+     * @param type
+     * @return
+     * @deprecated
+     */
     public List<T> findAllTopicsForExtraType(Extra.ExtraType type) {
         List<T> result = new ArrayList<>();
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                _findAllTopicsForExtraType(rootTopic, type, result);
-            } finally {
-                this.unlock();
+        this.traverseTopicTree(this.root, topics -> {
+            if (topics.getExtras().containsKey(type)) {
+                result.add(topics);
             }
-        }
+        });
         return result;
-    }
-
-    private void _findAllTopicsForExtraType(T topic,
-                                            Extra.ExtraType type,
-                                            List<T> result) {
-        if (topic.getExtras().containsKey(type)) {
-            result.add(topic);
-        }
-        for (T c : topic.getChildren()) {
-            _findAllTopicsForExtraType(c, type, result);
-        }
     }
 
 
@@ -543,57 +580,6 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     public int getChildCount(T parent) {
         return parent.getChildren().size();
     }
-
-    public boolean isLeaf(T node) {
-        return !node.hasChildren();
-    }
-
-    public int getIndexOfChild(T parent, T child) {
-        return parent.getChildren().indexOf(child);
-    }
-
-    public boolean doesContainFileLink(File baseFolder, MMapURI file) {
-        boolean result = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                return rootTopic.doesContainFileLink(baseFolder, file);
-            } finally {
-                this.unlock();
-            }
-        }
-        return result;
-    }
-
-    public boolean deleteAllLinksToFile(File baseFolder, MMapURI file) {
-        boolean changed = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                changed = rootTopic.deleteLinkToFileIfPresented(baseFolder, file);
-            } finally {
-                this.unlock();
-            }
-        }
-        return changed;
-    }
-
-    public boolean replaceAllLinksToFile(File baseFolder, MMapURI oldFile, MMapURI newFile) {
-        boolean changed = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                changed = rootTopic.replaceLinkToFileIfPresented(baseFolder, oldFile, newFile);
-            } finally {
-                this.unlock();
-            }
-        }
-        return changed;
-    }
-
 
     public List<T> makePlainList() {
         this.lock();

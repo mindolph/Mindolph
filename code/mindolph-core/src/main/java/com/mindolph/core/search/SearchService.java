@@ -24,7 +24,7 @@ public class SearchService {
     private final Logger log = LoggerFactory.getLogger(SearchService.class);
 
     // for searching content in files
-    private final Map<String, SearchMatcher> matchers = new HashMap<>();
+    private final Map<String, SearchMatcher> textMatchers = new HashMap<>();
     // for searching file links in files
     private final Map<String, SearchMatcher> fileLinkMatchers = new HashMap<>();
 
@@ -34,10 +34,9 @@ public class SearchService {
 
     private SearchService() {
         SearchMatcher pureFileMatcher = new CodeSearchMatcher(true);
-        this.matchers.put(TYPE_PLAIN_TEXT, pureFileMatcher);
-        this.matchers.put(TYPE_MARKDOWN, pureFileMatcher);
-        this.matchers.put(TYPE_PLANTUML, pureFileMatcher);
-        this.matchers.put(TYPE_CSV, pureFileMatcher);
+        this.textMatchers.put(TYPE_PLAIN_TEXT, pureFileMatcher);
+        this.textMatchers.put(TYPE_MARKDOWN, pureFileMatcher);
+        this.textMatchers.put(TYPE_PLANTUML, pureFileMatcher);
         // for file links (plantuml is not supported yet)
         FileLinkSearchMatcher fileLinkSearchMatcher = new FileLinkSearchMatcher();
         this.fileLinkMatchers.put(TYPE_PLAIN_TEXT, fileLinkSearchMatcher);
@@ -73,7 +72,7 @@ public class SearchService {
         if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {
             List<FoundFile> foundList = new ArrayList<>();
             for (File file : files) {
-                SearchMatcher searchMatch = this.matchers.get(FilenameUtils.getExtension(file.getPath()));
+                SearchMatcher searchMatch = this.textMatchers.get(FilenameUtils.getExtension(file.getPath()));
                 if (searchMatch != null && searchMatch.matches(file, searchParams)) {
                     foundList.add(new FoundFile(file, searchMatch.getMatched()));
                 }
@@ -118,7 +117,7 @@ public class SearchService {
     }
 
     public void registerMatcher(String fileType, SearchMatcher matcher) {
-        this.matchers.put(fileType, matcher);
+        this.textMatchers.put(fileType, matcher);
     }
 
     public void registerFileLinkMatcher(String fileType, SearchMatcher matcher) {
