@@ -140,14 +140,14 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public void locate(Anchor anchor) {
-        Optional<Topic<?>> firstInTree = this.getMindMapModel().findFirstInTree(t -> {
+        Optional<TopicNode> firstInTree = this.getMindMapModel().findFirstInTree(t -> {
             if (anchor instanceof MindMapAnchor ma) {
                 return ma.getText().equals(t.getText()) && ma.getParentText().equals(t.getParent().getText());
             }
             return false;
         });
         if (firstInTree.isPresent()) {
-            this.mindMapView.selectAndUpdate((TopicNode) firstInTree.get(), false);
+            this.mindMapView.selectAndUpdate(firstInTree.get(), false);
         }
         else {
             log.warn("Couldn't locate any topic for: " + anchor);

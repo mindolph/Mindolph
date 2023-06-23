@@ -356,25 +356,6 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
 
-    public List<T> removeNonExistingTopics(List<T> origList) {
-        List<T> result = new ArrayList<>();
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                for (T t : origList) {
-                    if (rootTopic.containTopic(t)) {
-                        result.add(t);
-                    }
-                }
-            } finally {
-                this.unlock();
-            }
-        }
-        return result;
-    }
-
-
     public T getRoot() {
         this.lock();
         try {
@@ -496,13 +477,13 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
      * @param consumer
      * @since 1.3.4
      */
-    public void traverseTopicTree(Consumer<Topic<?>> consumer) {
+    public void traverseTopicTree(Consumer<T> consumer) {
         traverseTopicTree(this.root, consumer);
     }
 
-    public void traverseTopicTree(Topic<?> parent, Consumer<Topic<?>> consumer) {
+    public void traverseTopicTree(T parent, Consumer<T> consumer) {
         consumer.accept(parent);
-        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        List<T> children = parent.getChildren();
         if (children != null) {
             children.forEach(child -> traverseTopicTree(child, consumer));
         }
@@ -512,17 +493,17 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
      * @param predicate
      * @since 1.3.4
      */
-    public boolean anyMatchInTree(Predicate<Topic<?>> predicate) {
+    public boolean anyMatchInTree(Predicate<T> predicate) {
         return this.anyMatchInTree(this.root, predicate);
     }
 
-    public boolean anyMatchInTree(Topic<?> parent, Predicate<Topic<?>> predicate) {
+    public boolean anyMatchInTree(T parent, Predicate<T> predicate) {
         if (predicate.test(parent)) {
             return true;
         }
-        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        List<T> children = parent.getChildren();
         if (children != null) {
-            for (Topic<?> child : children) {
+            for (T child : children) {
                 if (anyMatchInTree(child, predicate)) {
                     return true;
                 }
@@ -535,17 +516,17 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
      * @param predicate
      * @since 1.3.4
      */
-    public Optional<Topic<?>> findFirstInTree(Predicate<Topic<?>> predicate) {
+    public Optional<T> findFirstInTree(Predicate<T> predicate) {
         return this.findFirstInTree(this.root, predicate);
     }
 
-    public Optional<Topic<?>> findFirstInTree(Topic<?> parent, Predicate<Topic<?>> predicate) {
+    public Optional<T> findFirstInTree(T parent, Predicate<T> predicate) {
         if (predicate.test(parent)) {
             return Optional.ofNullable(parent);
         }
-        List<Topic<?>> children = (List<Topic<?>>) parent.getChildren();
+        List<T> children = parent.getChildren();
         if (children != null) {
-            for (Topic<?> child : children) {
+            for (T child : children) {
                 if (findFirstInTree(child, predicate).isPresent()) {
                     return Optional.ofNullable(child);
                 }
@@ -570,28 +551,19 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         return result;
     }
 
-
+    /**
+     * @deprecated
+     * @param type
+     * @return
+     */
     public List<T> findAllTopicsForExtraType(Extra.ExtraType type) {
         List<T> result = new ArrayList<>();
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                _findAllTopicsForExtraType(rootTopic, type, result);
-            } finally {
-                this.unlock();
+        this.traverseTopicTree(this.root, topics -> {
+            if (topics.getExtras().containsKey(type)) {
+                result.add(topics);
             }
-        }
+        });
         return result;
-    }
-
-    private void _findAllTopicsForExtraType(T topic, Extra.ExtraType type, List<T> result) {
-        if (topic.getExtras().containsKey(type)) {
-            result.add(topic);
-        }
-        for (T c : topic.getChildren()) {
-            _findAllTopicsForExtraType(c, type, result);
-        }
     }
 
 
@@ -602,57 +574,6 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     public int getChildCount(T parent) {
         return parent.getChildren().size();
     }
-
-    public boolean isLeaf(T node) {
-        return !node.hasChildren();
-    }
-
-    public int getIndexOfChild(T parent, T child) {
-        return parent.getChildren().indexOf(child);
-    }
-
-    public boolean doesContainFileLink(File baseFolder, MMapURI file) {
-        boolean result = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                return rootTopic.doesContainFileLink(baseFolder, file);
-            } finally {
-                this.unlock();
-            }
-        }
-        return result;
-    }
-
-    public boolean deleteAllLinksToFile(File baseFolder, MMapURI file) {
-        boolean changed = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                changed = rootTopic.deleteLinkToFileIfPresented(baseFolder, file);
-            } finally {
-                this.unlock();
-            }
-        }
-        return changed;
-    }
-
-    public boolean replaceAllLinksToFile(File baseFolder, MMapURI oldFile, MMapURI newFile) {
-        boolean changed = false;
-        T rootTopic = this.root;
-        if (rootTopic != null) {
-            this.lock();
-            try {
-                changed = rootTopic.replaceLinkToFileIfPresented(baseFolder, oldFile, newFile);
-            } finally {
-                this.unlock();
-            }
-        }
-        return changed;
-    }
-
 
     public List<T> makePlainList() {
         this.lock();

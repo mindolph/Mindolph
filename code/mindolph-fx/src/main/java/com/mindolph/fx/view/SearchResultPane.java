@@ -22,6 +22,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,8 +133,11 @@ public class SearchResultPane extends AnchorPane {
      */
     private void reSearch() {
         log.debug("reSearch()");
-        progressIndicator.setVisible(true);
         String keyword = searchParams.getKeywords();
+        if (StringUtils.isBlank(keyword)) {
+            return;
+        }
+        progressIndicator.setVisible(true);
         IOFileFilter newFileFilter = searchParams.getSearchFilter();
         AsyncUtils.fxAsync(() -> {
             foundFiles = SearchService.getIns().searchInFilesIn(searchParams.getSearchInDir(), newFileFilter, searchParams);
