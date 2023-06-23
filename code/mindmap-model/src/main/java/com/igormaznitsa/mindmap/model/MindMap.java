@@ -149,11 +149,11 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         }
 
         boolean findPluginNote = (extrasToFind != null && !extrasToFind.isEmpty())
-                && (topicFinders != null && !topicFinders.isEmpty())
-                && extrasToFind.contains(Extra.ExtraType.NOTE);
+                                 && (topicFinders != null && !topicFinders.isEmpty())
+                                 && extrasToFind.contains(Extra.ExtraType.NOTE);
         boolean findPluginFile = (extrasToFind != null && !extrasToFind.isEmpty())
-                && (topicFinders != null && !topicFinders.isEmpty())
-                && extrasToFind.contains(Extra.ExtraType.FILE);
+                                 && (topicFinders != null && !topicFinders.isEmpty())
+                                 && extrasToFind.contains(Extra.ExtraType.FILE);
 
         T result = null;
 
@@ -527,8 +527,14 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         List<T> children = parent.getChildren();
         if (children != null) {
             for (T child : children) {
-                if (findFirstInTree(child, predicate).isPresent()) {
+                if (predicate.test(child)) {
                     return Optional.ofNullable(child);
+                }
+                else {
+                    Optional<T> inChildren = findFirstInTree(child, predicate);
+                    if (inChildren.isPresent()) {
+                        return inChildren;
+                    }
                 }
             }
         }
@@ -552,9 +558,9 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
     /**
-     * @deprecated
      * @param type
      * @return
+     * @deprecated
      */
     public List<T> findAllTopicsForExtraType(Extra.ExtraType type) {
         List<T> result = new ArrayList<>();
