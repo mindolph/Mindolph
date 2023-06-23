@@ -46,8 +46,9 @@ public class CsvMatcher extends BaseSearchMatcher {
                         if (FunctionUtils.textContains(searchParams.isCaseSensitive()).apply(cellText, searchParams.getKeywords())) {
                             contains = true;
                             if (returnContextEnabled) {
-                                MatchedItem mi = new MatchedItem(StringUtils.join(record.values(), "|"), new CsvAnchor(i, j + 1 )); // column + 1 because the Index column
+                                MatchedItem mi = new MatchedItem(StringUtils.join(record.values(), " | "), new CsvAnchor(i, j + 1 )); // column + 1 because the Index column
                                 super.matched.add(mi);
+                                break; // stop read more cells because it's no need, just go to next row.
                             }
                         }
                         else {
