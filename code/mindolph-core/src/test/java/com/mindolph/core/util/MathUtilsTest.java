@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
  */
 class MathUtilsTest {
 
+    /**
+     * @deprecated
+     */
     @Test
     void equalsIgnoreScale() {
         Assertions.assertTrue(MathUtils.equalsIgnoreScale(0.5004553734061931f, 0.5001, 2));

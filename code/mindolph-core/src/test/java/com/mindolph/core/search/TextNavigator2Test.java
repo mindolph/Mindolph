@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author mindolph.com@gmail.com
  * @since 1.3.4
+ * @deprecated
  */
 public class TextNavigator2Test {
 

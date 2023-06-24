@@ -1,17 +1,15 @@
 package com.mindolph.core.search;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.swiftboot.util.TextUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Navigation in text forward and backward.
@@ -34,18 +32,15 @@ public class TextNavigator {
     public void setText(String text, boolean resetCursor) {
         if (!StringUtils.equals(this.text, text)) {
             this.text = text;
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes());
-            try {
-                lines = IOUtils.readLines(byteArrayInputStream, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Pattern linePattern = Pattern.compile("\n");
+            Matcher matcher = linePattern.matcher(text);
+            int last = 0;
             ranges.clear();
-            int pos = 0;
-            for (String line : lines) {
-                ranges.add(Range.between(pos, pos + line.length()));
-                pos += line.length() + 1; //to next line
+            while (matcher.find()) {
+                ranges.add(Range.between(last, matcher.start()));
+                last = matcher.end();
             }
+            ranges.add(Range.between(last, text.length()));
         }
         if (resetCursor) cursor = null; // reset the cursor
     }
@@ -80,6 +75,9 @@ public class TextNavigator {
             Range<Integer> range = ranges.get(row);
             if (col < range.getMaximum()) {
                 cursor = range.getMinimum() + col;
+            }
+            else {
+                cursor = range.getMaximum();
             }
         }
     }

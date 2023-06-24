@@ -10,7 +10,15 @@ class TextNavigatorTest {
 
     private final String text1 = "0123456789\nabcdefghij\n0123456789";
     private final String text2 = "#####";
-
+    private final String text3 = """
+            0123456789
+            0123456789
+            0123456789
+            """;
+    private final String text4 = """
+            0123456789  0123456789  0123456789
+            0123456789  0123456789  0123456789
+            """;// with 2 blank chars
     @Test
     void locateNext() {
         TextNavigator textNavigator = new TextNavigator();
@@ -98,5 +106,27 @@ class TextNavigatorTest {
         textNavigator.setText(text2, true);
         TextLocation loc = textNavigator.locateNext("##", false);
         Assertions.assertEquals("0 0 0 1", loc.toString());
+    }
+
+
+    @Test
+    public void convert() {
+        TextNavigator navigator = new TextNavigator();
+        navigator.setText(text3, false);
+        Assertions.assertEquals(new TextLocation(0, 5, 0, 8), navigator.convert(5, 8));
+        Assertions.assertEquals(new TextLocation(1, 5, 1, 8), navigator.convert(16, 19));
+        Assertions.assertEquals(new TextLocation(2, 5, 2, 8), navigator.convert(27, 30));
+    }
+
+    @Test
+    public void convertWithBlank() {
+        TextNavigator navigator = new TextNavigator();
+        navigator.setText(text4, false);
+        Assertions.assertEquals(new TextLocation(0, 5, 0, 8), navigator.convert(5, 8));
+        Assertions.assertEquals(new TextLocation(0, 17, 0, 20), navigator.convert(17, 20));
+        Assertions.assertEquals(new TextLocation(0, 29, 0, 32), navigator.convert(29, 32));
+        Assertions.assertEquals(new TextLocation(1, 5, 1, 8), navigator.convert(40, 43));
+        Assertions.assertEquals(new TextLocation(1, 17, 1, 20), navigator.convert(52, 55));
+        Assertions.assertEquals(new TextLocation(1, 29, 1, 32), navigator.convert(64, 67));
     }
 }

@@ -23,6 +23,6 @@ public class DisplayUtils {
     }
 
     public static String displayFile(File workspaceDir, File file) {
-        return StringUtils.substringAfter(file.getPath(), workspaceDir.getPath());
+        return StringUtils.substringAfter(file.getPath(), StringUtils.appendIfMissing(workspaceDir.getPath(), "/"));
     }
 }

@@ -30,8 +30,8 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
             Matcher matcher = searchParams.getPattern().matcher(text);
             boolean contains = false;
             int last = 0;// to skip matched positions that already be extracted in previous.
-            TextNavigator2 navigator2 = new TextNavigator2();
-            navigator2.setText(text, false);
+            TextNavigator navigator = new TextNavigator();
+            navigator.setText(text, false);
             while (matcher.find()) {
                 contains = true;
                 if (!returnContextEnabled) {
@@ -44,7 +44,7 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
                 }
                 log.debug(String.format("matched: %d - %d", start, end));
                 String matched = super.extractInText(text, start, end, 64);
-                super.addMatched(new MatchedItem(SearchUtils.normalizeSpace(matched), new TextAnchor(navigator2.convert(start, end))));
+                super.addMatched(new MatchedItem(SearchUtils.normalizeSpace(matched), new TextAnchor(navigator.convert(start, end))));
                 last = end + 64 - searchParams.getKeywords().length(); // 3 is for `...`
             }
             return contains;
