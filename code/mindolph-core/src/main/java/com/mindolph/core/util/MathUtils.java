@@ -14,6 +14,7 @@ public class MathUtils {
      * @param a
      * @param b
      * @return
+     * @deprecated
      */
     public static int doubleAddToInt(double a, double b) {
         return (int) (a + b);
@@ -26,6 +27,7 @@ public class MathUtils {
      * @param b
      * @param scale
      * @return
+     * @deprecated
      */
     public static boolean equalsIgnoreScale(double a, double b, int scale) {
         return BigDecimal.valueOf(a).setScale(scale, RoundingMode.DOWN)

@@ -1,5 +1,16 @@
 # Release Notes
 
+### V1.3.4 Unstable Release
+* Improvement: "Find in Files" functionality is improved a lot
+	* the search result displays every matched text with context instead of only the first one.
+	* highlight all matching text in result items.
+	* use graphical line breaker instead in result items for code based file type(*.md, *.puml, *.txt).
+	* use graphical connector in result items for Mind Map topics.
+	* precisely locating keyword in editor for opening file from search result.
+* Fix: exception when search blank keyword in the search result panel 
+* update demo workspace.
+* Some other refactors.
+
 ### V1.3.3 Unstable Release
 * New Feature: add context menu for editing to note editor in mind map.
 * Fix: exception when dragging a file to the blank space in the workspace tree.

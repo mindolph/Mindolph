@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  * TODO to be refactored
  * @author mindolph.com@gmail.com
  * @since 1.3.4
+ * @deprecated
  */
 public class TextNavigator2 extends TextNavigator {
 

@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 public class IoUtils {
 
