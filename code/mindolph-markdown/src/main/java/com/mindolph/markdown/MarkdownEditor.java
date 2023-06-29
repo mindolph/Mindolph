@@ -175,15 +175,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
         pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
-                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
-                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
-                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
-                        + "|(?<LIST>" + LIST_PATTERN + ")"
-                        + "|(?<TABLE>" + TABLE_PATTERN + ")"
-                        + "|(?<CODE>" + CODE_PATTERN + ")"
-                        + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
-                        + "|(?<URL>" + URL_PATTERN + ")"
+                + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
+                + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
+                + "|(?<BOLD>" + BOLD_PATTERN + ")"
+                + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
+                + "|(?<LIST>" + LIST_PATTERN + ")"
+                + "|(?<TABLE>" + TABLE_PATTERN + ")"
+                + "|(?<CODE>" + CODE_PATTERN + ")"
+                + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
+                + "|(?<URL>" + URL_PATTERN + ")"
         );
         timestamp = String.valueOf(System.currentTimeMillis());
 
@@ -693,7 +693,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             codeArea.addToSelectionHeadAndTail("```");
         }
         else if (node == btnLink) {
-            String link = "[](%s)".formatted(ClipBoardUtils.textFromClipboard());
+            String text = ClipBoardUtils.textFromClipboard();
+            String link = (UrlUtils.isValid(text) ? "[](%s)" : "[%s]()").formatted(text);
             codeArea.replaceSelection(link);
         }
         else if (node == btnTable) {
