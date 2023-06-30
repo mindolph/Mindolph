@@ -296,10 +296,13 @@ public class FileTabView extends BaseView {
                 DialogFactory.warnDialog("Can't open this file in system");
             }
         });
-        if (selectedTabUserData instanceof NodeData && ((NodeData) selectedTabUserData).isFile()) {
+        if (selectedTabUserData instanceof NodeData data && ((NodeData) selectedTabUserData).isFile()) {
             contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll,
                     new SeparatorMenuItem(), miSaveAs,
-                    new SeparatorMenuItem(), miSelectInTree, miOpenInSystem);
+                    new SeparatorMenuItem(), miSelectInTree);
+            if (!data.isMindMap()) {
+                contextMenu.getItems().add(miOpenInSystem);
+            }
         }
         else {
             contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll);
