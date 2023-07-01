@@ -1,7 +1,25 @@
 # Release Notes
 
+### V1.4.0 Unstable Relase
+* Feature: Add new toolbar for markdown editor to quickly insert or format Markdown code, including
+	* bold and italic
+	* heading from h1 to h6
+	* bullet list
+	* link URL
+	* quote block
+	* code block
+	* table
+* Improvement: 
+	* add syntax highlight of emphasis text block, list, numbered list, table for Markdown editor.
+	* improved syntax highlighting for PlantUML editor.
+
+### V1.3.5 Release
+* Fix: Context menu for file tab doesn't need `Open in System` for mind map, like menu for workspace tree item.
+* Fix: Search in editor doesn't work well in some cases.
+* Some UI fix and code refactor.
+
 ### V1.3.4 Unstable Release
-* Improvement: "Find in Files" functionality is improved a lot
+* Improvement: `Find in Files` functionality is improved a lot
 	* the search result displays every matched text with context instead of only the first one.
 	* highlight all matching text in result items.
 	* use graphical line breaker instead in result items for code based file type(*.md, *.puml, *.txt).
