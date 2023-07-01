@@ -8,6 +8,11 @@
     -fx-font-weight: bold;
 }
 
+.table {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
 .code {
     -fx-fill: green;
     -fx-font-weight: bold;
@@ -18,11 +23,7 @@
     -fx-font-weight: bold;
 }
 
-.quote {
+.md-quote {
     -fx-fill: grey;
     -fx-font-weight: bold;
-}
-
-.url {
-    -fx-fill: blue;
 }

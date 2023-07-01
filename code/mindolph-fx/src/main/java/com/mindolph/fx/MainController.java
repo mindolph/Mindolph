@@ -16,6 +16,8 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.SearchParams;
+import com.mindolph.core.util.MavenUtils;
+import com.mindolph.core.util.ReleaseUtils;
 import com.mindolph.fx.dialog.*;
 import com.mindolph.fx.helper.OpenedFileRestoreListener;
 import com.mindolph.fx.helper.SceneRestore;
@@ -31,6 +33,7 @@ import com.mindolph.mfx.BaseController;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.plantuml.PlantUmlEditor;
@@ -41,6 +44,7 @@ import javafx.fxml.Initializable;
 import javafx.print.Printer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -487,7 +491,7 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuExit(ActionEvent event) {
         Boolean requireConfirm = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         if (requireConfirm) {
-            if (!new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to quit Mindolph?").showAndWait()){
+            if (!new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to quit Mindolph?").showAndWait()) {
                 return;
             }
         }
@@ -573,6 +577,29 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onMenuShortcuts() {
         new ShortcutsDialog().showAndWait();
+    }
+
+    @FXML
+    public void onMenuCheckUpdate() {
+        ReleaseUtils.ReleaseInfo latest = ReleaseUtils.getLatestReleaseVersion();
+        String currentVersion = MavenUtils.getVersionInPom();
+        if (latest == null || currentVersion == null
+                || StringUtils.isBlank(latest.getVersion())
+                || StringUtils.isBlank(currentVersion)) {
+            log.warn("Can't get current version or latest release info");
+            return;
+        }
+
+        currentVersion = "v" + currentVersion;
+
+        if (currentVersion.compareTo(latest.getVersion()) < 0) {
+            if (StringUtils.isNotBlank(latest.getUrl())) {
+                String msg = "Found new release %s, current version is %s, do you wan to download and install?".formatted(latest.getVersion(), currentVersion);
+                if (DialogFactory.yesNoConfirmDialog("New updates", msg)) {
+                    DesktopUtils.openURL(latest.getUrl());
+                }
+            }
+        }
     }
 
     @FXML

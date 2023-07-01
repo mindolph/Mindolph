@@ -76,6 +76,22 @@ public class FontIconManager {
         icons.put(IconKey.FILE_TXT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_TEXT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.UNKNOWN_FILE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_OUTLINE, DEFAULT_ICON_SIZE));
 
+        icons.put(IconKey.BOLD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_BOLD, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.ITALIC, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_ITALIC, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.INDENT_INCREASE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_INDENT_INCREASE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.INDENT_DECREASE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_INDENT_DECREASE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.BULLET_LIST, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_LIST_BULLETED, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.NUMBER_LIST, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_LIST_NUMBERED, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.TABLE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_LARGE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.CODE_TAG, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.CODE_TAGS, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.QUOTE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.FORMAT_QUOTE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H1, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_1, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H2, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_2, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H3, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_3, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H4, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_4, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H5, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_5, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, DEFAULT_ICON_SIZE));
+
         if (SystemUtils.IS_OS_MAC) {
             icons.put(IconKey.SYSTEM, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.APPLE, DEFAULT_ICON_SIZE));
         }

@@ -22,3 +22,15 @@
     -fx-fill: grey;
     -fx-font-style: italic;
 }
+
+.connector {
+    -fx-fill: blue;
+}
+
+.quote {
+    -fx-fill: green;
+}
+
+.activity {
+    -fx-font-style: italic;
+}

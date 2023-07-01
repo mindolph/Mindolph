@@ -60,9 +60,23 @@
 
 ## Emphasis
 
-*Hello, world.*
+**bold**  
+__bold__  
+**is bold**  
+__is bold__  
 
-**Goodbye, world.**
+*italic*  
+_italic_  
+*is italic*  
+_is italic_  
+
+
+***bold italic***  
+**_bold italic_**  
+*__bold italic__*  
+_**bold italic**_  
+__*bold italic*__  
+___bold italic___  
 
 ~~Hello, Goodbye.~~
 
@@ -73,5 +87,7 @@ image 0
 ![Image](app.png) 
 
 
+## Link
 
+[MindMap.mmd](MindMap.mmd)
 
