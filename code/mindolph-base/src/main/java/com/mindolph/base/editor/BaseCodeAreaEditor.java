@@ -21,14 +21,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.CharacterHit;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
-import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -42,15 +40,12 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
  */
 public abstract class BaseCodeAreaEditor extends BaseEditor {
 
-    public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
     private final Logger log = LoggerFactory.getLogger(BaseCodeAreaEditor.class);
 
     @FXML
     protected SearchableCodeArea codeArea;
 
     protected boolean acceptDraggingFiles = false;
-
-    private final EventSource<String> historySource = new EventSource<>();
 
 //    protected String fontPrefKey;
 
@@ -61,6 +56,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         codeArea.getUndoManager().preventMerge();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.setDisablePaste(true); // only works for macOS
+        codeArea.setDisableUndo(true);
+        codeArea.setDisableRedo(true);
 //        codeArea.setStyle("-fx-tab-size: 2"); doesn't work
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
@@ -107,12 +104,6 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             });
         }
 
-        // the event will be emitted when text changed in editor
-        historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
-                .subscribe(s -> {
-                    this.codeArea.getUndoManager().preventMerge();
-                });
-
 //        if (!codeArea.addSelection(extraSelection)) {
 //            throw new IllegalStateException("selection was not added to area");
 //        }
@@ -141,7 +132,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             // add text change listener should after CodeArea init content.
             this.codeArea.textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!StringUtils.equals(oldValue, newValue)) {
-                    historySource.push(newValue);
+                    this.codeArea.doHistory();
                     refresh(newValue);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
