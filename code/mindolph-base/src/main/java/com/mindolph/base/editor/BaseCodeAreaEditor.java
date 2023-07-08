@@ -107,6 +107,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             });
         }
 
+        // the event will be emitted when text changed in editor
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> {
                     this.codeArea.getUndoManager().preventMerge();
@@ -122,7 +123,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      * @param filePath final path to present the provided file in this editor.
      */
     protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
-        // INHERIT ME
+        // INHERIT ME TO HANDLE DROPPED FILES
     }
 
     @Override

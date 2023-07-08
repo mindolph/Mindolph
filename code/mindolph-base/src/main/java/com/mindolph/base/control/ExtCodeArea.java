@@ -31,7 +31,6 @@ import static com.mindolph.base.constant.ShortcutConstants.*;
 import static javafx.scene.input.KeyCode.TAB;
 
 /**
- *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
@@ -178,6 +177,14 @@ public class ExtCodeArea extends CodeArea {
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
                 ));
             }
+            // disable undo to avoid conflict with global shortcut
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+            ));
+            // disable redo to avoid conflict with global shortcut
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+            ));
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
         }
     }
@@ -201,7 +208,7 @@ public class ExtCodeArea extends CodeArea {
 
         try {
             if (newStartPar >= 0
-                    && (newEndPar < this.getParagraphs().size())) {
+                && (newEndPar < this.getParagraphs().size())) {
                 String toBeMoved = this.getText(startParIndex, 0, endParIndex, endParLen);
                 log.trace("to be moved text: '%s'".formatted(StringUtils.abbreviateMiddle(toBeMoved, "...", 50)));
                 log.trace("delete text from %d,%d to %d,%d".formatted(startParIndex, 0, endParIndex, endParLen + 1));

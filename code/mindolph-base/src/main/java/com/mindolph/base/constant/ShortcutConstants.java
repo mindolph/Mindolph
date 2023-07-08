@@ -28,4 +28,9 @@ public interface ShortcutConstants {
 
     // modifier for dragging view
     ShortcutKey KEY_MODIFIER_DRAGGING = ShortcutKey.newShortcutKey("global.dragging", "dragging modifier");
+
+    // internal shortcuts like undo/redo, copy/paste...
+    ShortcutKey KEY_UNDO = ShortcutKey.newShortcutKey("global.undo", "undo");
+    ShortcutKey KEY_REDO = ShortcutKey.newShortcutKey("global.redo", "redo");
+
 }
