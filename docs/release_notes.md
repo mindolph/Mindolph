@@ -1,5 +1,9 @@
 # Release Notes
 
+### V1.3.6 Release
+* Improvement: better undo/redo handling for the note editor of mind map topic.
+* Fix: undo/redo doesn't work well in code editor.
+
 ### V1.4.0 Unstable Relase
 * Feature: Add new toolbar for markdown editor to quickly insert or format Markdown code, including
 	* bold and italic
