@@ -20,9 +20,11 @@ import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 
@@ -31,9 +33,12 @@ import static javafx.scene.input.KeyCode.TAB;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
+ *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
+
+    public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
 
     private final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
@@ -41,6 +46,11 @@ public class ExtCodeArea extends CodeArea {
 
     // disable 'paste' shortcut in code area control, just a workaround for the shortcut conflict on macOS.
     private final BooleanProperty disablePaste = new SimpleBooleanProperty(false);
+    private final BooleanProperty disableRedo = new SimpleBooleanProperty(false);
+    private final BooleanProperty disableUndo = new SimpleBooleanProperty(false);
+
+    // used to control the merging of editing history.
+    private final EventSource<String> historySource = new EventSource<>();
 
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
@@ -50,6 +60,13 @@ public class ExtCodeArea extends CodeArea {
             Node node = (Node) contextMenuEvent.getSource();
             codeContextMenu.show(node.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
+        // the event should be emitted when text changed in editor
+        historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
+                .subscribe(s -> this.getUndoManager().preventMerge());
+    }
+
+    public void doHistory() {
+        historySource.push(null);
     }
 
     private ContextMenu createContextMenu() {
@@ -175,6 +192,18 @@ public class ExtCodeArea extends CodeArea {
             if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
                 inputMaps.add(InputMap.consume(
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+                ));
+            }
+            // disable undo to avoid conflict with global shortcut
+            if (disableUndo.get()) {
+                inputMaps.add(InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+                ));
+            }
+            // disable redo to avoid conflict with global shortcut
+            if (disableRedo.get()) {
+                inputMaps.add(InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
                 ));
             }
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
@@ -382,6 +411,30 @@ public class ExtCodeArea extends CodeArea {
 
     public void setDisablePaste(boolean disablePaste) {
         this.disablePaste.set(disablePaste);
+    }
+
+    public boolean isDisableRedo() {
+        return disableRedo.get();
+    }
+
+    public BooleanProperty disableRedoProperty() {
+        return disableRedo;
+    }
+
+    public void setDisableRedo(boolean disableRedo) {
+        this.disableRedo.set(disableRedo);
+    }
+
+    public boolean isDisableUndo() {
+        return disableUndo.get();
+    }
+
+    public BooleanProperty disableUndoProperty() {
+        return disableUndo;
+    }
+
+    public void setDisableUndo(boolean disableUndo) {
+        this.disableUndo.set(disableUndo);
     }
 
     public enum FEATURE {
