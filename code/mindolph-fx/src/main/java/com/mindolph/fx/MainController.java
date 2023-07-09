@@ -584,11 +584,13 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onMenuCheckUpdate() {
         ReleaseUtils.ReleaseInfo latest = ReleaseUtils.getLatestReleaseVersion();
+        if (latest == null || StringUtils.isBlank(latest.getVersion())) {
+            Notifications.create().title("Check updates").text("Unable to retrieve the latest release information.").showWarning();
+            return;
+        }
         String currentVersion = Env.isDevelopment ? "1.3.5" : MavenUtils.getVersionInPomProperties();
-        if (latest == null || currentVersion == null
-                || StringUtils.isBlank(latest.getVersion())
-                || StringUtils.isBlank(currentVersion)) {
-            log.warn("Can't get current version or latest release info");
+        if (currentVersion == null || StringUtils.isBlank(currentVersion)) {
+            log.warn("Can't get current version");
             return;
         }
 
