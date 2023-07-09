@@ -195,13 +195,13 @@ public class ExtCodeArea extends CodeArea {
                 ));
             }
             // disable undo to avoid conflict with global shortcut
-            if (disableUndo.get()) {
+            if (disableUndo.get() && SystemUtils.IS_OS_MAC) {
                 inputMaps.add(InputMap.consume(
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
                 ));
             }
             // disable redo to avoid conflict with global shortcut
-            if (disableRedo.get()) {
+            if (disableRedo.get() && SystemUtils.IS_OS_MAC) {
                 inputMaps.add(InputMap.consume(
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
                 ));
