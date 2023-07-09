@@ -1,10 +1,16 @@
 # Release Notes
 
+### V1.4.1 Unstalbe Release
+* Improvement: run `check for update` in background.
+* Improvement: show toast when not updates for `check for updates`.
+* Fix: handshake exception for `check for updates`.
+* Merge fixes from v1.3.6
+
 ### V1.3.6 Release
 * Improvement: better undo/redo handling for the note editor of mind map topic.
 * Fix: undo/redo doesn't work well in code editor.
 
-### V1.4.0 Unstable Relase
+### V1.4.0 Unstable Release
 * Feature: Add new toolbar for markdown editor to quickly insert or format Markdown code, including
 	* bold and italic
 	* heading from h1 to h6
