@@ -13,5 +13,5 @@
 --input ${project.build.directory}\dependency
 --runtime-image ${project.build.directory}\jvm-image
 --temp ${project.build.directory}\installer-work
---java-options '-Dlog4j2.configurationFile=log4j2-prod.xml -Xms128M -Xmx512M'
+--java-options '-Dlog4j2.configurationFile=log4j2-prod.xml -Xms128M -Xmx512M -Dhttps.protocols=TLSv1.2,TLSv1.1,SSLv3'
 --win-upgrade-uuid 1db34ee9-fac4-4887-a91d-074b97d14ff1
