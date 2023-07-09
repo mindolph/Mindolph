@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
@@ -46,6 +47,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -582,7 +584,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onMenuCheckUpdate() {
         ReleaseUtils.ReleaseInfo latest = ReleaseUtils.getLatestReleaseVersion();
-        String currentVersion = MavenUtils.getVersionInPom();
+        String currentVersion = Env.isDevelopment ? "1.3.5" : MavenUtils.getVersionInPomProperties();
         if (latest == null || currentVersion == null
                 || StringUtils.isBlank(latest.getVersion())
                 || StringUtils.isBlank(currentVersion)) {
@@ -597,9 +599,13 @@ public class MainController extends BaseController implements Initializable,
                 String msg = "Found new release %s, current version is %s, do you wan to download and install?".formatted(latest.getVersion(), currentVersion);
                 if (DialogFactory.yesNoConfirmDialog("New updates", msg)) {
                     DesktopUtils.openURL(latest.getUrl());
+                    return;
                 }
             }
         }
+
+        Notifications.create().title("Check updates").text("You already have the latest version installed.").showWarning();
+
     }
 
     @FXML

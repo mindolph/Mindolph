@@ -444,7 +444,7 @@ public class ExtCodeArea extends CodeArea {
         QUOTE,
         // quote by "
         DOUBLE_QUOTE,
-        // quote by `
+        // quote by ```
         BACK_QUOTE,
         // auto indent when starts new line
         AUTO_INDENT,

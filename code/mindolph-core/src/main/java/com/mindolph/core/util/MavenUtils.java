@@ -9,8 +9,13 @@ import java.util.Properties;
  */
 public class MavenUtils {
 
-    public static String getVersionInPom() {
-        return getVersionInPom("com.mindolph", "mindolph-desktop");
+    /**
+     * Only works in packaged application.
+     *
+     * @return
+     */
+    public static String getVersionInPomProperties() {
+        return getVersionInPomProperties("com.mindolph", "mindolph-desktop");
     }
 
     /**
@@ -21,7 +26,7 @@ public class MavenUtils {
      * @return
      * @throws IOException
      */
-    public static String getVersionInPom(String group, String artifact) {
+    public static String getVersionInPomProperties(String group, String artifact) {
         ClassLoader cl = MavenUtils.class.getClassLoader();
         String path = "META-INF/maven/%s/%s/pom.properties".formatted(group, artifact);
         InputStream resourceAsStream = cl.getResourceAsStream(path);
