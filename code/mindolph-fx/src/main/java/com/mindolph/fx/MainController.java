@@ -583,31 +583,39 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onMenuCheckUpdate() {
-        ReleaseUtils.ReleaseInfo latest = ReleaseUtils.getLatestReleaseVersion();
-        if (latest == null || StringUtils.isBlank(latest.getVersion())) {
-            Notifications.create().title("Check updates").text("Unable to retrieve the latest release information.").showWarning();
-            return;
-        }
-        String currentVersion = Env.isDevelopment ? "1.3.5" : MavenUtils.getVersionInPomProperties();
-        if (currentVersion == null || StringUtils.isBlank(currentVersion)) {
-            log.warn("Can't get current version");
-            return;
-        }
+        ReleaseUtils.getLatestReleaseVersion(latest -> {
+            if (latest == null || StringUtils.isBlank(latest.getVersion())) {
+                showCheckUpdatesToast("Unable to retrieve the latest release information.");
+                return;
+            }
+            String currentVersion = Env.isDevelopment ? "1.3.5" : MavenUtils.getVersionInPomProperties();
+            if (currentVersion == null || StringUtils.isBlank(currentVersion)) {
+                log.warn("Can't get current version");
+                return;
+            }
 
-        currentVersion = "v" + currentVersion;
+            currentVersion = "v" + currentVersion;
 
-        if (currentVersion.compareTo(latest.getVersion()) < 0) {
-            if (StringUtils.isNotBlank(latest.getUrl())) {
-                String msg = "Found new release %s, current version is %s, do you wan to download and install?".formatted(latest.getVersion(), currentVersion);
-                if (DialogFactory.yesNoConfirmDialog("New updates", msg)) {
-                    DesktopUtils.openURL(latest.getUrl());
+            if (currentVersion.compareTo(latest.getVersion()) < 0) {
+                if (StringUtils.isNotBlank(latest.getUrl())) {
+                    String msg = "Found new release %s, current version is %s, do you wan to download and install?".formatted(latest.getVersion(), currentVersion);
+                    Platform.runLater(() -> {
+                        if (DialogFactory.yesNoConfirmDialog("New updates", msg)) {
+                            DesktopUtils.openURL(latest.getUrl());
+                        }
+                    });
                     return;
                 }
             }
-        }
 
-        Notifications.create().title("Check updates").text("You already have the latest version installed.").showWarning();
+            showCheckUpdatesToast("You already have the latest version installed.");
+        });
+    }
 
+    private void showCheckUpdatesToast(String msg) {
+        Platform.runLater(() -> {
+            Notifications.create().title("Check updates").text(msg).showWarning();
+        });
     }
 
     @FXML

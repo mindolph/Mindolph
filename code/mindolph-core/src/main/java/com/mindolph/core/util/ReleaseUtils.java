@@ -11,6 +11,7 @@ import org.swiftboot.util.BufferedIoUtils;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
@@ -21,6 +22,13 @@ public class ReleaseUtils {
     public static final String GITHUB_API_LATEST_VERSION =
             "https://api.github.com/repos/mindolph/Mindolph/releases/latest";
 
+
+    public static void getLatestReleaseVersion(Consumer<ReleaseInfo> consumer) {
+        new Thread(() -> {
+            ReleaseInfo latestVersion = getLatestReleaseVersion();
+            consumer.accept(latestVersion);
+        }).start();
+    }
 
     public static ReleaseInfo getLatestReleaseVersion() {
         log.info("Check latest release from: " + GITHUB_API_LATEST_VERSION);
