@@ -33,7 +33,6 @@ import static javafx.scene.input.KeyCode.TAB;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
@@ -119,14 +118,14 @@ public class ExtCodeArea extends CodeArea {
                 case QUOTE:
                     InputMap<KeyEvent> quote2 = InputMap.consume(EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_QUOTE)), e -> {
                         log.debug(e.getText());
-                        addToSelectionHeadAndTail("'");
+                        addToSelectionHeadAndTail("'", true);
                     });
                     inputMaps.add(quote2);
                     break;
                 case DOUBLE_QUOTE:
                     InputMap<KeyEvent> quote = InputMap.consume(EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_DOUBLE_QUOTE)), e -> {
                         log.debug(e.getText());
-                        addToSelectionHeadAndTail("\"");
+                        addToSelectionHeadAndTail("\"", true);
                     });
                     inputMaps.add(quote);
                     break;
@@ -136,10 +135,10 @@ public class ExtCodeArea extends CodeArea {
                         keyEvent.consume();
                         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
                         if (caretSelectionBind.getEndParagraphIndex() > caretSelectionBind.getStartParagraphIndex()) {
-                            addToSelectionHeadAndTail("```");
+                            addToSelectionHeadAndTail("```", true);
                         }
                         else {
-                            addToSelectionHeadAndTail("`");
+                            addToSelectionHeadAndTail("`", true);
                         }
                     });
 
@@ -394,11 +393,13 @@ public class ExtCodeArea extends CodeArea {
         this.selectRange(selection.getStart(), selection.getEnd() + text.length());
     }
 
-    public void addToSelectionHeadAndTail(String text) {
+    public void addToSelectionHeadAndTail(String text, boolean select) {
         IndexRange selection = this.getSelection();
         String selectedText = super.getSelectedText();
         super.replaceSelection(text + selectedText + text);
-        this.selectRange(selection.getStart(), selection.getEnd() + text.length() * 2);
+        if (select) {
+            this.selectRange(selection.getStart(), selection.getEnd() + text.length() * 2);
+        }
     }
 
     public boolean isDisablePaste() {

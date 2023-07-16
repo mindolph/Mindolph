@@ -21,8 +21,8 @@ public class FileFilterButtonGroup extends SegmentedButton {
     private void init() {
         FxmlUtils.loadUri("/control/file_filter_button_group.fxml", this);
         for (ToggleButton button : this.getButtons()) {
-            button.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-                if (t1) {
+            button.selectedProperty().addListener((observableValue, aBoolean, selected) -> {
+                if (selected) {
                     selectedFileType.set(String.valueOf(button.getUserData()));
                 }
             });

@@ -49,6 +49,7 @@ import javafx.print.PrinterJob;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -175,15 +176,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
         pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
-                + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
-                + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                + "|(?<BOLD>" + BOLD_PATTERN + ")"
-                + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
-                + "|(?<LIST>" + LIST_PATTERN + ")"
-                + "|(?<TABLE>" + TABLE_PATTERN + ")"
-                + "|(?<CODE>" + CODE_PATTERN + ")"
-                + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
-                + "|(?<URL>" + URL_PATTERN + ")"
+                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
+                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
+                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
+                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
+                        + "|(?<LIST>" + LIST_PATTERN + ")"
+                        + "|(?<TABLE>" + TABLE_PATTERN + ")"
+                        + "|(?<CODE>" + CODE_PATTERN + ")"
+                        + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
+                        + "|(?<URL>" + URL_PATTERN + ")"
         );
         timestamp = String.valueOf(System.currentTimeMillis());
 
@@ -673,10 +674,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             this.addHeader(6);
         }
         else if (node == btnBold) {
-            codeArea.addToSelectionHeadAndTail("**");
+            codeArea.addToSelectionHeadAndTail("**", true);
         }
         else if (node == btnItalic) {
-            codeArea.addToSelectionHeadAndTail("*");
+            codeArea.addToSelectionHeadAndTail("*", true);
         }
         else if (node == btnBullet) {
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* "));
@@ -690,12 +691,17 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  "));
         }
         else if (node == btnCode) {
-            codeArea.addToSelectionHeadAndTail("```");
+            IndexRange selection = codeArea.getSelection();
+            codeArea.addToSelectionHeadAndTail("```", false);
+            codeArea.moveTo(selection.getStart() + 3);
         }
         else if (node == btnLink) {
             String text = ClipBoardUtils.textFromClipboard();
-            String link = (UrlUtils.isValid(text) ? "[](%s)" : "[%s]()").formatted(text);
+            boolean isUrl = UrlUtils.isValid(text);
+            String link = (isUrl ? "[](%s)" : "[%s]()").formatted(text);
+            IndexRange selection = codeArea.getSelection();
             codeArea.replaceSelection(link);
+            codeArea.moveTo(selection.getStart() + (isUrl ? 1 : link.length() - 1));
         }
         else if (node == btnTable) {
             TableOptions to = new TableOptions();
@@ -712,12 +718,14 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                             "|" + StringUtils.join(separatorRow, "|") + "|"
                     );
                     content = "\n" + content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
+                    IndexRange selection = codeArea.getSelection();
                     codeArea.replaceSelection(content);
+                    codeArea.moveTo(selection.getStart() + 2);
                 }
                 codeArea.requestFocus();
             });
-
         }
+        codeArea.requestFocus();
     }
 
     private void addHeader(int number) {
