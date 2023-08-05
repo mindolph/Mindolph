@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.4.2 Unstable Release
+* Improvement: auto scroll when dragging mind map topics to any border of viewport.
+* Improvement: move caret to input position after insert markdown code spinnet from toolbar.
+* Fix: lost focus after insertion to markdown editor.
+* update javafx to 20.0.2, plantuml to 1.2023.10, flexmark to 0.64.8
+
 ### V1.4.1 Unstalbe Release
 * Improvement: run `check for update` in background.
 * Improvement: show toast when not updates for `check for updates`.
