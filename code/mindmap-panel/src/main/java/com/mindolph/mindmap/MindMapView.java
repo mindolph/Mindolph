@@ -11,6 +11,7 @@ import com.mindolph.base.event.StatusMsg;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.clipboard.ClipboardTopicsContainer;
 import com.mindolph.mindmap.constant.ElementPart;
@@ -212,6 +213,28 @@ public class MindMapView extends BaseScalableView {
                         // keep dragging
                         draggedElement.updatePosition(point);
                         findDestinationElementForDragged();
+                        // auto scroll when dragging close to any border of the viewport.
+                        Rectangle2D vr = getViewportRectangle();
+                        if(log.isTraceEnabled())log.trace("mouse position: " + PointUtils.pointInStr(e.getX(), e.getY()));
+                        if(log.isTraceEnabled())log.trace("viewport position: " + PointUtils.pointInStr(vr.getMinX(), vr.getMinY()));
+                        int STEP_X = 4; // scroll x 4 pixels each event emitted.
+                        int STEP_Y = 2; // scroll Y 2 pixels each event emitted.
+                        int offsetx = 0;
+                        int offsety = 0;
+                        if (e.getX() < (vr.getMinX() + 50)) {
+                            offsetx = -STEP_X;
+                        }
+                        else if (e.getX() > (vr.getMaxX() - 50)) {
+                            offsetx = STEP_X;
+                        }
+                        if (e.getY() < (vr.getMinY() + 50)) {
+                            offsety = -STEP_Y;
+                        }
+                        else if (e.getY() > (vr.getMaxY() - 50)) {
+                            offsety = STEP_Y;
+                        }
+                        if(log.isTraceEnabled())log.trace("scroll to: %s %s".formatted(vr.getMinX() + offsetx, vr.getMinY() + offsety));
+                        scrollEventHandler.onScroll(new Point2D(vr.getMinX() + offsetx, vr.getMinY() + offsety), false);
                     }
                     repaint();
                 })
@@ -1046,7 +1069,6 @@ public class MindMapView extends BaseScalableView {
     }
 
     /**
-     *
      * @param dragEvent
      * @return
      */

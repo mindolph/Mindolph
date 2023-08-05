@@ -12,7 +12,7 @@ import javafx.geometry.Point2D;
 public interface ScrollEventHandler {
 
     /**
-     * Invoked when the control want the container to scroll.
+     * Invoked when the inner control needs the container to scroll.
      *
      * @param scrollPos The position that the control want scroll to.
      * @param animate Whether scroll with animation.
