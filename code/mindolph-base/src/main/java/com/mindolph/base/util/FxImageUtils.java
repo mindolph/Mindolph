@@ -34,7 +34,7 @@ public class FxImageUtils {
     }
 
     /**
-     * A legacy image utils for reference.
+     * A legacy image utils just for reference.
      *
      * @param image
      * @param opacity

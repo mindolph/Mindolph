@@ -10,6 +10,7 @@ import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mfx.util.ImageConverter;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.dialog.AddImageChooseDialog;
+import com.mindolph.mindmap.dialog.ImagePreviewDialog;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -63,9 +64,14 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                     else {
                         lastSelectedImportIndex = imageSource;
                         if (imageSource == 0) {
+                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Scale Image", image);
+                            Image scaledImage = scaleImageDialog.showAndWait();
+                            log.debug("Scaled image size: %sx%s".formatted(scaledImage.getWidth(), scaledImage.getHeight()));
                             try {
-                                BufferedImage scaledImage = new ImageConverter().image(SwingFXUtils.fromFXImage(image, null)).maxSize(Utils.getMaxImageSize()).convert();
-                                String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(scaledImage);
+                                //BufferedImage scaledImage = new ImageConverter().image(SwingFXUtils.fromFXImage(image, null)).maxSize(Utils.getMaxImageSize()).convert();
+                                BufferedImage scaledAwtImage = new BufferedImage((int) scaledImage.getWidth(), (int) scaledImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                SwingFXUtils.fromFXImage(scaledImage, scaledAwtImage);
+                                String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(scaledAwtImage);
                                 String filePath = null;
                                 setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, null);
                                 context.doNotifyModelChanged(true);
