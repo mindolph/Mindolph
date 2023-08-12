@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="80.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -14,12 +14,12 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Pane maxHeight="450.0" maxWidth="600.0" minHeight="450.0" minWidth="600.0" prefHeight="450.0" prefWidth="600.0">
-                     <children>
+                  <ScrollPane maxHeight="450.0" maxWidth="600.0" minHeight="450.0" minWidth="600.0" prefHeight="450.0" prefWidth="600.0">
+                     <content>
                         <ImageView fx:id="ivPreview" fitHeight="450.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </Pane>
-                  <Slider fx:id="sldSize" orientation="VERTICAL" />
+                     </content>
+                  </ScrollPane>
+                  <Slider fx:id="sldSize" majorTickUnit="20.0" min="10.0" minorTickCount="2" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
                </children>
             </HBox>
          </children>

@@ -7,7 +7,7 @@ import com.mindolph.base.dialog.DialogFileFilters;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.FileDialogBuilder;
 import com.mindolph.mfx.util.AwtImageUtils;
-import com.mindolph.mfx.util.ImageConverter;
+import com.mindolph.mfx.util.FxImageUtils;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.dialog.AddImageChooseDialog;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
@@ -15,7 +15,6 @@ import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.Utils;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -25,8 +24,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 
 public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
 
@@ -64,23 +63,22 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                     else {
                         lastSelectedImportIndex = imageSource;
                         if (imageSource == 0) {
-                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Scale Image", image);
+                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
                             Image scaledImage = scaleImageDialog.showAndWait();
-                            log.debug("Scaled image size: %sx%s".formatted(scaledImage.getWidth(), scaledImage.getHeight()));
-                            try {
-                                //BufferedImage scaledImage = new ImageConverter().image(SwingFXUtils.fromFXImage(image, null)).maxSize(Utils.getMaxImageSize()).convert();
-                                BufferedImage scaledAwtImage = new BufferedImage((int) scaledImage.getWidth(), (int) scaledImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                SwingFXUtils.fromFXImage(scaledImage, scaledAwtImage);
-                                String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(scaledAwtImage);
-                                String filePath = null;
-                                setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, null);
-                                context.doNotifyModelChanged(true);
-                            } catch (IllegalArgumentException ex) {
-                                DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                                log.error("Can't import from clipboard image", ex);
-                            } catch (Exception ex) {
-                                DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                                log.error("Unexpected error during image import from clipboard", ex);
+                            if (scaledImage != null) {
+                                log.debug("Scaled image size: %sx%s".formatted(scaledImage.getWidth(), scaledImage.getHeight()));
+                                try {
+                                    String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(SwingFXUtils.fromFXImage(scaledImage, null));
+                                    String filePath = null;
+                                    setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, null);
+                                    context.doNotifyModelChanged(true);
+                                } catch (IllegalArgumentException ex) {
+                                    DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+                                    log.error("Can't import from clipboard image", ex);
+                                } catch (Exception ex) {
+                                    DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+                                    log.error("Unexpected error during image import from clipboard", ex);
+                                }
                             }
                             loadFromFile = false;
                         }
@@ -94,24 +92,28 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                     // TODO remember the selected for next time popup;
                     if (selected != null) {
                         try {
-                            BufferedImage scaledImage = new ImageConverter().file(selected).maxSize(Utils.getMaxImageSize()).convert();
-                            String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(scaledImage);
-                            String fileName = FilenameUtils.getBaseName(selected.getName());
-                            String filePath;
-                            if (DialogFactory.okCancelConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
-                                filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
+                            image = new Image(new FileInputStream(selected));
+                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
+                            Image scaledImage = scaleImageDialog.showAndWait();
+                            if (scaledImage != null) {
+                                String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
+                                String fileName = FilenameUtils.getBaseName(selected.getName());
+                                String filePath;
+                                if (DialogFactory.okCancelConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
+                                    filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
+                                }
+                                else {
+                                    filePath = null;
+                                }
+                                setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, fileName);
+                                context.doNotifyModelChanged(true);
                             }
-                            else {
-                                filePath = null;
-                            }
-                            setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, fileName);
-                            context.doNotifyModelChanged(true);
                         } catch (IllegalArgumentException ex) {
                             DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
                             log.warn("Can't load image file : " + selected);
                         } catch (Exception ex) {
                             DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                            log.error("Unexpected error during loading of image file : " + selected, ex);
+                            log.error("Unexpected error during loading image file : " + selected, ex);
                         }
                     }
                 }

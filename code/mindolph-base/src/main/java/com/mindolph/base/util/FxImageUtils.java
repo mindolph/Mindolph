@@ -1,12 +1,10 @@
 package com.mindolph.base.util;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,7 +12,6 @@ import java.io.IOException;
  * @author mindolph.com@gmail.com
  */
 public class FxImageUtils {
-
     /**
      * Dump image to temporary for test.
      *
@@ -24,7 +21,8 @@ public class FxImageUtils {
         File snapshotFile = MindolphFileUtils.getTempFile("snapshot.png");
         try {
             if (snapshotFile != null) {
-                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", snapshotFile);
+                com.mindolph.mfx.util.FxImageUtils.writeImage(image, snapshotFile);
+                //ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", snapshotFile);
             }
             return snapshotFile;
         } catch (IOException e) {

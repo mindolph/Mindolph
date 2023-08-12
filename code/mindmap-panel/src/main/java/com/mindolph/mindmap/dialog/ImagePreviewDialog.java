@@ -3,12 +3,12 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.FxImageUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 
 /**
  * @author mindolph.com@gmail.com
@@ -39,7 +39,6 @@ public class ImagePreviewDialog extends BaseDialogController<Image> {
 
         sldSize.valueProperty().addListener((observableValue, oldRatio, newRatio) -> {
             this.scaleImage(newRatio.doubleValue());
-
         });
     }
 
@@ -51,8 +50,8 @@ public class ImagePreviewDialog extends BaseDialogController<Image> {
         ivPreview.setPreserveRatio(true);
         ivPreview.setFitWidth(newWidth);
         ivPreview.setFitHeight(newHeight);
-        WritableImage scaledImage = new WritableImage((int) (origin.getWidth() * ratio), (int) (origin.getHeight() * ratio));
-        this.ivPreview.snapshot(null, scaledImage);
-        super.result = scaledImage;
+        Image resizeImage = FxImageUtils.resize(this.origin, this.ratio);
+        ivPreview.setImage(resizeImage);
+        super.result = resizeImage;
     }
 }
