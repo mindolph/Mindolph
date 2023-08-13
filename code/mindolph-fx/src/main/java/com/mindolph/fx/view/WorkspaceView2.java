@@ -676,6 +676,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     public void selectByNodeDataInAppropriateWorkspace(NodeData nodeData) {
         if (nodeData != null) {
             WorkspaceMeta workspaceMeta = WorkspaceManager.getIns().getWorkspaceList().matchByFilePath(nodeData.getFile().getPath());
+            if (workspaceMeta == null) {
+                log.debug("The file of this node does not belongs to any workspace");
+                return;
+            }
             if (workspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
                 this.selectByNodeData(nodeData);
                 this.scrollToSelected();
