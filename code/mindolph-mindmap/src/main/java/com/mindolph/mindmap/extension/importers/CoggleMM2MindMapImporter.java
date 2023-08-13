@@ -21,6 +21,7 @@ import com.igormaznitsa.mindmap.model.ExtraNote;
 import com.igormaznitsa.mindmap.model.MMapURI;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.util.ColorUtils;
+import com.mindolph.mfx.util.FxImageUtils;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
@@ -29,10 +30,8 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.ImageUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.XmlUtils;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -67,13 +66,10 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
             return null;
         }
 
-        if (loadedImage != null) {
-            try {
-
-                result = ImageUtils.rescaleImageAndEncodeAsBase64(SwingFXUtils.fromFXImage(loadedImage, null), -1);
-            } catch (Exception ex) {
-                LOG.error("Can't decode image", ex);
-            }
+        try {
+            result = FxImageUtils.imageToBase64(loadedImage);
+        } catch (Exception ex) {
+            LOG.error("Can't decode image", ex);
         }
 
         return result;

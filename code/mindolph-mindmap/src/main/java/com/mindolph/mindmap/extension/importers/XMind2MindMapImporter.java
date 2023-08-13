@@ -27,10 +27,7 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.ImageUtils;
-import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.Utils;
-import com.mindolph.mindmap.util.XmlUtils;
+import com.mindolph.mindmap.util.*;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.IOUtils;
@@ -144,7 +141,6 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
     private static String extractFirstAttachedImageAsBase64(ZipFile file, Element topic) {
         String result = null;
-
         for (Element e : XmlUtils.findDirectChildrenForName(topic, "xhtml:img")) {
             String link = e.getAttribute("xhtml:src");
             if (!link.isEmpty()) {
@@ -153,10 +149,11 @@ public class XMind2MindMapImporter extends BaseImportExtension {
                     try {
                         inStream = Utils.findInputStreamForResource(file, link.substring(4));
                         if (inStream != null) {
-                            result = ImageUtils.rescaleImageAndEncodeAsBase64(inStream, -1);
-                            if (result != null) {
+                            byte[] bytes = inStream.readAllBytes();
+                            if (bytes == null || bytes.length == 0) {
                                 break;
                             }
+                            result = CryptoUtils.base64encode(bytes);
                         }
                     } catch (Exception ex) {
                         LOGGER.error("Can't decode attached image : " + link, ex);
@@ -171,7 +168,6 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
 
     private static String extractFirstAttachedImageAsBase64(ZipFile file, JSONObject topic) {
-
         String result = null;
         JSONObject image = topic.has("image") ? topic.getJSONObject("image") : null;
         if (image != null) {
@@ -180,9 +176,11 @@ public class XMind2MindMapImporter extends BaseImportExtension {
                 InputStream inStream = null;
                 try {
                     inStream = Utils.findInputStreamForResource(file, link.substring(4));
-                    if (inStream != null) {
-                        result = ImageUtils.rescaleImageAndEncodeAsBase64(inStream, -1);
+                    byte[] bytes = inStream.readAllBytes();
+                    if (bytes == null || bytes.length == 0) {
+                        return result;
                     }
+                    result = CryptoUtils.base64encode(bytes);
                 } catch (Exception ex) {
                     LOGGER.error("Can't decode attached image : " + link, ex);
                 } finally {
@@ -559,7 +557,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
         MindMap<TopicNode> result;
 
         if (xmlSheets.isEmpty()) {
-             result = MindMapUtils.createModelWithRoot();
+            result = MindMapUtils.createModelWithRoot();
             result.getRoot().setText("Empty");
         }
         else {

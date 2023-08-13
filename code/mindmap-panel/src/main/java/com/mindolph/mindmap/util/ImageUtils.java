@@ -14,8 +14,7 @@ import java.io.InputStream;
 
 /**
  * Extracted from Utils
- * This probably be replaced with mfx.
- *
+ * @deprecated This can be replaced by mfx ImageConverter.
  * @author mindolph.com@gmail.com
  */
 public class ImageUtils {

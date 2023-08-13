@@ -28,7 +28,7 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.ImageUtils;
+import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.Utils;
 import com.mindolph.mindmap.util.XmlUtils;
@@ -41,7 +41,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -288,10 +287,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                 byte[] imageFile = resource.extractResourceBody();
                 if (imageFile != null) {
                     try {
-                        result = ImageUtils.rescaleImageAndEncodeAsBase64(new ByteArrayInputStream(imageFile), -1);
-                        if (result == null) {
-                            LOG.warn("Impossible to read image: " + resource.getUrl());
-                        }
+                        result = CryptoUtils.base64encode(imageFile);
                     } catch (Exception ex) {
                         LOG.error("Can't find or convert image resource : " + resource.getUrl(), ex);
                     }

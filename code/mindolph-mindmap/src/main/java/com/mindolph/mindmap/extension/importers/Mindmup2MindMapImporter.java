@@ -27,18 +27,16 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.CryptoUtils;
-import com.mindolph.mindmap.util.ImageUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -201,8 +199,9 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
             String[] data = iconUrl.split("\\,");
             if (data.length == 2 && data[0].startsWith("data:image/") && data[0].endsWith("base64")) {
                 try {
-                    String encoded = ImageUtils.rescaleImageAndEncodeAsBase64(new ByteArrayInputStream(CryptoUtils.base64decode(data[1].trim())), -1);
-                    if (encoded == null) {
+                    // String encoded = ImageUtils.rescaleImageAndEncodeAsBase64(new ByteArrayInputStream(CryptoUtils.base64decode(data[1].trim())), -1);
+                    String encoded = data[1].trim();
+                    if (StringUtils.isBlank(encoded)) {
                         LOG.warn("Can't convert image : " + iconUrl);
                     }
                     else {

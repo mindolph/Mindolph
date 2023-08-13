@@ -22,6 +22,7 @@ import com.igormaznitsa.mindmap.model.ExtraNote;
 import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.util.ColorUtils;
+import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
@@ -30,7 +31,6 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.ImageUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.XmlUtils;
 import javafx.scene.image.Image;
@@ -39,9 +39,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
+import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
@@ -78,7 +80,9 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
                 }
 
                 if (file.isFile()) {
-                    topic.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, ImageUtils.rescaleImageAndEncodeAsBase64(file, -1));
+                    BufferedImage bufferedImage = ImageIO.read(file);
+                    String result = AwtImageUtils.imageToBase64(bufferedImage);
+                    topic.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, result);
                     break;
                 }
             } catch (Exception ex) {
