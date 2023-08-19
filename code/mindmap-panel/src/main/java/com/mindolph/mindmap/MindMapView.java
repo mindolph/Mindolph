@@ -23,7 +23,10 @@ import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.extension.api.VisualAttributeExtension;
 import com.mindolph.mindmap.extension.attributes.emoticon.EmoticonVisualAttributeExtension;
 import com.mindolph.mindmap.model.*;
-import com.mindolph.mindmap.util.*;
+import com.mindolph.mindmap.util.ElementUtils;
+import com.mindolph.mindmap.util.MindMapUtils;
+import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.Utils;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -1094,37 +1097,44 @@ public class MindMapView extends BaseScalableView {
     /**
      * Select all siblings form current selections to target.
      *
-     * @param element the target element of a topic
+     * @param targetEl the target element of a topic
      */
-    private void selectSiblings(BaseElement element) {
-        BaseElement parent = element.getParent();
+    private void selectSiblings(BaseElement targetEl) {
+        BaseElement parent = targetEl.getParent();
         TopicNode selectedSibling = null;
 
         if (parent != null) {
+            // check whether there is any selected topic has same parent, to select siblings between current and target.
             for (TopicNode topic : this.selection.get()) {
-                if (topic != element.getModel()
+                if (topic != targetEl.getModel()
                         && parent.getModel() == topic.getParent()
-                        && element.isLeftDirection() == topic.isLeftSidedTopic()) {
+                        && targetEl.isLeftDirection() == topic.isLeftSidedTopic()) {
                     selectedSibling = topic;
                     break;
                 }
             }
         }
         if (selectedSibling != null) {
-            boolean select = false;
+            boolean selecting = false;
+            //
             for (TopicNode t : parent.getModel().getChildren()) {
-                if (select && element.isLeftDirection() == t.isLeftSidedTopic()) {
+                // handle topics in between.
+                if (selecting && targetEl.isLeftDirection() == t.isLeftSidedTopic()) {
                     selectAndUpdate(t, false);
                 }
-                if (t == element.getModel() || t == selectedSibling) {
-                    select = !select;
-                    if (!select) {
+                // determine which one is start and which is end.
+                if (t == targetEl.getModel() || t == selectedSibling) {
+                    // remove and re-add again will let the selection being resorted(since the already selected topic might be the latest one)
+                    this.selection.remove(t);
+                    this.selection.add(t);
+                    selecting = !selecting;
+                    if (!selecting) {
                         break;
                     }
                 }
             }
         }
-        selectAndUpdate(element.getModel(), false);
+        selectAndUpdate(targetEl.getModel(), false);
     }
 
     public void removeAllSelection() {
