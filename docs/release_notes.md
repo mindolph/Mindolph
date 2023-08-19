@@ -2,8 +2,8 @@
 
 ### V1.5.0 Unstable Release
 * New Feature: add preview and resizing dialog for inserting image to mind map topic from clipboard or disk. 
-* Improvment: optimized quality of embedded image in mind map topic. 
-* Merged bug fixes from v1.4.3
+* Improvement: optimized quality of embedded image in mind map topic. 
+* Merged bug fixes from v1.4.3.
 
 ### V1.4.3 Release
 * Fix: multi selected topics are not in their original order in some cases.
