@@ -25,6 +25,13 @@ public class TopicNode extends Topic<TopicNode> {
         super(mindMap, base, copyChildren);
     }
 
+    /**
+     *
+     * @param map
+     * @param parent
+     * @param text
+     * @param extras can't be null
+     */
     public TopicNode(MindMap<TopicNode> map, TopicNode parent, String text, Extra<?>... extras) {
         super(map, parent, text, extras);
     }

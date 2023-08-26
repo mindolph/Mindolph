@@ -3,7 +3,7 @@
 <?import com.mindolph.fx.preference.FontPreferencesPane?>
 <?import com.mindolph.fx.preference.GeneralPreferencesPane?>
 <?import com.mindolph.markdown.preference.MarkdownPreferencesPane?>
-<?import com.mindolph.mindmap.preference.MmdPreferences?>
+<?import com.mindolph.mindmap.preference.MmdPreferencesPane?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import com.mindolph.mfx.container.SideTabPane?>
@@ -29,7 +29,7 @@
           <Tab fx:id="tabMindMap" text="Mind Map" userData="mmd">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0"  >
-                <MmdPreferences fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                <MmdPreferencesPane fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
               </AnchorPane>
               
             </content>

@@ -1,7 +1,7 @@
 package com.mindolph.mindmap.legacy;
 
 import com.mindolph.mindmap.MindMapConfig;
-import com.mindolph.mindmap.preference.MmdPreferences;
+import com.mindolph.mindmap.preference.MmdPreferencesPane;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.NotImplementedException;
 public class MmdPreferenceDialog extends BaseDialogController<MindMapConfig> {
 
     @FXML
-    private MmdPreferences mmdPreferences;
+    private MmdPreferencesPane mmdPreferences;
 
     public MmdPreferenceDialog() {
             dialog = new CustomDialogBuilder<MindMapConfig>()

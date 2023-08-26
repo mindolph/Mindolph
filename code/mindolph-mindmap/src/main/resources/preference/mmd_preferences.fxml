@@ -187,6 +187,11 @@
                      <children>
                         <VBox layoutX="135.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
+                               <PreferenceItem name="Add default comment to root node">
+                                   <items>
+                                       <CheckBox fx:id="ckbAddDefaultCommentToRoot" />
+                                   </items>
+                               </PreferenceItem>
                                <PreferenceItem name="Trim topic text before set:">
                                    <items>
                                        <CheckBox fx:id="ckbTrimTopicText" />

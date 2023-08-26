@@ -5,6 +5,7 @@ import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.EventBus;
@@ -879,8 +880,15 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         newFile = createEmptyFile(fileName, selectedData, "mmd");
                         if (newFile != null) {
                             final MindMap<TopicNode> mindMap = new MindMap<>();
-                            ExtraNote extraNote = new ExtraNote("Created on " + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
-                            TopicNode rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()), extraNote);
+                            Boolean addDefaultComment = fxPreferences.getPreference(PrefConstants.PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT, true);
+                            TopicNode rootTopic;
+                            if (addDefaultComment) {
+                                ExtraNote extraNote = new ExtraNote("Created on " + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+                                rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()), extraNote);
+                            }
+                            else {
+                                rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()));
+                            }
                             mindMap.setRoot(rootTopic);
                             final String text;
                             try {

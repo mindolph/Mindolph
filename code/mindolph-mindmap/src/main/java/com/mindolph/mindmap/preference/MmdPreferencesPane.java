@@ -17,9 +17,9 @@ import java.util.function.Consumer;
  *
  * @author mindolph.com@gmail.com
  */
-public class MmdPreferences extends BasePrefsPane {
+public class MmdPreferencesPane extends BasePrefsPane {
 
-    private final Logger log = LoggerFactory.getLogger(MmdPreferences.class);
+    private final Logger log = LoggerFactory.getLogger(MmdPreferencesPane.class);
 
     private MindMapConfig mindMapConfig;
 
@@ -82,6 +82,8 @@ public class MmdPreferences extends BasePrefsPane {
     @FXML
     private Spinner<Double> spnSelectionGap;
     @FXML
+    private CheckBox ckbAddDefaultCommentToRoot;
+    @FXML
     private CheckBox ckbTrimTopicText;
     //    @FXML
 //    private CheckBox ckbPreferInternalBrowser;
@@ -94,7 +96,7 @@ public class MmdPreferences extends BasePrefsPane {
     @FXML
     private Spinner<Integer> spnUndRedo;
 
-    public MmdPreferences() {
+    public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
         mindMapConfig = new MindMapConfig();
         mindMapConfig.loadFromPreferences();
@@ -139,6 +141,7 @@ public class MmdPreferences extends BasePrefsPane {
         this.bindPreference(spnUndRedo.valueProperty(), integer -> mindMapConfig.setMaxRedoUndo(integer));
 
         // bind with the new style.
+        super.bindPreference(ckbAddDefaultCommentToRoot.selectedProperty(), PrefConstants.PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT, true);
         super.bindPreference(ckbTrimTopicText.selectedProperty(), PrefConstants.PREF_KEY_MMD_TRIM_TOPIC_TEXT, true);
 //        super.bindPreference(ckbPreferInternalBrowser.selectedProperty(), PrefConstants.PREF_KEY_MMD_USE_INSIDE_BROWSER, true);
 //        super.bindPreference(ckbUseRelevantPathForProjectFiles.selectedProperty(), PrefConstants.PREF_KEY_MMD_MAKE_RELATIVE_PATH_TO_PROJECT, true);
