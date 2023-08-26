@@ -1,5 +1,14 @@
 # Release Notes
 
+### V1.5.0 Unstable Release
+* New Feature: add preview and resizing dialog for inserting image to mind map topic from clipboard or disk. 
+* Improvement: optimized quality of embedded image in mind map topic. 
+* Merged bug fixes from v1.4.3.
+
+### V1.4.3 Release
+* Fix: multi selected topics are not in their original order in some cases.
+* Fix: exception when opening an external file link.
+
 ### V1.4.2 Unstable Release
 * Improvement: auto scroll when dragging mind map topics to any border of viewport.
 * Improvement: move caret to input position after insert markdown code spinnet from toolbar.
