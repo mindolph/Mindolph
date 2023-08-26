@@ -1803,7 +1803,11 @@ public class MindMapView extends BaseScalableView {
         return config;
     }
 
-    // TODO
+    /**
+     * The order of selected topics should be as they are.
+     *
+     * @return
+     */
     public List<TopicNode> getSelectedTopics() {
         return selection.get();
     }

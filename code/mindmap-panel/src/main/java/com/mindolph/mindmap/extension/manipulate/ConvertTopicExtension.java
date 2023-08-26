@@ -1,9 +1,6 @@
 package com.mindolph.mindmap.extension.manipulate;
 
-import com.igormaznitsa.mindmap.model.Extra;
-import com.igormaznitsa.mindmap.model.ExtraLink;
-import com.igormaznitsa.mindmap.model.ExtraNote;
-import com.igormaznitsa.mindmap.model.MMapURI;
+import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.TextConstants;
@@ -20,7 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author mindolph.com@gmail.com
@@ -72,24 +73,29 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
                             preTopic = newTopic;
                         }
                         context.forceRefresh(); // not very appropriate but works.
-                        removeTopic(context, activeTopic);
+                        removeTopics(context, Collections.singletonList(activeTopic));
                         context.selectAndUpdate(parentTopic, false);
                     }
                 }
 
             });
             miToTopics.setDisable(false);
+
+            List<TopicNode> selectedTopics = context.getSelectedTopics();
+            boolean inSameParent = selectedTopics.stream().collect(Collectors.groupingBy(TopicNode::getParent, LinkedHashMap::new, Collectors.toList())).size() == 1;
+            boolean haveChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
             miToNote.setOnAction(event -> {
                 TopicNode parentTopic = activeTopic.getParent();
                 Map<Extra.ExtraType, Extra<?>> extras = parentTopic.getExtras();
                 if (extras.containsKey(Extra.ExtraType.NOTE)) {
                     return;
                 }
-                ExtraNote extraNote = new ExtraNote(activeTopic.getText());
+                String note = selectedTopics.stream().map(TopicNode::getText).collect(Collectors.joining("\n"));
+                ExtraNote extraNote = new ExtraNote(note);
                 parentTopic.setExtra(extraNote);
-                removeTopic(context, activeTopic);
+                removeTopics(context, selectedTopics);
             });
-            miToNote.setDisable(false);
+            miToNote.setDisable(!inSameParent || haveChildren);
 
             try {
                 URI uri = new URI(activeTopic.getText());
@@ -101,9 +107,9 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
                     }
                     ExtraLink extraLink = new ExtraLink(new MMapURI(uri));
                     parentTopic.setExtra(extraLink);
-                    removeTopic(context, activeTopic);
+                    removeTopics(context, Collections.singletonList(activeTopic));
                 });
-                miToUri.setDisable(false);
+                miToUri.setDisable(selectedTopics.size() != 1);
             } catch (Exception e) {
                 log.warn(e.getMessage());
             }
@@ -112,8 +118,11 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
         return menu;
     }
 
-    private void removeTopic(ExtensionContext context, TopicNode activeTopic) {
-        activeTopic.getMap().removeTopic(activeTopic);// remove from model
+    private void removeTopics(ExtensionContext context, List<TopicNode> topics) {
+        topics.forEach(topicNode -> {
+            topicNode.getMap().removeTopic(topicNode);// remove from model
+        });
+//        activeTopic.getMap().removeTopic(activeTopic);// remove from model
         context.removeAllSelection();
         context.doNotifyModelChanged(true);
     }

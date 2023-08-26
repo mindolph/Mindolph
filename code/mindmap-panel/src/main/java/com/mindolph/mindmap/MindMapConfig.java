@@ -58,13 +58,15 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private float selectLineWidth = 3.0f;
     private float jumpLinkWidth = 1.5f;
     private float roundRadius = 8f;
+    private Font topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
+    private Font noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
+    private boolean dropShadow = true;
+
+    // options
     private boolean trimTopicText = true;
     private boolean unfoldCollapsedTarget = false;
     private boolean copyColorInfoToNewChild = false;
     private boolean smartTextPaste = false;
-    private Font topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
-    private Font noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
-    private boolean dropShadow = true;
     private int maxRedoUndo = 20;
 
     public MindMapConfig(MindMapConfig cfg) {
@@ -101,7 +103,7 @@ public final class MindMapConfig implements EditorConfig, Serializable {
             if ((f.getModifiers() & (Modifier.STATIC | Modifier.TRANSIENT | Modifier.FINAL)) != 0) {
                 continue;
             }
-            String key = CFG_PREFIX + '.' + f.getName();
+            String key = "%s.%s".formatted(CFG_PREFIX, f.getName());
             try {
                 Object val = FxPreferences.getInstance().getPreference(key, f, cfg);
                 if (val == null) {
