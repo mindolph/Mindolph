@@ -76,7 +76,7 @@ public class PrintOptionsDialog extends BaseDialogController<PrintOptions> {
             String value = key + "%";
             cbZoomTo.getItems().add(new Pair<>(key, value));
         }
-        int scaleInPercent = (int) (initOptions.getScale() * 100);
+        int scaleInPercent = (int) (initOptions.getScale() * 100);// todo use NumberFormatUtils.toPercent
         cbZoomTo.setValue(new Pair<>(scaleInPercent, scaleInPercent + "%"));
         spFitWidthTo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, initOptions.getPagesInRow()));
         spFitHeightTo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, initOptions.getPagesInColumn()));
