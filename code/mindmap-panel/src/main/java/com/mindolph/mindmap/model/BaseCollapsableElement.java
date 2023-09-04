@@ -37,11 +37,11 @@ public abstract class BaseCollapsableElement extends BaseElement {
         double w = collapsatorZone.getWidth();
         double h = collapsatorZone.getHeight();
 
-        double DELTA = Math.round(cfg.getCollapsatorSize() * 0.3d * mindMapContext.getScale());
+        double DELTA = Math.round(theme.getCollapsatorSize() * 0.3d * mindMapContext.getScale());
 
-        g.setStroke(mindMapContext.safeScale(cfg.getCollapsatorBorderWidth(), 0.1f), StrokeType.SOLID);
-        Color lineColor = cfg.getCollapsatorBorderColor();
-        g.drawOval(x, y, w, h, lineColor, cfg.getCollapsatorBackgroundColor());
+        g.setStroke(mindMapContext.safeScale(theme.getCollapsatorBorderWidth(), 0.1f), StrokeType.SOLID);
+        Color lineColor = theme.getCollapsatorBorderColor();
+        g.drawOval(x, y, w, h, lineColor, theme.getCollapsatorBackgroundColor());
         g.drawLine(x + DELTA, y + h / 2, x + w - DELTA, y + h / 2, lineColor);
         if (collapsed) {
             g.drawLine(x + w / 2, y + DELTA, x + w / 2, y + h - DELTA, lineColor);
@@ -93,8 +93,8 @@ public abstract class BaseCollapsableElement extends BaseElement {
     public Dimension2D calcBlockSize(Dimension2D size, boolean childrenOnly) {
         Dimension2D result = size == null ? DimensionUtils.newZero() : size;
 
-        double scaledVInset = mindMapContext.getScale() * cfg.getOtherLevelVerticalInset();
-        double scaledHInset = mindMapContext.getScale() * cfg.getOtherLevelHorizontalInset();
+        double scaledVInset = mindMapContext.getScale() * theme.getOtherLevelVerticalInset();
+        double scaledHInset = mindMapContext.getScale() * theme.getOtherLevelHorizontalInset();
 
         double width = childrenOnly ? 0.0d : this.bounds.getWidth();
         double height = childrenOnly ? 0.0d : this.bounds.getHeight();
@@ -123,7 +123,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
                 height = Math.max(height, childrenHeight);
             }
             else if (!childrenOnly) {
-                width += cfg.getCollapsatorSize() * mindMapContext.getScale();
+                width += theme.getCollapsatorSize() * mindMapContext.getScale();
             }
         }
         result = new Dimension2D(width, height);
@@ -134,12 +134,12 @@ public abstract class BaseCollapsableElement extends BaseElement {
     public void alignElementAndChildren(boolean leftSide, double leftX, double topY) {
         super.alignElementAndChildren(leftSide, leftX, topY);
 
-        double horzInset = cfg.getOtherLevelHorizontalInset() * mindMapContext.getScale();
+        double horzInset = theme.getOtherLevelHorizontalInset() * mindMapContext.getScale();
 
         double childrenX;
 
-        double COLLAPSATORSIZE = cfg.getCollapsatorSize() * mindMapContext.getScale();
-        double COLLAPSATORDISTANCE = cfg.getCollapsatorSize() * 0.1d * mindMapContext.getScale();
+        double COLLAPSATORSIZE = theme.getCollapsatorSize() * mindMapContext.getScale();
+        double COLLAPSATORDISTANCE = theme.getCollapsatorSize() * 0.1d * mindMapContext.getScale();
 
         double collapsatorX;
 
@@ -160,7 +160,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
         //this.collapsatorZone.setRect(collapsatorX, (this.bounds.getHeight() - COLLAPSATORSIZE) / 2, COLLAPSATORSIZE, COLLAPSATORSIZE);
 
         if (!this.isCollapsed()) {
-            double vertInset = cfg.getOtherLevelVerticalInset() * mindMapContext.getScale();
+            double vertInset = theme.getOtherLevelVerticalInset() * mindMapContext.getScale();
 
             Dimension2D childBlockSize = calcBlockSize(null, true);
             double currentY = topY + (this.blockSize.getHeight() - childBlockSize.getHeight()) / 2.0d;
@@ -196,13 +196,13 @@ public abstract class BaseCollapsableElement extends BaseElement {
 
     @Override
     public void drawConnector(Rectangle2D source, Rectangle2D destination, boolean isLeftDirection) {
-        g.setStroke(mindMapContext.safeScale(cfg.getConnectorWidth(), 0.1f), StrokeType.SOLID);
+        g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
 
         double dy = Math.abs(centerY(destination) - centerY(source));
         if (dy < (16.0d * mindMapContext.getScale())) {
             g.drawLine(isLeftDirection ? source.getMaxX() : source.getMinX(),
                     centerY(source), centerX(destination), centerY(source),
-                    cfg.getConnectorColor());
+                    theme.getConnectorColor());
         }
         else {
             Path path = new Path();
@@ -221,7 +221,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
             }
             path.getElements().add(new LineTo(centerX(destination), centerY(destination)));
 
-            g.draw(path, cfg.getConnectorColor(), null);
+            g.draw(path, theme.getConnectorColor(), null);
         }
     }
 
@@ -253,7 +253,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
     @Override
     public void updateElementBounds() {
         super.updateElementBounds();
-        double marginOffset = ((cfg.getTextMargins() + cfg.getElementBorderWidth()) * 2.0d) * mindMapContext.getScale();
+        double marginOffset = ((theme.getTextMargins() + theme.getElementBorderWidth()) * 2.0d) * mindMapContext.getScale();
         this.bounds = new Rectangle2D(this.bounds.getMinX(), this.bounds.getMinY(),
                 this.bounds.getWidth() + marginOffset, this.bounds.getHeight() + marginOffset);
     }

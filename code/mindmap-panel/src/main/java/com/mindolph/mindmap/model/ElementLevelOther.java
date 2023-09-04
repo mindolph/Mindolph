@@ -33,11 +33,11 @@ public class ElementLevelOther extends ElementLevelFirst {
 
     @Override
     public void drawComponent(boolean drawCollapsator) {
-        g.setStroke(mindMapContext.safeScale(cfg.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
+        g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
 
-        if (cfg.isDropShadow()) {
-            float offset = mindMapContext.safeScale(cfg.getShadowOffset(), 0.0f);
-            g.draw(makeShape(offset, offset), null, cfg.getShadowColor());
+        if (theme.isDropShadow()) {
+            float offset = mindMapContext.safeScale(theme.getShadowOffset(), 0.0f);
+            g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
 
         Shape shape = makeShape(0f, 0f);
@@ -94,12 +94,12 @@ public class ElementLevelOther extends ElementLevelFirst {
 
     @Override
     public Color getBackgroundColor() {
-        return this.fillColor == null ? cfg.getOtherLevelBackgroundColor() : this.fillColor;
+        return this.fillColor == null ? theme.getOtherLevelBackgroundColor() : this.fillColor;
     }
 
     @Override
     public Color getTextColor() {
-        return this.textColor == null ? cfg.getOtherLevelTextColor() : this.textColor;
+        return this.textColor == null ? theme.getOtherLevelTextColor() : this.textColor;
     }
 
 }

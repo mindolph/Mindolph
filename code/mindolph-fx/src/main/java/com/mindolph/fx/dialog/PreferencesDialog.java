@@ -58,7 +58,10 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Preferences of Mindolph")
                 .fxmlUri("dialog/preferences_dialog.fxml")
-                .buttons(ButtonType.CLOSE)
+                .button(ButtonType.CLOSE, () -> {
+                    mmdPreferences.save(); // todo use change status to avoid unnecessary save
+                    dialog.close();
+                })
                 .button(resetButtonType, () -> {
                     boolean confirmed = DialogFactory.okCancelConfirmDialog("Are you sure, this operation will reset all your preferences to default");
                     if (confirmed) {

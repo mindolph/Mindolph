@@ -32,6 +32,7 @@ import com.mindolph.mindmap.gfx.MindMapCanvas;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.theme.MindMapTheme;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import javafx.geometry.Dimension2D;
@@ -145,15 +146,16 @@ public class SVGImageExporter extends BaseExportExtension {
         }
 
         MindMapConfig newConfig = new MindMapConfig(context.getMindMapConfig());
-        String[] mappedFont = LOCAL_FONT_MAP.get(newConfig.getTopicFont().getFamily().toLowerCase(Locale.ENGLISH));
+        MindMapTheme theme = newConfig.getTheme();
+        String[] mappedFont = LOCAL_FONT_MAP.get(theme.getTopicFont().getFamily().toLowerCase(Locale.ENGLISH));
         if (mappedFont != null) {
-            FontWeight weight = FontUtils.fontWeight(newConfig.getTopicFont().getStyle());
-            FontPosture posture = FontUtils.fontPosture(newConfig.getTopicFont().getStyle());
-            Font adaptedFont = Font.font(mappedFont[1], weight, posture, newConfig.getTopicFont().getSize());
-            newConfig.setTopicFont(adaptedFont);
+            FontWeight weight = FontUtils.fontWeight(theme.getTopicFont().getStyle());
+            FontPosture posture = FontUtils.fontPosture(theme.getTopicFont().getStyle());
+            Font adaptedFont = Font.font(mappedFont[1], weight, posture, theme.getTopicFont().getSize());
+            theme.setTopicFont(adaptedFont);
         }
 
-        newConfig.setDrawBackground(this.flagDrawBackground);
+        theme.setDrawBackground(this.flagDrawBackground);
 
         MindMapContext mindMapContext = new MindMapContext();
         Dimension2D blockSize = calculateSizeOfMapInPixels(workMap, newConfig, mindMapContext, flagExpandAllNodes);
@@ -218,7 +220,7 @@ public class SVGImageExporter extends BaseExportExtension {
 
 
     private String prepareStylePart(StringBuilder buffer, MindMapConfig config) {
-        return "<style>%s.%s {%s%s}%s</style>".formatted(NEXT_LINE, FONT_CLASS_NAME, NEXT_LINE, font2style(config.getTopicFont()), NEXT_LINE);
+        return "<style>%s.%s {%s%s}%s</style>".formatted(NEXT_LINE, FONT_CLASS_NAME, NEXT_LINE, font2style(config.getTheme().getNoteFont()), NEXT_LINE);
     }
 
     @Override

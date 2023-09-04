@@ -1,5 +1,6 @@
 package com.mindolph.mindmap;
 
+import com.mindolph.mindmap.theme.MindMapTheme;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -93,23 +94,24 @@ public class MindMapConfigTest {
     }
 
     final MindMapConfig config = new MindMapConfig();
+    MindMapTheme theme =  config.getTheme();
 
-    config.setGridColor(Color.ORANGE);
-    config.setShowGrid(false);
-    config.setTopicFont(Font.font("Helvetica", FontWeight.NORMAL, FontPosture.ITALIC, 36));
+    theme.setGridColor(Color.ORANGE);
+    theme.setShowGrid(false);
+    theme.setTopicFont(Font.font("Helvetica", FontWeight.NORMAL, FontPosture.ITALIC, 36));
 
-//    config.setKeyShortCut(new KeyShortcut("testShortCut", 1234, 5678));
+//    theme.setKeyShortCut(new KeyShortcut("testShortCut", 1234, 5678));
 
-    config.saveToPreferences();
+    config.getTheme().saveToPreferences();
     assertFalse(storage.isEmpty());
 
     final MindMapConfig newConfig = new MindMapConfig();
 
     newConfig.loadFromPreferences();
 
-    assertFalse(newConfig.isShowGrid());
-    assertEquals(Color.ORANGE, newConfig.getGridColor());
-    assertEquals(Font.font("Helvetica",  FontWeight.NORMAL, FontPosture.ITALIC, 36), newConfig.getTopicFont());
+    assertFalse(newConfig.getTheme().isShowGrid());
+    assertEquals(Color.ORANGE, newConfig.getTheme().getGridColor());
+    assertEquals(Font.font("Helvetica",  FontWeight.NORMAL, FontPosture.ITALIC, 36), newConfig.getTheme().getTopicFont());
 
 //    final KeyShortcut shortCut = newConfig.getKeyShortCut("testShortCut");
 //    assertNotNull(shortCut);
@@ -123,9 +125,9 @@ public class MindMapConfigTest {
 
     final MindMapConfig etalon = new MindMapConfig();
 
-    assertEquals(etalon.isShowGrid(), newConfig.isShowGrid());
-    assertEquals(etalon.getGridColor(), newConfig.getGridColor());
-    assertEquals(etalon.getTopicFont(), newConfig.getTopicFont());
+    assertEquals(etalon.getTheme().isShowGrid(), newConfig.getTheme().isShowGrid());
+    assertEquals(etalon.getTheme().getGridColor(), newConfig.getTheme().getGridColor());
+    assertEquals(etalon.getTheme().getTopicFont(), newConfig.getTheme().getTopicFont());
 //    assertNull(newConfig.getKeyShortCut("testShortCut"));
 //    assertNotNull(newConfig.getKeyShortCut(ShortcutConstants.KEY_ADD_CHILD_AND_START_EDIT));
   }

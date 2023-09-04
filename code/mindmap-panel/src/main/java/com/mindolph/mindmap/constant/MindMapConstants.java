@@ -8,6 +8,9 @@ import javafx.scene.paint.Color;
  * @author mindolph.com@gmail.com
  */
 public interface MindMapConstants {
+
+    String CFG_PREFIX = "mmd";
+
     int TOPIC_GAP = 30;
     int MIN_DISTANCE_FOR_DRAGGING_START = 8;
 

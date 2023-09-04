@@ -33,8 +33,8 @@ public class ElementLevelFirst extends BaseCollapsableElement {
 
     protected Shape makeShape(double x, double y) {
         Rectangle rect = new Rectangle(x, y, this.bounds.getWidth(), this.bounds.getHeight());
-        if (cfg.getRoundRadius() > 0) {
-            float round = mindMapContext.safeScale(cfg.getRoundRadius(), 0f);
+        if (theme.getRoundRadius() > 0) {
+            float round = mindMapContext.safeScale(theme.getRoundRadius(), 0f);
             rect.setArcWidth(round);
             rect.setArcHeight(round);
         }
@@ -43,13 +43,13 @@ public class ElementLevelFirst extends BaseCollapsableElement {
 
     @Override
     public void drawComponent(boolean drawCollapsator) {
-        g.setStroke(mindMapContext.safeScale(cfg.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
+        g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
 
         Shape shape = makeShape(0f, 0f);
 
-        if (cfg.isDropShadow()) {
-            float offset = mindMapContext.safeScale(cfg.getShadowOffset(), 0.0f);
-            g.draw(makeShape(offset, offset), null, cfg.getShadowColor());
+        if (theme.isDropShadow()) {
+            float offset = mindMapContext.safeScale(theme.getShadowOffset(), 0.0f);
+            g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
 
         g.draw(shape, getBorderColor(), getBackgroundColor());
@@ -76,11 +76,11 @@ public class ElementLevelFirst extends BaseCollapsableElement {
 
     @Override
     public Color getBackgroundColor() {
-        return this.fillColor == null ? cfg.getFirstLevelBackgroundColor() : this.fillColor;
+        return this.fillColor == null ? theme.getFirstLevelBackgroundColor() : this.fillColor;
     }
 
     @Override
     public Color getTextColor() {
-        return this.textColor == null ? cfg.getFirstLevelTextColor() : this.textColor;
+        return this.textColor == null ? theme.getFirstLevelTextColor() : this.textColor;
     }
 }

@@ -186,7 +186,7 @@ public class MindmupExporter extends BaseExportExtension {
                     stringer.key("style").object();
 
                     stringer.key("arrow").value("to");
-                    stringer.key("color").value(cfg.getJumpLinkColor().toString());
+                    stringer.key("color").value(cfg.getTheme().getJumpLinkColor().toString());
                     stringer.key("lineStyle").value("dashed");
 
                     stringer.endObject();

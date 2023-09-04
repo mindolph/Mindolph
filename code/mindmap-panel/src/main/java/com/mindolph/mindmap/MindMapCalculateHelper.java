@@ -40,7 +40,7 @@ public class MindMapCalculateHelper {
                     mmCanvas.calculateElementSizes(workMap);
                 }
                 blockSize = mmCanvas.layoutModelElements(workMap);
-                double paperMargin = cfg.getPaperMargins() * context.getScale();
+                double paperMargin = cfg.getTheme().getPaperMargins() * context.getScale();
                 blockSize = new Dimension2D(blockSize.getWidth() + paperMargin * 2, blockSize.getHeight() + paperMargin * 2);
             }
         } finally {

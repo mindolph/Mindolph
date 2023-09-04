@@ -11,6 +11,7 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.model.*;
+import com.mindolph.mindmap.theme.MindMapTheme;
 import com.mindolph.mindmap.util.DiagramUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
@@ -40,11 +41,13 @@ public class MindMapCanvas {
 
     private final Graphics g;
     private final MindMapConfig config;
+    private final MindMapTheme theme;
     private final MindMapContext mindMapContext;
 
     public MindMapCanvas(Graphics g, MindMapConfig config, MindMapContext context) {
         this.g = g;
         this.config = config;
+        this.theme = config.getTheme();
         this.mindMapContext = context;
     }
 
@@ -108,7 +111,7 @@ public class MindMapCanvas {
 
     public void drawBackground() {
         Rectangle2D clipBounds = g.getClipBounds();
-        if (config.isDrawBackground()) {
+        if (theme.isDrawBackground()) {
             if (clipBounds == null) {
                 log.warn("Can't draw background because clip bounds is not provided!");
             }
@@ -119,19 +122,19 @@ public class MindMapCanvas {
                 double beginY = clipBounds.getMinY() < 0 ? clipBounds.getMinY() : 0;
                 double totalWidth = (clipBounds.getWidth() + (clipBounds.getMinX() < 0 ? 0 : clipBounds.getMinX()));
                 double totalHeight = (clipBounds.getHeight() + (clipBounds.getMinY() < 0 ? 0 : clipBounds.getMinY()));
-                g.drawRect(beginX, beginY, totalWidth, totalHeight, null, config.getPaperColor());
+                g.drawRect(beginX, beginY, totalWidth, totalHeight, null, theme.getPaperColor());
                 //g.drawRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height, null, cfg.getPaperColor());
 
                 g.setStroke(1, StrokeType.SOLID);
-                if (config.isShowGrid()) {
-                    double scaledGridStep = config.getGridStep() * mindMapContext.getScale();
+                if (theme.isShowGrid()) {
+                    double scaledGridStep = theme.getGridStep() * mindMapContext.getScale();
 
                     double minX = clipBounds.getMinX();
                     double minY = clipBounds.getMinY();
                     double maxX = clipBounds.getMinX() + clipBounds.getWidth();
                     double maxY = clipBounds.getMinY() + clipBounds.getHeight();
 
-                    Color gridColor = config.getGridColor();
+                    Color gridColor = theme.getGridColor();
 
                     for (double x = beginX; x < maxX; x += scaledGridStep) {
                         if (x < minX) {
@@ -195,16 +198,16 @@ public class MindMapCanvas {
     private void paintTopic(TopicNode topic, TopicNode collapsingTopic) {
         BaseElement element = (BaseElement) topic.getPayload();
         if (element != null) {
-            element.doPaint(!config.isShowCollapsatorOnMouseHover() || topic == collapsingTopic);
+            element.doPaint(!theme.isShowCollapsatorOnMouseHover() || topic == collapsingTopic);
         }
     }
 
     private void drawSelection(List<TopicNode> selectedTopics) {
         if (selectedTopics != null && !selectedTopics.isEmpty()) {
             if (log.isTraceEnabled()) log.trace("Draw selection");
-            Color selectLineColor = config.getSelectLineColor();
-            g.setStroke(mindMapContext.safeScale(config.getSelectLineWidth(), 0.1f), StrokeType.DASHES);
-            double selectLineGap = mindMapContext.safeScale(config.getSelectLineGap(), 0.05f);
+            Color selectLineColor = theme.getSelectLineColor();
+            g.setStroke(mindMapContext.safeScale(theme.getSelectLineWidth(), 0.1f), StrokeType.DASHES);
+            double selectLineGap = mindMapContext.safeScale(theme.getSelectLineGap(), 0.05f);
             double selectLineGapX2 = selectLineGap + selectLineGap;
 
             for (TopicNode s : selectedTopics) {
@@ -216,8 +219,8 @@ public class MindMapCanvas {
                     double h = Math.round(e.getBounds().getHeight() + selectLineGapX2);
 
                     Rectangle rect = new Rectangle(x, y, w, h);
-                    if (config.getRoundRadius() > 0) {
-                        float round = mindMapContext.safeScale((e instanceof ElementRoot) ? 10f : config.getRoundRadius(), 0f);
+                    if (theme.getRoundRadius() > 0) {
+                        float round = mindMapContext.safeScale((e instanceof ElementRoot) ? 10f : theme.getRoundRadius(), 0f);
                         rect.setArcWidth(round);
                         rect.setArcHeight(round);
                     }
@@ -225,7 +228,7 @@ public class MindMapCanvas {
                 }
             }
             // force resetting stroke or the background drawing will be affected.
-            g.setStroke(mindMapContext.safeScale(config.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
+            g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
         }
     }
 
@@ -240,10 +243,10 @@ public class MindMapCanvas {
 
     private void drawJumps(MindMap<TopicNode> map) {
         List<TopicNode> allTopicsWithJumps = map.findAllTopicsForExtraType(Extra.ExtraType.TOPIC);
-        float lineWidth = mindMapContext.safeScale(config.getJumpLinkWidth(), 0.1f);
-        float arrowWidth = mindMapContext.safeScale(config.getJumpLinkWidth(), 0.3f);
-        Color jumpLinkColor = config.getJumpLinkColor();
-        float arrowSize = mindMapContext.safeScale(10.0f * config.getJumpLinkWidth(), 0.2f);
+        float lineWidth = mindMapContext.safeScale(theme.getJumpLinkWidth(), 0.1f);
+        float arrowWidth = mindMapContext.safeScale(theme.getJumpLinkWidth(), 0.3f);
+        Color jumpLinkColor = theme.getJumpLinkColor();
+        float arrowSize = mindMapContext.safeScale(10.0f * theme.getJumpLinkWidth(), 0.2f);
         for (TopicNode src : allTopicsWithJumps) {
             ExtraTopic extra = (ExtraTopic) src.getExtras().get(Extra.ExtraType.TOPIC);
             src = src.isHidden() ? src.findFirstVisibleAncestor() : src;
@@ -342,7 +345,7 @@ public class MindMapCanvas {
         Dimension2D resultSize = null;
         if (calculateElementSizes(model)) {
             Dimension2D rootBlockSize = layoutModelElements(model);
-            double paperMargin = config.getPaperMargins() * mindMapContext.getScale();
+            double paperMargin = theme.getPaperMargins() * mindMapContext.getScale();
 
             if (rootBlockSize != null) {
                 ElementRoot rootElement = (ElementRoot) model.getRoot().getPayload();

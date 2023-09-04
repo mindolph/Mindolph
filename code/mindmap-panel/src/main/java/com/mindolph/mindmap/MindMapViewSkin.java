@@ -230,7 +230,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
 //            rectToDraw.setRect(destinationElement.getBounds());
 
             Rectangle2D eBounds = destinationElement.getBounds();
-            double selectLineGap = cfg.getSelectLineGap() * 3.0d * getSkinnable().mindMapContext.getScale();
+            double selectLineGap = cfg.getTheme().getSelectLineGap() * 3.0d * getSkinnable().mindMapContext.getScale();
             // calculate extended rectangle
             Rectangle2D r = new Rectangle2D(eBounds.getMinX() - selectLineGap, eBounds.getMinY() - selectLineGap,
                     eBounds.getWidth() + selectLineGap * 2, eBounds.getHeight() + selectLineGap * 2);
@@ -270,7 +270,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             if (draw) {
                 gc.fillRect(r.getMinX(), r.getMinY(), r.getWidth(), r.getHeight());
             }
-            gc.setLineWidth(getSkinnable().mindMapContext.safeScale(cfg.getElementBorderWidth(), 0.1f));
+            gc.setLineWidth(getSkinnable().mindMapContext.safeScale(cfg.getTheme().getElementBorderWidth(), 0.1f));
         }
     }
 

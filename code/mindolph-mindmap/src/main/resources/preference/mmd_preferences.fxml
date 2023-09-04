@@ -13,6 +13,8 @@
 
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Button?>
 <fx:root prefHeight="800.0" prefWidth="640.0" type="AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -25,6 +27,12 @@
                         <HBox HBox.hgrow="ALWAYS">
                         <VBox prefWidth="640">
                            <children>
+                               <PreferenceItem name="Theme:" >
+                                   <ChoiceBox fx:id="cbTheme">
+                                   </ChoiceBox>
+                                   <Button fx:id="btnDuplicate" text="Duplicate"/>
+                                   <Button fx:id="btnDelete" text="Delete"/>
+                               </PreferenceItem>
                                <PreferenceItem name="Show grid:">
                                    <items>
                                        <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false" />

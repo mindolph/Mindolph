@@ -55,7 +55,7 @@ public final class PNGImageExporter extends BaseExportExtension {
 
     private Image makeImage(ExtensionContext context, List<Boolean> options) throws IOException {
         MindMapConfig newConfig = new MindMapConfig(context.getMindMapConfig());
-        newConfig.setDrawBackground(this.flagDrawBackground);
+        newConfig.getTheme().setDrawBackground(this.flagDrawBackground);
         return MindMapCanvas.renderMindMapAsImage(context.getModel(),newConfig,  flagExpandAllNodes);
     }
 

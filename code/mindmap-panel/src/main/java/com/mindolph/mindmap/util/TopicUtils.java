@@ -55,13 +55,13 @@ public class TopicUtils {
         if (extracted == null) {
             switch (topic.getTopicLevel()) {
                 case 0 -> {
-                    result = cfg.getRootBackgroundColor();
+                    result = cfg.getTheme().getRootBackgroundColor();
                 }
                 case 1 -> {
-                    result = cfg.getFirstLevelBackgroundColor();
+                    result = cfg.getTheme().getFirstLevelBackgroundColor();
                 }
                 default -> {
-                    result = cfg.getOtherLevelBackgroundColor();
+                    result = cfg.getTheme().getOtherLevelBackgroundColor();
                 }
             }
         } else {
@@ -77,13 +77,13 @@ public class TopicUtils {
         if (extracted == null) {
             switch (topic.getTopicLevel()) {
                 case 0 -> {
-                    result = cfg.getRootTextColor();
+                    result = cfg.getTheme().getRootTextColor();
                 }
                 case 1 -> {
-                    result = cfg.getFirstLevelTextColor();
+                    result = cfg.getTheme().getFirstLevelTextColor();
                 }
                 default -> {
-                    result = cfg.getOtherLevelTextColor();
+                    result = cfg.getTheme().getOtherLevelTextColor();
                 }
             }
         } else {
@@ -95,6 +95,6 @@ public class TopicUtils {
     public static Color getBorderColor(MindMapConfig cfg, TopicNode topic) {
         Color extracted = topic.getColorFromAttribute(ATTR_BORDER_COLOR);
 //        Color extracted = Utils.html2color(topic.getAttribute(ATTR_BORDER_COLOR.getText()), false);
-        return extracted == null ? cfg.getElementBorderColor() : extracted;
+        return extracted == null ? cfg.getTheme().getElementBorderColor() : extracted;
     }
 }

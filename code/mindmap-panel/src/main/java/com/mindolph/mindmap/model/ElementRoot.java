@@ -62,13 +62,13 @@ public final class ElementRoot extends BaseElement {
 
     @Override
     public void drawComponent(boolean drawCollapsator) {
-        g.setStroke(mindMapContext.safeScale(cfg.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
+        g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
 
         // Draw element area with shadow(if required)
         Shape shape = makeShape(0f, 0f);
-        if (cfg.isDropShadow()) {
-            float offset = mindMapContext.safeScale(cfg.getShadowOffset(), 0.0f);
-            g.draw(makeShape(offset, offset), null, cfg.getShadowColor());
+        if (theme.isDropShadow()) {
+            float offset = mindMapContext.safeScale(theme.getShadowOffset(), 0.0f);
+            g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
         g.draw(shape, this.getBorderColor(), this.getBackgroundColor());
 
@@ -88,7 +88,7 @@ public final class ElementRoot extends BaseElement {
 
     @Override
     public void drawConnector(Rectangle2D source, Rectangle2D destination, boolean leftDirection) {
-        g.setStroke(mindMapContext.safeScale(cfg.getConnectorWidth(), 0.1f), StrokeType.SOLID);
+        g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
 
         double startX;
         double endX;
@@ -103,7 +103,7 @@ public final class ElementRoot extends BaseElement {
             endX = destination.getMinX() + 10;
         }
 
-        g.drawCurve(startX, centerY(source), endX, centerY(destination), cfg.getConnectorColor());
+        g.drawCurve(startX, centerY(source), endX, centerY(destination), theme.getConnectorColor());
     }
 
     private double calcTotalChildrenHeight(double vertInset, boolean left) {
@@ -133,8 +133,8 @@ public final class ElementRoot extends BaseElement {
         double dy = cy;
         this.moveTo(dx, dy);
 
-        double insetVert = cfg.getFirstLevelVerticalInset() * mindMapContext.getScale();
-        double insetHorz = cfg.getFirstLevelHorizontalInset() * mindMapContext.getScale();
+        double insetVert = theme.getFirstLevelVerticalInset() * mindMapContext.getScale();
+        double insetHorz = theme.getFirstLevelHorizontalInset() * mindMapContext.getScale();
 
         double leftHeight = calcTotalChildrenHeight(insetVert, true);
         double rightHeight = calcTotalChildrenHeight(insetVert, false);
@@ -167,7 +167,7 @@ public final class ElementRoot extends BaseElement {
     @Override
     public void updateElementBounds() {
         super.updateElementBounds();
-        double marginOffset = ((cfg.getTextMargins() + cfg.getElementBorderWidth()) * 2.0d) * mindMapContext.getScale();
+        double marginOffset = ((theme.getTextMargins() + theme.getElementBorderWidth()) * 2.0d) * mindMapContext.getScale();
         this.bounds = new Rectangle2D(this.bounds.getMinY(), this.bounds.getMinY(), this.bounds.getWidth() + marginOffset, this.bounds.getHeight() + marginOffset);
     }
 
@@ -181,8 +181,8 @@ public final class ElementRoot extends BaseElement {
 
     @Override
     public Dimension2D calcBlockSize(Dimension2D size, boolean childrenOnly) {
-        double insetV = mindMapContext.getScale() * cfg.getFirstLevelVerticalInset();
-        double insetH = mindMapContext.getScale() * cfg.getFirstLevelHorizontalInset();
+        double insetV = mindMapContext.getScale() * theme.getFirstLevelVerticalInset();
+        double insetH = mindMapContext.getScale() * theme.getFirstLevelHorizontalInset();
 
         Dimension2D result = size;
 
@@ -245,12 +245,12 @@ public final class ElementRoot extends BaseElement {
 
     @Override
     public Color getBackgroundColor() {
-        return this.fillColor == null ?  cfg.getRootBackgroundColor() : this.fillColor;
+        return this.fillColor == null ?  theme.getRootBackgroundColor() : this.fillColor;
     }
 
     @Override
     public Color getTextColor() {
-        return this.textColor == null ? cfg.getRootTextColor() : this.textColor;
+        return this.textColor == null ? theme.getRootTextColor() : this.textColor;
     }
 
 }

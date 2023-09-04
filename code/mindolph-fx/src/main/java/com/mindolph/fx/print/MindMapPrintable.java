@@ -8,6 +8,7 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.base.graphic.CanvasGraphicsWrapper;
 import com.mindolph.mfx.util.DimensionUtils;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.theme.MindMapTheme;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.print.PageLayout;
@@ -41,24 +42,25 @@ public class MindMapPrintable extends BasePrintable {
         this.mindMapContext = new MindMapContext();
 
         cfg = new MindMapConfig();
-        cfg.setDrawBackground(false);
-        cfg.setDropShadow(false);
+        MindMapTheme theme = cfg.getTheme();
+        theme.setDrawBackground(false);
+        theme.setDropShadow(false);
 
-        cfg.setConnectorColor(Color.BLACK);
-        cfg.setRootBackgroundColor(Color.BLACK);
-        cfg.setRootTextColor(Color.WHITE);
-        cfg.setFirstLevelBackgroundColor(Color.LIGHTGRAY);
-        cfg.setFirstLevelTextColor(Color.BLACK);
-        cfg.setOtherLevelBackgroundColor(Color.WHITE);
-        cfg.setOtherLevelTextColor(Color.BLACK);
-        cfg.setCollapsatorBorderColor(Color.BLACK);
-        cfg.setCollapsatorBackgroundColor(Color.WHITE);
-        cfg.setJumpLinkColor(Color.DARKGRAY);
+        theme.setConnectorColor(Color.BLACK);
+        theme.setRootBackgroundColor(Color.BLACK);
+        theme.setRootTextColor(Color.WHITE);
+        theme.setFirstLevelBackgroundColor(Color.LIGHTGRAY);
+        theme.setFirstLevelTextColor(Color.BLACK);
+        theme.setOtherLevelBackgroundColor(Color.WHITE);
+        theme.setOtherLevelTextColor(Color.BLACK);
+        theme.setCollapsatorBorderColor(Color.BLACK);
+        theme.setCollapsatorBackgroundColor(Color.WHITE);
+        theme.setJumpLinkColor(Color.DARKGRAY);
 
-        cfg.setElementBorderWidth(1.5f);
-        cfg.setCollapsatorBorderWidth(1.0f);
-        cfg.setConnectorWidth(2.0f);
-        cfg.setPaperMargins(2);
+        theme.setElementBorderWidth(1.5f);
+        theme.setCollapsatorBorderWidth(1.0f);
+        theme.setConnectorWidth(2.0f);
+        theme.setPaperMargins(2);
 
         mmCanvas = new MindMapCanvas(new CanvasGraphicsWrapper(new Canvas()), cfg, mindMapContext);
 

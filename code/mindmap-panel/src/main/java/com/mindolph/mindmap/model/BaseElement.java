@@ -8,6 +8,7 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.constant.ElementPart;
 import com.mindolph.mindmap.constant.TextAlign;
+import com.mindolph.mindmap.theme.MindMapTheme;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -20,6 +21,8 @@ public abstract class BaseElement {
     protected Graphics g;
 
     protected final MindMapConfig cfg;
+
+    protected final MindMapTheme theme;
 
     protected final MindMapContext mindMapContext;
 
@@ -41,6 +44,7 @@ public abstract class BaseElement {
     protected BaseElement(BaseElement orig) {
         this.model = orig.model;
         this.cfg = orig.cfg;
+        this.theme = orig.cfg.getTheme();
         this.g = orig.g;
         this.mindMapContext = orig.mindMapContext;
         this.textBlock = new TextBlock(orig.textBlock);
@@ -56,6 +60,7 @@ public abstract class BaseElement {
     public BaseElement(TopicNode model, Graphics g, MindMapConfig cfg, MindMapContext context) {
         this.model = model;
         this.cfg = cfg;
+        this.theme = cfg.getTheme();
         this.g = g;
         this.mindMapContext = context;
         this.textBlock = new TextBlock(this.model.getText(), TextAlign.findForName(model.getAttribute("align")), g, cfg, context);
@@ -118,7 +123,7 @@ public abstract class BaseElement {
         this.textBlock.updateSize();
         this.extrasIconBlock.updateSize();
 
-        double scaledHorzBlockGap = mindMapContext.getScale() * cfg.getHorizontalBlockGap();
+        double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
 
         double width = 0.0d;
         if (this.visualAttributeImageBlock.mayHaveContent()) {
@@ -207,12 +212,12 @@ public abstract class BaseElement {
     public abstract boolean isCollapsed();
 
     public void alignElementAndChildren(boolean leftSide, double centerX, double centerY) {
-        double textMargin = mindMapContext.getScale() * cfg.getTextMargins();
+        double textMargin = mindMapContext.getScale() * theme.getTextMargins();
         double centralBlockLineY = textMargin +
                 Math.max(this.visualAttributeImageBlock.getBounds().getHeight(),
                         Math.max(this.textBlock.getBounds().getHeight(), this.extrasIconBlock.getBounds().getHeight())) / 2;
 
-        double scaledHorzBlockGap = mindMapContext.getScale() * cfg.getHorizontalBlockGap();
+        double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
 
         double offset = textMargin;
 
@@ -331,7 +336,7 @@ public abstract class BaseElement {
 
 
     public Color getBorderColor() {
-        return this.borderColor == null ? cfg.getElementBorderColor() : this.borderColor;
+        return this.borderColor == null ? theme.getElementBorderColor() : this.borderColor;
     }
 
 
