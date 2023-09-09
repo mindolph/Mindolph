@@ -5,10 +5,7 @@ import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mindmap.MindMapConfig;
-import com.mindolph.mindmap.theme.CustomTheme;
-import com.mindolph.mindmap.theme.MindMapTheme;
-import com.mindolph.mindmap.theme.ThemeType;
-import com.mindolph.mindmap.theme.ThemeUtils;
+import com.mindolph.mindmap.theme.*;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -44,6 +41,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private Button btnDelete;
     @FXML
     private Spinner<Integer> spnGridStep;
+    @FXML
+    private ChoiceBox<Pair<ConnectorStyle, String>> cbConnectorStyle;
     @FXML
     private CheckBox ckbShowGrid;
     @FXML
@@ -118,8 +117,13 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Pair<ThemeKey, String> THEME_ITEM_CLASSIC;
     private final Pair<ThemeKey, String> THEME_ITEM_LIGHT;
 
+
+    private final Pair<ConnectorStyle, String> CS_ITEM_BEZIER  = new Pair<>(ConnectorStyle.BEZIER, ThemeUtils.connectorTypeLabel(ConnectorStyle.BEZIER.name()));
+    private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE  = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
+
     public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
+
         THEME_ITEM_CLASSIC = new Pair<>(new ThemeKey(ThemeType.CLASSIC.name(), null), ThemeUtils.themeLabel(ThemeType.CLASSIC.name()));
         THEME_ITEM_LIGHT = new Pair<>(new ThemeKey(ThemeType.LIGHT.name(), null), ThemeUtils.themeLabel(ThemeType.LIGHT.name()));
 
@@ -146,48 +150,49 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         if (mindMapConfig.getUserThemes() != null) {
             cbTheme.getItems().addAll(mindMapConfig.getUserThemes().stream().map(n -> new Pair<>(new ThemeKey(n, n), ThemeUtils.themeLabel(n))).toList());
         }
-
         cbTheme.valueProperty().addListener((observableValue, old, newChoice) -> {
             // TO switch theme
             System.out.println("Switch to theme: " + mindMapConfig.getThemeName());
             ThemeKey selectedKey = newChoice.getKey();
             mindMapConfig.setThemeName(selectedKey.name);// set current theme
             mindMapConfig.setTheme(ThemeUtils.createTheme(selectedKey.name));
-            if (Arrays.stream(ThemeType.values()).anyMatch(themeType -> themeType.name().equals(selectedKey.name))) {
+            if (this.isPredefinedTheme(selectedKey.name)) {
                 btnDelete.setDisable(true);
             }
             else {
                 mindMapConfig.getTheme().loadFromPreferences();
                 btnDelete.setDisable(false);
             }
-            this.loadCustomizePreferences();
-            this.save();
+            this.initControlsFromPreferences();
+            this.save(true);
             // bind
             this.bindTheme();
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
         btnDuplicate.setOnAction(event -> {
             Dialog<String> nameDialog = new TextDialogBuilder().title("Give a name for you own customize theme")
-                    .text("xxx").build();
+                    .text(mindMapConfig.getThemeName() + "_copy").build();
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {
                 ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
                 String newName = optName.get();
                 mindMapConfig.getUserThemes().add(newName);
                 ThemeKey newThemeKey = new ThemeKey(newName, parentThemeKey.name);
-                Pair<ThemeKey, String> newItem = new Pair<>(newThemeKey, newName);
-                cbTheme.getItems().add(newItem);
-                cbTheme.getSelectionModel().select(newItem);
+
                 // create new custom theme and save to preference.
                 MindMapTheme newTheme = createThemeFromParent(newThemeKey);
                 newTheme.saveToPreferences();
+
+                Pair<ThemeKey, String> newItem = new Pair<>(newThemeKey, newName);
+                cbTheme.getItems().add(newItem);
+                cbTheme.getSelectionModel().select(newItem);
             }
         });
         btnDelete.setOnAction(event -> {
             ThemeKey selectedThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
             String selectedThemeName = selectedThemeKey.name;
             log.debug("Delete theme: " + selectedThemeName);
-            if (Arrays.stream(ThemeType.values()).noneMatch(themeType -> themeType.name().equals(selectedThemeName))) {
+            if (!isPredefinedTheme(selectedThemeName)) {
                 CustomTheme userTheme = new CustomTheme(selectedThemeName);
                 userTheme.deleteFromPreference();
                 mindMapConfig.getUserThemes().remove(selectedThemeName);
@@ -198,6 +203,26 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 cbTheme.getSelectionModel().select(THEME_ITEM_CLASSIC);
             }
         });
+        cbConnectorStyle.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Pair<ConnectorStyle, String> object) {
+                return object.getValue();
+            }
+
+            @Override
+            public Pair<ConnectorStyle, String> fromString(String string) {
+                return null;
+            }
+        });
+        cbConnectorStyle.getItems().addAll(Arrays.asList(
+                CS_ITEM_BEZIER,
+                CS_ITEM_POLYLINE
+        ));
+        cbConnectorStyle.getSelectionModel().select(new Pair<>(mindMapConfig.getTheme().getConnectorStyle(), ThemeUtils.connectorTypeLabel(mindMapConfig.getTheme().getConnectorStyle())));
+    }
+
+    private boolean isPredefinedTheme(String name) {
+        return Arrays.stream(ThemeType.values()).anyMatch(themeType -> themeType.name().equals(name));
     }
 
     @Override
@@ -205,11 +230,18 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
     }
 
+    /**
+     * Create custom theme from parent theme in themeKey.
+     *
+     * @param themeKey
+     * @return
+     */
     private MindMapTheme createThemeFromParent(ThemeKey themeKey) {
         MindMapTheme theme = ThemeUtils.createTheme(themeKey.name);
         if (theme instanceof CustomTheme customTheme) {
             if (StringUtils.isNotBlank(themeKey.parentName)) {
                 MindMapTheme parentTheme = ThemeUtils.createTheme(themeKey.parentName);
+//                log.debug("Copy theme from parent theme: " + parentTheme.getClass());
                 parentTheme.loadFromPreferences();
                 customTheme.copyFromTheme(parentTheme);
             }
@@ -238,6 +270,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         MindMapTheme theme = mindMapConfig.getTheme();
         this.bindPreference(spnGridStep.valueProperty(), theme::setGridStep);
         this.bindPreference(ckbShowGrid.selectedProperty(), theme::setShowGrid);
+        this.bindPreference(cbConnectorStyle.valueProperty(), connectorStyleStringPair -> theme.setConnectorStyle(connectorStyleStringPair.getKey()));
+
         this.bindPreference(cpGridColor.valueProperty(), theme::setGridColor);
         this.bindPreference(cpBackgroundFillColor.valueProperty(), theme::setPaperColor);
 
@@ -270,11 +304,12 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     }
 
     @Override
-    protected void loadCustomizePreferences() {
+    protected void initControlsFromPreferences() {
         //
         MindMapTheme theme = mindMapConfig.getTheme();
         spnGridStep.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 256, theme.getGridStep()));
         ckbShowGrid.setSelected(theme.isShowGrid());
+        cbConnectorStyle.getSelectionModel().select(CS_ITEM_BEZIER.getKey() == theme.getConnectorStyle()? CS_ITEM_BEZIER: CS_ITEM_POLYLINE);
         cpGridColor.setValue(theme.getGridColor());
         cpBackgroundFillColor.setValue(theme.getPaperColor());
         spnConnectorWidth.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 16f, theme.getConnectorWidth()));
@@ -325,7 +360,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             if (isLoaded) {
                 log.debug("Save preference to cache from control: %s".formatted(property.getBean()));
                 saveFunction.accept(newValue);
-                //save(); // save all or single? TODO
+                save(false); // save all or single? TODO
             }
         };
         listeners.put(property, changeListener);
@@ -339,10 +374,10 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     public void resetToDefault() {
         super.resetToDefault();
         mindMapConfig = new MindMapConfig();
-        this.loadCustomizePreferences(); // reset all customized preferences by setting value of controls.
+        this.initControlsFromPreferences(); // reset all customized preferences by setting value of controls.
     }
 
-    public void save() {
+    public void save(boolean notify) {
 //        for (Consumer<?> getHandler : getHandlers) {
 //            getHandler.apply();
 //        }
@@ -350,7 +385,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         mindMapConfig.saveToPreferences();
 //        preferencesManager.flush();
         // notify reload config
-        if (preferenceChangedEventHandler != null) {
+        if (notify && preferenceChangedEventHandler != null) {
             preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
         }
     }

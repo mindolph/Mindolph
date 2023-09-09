@@ -68,7 +68,13 @@ public final class MindMapUtils {
         }
     }
 
-
+    /**
+     * Check if the file is not dir, and the  extension matches, if not, ask user to add extension to file name.
+     *
+     * @param file
+     * @param dottedExtension
+     * @return
+     */
     public static File checkFileAndExtension(File file, String dottedExtension) {
         if (file == null) {
             return null;

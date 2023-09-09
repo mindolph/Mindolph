@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public abstract class MindMapTheme {
 
@@ -28,7 +28,7 @@ public abstract class MindMapTheme {
     protected Color firstLevelTextColor;
     protected Color otherLevelTextColor;
     protected Color elementBorderColor;
-    protected Color connectorColor;
+
     protected Color shadowColor;
     protected Color collapsatorBorderColor;
     protected Color collapsatorBackgroundColor;
@@ -39,13 +39,21 @@ public abstract class MindMapTheme {
     protected boolean showCollapsatorOnMouseHover;
     protected float collapsatorBorderWidth;
     protected float collapsatorSize;
+
+    protected ConnectorStyle connectorStyle;
     protected float connectorWidth;
+    protected Color connectorColor;
+
     protected float selectLineWidth;
     protected float jumpLinkWidth;
     protected float roundRadius;
     protected Font topicFont;
     protected Font noteFont;
     protected boolean dropShadow;
+
+    // internal (user can't change)
+    protected BorderType borderType;
+
 
     public MindMapTheme() {
     }
@@ -219,6 +227,14 @@ public abstract class MindMapTheme {
         this.elementBorderColor = elementBorderColor;
     }
 
+    public ConnectorStyle getConnectorStyle() {
+        return connectorStyle;
+    }
+
+    public void setConnectorStyle(ConnectorStyle connectorStyle) {
+        this.connectorStyle = connectorStyle;
+    }
+
     public Color getConnectorColor() {
         return connectorColor;
     }
@@ -363,4 +379,11 @@ public abstract class MindMapTheme {
         this.dropShadow = dropShadow;
     }
 
+    public BorderType getBorderType() {
+        return borderType;
+    }
+
+    public void setBorderType(BorderType borderType) {
+        this.borderType = borderType;
+    }
 }

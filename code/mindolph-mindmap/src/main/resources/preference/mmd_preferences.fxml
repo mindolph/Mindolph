@@ -33,6 +33,7 @@
                                    <Button fx:id="btnDuplicate" text="Duplicate"/>
                                    <Button fx:id="btnDelete" text="Delete"/>
                                </PreferenceItem>
+                               <Separator prefWidth="200.0" />
                                <PreferenceItem name="Show grid:">
                                    <items>
                                        <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false" />
@@ -42,6 +43,10 @@
                                    <items>
                                        <CheckBox fx:id="ckbDropShadow" />
                                    </items>
+                               </PreferenceItem>
+                               <PreferenceItem name="Connector style:" >
+                                   <ChoiceBox fx:id="cbConnectorStyle">
+                                   </ChoiceBox>
                                </PreferenceItem>
                                <Separator prefWidth="200.0" />
 

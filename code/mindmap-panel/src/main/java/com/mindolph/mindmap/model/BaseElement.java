@@ -8,12 +8,14 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.constant.ElementPart;
 import com.mindolph.mindmap.constant.TextAlign;
+import com.mindolph.mindmap.theme.BorderType;
 import com.mindolph.mindmap.theme.MindMapTheme;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 
+import static com.mindolph.mfx.util.RectangleUtils.centerY;
 import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 
 public abstract class BaseElement {
@@ -204,8 +206,73 @@ public abstract class BaseElement {
 
     public abstract void drawComponent(boolean drawCollapsator);
 
+    /**
+     * @param source        up level element
+     * @param destination   low level element
+     * @param leftDirection
+     */
     public abstract void drawConnector(Rectangle2D source, Rectangle2D destination,
                                        boolean leftDirection);
+
+    /**
+     * Source point for drawing connector between topics.
+     * @param borderType
+     * @param source
+     * @param isLeftDirection
+     * @return
+     */
+    protected Point2D sourcePoint(BorderType borderType, Rectangle2D source, boolean isLeftDirection) {
+        switch (borderType) {
+            case BOX:
+                return new Point2D(isLeftDirection ? source.getMinX() : source.getMaxX(),
+                        centerY(source));
+            case LINE:
+                return new Point2D(isLeftDirection ? source.getMinX() : source.getMaxX(),
+                        source.getMaxY());
+            default:
+                throw new RuntimeException("Unsupported border type " + borderType);
+        }
+    }
+
+    /**
+     * Destination point for drawing connector between topics.
+     *
+     * @param borderType
+     * @param destination
+     * @param isLeftDirection
+     * @return
+     */
+    protected Point2D destinationPoint(BorderType borderType, Rectangle2D destination, boolean isLeftDirection) {
+        switch (borderType) {
+            case BOX:
+                return new Point2D(isLeftDirection ? destination.getMaxX() : destination.getMinX(),
+                        centerY(destination));
+            case LINE:
+                return new Point2D(isLeftDirection ? destination.getMaxX() : destination.getMinX(),
+                        destination.getMaxY());
+            default:
+                throw new RuntimeException("Unsupported border type " + borderType);
+        }
+    }
+
+    /**
+     * Y of collapsator.
+     *
+     * @param borderType
+     * @param bounds
+     * @param collapsatorSize
+     * @return
+     */
+    protected double collapsatorY(BorderType borderType, Rectangle2D bounds, double collapsatorSize) {
+        switch (borderType) {
+            case BOX:
+                return (bounds.getHeight() - collapsatorSize) / 2;
+            case LINE:
+                return bounds.getHeight() - collapsatorSize / 2;
+            default:
+                throw new RuntimeException("Unsupported border type " + borderType);
+        }
+    }
 
     public abstract boolean isMoveable();
 

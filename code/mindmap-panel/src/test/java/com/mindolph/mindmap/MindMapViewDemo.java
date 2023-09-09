@@ -3,12 +3,11 @@ package com.mindolph.mindmap;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.container.ScalableScrollPane;
 import com.mindolph.base.util.MindolphFileUtils;
+import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.core.search.SearchUtils;
+import com.mindolph.mindmap.theme.LightTheme;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -128,12 +127,7 @@ public class MindMapViewDemo extends Application implements Initializable, Event
             options.setInTopic(true);
             mindMapView.findTopicByPattern(pattern, options, false);
         });
-        showStatusBar.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                statusBar.setVisible(t1);
-            }
-        });
+        showStatusBar.selectedProperty().addListener((observableValue, aBoolean, t1) -> statusBar.setVisible(t1));
 
         // undo/redo
         btnUndo.setOnAction((event) -> {
@@ -146,6 +140,7 @@ public class MindMapViewDemo extends Application implements Initializable, Event
         this.registerMindMapListeners();
         logContentBounds();
         mindMapView.setConfig(new MindMapConfig());
+        mindMapView.getConfig().setTheme(new LightTheme());
         logAny("[DEMO] Ready.");
     }
 

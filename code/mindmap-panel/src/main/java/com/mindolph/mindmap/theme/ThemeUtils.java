@@ -3,7 +3,7 @@ package com.mindolph.mindmap.theme;
 import static com.mindolph.mindmap.theme.ThemeType.*;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class ThemeUtils {
 
@@ -35,6 +35,25 @@ public class ThemeUtils {
         }
         else {
             return themeName;
+        }
+    }
+
+    public static String connectorTypeLabel(ConnectorStyle connectorType) {
+        if (connectorType == null) {
+            connectorType = ConnectorStyle.BEZIER;
+        }
+        return connectorTypeLabel(connectorType.name());
+    }
+
+    public static String connectorTypeLabel(String connectorTypeName) {
+        if (ConnectorStyle.BEZIER.name().equals(connectorTypeName)) {
+            return "Bezier";
+        }
+        else if (ConnectorStyle.POLYLINE.name().equals(connectorTypeName)) {
+            return "Polyline";
+        }
+        else {
+            return connectorTypeName;
         }
     }
 

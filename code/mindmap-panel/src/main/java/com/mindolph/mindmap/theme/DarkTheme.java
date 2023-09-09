@@ -1,7 +1,7 @@
 package com.mindolph.mindmap.theme;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class DarkTheme extends MindMapTheme{
 

@@ -38,7 +38,7 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
         tfFontFile.textProperty().addListener((observableValue, s, t1) -> {
             File file = new File(t1);
             if (file.exists()) {
-                this.save();
+                this.save(true);
             }
         });
 
@@ -53,7 +53,7 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
     }
 
     @Override
-    protected void save() {
+    protected void save(boolean notify) {
         fxPreferences.savePreference(PREF_KEY_MD_FONT_FILE_PDF, tfFontFile.getText());
     }
 }

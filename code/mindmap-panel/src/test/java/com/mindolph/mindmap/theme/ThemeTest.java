@@ -3,7 +3,7 @@ package com.mindolph.mindmap.theme;
 import org.junit.Test;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class ThemeTest {
 

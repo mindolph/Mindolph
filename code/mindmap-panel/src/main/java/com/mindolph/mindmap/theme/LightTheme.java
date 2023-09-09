@@ -2,16 +2,15 @@ package com.mindolph.mindmap.theme;
 
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.util.ColorUtils;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class LightTheme extends MindMapTheme {
+
     public LightTheme() {
-        // TODO
-        textMargins = 5;
+        textMargins = 10;
         otherLevelVerticalInset = 16;
         otherLevelHorizontalInset = 32;
         firstLevelVerticalInset = 32;
@@ -20,35 +19,44 @@ public class LightTheme extends MindMapTheme {
         selectLineGap = 5;
         horizontalBlockGap = 5;
         drawBackground = true;
-        paperColor = Color.web("0xEEEEEE");
+        paperColor = Color.web("0xEEEEEE88");
         gridColor = paperColor.darker();
         showGrid = false;
-         gridStep = 0;
+        gridStep = 0;
         rootBackgroundColor = Color.web("0x031A31");
-        firstLevelBackgroundColor = Color.web("0xB1BFCC");
-        otherLevelBackgroundColor = Color.web("0xFDFDFD");
+        firstLevelBackgroundColor = Color.web("0xB1BFCC00");
+        otherLevelBackgroundColor = Color.web("0xFFFFFF00");
         rootTextColor = Color.WHITE;
         firstLevelTextColor = Color.BLACK;
         otherLevelTextColor = Color.BLACK;
-        elementBorderColor = Color.BLACK;
-        connectorColor = Color.WHITE;
-        shadowColor = ColorUtils.makeTransparentColor(Color.BLACK, 0.188);
+
+        connectorStyle = ConnectorStyle.BEZIER;
+        connectorWidth = 2.0f;
+        connectorColor = Color.GREY;
+
         collapsatorBorderColor = Color.DARKGRAY;
         collapsatorBackgroundColor = Color.WHITE;
         selectLineColor = Color.ORANGE;
         jumpLinkColor = Color.CYAN;
-        shadowOffset = 5.0f;
-        elementBorderWidth = 1.0f;
+
         showCollapsatorOnMouseHover = true;
         collapsatorBorderWidth = 1.0f;
         collapsatorSize = 16;
-        connectorWidth = 1.5f;
-        selectLineWidth = 3.0f;
+
+        selectLineWidth = 2.5f;
         jumpLinkWidth = 1.5f;
         roundRadius = 8f;
         topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
         noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
-        dropShadow = true;
+
+        dropShadow = false;
+        shadowColor = ColorUtils.makeTransparentColor(Color.BLACK, 0.188);
+        shadowOffset = 5.0f;
+
+        borderType = BorderType.LINE;
+        elementBorderWidth = 0f;
+        elementBorderColor = paperColor;
+
     }
 
 }

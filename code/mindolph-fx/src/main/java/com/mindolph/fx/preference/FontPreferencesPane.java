@@ -73,7 +73,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
             lbFont.setText(FontUtils.fontToString(changedFont));
             taPreview.setFont(changedFont);
             fxPreferences.savePreference(cbText.getSelectionModel().getSelectedItem().getKey().getPrefId(), changedFont);
-            this.save();
+            this.save(true);
         }
     }
 
@@ -88,12 +88,12 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
                 taPreview.setFont(defaultFont);
             }
         }
-        this.save();
+        this.save(true);
         fxPreferences.flush();
     }
 
     @Override
-    protected void save() {
+    protected void save(boolean notify) {
         String fileType = cbText.getSelectionModel().getSelectedItem().getKey().getFileType();
         preferenceChangedEventHandler.onPreferenceChanged(fileType);
     }

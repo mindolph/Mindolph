@@ -36,6 +36,7 @@ import com.mindolph.mindmap.theme.MindMapTheme;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
@@ -57,6 +58,8 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
@@ -196,23 +199,23 @@ public class SVGImageExporter extends BaseExportExtension {
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
         String text = makeContent(context, options);
 
-        File fileToSaveMap = null;
-        OutputStream theOut = out;
-        if (theOut == null) {
-            fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
+        File fileToSave = null;
+        if (out == null) {
+            fileToSave = DialogUtils.selectFileToSaveForFileFilter(
                     I18n.getIns().getString("SvgExporter.saveDialogTitle"), null,
                     ".svg",
                     I18n.getIns().getString("SvgExporter.filterDescription"),
                     exportFileName);
-            fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".svg");
-            theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
+            fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".svg");
+            out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
         }
-        if (theOut != null) {
+        if (out != null) {
             try {
-                IOUtils.write(text, theOut, "UTF-8");
+                IOUtils.write(text, out, "UTF-8");
+                Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
             } finally {
-                if (fileToSaveMap != null) {
-                    IOUtils.closeQuietly(theOut);
+                if (fileToSave != null) {
+                    IOUtils.closeQuietly(out);
                 }
             }
         }
@@ -423,6 +426,11 @@ public class SVGImageExporter extends BaseExportExtension {
         }
 
         @Override
+        public void drawLine(Point2D start, Point2D end, Color color) {
+            this.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), color);
+        }
+
+        @Override
         public void drawLine(double startX, double startY, double endX, double endY, Color color) {
             this.buffer.append("<line x1=\"").append(dbl2str(startX + this.translateX))
                     .append("\" y1=\"").append(dbl2str(startY + this.translateY))
@@ -553,6 +561,29 @@ public class SVGImageExporter extends BaseExportExtension {
                 printStrokeData(color);
             }
             this.buffer.append(" />").append(NEXT_LINE);
+        }
+
+        @Override
+        public void drawBezier(double startX, double startY, double endX, double endY, Color color) {
+            // TODO
+            String s = """
+                    <path d="M %s %s Q %s %s, %s %s T %s %s" 
+                    """;
+            double c1x = startX + (endX - startX) / 2;
+            double c1y = startY;
+            double c2x = startX + (endX - startX) / 2;
+            double c2y = startY + (endY - startY) / 2;
+            String formatted = s.formatted(
+                    dbl2str(startX), dbl2str(startY),
+                    dbl2str(c1x), dbl2str(c1y),
+                    dbl2str(c2x), dbl2str(c2y),
+                    dbl2str(endX), dbl2str(endY)
+            );
+            this.buffer.append(formatted);
+            if (color != null) {
+                printStrokeData(color);
+            }
+            this.buffer.append(" fill=\"none\"/>").append(NEXT_LINE);
         }
 
         @Override

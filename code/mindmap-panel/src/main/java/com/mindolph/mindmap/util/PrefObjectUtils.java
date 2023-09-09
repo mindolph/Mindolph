@@ -1,20 +1,23 @@
 package com.mindolph.mindmap.util;
 
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mindmap.theme.BorderType;
+import com.mindolph.mindmap.theme.ConnectorStyle;
 import com.mindolph.mindmap.theme.MindMapTheme;
 import com.mindolph.mindmap.theme.ThemeType;
 import org.swiftboot.util.BeanUtils;
+import org.swiftboot.util.pref.StringConverter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class PrefObjectUtils {
 
     static {
-        FxPreferences.getInstance().addConverter(ThemeType.class, new org.swiftboot.util.pref.StringConverter<ThemeType>() {
+        FxPreferences.getInstance().addConverter(ThemeType.class, new StringConverter<ThemeType>() {
             @Override
             public ThemeType deserialize(String prefValue) {
                 return ThemeType.valueOf(prefValue);
@@ -22,6 +25,28 @@ public class PrefObjectUtils {
 
             @Override
             public String serialize(ThemeType valueObject) {
+                return valueObject.name();
+            }
+        });
+        FxPreferences.getInstance().addConverter(ConnectorStyle.class, new StringConverter<ConnectorStyle>() {
+            @Override
+            public ConnectorStyle deserialize(String prefValue) {
+                return ConnectorStyle.valueOf(String.valueOf(prefValue));
+            }
+
+            @Override
+            public String serialize(ConnectorStyle valueObject) {
+                return valueObject.name();
+            }
+        });
+        FxPreferences.getInstance().addConverter(BorderType.class, new StringConverter<BorderType>() {
+            @Override
+            public BorderType deserialize(String prefValue) {
+                return BorderType.valueOf(String.valueOf(prefValue));
+            }
+
+            @Override
+            public String serialize(BorderType valueObject) {
                 return valueObject.name();
             }
         });

@@ -5,7 +5,9 @@ import com.mindolph.base.graphic.Graphics;
 import com.mindolph.mfx.util.DimensionUtils;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
+import com.mindolph.mindmap.theme.BorderType;
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,7 +26,7 @@ public final class ElementRoot extends BaseElement {
         super(topic, g, cfg, context);
     }
 
-    protected ElementRoot(ElementRoot element) {
+    private ElementRoot(ElementRoot element) {
         super(element);
         this.leftBlockSize = DimensionUtils.copy(element.leftBlockSize);
         this.rightBlockSize = DimensionUtils.copy(element.rightBlockSize);
@@ -90,20 +92,24 @@ public final class ElementRoot extends BaseElement {
     public void drawConnector(Rectangle2D source, Rectangle2D destination, boolean leftDirection) {
         g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
 
+        // since the left direction in root is always false
+        leftDirection = centerX(destination) < centerX(source);
+
+        Point2D destPoint = super.destinationPoint(theme.getBorderType(), destination, leftDirection);
+
         double startX;
-        double endX;
-        if (centerX(destination) < centerX(source)) {
-            // left
+        if (leftDirection) {
             startX = centerX(source) - source.getWidth() / 4;
-            endX = destination.getMaxX() - 10;
         }
         else {
-            // right
             startX = centerX(source) + source.getWidth() / 4;
-            endX = destination.getMinX() + 10;
         }
-
-        g.drawCurve(startX, centerY(source), endX, centerY(destination), theme.getConnectorColor());
+        System.out.println("ROOT: " + destPoint + "  " + destination.getMaxX());
+        g.drawCurve(startX, centerY(source), destPoint.getX(), destPoint.getY(), theme.getConnectorColor());
+        if (theme.getBorderType() == BorderType.LINE) {
+            double endX = destPoint.getX() + (leftDirection ? -destination.getWidth() : destination.getWidth());
+            g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
+        }
     }
 
     private double calcTotalChildrenHeight(double vertInset, boolean left) {
@@ -245,7 +251,7 @@ public final class ElementRoot extends BaseElement {
 
     @Override
     public Color getBackgroundColor() {
-        return this.fillColor == null ?  theme.getRootBackgroundColor() : this.fillColor;
+        return this.fillColor == null ? theme.getRootBackgroundColor() : this.fillColor;
     }
 
     @Override

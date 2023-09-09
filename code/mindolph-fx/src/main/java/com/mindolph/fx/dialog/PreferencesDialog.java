@@ -59,7 +59,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                 .title("Preferences of Mindolph")
                 .fxmlUri("dialog/preferences_dialog.fxml")
                 .button(ButtonType.CLOSE, () -> {
-                    mmdPreferences.save(); // todo use change status to avoid unnecessary save
+                    mmdPreferences.save(true); // todo use change status to avoid unnecessary save
                     dialog.close();
                 })
                 .button(resetButtonType, () -> {

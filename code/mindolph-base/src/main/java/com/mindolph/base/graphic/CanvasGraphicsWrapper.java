@@ -3,6 +3,7 @@ package com.mindolph.base.graphic;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.base.constant.StrokeType;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -99,6 +100,11 @@ public class CanvasGraphicsWrapper implements Graphics {
     }
 
     @Override
+    public void drawLine(Point2D start, Point2D end, Color color) {
+        this.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), color);
+    }
+
+    @Override
     public void drawLine(double startX, double startY, double endX, double endY, Color color) {
         if (color != null) {
             gc.setStroke((color));
@@ -157,6 +163,19 @@ public class CanvasGraphicsWrapper implements Graphics {
         gc.beginPath();
         gc.moveTo(startX, startY);
         gc.bezierCurveTo(startX, endY, startX, endY, endX, endY);
+        gc.stroke();
+        gc.closePath();
+    }
+
+    public void drawBezier(double startX, double startY, double endX, double endY, Color color) {
+        gc.setStroke((color));
+        gc.beginPath();
+        gc.moveTo(startX, startY);
+        double c1x = startX + (endX - startX) / 2;
+        double c1y = startY;
+        double c2x = startX + (endX - startX) / 2;
+        double c2y = endY;
+        gc.bezierCurveTo(c1x, c1y, c2x, c2y, endX, endY);
         gc.stroke();
         gc.closePath();
     }

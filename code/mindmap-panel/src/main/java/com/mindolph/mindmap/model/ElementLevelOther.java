@@ -5,7 +5,7 @@ import com.mindolph.base.constant.StrokeType;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
-import javafx.geometry.Rectangle2D;
+import com.mindolph.mindmap.theme.BorderType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
@@ -40,8 +40,11 @@ public class ElementLevelOther extends ElementLevelFirst {
             g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
 
-        Shape shape = makeShape(0f, 0f);
-        g.draw(shape, getBorderColor(), getBackgroundColor());
+        // only BOX border draw background
+        if (BorderType.BOX == theme.getBorderType()) {
+            Shape shape = makeShape(0f, 0f);
+            g.draw(shape, getBorderColor(), getBackgroundColor());
+        }
 
         if (this.visualAttributeImageBlock.mayHaveContent()) {
             this.visualAttributeImageBlock.paint();
@@ -54,26 +57,24 @@ public class ElementLevelOther extends ElementLevelFirst {
         }
 
         if (drawCollapsator && this.hasChildren()) {
-            drawCollapsator(this.isCollapsed());
+            this.drawCollapsator(this.isCollapsed());
         }
     }
 
     @Override
     public void doPaintConnectors(boolean isLeftDirection) {
-        Rectangle2D source = new Rectangle2D(this.bounds.getMinX() + this.collapsatorZone.getMinX(),
-                this.bounds.getMinY() + this.collapsatorZone.getMinY(),
-                this.collapsatorZone.getWidth(), this.collapsatorZone.getHeight());
+//        Rectangle2D source = new Rectangle2D(this.bounds.getMinX() + this.collapsatorZone.getMinX(),
+//                this.bounds.getMinY() + this.collapsatorZone.getMinY(),
+//                this.collapsatorZone.getWidth(), this.collapsatorZone.getHeight());
         for (TopicNode t : this.model.getChildren()) {
-            this.drawConnector(source, ((BaseElement) t.getPayload()).getBounds(), isLeftDirection);
+            this.drawConnector(super.bounds, ((BaseElement) t.getPayload()).getBounds(), isLeftDirection);
         }
     }
 
     @Override
     public boolean isLeftDirection() {
         TopicNode topic = this.model.getParent();
-
         boolean result = false;
-
         while (topic != null) {
             BaseElement w = (BaseElement) topic.getPayload();
             if (w.getClass() == ElementLevelFirst.class) {
@@ -84,7 +85,6 @@ public class ElementLevelOther extends ElementLevelFirst {
                 topic = topic.getParent();
             }
         }
-
         return result;
     }
 

@@ -125,14 +125,14 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
 
             }
         }
-        this.loadCustomizePreferences();
+        this.initControlsFromPreferences();
         this.isLoaded = true;
     }
 
     /**
      * Override this method to load your own customized preferences.
      */
-    protected void loadCustomizePreferences() {
+    protected void initControlsFromPreferences() {
         log.info("No customize preferences loaded");
     }
 
@@ -150,7 +150,8 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     }
 
     // probably be onSave?
-    protected abstract void save();
+    protected abstract void save(boolean notify);
+
 
     public void setPreferenceChangedEventHandler(PreferenceChangedEventHandler preferenceChangedEventHandler) {
         this.preferenceChangedEventHandler = preferenceChangedEventHandler;

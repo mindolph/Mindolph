@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
- * @author allen
+ * @author mindolph
  * @since 1.4
  */
 public interface MarkdownConstants {

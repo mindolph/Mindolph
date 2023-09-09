@@ -108,7 +108,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     }
 
     @Override
-    protected void save() {
+    protected void save(boolean notify) {
 
     }
 

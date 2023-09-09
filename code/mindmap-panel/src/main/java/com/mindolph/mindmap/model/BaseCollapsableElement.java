@@ -7,6 +7,8 @@ import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.constant.ElementPart;
+import com.mindolph.mindmap.theme.BorderType;
+import com.mindolph.mindmap.theme.ConnectorStyle;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -14,9 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-
-import static com.mindolph.mfx.util.RectangleUtils.centerX;
-import static com.mindolph.mfx.util.RectangleUtils.centerY;
 
 public abstract class BaseCollapsableElement extends BaseElement {
 
@@ -138,8 +137,8 @@ public abstract class BaseCollapsableElement extends BaseElement {
 
         double childrenX;
 
-        double COLLAPSATORSIZE = theme.getCollapsatorSize() * mindMapContext.getScale();
-        double COLLAPSATORDISTANCE = theme.getCollapsatorSize() * 0.1d * mindMapContext.getScale();
+        double COLLAPSATOR_SIZE = theme.getCollapsatorSize() * mindMapContext.getScale();
+        double COLLAPSATOR_DISTANCE = theme.getCollapsatorSize() * 0.1d * mindMapContext.getScale();
 
         double collapsatorX;
 
@@ -147,17 +146,19 @@ public abstract class BaseCollapsableElement extends BaseElement {
             childrenX = leftX + this.blockSize.getWidth() - this.bounds.getWidth();
             this.moveTo(childrenX, topY + (this.blockSize.getHeight() - this.bounds.getHeight()) / 2);
             childrenX -= horzInset;
-            collapsatorX = -COLLAPSATORSIZE - COLLAPSATORDISTANCE;
+            collapsatorX = -COLLAPSATOR_SIZE - COLLAPSATOR_DISTANCE;
         }
         else {
             childrenX = leftX;
             this.moveTo(childrenX, topY + (this.blockSize.getHeight() - this.bounds.getHeight()) / 2);
             childrenX += this.bounds.getWidth() + horzInset;
-            collapsatorX = this.bounds.getWidth() + COLLAPSATORDISTANCE;
+            collapsatorX = this.bounds.getWidth() + COLLAPSATOR_DISTANCE;
         }
 
-        this.collapsatorZone = new Rectangle2D(collapsatorX, (this.bounds.getHeight() - COLLAPSATORSIZE) / 2, COLLAPSATORSIZE, COLLAPSATORSIZE);
-        //this.collapsatorZone.setRect(collapsatorX, (this.bounds.getHeight() - COLLAPSATORSIZE) / 2, COLLAPSATORSIZE, COLLAPSATORSIZE);
+        // the collapsator Y depends on the border type
+        double collapsatorY = super.collapsatorY(theme.getBorderType(), this.bounds, COLLAPSATOR_SIZE);
+        this.collapsatorZone = new Rectangle2D(collapsatorX, collapsatorY,
+                COLLAPSATOR_SIZE, COLLAPSATOR_SIZE);
 
         if (!this.isCollapsed()) {
             double vertInset = theme.getOtherLevelVerticalInset() * mindMapContext.getScale();
@@ -183,14 +184,14 @@ public abstract class BaseCollapsableElement extends BaseElement {
 
     @Override
     public void doPaintConnectors(boolean isLeftDirection) {
-        // source is the collapsator
-        Rectangle2D source = new Rectangle2D(
-                this.bounds.getMinX() + this.collapsatorZone.getMinX(),
-                this.bounds.getMinY() + this.collapsatorZone.getMinY(),
-                this.collapsatorZone.getWidth(),
-                this.collapsatorZone.getHeight());
+//        // source is the collapsator
+//        Rectangle2D source = new Rectangle2D(
+//                this.bounds.getMinX() + this.collapsatorZone.getMinX(),
+//                this.bounds.getMinY() + this.collapsatorZone.getMinY(),
+//                this.collapsatorZone.getWidth(),
+//                this.collapsatorZone.getHeight());
         for (TopicNode t : this.model.getChildren()) {
-            this.drawConnector(source, ((BaseElement) t.getPayload()).getBounds(), isLeftDirection());
+            this.drawConnector(super.bounds, ((BaseElement) t.getPayload()).getBounds(), isLeftDirection());
         }
     }
 
@@ -198,32 +199,49 @@ public abstract class BaseCollapsableElement extends BaseElement {
     public void drawConnector(Rectangle2D source, Rectangle2D destination, boolean isLeftDirection) {
         g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
 
-        double dy = Math.abs(centerY(destination) - centerY(source));
-        if (dy < (16.0d * mindMapContext.getScale())) {
-            g.drawLine(isLeftDirection ? source.getMaxX() : source.getMinX(),
-                    centerY(source), centerX(destination), centerY(source),
-                    theme.getConnectorColor());
-        }
-        else {
-            Path path = new Path();
+        Point2D sourcePoint = sourcePoint(theme.getBorderType(), source, isLeftDirection);
+        Point2D destPoint = destinationPoint(theme.getBorderType(), destination, isLeftDirection);
+        double endX = destPoint.getX() + (isLeftDirection ? -destination.getWidth() : destination.getWidth());
 
+//        double dy = Math.abs(destPoint.getY() - centerY(source));
+//        if (dy < (16.0d * mindMapContext.getScale())) {
+//            g.drawLine(sourcePoint.getX(),
+//                    sourcePoint.getY(),
+//                    centerX(destination),
+//                    sourcePoint.getY(),
+//                    theme.getConnectorColor());
+//        }
+//        else {
+
+        if (theme.getConnectorStyle() == ConnectorStyle.POLYLINE) {
+            Path path = new Path();
             if (isLeftDirection) {
-                path.getElements().add(new MoveTo(source.getMaxX(), centerY(source)));
-                double dx = source.getMaxX() - destination.getMaxX() + 8;
-                path.getElements().add(new LineTo((source.getMaxX() - dx / 2), centerY(source)));
-                path.getElements().add(new LineTo((source.getMaxX() - dx / 2), centerY(destination)));
+                path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
+                double dx = source.getMinX() - destination.getMaxX();
+                path.getElements().add(new LineTo((source.getMinX() - dx / 2), sourcePoint.getY()));
+                path.getElements().add(new LineTo((source.getMinX() - dx / 2), destPoint.getY()));
             }
             else {
-                path.getElements().add(new MoveTo(source.getMinX(), centerY(source)));
-                double dx = destination.getMinX() - source.getMinX() + 8;
-                path.getElements().add(new LineTo((source.getMinX() + dx / 2), centerY(source)));
-                path.getElements().add(new LineTo((source.getMinX() + dx / 2), centerY(destination)));
+                path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
+                double dx = destination.getMinX() - source.getMaxX();
+                path.getElements().add(new LineTo((source.getMaxX() + dx / 2), sourcePoint.getY()));
+                path.getElements().add(new LineTo((source.getMaxX() + dx / 2), destPoint.getY()));
             }
-            path.getElements().add(new LineTo(centerX(destination), centerY(destination)));
-
+            path.getElements().add(new LineTo(destPoint.getX(), destPoint.getY()));
             g.draw(path, theme.getConnectorColor(), null);
         }
+        else if (theme.getConnectorStyle() == ConnectorStyle.BEZIER) {
+            // draw bezier style connector
+            g.drawBezier(sourcePoint.getX(), sourcePoint.getY(), destPoint.getX(), destPoint.getY(), theme.getConnectorColor());
+            // draw line under text
+            if (theme.getBorderType() == BorderType.LINE) {
+                g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
+            }
+        }
+
+//        }
     }
+
 
     @Override
     public BaseElement findForPoint(Point2D point) {

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static com.mindolph.markdown.constant.MarkdownConstants.*;
 
 /**
- * @author allen
+ * @author mindolph
  * @since 1.4
  */
 public class MdRegexTest {

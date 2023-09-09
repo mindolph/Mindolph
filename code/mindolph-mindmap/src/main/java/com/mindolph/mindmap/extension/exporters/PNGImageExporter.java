@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +58,7 @@ public final class PNGImageExporter extends BaseExportExtension {
     private Image makeImage(ExtensionContext context, List<Boolean> options) throws IOException {
         MindMapConfig newConfig = new MindMapConfig(context.getMindMapConfig());
         newConfig.getTheme().setDrawBackground(this.flagDrawBackground);
-        return MindMapCanvas.renderMindMapAsImage(context.getModel(),newConfig,  flagExpandAllNodes);
+        return MindMapCanvas.renderMindMapAsImage(context.getModel(), newConfig, flagExpandAllNodes);
     }
 
     @Override
@@ -103,24 +105,25 @@ public final class PNGImageExporter extends BaseExportExtension {
 
         byte[] imageData = buff.toByteArray();
 
-        File fileToSaveMap = null;
-        OutputStream theOut = out;
-        if (theOut == null) {
-            fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
+        File fileToSave = null;
+        if (out == null) {
+            fileToSave = DialogUtils.selectFileToSaveForFileFilter(
                     I18n.getIns().getString("PNGImageExporter.saveDialogTitle"),
                     null,
                     ".png",
                     I18n.getIns().getString("PNGImageExporter.filterDescription"),
                     exportFileName);
-            fileToSaveMap = MindMapUtils.checkFileAndExtension( fileToSaveMap, ".png");
-            theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
+            fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".png");
+            log.debug("Save to " + fileToSave);
+            out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
         }
-        if (theOut != null) {
+        if (out != null) {
             try {
-                IOUtils.write(imageData, theOut);
+                IOUtils.write(imageData, out);
+                Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
             } finally {
-                if (fileToSaveMap != null) {
-                    IOUtils.closeQuietly(theOut);
+                if (fileToSave != null) {
+                    IOUtils.closeQuietly(out);
                 }
             }
         }

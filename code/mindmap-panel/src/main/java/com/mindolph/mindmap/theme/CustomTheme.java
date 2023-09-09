@@ -9,19 +9,23 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * @author allen
+ * @author mindolph
  */
 public class CustomTheme extends MindMapTheme {
 
     private static final Logger log = LoggerFactory.getLogger(CustomTheme.class);
 
     /**
-     * The name given by user. TBD
+     * The name given by user.
      */
     protected String themeName;
 
     public CustomTheme(String themeName) {
         this.themeName = themeName;
+        // since new added config for theme in the future version doesn't have preference saved,
+        // so it must be assigned default value.
+        // to better solve this problem, create a automatic update tool to fix this.
+        this.borderType = BorderType.LINE;
     }
 
     /**
@@ -47,11 +51,12 @@ public class CustomTheme extends MindMapTheme {
 
 
     public void loadFromPreferences() {
-        log.debug("Load from preferences");
+        log.debug("Load theme from preferences");
         PrefObjectUtils.load(this, null, MindMapTheme.class, makeKey());
     }
 
     public void saveToPreferences() {
+        log.debug("Save theme to preference");
         PrefObjectUtils.save(this, MindMapTheme.class, makeKey());
     }
 

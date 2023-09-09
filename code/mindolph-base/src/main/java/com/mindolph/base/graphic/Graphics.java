@@ -1,6 +1,7 @@
 package com.mindolph.base.graphic;
 
 import com.mindolph.base.constant.StrokeType;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -20,6 +21,8 @@ public interface Graphics {
 
     void setStroke(float width, StrokeType type);
 
+    void drawLine(Point2D start, Point2D end, Color color);
+
     void drawLine(double startX, double startY, double endX, double endY, Color color);
 
     void drawRect(double x, double y, double width, double height, Color border, Color fill);
@@ -27,6 +30,8 @@ public interface Graphics {
     void draw(Shape shape, Color border, Color fill);
 
     void drawCurve(double startX, double startY, double endX, double endY, Color color);
+
+    void drawBezier(double startX, double startY, double endX, double endY, Color color);
 
     void drawOval(double x, double y, double w, double h, Color border, Color fill);
 
