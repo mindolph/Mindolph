@@ -3,6 +3,8 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mindmap.MindMapConfig;
+import com.mindolph.mindmap.theme.BorderType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -43,9 +45,12 @@ public class ColorDialog extends BaseDialogController<ColorDialog.ColorSet> {
 
     private final ColorSet origin;
 
-    public ColorDialog(String title, ColorSet origin) {
+    private final MindMapConfig config;
+
+    public ColorDialog(String title, ColorSet origin, MindMapConfig config) {
         this.origin = origin;
         super.result = origin;
+        this.config = config;
 //        Platform.runLater(() -> {
         dialog = new CustomDialogBuilder<ColorSet>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
@@ -78,6 +83,8 @@ public class ColorDialog extends BaseDialogController<ColorDialog.ColorSet> {
         cpBorderColor.setValue((origin.borderColor));
         cpFillColor.setValue((origin.fillColor));
         cpTextColor.setValue((origin.textColor));
+        cpBorderColor.setDisable(config.getTheme().getBorderType() == BorderType.LINE);
+        cpFillColor.setDisable(config.getTheme().getBorderType() == BorderType.LINE);
         Optional<ColorSet> optColorSet = dialog.showAndWait();
         if (callback != null && optColorSet.isPresent()) {
             callback.accept(optColorSet.get());

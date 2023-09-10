@@ -508,7 +508,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         ColorDialog.ColorSet colorSet = new ColorDialog.ColorSet(borderColor, fillColor, textColor);
 
-        ColorDialog colorDialog = new ColorDialog(String.format("Edit Colors for %d Topic(s)", topics.size()), colorSet);
+        ColorDialog colorDialog = new ColorDialog(String.format("Edit Colors for %d Topic(s)", topics.size()), colorSet, config);
         colorDialog.show(newColorSet -> {
 
             for (TopicNode topic : topics) {

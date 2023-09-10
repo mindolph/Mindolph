@@ -3,6 +3,7 @@ package com.mindolph.mindmap.preference;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.theme.*;
@@ -170,7 +171,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
         btnDuplicate.setOnAction(event -> {
-            Dialog<String> nameDialog = new TextDialogBuilder().title("Give a name for you own customize theme")
+            Dialog<String> nameDialog = new TextDialogBuilder()
+                    .owner(DialogFactory.DEFAULT_WINDOW)
+                    .title("Give a name for you own customized theme")
                     .text(mindMapConfig.getThemeName() + "_copy").build();
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {

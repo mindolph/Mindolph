@@ -22,7 +22,7 @@ public final class MindMapConfig implements EditorConfig, Serializable {
 
     // the current theme name, if user-defined, load from java preference.
     private String themeName = ThemeType.LIGHT.name();
-    private List<String> userThemes=new ArrayList<>();// init for first usage.
+    private List<String> userThemes = new ArrayList<>();// init for first usage.
     private MindMapTheme theme = new LightTheme();
 
     // options
