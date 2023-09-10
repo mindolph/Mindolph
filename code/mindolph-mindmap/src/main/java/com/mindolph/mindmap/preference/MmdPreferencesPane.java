@@ -173,7 +173,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         btnDuplicate.setOnAction(event -> {
             Dialog<String> nameDialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
-                    .title("Give a name for you own customized theme")
+                    .title("New Theme Name")
+                    .content("Give a name for you own customized theme: ")
+                    .width(480)
                     .text(mindMapConfig.getThemeName() + "_copy").build();
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {

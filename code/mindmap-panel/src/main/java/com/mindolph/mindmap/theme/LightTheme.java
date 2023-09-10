@@ -37,14 +37,14 @@ public class LightTheme extends MindMapTheme {
         collapsatorBorderColor = Color.DARKGRAY;
         collapsatorBackgroundColor = Color.WHITE;
         selectLineColor = Color.ORANGE;
-        jumpLinkColor = Color.CYAN;
+        jumpLinkColor = Color.BLUEVIOLET;
 
         showCollapsatorOnMouseHover = true;
         collapsatorBorderWidth = 1.0f;
         collapsatorSize = 16;
 
         selectLineWidth = 2.5f;
-        jumpLinkWidth = 1.5f;
+        jumpLinkWidth = 2f;
         roundRadius = 8f;
         topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
         noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
