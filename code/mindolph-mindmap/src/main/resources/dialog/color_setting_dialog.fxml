@@ -12,7 +12,7 @@
    <children>
       <VBox layoutX="100.0" layoutY="39.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox prefWidth="200.0">
+            <HBox >
                <children>
                   <Label fx:id="lblBorderColor" alignment="CENTER" prefWidth="160.0" text="Border Color">
                      <padding>
@@ -22,7 +22,7 @@
                   <ColorPicker fx:id="cpBorderColor" prefWidth="160.0" />
                </children>
             </HBox>
-            <HBox prefWidth="200.0">
+            <HBox >
                <children>
                   <Label fx:id="lblFillColor" alignment="CENTER" prefWidth="160.0" text="Fill Color">
                      <padding>
@@ -32,7 +32,7 @@
                   <ColorPicker fx:id="cpFillColor" prefWidth="160.0" />
                </children>
             </HBox>
-            <HBox prefWidth="200.0">
+            <HBox >
                <children>
                   <Label fx:id="lblTextColor" alignment="CENTER" prefWidth="160.0" text="Text Color">
                      <padding>
