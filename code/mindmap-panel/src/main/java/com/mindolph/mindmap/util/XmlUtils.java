@@ -24,7 +24,7 @@ import java.util.List;
  * @author mindolph.com@gmail.com
  */
 public class XmlUtils {
-    public static Document loadHtmlDocument(InputStream inStream, String charset, boolean autoClose) throws ParserConfigurationException, IOException {
+    public static Document loadHtmlDocument(InputStream inStream, String charset, boolean autoClose) throws IOException {
         try {
             org.jsoup.nodes.Document result = Jsoup.parse(IOUtils.toString(inStream, charset));
             return new W3CDom().fromJsoup(result);

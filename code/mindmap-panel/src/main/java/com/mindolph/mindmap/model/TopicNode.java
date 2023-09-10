@@ -217,12 +217,12 @@ public class TopicNode extends Topic<TopicNode> {
         }
 
         int ignoredLeadingSpaces = Integer.MAX_VALUE;
-        for (String s : lines) {
-            if (s.trim().isEmpty()) {
+        for (String line : lines) {
+            if (line.trim().isEmpty()) {
                 continue;
             }
-            s = s.replace("\t", "    ");
-            int leadingSpacesNumber = s.length() - TextUtils.strip(s, true).length();
+            line = line.replace("\t", "    ");
+            int leadingSpacesNumber = line.length() - TextUtils.strip(line, true).length();
             ignoredLeadingSpaces = Math.min(leadingSpacesNumber, ignoredLeadingSpaces);
         }
 

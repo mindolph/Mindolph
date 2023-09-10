@@ -565,7 +565,6 @@ public class SVGImageExporter extends BaseExportExtension {
 
         @Override
         public void drawBezier(double startX, double startY, double endX, double endY, Color color) {
-            // TODO
             String s = """
                     <path d="M %s %s Q %s %s, %s %s T %s %s" 
                     """;

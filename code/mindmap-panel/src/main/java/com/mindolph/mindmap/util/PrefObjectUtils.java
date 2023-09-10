@@ -91,6 +91,7 @@ public class PrefObjectUtils {
      *
      * @param prefObject the object stores preferences.
      * @param clazz      the class must be the Class that defines the fields that you want to save.
+     * @param prefix
      */
     public static void save(Object prefObject, Class<?> clazz, String prefix) {
         for (Field f : clazz.getDeclaredFields()) {

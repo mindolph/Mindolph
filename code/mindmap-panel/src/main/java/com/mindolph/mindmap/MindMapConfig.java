@@ -21,9 +21,9 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private final Logger log = LoggerFactory.getLogger(MindMapConfig.class);
 
     // the current theme name, if user-defined, load from java preference.
-    private String themeName = "default";
+    private String themeName = ThemeType.LIGHT.name();
     private List<String> userThemes=new ArrayList<>();// init for first usage.
-    private MindMapTheme theme = new CustomTheme("default");
+    private MindMapTheme theme = new LightTheme();
 
     // options
     private boolean trimTopicText = true;
