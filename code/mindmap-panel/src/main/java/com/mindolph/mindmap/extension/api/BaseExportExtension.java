@@ -44,7 +44,9 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
                 List<String> options = this.getOptions();
                 List<Boolean> selectedOptions = null;
                 if (options != null) {
-                    Dialog<List<Boolean>> dialog = new OptionsDialogBuilder().title(getName(context, activeTopic))
+                    Dialog<List<Boolean>> dialog = new OptionsDialogBuilder()
+                            .owner(DialogFactory.DEFAULT_WINDOW)
+                            .title(getName(context, activeTopic))
                             .options(options)
                             .defaultValue(getDefaults())
                             .build();
