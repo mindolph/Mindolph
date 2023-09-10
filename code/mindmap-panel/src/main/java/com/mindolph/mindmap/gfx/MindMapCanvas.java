@@ -274,8 +274,9 @@ public class MindMapCanvas {
     private void drawArrowToDestination(Rectangle2D start, Rectangle2D destination,
                                         float lineWidth, float arrowSize, Color color) {
 
-        double startx = centerX(start);
-        double starty = centerY(start);
+        Point2D startPoint = startPointForJump(start, destination);
+        double startx = startPoint.getX();
+        double starty = startPoint.getY();
 
         Point2D arrowPoint = DiagramUtils.findRectEdgeIntersection(destination, startx, starty);
 
@@ -303,6 +304,23 @@ public class MindMapCanvas {
             g.setStroke(lineWidth, StrokeType.DOTS);
             g.drawLine(startx, starty, (arrowPoint.getX() + cx), (arrowPoint.getY() + cy), color);
         }
+    }
+
+    private Point2D startPointForJump(Rectangle2D start, Rectangle2D destination) {
+        double dx = centerX(start) - centerX(destination);
+        double dy = centerY(start) - centerY(destination);
+        double x, y;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // left and right sides
+            x = dx > 0 ? start.getMinX() : start.getMaxX();
+            y = centerY(start);
+        }
+        else {
+            // up and down sides
+            x = centerX(start);
+            y = dy > 0 ? start.getMinY() : start.getMaxY();
+        }
+        return new Point2D(x, y);
     }
 
 
