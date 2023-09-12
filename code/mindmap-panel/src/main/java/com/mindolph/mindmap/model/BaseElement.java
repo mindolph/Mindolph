@@ -1,5 +1,6 @@
 package com.mindolph.mindmap.model;
 
+import com.mindolph.base.constant.StrokeType;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.base.util.ColorUtils;
 import com.mindolph.mfx.util.DimensionUtils;
@@ -14,6 +15,7 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import static com.mindolph.mfx.util.RectangleUtils.centerY;
 import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
@@ -22,7 +24,7 @@ public abstract class BaseElement {
 
     protected Graphics g;
 
-    protected final MindMapConfig cfg;
+    protected final MindMapConfig config;
 
     protected final MindMapTheme theme;
 
@@ -42,11 +44,12 @@ public abstract class BaseElement {
     protected Color fillColor;
     protected Color textColor;
     protected Color borderColor;
+    protected boolean selected;
 
     protected BaseElement(BaseElement orig) {
         this.model = orig.model;
-        this.cfg = orig.cfg;
-        this.theme = orig.cfg.getTheme();
+        this.config = orig.config;
+        this.theme = orig.config.getTheme();
         this.g = orig.g;
         this.mindMapContext = orig.mindMapContext;
         this.textBlock = new TextBlock(orig.textBlock);
@@ -59,28 +62,19 @@ public abstract class BaseElement {
         this.borderColor = orig.borderColor;
     }
 
-    public BaseElement(TopicNode model, Graphics g, MindMapConfig cfg, MindMapContext context) {
+    public BaseElement(TopicNode model, Graphics g, MindMapConfig config, MindMapContext context) {
         this.model = model;
-        this.cfg = cfg;
-        this.theme = cfg.getTheme();
+        this.config = config;
+        this.theme = config.getTheme();
         this.g = g;
         this.mindMapContext = context;
-        this.textBlock = new TextBlock(this.model.getText(), TextAlign.findForName(model.getAttribute("align")), g, cfg, context);
+        this.textBlock = new TextBlock(this.model.getText(), TextAlign.findForName(model.getAttribute("align")), g, config, context);
         this.textBlock.setTextAlign(TextAlign.findForName(model.getAttribute("align")));
-        this.extrasIconBlock = new IconBlock(model, g, cfg, context);
-        this.visualAttributeImageBlock = new VisualAttributeImageBlock(model, g, cfg, context);
+        this.extrasIconBlock = new IconBlock(model, g, config, context);
+        this.visualAttributeImageBlock = new VisualAttributeImageBlock(model, g, config, context);
         updateColorAttributeFromModel();
     }
 
-
-    public String getText() {
-        return this.model.getText();
-    }
-
-    public void setText(String text) {
-        this.model.setText(text);
-        this.textBlock.updateText(text);
-    }
 
     public final void updateColorAttributeFromModel() {
         this.borderColor = ColorUtils.html2color(this.model.getAttribute(ATTR_BORDER_COLOR.getText()), false);
@@ -92,33 +86,6 @@ public abstract class BaseElement {
         TopicNode parent = this.model.getParent();
         return parent == null ? null : (BaseElement) parent.getPayload();
     }
-
-
-    public TopicNode getModel() {
-        return this.model;
-    }
-
-
-    public TextAlign getTextAlign() {
-        return this.textBlock.getTextAlign();
-    }
-
-    public void setTextAlign(TextAlign textAlign) {
-        this.textBlock.setTextAlign(textAlign);
-        this.model.setAttribute("align", this.textBlock.getTextAlign().name());
-    }
-
-//    public void setBounds(Rectangle2D rectangle2D) {
-//        this.bounds = rectangle2D;
-//    }
-//
-//    public void updateWidth(double width) {
-//        this.bounds = RectangleUtils.newWithWidth(this.bounds, width);
-//    }
-//
-//    public void updateHeight(double height) {
-//        this.bounds = RectangleUtils.newWithHeight(this.bounds, height);
-//    }
 
     public void updateElementBounds() {
         this.visualAttributeImageBlock.updateSize();
@@ -145,14 +112,6 @@ public abstract class BaseElement {
         );
     }
 
-    public void updateBlockSize() {
-        this.blockSize = this.calcBlockSize(this.blockSize, false);
-    }
-
-
-    public Dimension2D getBlockSize() {
-        return this.blockSize;
-    }
 
     public void moveTo(double x, double y) {
         this.bounds = new Rectangle2D(x, y, this.bounds.getWidth(), this.bounds.getHeight());
@@ -168,11 +127,6 @@ public abstract class BaseElement {
         }
     }
 
-
-    public Rectangle2D getBounds() {
-        return this.bounds;
-    }
-
     public final void doPaint(boolean drawCollapsator) {
         if (this.hasChildren() && !isCollapsed()) {
             doPaintConnectors(isLeftDirection());
@@ -180,6 +134,9 @@ public abstract class BaseElement {
         Rectangle2D canvasClip = g.getClipBounds();
         if (canvasClip.intersects(this.bounds)) {
             g.translate(this.bounds.getMinX(), this.bounds.getMinY()); // translate to draw correct position in canvas.
+            if (isSelected()) {
+                drawSelection();
+            }
             drawComponent(isCollapsed() || drawCollapsator);
             g.translate(-this.bounds.getMinX(), -this.bounds.getMinY());
         }
@@ -200,11 +157,38 @@ public abstract class BaseElement {
         }
     }
 
-    public boolean hasChildren() {
-        return this.model.hasChildren();
-    }
 
     public abstract void drawComponent(boolean drawCollapsator);
+
+    public void drawSelection() {
+        double selectLineGap = mindMapContext.safeScale(config.getTheme().getSelectLineGap(), 0.05f);
+        double selectLineGapX2 = selectLineGap + selectLineGap;
+        Color selectLineColor = null;
+        Color selectionBackcolor = null;
+
+        double x = Math.round(-selectLineGap);
+        double y = Math.round(-selectLineGap);
+        double w = Math.round(this.getBounds().getWidth() + selectLineGapX2);
+        double h = Math.round(this.getBounds().getHeight() + selectLineGapX2);
+        Rectangle rect = new Rectangle(x, y, w, h);
+        g.setStroke(mindMapContext.safeScale(config.getTheme().getSelectLineWidth(), 0.1f), StrokeType.DASHES);
+        if (config.getTheme().getRoundRadius() > 0) {
+            float round = mindMapContext.safeScale(getRoundRadius(), 0f);
+            rect.setArcWidth(round);
+            rect.setArcHeight(round);
+        }
+        if (config.getTheme().getBorderType() == BorderType.BOX) {
+            selectLineColor = config.getTheme().getSelectLineColor();
+        }
+        else {
+            selectionBackcolor = ColorUtils.makeTransparentColor(Color.DARKGRAY, 0.35f);
+        }
+        g.draw(rect, selectLineColor, selectionBackcolor);
+        // draw border for root selection
+        if (this instanceof ElementRoot) {
+            g.draw(rect, config.getTheme().getSelectLineColor(), null);
+        }
+    }
 
     /**
      * @param source        up level element
@@ -214,8 +198,112 @@ public abstract class BaseElement {
     public abstract void drawConnector(Rectangle2D source, Rectangle2D destination,
                                        boolean leftDirection);
 
+
+    public void alignElementAndChildren(boolean leftSide, double centerX, double centerY) {
+        double textMargin = mindMapContext.getScale() * theme.getTextMargins();
+        double centralBlockLineY = textMargin +
+                Math.max(this.visualAttributeImageBlock.getBounds().getHeight(),
+                        Math.max(this.textBlock.getBounds().getHeight(), this.extrasIconBlock.getBounds().getHeight())) / 2;
+
+        double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
+
+        double offset = textMargin;
+
+        if (this.visualAttributeImageBlock.mayHaveContent()) {
+            this.visualAttributeImageBlock.setCoordOffset(offset, centralBlockLineY - this.visualAttributeImageBlock.getBounds().getHeight() / 2);
+            offset += this.visualAttributeImageBlock.getBounds().getWidth() + scaledHorzBlockGap;
+        }
+
+        this.textBlock.setCoordOffset(offset, centralBlockLineY - this.textBlock.getBounds().getHeight() / 2);
+        offset += this.textBlock.getBounds().getWidth() + scaledHorzBlockGap;
+
+        if (this.extrasIconBlock.hasContent()) {
+            this.extrasIconBlock.setCoordOffset(offset, centralBlockLineY - this.extrasIconBlock.getBounds().getHeight() / 2);
+        }
+    }
+
+
+    public ElementPart findPartForPoint(Point2D point) {
+        ElementPart result = ElementPart.NONE;
+        if (this.bounds.contains(point)) {
+            double offX = point.getX() - this.bounds.getMinX();
+            double offY = point.getY() - this.bounds.getMinY();
+
+            result = ElementPart.AREA;
+            if (this.visualAttributeImageBlock.getBounds().contains(offX, offY)) {
+                result = ElementPart.VISUAL_ATTRIBUTES;
+            }
+            else {
+                if (this.textBlock.getBounds().contains(offX, offY)) {
+                    result = ElementPart.TEXT;
+                }
+                else if (this.extrasIconBlock.getBounds().contains(offX, offY)) {
+                    result = ElementPart.ICONS;
+                }
+            }
+        }
+        return result;
+    }
+
+    public BaseElement findForPoint(Point2D point) {
+        BaseElement result = null;
+        if (point != null) {
+            if (this.bounds.contains(point)) {
+                result = this;
+            }
+            else {
+                for (TopicNode t : this.model.getChildren()) {
+                    BaseElement w = (BaseElement) t.getPayload();
+                    result = w == null ? null : w.findForPoint(point);
+                    if (result != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+
+    public boolean collapseOrExpandAllChildren(boolean collapse) {
+        boolean result = false;
+
+        if (this instanceof BaseCollapsableElement el) {
+            if (collapse) {
+                if (!el.isCollapsed()) {
+                    el.setCollapse(true);
+                    result = true;
+                }
+            }
+            else if (el.isCollapsed()) {
+                el.setCollapse(false);
+                result = true;
+            }
+        }
+
+        if (this.hasChildren()) {
+            for (TopicNode t : this.model.getChildren()) {
+                BaseElement e = (BaseElement) t.getPayload();
+                if (e != null) {
+                    result |= e.collapseOrExpandAllChildren(collapse);
+                }
+            }
+        }
+        return result;
+    }
+
+    // to update Graphics for this element and all it's children, this is used for drawing dragging elements.
+    // this probably useless when everything drawing on one canvas.
+    void updateGraphics(Graphics g) {
+        this.g = g;
+        textBlock.updateGraphics(g);
+        visualAttributeImageBlock.updateGraphics(g);
+        extrasIconBlock.updateGraphics(g);
+    }
+
     /**
      * Source point for drawing connector between topics.
+     *
      * @param borderType
      * @param source
      * @param isLeftDirection
@@ -278,134 +366,15 @@ public abstract class BaseElement {
 
     public abstract boolean isCollapsed();
 
-    public void alignElementAndChildren(boolean leftSide, double centerX, double centerY) {
-        double textMargin = mindMapContext.getScale() * theme.getTextMargins();
-        double centralBlockLineY = textMargin +
-                Math.max(this.visualAttributeImageBlock.getBounds().getHeight(),
-                        Math.max(this.textBlock.getBounds().getHeight(), this.extrasIconBlock.getBounds().getHeight())) / 2;
-
-        double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
-
-        double offset = textMargin;
-
-        if (this.visualAttributeImageBlock.mayHaveContent()) {
-            this.visualAttributeImageBlock.setCoordOffset(offset, centralBlockLineY - this.visualAttributeImageBlock.getBounds().getHeight() / 2);
-            offset += this.visualAttributeImageBlock.getBounds().getWidth() + scaledHorzBlockGap;
-        }
-
-        this.textBlock.setCoordOffset(offset, centralBlockLineY - this.textBlock.getBounds().getHeight() / 2);
-        offset += this.textBlock.getBounds().getWidth() + scaledHorzBlockGap;
-
-        if (this.extrasIconBlock.hasContent()) {
-            this.extrasIconBlock.setCoordOffset(offset, centralBlockLineY - this.extrasIconBlock.getBounds().getHeight() / 2);
-        }
-    }
-
-
     public abstract Dimension2D calcBlockSize(Dimension2D size, boolean childrenOnly);
 
     public abstract boolean hasDirection();
 
-
-    public ElementPart findPartForPoint(Point2D point) {
-        ElementPart result = ElementPart.NONE;
-        if (this.bounds.contains(point)) {
-            double offX = point.getX() - this.bounds.getMinX();
-            double offY = point.getY() - this.bounds.getMinY();
-
-            result = ElementPart.AREA;
-            if (this.visualAttributeImageBlock.getBounds().contains(offX, offY)) {
-                result = ElementPart.VISUAL_ATTRIBUTES;
-            }
-            else {
-                if (this.textBlock.getBounds().contains(offX, offY)) {
-                    result = ElementPart.TEXT;
-                }
-                else if (this.extrasIconBlock.getBounds().contains(offX, offY)) {
-                    result = ElementPart.ICONS;
-                }
-            }
-        }
-        return result;
-    }
-
-    public BaseElement findForPoint(Point2D point) {
-        BaseElement result = null;
-        if (point != null) {
-            if (this.bounds.contains(point)) {
-                result = this;
-            }
-            else {
-                for (TopicNode t : this.model.getChildren()) {
-                    BaseElement w = (BaseElement) t.getPayload();
-                    result = w == null ? null : w.findForPoint(point);
-                    if (result != null) {
-                        break;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public boolean isLeftDirection() {
-        return false;
-    }
-
-
-    public TextBlock getTextBlock() {
-        return this.textBlock;
-    }
-
-
-    public IconBlock getIconBlock() {
-        return this.extrasIconBlock;
-    }
-
-
-    public VisualAttributeImageBlock getVisualAttributeImageBlock() {
-        return this.visualAttributeImageBlock;
-    }
-
-    public boolean collapseOrExpandAllChildren(boolean collapse) {
-        boolean result = false;
-
-        if (this instanceof BaseCollapsableElement el) {
-            if (collapse) {
-                if (!el.isCollapsed()) {
-                    el.setCollapse(true);
-                    result = true;
-                }
-            }
-            else if (el.isCollapsed()) {
-                el.setCollapse(false);
-                result = true;
-            }
-        }
-
-        if (this.hasChildren()) {
-            for (TopicNode t : this.model.getChildren()) {
-                BaseElement e = (BaseElement) t.getPayload();
-                if (e != null) {
-                    result |= e.collapseOrExpandAllChildren(collapse);
-                }
-            }
-        }
-
-        return result;
-    }
-
-
     public abstract Color getBackgroundColor();
-
 
     public abstract Color getTextColor();
 
-
-    public Color getBorderColor() {
-        return this.borderColor == null ? theme.getElementBorderColor() : this.borderColor;
-    }
-
+    public abstract float getRoundRadius();
 
     public abstract BaseElement makeCopy();
 
@@ -418,13 +387,9 @@ public abstract class BaseElement {
      */
     public abstract BaseElement makeCopyWith(Graphics g);
 
-    // to update Graphics for this element and all it's children, this is used for drawing dragging elements.
-    // this probably useless when everything drawing on one canvas.
-    void updateGraphics(Graphics g) {
-        this.g = g;
-        textBlock.updateGraphics(g);
-        visualAttributeImageBlock.updateGraphics(g);
-        extrasIconBlock.updateGraphics(g);
+
+    public TopicNode getModel() {
+        return this.model;
     }
 
     public Graphics getGraphics() {
@@ -432,10 +397,86 @@ public abstract class BaseElement {
     }
 
     public MindMapConfig getConfig() {
-        return cfg;
+        return config;
     }
 
     public MindMapContext getMindMapContext() {
         return mindMapContext;
     }
+
+    public Rectangle2D getBounds() {
+        return this.bounds;
+    }
+
+    public Color getBorderColor() {
+        return this.borderColor == null ? theme.getElementBorderColor() : this.borderColor;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public TextAlign getTextAlign() {
+        return this.textBlock.getTextAlign();
+    }
+
+    public void setTextAlign(TextAlign textAlign) {
+        this.textBlock.setTextAlign(textAlign);
+        this.model.setAttribute("align", this.textBlock.getTextAlign().name());
+    }
+
+
+    public void updateBlockSize() {
+        this.blockSize = this.calcBlockSize(this.blockSize, false);
+    }
+
+
+    public Dimension2D getBlockSize() {
+        return this.blockSize;
+    }
+
+    public boolean hasChildren() {
+        return this.model.hasChildren();
+    }
+
+    public String getText() {
+        return this.model.getText();
+    }
+
+    public void setText(String text) {
+        this.model.setText(text);
+        this.textBlock.updateText(text);
+    }
+
+    public boolean isLeftDirection() {
+        return false;
+    }
+
+    public TextBlock getTextBlock() {
+        return this.textBlock;
+    }
+
+    public IconBlock getIconBlock() {
+        return this.extrasIconBlock;
+    }
+
+    public VisualAttributeImageBlock getVisualAttributeImageBlock() {
+        return this.visualAttributeImageBlock;
+    }
+
+//    public void setBounds(Rectangle2D rectangle2D) {
+//        this.bounds = rectangle2D;
+//    }
+//
+//    public void updateWidth(double width) {
+//        this.bounds = RectangleUtils.newWithWidth(this.bounds, width);
+//    }
+//
+//    public void updateHeight(double height) {
+//        this.bounds = RectangleUtils.newWithHeight(this.bounds, height);
+//    }
 }

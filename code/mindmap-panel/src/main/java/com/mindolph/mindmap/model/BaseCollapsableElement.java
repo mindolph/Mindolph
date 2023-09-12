@@ -17,6 +17,8 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
+import static com.mindolph.mfx.util.RectangleUtils.centerY;
+
 public abstract class BaseCollapsableElement extends BaseElement {
 
     protected Rectangle2D collapsatorZone = RectangleUtils.newZero();
@@ -60,14 +62,6 @@ public abstract class BaseCollapsableElement extends BaseElement {
         return result;
     }
 
-    @Override
-    public boolean isCollapsed() {
-        return this.model.isCollapsed();
-    }
-
-    public void setCollapse(boolean collapseElementFlag) {
-        this.model.setCollapsed(collapseElementFlag);
-    }
 
     public void foldAllChildren() {
 
@@ -77,15 +71,6 @@ public abstract class BaseCollapsableElement extends BaseElement {
         for (TopicNode t : this.model.getChildren()) {
             t.setCollapsed(true);
         }
-    }
-
-    @Override
-    public boolean isLeftDirection() {
-        return this.model.isLeftSidedTopic();
-    }
-
-    public void setLeftDirection(boolean leftSide) {
-        this.model.makeTopicLeftSided(leftSide);
     }
 
     @Override
@@ -203,32 +188,32 @@ public abstract class BaseCollapsableElement extends BaseElement {
         Point2D destPoint = destinationPoint(theme.getBorderType(), destination, isLeftDirection);
         double endX = destPoint.getX() + (isLeftDirection ? -destination.getWidth() : destination.getWidth());
 
-//        double dy = Math.abs(destPoint.getY() - centerY(source));
-//        if (dy < (16.0d * mindMapContext.getScale())) {
-//            g.drawLine(sourcePoint.getX(),
-//                    sourcePoint.getY(),
-//                    centerX(destination),
-//                    sourcePoint.getY(),
-//                    theme.getConnectorColor());
-//        }
-//        else {
-
         if (theme.getConnectorStyle() == ConnectorStyle.POLYLINE) {
-            Path path = new Path();
-            if (isLeftDirection) {
-                path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
-                double dx = source.getMinX() - destination.getMaxX();
-                path.getElements().add(new LineTo((source.getMinX() - dx / 2), sourcePoint.getY()));
-                path.getElements().add(new LineTo((source.getMinX() - dx / 2), destPoint.getY()));
+            double dy = Math.abs(destPoint.getY() - centerY(source));
+            if (dy < (16.0d * mindMapContext.getScale())) {
+                g.drawLine(sourcePoint.getX(),
+                        sourcePoint.getY(),
+                        destPoint.getX(),
+                        sourcePoint.getY(), // force to align with sourceø
+                        theme.getConnectorColor());
             }
             else {
-                path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
-                double dx = destination.getMinX() - source.getMaxX();
-                path.getElements().add(new LineTo((source.getMaxX() + dx / 2), sourcePoint.getY()));
-                path.getElements().add(new LineTo((source.getMaxX() + dx / 2), destPoint.getY()));
+                Path path = new Path();
+                if (isLeftDirection) {
+                    path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
+                    double dx = source.getMinX() - destination.getMaxX();
+                    path.getElements().add(new LineTo((source.getMinX() - dx / 2), sourcePoint.getY()));
+                    path.getElements().add(new LineTo((source.getMinX() - dx / 2), destPoint.getY()));
+                }
+                else {
+                    path.getElements().add(new MoveTo(sourcePoint.getX(), sourcePoint.getY()));
+                    double dx = destination.getMinX() - source.getMaxX();
+                    path.getElements().add(new LineTo((source.getMaxX() + dx / 2), sourcePoint.getY()));
+                    path.getElements().add(new LineTo((source.getMaxX() + dx / 2), destPoint.getY()));
+                }
+                path.getElements().add(new LineTo(destPoint.getX(), destPoint.getY()));
+                g.draw(path, theme.getConnectorColor(), null);
             }
-            path.getElements().add(new LineTo(destPoint.getX(), destPoint.getY()));
-            g.draw(path, theme.getConnectorColor(), null);
         }
         else if (theme.getConnectorStyle() == ConnectorStyle.BEZIER) {
             // draw bezier style connector
@@ -238,8 +223,6 @@ public abstract class BaseCollapsableElement extends BaseElement {
                 g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
             }
         }
-
-//        }
     }
 
 
@@ -285,4 +268,21 @@ public abstract class BaseCollapsableElement extends BaseElement {
         return true;
     }
 
+    @Override
+    public boolean isLeftDirection() {
+        return this.model.isLeftSidedTopic();
+    }
+
+    public void setLeftDirection(boolean leftSide) {
+        this.model.makeTopicLeftSided(leftSide);
+    }
+
+    @Override
+    public boolean isCollapsed() {
+        return this.model.isCollapsed();
+    }
+
+    public void setCollapse(boolean collapseElementFlag) {
+        this.model.setCollapsed(collapseElementFlag);
+    }
 }

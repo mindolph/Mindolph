@@ -23,6 +23,12 @@ public class ColorUtils {
                 ? Color.BLACK : Color.WHITE;
     }
 
+    /**
+     *
+     * @param color
+     * @param opacity
+     * @return
+     */
     public static Color makeTransparentColor(Color color, double opacity) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
     }

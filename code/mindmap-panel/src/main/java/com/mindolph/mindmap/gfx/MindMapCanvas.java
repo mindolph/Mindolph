@@ -22,10 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +42,7 @@ public class MindMapCanvas {
     private final Graphics g;
     private final MindMapConfig config;
     private final MindMapContext mindMapContext;
+    private List<TopicNode> selectedTopics;
 
     public MindMapCanvas(Graphics g, MindMapConfig config, MindMapContext context) {
         this.g = g;
@@ -102,11 +101,9 @@ public class MindMapCanvas {
     }
 
     public void drawOnGraphicsForConfiguration(MindMap<TopicNode> map, boolean drawSelection, List<TopicNode> selectedTopics) {
+        this.selectedTopics = selectedTopics;
         drawBackground();
-        drawTopics(map, null);
-        if (drawSelection && CollectionUtils.isNotEmpty(selectedTopics)) {
-            drawSelection(selectedTopics);
-        }
+        drawTopics(map, null, drawSelection);
     }
 
     public void drawBackground() {
@@ -162,13 +159,11 @@ public class MindMapCanvas {
      */
     public void drawGraphics(MindMap<TopicNode> map,
                              boolean drawSelection, List<TopicNode> selectedTopics, TopicNode collapsingTopic) {
-        drawTopics(map, collapsingTopic);
-        if (drawSelection && CollectionUtils.isNotEmpty(selectedTopics)) {
-            drawSelection(selectedTopics);
-        }
+        this.selectedTopics = selectedTopics;
+        drawTopics(map, collapsingTopic, drawSelection);
     }
 
-    private void drawTopics(MindMap<TopicNode> map, TopicNode collapsingTopic) {
+    private void drawTopics(MindMap<TopicNode> map, TopicNode collapsingTopic, boolean drawSelection) {
         if (map != null) {
             if (log.isTraceEnabled()) log.trace("Draw topics");
             if (Boolean.parseBoolean(map.getAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS))) {
@@ -177,61 +172,34 @@ public class MindMapCanvas {
 
             TopicNode root = map.getRoot();
             if (root != null) {
-                drawTopicTree(root, collapsingTopic);
+                drawTopicTree(root, collapsingTopic, drawSelection);
             }
         }
     }
 
-    private void drawTopicTree(TopicNode topic, TopicNode collapsingTopic) {
-        paintTopic(topic, collapsingTopic);
+    private void drawTopicTree(TopicNode topic, TopicNode collapsingTopic, boolean drawSelection) {
+        paintTopic(topic, collapsingTopic, drawSelection);
         BaseElement w = (BaseElement) topic.getPayload();
         if (w != null) {
             if (w.isCollapsed()) {
                 return;
             }
             for (TopicNode t : topic.getChildren()) {
-                drawTopicTree(t, collapsingTopic);
+                drawTopicTree(t, collapsingTopic, drawSelection);
             }
         }
     }
 
-    private void paintTopic(TopicNode topic, TopicNode collapsingTopic) {
+    private void paintTopic(TopicNode topic, TopicNode collapsingTopic, boolean drawSelection) {
         BaseElement element = (BaseElement) topic.getPayload();
         if (element != null) {
+            // set element to be drawn with selection
+            if (drawSelection) {
+                element.setSelected(selectedTopics.contains(topic));
+            }
             element.doPaint(!config.getTheme().isShowCollapsatorOnMouseHover() || topic == collapsingTopic);
         }
     }
-
-    private void drawSelection(List<TopicNode> selectedTopics) {
-        if (selectedTopics != null && !selectedTopics.isEmpty()) {
-            if (log.isTraceEnabled()) log.trace("Draw selection");
-            Color selectLineColor = config.getTheme().getSelectLineColor();
-            g.setStroke(mindMapContext.safeScale(config.getTheme().getSelectLineWidth(), 0.1f), StrokeType.DASHES);
-            double selectLineGap = mindMapContext.safeScale(config.getTheme().getSelectLineGap(), 0.05f);
-            double selectLineGapX2 = selectLineGap + selectLineGap;
-
-            for (TopicNode s : selectedTopics) {
-                BaseElement e = (BaseElement) s.getPayload();
-                if (e != null) {
-                    double x = Math.round(e.getBounds().getMinX() - selectLineGap);
-                    double y = Math.round(e.getBounds().getMinY() - selectLineGap);
-                    double w = Math.round(e.getBounds().getWidth() + selectLineGapX2);
-                    double h = Math.round(e.getBounds().getHeight() + selectLineGapX2);
-
-                    Rectangle rect = new Rectangle(x, y, w, h);
-                    if (config.getTheme().getRoundRadius() > 0) {
-                        float round = mindMapContext.safeScale((e instanceof ElementRoot) ? 10f : config.getTheme().getRoundRadius(), 0f);
-                        rect.setArcWidth(round);
-                        rect.setArcHeight(round);
-                    }
-                    g.draw(rect, selectLineColor, null);
-                }
-            }
-            // force resetting stroke or the background drawing will be affected.
-            g.setStroke(mindMapContext.safeScale(config.getTheme().getElementBorderWidth(), 0.1f), StrokeType.SOLID);
-        }
-    }
-
 
     private double findLineAngle(double sx, double sy, double ex, double ey) {
         double deltax = ex - sx;

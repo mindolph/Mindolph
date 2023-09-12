@@ -44,16 +44,6 @@ public final class ElementRoot extends BaseElement {
         return e;
     }
 
-    @Override
-    public boolean isMoveable() {
-        return false;
-    }
-
-    @Override
-    public boolean isCollapsed() {
-        return false;
-    }
-
     private Shape makeShape(double x, double y) {
         float round = mindMapContext.safeScale(10.0f, 0.1f);
         Rectangle rect = new Rectangle(x, y, this.bounds.getWidth(), this.bounds.getHeight());
@@ -245,6 +235,16 @@ public final class ElementRoot extends BaseElement {
     }
 
     @Override
+    public boolean isMoveable() {
+        return false;
+    }
+
+    @Override
+    public boolean isCollapsed() {
+        return false;
+    }
+
+    @Override
     public boolean hasDirection() {
         return true;
     }
@@ -259,4 +259,8 @@ public final class ElementRoot extends BaseElement {
         return this.textColor == null ? theme.getRootTextColor() : this.textColor;
     }
 
+    @Override
+    public float getRoundRadius() {
+        return 10;
+    }
 }

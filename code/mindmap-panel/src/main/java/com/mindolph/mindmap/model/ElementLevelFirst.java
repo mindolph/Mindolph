@@ -45,21 +45,23 @@ public class ElementLevelFirst extends BaseCollapsableElement {
     public void drawComponent(boolean drawCollapsator) {
         g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
 
+        // Draw element area with shadow(if required)
         Shape shape = makeShape(0f, 0f);
-
         if (theme.isDropShadow()) {
             float offset = mindMapContext.safeScale(theme.getShadowOffset(), 0.0f);
             g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
+        g.draw(shape, this.getBorderColor(), this.getBackgroundColor());
 
-        g.draw(shape, getBorderColor(), getBackgroundColor());
-
+        // Draw image
         if (this.visualAttributeImageBlock.mayHaveContent()) {
             this.visualAttributeImageBlock.paint();
         }
 
-        this.textBlock.paint(getTextColor());
+        // Draw text
+        this.textBlock.paint(this.getTextColor());
 
+        // Draw icon
         if (this.extrasIconBlock.hasContent()) {
             this.extrasIconBlock.paint();
         }
@@ -82,5 +84,10 @@ public class ElementLevelFirst extends BaseCollapsableElement {
     @Override
     public Color getTextColor() {
         return this.textColor == null ? theme.getFirstLevelTextColor() : this.textColor;
+    }
+
+    @Override
+    public float getRoundRadius() {
+        return config.getTheme().getRoundRadius();
     }
 }

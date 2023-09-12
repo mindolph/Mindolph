@@ -19,7 +19,7 @@ public class LightTheme extends MindMapTheme {
         selectLineGap = 5;
         horizontalBlockGap = 5;
         drawBackground = true;
-        paperColor = Color.web("0xEEEEEE88");
+        paperColor = Color.WHITE; //Color.web("0xEEEEEE88");
         gridColor = paperColor.darker();
         showGrid = false;
         gridStep = 0;
@@ -36,7 +36,7 @@ public class LightTheme extends MindMapTheme {
 
         collapsatorBorderColor = Color.DARKGRAY;
         collapsatorBackgroundColor = Color.WHITE;
-        selectLineColor = Color.ORANGE;
+        selectLineColor = Color.DARKGRAY;
         jumpLinkColor = Color.BLUEVIOLET;
 
         showCollapsatorOnMouseHover = true;
