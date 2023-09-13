@@ -9,6 +9,7 @@ import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mfx.util.RectangleUtils;
+import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.dialog.*;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
@@ -461,12 +462,13 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             ExtraTopic remove = new ExtraTopic("_______"); // todo this could be refactored.
             Consumer<TopicNode> callback = selected -> {
                 ExtraTopic result = null;
-                if (selected != null && selected != topic) { // equals to be linked topic means remove the link.
-                    log.debug("Selected: " + selected.getText());
-                    result = ExtraTopic.makeLinkTo(getModel(), selected);
+                boolean removeLink = selected == null || selected == topic;// equals to be linked topic means remove the link.
+                if (removeLink) {
+                    result = remove;
                 }
                 else {
-                    result = remove;
+                    log.debug("Selected: " + selected.getText());
+                    result = ExtraTopic.makeLinkTo(getModel(), selected);
                 }
                 boolean changed = false;
                 if (result == remove) {
@@ -487,6 +489,10 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             changed = true;
                         }
                     }
+                }
+                if (!removeLink){
+                    changed = !"true".equals(model.getAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS));
+                    model.setAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS, "true");
                 }
                 if (changed) {
                     onMindMapModelChanged(true);
