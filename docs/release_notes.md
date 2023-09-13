@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.4.4 Release
+* Improvement: better start position of jump link in mind map.
+* Improvement: optimize UI of color dialog for mind map.
+* Improvement: show jump link immediately after adding it.
+* Fix: dialog is not in center of screen when exporting mind map to image.
+
 ### V1.5.0 Unstable Release
 * New Feature: add preview and resizing dialog for inserting image to mind map topic from clipboard or disk. 
 * Improvement: optimized quality of embedded image in mind map topic. 
