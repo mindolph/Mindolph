@@ -117,7 +117,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
     private final Pair<ThemeKey, String> THEME_ITEM_CLASSIC;
     private final Pair<ThemeKey, String> THEME_ITEM_LIGHT;
-
+    private final Pair<ThemeKey, String> THEME_ITEM_DARK;
 
     private final Pair<ConnectorStyle, String> CS_ITEM_BEZIER  = new Pair<>(ConnectorStyle.BEZIER, ThemeUtils.connectorTypeLabel(ConnectorStyle.BEZIER.name()));
     private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE  = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
@@ -127,6 +127,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
         THEME_ITEM_CLASSIC = new Pair<>(new ThemeKey(ThemeType.CLASSIC.name(), null), ThemeUtils.themeLabel(ThemeType.CLASSIC.name()));
         THEME_ITEM_LIGHT = new Pair<>(new ThemeKey(ThemeType.LIGHT.name(), null), ThemeUtils.themeLabel(ThemeType.LIGHT.name()));
+        THEME_ITEM_DARK = new Pair<>(new ThemeKey(ThemeType.DARK.name(), null), ThemeUtils.themeLabel(ThemeType.DARK.name()));
 
         mindMapConfig = new MindMapConfig();
         mindMapConfig.loadFromPreferences();
@@ -145,7 +146,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         // load pre-defined themes
         cbTheme.getItems().addAll(Arrays.asList(
                 THEME_ITEM_CLASSIC,
-                THEME_ITEM_LIGHT
+                THEME_ITEM_LIGHT,
+                THEME_ITEM_DARK
         ));
         // load user's themes
         if (mindMapConfig.getUserThemes() != null) {
@@ -176,7 +178,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                     .title("New Theme Name")
                     .content("Give a name for you own customized theme: ")
                     .width(480)
-                    .text(mindMapConfig.getThemeName() + "_copy").build();
+                    .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {
                 ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();

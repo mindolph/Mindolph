@@ -24,7 +24,7 @@ public class LightTheme extends MindMapTheme {
         showGrid = false;
         gridStep = 0;
         rootBackgroundColor = Color.web("0x031A31");
-        firstLevelBackgroundColor = Color.web("0xB1BFCC00");
+        firstLevelBackgroundColor = Color.LIGHTGRAY;//Color.web("0xB1BFCC00");
         otherLevelBackgroundColor = Color.web("0xFFFFFF00");
         rootTextColor = Color.WHITE;
         firstLevelTextColor = Color.BLACK;

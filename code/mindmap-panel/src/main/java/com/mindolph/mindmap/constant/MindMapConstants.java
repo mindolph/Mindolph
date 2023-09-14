@@ -14,7 +14,7 @@ public interface MindMapConstants {
     int TOPIC_GAP = 30;
     int MIN_DISTANCE_FOR_DRAGGING_START = 8;
 
-    Color COLOR_MOUSE_DRAG_SELECTION = ColorUtils.makeTransparentColor(Color.BLACK, 0.35); // 0x80000000
+    Color COLOR_MOUSE_DRAG_SELECTION = ColorUtils.makeTransparentColor(Color.DARKGRAY, 0.4); // 0x80000000
     int DRAG_POSITION_UNKNOWN = -1;
     int DRAG_POSITION_LEFT = 1;
     int DRAG_POSITION_TOP = 2;

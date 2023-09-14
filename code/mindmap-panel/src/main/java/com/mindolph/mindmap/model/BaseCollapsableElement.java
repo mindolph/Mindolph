@@ -194,7 +194,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
                 g.drawLine(sourcePoint.getX(),
                         sourcePoint.getY(),
                         destPoint.getX(),
-                        sourcePoint.getY(), // force to align with sourceø
+                        sourcePoint.getY(), // force to align with source
                         theme.getConnectorColor());
             }
             else {
