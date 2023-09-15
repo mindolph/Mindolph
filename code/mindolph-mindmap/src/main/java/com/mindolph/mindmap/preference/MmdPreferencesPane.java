@@ -181,8 +181,13 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                     .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {
-                ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
                 String newName = optName.get();
+                if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))){
+                    DialogFactory.errDialog("Theme %s already exists".formatted(newName));
+                    return;
+                }
+
+                ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
                 mindMapConfig.getUserThemes().add(newName);
                 ThemeKey newThemeKey = new ThemeKey(newName, parentThemeKey.name);
 
