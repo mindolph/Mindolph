@@ -376,6 +376,8 @@ public abstract class BaseElement {
 
     public abstract float getRoundRadius();
 
+    public abstract BorderType getBorderType();
+
     public abstract BaseElement makeCopy();
 
     /**

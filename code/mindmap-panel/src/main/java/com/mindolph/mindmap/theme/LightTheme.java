@@ -24,10 +24,10 @@ public class LightTheme extends MindMapTheme {
         showGrid = false;
         gridStep = 0;
         rootBackgroundColor = Color.web("0x031A31");
-        firstLevelBackgroundColor = Color.LIGHTGRAY;//Color.web("0xB1BFCC00");
+        firstLevelBackgroundColor = Color.DARKGRAY;//Color.web("0xB1BFCC00");
         otherLevelBackgroundColor = Color.web("0xFFFFFF00");
         rootTextColor = Color.WHITE;
-        firstLevelTextColor = Color.BLACK;
+        firstLevelTextColor = Color.WHITE;
         otherLevelTextColor = Color.BLACK;
 
         connectorStyle = ConnectorStyle.BEZIER;
@@ -54,6 +54,7 @@ public class LightTheme extends MindMapTheme {
         shadowOffset = 5.0f;
 
         borderType = BorderType.LINE;
+        firstLevelBorderType = BorderType.BOX;
         elementBorderWidth = 0f;
         elementBorderColor = paperColor;
 

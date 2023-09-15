@@ -26,6 +26,7 @@ public class CustomTheme extends MindMapTheme {
         // so it must be assigned default value.
         // to better solve this problem, create a automatic update tool to fix this.
         this.borderType = BorderType.LINE;
+        this.firstLevelBorderType = BorderType.BOX;
     }
 
     /**

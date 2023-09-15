@@ -53,6 +53,7 @@ public abstract class MindMapTheme {
 
     // internal (user can't change)
     protected BorderType borderType;
+    protected BorderType firstLevelBorderType;
 
 
     public MindMapTheme() {
@@ -385,5 +386,13 @@ public abstract class MindMapTheme {
 
     public void setBorderType(BorderType borderType) {
         this.borderType = borderType;
+    }
+
+    public BorderType getFirstLevelBorderType() {
+        return firstLevelBorderType;
+    }
+
+    public void setFirstLevelBorderType(BorderType firstLevelBorderType) {
+        this.firstLevelBorderType = firstLevelBorderType;
     }
 }

@@ -4,6 +4,7 @@ import com.mindolph.base.constant.StrokeType;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
+import com.mindolph.mindmap.theme.BorderType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -46,12 +47,22 @@ public class ElementLevelFirst extends BaseCollapsableElement {
         g.setStroke(mindMapContext.safeScale(theme.getElementBorderWidth(), 0.1f), StrokeType.SOLID);
 
         // Draw element area with shadow(if required)
-        Shape shape = makeShape(0f, 0f);
         if (theme.isDropShadow()) {
             float offset = mindMapContext.safeScale(theme.getShadowOffset(), 0.0f);
             g.draw(makeShape(offset, offset), null, theme.getShadowColor());
         }
-        g.draw(shape, this.getBorderColor(), this.getBackgroundColor());
+
+        BorderType borderType = this.getBorderType();
+        if (BorderType.BOX == borderType) {
+            Shape shape = makeShape(0f, 0f);
+            g.draw(shape, this.getBorderColor(), this.getBackgroundColor());
+        }
+        else if (BorderType.LINE == borderType) {
+            // draw line under text
+            g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
+            // the coordinate already has been translated
+            g.drawLine(0, this.bounds.getHeight(), this.bounds.getWidth(), this.bounds.getHeight(), theme.getConnectorColor());
+        }
 
         // Draw image
         if (this.visualAttributeImageBlock.mayHaveContent()) {
@@ -89,5 +100,10 @@ public class ElementLevelFirst extends BaseCollapsableElement {
     @Override
     public float getRoundRadius() {
         return config.getTheme().getRoundRadius();
+    }
+
+    @Override
+    public BorderType getBorderType() {
+        return theme.getFirstLevelBorderType();
     }
 }

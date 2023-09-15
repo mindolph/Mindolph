@@ -54,6 +54,7 @@ public class ClassicTheme extends MindMapTheme {
         shadowOffset = 5.0f;
 
         borderType = BorderType.BOX;
+        firstLevelBorderType = BorderType.BOX;
         elementBorderWidth = 1.0f;
         elementBorderColor = Color.BLACK;
     }

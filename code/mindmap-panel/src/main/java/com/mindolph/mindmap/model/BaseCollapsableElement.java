@@ -169,12 +169,6 @@ public abstract class BaseCollapsableElement extends BaseElement {
 
     @Override
     public void doPaintConnectors(boolean isLeftDirection) {
-//        // source is the collapsator
-//        Rectangle2D source = new Rectangle2D(
-//                this.bounds.getMinX() + this.collapsatorZone.getMinX(),
-//                this.bounds.getMinY() + this.collapsatorZone.getMinY(),
-//                this.collapsatorZone.getWidth(),
-//                this.collapsatorZone.getHeight());
         for (TopicNode t : this.model.getChildren()) {
             this.drawConnector(super.bounds, ((BaseElement) t.getPayload()).getBounds(), isLeftDirection());
         }
@@ -184,7 +178,10 @@ public abstract class BaseCollapsableElement extends BaseElement {
     public void drawConnector(Rectangle2D source, Rectangle2D destination, boolean isLeftDirection) {
         g.setStroke(mindMapContext.safeScale(theme.getConnectorWidth(), 0.1f), StrokeType.SOLID);
 
-        Point2D sourcePoint = sourcePoint(theme.getBorderType(), source, isLeftDirection);
+        // different level topics might have different style.
+        BorderType borderType = getBorderType();
+
+        Point2D sourcePoint = sourcePoint(borderType, source, isLeftDirection);
         Point2D destPoint = destinationPoint(theme.getBorderType(), destination, isLeftDirection);
         double endX = destPoint.getX() + (isLeftDirection ? -destination.getWidth() : destination.getWidth());
 
@@ -218,10 +215,6 @@ public abstract class BaseCollapsableElement extends BaseElement {
         else if (theme.getConnectorStyle() == ConnectorStyle.BEZIER) {
             // draw bezier style connector
             g.drawBezier(sourcePoint.getX(), sourcePoint.getY(), destPoint.getX(), destPoint.getY(), theme.getConnectorColor());
-            // draw line under text
-            if (theme.getBorderType() == BorderType.LINE) {
-                g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
-            }
         }
     }
 

@@ -84,9 +84,6 @@ public final class ElementRoot extends BaseElement {
 
         // since the left direction in root is always false
         leftDirection = centerX(destination) < centerX(source);
-
-        Point2D destPoint = super.destinationPoint(theme.getBorderType(), destination, leftDirection);
-
         double startX;
         if (leftDirection) {
             startX = centerX(source) - source.getWidth() / 4;
@@ -94,12 +91,13 @@ public final class ElementRoot extends BaseElement {
         else {
             startX = centerX(source) + source.getWidth() / 4;
         }
+        Point2D destPoint = super.destinationPoint(theme.getFirstLevelBorderType(), destination, leftDirection);
         System.out.println("ROOT: " + destPoint + "  " + destination.getMaxX());
         g.drawCurve(startX, centerY(source), destPoint.getX(), destPoint.getY(), theme.getConnectorColor());
-        if (theme.getBorderType() == BorderType.LINE) {
-            double endX = destPoint.getX() + (leftDirection ? -destination.getWidth() : destination.getWidth());
-            g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
-        }
+//        if (theme.getBorderType() == BorderType.LINE) {
+//            double endX = destPoint.getX() + (leftDirection ? -destination.getWidth() : destination.getWidth());
+//            g.drawLine(destPoint.getX(), destPoint.getY(), endX, destPoint.getY(), theme.getConnectorColor());
+//        }
     }
 
     private double calcTotalChildrenHeight(double vertInset, boolean left) {
@@ -262,5 +260,11 @@ public final class ElementRoot extends BaseElement {
     @Override
     public float getRoundRadius() {
         return 10;
+    }
+
+    @Override
+    public BorderType getBorderType() {
+        // root node actually always has it's own style
+        return BorderType.BOX;
     }
 }

@@ -44,6 +44,7 @@ public class MigrationV1 implements Migration {
         MindMapTheme theme = new CustomTheme("default");
         // some new configs
         theme.setBorderType(BorderType.BOX);
+        theme.setFirstLevelBorderType(BorderType.BOX);
         theme.setConnectorStyle(ConnectorStyle.POLYLINE);
         newConfig.setThemeName("default");
         newConfig.setTheme(theme);

@@ -123,7 +123,7 @@ public class MindMapCanvas {
                 //g.drawRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height, null, cfg.getPaperColor());
 
                 g.setStroke(1, StrokeType.SOLID);
-                if (config.getTheme().isShowGrid()) {
+                if (config.getTheme().isShowGrid() && config.getTheme().getGridStep() > 0) {
                     double scaledGridStep = config.getTheme().getGridStep() * mindMapContext.getScale();
 
                     double minX = clipBounds.getMinX();

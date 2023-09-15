@@ -24,10 +24,10 @@ public class DarkTheme extends MindMapTheme {
         showGrid = false;
         gridStep = 0;
         rootBackgroundColor = Color.web("0xEEEEEE");
-        firstLevelBackgroundColor = Color.web("0xB1BFCC00");
+        firstLevelBackgroundColor = Color.web("0xB1BFCC");
         otherLevelBackgroundColor = Color.web("0xFFFFFF00");
         rootTextColor = Color.BLACK;
-        firstLevelTextColor = Color.WHITE;
+        firstLevelTextColor = Color.BLACK;
         otherLevelTextColor = Color.WHITE;
 
         connectorStyle = ConnectorStyle.BEZIER;
@@ -37,7 +37,7 @@ public class DarkTheme extends MindMapTheme {
         collapsatorBorderColor = Color.LIGHTGRAY;
         collapsatorBackgroundColor = Color.DARKGRAY;
         selectLineColor = Color.LIGHTGRAY;
-        jumpLinkColor = Color.BLUEVIOLET;
+        jumpLinkColor = Color.YELLOWGREEN;
 
         showCollapsatorOnMouseHover = true;
         collapsatorBorderWidth = 1.0f;
@@ -54,6 +54,7 @@ public class DarkTheme extends MindMapTheme {
         shadowOffset = 5.0f;
 
         borderType = BorderType.LINE;
+        firstLevelBorderType = BorderType.BOX;
         elementBorderWidth = 0f;
         elementBorderColor = paperColor;
     }
