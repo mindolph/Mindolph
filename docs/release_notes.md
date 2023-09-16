@@ -1,5 +1,18 @@
 # Release Notes
 
+### V1.5.1 Unstable Release
+* Feature: add theme support to mind map editor.
+* Feature: add new Light and Dark themes to mind map, and provide the ability to duplicate them and make your own theme.
+* Feature: add Bezier style for topics connector line in mind map and can be chosen in preference dialog.
+* Feature: add migration process for data that needs to be fixed when version update.
+* Improvement: let the color dialog in mind map be affected by the theme's border type.
+* Improvement: support converting multi selected topics to the note of their mutual parent.
+* Improvement: better dragging selection area color for mind map.
+* Improvement: add new preference option for creating default comment to root node of mind map.
+* Improvement: add status bar to image preview dialog for mind map and optimize the UI.
+* update plantuml and richtextfx to latest version.
+* merged bug fixes from v1.4.4
+
 ### V1.4.4 Release
 * Improvement: better start position of jump link in mind map.
 * Improvement: optimize UI of color dialog for mind map.
