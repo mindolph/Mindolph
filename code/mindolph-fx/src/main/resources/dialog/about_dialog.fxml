@@ -23,7 +23,7 @@
             </ImageView>
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.5.0" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.5.1" />
                   <Hyperlink onAction="#onLink" text="https://github.com/mindolph/Mindolph" />
                   <Label text="email: mindolph.com@gmail.com">
                      <VBox.margin>
