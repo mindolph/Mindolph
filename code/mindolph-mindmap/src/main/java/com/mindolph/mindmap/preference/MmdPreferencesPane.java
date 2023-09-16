@@ -15,13 +15,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.swiftboot.util.BeanUtils;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -36,7 +33,6 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Logger log = LoggerFactory.getLogger(MmdPreferencesPane.class);
 
     private MindMapConfig mindMapConfig;
-//    private MindMapTheme theme;
 
     @FXML
     private ChoiceBox<Pair<ThemeKey, String>> cbTheme;
@@ -128,6 +124,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Pair<ConnectorStyle, String> CS_ITEM_BEZIER = new Pair<>(ConnectorStyle.BEZIER, ThemeUtils.connectorTypeLabel(ConnectorStyle.BEZIER.name()));
     private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
 
+    // listeners for binding
+    private Map<ReadOnlyProperty, ChangeListener> listeners = new HashMap<>();
+
     public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
 
@@ -176,6 +175,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             this.save(true);
             // bind
             this.bindTheme();
+            // toggle theme controls disable state byt theme type and specific items.
             this.toggleThemeSettings(isPredefinedTheme(mindMapConfig.getThemeName()));
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
@@ -242,24 +242,6 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
     private boolean isPredefinedTheme(String name) {
         return Arrays.stream(ThemeType.values()).anyMatch(themeType -> themeType.name().equals(name));
-    }
-
-    private void toggleSettingsExcept(boolean isDisable, Node... excludes) {
-        boolean isForAll = isPredefinedTheme(mindMapConfig.getThemeName());
-        List<Field> allControls = BeanUtils.getDeclaredFieldsByType(this, Node.class);
-        for (Field cf : allControls) {
-            System.out.println(" > " + cf.getName());
-            if (isForAll || mindMapConfig.getTheme().getDisabledSettings().contains(cf.getName())) {
-                log.debug("     Disable " + cf.getName());
-                Node node = (Node) BeanUtils.forceGetProperty(this, cf);
-                if (node != null) {
-                    if (ArrayUtils.contains(excludes, node)) {
-                        continue;
-                    }
-                    node.setDisable(isDisable);
-                }
-            }
-        }
     }
 
     private void toggleThemeSettings(boolean disable) {
@@ -411,10 +393,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         };
         listeners.put(property, changeListener);
         property.addListener(changeListener);
-        //getHandlers.add(getHandler);
     }
 
-    private Map<ReadOnlyProperty, ChangeListener> listeners = new HashMap<>();
 
     @Override
     public void resetToDefault() {
@@ -424,12 +404,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     }
 
     public void save(boolean notify) {
-//        for (Consumer<?> getHandler : getHandlers) {
-//            getHandler.apply();
-//        }
-        System.out.println("Save to Preference from cache");
         mindMapConfig.saveToPreferences();
-//        preferencesManager.flush();
         // notify reload config
         if (notify && preferenceChangedEventHandler != null) {
             preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
