@@ -141,7 +141,7 @@ public abstract class BaseCollapsableElement extends BaseElement {
         }
 
         // the collapsator Y depends on the border type
-        double collapsatorY = super.collapsatorY(theme.getBorderType(), this.bounds, COLLAPSATOR_SIZE);
+        double collapsatorY = super.collapsatorY(this.bounds, COLLAPSATOR_SIZE);
         this.collapsatorZone = new Rectangle2D(collapsatorX, collapsatorY,
                 COLLAPSATOR_SIZE, COLLAPSATOR_SIZE);
 

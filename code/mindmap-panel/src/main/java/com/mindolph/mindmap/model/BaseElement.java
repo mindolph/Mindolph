@@ -346,12 +346,12 @@ public abstract class BaseElement {
     /**
      * Y of collapsator.
      *
-     * @param borderType
      * @param bounds
      * @param collapsatorSize
      * @return
      */
-    protected double collapsatorY(BorderType borderType, Rectangle2D bounds, double collapsatorSize) {
+    protected double collapsatorY(Rectangle2D bounds, double collapsatorSize) {
+        BorderType borderType = this.getBorderType();
         switch (borderType) {
             case BOX:
                 return (bounds.getHeight() - collapsatorSize) / 2;
