@@ -43,7 +43,7 @@ public class DialogUtils {
     public static File selectFileToOpenForFileFilter(String title, File defaultFolder, String dottedFileExtension,
                                                      String filterDescription) {
         String lcExtension = "*" + dottedFileExtension.toLowerCase(Locale.ENGLISH);
-        System.out.println("Select file: " + lcExtension);
+        // System.out.println("Select file: " + lcExtension);
         return new FileDialogBuilder().fileDialogType(FileDialogBuilder.FileDialogType.OPEN_FILE).title(title).initDir(defaultFolder)
                 .extensionFilters(new FileChooser.ExtensionFilter(filterDescription, lcExtension))
                 .buildAndShow();

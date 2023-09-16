@@ -50,7 +50,7 @@ public interface MarkdownConstants {
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
         Matcher matcher = pattern.matcher("_not italic");
-        System.out.println(matcher.groupCount());
+        // System.out.println(matcher.groupCount());
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :

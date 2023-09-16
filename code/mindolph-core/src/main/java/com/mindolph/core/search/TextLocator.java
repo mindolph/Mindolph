@@ -184,6 +184,5 @@ public class TextLocator {
 
     public static void main(String[] args) {
         System.out.println(StringUtils.lastIndexOf("###", "##", 0));
-        ;
     }
 }

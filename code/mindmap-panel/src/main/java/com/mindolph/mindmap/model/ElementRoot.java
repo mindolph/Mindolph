@@ -92,7 +92,7 @@ public final class ElementRoot extends BaseElement {
             startX = centerX(source) + source.getWidth() / 4;
         }
         Point2D destPoint = super.destinationPoint(theme.getFirstLevelBorderType(), destination, leftDirection);
-        System.out.println("ROOT: " + destPoint + "  " + destination.getMaxX());
+        // System.out.println("ROOT: " + destPoint + "  " + destination.getMaxX());
         g.drawCurve(startX, centerY(source), destPoint.getX(), destPoint.getY(), theme.getConnectorColor());
 //        if (theme.getBorderType() == BorderType.LINE) {
 //            double endX = destPoint.getX() + (leftDirection ? -destination.getWidth() : destination.getWidth());

@@ -161,7 +161,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         }
         cbTheme.valueProperty().addListener((observableValue, old, newChoice) -> {
             // TO switch theme
-            System.out.println("Switch to theme: " + mindMapConfig.getThemeName());
+            log.debug("Switch to theme: " + mindMapConfig.getThemeName());
             ThemeKey selectedKey = newChoice.getKey();
             mindMapConfig.setThemeName(selectedKey.name);// set current theme
             mindMapConfig.setTheme(ThemeUtils.createTheme(selectedKey.name));

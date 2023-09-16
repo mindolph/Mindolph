@@ -431,11 +431,9 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
                 return null;
             }
 
-//            T clonedTopic = topic.makeCopy(this, topic.getParent());
             T clonedTopic = topic.cloneTopic(true);
-//            clonedTopic.setParent(topic.getParent());
             clonedTopic.moveToNewParent(topic.getParent());
-            System.out.printf("%s %s %s%n", clonedTopic, clonedTopic.getParent(), clonedTopic.getMap().toString());
+            // System.out.printf("%s %s %s%n", clonedTopic, clonedTopic.getParent(), clonedTopic.getMap().toString());
             if (!cloneFullTree) {
                 clonedTopic.removeAllChildren();
             }
