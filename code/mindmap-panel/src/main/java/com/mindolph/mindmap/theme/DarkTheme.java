@@ -4,6 +4,8 @@ import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.util.ColorUtils;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 /**
  * @author mindolph
  */
@@ -57,5 +59,13 @@ public class DarkTheme extends MindMapTheme {
         firstLevelBorderType = BorderType.BOX;
         elementBorderWidth = 0f;
         elementBorderColor = paperColor;
+
+        disabledSettings = new ArrayList<>() {
+            {
+                add("spnBorderWidth"); // elementBorderWidth
+                add("cpTopicBorderColor"); // elementBorderColor
+                add("ckbDropShadow");
+            }
+        };
     }
 }

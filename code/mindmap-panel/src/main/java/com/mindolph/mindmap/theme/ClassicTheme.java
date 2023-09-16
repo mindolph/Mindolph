@@ -4,6 +4,8 @@ import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.util.ColorUtils;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+
 /**
  * @author mindolph
  */
@@ -57,6 +59,7 @@ public class ClassicTheme extends MindMapTheme {
         firstLevelBorderType = BorderType.BOX;
         elementBorderWidth = 1.0f;
         elementBorderColor = Color.BLACK;
+        disabledSettings = new ArrayList<>();
     }
 
 }

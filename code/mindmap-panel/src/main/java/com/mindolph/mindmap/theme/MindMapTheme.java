@@ -3,6 +3,8 @@ package com.mindolph.mindmap.theme;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.List;
+
 /**
  * @author mindolph
  */
@@ -55,6 +57,7 @@ public abstract class MindMapTheme {
     protected BorderType borderType;
     protected BorderType firstLevelBorderType;
 
+    protected List<String> disabledSettings;
 
     public MindMapTheme() {
     }
@@ -394,5 +397,9 @@ public abstract class MindMapTheme {
 
     public void setFirstLevelBorderType(BorderType firstLevelBorderType) {
         this.firstLevelBorderType = firstLevelBorderType;
+    }
+
+    public List<String> getDisabledSettings() {
+        return disabledSettings;
     }
 }

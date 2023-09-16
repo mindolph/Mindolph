@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 /**
  * @author mindolph
@@ -27,6 +28,7 @@ public class CustomTheme extends MindMapTheme {
         // to better solve this problem, create a automatic update tool to fix this.
         this.borderType = BorderType.LINE;
         this.firstLevelBorderType = BorderType.BOX;
+        disabledSettings = new ArrayList<>();
     }
 
     /**

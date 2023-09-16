@@ -11,13 +11,17 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.BeanUtils;
 
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -62,6 +66,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private Spinner<Double> spnCollapsatorWidth;
     @FXML
     private Spinner<Double> spnCollapsatorSize;
+    @FXML
+    private ColorPicker cpTopicBorderColor;
     @FXML
     private ColorPicker cpCollapsatorFillColor;
     @FXML
@@ -119,8 +125,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Pair<ThemeKey, String> THEME_ITEM_LIGHT;
     private final Pair<ThemeKey, String> THEME_ITEM_DARK;
 
-    private final Pair<ConnectorStyle, String> CS_ITEM_BEZIER  = new Pair<>(ConnectorStyle.BEZIER, ThemeUtils.connectorTypeLabel(ConnectorStyle.BEZIER.name()));
-    private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE  = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
+    private final Pair<ConnectorStyle, String> CS_ITEM_BEZIER = new Pair<>(ConnectorStyle.BEZIER, ThemeUtils.connectorTypeLabel(ConnectorStyle.BEZIER.name()));
+    private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
 
     public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
@@ -170,6 +176,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             this.save(true);
             // bind
             this.bindTheme();
+            this.toggleThemeSettings(isPredefinedTheme(mindMapConfig.getThemeName()));
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
         btnDuplicate.setOnAction(event -> {
@@ -182,7 +189,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             Optional<String> optName = nameDialog.showAndWait();
             if (optName.isPresent()) {
                 String newName = optName.get();
-                if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))){
+                if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))) {
                     DialogFactory.errDialog("Theme %s already exists".formatted(newName));
                     return;
                 }
@@ -237,9 +244,34 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         return Arrays.stream(ThemeType.values()).anyMatch(themeType -> themeType.name().equals(name));
     }
 
+    private void toggleSettingsExcept(boolean isDisable, Node... excludes) {
+        boolean isForAll = isPredefinedTheme(mindMapConfig.getThemeName());
+        List<Field> allControls = BeanUtils.getDeclaredFieldsByType(this, Node.class);
+        for (Field cf : allControls) {
+            System.out.println(" > " + cf.getName());
+            if (isForAll || mindMapConfig.getTheme().getDisabledSettings().contains(cf.getName())) {
+                log.debug("     Disable " + cf.getName());
+                Node node = (Node) BeanUtils.forceGetProperty(this, cf);
+                if (node != null) {
+                    if (ArrayUtils.contains(excludes, node)) {
+                        continue;
+                    }
+                    node.setDisable(isDisable);
+                }
+            }
+        }
+    }
+
+    private void toggleThemeSettings(boolean disable) {
+        for (String name : themeNodes.keySet()) {
+            boolean isDisable = disable || mindMapConfig.getTheme().getDisabledSettings().contains(name);
+            themeNodes.get(name).setDisable(isDisable);
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        // dont do initialization here.
     }
 
     /**
@@ -292,6 +324,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         this.bindPreference(ckbShowCollapsatorOnMouseHover.selectedProperty(), theme::setShowCollapsatorOnMouseHover);
         this.bindPreference(spnCollapsatorWidth.valueProperty(), aDouble -> theme.setCollapsatorBorderWidth(aDouble.floatValue()));
         this.bindPreference(spnCollapsatorSize.valueProperty(), aDouble -> theme.setCollapsatorSize(aDouble.floatValue()));
+        this.bindPreference(cpTopicBorderColor.valueProperty(), theme::setElementBorderColor);
         this.bindPreference(cpCollapsatorFillColor.valueProperty(), theme::setCollapsatorBackgroundColor);
         this.bindPreference(cpCollapsatorBorderColor.valueProperty(), theme::setCollapsatorBorderColor);
         this.bindPreference(cpConnectorColor.valueProperty(), theme::setConnectorColor);
@@ -321,7 +354,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         MindMapTheme theme = mindMapConfig.getTheme();
         spnGridStep.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 256, theme.getGridStep()));
         ckbShowGrid.setSelected(theme.isShowGrid());
-        cbConnectorStyle.getSelectionModel().select(CS_ITEM_BEZIER.getKey() == theme.getConnectorStyle()? CS_ITEM_BEZIER: CS_ITEM_POLYLINE);
+        cbConnectorStyle.getSelectionModel().select(CS_ITEM_BEZIER.getKey() == theme.getConnectorStyle() ? CS_ITEM_BEZIER : CS_ITEM_POLYLINE);
         cpGridColor.setValue(theme.getGridColor());
         cpBackgroundFillColor.setValue(theme.getPaperColor());
         spnConnectorWidth.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 16f, theme.getConnectorWidth()));
@@ -329,6 +362,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         ckbShowCollapsatorOnMouseHover.setSelected(theme.isShowCollapsatorOnMouseHover());
         spnCollapsatorWidth.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 4f, theme.getCollapsatorBorderWidth()));
         spnCollapsatorSize.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(16, 32f, theme.getCollapsatorSize()));
+        cpTopicBorderColor.setValue(theme.getElementBorderColor());
         cpCollapsatorFillColor.setValue(theme.getCollapsatorBackgroundColor());
         cpCollapsatorBorderColor.setValue(theme.getCollapsatorBorderColor());
         cpConnectorColor.setValue(theme.getConnectorColor());
@@ -401,6 +435,42 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
         }
     }
+
+    private Map<String, Node> themeNodes = new HashMap<>() {
+        {
+            put("spnGridStep", spnGridStep);
+            put("cbConnectorStyle", cbConnectorStyle);
+            put("ckbShowGrid", ckbShowGrid);
+            put("cpGridColor", cpGridColor);
+            put("cpBackgroundFillColor", cpBackgroundFillColor);
+            put("spnConnectorWidth", spnConnectorWidth);
+            put("ckbShowCollapsatorOnMouseHover", ckbShowCollapsatorOnMouseHover);
+            put("spnRoundRadius", spnRoundRadius);
+            put("spnJumpLinkWidth", spnJumpLinkWidth);
+            put("spnCollapsatorWidth", spnCollapsatorWidth);
+            put("spnCollapsatorSize", spnCollapsatorSize);
+            put("cpTopicBorderColor", cpTopicBorderColor);
+            put("cpCollapsatorFillColor", cpCollapsatorFillColor);
+            put("cpCollapsatorBorderColor", cpCollapsatorBorderColor);
+            put("cpConnectorColor", cpConnectorColor);
+            put("cpJumpLinkColor", cpJumpLinkColor);
+            put("ckbDropShadow", ckbDropShadow);
+            put("spnBorderWidth", spnBorderWidth);
+            put("cpRootFillColor", cpRootFillColor);
+            put("cpRootTextColor", cpRootTextColor);
+            put("cp1stLevelColor", cp1stLevelColor);
+            put("cp1stLevelTextColor", cp1stLevelTextColor);
+            put("cp2ndLevelColor", cp2ndLevelColor);
+            put("cp2ndLevelTextColor", cp2ndLevelTextColor);
+            put("sld1stLevelHGap", sld1stLevelHGap);
+            put("sld1stLevelVGap", sld1stLevelVGap);
+            put("sld2ndLevelHGap", sld2ndLevelHGap);
+            put("sld2ndLevelVGap", sld2ndLevelVGap);
+            put("cpSelectionColor", cpSelectionColor);
+            put("spnSelectionWidth", spnSelectionWidth);
+            put("spnSelectionGap", spnSelectionGap);
+        }
+    };
 
     private class ThemeKey {
         String name;

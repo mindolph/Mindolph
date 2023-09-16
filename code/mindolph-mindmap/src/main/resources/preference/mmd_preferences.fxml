@@ -131,6 +131,11 @@
                                        <ColorPicker fx:id="cpBackgroundFillColor" />
                                    </items>
                                </PreferenceItem>
+                               <PreferenceItem name="Topic border color">
+                                   <items>
+                                       <ColorPicker fx:id="cpTopicBorderColor" />
+                                   </items>
+                               </PreferenceItem>
                                <PreferenceItem name="Collapsator fill color:">
                                    <items>
                                        <ColorPicker fx:id="cpCollapsatorFillColor" />

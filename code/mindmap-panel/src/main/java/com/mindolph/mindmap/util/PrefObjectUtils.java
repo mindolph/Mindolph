@@ -104,7 +104,7 @@ public class PrefObjectUtils {
             String key = "%s.%s".formatted(prefix, f.getName());
             try {
                 Object v = BeanUtils.forceGetProperty(prefObject, f);
-                System.out.printf("Save %s to %s%n", v, key);
+                // System.out.printf("Save %s to %s%n", v, key);
                 FxPreferences.getInstance().savePreference(key, v);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -114,6 +114,12 @@ public class PrefObjectUtils {
         FxPreferences.getInstance().flush();
     }
 
+    /**
+     * TODO This doesn't really delete the preference from storage.
+     *
+     * @param clazz
+     * @param prefix
+     */
     public static void delete(Class<?> clazz, String prefix) {
         for (Field f : clazz.getDeclaredFields()) {
             if ((f.getModifiers() & (Modifier.STATIC | Modifier.TRANSIENT | Modifier.FINAL)) != 0) {
@@ -124,7 +130,7 @@ public class PrefObjectUtils {
             }
             String key = "%s.%s".formatted(prefix, f.getName());
             try {
-                System.out.println("remove: " + key);
+                // System.out.println("remove: " + key);
                 FxPreferences.getInstance().removePreference(key);
             } catch (Exception e) {
                 e.printStackTrace();
