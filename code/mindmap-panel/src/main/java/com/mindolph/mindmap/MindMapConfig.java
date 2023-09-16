@@ -55,14 +55,13 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     }
 
     public void makeFullCopyOf(MindMapConfig src) {
-        // TODO to support theme
         if (src != null) {
             for (Field f : MindMapConfig.class.getDeclaredFields()) {
                 if ((f.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) == 0) {
                     try {
                         f.set(this, f.get(src));
                     } catch (Exception ex) {
-                        throw new Error("Unexpected state during cloning field " + f, ex);
+                        throw new Error("Failed to cloning field " + f, ex);
                     }
                 }
             }

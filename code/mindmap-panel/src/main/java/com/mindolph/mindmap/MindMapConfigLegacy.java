@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * Legacy to do the migration.
+ * Legacy to do the theme migration.
  *
  * @author mindolph
  * @deprecated
@@ -22,7 +22,6 @@ public class MindMapConfigLegacy {
 
     private final String CFG_PREFIX = "mmd";
 
-    //    private transient final Map<String, KeyShortcut> mapShortCut = new HashMap<>();
     private int textMargins = 10;
     private int otherLevelVerticalInset = 16;
     private int otherLevelHorizontalInset = 32;
@@ -62,18 +61,6 @@ public class MindMapConfigLegacy {
     private Font noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
     private boolean dropShadow = true;
 
-    // options
-    private boolean trimTopicText = true;
-    private boolean unfoldCollapsedTarget = false;
-    private boolean copyColorInfoToNewChild = false;
-    private boolean smartTextPaste = false;
-    private int maxRedoUndo = 20;
-
-    public MindMapConfigLegacy(MindMapConfigLegacy cfg) {
-        this();
-        this.makeFullCopyOf(cfg);
-    }
-
     public MindMapConfigLegacy() {
 
     }
@@ -99,19 +86,6 @@ public class MindMapConfigLegacy {
         }
     }
 
-    public void makeFullCopyOf(MindMapConfigLegacy src) {
-        if (src != null) {
-            for (Field f : MindMapConfigLegacy.class.getDeclaredFields()) {
-                if ((f.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) == 0) {
-                    try {
-                        f.set(this, f.get(src));
-                    } catch (Exception ex) {
-                        throw new Error("Unexpected state during cloning field " + f, ex);
-                    }
-                }
-            }
-        }
-    }
 
     public int getHorizontalBlockGap() {
         return this.horizontalBlockGap;
@@ -167,14 +141,6 @@ public class MindMapConfigLegacy {
 
     public void setPaperMargins(int size) {
         this.paperMargins = size;
-    }
-
-    public boolean isSmartTextPaste() {
-        return this.smartTextPaste;
-    }
-
-    public void setSmartTextPaste(boolean flag) {
-        this.smartTextPaste = flag;
     }
 
     public boolean isDrawBackground() {
@@ -438,35 +404,4 @@ public class MindMapConfigLegacy {
         this.selectLineGap = value;
     }
 
-    public boolean isTrimTopicText() {
-        return trimTopicText;
-    }
-
-    public void setTrimTopicText(boolean trimTopicText) {
-        this.trimTopicText = trimTopicText;
-    }
-
-    public boolean isUnfoldCollapsedTarget() {
-        return unfoldCollapsedTarget;
-    }
-
-    public void setUnfoldCollapsedTarget(boolean unfoldCollapsedTarget) {
-        this.unfoldCollapsedTarget = unfoldCollapsedTarget;
-    }
-
-    public boolean isCopyColorInfoToNewChild() {
-        return copyColorInfoToNewChild;
-    }
-
-    public void setCopyColorInfoToNewChild(boolean copyColorInfoToNewChild) {
-        this.copyColorInfoToNewChild = copyColorInfoToNewChild;
-    }
-
-    public int getMaxRedoUndo() {
-        return maxRedoUndo;
-    }
-
-    public void setMaxRedoUndo(int maxRedoUndo) {
-        this.maxRedoUndo = maxRedoUndo;
-    }
 }
