@@ -168,6 +168,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 loadWorkspace(selectedWorkspace.getValue());
                 fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getBaseDirPath());
             }
+            toggleButtons(selectedWorkspace == null);
         });
         cbWorkspaces.setOnDragEntered(event -> {
             RegionUtils.applyDragDropBorder(cbWorkspaces);
@@ -328,6 +329,13 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
         SearchService.getIns().registerMatcher(TYPE_CSV, new CsvMatcher(true));
         SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
+    }
+
+    public void toggleButtons(boolean disable) {
+        btnNew.setDisable(disable);
+        btnCollapseAll.setDisable(disable);
+        btnReload.setDisable(disable);
+        btnFindInFiles.setDisable(disable);
     }
 
     /**
@@ -837,6 +845,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         MenuItem source = (MenuItem) event.getSource();
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
         NodeData selectedData = selectedTreeItem.getValue(); // use selected tree item as target even for workspace folder(the root item), because the user data of tree item might be used for other purpose.
+        if (selectedData == null || selectedData.getFile() == null) {
+            return;
+        }
         String fileType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
         if (TYPE_FOLDER.equals(fileType)) {
             Dialog<String> dialog = new TextDialogBuilder()
@@ -1097,7 +1108,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     private void launchFindInFilesDialog(NodeData selectedData) {
-        if (!selectedData.isFile()) {
+        if (selectedData != null && !selectedData.isFile()) {
             if (!selectedData.getFile().exists()) {
                 DialogFactory.errDialog("The workspace or folder you selected doesn't exist, probably be deleted externally.");
             }
