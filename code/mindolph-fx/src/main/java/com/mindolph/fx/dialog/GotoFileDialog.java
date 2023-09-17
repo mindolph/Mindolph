@@ -130,7 +130,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
                     }
                 };
                 listCell.setOnMouseClicked(event -> {
-                    if (event.getClickCount() > 1) {
+                    if (event.getClickCount() > 1 && listCell.getItem() != null) {
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(listCell.getItem().getDirOrFile(), true));
                         dialog.close();
                     }

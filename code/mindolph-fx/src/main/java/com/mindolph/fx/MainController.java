@@ -235,7 +235,8 @@ public class MainController extends BaseController implements Initializable,
     @Override
     public void onWorkspacesRestore(WorkspaceList workspaceList) {
         this.workspaceList = workspaceList;
-        if (workspaceList != null && workspaceList.getProjects() != null && !workspaceList.getProjects().isEmpty()) {
+        workspaceView.toggleButtons(workspaceList == null || workspaceList.isEmpty());
+        if (workspaceList != null && !workspaceList.isEmpty()) {
             log.info("Restore workspaces: %d".formatted(workspaceList.getSize()));
             workspaceList.getProjects().forEach(ws -> {
                 log.debug(ws.getBaseDirPath());

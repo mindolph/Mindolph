@@ -68,6 +68,10 @@ public class WorkspaceList {
         return this.projects.contains(new WorkspaceMeta(filePath));
     }
 
+    public boolean isEmpty() {
+        return this.projects == null || this.projects.isEmpty();
+    }
+
     public void removeWorkspace(File workspaceBaseDir) {
         this.projects.remove(new WorkspaceMeta(workspaceBaseDir.getPath()));
     }
