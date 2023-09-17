@@ -168,6 +168,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 loadWorkspace(selectedWorkspace.getValue());
                 fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getBaseDirPath());
             }
+            else {
+                // clear the tree view if last workspace is closed.
+                treeView.getRoot().getChildren().clear();
+            }
             toggleButtons(selectedWorkspace == null);
         });
         cbWorkspaces.setOnDragEntered(event -> {
