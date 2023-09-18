@@ -1,5 +1,10 @@
 # Release Notes
 
+### V1.4.5 Release
+* Fix: workspace view doesn't be cleared after the last workspace is closed.
+* Fix: exception when click on buttons if there is no workspace created or loaded.
+* Fix: exception when double-click on blank item in the 'go to file' file list.
+
 ### V1.5.1 Unstable Release
 * Feature: add theme support to mind map editor.
 * Feature: add new Light and Dark themes to mind map, and provide the ability to duplicate them and make your own theme.
