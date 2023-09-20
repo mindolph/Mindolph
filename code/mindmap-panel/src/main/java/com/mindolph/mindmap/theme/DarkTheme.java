@@ -22,7 +22,7 @@ public class DarkTheme extends MindMapTheme {
         horizontalBlockGap = 5;
         drawBackground = true;
         paperColor = Color.web("0x000000CC");
-        gridColor = paperColor.darker();
+        gridColor = paperColor.brighter();
         showGrid = false;
         gridStep = 0;
         rootBackgroundColor = Color.web("0xEEEEEE");
