@@ -30,8 +30,7 @@
                                <PreferenceItem name="Theme:" >
                                    <ChoiceBox fx:id="cbTheme">
                                    </ChoiceBox>
-                                   <Button fx:id="btnDuplicate" text="Duplicate"/>
-                                   <Button fx:id="btnDelete" text="Delete"/>
+                                   <Button fx:id="btnActions"/>
                                </PreferenceItem>
                                <Separator prefWidth="200.0" />
                                <PreferenceItem name="Show grid:">

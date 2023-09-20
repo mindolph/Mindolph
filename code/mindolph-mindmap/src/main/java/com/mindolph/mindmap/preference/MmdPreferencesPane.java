@@ -1,5 +1,7 @@
 package com.mindolph.mindmap.preference;
 
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -37,9 +39,10 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     @FXML
     private ChoiceBox<Pair<ThemeKey, String>> cbTheme;
     @FXML
-    private Button btnDuplicate;
-    @FXML
-    private Button btnDelete;
+    private Button btnActions;
+    ContextMenu contextMenu;
+    MenuItem miDuplicate;
+    MenuItem miDelete;
     @FXML
     private Spinner<Integer> spnGridStep;
     @FXML
@@ -164,12 +167,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             ThemeKey selectedKey = newChoice.getKey();
             mindMapConfig.setThemeName(selectedKey.name);// set current theme
             mindMapConfig.setTheme(ThemeUtils.createTheme(selectedKey.name));
-            if (this.isPredefinedTheme(selectedKey.name)) {
-                btnDelete.setDisable(true);
-            }
-            else {
+            if (!this.isPredefinedTheme(selectedKey.name)) {
                 mindMapConfig.getTheme().loadFromPreferences();
-                btnDelete.setDisable(false);
             }
             this.initControlsFromPreferences();
             this.save(true);
@@ -179,49 +178,70 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             this.toggleThemeSettings(isPredefinedTheme(mindMapConfig.getThemeName()));
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
-        btnDuplicate.setOnAction(event -> {
-            Dialog<String> nameDialog = new TextDialogBuilder()
-                    .owner(DialogFactory.DEFAULT_WINDOW)
-                    .title("New Theme Name")
-                    .content("Give a name for you own customized theme: ")
-                    .width(480)
-                    .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
-            Optional<String> optName = nameDialog.showAndWait();
-            if (optName.isPresent()) {
-                String newName = optName.get();
-                if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))) {
-                    DialogFactory.errDialog("Theme %s already exists".formatted(newName));
-                    return;
+        btnActions.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
+        btnActions.setOnMouseClicked(event -> {
+            if (contextMenu == null) {
+                contextMenu = new ContextMenu();
+            }
+            else {
+                contextMenu.getItems().clear();
+                contextMenu.hide();
+            }
+            miDuplicate = new MenuItem("Duplicate", FontIconManager.getIns().getIcon(IconKey.CLONE));
+            miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
+            miDelete.setDisable(isPredefinedTheme(mindMapConfig.getThemeName()));
+            miDuplicate.setOnAction(event1 -> {
+                Dialog<String> nameDialog = new TextDialogBuilder()
+                        .owner(DialogFactory.DEFAULT_WINDOW)
+                        .title("New Theme Name")
+                        .content("Give a name for you own customized theme: ")
+                        .width(480)
+                        .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
+                Optional<String> optName = nameDialog.showAndWait();
+                if (optName.isPresent()) {
+                    String newName = optName.get();
+                    if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))) {
+                        DialogFactory.errDialog("Theme %s already exists".formatted(newName));
+                        return;
+                    }
+
+                    ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
+                    mindMapConfig.getUserThemes().add(newName);
+                    ThemeKey newThemeKey = new ThemeKey(newName, parentThemeKey.name);
+
+                    // create new custom theme and save to preference.
+                    MindMapTheme newTheme = createThemeFromParent(newThemeKey);
+                    newTheme.saveToPreferences();
+
+                    Pair<ThemeKey, String> newItem = new Pair<>(newThemeKey, newName);
+                    cbTheme.getItems().add(newItem);
+                    cbTheme.getSelectionModel().select(newItem);
                 }
-
-                ThemeKey parentThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
-                mindMapConfig.getUserThemes().add(newName);
-                ThemeKey newThemeKey = new ThemeKey(newName, parentThemeKey.name);
-
-                // create new custom theme and save to preference.
-                MindMapTheme newTheme = createThemeFromParent(newThemeKey);
-                newTheme.saveToPreferences();
-
-                Pair<ThemeKey, String> newItem = new Pair<>(newThemeKey, newName);
-                cbTheme.getItems().add(newItem);
-                cbTheme.getSelectionModel().select(newItem);
-            }
+            });
+            miDelete.setOnAction(event12 -> {
+                ThemeKey selectedThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
+                String selectedThemeName = selectedThemeKey.name;
+                log.debug("Delete theme: " + selectedThemeName);
+                if (!isPredefinedTheme(selectedThemeName)) {
+                    CustomTheme userTheme = new CustomTheme(selectedThemeName);
+                    userTheme.deleteFromPreference();
+                    mindMapConfig.getUserThemes().remove(selectedThemeName);
+                    mindMapConfig.saveToPreferences();
+                    // switch to class theme
+                    Pair<ThemeKey, String> deletedItem = new Pair<>(selectedThemeKey, selectedThemeName);
+                    cbTheme.getItems().remove(deletedItem);
+                    cbTheme.getSelectionModel().select(THEME_ITEM_CLASSIC);
+                }
+            });
+            contextMenu.getItems().addAll(miDuplicate, miDelete);
+            contextMenu.show(btnActions, event.getScreenX(), event.getScreenY());
         });
-        btnDelete.setOnAction(event -> {
-            ThemeKey selectedThemeKey = cbTheme.getSelectionModel().getSelectedItem().getKey();
-            String selectedThemeName = selectedThemeKey.name;
-            log.debug("Delete theme: " + selectedThemeName);
-            if (!isPredefinedTheme(selectedThemeName)) {
-                CustomTheme userTheme = new CustomTheme(selectedThemeName);
-                userTheme.deleteFromPreference();
-                mindMapConfig.getUserThemes().remove(selectedThemeName);
-                mindMapConfig.saveToPreferences();
-                // switch to class theme
-                Pair<ThemeKey, String> deletedItem = new Pair<>(selectedThemeKey, selectedThemeName);
-                cbTheme.getItems().remove(deletedItem);
-                cbTheme.getSelectionModel().select(THEME_ITEM_CLASSIC);
-            }
-        });
+//        btnDuplicate.setOnAction(event -> {
+//
+//        });
+//        btnDelete.setOnAction(event -> {
+//
+//        });
         cbConnectorStyle.setConverter(new StringConverter<>() {
             @Override
             public String toString(Pair<ConnectorStyle, String> object) {

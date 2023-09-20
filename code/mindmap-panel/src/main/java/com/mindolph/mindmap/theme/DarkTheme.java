@@ -21,7 +21,7 @@ public class DarkTheme extends MindMapTheme {
         selectLineGap = 5;
         horizontalBlockGap = 5;
         drawBackground = true;
-        paperColor = Color.web("0x262F34CC");
+        paperColor = Color.web("0x000000CC");
         gridColor = paperColor.darker();
         showGrid = false;
         gridStep = 0;
