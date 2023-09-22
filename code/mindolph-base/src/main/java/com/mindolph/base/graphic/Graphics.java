@@ -27,6 +27,8 @@ public interface Graphics {
 
     void drawRect(double x, double y, double width, double height, Color border, Color fill);
 
+    void drawRect(Rectangle2D rect, Color border, Color fill);
+
     void draw(Shape shape, Color border, Color fill);
 
     void drawCurve(double startX, double startY, double endX, double endY, Color color);

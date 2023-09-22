@@ -478,6 +478,11 @@ public class SVGImageExporter extends BaseExportExtension {
         }
 
         @Override
+        public void drawRect(Rectangle2D rect, Color border, Color fill) {
+            this.drawRect(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight(), border, fill);
+        }
+
+        @Override
         public void draw(Shape shape, Color border, Color fill) {
             if (shape instanceof Rectangle) {
                 Rectangle rect = (Rectangle) shape;

@@ -8,8 +8,16 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.util.Utils;
 import javafx.geometry.Rectangle2D;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IconBlock {
+
+    private static final double ICON_SPACING = 4;
+
     private Graphics g;
     private final MindMapConfig cfg;
     private final MindMapContext mindMapContext;
@@ -18,7 +26,8 @@ public class IconBlock {
     private double scale = 1.0d;
     private boolean contentPresented;
 
-    private Extra<?>[] currentExtras = null;
+    private List<Extra<?>> currentExtras = null;
+    private List<Rectangle2D> boundsList = new ArrayList<>(); // bounds of icons inside
 
     public IconBlock(IconBlock orig) {
         this.g = orig.g;
@@ -28,7 +37,8 @@ public class IconBlock {
         this.model = orig.model;
         this.scale = orig.scale;
         this.contentPresented = orig.contentPresented;
-        this.currentExtras = orig.currentExtras == null ? null : orig.currentExtras.clone();
+        this.currentExtras = orig.currentExtras;
+        this.boundsList = orig.boundsList;
     }
 
     public IconBlock(TopicNode model, Graphics g, MindMapConfig cfg, MindMapContext mindMapContext) {
@@ -38,32 +48,9 @@ public class IconBlock {
         this.mindMapContext = mindMapContext;
     }
 
-    public void setCoordOffset(double x, double y) {
-        this.bounds = new Rectangle2D(x, y, this.bounds.getWidth(), this.bounds.getHeight());
-    }
-
-    public void updateSize() {
-        int numberOfIcons = this.model.getNumberOfExtras();
-        this.scale = mindMapContext.getScale();
-        if (numberOfIcons == 0) {
-            this.bounds = new Rectangle2D(0d, 0d, 0d, 0d);
-            this.contentPresented = false;
-        }
-        else {
-            double scaledIconWidth = ScalableIcon.BASE_WIDTH * this.scale;
-            double scaledIconHeight = ScalableIcon.BASE_HEIGHT * this.scale;
-            this.bounds = new Rectangle2D(0d, 0d, scaledIconWidth * numberOfIcons, scaledIconHeight);
-            this.contentPresented = true;
-            this.currentExtras = new Extra<?>[numberOfIcons];
-            int index = 0;
-            for (Extra<?> e : this.model.getExtras().values()) {
-                this.currentExtras[index++] = e;
-            }
-        }
-    }
 
     public boolean hasContent() {
-        return this.currentExtras != null && this.contentPresented;
+        return CollectionUtils.isNotEmpty(this.boundsList) && this.contentPresented;
     }
 
     public void paint() {
@@ -111,12 +98,46 @@ public class IconBlock {
 //                    g.drawString(icon.getText(), 0, 0, Color.BLACK);
 //                    g.translate(-offsetX, -offsetY - 12);
                     g.drawImage(ico.getImage(), offsetX, offsetY, scaledIconWidth, scaledIconHeight);
-                    offsetX += scaledIconWidth;
+                    offsetX += scaledIconWidth + ICON_SPACING * this.scale;
                 }
             }
+
+            // debugging
+//            for (Rectangle2D r : this.boundsList) {
+//                g.drawRect(r.getMinX() + this.bounds.getMinX(), r.getMinY() + this.bounds.getMinY(),
+//                        r.getWidth(), r.getHeight(), Color.RED, null);
+//            }
+
         }
     }
 
+    public void translate(double x, double y) {
+        this.bounds = new Rectangle2D(x, y, this.bounds.getWidth(), this.bounds.getHeight());
+    }
+
+    public void updateBounds() {
+        int numberOfIcons = this.model.getNumberOfExtras();
+        this.scale = mindMapContext.getScale();
+        if (numberOfIcons == 0) {
+            this.bounds = new Rectangle2D(0d, 0d, 0d, 0d);
+            this.contentPresented = false;
+        }
+        else {
+            double scaledIconWidth = ScalableIcon.BASE_WIDTH * this.scale;
+            double scaledIconHeight = ScalableIcon.BASE_HEIGHT * this.scale;
+            double scaledSpacing = ICON_SPACING * this.scale;
+            double totalSpacing = scaledSpacing * (numberOfIcons - 1);
+
+            this.bounds = new Rectangle2D(0d, 0d, scaledIconWidth * numberOfIcons + totalSpacing, scaledIconHeight);
+            this.contentPresented = true;
+            this.currentExtras = new ArrayList<>();
+            this.currentExtras.addAll(this.model.getExtras().values());
+
+            for (int i = 0; i < this.currentExtras.size(); i++) {
+                this.boundsList.add(new Rectangle2D((scaledIconWidth + scaledSpacing) * i, 0d, scaledIconWidth, scaledIconHeight));
+            }
+        }
+    }
 
     public ScalableIcon findIconForFileType(ExtraFile theFileLink) {
         ScalableIcon result;
@@ -137,20 +158,25 @@ public class IconBlock {
 
 
     public Extra<?> findExtraForPoint(double x, double y) {
-        Extra<?> result = null;
-        if (this.hasContent() && this.bounds.contains(x, y)) {
-            double iconWidth = this.scale * ScalableIcon.BASE_WIDTH;
-            int index = (int) ((x - this.bounds.getMinX()) / iconWidth);
-            result = index >= 0 && index < this.currentExtras.length ? this.currentExtras[index] : null;
+        if (!this.hasContent() || !this.bounds.contains(x, y)) {
+            return null;
         }
-        return result;
+        int i = ListUtils.indexOf(this.boundsList, b -> b.contains(x - this.bounds.getMinX(), y - this.bounds.getMinY()));
+//        Rectangle2D r = this.boundsList.get(i);
+//        g.drawRect(r.getMinX() + bounds.getMinX(), r.getMinY() + bounds.getMinY(), r.getWidth(), r.getHeight(), null, Color.GREEN);
+        return (i >= 0 && i < this.currentExtras.size()) ? this.currentExtras.get(i) : null;
     }
 
 
     public Rectangle2D getBounds() {
         return this.bounds;
     }
-    public void updateGraphics(Graphics g) {
+
+    public List<Rectangle2D> getBoundsList() {
+        return boundsList;
+    }
+
+    public void setGraphics(Graphics g) {
         this.g = g;
     }
 

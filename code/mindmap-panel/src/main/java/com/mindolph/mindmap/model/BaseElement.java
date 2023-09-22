@@ -90,7 +90,7 @@ public abstract class BaseElement {
     public void updateElementBounds() {
         this.visualAttributeImageBlock.updateSize();
         this.textBlock.updateSize();
-        this.extrasIconBlock.updateSize();
+        this.extrasIconBlock.updateBounds();
 
         double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
 
@@ -218,7 +218,7 @@ public abstract class BaseElement {
         offset += this.textBlock.getBounds().getWidth() + scaledHorzBlockGap;
 
         if (this.extrasIconBlock.hasContent()) {
-            this.extrasIconBlock.setCoordOffset(offset, centralBlockLineY - this.extrasIconBlock.getBounds().getHeight() / 2);
+            this.extrasIconBlock.translate(offset, centralBlockLineY - this.extrasIconBlock.getBounds().getHeight() / 2);
         }
     }
 
@@ -298,7 +298,7 @@ public abstract class BaseElement {
         this.g = g;
         textBlock.updateGraphics(g);
         visualAttributeImageBlock.updateGraphics(g);
-        extrasIconBlock.updateGraphics(g);
+        extrasIconBlock.setGraphics(g);
     }
 
     /**
