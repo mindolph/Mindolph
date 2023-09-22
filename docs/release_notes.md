@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.5.2 Unstable Release
+* Improvement: replace theme operation buttons with context menu in preference dialog.
+* Improvement: better dark theme of mind map.
+* Improvement: add spacing between topic extra icons in mind map.
+* merged bug fixes from v1.4.5
+
 ### V1.4.5 Release
 * Fix: workspace view doesn't be cleared after the last workspace is closed.
 * Fix: exception when click on buttons if there is no workspace created or loaded.
