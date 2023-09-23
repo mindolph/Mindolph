@@ -1,6 +1,7 @@
 package com.mindolph.mindmap.model;
 
 import com.mindolph.base.graphic.Graphics;
+import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.MindMapConfig;
@@ -9,8 +10,7 @@ import com.mindolph.mindmap.constant.TextAlign;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
-import static com.igormaznitsa.mindmap.model.ModelUtils.breakToLines;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TextBlock extends Block {
     private String text;
@@ -39,7 +39,12 @@ public final class TextBlock extends Block {
 
     public void updateText(String text) {
         this.text = text == null ? "" : text;
-        invalidate();
+        String[] texts = StringUtils.split(this.text, TextConstants.LINE_SEPARATOR);
+
+        this.lines = new Line[texts.length];
+        for (int i = 0; i < texts.length; i++) {
+            this.lines[i] = new Line(texts[i], RectangleUtils.newZero());
+        }
     }
 
     public Font getFont() {
@@ -52,11 +57,6 @@ public final class TextBlock extends Block {
 
     public void setTextAlign(TextAlign textAlign) {
         this.textAlign = textAlign == null ? TextAlign.LEFT : textAlign;
-        invalidate();
-    }
-
-    public void invalidate() {
-        this.lines = null;
     }
 
     @Override
@@ -70,17 +70,13 @@ public final class TextBlock extends Block {
 
         double maxWidth = 0.0d;
         double maxHeight = 0.0d;
-
-        String[] brokenText = breakToLines(this.text);
-
-        this.lines = new Line[brokenText.length];
-
-        int index = 0;
-        for (String s : brokenText) {
-            Rectangle2D lineBounds = g.getStringBounds(s);
-            maxWidth = Math.max(lineBounds.getWidth(), maxWidth);
-            maxHeight += lineBounds.getHeight();
-            this.lines[index++] = new Line(s, lineBounds);
+        if (lines != null) {
+            for (Line l : lines) {
+                Rectangle2D lineBounds = g.getStringBounds(l.line);
+                maxWidth = Math.max(lineBounds.getWidth(), maxWidth);
+                maxHeight += lineBounds.getHeight();
+                l.bounds = lineBounds;
+            }
         }
         this.bounds = new Rectangle2D(0.0d, 0.0d, maxWidth, maxHeight);
     }
@@ -120,8 +116,8 @@ public final class TextBlock extends Block {
         private String line;
 
         private Line(String line, Rectangle2D bounds) {
-            this.bounds = bounds;
             this.line = line;
+            this.bounds = bounds;
         }
     }
 
