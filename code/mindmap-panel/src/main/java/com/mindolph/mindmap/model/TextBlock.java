@@ -12,36 +12,29 @@ import javafx.scene.text.Font;
 
 import static com.igormaznitsa.mindmap.model.ModelUtils.breakToLines;
 
-public final class TextBlock implements Cloneable {
-    private Graphics g;
-    private final MindMapConfig cfg;
-    private final MindMapContext mindMapContext;
-    private static final Rectangle2D ZERO = new Rectangle2D(0, 0, 0, 0);
-    private Rectangle2D bounds = new Rectangle2D(0, 0, 0, 0);
+public final class TextBlock extends Block {
     private String text;
     private Line[] lines;
     private Font font;
     private double maxLineAscent;
     private TextAlign textAlign;
+    private Color textColor;
 
     public TextBlock(TextBlock orig) {
-        this.cfg = orig.cfg;
-        this.g = orig.g;
-        this.mindMapContext = orig.mindMapContext;
+        super(orig.cfg, orig.mindMapContext, orig.g);
         this.text = orig.text;
         this.lines = orig.lines.clone();
         this.font = orig.font;
         this.maxLineAscent = orig.maxLineAscent;
-        this.bounds = RectangleUtils.copy(orig.getBounds());
+        super.bounds = RectangleUtils.copy(orig.getBounds());
         this.textAlign = orig.textAlign;
+        this.textColor = orig.textColor;
     }
 
     public TextBlock(String text, TextAlign justify, Graphics g, MindMapConfig cfg, MindMapContext mindMapContext) {
+        super(cfg, mindMapContext, g);
         updateText(text);
         this.textAlign = justify;
-        this.cfg = cfg;
-        this.g = g;
-        this.mindMapContext = mindMapContext;
     }
 
     public void updateText(String text) {
@@ -51,10 +44,6 @@ public final class TextBlock implements Cloneable {
 
     public Font getFont() {
         return font;
-    }
-
-    public Rectangle2D getBounds() {
-        return this.bounds == null ? ZERO : this.bounds;
     }
 
     public TextAlign getTextAlign() {
@@ -70,11 +59,8 @@ public final class TextBlock implements Cloneable {
         this.lines = null;
     }
 
-    public void setCoordOffset(double x, double y) {
-        this.bounds = new Rectangle2D(x, y, this.bounds.getWidth(), this.bounds.getHeight());
-    }
-
-    public void updateSize() {
+    @Override
+    public void updateBounds() {
         // ugly but works
         this.font = FontUtils.newFontWithSize(cfg.getTheme().getTopicFont(), cfg.getTheme().getTopicFont().getSize() * mindMapContext.getScale());
 //        this.font = cfg.getFont().deriveFont(AffineTransform.getScaleInstance(cfg.getScale(), cfg.getScale()));
@@ -99,7 +85,8 @@ public final class TextBlock implements Cloneable {
         this.bounds = new Rectangle2D(0.0d, 0.0d, maxWidth, maxHeight);
     }
 
-    public void paint(Color color) {
+    @Override
+    public void paint() {
         if (this.font != null && this.lines != null) {
             double posy = this.bounds.getMinY() + this.maxLineAscent;
             g.setFont(this.font);
@@ -117,14 +104,14 @@ public final class TextBlock implements Cloneable {
                     }
                     default -> throw new Error("unsupported text alignment");
                 }
-                g.drawString(l.line, drawX, posy, color);
+                g.drawString(l.line, drawX, posy, textColor);
                 posy += l.bounds.getHeight();
             }
         }
     }
 
-    public void updateGraphics(Graphics g) {
-        this.g = g;
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
     }
 
     private static class Line {

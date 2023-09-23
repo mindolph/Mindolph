@@ -14,21 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VisualAttributeImageBlock {
-    private Graphics g;
-    private final MindMapConfig cfg;
-    MindMapContext mindMapContext;
-    private Rectangle2D bounds = RectangleUtils.newZero();
+public class VisualAttributeImageBlock extends Block {
     private final TopicNode model;
     private boolean contentPresented;
-
     private VisualItem[] items = null;
 
     public VisualAttributeImageBlock(VisualAttributeImageBlock origin) {
-        this.g = origin.g;
-        this.cfg = origin.cfg;
-        this.mindMapContext = origin.mindMapContext;
-        this.bounds = RectangleUtils.copy(origin.bounds);
+        super(origin.cfg, origin.mindMapContext, origin.g);
+        super.bounds = RectangleUtils.copy(origin.bounds);
         this.model = origin.model;
         this.contentPresented = origin.contentPresented;
         if (origin.items == null) {
@@ -43,17 +36,12 @@ public class VisualAttributeImageBlock {
     }
 
     public VisualAttributeImageBlock(TopicNode model, Graphics g, MindMapConfig cfg, MindMapContext mindMapContext) {
+        super(cfg, mindMapContext, g);
         this.model = model;
-        this.g = g;
-        this.cfg = cfg;
-        this.mindMapContext = mindMapContext;
     }
 
-    public void setCoordOffset(double x, double y) {
-        this.bounds = new Rectangle2D(x, y, this.bounds.getWidth(), this.bounds.getHeight());
-    }
-
-    public void updateSize() {
+    @Override
+    public void updateBounds() {
         List<VisualAttributeExtension> extensionsFromRegistry = MindMapExtensionRegistry.getInstance().findFor(VisualAttributeExtension.class);
         int x = 0;
         double maxheight = 0;
@@ -97,9 +85,10 @@ public class VisualAttributeImageBlock {
         return this.items == null || this.items.length > 0;
     }
 
+    @Override
     public void paint() {
         if (this.items == null) {
-            updateSize();
+            updateBounds();
         }
 
         double offsetX = this.bounds.getMinX();
@@ -126,13 +115,6 @@ public class VisualAttributeImageBlock {
         return result;
     }
 
-    public Rectangle2D getBounds() {
-        return this.bounds;
-    }
-
-    public void updateGraphics(Graphics g) {
-        this.g = g;
-    }
 
     /**
      *

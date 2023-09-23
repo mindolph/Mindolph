@@ -60,6 +60,7 @@ public abstract class BaseElement {
         this.fillColor = orig.fillColor;
         this.textColor = orig.textColor;
         this.borderColor = orig.borderColor;
+        this.selected = orig.selected;
     }
 
     public BaseElement(TopicNode model, Graphics g, MindMapConfig config, MindMapContext context) {
@@ -88,8 +89,8 @@ public abstract class BaseElement {
     }
 
     public void updateElementBounds() {
-        this.visualAttributeImageBlock.updateSize();
-        this.textBlock.updateSize();
+        this.visualAttributeImageBlock.updateBounds();
+        this.textBlock.updateBounds();
         this.extrasIconBlock.updateBounds();
 
         double scaledHorzBlockGap = mindMapContext.getScale() * theme.getHorizontalBlockGap();
@@ -210,11 +211,11 @@ public abstract class BaseElement {
         double offset = textMargin;
 
         if (this.visualAttributeImageBlock.mayHaveContent()) {
-            this.visualAttributeImageBlock.setCoordOffset(offset, centralBlockLineY - this.visualAttributeImageBlock.getBounds().getHeight() / 2);
+            this.visualAttributeImageBlock.translate(offset, centralBlockLineY - this.visualAttributeImageBlock.getBounds().getHeight() / 2);
             offset += this.visualAttributeImageBlock.getBounds().getWidth() + scaledHorzBlockGap;
         }
 
-        this.textBlock.setCoordOffset(offset, centralBlockLineY - this.textBlock.getBounds().getHeight() / 2);
+        this.textBlock.translate(offset, centralBlockLineY - this.textBlock.getBounds().getHeight() / 2);
         offset += this.textBlock.getBounds().getWidth() + scaledHorzBlockGap;
 
         if (this.extrasIconBlock.hasContent()) {
@@ -296,8 +297,8 @@ public abstract class BaseElement {
     // this probably useless when everything drawing on one canvas.
     void updateGraphics(Graphics g) {
         this.g = g;
-        textBlock.updateGraphics(g);
-        visualAttributeImageBlock.updateGraphics(g);
+        textBlock.setGraphics(g);
+        visualAttributeImageBlock.setGraphics(g);
         extrasIconBlock.setGraphics(g);
     }
 

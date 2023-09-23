@@ -70,7 +70,8 @@ public class ElementLevelFirst extends BaseCollapsableElement {
         }
 
         // Draw text
-        this.textBlock.paint(this.getTextColor());
+        this.textBlock.setTextColor(this.getTextColor());
+        this.textBlock.paint();
 
         // Draw icon
         if (this.extrasIconBlock.hasContent()) {
