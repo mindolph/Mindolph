@@ -21,7 +21,7 @@
                         <ImageView fx:id="ivPreview" fitHeight="450.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
                      </content>
                   </ScrollPane>
-                  <Slider fx:id="sldSize" majorTickUnit="20.0" min="10.0" minorTickCount="2" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                  <Slider fx:id="sldSize" majorTickUnit="10.0" min="10.0" minorTickCount="1" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
                </children>
             </HBox>
          </children>
