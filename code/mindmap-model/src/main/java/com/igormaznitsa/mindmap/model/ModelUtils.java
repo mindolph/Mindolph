@@ -213,7 +213,11 @@ public final class ModelUtils {
         return result;
     }
 
-
+    /**
+     * @deprecated use StringUtils.split()
+     * @param text
+     * @return
+     */
     public static String[] breakToLines(String text) {
         int lineNum = countLines(text);
         String[] result = new String[lineNum];

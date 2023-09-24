@@ -9,15 +9,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.apache.commons.lang3.CharUtils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * @author mindolph.com@gmail.com
  */
 public class TextUtils {
-
-    private static final Pattern STRIP_PATTERN = Pattern.compile("^(\\s*)(.*[^\\s])(\\s*)$");
 
     // refactor for different fonts todo
     private static Bounds alphabetBounds;
@@ -68,31 +63,6 @@ public class TextUtils {
         return text.getLayoutBounds();
     }
 
-    public static String convertCamelCasedToHumanForm(String camelCasedString, boolean capitalizeFirstChar) {
-        StringBuilder result = new StringBuilder();
-
-        boolean notFirst = false;
-
-        for (char c : camelCasedString.toCharArray()) {
-            if (notFirst) {
-                if (Character.isUpperCase(c)) {
-                    result.append(' ');
-                    result.append(Character.toLowerCase(c));
-                } else {
-                    result.append(c);
-                }
-            } else {
-                notFirst = true;
-                if (capitalizeFirstChar) {
-                    result.append(Character.toUpperCase(c));
-                } else {
-                    result.append(c);
-                }
-            }
-        }
-        return result.toString();
-    }
-
     public static String removeAllISOControlsButTabs(String str) {
         StringBuilder result = new StringBuilder(str.length());
         for (char c : str.toCharArray()) {
@@ -104,15 +74,16 @@ public class TextUtils {
         return result.toString();
     }
 
-    public static String strip(String str, boolean leading) {
-        if (str.trim().isEmpty()) {
-            return "";
+    public static int countHeading(String str, char c) {
+        char[] chars = str.toCharArray();
+        int count = 0;
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != c) {
+                return count;
+            }
+            count++;
         }
-        Matcher matcher = STRIP_PATTERN.matcher(str);
-        if (!matcher.find()) {
-            throw new Error("Unexpected error in strip(String): " + str);
-        }
-        return leading ? matcher.group(2) + matcher.group(3) : matcher.group(1) + matcher.group(2);
+        return count;
     }
 
 }

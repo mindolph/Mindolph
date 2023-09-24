@@ -222,7 +222,7 @@ public class TopicNode extends Topic<TopicNode> {
                 continue;
             }
             line = line.replace("\t", "    ");
-            int leadingSpacesNumber = line.length() - TextUtils.strip(line, true).length();
+            int leadingSpacesNumber = TextUtils.countHeading(line, ' ');
             ignoredLeadingSpaces = Math.min(leadingSpacesNumber, ignoredLeadingSpaces);
         }
 
