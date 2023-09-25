@@ -10,6 +10,7 @@ import com.mindolph.mindmap.constant.TextAlign;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public final class TextBlock extends Block {
@@ -70,7 +71,13 @@ public final class TextBlock extends Block {
 
         double maxWidth = 0.0d;
         double maxHeight = 0.0d;
-        if (lines != null) {
+        if (ArrayUtils.isEmpty(lines) || StringUtils.isBlank(lines[0].line)) {
+            // force to set bounds as one letter if topic is blank.
+            Rectangle2D rect = g.getStringBounds("X");
+            maxWidth = rect.getWidth();
+            maxHeight = rect.getHeight();
+        }
+        else {
             for (Line l : lines) {
                 Rectangle2D lineBounds = g.getStringBounds(l.line);
                 maxWidth = Math.max(lineBounds.getWidth(), maxWidth);
