@@ -149,7 +149,7 @@ public class FileTabView extends BaseView {
             log.debug(StringUtils.join(openedFileMap.keySet()));
             tabPane.getSelectionModel().select(tab);
             tabEditorMap.get(tab).requestFocus();
-            locateInEditor((BaseEditor) tabEditorMap.get(tab), fileData);
+            tabEditorMap.get(tab).locate(fileData.getAnchor());
         }
         EventBus.getIns().notifyMenuStateChange(CLOSE_TAB, true);
         EventBus.getIns().notifyMenuStateChange(SAVE_AS, true);
@@ -184,7 +184,7 @@ public class FileTabView extends BaseView {
         this.createContextMenuForTab(tab);
 
         // do something when editor is ready.
-        editor.setEditorReadyEventHandler(() -> locateInEditor(editor, fileData));
+        editor.setEditorReadyEventHandler(() -> editor.locate(fileData.getAnchor()));
 
         new Thread(() -> {
             try {
@@ -233,24 +233,15 @@ public class FileTabView extends BaseView {
         }, "File Load Thread").start();
     }
 
-    private void locateInEditor(BaseEditor editor, NodeData fileData) {
-        // locate searched keyword in file
-        if (fileData.getAnchor() != null) {
-            editor.locate(fileData.getAnchor());
-        }
-        else {
-            log.warn("No target to locate");
-        }
-//        if (fileData.getSearchParams() != null && StringUtils.isNotBlank(fileData.getSearchParams().getKeywords())) {
-//            log.debug("Locate matched keyword in file: " + fileData.getSearchParams());
-//            TextSearchOptions textSearchOptions = new TextSearchOptions(fileData.getSearchParams().isCaseSensitive());
-//            textSearchOptions.setInTopic(true);
-//            textSearchOptions.setInNote(true);
-//            textSearchOptions.setInUrl(true);
-//            textSearchOptions.setInFileLink(true);
-//            editor.searchNext(fileData.getSearchParams().getKeywords(), textSearchOptions);
+//    private void locateInEditor(BaseEditor editor, NodeData fileData) {
+//        // locate searched keyword in file
+//        if (fileData.getAnchor() != null) {
+//            editor.locate(fileData.getAnchor());
 //        }
-    }
+//        else {
+//            log.warn("No target to locate");
+//        }
+//    }
 
     public ContextMenu createContextMenuForTab(Tab selectedTab) {
         Object selectedTabUserData = selectedTab.getUserData();

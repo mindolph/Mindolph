@@ -1152,6 +1152,7 @@ public class MindMapView extends BaseScalableView {
         if (topic != null) {
             log.trace("Select topic: %s".formatted(topic));
             this.selection.get().add(topic);
+            repaint(); // this make sure the selection effect before the topic is visible
         }
     }
 

@@ -145,6 +145,7 @@ public class MindMapEditor extends BaseEditor {
             log.debug("Try to locate topic: %s(%s)".formatted(ma.getText(), ma.getParentText()));
             firstInTree = this.getMindMapModel().findFirstInTree(t -> {
                 log.debug("  %s".formatted(t.getText()));
+                // TODO within extra contents if how to display them in the result has been resolved.
                 return ma.getText().equals(t.getText()) && ma.getParentText().equals(t.getParent().getText());
             });
         }
@@ -153,7 +154,8 @@ public class MindMapEditor extends BaseEditor {
             this.mindMapView.selectAndUpdate(firstInTree.get(), false);
         }
         else {
-            log.warn("Couldn't locate any topic for: " + anchor);
+            log.warn("Couldn't locate any topic for '%s', select the root topic".formatted(anchor));
+            this.mindMapView.select(this.mindMapView.getModel().getRoot());
         }
     }
 

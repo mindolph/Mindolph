@@ -511,6 +511,8 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
     /**
+     * Find first matching topic in the whole tree.
+     *
      * @param predicate
      * @since 1.3.4
      */
@@ -518,6 +520,13 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         return this.findFirstInTree(this.root, predicate);
     }
 
+    /**
+     * Find first matching topic in the sub-tree.
+     *
+     * @param parent
+     * @param predicate
+     * @return
+     */
     public Optional<T> findFirstInTree(T parent, Predicate<T> predicate) {
         if (predicate.test(parent)) {
             return Optional.ofNullable(parent);
