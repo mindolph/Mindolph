@@ -2,6 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.dialog.FontSelectDialog;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -95,7 +96,9 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     @Override
     protected void save(boolean notify) {
         String fileType = cbText.getSelectionModel().getSelectedItem().getKey().getFileType();
-        preferenceChangedEventHandler.onPreferenceChanged(fileType);
+        if (notify) {
+            EventBus.getIns().notifyPreferenceChanged(fileType);
+        }
     }
 
     /**

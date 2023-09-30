@@ -69,7 +69,7 @@ public class MainController extends BaseController implements Initializable,
         SearchResultEventHandler,
         WorkspaceRestoreListener, OpenedFileRestoreListener,
         FileRenamedEventHandler, FileChangedEventHandler,
-        WorkspaceViewSizeRestoreListener, PreferenceChangedEventHandler {
+        WorkspaceViewSizeRestoreListener {
 
     private final Logger log = LoggerFactory.getLogger(MainController.class);
 
@@ -200,6 +200,8 @@ public class MainController extends BaseController implements Initializable,
                 workspaceView.requestFocus();
             });
         });
+
+        EventBus.getIns().subscribePreferenceChanged(fileType -> fileTabView.reloadEditorsByType(fileType));
 
         leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == tabRecentFiles) {
@@ -425,11 +427,6 @@ public class MainController extends BaseController implements Initializable,
         }
     }
 
-    @Override
-    public void onPreferenceChanged(String fileType) {
-        fileTabView.reloadEditorsByType(fileType);
-    }
-
     @FXML
     public void onMenuSave(ActionEvent event) {
         fileTabView.saveCurrentTab();
@@ -561,7 +558,7 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onMenuPreferences(ActionEvent event) {
-        new PreferencesDialog(this).show(param -> {
+        new PreferencesDialog().show(param -> {
             log.info("Preferences loaded");
         });
     }

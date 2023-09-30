@@ -63,7 +63,7 @@ public final class TextBlock extends Block {
     @Override
     public void updateBounds() {
         // ugly but works
-        this.font = FontUtils.newFontWithSize(cfg.getTheme().getTopicFont(), cfg.getTheme().getTopicFont().getSize() * mindMapContext.getScale());
+        this.font = FontUtils.newFontWithSize(cfg.getTopicFont(), cfg.getTopicFont().getSize() * mindMapContext.getScale());
 //        this.font = cfg.getFont().deriveFont(AffineTransform.getScaleInstance(cfg.getScale(), cfg.getScale()));
         g.setFont(font);
 

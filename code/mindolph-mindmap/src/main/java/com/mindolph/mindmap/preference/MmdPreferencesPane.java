@@ -4,6 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
@@ -25,6 +26,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.mindolph.base.constant.FontConstants.*;
+
 /**
  * Composite control for Mind Map's preferences.
  *
@@ -40,9 +43,10 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private ChoiceBox<Pair<ThemeKey, String>> cbTheme;
     @FXML
     private Button btnActions;
-    ContextMenu contextMenu;
-    MenuItem miDuplicate;
-    MenuItem miDelete;
+    private ContextMenu contextMenu;
+    private MenuItem miDuplicate;
+    private MenuItem miDelete;
+
     @FXML
     private Spinner<Integer> spnGridStep;
     @FXML
@@ -129,6 +133,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
     // listeners for binding
     private Map<ReadOnlyProperty, ChangeListener> listeners = new HashMap<>();
+
+    // any preference has been changed.
+    private boolean changed = false;
 
     public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
@@ -236,12 +243,6 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             contextMenu.getItems().addAll(miDuplicate, miDelete);
             contextMenu.show(btnActions, event.getScreenX(), event.getScreenY());
         });
-//        btnDuplicate.setOnAction(event -> {
-//
-//        });
-//        btnDelete.setOnAction(event -> {
-//
-//        });
         cbConnectorStyle.setConverter(new StringConverter<>() {
             @Override
             public String toString(Pair<ConnectorStyle, String> object) {
@@ -273,7 +274,16 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // dont do initialization here.
+        // dont do initialization for controls here.
+
+        // listen font changes for mind map and reload, because the fonts are set in another panel,
+        // if not, the font changes will be recovered when saving mmd preferences.
+        EventBus.getIns().subscribePreferenceChanged(fileType -> {
+            if (SupportFileTypes.TYPE_MIND_MAP.equals(fileType)) {
+                mindMapConfig.setTopicFont(fxPreferences.getPreference(KEY_MMD_TOPIC_FONT, DEFAULT_FONTS.get(KEY_MMD_TOPIC_FONT)));
+                mindMapConfig.setNoteFont(fxPreferences.getPreference(KEY_MMD_NOTE_FONT, DEFAULT_FONTS.get(KEY_MMD_NOTE_FONT)));
+            }
+        });
     }
 
     /**
@@ -408,7 +418,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             if (isLoaded) {
                 log.debug("Save preference to cache from control: %s".formatted(property.getBean()));
                 saveFunction.accept(newValue);
-                save(false); // save all or single? TODO
+                save(false);
+                changed = true;
             }
         };
         listeners.put(property, changeListener);
@@ -424,10 +435,13 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     }
 
     public void save(boolean notify) {
+        if (!changed) {
+            return;
+        }
         mindMapConfig.saveToPreferences();
         // notify reload config
-        if (notify && preferenceChangedEventHandler != null) {
-            preferenceChangedEventHandler.onPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
+        if (notify) {
+            EventBus.getIns().notifyPreferenceChanged(SupportFileTypes.TYPE_MIND_MAP);
         }
     }
 

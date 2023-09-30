@@ -1,7 +1,5 @@
 package com.mindolph.base.control;
 
-import com.mindolph.base.event.PreferenceChangedEventHandler;
-import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -33,11 +31,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * Whether preferences is loaded, all listeners or handlers are available only this is true.
      */
     protected boolean isLoaded = false;
-
-    /**
-     * Handle if preference changes.
-     */
-    protected PreferenceChangedEventHandler preferenceChangedEventHandler;
 
     public BasePrefsPane(String fxmlResourceUri) {
         log = LoggerFactory.getLogger(BasePrefsPane.class);
@@ -88,7 +81,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
                 log.debug("Save preference: " + prefName);
                 // save all (call save()) or single? TODO
                 fxPreferences.savePreference(prefName, newValue);
-                preferenceChangedEventHandler.onPreferenceChanged( SupportFileTypes.TYPE_MIND_MAP);
             }
         });
     }
@@ -151,11 +143,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
 
     // probably be onSave?
     protected abstract void save(boolean notify);
-
-
-    public void setPreferenceChangedEventHandler(PreferenceChangedEventHandler preferenceChangedEventHandler) {
-        this.preferenceChangedEventHandler = preferenceChangedEventHandler;
-    }
 
     public static class Pref<T> {
         Property<T> property;

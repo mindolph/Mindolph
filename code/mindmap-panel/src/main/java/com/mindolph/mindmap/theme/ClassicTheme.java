@@ -48,8 +48,8 @@ public class ClassicTheme extends MindMapTheme {
         selectLineWidth = 3.0f;
         jumpLinkWidth = 1.5f;
         roundRadius = 8f;
-        topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
-        noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
+//        topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
+//        noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
 
         dropShadow = true;
         shadowColor = ColorUtils.makeTransparentColor(Color.BLACK, 0.188);

@@ -45,6 +45,9 @@ public class EventBus {
     // file editor send status msg to anywhere listening
     private final Map<File, EventSource<StatusMsg>> statusMsgEvents = new HashMap<>();
 
+    // preference changed with file type (null for all file types)
+    private final EventSource<String> preferenceChanged = new EventSource<>();
+
     public static EventBus getIns() {
         return ins;
     }
@@ -251,6 +254,16 @@ public class EventBus {
 
     public EventBus subscribeDeletedFile(Consumer<NodeData> consumer) {
         fileDeleted.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus subscribePreferenceChanged(Consumer<String> consumer) {
+        preferenceChanged.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyPreferenceChanged(String fileType) {
+        preferenceChanged.push(fileType);
         return this;
     }
 

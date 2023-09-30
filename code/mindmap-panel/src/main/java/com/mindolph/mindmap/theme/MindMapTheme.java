@@ -1,7 +1,6 @@
 package com.mindolph.mindmap.theme;
 
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.util.List;
 
@@ -49,8 +48,8 @@ public abstract class MindMapTheme {
     protected float selectLineWidth;
     protected float jumpLinkWidth;
     protected float roundRadius;
-    protected Font topicFont;
-    protected Font noteFont;
+//    protected Font topicFont;
+//    protected Font noteFont;
     protected boolean dropShadow;
 
     // internal (user can't change)
@@ -359,21 +358,6 @@ public abstract class MindMapTheme {
         this.roundRadius = roundRadius;
     }
 
-    public Font getTopicFont() {
-        return topicFont;
-    }
-
-    public void setTopicFont(Font topicFont) {
-        this.topicFont = topicFont;
-    }
-
-    public Font getNoteFont() {
-        return noteFont;
-    }
-
-    public void setNoteFont(Font noteFont) {
-        this.noteFont = noteFont;
-    }
 
     public boolean isDropShadow() {
         return dropShadow;

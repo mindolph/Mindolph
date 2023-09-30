@@ -1,9 +1,11 @@
 package com.mindolph.mindmap;
 
+import com.mindolph.base.constant.FontConstants;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.theme.*;
 import com.mindolph.mindmap.util.PrefObjectUtils;
+import javafx.scene.text.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,10 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private List<String> userThemes = new ArrayList<>();// init for first usage.
     private MindMapTheme theme = new LightTheme();
 
+    // fonts
+    private Font topicFont;
+    private Font noteFont;
+
     // options
     private boolean trimTopicText = true;
     private boolean unfoldCollapsedTarget = false;
@@ -38,7 +44,8 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     }
 
     public MindMapConfig() {
-
+        topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
+        noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
     }
 
     @Override
@@ -90,6 +97,22 @@ public final class MindMapConfig implements EditorConfig, Serializable {
 
     public void setUserThemes(List<String> userThemes) {
         this.userThemes = userThemes;
+    }
+
+    public Font getTopicFont() {
+        return topicFont;
+    }
+
+    public void setTopicFont(Font topicFont) {
+        this.topicFont = topicFont;
+    }
+
+    public Font getNoteFont() {
+        return noteFont;
+    }
+
+    public void setNoteFont(Font noteFont) {
+        this.noteFont = noteFont;
     }
 
     public boolean isTrimTopicText() {

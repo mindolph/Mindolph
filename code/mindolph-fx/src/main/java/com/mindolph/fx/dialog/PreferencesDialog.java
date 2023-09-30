@@ -2,7 +2,6 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.event.PreferenceChangedEventHandler;
 import com.mindolph.fx.preference.FontPreferencesPane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
@@ -53,12 +52,13 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 
     private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
 
-    public PreferencesDialog(PreferenceChangedEventHandler preferenceChangedEventHandler) {
+    public PreferencesDialog() {
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Preferences of Mindolph")
                 .fxmlUri("dialog/preferences_dialog.fxml")
                 .button(ButtonType.CLOSE, () -> {
+//                    fontPreferencesPane.save
                     mmdPreferences.save(true); // todo use change status to avoid unnecessary save
                     dialog.close();
                 })
@@ -81,12 +81,6 @@ public class PreferencesDialog extends BaseDialogController<Void> {
         generalPreferencesPane.loadPreferences();
         mmdPreferences.loadPreferences();
 //        plantumlPreferences.loadPreferences();
-        // handle preferences changes
-        generalPreferencesPane.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
-        mmdPreferences.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
-        mdPreferences.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
-//        plantumlPreferences.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
-        fontPreferencesPane.setPreferenceChangedEventHandler(preferenceChangedEventHandler);
 
         Platform.runLater(() -> {
             tabPane.setTabIcon(tabGeneral, FontIconManager.getIns().getIcon(IconKey.GEAR));

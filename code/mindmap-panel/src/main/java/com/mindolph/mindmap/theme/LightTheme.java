@@ -48,8 +48,8 @@ public class LightTheme extends MindMapTheme {
         selectLineWidth = 2.5f;
         jumpLinkWidth = 2f;
         roundRadius = 8f;
-        topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
-        noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
+//        topicFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_TOPIC_FONT);
+//        noteFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_MMD_NOTE_FONT);
 
         dropShadow = false;
         shadowColor = ColorUtils.makeTransparentColor(Color.BLACK, 0.188);

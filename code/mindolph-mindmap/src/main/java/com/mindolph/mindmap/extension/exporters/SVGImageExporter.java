@@ -150,12 +150,12 @@ public class SVGImageExporter extends BaseExportExtension {
 
         MindMapConfig newConfig = new MindMapConfig(context.getMindMapConfig());
         MindMapTheme theme = newConfig.getTheme();
-        String[] mappedFont = LOCAL_FONT_MAP.get(theme.getTopicFont().getFamily().toLowerCase(Locale.ENGLISH));
+        String[] mappedFont = LOCAL_FONT_MAP.get(newConfig.getTopicFont().getFamily().toLowerCase(Locale.ENGLISH));
         if (mappedFont != null) {
-            FontWeight weight = FontUtils.fontWeight(theme.getTopicFont().getStyle());
-            FontPosture posture = FontUtils.fontPosture(theme.getTopicFont().getStyle());
-            Font adaptedFont = Font.font(mappedFont[1], weight, posture, theme.getTopicFont().getSize());
-            theme.setTopicFont(adaptedFont);
+            FontWeight weight = FontUtils.fontWeight(newConfig.getTopicFont().getStyle());
+            FontPosture posture = FontUtils.fontPosture(newConfig.getTopicFont().getStyle());
+            Font adaptedFont = Font.font(mappedFont[1], weight, posture, newConfig.getTopicFont().getSize());
+            newConfig.setTopicFont(adaptedFont);
         }
 
         theme.setDrawBackground(this.flagDrawBackground);
@@ -223,7 +223,7 @@ public class SVGImageExporter extends BaseExportExtension {
 
 
     private String prepareStylePart(StringBuilder buffer, MindMapConfig config) {
-        return "<style>%s.%s {%s%s}%s</style>".formatted(NEXT_LINE, FONT_CLASS_NAME, NEXT_LINE, font2style(config.getTheme().getNoteFont()), NEXT_LINE);
+        return "<style>%s.%s {%s%s}%s</style>".formatted(NEXT_LINE, FONT_CLASS_NAME, NEXT_LINE, font2style(config.getNoteFont()), NEXT_LINE);
     }
 
     @Override
