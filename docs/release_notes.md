@@ -1,5 +1,11 @@
 # Release Notes
 
+### V1.5.3 Unstable Release
+* Improvement: automatically select the root topic when opening the mind map.
+* Improvement: optimize the performance of text drawing in mind map.
+* Improvement: optimize the image preview dialog for mind map.
+* Fix: the fonts setting doesn't work since the themes was introduced to mind map.
+
 ### V1.5.2 Unstable Release
 * Improvement: replace theme operation buttons with context menu in preference dialog.
 * Improvement: better dark theme of mind map.
