@@ -478,7 +478,7 @@ public class ExtCodeArea extends CodeArea {
         public Replacement(String substitute, String tail, List<String> targets) {
             this.substitute = substitute;
             this.tail = tail;
-            if (targets == null || targets.size() == 0) {
+            if (targets == null || targets.isEmpty()) {
                 this.targets = Collections.singletonList(substitute);
             }
             else {

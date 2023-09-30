@@ -63,7 +63,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         colOrientation.setPrefWidth(180);
 
         colEditor.setCellValueFactory(param -> {
-            Label label = new Label(param.getValue().getEditor());
+            Label label = new Label(param.getValue().editor());
             label.setPadding(new Insets(4));
             return new SimpleObjectProperty<>(label);
         });
@@ -112,29 +112,6 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
     }
 
-    private static class OrientationItem {
-        String editor;
-        Orientation orientation;
-
-        public OrientationItem(String editor, Orientation orientation) {
-            this.editor = editor;
-            this.orientation = orientation;
-        }
-
-        public String getEditor() {
-            return editor;
-        }
-
-        public void setEditor(String editor) {
-            this.editor = editor;
-        }
-
-        public Orientation getOrientation() {
-            return orientation;
-        }
-
-        public void setOrientation(Orientation orientation) {
-            this.orientation = orientation;
-        }
+    private record OrientationItem(String editor, Orientation orientation) {
     }
 }

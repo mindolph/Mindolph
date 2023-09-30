@@ -263,17 +263,8 @@ public class MindmupExporter extends BaseExportExtension {
         return 2;
     }
 
-    private static class TopicId {
+    private record TopicId(int id, String uuid, TopicNode topic) {
 
-        private final int id;
-        private final TopicNode topic;
-        private final String uuid;
-
-        private TopicId(int id, String uuid, TopicNode topic) {
-            this.id = id;
-            this.topic = topic;
-            this.uuid = uuid;
-        }
     }
 
 }

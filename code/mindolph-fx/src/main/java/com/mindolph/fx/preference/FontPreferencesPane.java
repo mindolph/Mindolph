@@ -52,7 +52,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
             }
         });
         cbText.valueProperty().addListener((observableValue, old, newChoice) -> {
-            Font font = fxPreferences.getPreference(newChoice.getKey().getPrefId(), Font.class, DEFAULT_FONTS.get(newChoice.getKey().getPrefId()));
+            Font font = fxPreferences.getPreference(newChoice.getKey().prefId(), Font.class, DEFAULT_FONTS.get(newChoice.getKey().prefId()));
             lbFont.setText(FontUtils.fontToString(font));
             taPreview.setFont(font);
         });
@@ -73,7 +73,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
         if (changedFont != null) {
             lbFont.setText(FontUtils.fontToString(changedFont));
             taPreview.setFont(changedFont);
-            fxPreferences.savePreference(cbText.getSelectionModel().getSelectedItem().getKey().getPrefId(), changedFont);
+            fxPreferences.savePreference(cbText.getSelectionModel().getSelectedItem().getKey().prefId(), changedFont);
             this.save(true);
         }
     }
@@ -82,8 +82,8 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     public void resetToDefault() {
         super.resetToDefault();
         for (Pair<PrefKey, String> item : cbText.getItems()) {
-            Font defaultFont = DEFAULT_FONTS.get(item.getKey().getPrefId());
-            fxPreferences.savePreference(item.getKey().getPrefId(), defaultFont);
+            Font defaultFont = DEFAULT_FONTS.get(item.getKey().prefId());
+            fxPreferences.savePreference(item.getKey().prefId(), defaultFont);
             // update the preview for selected.
             if (item == cbText.getSelectionModel().getSelectedItem()) {
                 taPreview.setFont(defaultFont);
@@ -95,7 +95,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
 
     @Override
     protected void save(boolean notify) {
-        String fileType = cbText.getSelectionModel().getSelectedItem().getKey().getFileType();
+        String fileType = cbText.getSelectionModel().getSelectedItem().getKey().fileType();
         if (notify) {
             EventBus.getIns().notifyPreferenceChanged(fileType);
         }
@@ -104,21 +104,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     /**
      * Preference key in choice box.
      */
-    private static class PrefKey {
-        String prefId;
-        String fileType;
-
-        public PrefKey(String prefId, String fileType) {
-            this.prefId = prefId;
-            this.fileType = fileType;
-        }
-
-        public String getPrefId() {
-            return prefId;
-        }
-
-        public String getFileType() {
-            return fileType;
-        }
+    private record PrefKey(String prefId, String fileType) {
     }
+
 }

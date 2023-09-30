@@ -481,13 +481,6 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         }
     };
 
-    private class ThemeKey {
-        String name;
-        String parentName;
-
-        public ThemeKey(String name, String parentName) {
-            this.name = name;
-            this.parentName = parentName;
-        }
+    private record ThemeKey(String name, String parentName) {
     }
 }
