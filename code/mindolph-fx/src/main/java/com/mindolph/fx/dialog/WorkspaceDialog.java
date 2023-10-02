@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Dialog to show and manage workspaces.
+ *
  * @author mindolph.com@gmail.com
  * @see WorkspaceListCell
  */

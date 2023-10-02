@@ -105,7 +105,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                 miOpenInSys.setOnAction(ItemController.this);
 //                miDelete.setOnAction(ItemController.this);
                 contextMenu.getItems().addAll(miRename, miClose, miOpenInSys);
-                contextMenu.show(ItemController.this, event.getScreenX(), event.getScreenY());
+                contextMenu.show(btnActions, event.getScreenX(), event.getScreenY());
             });
         }
 
