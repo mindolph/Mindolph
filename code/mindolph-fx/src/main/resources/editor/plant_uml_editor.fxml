@@ -6,6 +6,7 @@
 <?import com.mindolph.base.control.snippet.SnippetView?>
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<?import com.mindolph.plantuml.PlantUmlCodeArea?>
 <fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300" layoutX="281.0" layoutY="71.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -16,7 +17,7 @@
                             <primary>
                                 <VirtualizedScrollPane>
                                     <content>
-                                        <SearchableCodeArea fx:id="codeArea"/>
+                                        <PlantUmlCodeArea fx:id="codeArea"/>
                                     </content>
                                 </VirtualizedScrollPane>
                             </primary>

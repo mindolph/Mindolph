@@ -2,11 +2,9 @@ package com.mindolph.plantuml;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.FixedSplitPane;
-import com.mindolph.base.control.ExtCodeArea;
 import com.mindolph.base.control.ImageScrollPane;
 import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.editor.BasePreviewEditor;
@@ -15,7 +13,6 @@ import com.mindolph.base.event.StatusMsg;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.plantuml.constant.ShortcutConstants;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -25,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -37,11 +33,6 @@ import net.sourceforge.plantuml.core.DiagramDescription;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.fxmisc.wellbehaved.event.EventPattern;
-import org.fxmisc.wellbehaved.event.InputMap;
-import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,23 +44,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
-import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
  */
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
-
-
-    private final Pattern pattern;
 
     @FXML
     private SnippetView snippetView;
@@ -93,24 +81,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         super("/editor/plant_uml_editor.fxml", editorContext, false);
         super.fileType = SupportFileTypes.TYPE_PLANTUML;
         log.info("initialize plantuml editor");
-        pattern = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
-                        + "|(?<ACTIVITY>" + ACTIVITY + ")"
-                        + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
-                        + "|(?<CONNECTOR>" + CONNECTOR + ")"
-                        + "|(?<BLOCKCOMMENT>" + BLOCK_COMMENT_PATTERN + ")"
-                        + "|(?<DIAGRAMKEYWORDS>" + DIAGRAM_PATTERN + ")"
-                        + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
-                        + "|(?<CONTAININGKEYWORDS>" + CONTAINING_PATTERN + ")"
-                        + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
-                , Pattern.MULTILINE);
-
-        codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, AUTO_INDENT);
-
-        // comment or uncomment for plantuml.
-        InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_PUML_COMMENT)), keyEvent -> {
-            codeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("'"));
-        });
-        Nodes.addInputMap(this, comment);
 
         this.previewPane.setOnContextMenuRequested(event -> {
             log.debug("context menu requested");
@@ -259,30 +229,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         }
     }
 
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = pattern.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass =
-                    matcher.group("ACTIVITY") != null ? "activity" :
-                            matcher.group("QUOTE") != null ? "quote" :
-                                    matcher.group("CONNECTOR") != null ? "connector" :
-                                            matcher.group("DIAGRAMKEYWORDS") != null ? "diagramkeyword" :
-                                                    matcher.group("DIRECTIVE") != null ? "directive" :
-                                                            matcher.group("CONTAININGKEYWORDS") != null ? "containing" :
-                                                                    matcher.group("COMMENT") != null ? "comment" :
-                                                                            matcher.group("BLOCKCOMMENT") != null ? "comment" :
-                                                                                    matcher.group("KEYWORD") != null ? "keyword" :
-                                                                                            null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -305,7 +251,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void refresh(String text) {
-        codeArea.setStyleSpans(0, computeHighlighting(text));
+        codeArea.refresh();
         super.refresh(text);
     }
 

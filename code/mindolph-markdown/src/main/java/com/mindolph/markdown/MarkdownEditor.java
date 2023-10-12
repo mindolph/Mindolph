@@ -4,7 +4,6 @@ package com.mindolph.markdown;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtCodeArea.Replacement;
@@ -20,7 +19,6 @@ import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
-import com.mindolph.markdown.constant.ShortcutConstants;
 import com.mindolph.markdown.dialog.TableDialog;
 import com.mindolph.markdown.dialog.TableOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -53,7 +51,6 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
@@ -69,11 +66,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CharacterHit;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.fxmisc.wellbehaved.event.EventPattern;
-import org.fxmisc.wellbehaved.event.InputMap;
-import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
@@ -93,15 +85,9 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
-import static com.mindolph.markdown.constant.MarkdownConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -120,7 +106,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
             }
             """;
 
-    private final Pattern pattern;
 
     @FXML
     private AnchorPane panePreview;
@@ -174,25 +159,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
-        pattern = Pattern.compile(
-                "(?<HEADING>" + HEADING_PATTERN + ")"
-                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
-                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
-                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
-                        + "|(?<LIST>" + LIST_PATTERN + ")"
-                        + "|(?<TABLE>" + TABLE_PATTERN + ")"
-                        + "|(?<CODE>" + CODE_PATTERN + ")"
-                        + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
-                        + "|(?<URL>" + URL_PATTERN + ")"
-        );
-        timestamp = String.valueOf(System.currentTimeMillis());
 
-        codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, BACK_QUOTE, AUTO_INDENT);
-        InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)), keyEvent -> {
-            codeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ")); // TODO add tail
-        });
-        Nodes.addInputMap(this, comment);
+        timestamp = String.valueOf(System.currentTimeMillis());
 
         EventBus.getIns().subscribe(notificationType -> {
             if (notificationType == NotificationType.FILE_LOADED) {
@@ -352,13 +320,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
     }
 
-    // this method will be called from javascript inside the webview.
+    // NOTE: this method will be called from javascript inside the webview.
     public void onHover(String content) {
         log.debug("Hover content: %s".formatted(content));
         EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
     }
 
-    // this method will be called from javascript inside the webview.
+    // NOTE: this method will be called from javascript inside the webview.
     public void onFileLinkClicked(String url) {
         if (!UrlUtils.isValid(url)) {
             File f;
@@ -412,36 +380,9 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         return css;
     }
 
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = pattern.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass =
-                    matcher.group("HEADING") != null ? "heading" :
-                            matcher.group("CODEBLOCK") != null ? "code-block" :
-                                    matcher.group("LIST") != null ? "list" :
-                                            matcher.group("TABLE") != null ? "table" :
-                                                    matcher.group("BOLD") != null ? "bold" :
-                                                            matcher.group("ITALIC") != null ? "italic" :
-                                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                                            matcher.group("CODE") != null ? "code" :
-                                                                                    matcher.group("QUOTE") != null ? "md-quote" :
-                                                                                            matcher.group("URL") != null ? "url" :
-                                                                                                    null; /* never happens */
-            assert styleClass != null;
-            // System.out.printf("%s(%d-%d)%n", styleClass, matcher.start(), matcher.end());
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
-
     @Override
     protected void refresh(String text) {
-        codeArea.setStyleSpans(0, computeHighlighting(text));
+        codeArea.refresh();
         super.refresh(text);
     }
 

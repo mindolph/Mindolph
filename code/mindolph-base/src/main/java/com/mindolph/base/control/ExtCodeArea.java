@@ -64,6 +64,10 @@ public class ExtCodeArea extends CodeArea {
                 .subscribe(s -> this.getUndoManager().preventMerge());
     }
 
+    public void refresh(){
+        // DO NOTHING
+    }
+
     public void doHistory() {
         historySource.push(null);
     }
