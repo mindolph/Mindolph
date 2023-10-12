@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
+ * Code area with text locating functionality.
+ *
  * @author mindolph.com@gmail.com
  */
 public class SearchableCodeArea extends ExtCodeArea {

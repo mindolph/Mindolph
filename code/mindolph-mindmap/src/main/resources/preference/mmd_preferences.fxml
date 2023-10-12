@@ -101,22 +101,22 @@
                                <Separator prefWidth="200.0" />
                                <PreferenceItem name="1st level horizontal gap:">
                                    <items>
-                                       <Slider fx:id="sld1stLevelHGap" max="250.0" min="10.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                       <Slider fx:id="sld1stLevelHGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
                                    </items>
                                </PreferenceItem>
                                <PreferenceItem name="1st level vertical gap:">
                                    <items>
-                                       <Slider fx:id="sld1stLevelVGap" max="250.0" min="10.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                       <Slider fx:id="sld1stLevelVGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
                                    </items>
                                </PreferenceItem>
                                <PreferenceItem name="2nd level horizontal gap:">
                                    <items>
-                                       <Slider fx:id="sld2ndLevelHGap" max="250.0" min="10.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                       <Slider fx:id="sld2ndLevelHGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
                                    </items>
                                </PreferenceItem>
                                <PreferenceItem name="2nd level vertical gap:">
                                    <items>
-                                       <Slider fx:id="sld2ndLevelVGap" max="250.0" min="10.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                       <Slider fx:id="sld2ndLevelVGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
                                    </items>
                                </PreferenceItem>
                                <Separator prefWidth="200.0" />

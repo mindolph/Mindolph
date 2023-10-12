@@ -14,7 +14,7 @@ public class LightTheme extends MindMapTheme {
     public LightTheme() {
         textMargins = 10;
         otherLevelVerticalInset = 16;
-        otherLevelHorizontalInset = 32;
+        otherLevelHorizontalInset = 48;
         firstLevelVerticalInset = 32;
         firstLevelHorizontalInset = 48;
         paperMargins = 20;
