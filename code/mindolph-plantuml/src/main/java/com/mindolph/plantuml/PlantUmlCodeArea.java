@@ -37,7 +37,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
                         + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
                 , Pattern.MULTILINE);
 
-        super.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, AUTO_INDENT);
+        super.addFeatures(HELPER, TAB_INDENT, QUOTE, DOUBLE_QUOTE, AUTO_INDENT);
 
         // comment or uncomment for plantuml.
         InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_PUML_COMMENT)), keyEvent -> {

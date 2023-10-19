@@ -3,6 +3,9 @@ package com.mindolph.base.control;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.plugin.Plugin;
+import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
@@ -51,6 +54,8 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
+    private final InputHelperContextMenu inputHelperContextMenu = new InputHelperContextMenu();
+
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
@@ -62,9 +67,12 @@ public class ExtCodeArea extends CodeArea {
         // the event should be emitted when text changed in editor
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
+
+        this.bindCaretCoordinate();
+        this.bindInputHelperContextMenu();
     }
 
-    public void refresh(){
+    public void refresh() {
         // DO NOTHING
     }
 
@@ -101,10 +109,51 @@ public class ExtCodeArea extends CodeArea {
         return menu;
     }
 
+    private void bindCaretCoordinate() {
+        this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
+            newValue.ifPresent(bounds -> inputHelperContextMenu.updateCaret(this, bounds.getMaxX(), bounds.getMaxY()));
+        });
+    }
+
+    private void bindInputHelperContextMenu() {
+        // prepare the context words
+        this.textProperty().addListener((observable, oldValue, newValue) -> {
+            Plugin plugin = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_PLANTUML);
+            plugin.getInputHelper().updateContextWords(newValue);
+        });
+        //
+        this.inputMethodRequestsProperty().addListener((observable, oldValue, newValue) -> {
+            // TODO??
+            System.out.println(newValue.getSelectedText());
+        });
+
+        inputHelperContextMenu.onSelected((selection) -> {
+            this.insertText(this.getCaretPosition(), StringUtils.substringAfter(selection.selected(), selection.input()));
+        });
+        this.setOnKeyReleased(event -> {
+            String p = getCurrentParagraphText();
+            inputHelperContextMenu.consume(event, extractLastWord(p));
+        });
+    }
+
+
+    // TODO move to base module
+    public static String extractLastWord(String text) {
+        int i = StringUtils.lastIndexOfAny(text, " ", "\t") + 1;
+        return StringUtils.substring(text, Math.max(0, i), text.length());
+    }
+
+
     public void addFeatures(FEATURE... features) {
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();
         for (FEATURE feature : features) {
             switch (feature) {
+//                case HELPER:
+//                    InputMap<KeyEvent> showHelper = InputMap.consume(EventPattern.keyPressed(new KeyCodeCombination(ENTER, KeyCombination.META_DOWN)), e -> {
+//
+//                    });
+//                    inputMaps.add(showHelper);
+//                    break;
                 case TAB_INDENT:
                     InputMap<KeyEvent> indent = InputMap.consume(EventPattern.keyPressed(TAB), e -> {
                         if (this.getSelection().getLength() > 0) {
@@ -156,9 +205,7 @@ public class ExtCodeArea extends CodeArea {
                     break;
                 case AUTO_INDENT:
                     InputMap<KeyEvent> enter = InputMap.consume(EventPattern.keyPressed(KeyCode.ENTER), keyEvent -> {
-                        int curParIdx = this.getCurrentParagraph();
-                        Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
-                        String head = TextUtils.subStringBlankHead(paragraph.getText());
+                        String head = TextUtils.subStringBlankHead(getCurrentParagraphText());
                         log.trace("add to head: <%s>".formatted(head));
                         this.replaceSelection("\n" + head);
                     });
@@ -260,8 +307,8 @@ public class ExtCodeArea extends CodeArea {
      * @param endParIndex
      */
     private void deleteLinesSafely(int startParIndex, int endParIndex) {
-        int endParLen = getParagraphLength(endParIndex);
-        boolean isLastLine = endParIndex == getParagraphs().size() - 1;
+        int endParLen = super.getParagraphLength(endParIndex);
+        boolean isLastLine = endParIndex == super.getParagraphs().size() - 1;
         int endLineLen = isLastLine ? endParLen : endParLen + 1;// condition for last line
         int startColIndex = isLastLine ? -1 : 0;
         this.deleteText(startParIndex, startColIndex, endParIndex, endLineLen);
@@ -406,6 +453,12 @@ public class ExtCodeArea extends CodeArea {
         }
     }
 
+    protected String getCurrentParagraphText() {
+        int curParIdx = this.getCurrentParagraph();
+        Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
+        return paragraph.getText();
+    }
+
     public boolean isDisablePaste() {
         return disablePaste.get();
     }
@@ -443,6 +496,8 @@ public class ExtCodeArea extends CodeArea {
     }
 
     public enum FEATURE {
+        // input helper
+        HELPER,
         // indent or un-indent by TAB key
         TAB_INDENT,
         // quote by '
