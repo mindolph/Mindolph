@@ -12,10 +12,9 @@ public interface InputHelper {
     List<String> getHelpWords();
 
     /**
-     * If true, the input helper should parse the whole file and extract all words for helping.
-     * @return
+     * Call this method when context text has been changed to update the help words.
+     *
+     * @param text
      */
-    boolean isSupportContextWords();
-
-    void updateContextWords(String text);
+    void updateContextText(String text);
 }

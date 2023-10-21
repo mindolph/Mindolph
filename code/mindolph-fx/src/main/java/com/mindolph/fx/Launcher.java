@@ -1,8 +1,8 @@
 package com.mindolph.fx;
 
 import com.mindolph.base.Env;
+import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
-import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.fx.data.DataMigrator;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.plantuml.PlantUmlPlugin;
@@ -33,7 +33,8 @@ public class Launcher {
         dataMigrator.fixData();
 
         // register plugins TODO
-        PluginManager.getIns().registerPlugin(SupportFileTypes.TYPE_PLANTUML, new PlantUmlPlugin());
+        PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
+        PluginManager.getIns().registerPlugin(new ContextHelperPlugin());
 
         Application.launch(Main.class, args);
     }

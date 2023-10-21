@@ -2,6 +2,7 @@ package com.mindolph.markdown;
 
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.control.HighlightCodeArea;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.markdown.constant.ShortcutConstants;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -77,5 +78,10 @@ public class MarkdownCodeArea extends HighlightCodeArea {
         }
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
+    }
+
+    @Override
+    public String getFileType() {
+        return SupportFileTypes.TYPE_MARKDOWN;
     }
 }

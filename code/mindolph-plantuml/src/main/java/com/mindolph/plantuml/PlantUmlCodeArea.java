@@ -3,6 +3,7 @@ package com.mindolph.plantuml;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.control.ExtCodeArea;
 import com.mindolph.base.control.HighlightCodeArea;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.plantuml.constant.ShortcutConstants;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -75,5 +76,10 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
         }
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
+    }
+
+    @Override
+    public String getFileType() {
+        return SupportFileTypes.TYPE_PLANTUML;
     }
 }

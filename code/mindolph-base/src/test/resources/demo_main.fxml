@@ -16,6 +16,7 @@
             <Button mnemonicParsing="false" onAction="#onScrollableImageView" text="Scrollable Image View" />
             <Button mnemonicParsing="false" onAction="#onCanvasDemo" text="Canvas Demo" />
             <Button mnemonicParsing="false" onAction="#onExtTableView" text="Ext Table View" />
+            <Button mnemonicParsing="false" onAction="#onExtCodeArea" text="ExtCodeArea Demo" />
          </children>
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

@@ -1,7 +1,9 @@
 package com.mindolph.base.plugin;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
+import java.util.Collection;
 
 /**
  * @author mindolph.com@gmail.com
@@ -11,10 +13,13 @@ public class PluginManager {
 
     private static PluginManager ins;
 
-    private final Map<String, Plugin> pluginMap ;
+    private final MultiValuedMap<String, Plugin> pluginMap ;
+
+    private final MultiValuedMap<Plugin, String> fileTypeMap;
 
     private PluginManager() {
-        pluginMap = new HashMap<>();
+        pluginMap = new HashSetValuedHashMap<>();
+        fileTypeMap = new HashSetValuedHashMap<>();
     }
 
     public synchronized static PluginManager getIns() {
@@ -24,12 +29,19 @@ public class PluginManager {
         return ins;
     }
 
-    public void registerPlugin(String fileType, Plugin plugin) {
-        pluginMap.put(fileType, plugin);
+    public void registerPlugin(Plugin plugin) {
+        fileTypeMap.putAll(plugin, plugin.supportedFileTypes());
+        for (String fileType : plugin.supportedFileTypes()) {
+            pluginMap.get(fileType).add(plugin);
+        }
     }
 
-    public Plugin findPlugin(String fileType) {
+    public Collection<Plugin> findPlugin(String fileType) {
         return pluginMap.get(fileType);
+    }
+
+    public Collection<Plugin> getPlugins() {
+        return fileTypeMap.keys();
     }
 
 }

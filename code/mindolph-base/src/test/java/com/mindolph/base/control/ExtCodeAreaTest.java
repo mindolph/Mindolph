@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author mindolph
  */
-public class ExtCodeAreaText {
+public class ExtCodeAreaTest {
 
     /**
      * TODO move to base module

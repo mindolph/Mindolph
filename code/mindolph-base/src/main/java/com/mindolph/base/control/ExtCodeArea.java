@@ -54,9 +54,14 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
-    private final InputHelperContextMenu inputHelperContextMenu = new InputHelperContextMenu();
+    private final InputHelperManager inputHelperManager;
+
+    // Indicate that whether the input method is using, if true, the input helper is paused until it becomes false.
+    private boolean isInputMethod = false;
+
 
     public ExtCodeArea() {
+        this.inputHelperManager = new InputHelperManager(getFileType());
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
         this.setOnContextMenuRequested(contextMenuEvent -> {
@@ -109,30 +114,48 @@ public class ExtCodeArea extends CodeArea {
         return menu;
     }
 
+    // @since 1.6
     private void bindCaretCoordinate() {
         this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
-            newValue.ifPresent(bounds -> inputHelperContextMenu.updateCaret(this, bounds.getMaxX(), bounds.getMaxY()));
+            newValue.ifPresent(bounds -> inputHelperManager.updateCaret(this, bounds.getMaxX(), bounds.getMaxY()));
         });
     }
 
+    // @since 1.6
     private void bindInputHelperContextMenu() {
         // prepare the context words
         this.textProperty().addListener((observable, oldValue, newValue) -> {
-            Plugin plugin = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_PLANTUML);
-            plugin.getInputHelper().updateContextWords(newValue);
-        });
-        //
-        this.inputMethodRequestsProperty().addListener((observable, oldValue, newValue) -> {
-            // TODO??
-            System.out.println(newValue.getSelectedText());
+            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_PLANTUML);
+            for (Plugin plugin : plugins) {
+                plugin.getInputHelper().updateContextText(newValue);
+            }
         });
 
-        inputHelperContextMenu.onSelected((selection) -> {
+        this.setOnInputMethodTextChanged(event -> {
+            if (StringUtils.isBlank(event.getCommitted())){
+                isInputMethod = true;
+                log.debug("in input method");
+            }
+            else {
+                System.out.println(event.getCommitted());
+                isInputMethod = false;
+                log.debug("quit input method");
+                this.insertText(this.getCaretPosition(), event.getCommitted());
+                inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWord(getCurrentParagraphText()));
+            }
+        });
+
+        inputHelperManager.onSelected((selection) -> {
             this.insertText(this.getCaretPosition(), StringUtils.substringAfter(selection.selected(), selection.input()));
         });
         this.setOnKeyReleased(event -> {
-            String p = getCurrentParagraphText();
-            inputHelperContextMenu.consume(event, extractLastWord(p));
+            if (!isInputMethod) {
+                String p = getCurrentParagraphText();
+                inputHelperManager.consume(event, extractLastWord(p));
+            }
+            else {
+//                log.debug("no input method");
+            }
         });
     }
 
@@ -457,6 +480,13 @@ public class ExtCodeArea extends CodeArea {
         int curParIdx = this.getCurrentParagraph();
         Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
         return paragraph.getText();
+    }
+
+    // The file type is needed to
+//    private String fileType;
+
+    public String getFileType(){
+        return SupportFileTypes.TYPE_PLAIN_TEXT;
     }
 
     public boolean isDisablePaste() {
