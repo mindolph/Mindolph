@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImagePrintable extends BasePrintable implements Printable {
 
-    private final Logger log = LoggerFactory.getLogger(ImagePrintable.class);
+    private static final Logger log = LoggerFactory.getLogger(ImagePrintable.class);
 
     private final Image image;
 

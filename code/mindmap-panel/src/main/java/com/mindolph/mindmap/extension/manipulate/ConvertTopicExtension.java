@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public class ConvertTopicExtension extends BasePopupMenuItemExtension {
 
-    private final Logger log = LoggerFactory.getLogger(ConvertTopicExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(ConvertTopicExtension.class);
 
     @Override
     public int getOrder() {

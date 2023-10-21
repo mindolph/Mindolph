@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class WorkspaceManager {
 
-    private final Logger log = LoggerFactory.getLogger(WorkspaceManager.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkspaceManager.class);
     private static final WorkspaceManager ins = new WorkspaceManager();
 
     private WorkspaceList workspaceList;

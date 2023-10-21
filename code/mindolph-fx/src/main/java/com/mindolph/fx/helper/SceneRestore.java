@@ -38,7 +38,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_LAYOUT_MAIN_TR
 public class SceneRestore implements WindowEventHandler,
         WorkspaceViewResizedEventHandler {
 
-    private final Logger log = LoggerFactory.getLogger(SceneRestore.class);
+    private static final Logger log = LoggerFactory.getLogger(SceneRestore.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
     private static SceneRestore ins;

@@ -71,7 +71,7 @@ public class MainController extends BaseController implements Initializable,
         FileRenamedEventHandler, FileChangedEventHandler,
         WorkspaceViewSizeRestoreListener {
 
-    private final Logger log = LoggerFactory.getLogger(MainController.class);
+    private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 

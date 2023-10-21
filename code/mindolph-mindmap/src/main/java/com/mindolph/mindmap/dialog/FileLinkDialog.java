@@ -34,7 +34,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_MMD_FILE_LINK_
  */
 public class FileLinkDialog extends BaseDialogController<FileLink> {
 
-    private final Logger log = LoggerFactory.getLogger(FileLinkDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(FileLinkDialog.class);
 
     @FXML
     private TextField textField;

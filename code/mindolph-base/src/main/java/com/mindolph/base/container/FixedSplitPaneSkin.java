@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @see FixedSplitPane
  */
 public class FixedSplitPaneSkin extends SkinBase<FixedSplitPane> {
-    private final Logger log = LoggerFactory.getLogger(FixedSplitPaneSkin.class);
+    private static final Logger log = LoggerFactory.getLogger(FixedSplitPaneSkin.class);
 
     private final SplitPane splitPane;
 

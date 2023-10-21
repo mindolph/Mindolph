@@ -18,7 +18,7 @@ import java.util.*;
 @ThreadSafe
 public final class MindMapExtensionRegistry implements Iterable<Extension> {
 
-    private final Logger log = LoggerFactory.getLogger(MindMapExtensionRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(MindMapExtensionRegistry.class);
 
     private static final MindMapExtensionRegistry INSTANCE = new MindMapExtensionRegistry();
     private final List<Extension> extensionList = new ArrayList<>();

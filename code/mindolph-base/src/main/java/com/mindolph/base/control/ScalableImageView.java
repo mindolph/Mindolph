@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 @DefaultProperty("image")
 public class ScalableImageView extends BaseScalableView {
-    private final Logger log = LoggerFactory.getLogger(ScalableImageView.class);
+    private static final Logger log = LoggerFactory.getLogger(ScalableImageView.class);
 
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
 

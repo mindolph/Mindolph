@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class UsageDialog extends BaseDialogController<SearchParams> {
 
-    private final Logger log = LoggerFactory.getLogger(UsageDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(UsageDialog.class);
 
     private SearchParams searchParams;
 

@@ -18,7 +18,7 @@ import java.lang.reflect.Modifier;
  * @deprecated
  */
 public class MindMapConfigLegacy {
-    private final Logger log = LoggerFactory.getLogger(MindMapConfigLegacy.class);
+    private static final Logger log = LoggerFactory.getLogger(MindMapConfigLegacy.class);
 
     private final String CFG_PREFIX = "mmd";
 

@@ -16,7 +16,7 @@ import java.util.function.BiFunction;
  */
 public abstract class BaseSearchMatcher implements SearchMatcher {
 
-    private final Logger log = LoggerFactory.getLogger(BaseSearchMatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseSearchMatcher.class);
 
     protected boolean returnContextEnabled;
 

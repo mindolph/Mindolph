@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * @author mindolph.com@gmail.com
  */
 public class ScrollableImageViewDemo implements Initializable {
-    private final Logger log = LoggerFactory.getLogger(ScrollableImageViewDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(ScrollableImageViewDemo.class);
 
     @FXML
     private ImageScrollPane scrollableImageView;

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated
  */
 public class HiddenSplitPaneSkin extends SkinBase<HiddenSplitPane> {
-    private final Logger log = LoggerFactory.getLogger(HiddenSplitPaneSkin.class);
+    private static final Logger log = LoggerFactory.getLogger(HiddenSplitPaneSkin.class);
 
     private final SplitPane splitPane;
 

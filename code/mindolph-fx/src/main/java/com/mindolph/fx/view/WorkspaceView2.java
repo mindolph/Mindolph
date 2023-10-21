@@ -81,7 +81,7 @@ import static com.mindolph.core.constant.SupportFileTypes.*;
  */
 public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent> {
 
-    private final Logger log = LoggerFactory.getLogger(WorkspaceView2.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkspaceView2.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 

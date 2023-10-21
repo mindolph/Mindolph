@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Editable {
 
-    private final Logger log = LoggerFactory.getLogger(BasePreviewEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(BasePreviewEditor.class);
 
     @FXML
     private FixedSplitPane fixedSplitPane;

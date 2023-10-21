@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScalableImageViewSkin extends BaseScalableViewSkin<ScalableImageView> {
 
-    private final Logger log = LoggerFactory.getLogger(ScalableImageViewSkin.class);
+    private static final Logger log = LoggerFactory.getLogger(ScalableImageViewSkin.class);
 
     public ScalableImageViewSkin(ScalableImageView control) {
         super(control);

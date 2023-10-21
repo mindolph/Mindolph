@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 public class TopicTreeDialog extends BaseDialogController<TopicNode> {
 
-    private final Logger log = LoggerFactory.getLogger(TopicTreeDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(TopicTreeDialog.class);
 
     @FXML
     private Button btnUnfoldAll;

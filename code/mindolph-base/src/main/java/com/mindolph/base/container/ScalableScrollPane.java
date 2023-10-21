@@ -22,7 +22,7 @@ import static com.mindolph.mfx.util.BoundsUtils.boundsInString;
  */
 public class ScalableScrollPane extends ExtendedScrollPane {
 
-    private final Logger log = LoggerFactory.getLogger(ScalableScrollPane.class);
+    private static final Logger log = LoggerFactory.getLogger(ScalableScrollPane.class);
 
     private BaseScalableView scalableView;
 

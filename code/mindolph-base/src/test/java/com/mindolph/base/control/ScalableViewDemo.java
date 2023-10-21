@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  * @author mindolph.com@gmail.com
  */
 public class ScalableViewDemo implements Initializable {
-    private final Logger log = LoggerFactory.getLogger(ScalableViewDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(ScalableViewDemo.class);
 
     @FXML
     private ScalableScrollPane scrollPane;
@@ -108,7 +108,7 @@ public class ScalableViewDemo implements Initializable {
     }
 
     public static class DemoScalableViewSkin extends BaseScalableViewSkin<DemoScalableView> {
-        private final Logger log = LoggerFactory.getLogger(DemoScalableViewSkin.class);
+        private static final Logger log = LoggerFactory.getLogger(DemoScalableViewSkin.class);
 
         public DemoScalableViewSkin(DemoScalableView control) {
             super(control);

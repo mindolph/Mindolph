@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 public class EventBus {
 
-    private final Logger log = LoggerFactory.getLogger(EventBus.class);
+    private static final Logger log = LoggerFactory.getLogger(EventBus.class);
 
     private static final EventBus ins = new EventBus();
 

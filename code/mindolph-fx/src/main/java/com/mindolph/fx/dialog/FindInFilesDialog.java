@@ -27,7 +27,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.*;
  * @author mindolph.com@gmail.com
  */
 public class FindInFilesDialog extends BaseDialogController<SearchParams> {
-    private final Logger log = LoggerFactory.getLogger(FindInFilesDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(FindInFilesDialog.class);
 
     @FXML
     private Label lbDesc;

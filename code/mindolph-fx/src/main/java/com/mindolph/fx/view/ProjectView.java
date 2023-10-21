@@ -72,7 +72,7 @@ import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 public class ProjectView extends BaseView implements EventHandler<ActionEvent>,
         TreeExpandRestoreListener {
 
-    private final Logger log = LoggerFactory.getLogger(ProjectView.class);
+    private static final Logger log = LoggerFactory.getLogger(ProjectView.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 

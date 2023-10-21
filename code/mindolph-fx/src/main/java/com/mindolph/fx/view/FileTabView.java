@@ -45,7 +45,7 @@ import static org.apache.commons.lang3.StringUtils.replaceOnce;
  */
 public class FileTabView extends BaseView {
 
-    private final Logger log = LoggerFactory.getLogger(FileTabView.class);
+    private static final Logger log = LoggerFactory.getLogger(FileTabView.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 

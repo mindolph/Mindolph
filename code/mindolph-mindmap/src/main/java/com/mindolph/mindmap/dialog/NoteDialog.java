@@ -46,7 +46,7 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
  */
 public class NoteDialog extends BaseDialogController<NoteEditorData> {
 
-    private final Logger log = LoggerFactory.getLogger(NoteDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(NoteDialog.class);
 
     @FXML
     private Button btnSave;

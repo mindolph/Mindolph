@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  * @author mindolph.com@gmail.com
  */
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
-    private final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
 
     @FXML
     private SnippetView snippetView;

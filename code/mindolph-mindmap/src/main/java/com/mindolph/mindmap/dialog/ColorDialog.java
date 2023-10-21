@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  */
 public class ColorDialog extends BaseDialogController<ColorDialog.ColorSet> {
 
-    private final Logger log = LoggerFactory.getLogger(ColorDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(ColorDialog.class);
 
     @FXML
     private Label lblBorderColor;

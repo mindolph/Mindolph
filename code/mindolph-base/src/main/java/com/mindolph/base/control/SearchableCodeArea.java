@@ -20,7 +20,7 @@ import java.util.Collection;
  */
 public class SearchableCodeArea extends ExtCodeArea {
 
-    private final Logger log = LoggerFactory.getLogger(SearchableCodeArea.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchableCodeArea.class);
 
     /**
      * Used to show search highlighting.

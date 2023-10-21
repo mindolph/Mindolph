@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @see WorkspaceListCell
  */
 public class WorkspaceDialog extends BaseDialogController<Void> {
-    private final Logger log = LoggerFactory.getLogger(WorkspaceDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkspaceDialog.class);
 
     @FXML
     private ListView<WorkspaceMeta> lvWorkspaces;

@@ -35,7 +35,7 @@ import static com.mindolph.base.constant.FontConstants.*;
  */
 public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 
-    private final Logger log = LoggerFactory.getLogger(MmdPreferencesPane.class);
+    private static final Logger log = LoggerFactory.getLogger(MmdPreferencesPane.class);
 
     private MindMapConfig mindMapConfig;
 

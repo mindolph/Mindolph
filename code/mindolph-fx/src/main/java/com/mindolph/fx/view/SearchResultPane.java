@@ -37,7 +37,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_FIND_FILES_KEY
  */
 public class SearchResultPane extends AnchorPane {
 
-    private final Logger log = LoggerFactory.getLogger(SearchResultPane.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchResultPane.class);
 
     @FXML
     private Label label;

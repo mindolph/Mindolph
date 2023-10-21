@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class FileReferenceDialog extends BaseDialogController<Boolean> {
 
-    private final Logger log = LoggerFactory.getLogger(FileReferenceDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(FileReferenceDialog.class);
 
     private SearchParams searchParams;
 
