@@ -31,7 +31,7 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
     protected static final Format DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     protected static final Format TIME_FORMAT = new SimpleDateFormat("HH:mm:ss z");
 
-    private final Logger log = LoggerFactory.getLogger(BaseExportExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseExportExtension.class);
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {

@@ -39,7 +39,7 @@ import static javafx.scene.input.KeyCombination.META_DOWN;
 
 public class Main extends Application implements WindowRestoreListener {
 
-    private final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     // SceneRestore as the window change events handler.
     private final WindowEventHandler windowEventHandler = SceneRestore.getInstance();

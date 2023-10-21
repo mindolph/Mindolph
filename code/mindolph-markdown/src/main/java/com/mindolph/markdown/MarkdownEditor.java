@@ -108,7 +108,7 @@ import static com.mindolph.markdown.constant.MarkdownConstants.*;
  */
 public class MarkdownEditor extends BasePreviewEditor implements Initializable, EventHandler<ActionEvent> {
 
-    private final Logger log = LoggerFactory.getLogger(MarkdownEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(MarkdownEditor.class);
 
     public static final String URL_MARKUP = "[%s](%s)";
     public static final String IMG_MARKUP = "![%s](%s)";

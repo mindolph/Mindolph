@@ -16,7 +16,7 @@ import java.util.List;
  * @deprecated
  */
 public class TextLocator {
-    private final Logger log = LoggerFactory.getLogger(TextLocator.class);
+    private static final Logger log = LoggerFactory.getLogger(TextLocator.class);
 
     private String text;
     private List<String> lines; // text as lines.

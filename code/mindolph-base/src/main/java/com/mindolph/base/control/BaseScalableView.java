@@ -39,7 +39,7 @@ import static com.mindolph.mfx.util.PointUtils.pointInStr;
  * @see com.mindolph.base.container.ScalableScrollPane
  */
 public abstract class BaseScalableView extends Control {
-    private final Logger log = LoggerFactory.getLogger(BaseScalableView.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseScalableView.class);
 
     private final ShortcutManager sm = ShortcutManager.getIns();
 

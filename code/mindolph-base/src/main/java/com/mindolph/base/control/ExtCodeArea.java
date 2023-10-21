@@ -39,7 +39,7 @@ public class ExtCodeArea extends CodeArea {
 
     public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
 
-    private final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
     private final ShortcutManager sm = ShortcutManager.getIns();
 

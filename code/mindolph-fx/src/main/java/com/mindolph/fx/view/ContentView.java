@@ -34,7 +34,7 @@ public class ContentView extends BaseView {
     public static final String STATE_REPLACE = "REPLACE";
     public static final String STATE_SEARCH = "SEARCH";
     public static final String STATE_HIDDEN = "HIDDEN";
-    private final Logger log = LoggerFactory.getLogger(ContentView.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentView.class);
 
     private static final double FLOATING_MARGIN = 20;
 

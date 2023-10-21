@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  */
 public class PrintDemo extends Application implements Initializable {
 
-    private final Logger log = LoggerFactory.getLogger(PrintDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(PrintDemo.class);
 
     @FXML
     private ScalableScrollPane scrollPane;

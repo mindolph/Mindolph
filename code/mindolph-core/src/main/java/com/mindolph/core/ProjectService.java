@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class ProjectService {
 
-    private final Logger log = LoggerFactory.getLogger(ProjectService.class);
+    private static final Logger log = LoggerFactory.getLogger(ProjectService.class);
 
     private static ProjectService ins;
 

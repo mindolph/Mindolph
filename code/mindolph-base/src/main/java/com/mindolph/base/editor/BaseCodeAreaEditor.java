@@ -40,7 +40,7 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
  */
 public abstract class BaseCodeAreaEditor extends BaseEditor {
 
-    private final Logger log = LoggerFactory.getLogger(BaseCodeAreaEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseCodeAreaEditor.class);
 
     @FXML
     protected SearchableCodeArea codeArea;

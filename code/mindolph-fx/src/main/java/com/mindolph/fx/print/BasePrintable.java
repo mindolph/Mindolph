@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BasePrintable implements Printable {
 
-    private final Logger log = LoggerFactory.getLogger(BasePrintable.class);
+    private static final Logger log = LoggerFactory.getLogger(BasePrintable.class);
 
     protected PrintPage[][] pages;
     protected int pagesH;

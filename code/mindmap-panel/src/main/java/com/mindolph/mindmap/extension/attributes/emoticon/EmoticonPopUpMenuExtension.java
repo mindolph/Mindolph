@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class EmoticonPopUpMenuExtension extends BasePopupMenuItemExtension {
 
-    private final Logger log = LoggerFactory.getLogger(EmoticonPopUpMenuExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(EmoticonPopUpMenuExtension.class);
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MindMapPrintable extends BasePrintable {
 
-    private final Logger log = LoggerFactory.getLogger(MindMapPrintable.class);
+    private static final Logger log = LoggerFactory.getLogger(MindMapPrintable.class);
 
     private final MindMap<TopicNode> model;
     private final MindMapConfig cfg;

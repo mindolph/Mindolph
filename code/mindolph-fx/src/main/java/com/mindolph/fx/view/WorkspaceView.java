@@ -73,7 +73,7 @@ import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>,
         TreeExpandRestoreListener {
 
-    private final Logger log = LoggerFactory.getLogger(WorkspaceView.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkspaceView.class);
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 

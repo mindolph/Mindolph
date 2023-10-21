@@ -44,7 +44,7 @@ import static com.mindolph.fx.control.FileFilterButtonGroup.FILE_OPTION_ALL;
  */
 public class GotoFileDialog extends BaseDialogController<Void> {
 
-    private final Logger log = LoggerFactory.getLogger(GotoFileDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(GotoFileDialog.class);
 
     @FXML
     private TextField textField;

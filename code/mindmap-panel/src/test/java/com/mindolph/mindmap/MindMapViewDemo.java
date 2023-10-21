@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public class MindMapViewDemo extends Application implements Initializable, EventHandler<ActionEvent> {
 
-    private final Logger log = LoggerFactory.getLogger(MindMapViewDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(MindMapViewDemo.class);
 
     @FXML
     private ScalableScrollPane scrollPane;

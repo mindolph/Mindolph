@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
  */
 public class PumlSnippetDemo extends Application implements Initializable {
 
-    private final Logger log = LoggerFactory.getLogger(PumlSnippetDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(PumlSnippetDemo.class);
 
     @FXML
     private SnippetView snippetView;

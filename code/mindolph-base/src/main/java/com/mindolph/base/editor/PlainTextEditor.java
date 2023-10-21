@@ -18,7 +18,7 @@ import java.io.File;
  */
 public class PlainTextEditor extends BaseCodeAreaEditor {
 
-    private final Logger log = LoggerFactory.getLogger(PlainTextEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(PlainTextEditor.class);
 
     public PlainTextEditor(EditorContext editorContext) {
         super("/editor/plain_text_editor.fxml", editorContext, true);

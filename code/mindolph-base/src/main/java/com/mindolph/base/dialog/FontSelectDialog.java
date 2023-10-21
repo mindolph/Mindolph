@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class FontSelectDialog extends BaseDialogController<Font> {
 
-    private final Logger log = LoggerFactory.getLogger(FontSelectDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(FontSelectDialog.class);
 
     @FXML
     ChoiceBox<Pair<String, String>> cbFontFamily;

@@ -18,7 +18,7 @@ import static com.mindolph.fx.print.PrintConstants.*;
  */
 public class PrintPreviewViewSkin extends BaseScalableViewSkin<PrintPreviewView> {
 
-    private final Logger log = LoggerFactory.getLogger(PrintPreviewViewSkin.class);
+    private static final Logger log = LoggerFactory.getLogger(PrintPreviewViewSkin.class);
 
     public PrintPreviewViewSkin(PrintPreviewView control) {
         super(control);

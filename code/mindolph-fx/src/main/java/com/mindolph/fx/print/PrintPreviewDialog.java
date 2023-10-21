@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @author mindolph.com@gmail.com
  */
 public class PrintPreviewDialog extends BaseDialogController<Void> {
-    private final Logger log = LoggerFactory.getLogger(PrintPreviewDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(PrintPreviewDialog.class);
 
     @FXML
     private ChoiceBox<Pair<Integer, String>> cbScale;

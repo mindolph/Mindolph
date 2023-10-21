@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class CloneTopicExtension extends BaseTopicExtension {
 
-    private final Logger log = LoggerFactory.getLogger(CloneTopicExtension.class);
+    private static final Logger log = LoggerFactory.getLogger(CloneTopicExtension.class);
 
     @Override
     public int getOrder() {

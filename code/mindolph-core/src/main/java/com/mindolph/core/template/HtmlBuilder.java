@@ -43,7 +43,7 @@ public final class HtmlBuilder {
             console.log("scripts are ready");
             """;
 
-    private final Logger log = LoggerFactory.getLogger(HtmlBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(HtmlBuilder.class);
 
     private final String content;
 

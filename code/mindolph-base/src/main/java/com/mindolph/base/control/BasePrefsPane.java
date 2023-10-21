@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  */
 public abstract class BasePrefsPane extends AnchorPane implements Initializable {
 
-    private final Logger log;
+    private static final Logger log = LoggerFactory.getLogger(BasePrefsPane.class);;
 
     protected FxPreferences fxPreferences = FxPreferences.getInstance();;
 
@@ -33,7 +33,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     protected boolean isLoaded = false;
 
     public BasePrefsPane(String fxmlResourceUri) {
-        log = LoggerFactory.getLogger(BasePrefsPane.class);
         URL resource = getClass().getResource(fxmlResourceUri);
         if (resource == null) {
             throw new RuntimeException("Resource not found: " + fxmlResourceUri);

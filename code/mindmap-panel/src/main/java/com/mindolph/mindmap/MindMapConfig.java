@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class MindMapConfig implements EditorConfig, Serializable {
 
-    private final Logger log = LoggerFactory.getLogger(MindMapConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(MindMapConfig.class);
 
     // the current theme name, if user-defined, load from java preference.
     private String themeName = ThemeType.LIGHT.name();

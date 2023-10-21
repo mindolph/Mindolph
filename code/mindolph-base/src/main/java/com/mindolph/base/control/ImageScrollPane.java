@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @see ScalableImageView
  */
 public class ImageScrollPane extends ScalableScrollPane {
-    private final Logger log = LoggerFactory.getLogger(ImageScrollPane.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageScrollPane.class);
 
     private final ScalableImageView scalableImageView;
 

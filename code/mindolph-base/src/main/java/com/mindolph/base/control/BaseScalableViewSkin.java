@@ -24,7 +24,7 @@ import static com.mindolph.mfx.util.RectangleUtils.sizeInStr;
  * @see BaseScalableView
  */
 public abstract class BaseScalableViewSkin<T extends BaseScalableView> extends SkinBase<T> {
-    private final Logger log = LoggerFactory.getLogger(BaseScalableViewSkin.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseScalableViewSkin.class);
 
     protected T control;
     protected Canvas canvas;

@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
  * @author mindolph.com@gmail.com
  */
 public class CanvasDemo implements Initializable {
-    private final Logger log = LoggerFactory.getLogger(CanvasDemo.class);
+    private static final Logger log = LoggerFactory.getLogger(CanvasDemo.class);
 
 
     @FXML

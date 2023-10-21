@@ -66,7 +66,7 @@ import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
  * @author mindolph.com@gmail.com
  */
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
-    private final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
 
 
     private final Pattern pattern;

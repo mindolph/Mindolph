@@ -36,7 +36,7 @@ import java.util.function.Consumer;
  * @author mindolph.com@gmail.com
  */
 public class SearchBar extends VBox {
-    private final Logger log = LoggerFactory.getLogger(SearchBar.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchBar.class);
 
     @FXML
     private TextField tfKeywords;
