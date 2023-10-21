@@ -9,6 +9,7 @@ import com.mindolph.mfx.util.KeyEventUtils;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,10 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * @author mindolph.com@gmail.com
@@ -137,34 +137,29 @@ public class InputHelperManager {
             return;
         }
 
-        List<String> keywords = plugins.stream().flatMap((Function<Plugin, Stream<String>>) plugin -> plugin.getInputHelper().getHelpWords().stream()).toList();
-        log.debug("%d words in total".formatted(keywords.size()));
-
-        if (CollectionUtils.isEmpty(keywords)) {
-            return;
-        }
-
-        for (String string : keywords) {
-            System.out.println(string);
-        }
-
-        // get rid of duplicates
-        keywords = keywords.stream()
-                .filter(StringUtils::isNotBlank)
-                .filter(s -> !StringUtils.equals(s, input))
-                .distinct().toList();
-
-        List<String> filtered = StringUtils.isBlank(input) ? keywords
-                : keywords.stream().filter(s -> s.startsWith(input)).toList();
-
-        if (CollectionUtils.isEmpty(filtered)) {
-            return;
-        }
-
-        log.debug("%d are selected to be candidates".formatted(filtered.size()));
         menu.getItems().clear();
-        if (!filtered.isEmpty()) {
+        for (Plugin plugin : plugins) {
+            List<String> allHelpWords = plugin.getInputHelper().getHelpWords();
+            if (CollectionUtils.isEmpty(allHelpWords)) {
+                continue;
+            }
+            Collections.sort(allHelpWords);
+            // get rid of duplicates
+            List<String> helpWords = allHelpWords.stream()
+                    .filter(StringUtils::isNotBlank)
+                    .filter(s -> !StringUtils.equals(s, input))
+                    .distinct().toList();
+
+            List<String> filtered = StringUtils.isBlank(input) ? helpWords
+                    : helpWords.stream().filter(s -> s.startsWith(input)).toList();
+
+            if (CollectionUtils.isEmpty(filtered)) {
+                continue;
+            }
+
+            log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
             for (String keyword : filtered) {
+                log.debug("  " + keyword);
                 MenuItem mi = new MenuItem(keyword);
                 mi.setUserData(keyword);
                 mi.setOnAction(event -> {
@@ -172,6 +167,7 @@ public class InputHelperManager {
                 });
                 menu.getItems().add(mi);
             }
+            menu.getItems().add(new SeparatorMenuItem());
         }
         menu.show(node, caretX, caretY);
     }

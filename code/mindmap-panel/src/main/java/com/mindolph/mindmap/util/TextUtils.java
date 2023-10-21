@@ -77,8 +77,8 @@ public class TextUtils {
     public static int countHeading(String str, char c) {
         char[] chars = str.toCharArray();
         int count = 0;
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] != c) {
+        for (char aChar : chars) {
+            if (aChar != c) {
                 return count;
             }
             count++;

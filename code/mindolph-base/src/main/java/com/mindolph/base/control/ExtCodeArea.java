@@ -125,7 +125,7 @@ public class ExtCodeArea extends CodeArea {
     private void bindInputHelperContextMenu() {
         // prepare the context words
         this.textProperty().addListener((observable, oldValue, newValue) -> {
-            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_PLANTUML);
+            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
             for (Plugin plugin : plugins) {
                 plugin.getInputHelper().updateContextText(newValue);
             }

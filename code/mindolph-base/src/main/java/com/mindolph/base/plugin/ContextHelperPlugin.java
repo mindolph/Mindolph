@@ -1,10 +1,10 @@
 package com.mindolph.base.plugin;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,16 +43,22 @@ public class ContextHelperPlugin implements Plugin {
 
         @Override
         public void updateContextText(String text) {
-            StringTokenizer st = new StringTokenizer(text);
+            StringTokenizer st = new StringTokenizer(this.extractOnlyLetters(text));
             contextWords.clear();
             while (st.hasNext()) {
                 String token = st.nextToken();
-                if (StringUtils.isBlank(token)) {
+                if (StringUtils.isBlank(token) || token.length() < 2) {
                     continue;
                 }
                 contextWords.add(token);
             }
             log.debug("%d context words updated.".formatted(contextWords.size()));
         }
+
+        private String extractOnlyLetters(String text) {
+            String cleanText = RegExUtils.replaceAll(text, "[^a-zA-Z]", " ");
+            return cleanText;
+        }
+
     }
 }
