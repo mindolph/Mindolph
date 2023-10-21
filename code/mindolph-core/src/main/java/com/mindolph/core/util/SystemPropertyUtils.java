@@ -2,6 +2,7 @@ package com.mindolph.core.util;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 public class SystemPropertyUtils {
 

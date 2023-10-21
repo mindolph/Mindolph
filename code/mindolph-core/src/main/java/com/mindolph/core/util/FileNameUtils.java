@@ -55,11 +55,18 @@ public class FileNameUtils {
      * @param file
      * @param ancestorDir
      * @return like "a/b/c" or "../a/b/c"
+     * @deprecated
      */
     public static String getRelativePath(File file, File ancestorDir) {
         return ancestorDir.toPath().relativize(file.toPath()).toString();
     }
 
+    /**
+     * @deprecated
+     * @param path
+     * @param ancestorPath
+     * @return
+     */
     public static String getRelativePath(String path, String ancestorPath){
         return Path.of(ancestorPath).relativize(Path.of(path)).toString();
     }

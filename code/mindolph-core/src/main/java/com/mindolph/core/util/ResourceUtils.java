@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * @deprecated
+ */
 public class ResourceUtils {
 
     public static String readResourceToString(String resUri) {
