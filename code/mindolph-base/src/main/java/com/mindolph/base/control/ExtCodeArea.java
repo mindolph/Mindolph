@@ -141,6 +141,7 @@ public class ExtCodeArea extends CodeArea {
             if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
         });
 
+        // stop helping when paragraph is changed by like mouse click.
         this.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
         });
@@ -160,7 +161,10 @@ public class ExtCodeArea extends CodeArea {
         });
 
         inputHelperManager.onSelected((selection) -> {
-            this.insertText(this.getCaretPosition(), StringUtils.substringAfter(selection.selected(), selection.input()));
+            if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
+                int start = selection.input().length();
+                this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
+            }
         });
         this.setOnKeyReleased(event -> {
             if (!isInputMethod) {
