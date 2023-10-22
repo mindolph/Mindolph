@@ -169,9 +169,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             cbTheme.getItems().addAll(mindMapConfig.getUserThemes().stream().map(n -> new Pair<>(new ThemeKey(n, n), ThemeUtils.themeLabel(n))).toList());
         }
         cbTheme.valueProperty().addListener((observableValue, old, newChoice) -> {
-            // TO switch theme
-            log.debug("Switch to theme: " + mindMapConfig.getThemeName());
+            // To switch theme
             ThemeKey selectedKey = newChoice.getKey();
+            log.debug("Switch theme from %s to %s".formatted(mindMapConfig.getThemeName(), selectedKey));
             mindMapConfig.setThemeName(selectedKey.name);// set current theme
             mindMapConfig.setTheme(ThemeUtils.createTheme(selectedKey.name));
             if (!this.isPredefinedTheme(selectedKey.name)) {
@@ -181,7 +181,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             this.save(true);
             // bind
             this.bindTheme();
-            // toggle theme controls disable state byt theme type and specific items.
+            // toggle disable state of theme controls by theme type and specific items.
             this.toggleThemeSettings(isPredefinedTheme(mindMapConfig.getThemeName()));
         });
         cbTheme.setValue(new Pair<>(new ThemeKey(mindMapConfig.getThemeName(), null), ThemeUtils.themeLabel(mindMapConfig.getThemeName())));
@@ -430,8 +430,11 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     @Override
     public void resetToDefault() {
         super.resetToDefault();
+        List<String> userThemes = mindMapConfig.getUserThemes();
         mindMapConfig = new MindMapConfig();
-        this.initControlsFromPreferences(); // reset all customized preferences by setting value of controls.
+        mindMapConfig.setUserThemes(userThemes); // for the new MindMapConfig doesn't load user's theme
+        cbTheme.getSelectionModel().select(THEME_ITEM_LIGHT);
+//        this.initControlsFromPreferences(); // reset all customized preferences by setting value of controls.
     }
 
     public void save(boolean notify) {
@@ -453,7 +456,6 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             put("cpGridColor", cpGridColor);
             put("cpBackgroundFillColor", cpBackgroundFillColor);
             put("spnConnectorWidth", spnConnectorWidth);
-            put("ckbShowCollapsatorOnMouseHover", ckbShowCollapsatorOnMouseHover);
             put("spnRoundRadius", spnRoundRadius);
             put("spnJumpLinkWidth", spnJumpLinkWidth);
             put("spnCollapsatorWidth", spnCollapsatorWidth);
