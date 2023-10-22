@@ -8,6 +8,18 @@ import java.util.Collection;
  */
 public interface Plugin {
 
+    /**
+     * low is high priority to be processed.
+     *
+     * @return
+     */
+    Integer getOrder();
+
+    /**
+     * One plugin can support multiple file types.
+     *
+     * @return
+     */
     Collection<String> supportedFileTypes();
 
     /**

@@ -41,6 +41,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class ExtCodeArea extends CodeArea {
 
     public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
+    public static final int INPUT_HELP_DELAY_IN_MILLIS = 1000;
 
     private static final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
@@ -53,6 +54,8 @@ public class ExtCodeArea extends CodeArea {
 
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
+
+    private final EventSource<String> inputHelpSource = new EventSource<>();
 
     private final InputHelperManager inputHelperManager;
 
@@ -123,16 +126,27 @@ public class ExtCodeArea extends CodeArea {
 
     // @since 1.6
     private void bindInputHelperContextMenu() {
+        // delay update context text to reduce redundant calculating.
+        // TODO better way is to do updating when new word completed and any other actions that makes text change completed.
+        inputHelpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(INPUT_HELP_DELAY_IN_MILLIS))
+                .subscribe(s -> {
+                    Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
+                    for (Plugin plugin : plugins) {
+                        plugin.getInputHelper().updateContextText(s);
+                    }
+                });
+
         // prepare the context words
         this.textProperty().addListener((observable, oldValue, newValue) -> {
-            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
-            for (Plugin plugin : plugins) {
-                plugin.getInputHelper().updateContextText(newValue);
-            }
+            if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
+        });
+
+        this.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
+            inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
         });
 
         this.setOnInputMethodTextChanged(event -> {
-            if (StringUtils.isBlank(event.getCommitted())){
+            if (StringUtils.isBlank(event.getCommitted())) {
                 isInputMethod = true;
                 log.debug("in input method");
             }
@@ -152,9 +166,6 @@ public class ExtCodeArea extends CodeArea {
             if (!isInputMethod) {
                 String p = getCurrentParagraphText();
                 inputHelperManager.consume(event, extractLastWord(p));
-            }
-            else {
-//                log.debug("no input method");
             }
         });
     }
@@ -485,7 +496,7 @@ public class ExtCodeArea extends CodeArea {
     // The file type is needed to
 //    private String fileType;
 
-    public String getFileType(){
+    public String getFileType() {
         return SupportFileTypes.TYPE_PLAIN_TEXT;
     }
 

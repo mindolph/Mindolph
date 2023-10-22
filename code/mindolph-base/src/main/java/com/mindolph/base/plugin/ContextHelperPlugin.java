@@ -24,6 +24,11 @@ public class ContextHelperPlugin implements Plugin {
     private final InputHelper inputHelper = new ContextHelper();
 
     @Override
+    public Integer getOrder() {
+        return 1;
+    }
+
+    @Override
     public Collection<String> supportedFileTypes() {
         return Arrays.asList(TYPE_PLANTUML, TYPE_MARKDOWN, TYPE_PLAIN_TEXT);
     }

@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -64,7 +62,7 @@ public class InputHelperManager {
                     menu.hide();
                 })
                 .state(HELP_START).in(str -> menu.hide())
-                .state(HELPING).in(str -> this.updateAndShowContextMenu(fileType, (String) str))
+                .state(HELPING).in(str -> this.updateAndShowContextMenu(this.fileType, (String) str))
                 .initialize(NO_HELP)
                 .action("still-no-help", NO_HELP, NO_HELP, quitTriggers)
                 .action("start-input-help", NO_HELP, HELP_START, stateBuilder.triggerBuilder().c(' ', '\t').custom(isAlphanumeric).build())
@@ -118,11 +116,11 @@ public class InputHelperManager {
 
         String text = event.getText();
         Object data;
-        if (StringUtils.isNotBlank(text)) {
-            data = text.charAt(0);
+        if (text == null || text.isEmpty()) {
+            data = event.getCode();
         }
         else {
-            data = event.getCode();
+            data = text.charAt(0);
         }
         if (stateMachine.acceptWithPayload(data, str)) {
             event.consume();
@@ -136,42 +134,55 @@ public class InputHelperManager {
         if (CollectionUtils.isEmpty(plugins)) {
             return;
         }
+        plugins = plugins.stream().sorted(Comparator.comparing(Plugin::getOrder)).toList();
 
         menu.getItems().clear();
+        menu.hide(); // note: hide first because there might be no matching at last, in that case the menu needs to be hidden.
+        Map<String, Object> duplicateKiller = new HashMap<>();
+
         for (Plugin plugin : plugins) {
             List<String> allHelpWords = plugin.getInputHelper().getHelpWords();
             if (CollectionUtils.isEmpty(allHelpWords)) {
                 continue;
             }
             Collections.sort(allHelpWords);
-            // get rid of duplicates
+
+            // get rid of blank, duplicates and the one equals what user input.
             List<String> helpWords = allHelpWords.stream()
                     .filter(StringUtils::isNotBlank)
-                    .filter(s -> !StringUtils.equals(s, input))
+                    .filter(s -> !StringUtils.equals(s, input)) // no need to prompt if it equals what you just inputted.
+                    .filter(s -> !duplicateKiller.containsKey(s)) // excludes those provided in previous plugin.
                     .distinct().toList();
 
+            // use user input to filter the help words.
             List<String> filtered = StringUtils.isBlank(input) ? helpWords
-                    : helpWords.stream().filter(s -> s.startsWith(input)).toList();
+                    : helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
 
             if (CollectionUtils.isEmpty(filtered)) {
                 continue;
             }
 
             log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
-            for (String keyword : filtered) {
-                log.debug("  " + keyword);
-                MenuItem mi = new MenuItem(keyword);
-                mi.setUserData(keyword);
+            for (String candidate : filtered) {
+//                log.debug("  " + keyword);
+                MenuItem mi = new MenuItem(candidate);
+                mi.setUserData(candidate);
                 mi.setOnAction(event -> {
                     selectEvent.push(new Selection(input, (String) mi.getUserData()));
                 });
                 menu.getItems().add(mi);
+                duplicateKiller.put(candidate, candidate); // only key is needed for now.
             }
             menu.getItems().add(new SeparatorMenuItem());
         }
         menu.show(node, caretX, caretY);
     }
 
+    /**
+     * Handle use selected a candidate word.
+     *
+     * @param consumer
+     */
     public void onSelected(Consumer<Selection> consumer) {
         selectEvent.subscribe(consumer);
     }

@@ -30,6 +30,11 @@ public class ExtCodeAreaDemo implements Initializable {
     private static class TestPlugin implements Plugin {
 
         @Override
+        public Integer getOrder() {
+            return 100;
+        }
+
+        @Override
         public Collection<String> supportedFileTypes() {
             return SupportFileTypes.EDITABLE_TYPES;
         }

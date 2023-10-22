@@ -14,6 +14,11 @@ import java.util.Collections;
 public class PlantUmlPlugin implements Plugin {
 
     @Override
+    public Integer getOrder() {
+        return 0;
+    }
+
+    @Override
     public Collection<String> supportedFileTypes() {
         return Collections.singletonList(SupportFileTypes.TYPE_PLANTUML);
     }
