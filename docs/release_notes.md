@@ -1,5 +1,17 @@
 # Release Notes
 
+### V1.6.0 Release
+* Feature: new input helper to code editor, it collects words(for English only) from the content in editor as candidates to accelerate your input.
+* Feature: add PlantUML syntax keywords to input helper.
+* Merged bug fixes from v1.5.4
+
+### V1.5.4 Release
+* Improvement: minor improvement of mind map themes.
+* Improvement: optimize the logger performance.
+* Fix: the reset default preferences doesn't work for theme options.
+* Fix: the "show collapsator on mouse over" option is always disabled. 
+* Fix: the installer is unable to launch on macOS 14 Sonoma.
+
 ### V1.5.3 Unstable Release
 * Improvement: automatically select the root topic when opening the mind map.
 * Improvement: optimize the performance of text drawing in mind map.
