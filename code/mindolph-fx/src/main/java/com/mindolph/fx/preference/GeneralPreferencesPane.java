@@ -39,6 +39,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 //    private CheckBox ckbAutoBackupLastEdit;
     @FXML
     private TableView<OrientationItem> tvOrientation;
+    @FXML
+    private CheckBox cbEnableInputHelper;
 
 
     public GeneralPreferencesPane() {
@@ -100,6 +102,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         FxPreferences fxPreferences = FxPreferences.getInstance();
         tvOrientation.getItems().add(new OrientationItem(PLANT_UML, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_PUML, Orientation.class, Orientation.VERTICAL)));
         tvOrientation.getItems().add(new OrientationItem(MARKDOWN, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_MD, Orientation.class, Orientation.HORIZONTAL)));
+        super.bindPreference(cbEnableInputHelper.selectedProperty(), PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
     }
 
     @Override

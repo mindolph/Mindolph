@@ -3,6 +3,7 @@ package com.mindolph.base.control;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -26,6 +27,7 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.pref.PreferenceManager;
 
 import java.time.Duration;
 import java.util.*;
@@ -41,7 +43,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class ExtCodeArea extends CodeArea {
 
     public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
-    public static final int INPUT_HELP_DELAY_IN_MILLIS = 1000;
+    public static final int INPUT_HELP_DELAY_IN_MILLIS = 3000;
 
     private static final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
@@ -138,15 +140,24 @@ public class ExtCodeArea extends CodeArea {
 
         // prepare the context words
         this.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!isInputHelperEnabled()) {
+                return;
+            }
             if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
         });
 
         // stop helping when paragraph is changed by like mouse click.
         this.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
+            if (!isInputHelperEnabled()) {
+                return;
+            }
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
         });
 
         this.setOnInputMethodTextChanged(event -> {
+            if (!isInputHelperEnabled()) {
+                return;
+            }
             if (StringUtils.isBlank(event.getCommitted())) {
                 isInputMethod = true;
                 log.debug("in input method");
@@ -167,13 +178,16 @@ public class ExtCodeArea extends CodeArea {
             }
         });
         this.setOnKeyReleased(event -> {
-            if (!isInputMethod) {
+            if (isInputHelperEnabled() && !isInputMethod) {
                 String p = getCurrentParagraphText();
                 inputHelperManager.consume(event, extractLastWord(p));
             }
         });
     }
 
+    private boolean isInputHelperEnabled() {
+        return PreferenceManager.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
+    }
 
     // TODO move to base module
     public static String extractLastWord(String text) {

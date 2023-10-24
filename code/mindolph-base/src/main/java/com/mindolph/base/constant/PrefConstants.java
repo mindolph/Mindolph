@@ -11,6 +11,7 @@ public interface PrefConstants {
     String GENERAL_SHOW_HIDDEN_FILES = "general.showHiddenFiles";
     String GENERAL_EDITOR_ORIENTATION_PUML = "general.editorOrientation.puml";
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
+    String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
 
     String PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT = "mmd.addDefaultCommentToRoot";
     String PREF_KEY_MMD_TRIM_TOPIC_TEXT = "mmd.trimTopicText";

@@ -34,7 +34,9 @@
                   </TableView>
                </items>
             </PreferenceItem>
-
+            <PreferenceItem name="Enable input helper:">
+               <CheckBox fx:id="cbEnableInputHelper" mnemonicParsing="false" />
+            </PreferenceItem>
 <!--            <PreferenceItem name="Auto backup last edit:">-->
 <!--               <items>-->
 <!--                  <CheckBox fx:id="ckbAutoBackupLastEdit" />-->

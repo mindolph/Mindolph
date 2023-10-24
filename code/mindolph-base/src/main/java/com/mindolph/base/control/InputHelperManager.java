@@ -3,6 +3,7 @@ package com.mindolph.base.control;
 import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.github.swiftech.swstate.trigger.Trigger;
+import com.mindolph.base.Env;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.mfx.util.KeyEventUtils;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -52,8 +54,13 @@ public class InputHelperManager {
 
     private String fileType;
 
+    private Collection<Plugin> supportedPlugins;
+    private EventSource<String> helpSource = new EventSource<>();
+
     public InputHelperManager(String fileType) {
         this.fileType = fileType;
+        helpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(200))
+                .subscribe(this::updateAndShowContextMenu);
         StateBuilder<String, Serializable> stateBuilder = new StateBuilder<>();
         Trigger[] quitTriggers = stateBuilder.triggerBuilder().custom(isReturn).custom(isStopBackspace).custom(unknownInput).build();
         stateBuilder
@@ -62,7 +69,9 @@ public class InputHelperManager {
                     menu.hide();
                 })
                 .state(HELP_START).in(str -> menu.hide())
-                .state(HELPING).in(str -> this.updateAndShowContextMenu(this.fileType, (String) str))
+                .state(HELPING).in(str -> {
+                    helpSource.push((String) str); // delayed to show context menu.
+                })
                 .initialize(NO_HELP)
                 .action("still-no-help", NO_HELP, NO_HELP, quitTriggers)
                 .action("start-input-help", NO_HELP, HELP_START, stateBuilder.triggerBuilder().c(' ', '\t').custom(isAlphanumeric).build())
@@ -74,6 +83,11 @@ public class InputHelperManager {
                 .action("next-help", HELPING, HELP_START, stateBuilder.triggerBuilder().c(' ', '\t').build());
         stateMachine = new StateMachine<>(stateBuilder);
         stateMachine.startState(NO_HELP);
+
+        supportedPlugins = PluginManager.getIns().findPlugin(this.fileType);
+        if (!CollectionUtils.isEmpty(supportedPlugins)) {
+            this.supportedPlugins = supportedPlugins.stream().sorted(Comparator.comparing(Plugin::getOrder)).toList();
+        }
     }
 
     public void updateCaret(Node node, double x, double y) {
@@ -127,20 +141,22 @@ public class InputHelperManager {
         }
     }
 
-    private void updateAndShowContextMenu(String fileType, String input) {
-        log.debug("search with: '%s'".formatted(input));
-
-        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(fileType);
-        if (CollectionUtils.isEmpty(plugins)) {
+    private void updateAndShowContextMenu(String input) {
+        if (StringUtils.isBlank(input)) {
             return;
         }
-        plugins = plugins.stream().sorted(Comparator.comparing(Plugin::getOrder)).toList();
+        log.debug("search with: '%s'".formatted(input));
 
         menu.getItems().clear();
         menu.hide(); // note: hide first because there might be no matching at last, in that case the menu needs to be hidden.
         Map<String, Object> duplicateKiller = new HashMap<>();
-
-        for (Plugin plugin : plugins) {
+        if (Env.isDevelopment) {
+            MenuItem inputItem = new MenuItem(input);
+            inputItem.setDisable(true);
+            menu.getItems().add(inputItem);
+            menu.getItems().add(new SeparatorMenuItem());
+        }
+        for (Plugin plugin : supportedPlugins) {
             List<String> allHelpWords = plugin.getInputHelper().getHelpWords();
             if (CollectionUtils.isEmpty(allHelpWords)) {
                 continue;
@@ -155,8 +171,7 @@ public class InputHelperManager {
                     .distinct().toList();
 
             // use user input to filter the help words.
-            List<String> filtered = StringUtils.isBlank(input) ? helpWords
-                    : helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
+            List<String> filtered = helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
 
             if (CollectionUtils.isEmpty(filtered)) {
                 continue;
@@ -164,7 +179,6 @@ public class InputHelperManager {
 
             log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
             for (String candidate : filtered) {
-//                log.debug("  " + keyword);
                 MenuItem mi = new MenuItem(candidate);
                 mi.setUserData(candidate);
                 mi.setOnAction(event -> {
