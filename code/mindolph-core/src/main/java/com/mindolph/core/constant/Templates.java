@@ -9,5 +9,8 @@ public interface Templates {
     String MARKDOWN_TEMPLATE = """
             # %s
             
+            
+            ---
+            > Created at %s
             """;
 }

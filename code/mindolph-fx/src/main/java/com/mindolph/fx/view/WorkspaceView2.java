@@ -831,7 +831,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (userData == null) return false;
         Template template = (Template) userData;
         try {
-            String snippet = template.getContent().formatted(FilenameUtils.getBaseName(newFile.getName()));
+            String snippet = template.getContent().formatted(this.createTimestamp(), FilenameUtils.getBaseName(newFile.getName()));
             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
             return true;
         } catch (IOException e) {
@@ -898,7 +898,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             Boolean addDefaultComment = fxPreferences.getPreference(PrefConstants.PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT, true);
                             TopicNode rootTopic;
                             if (addDefaultComment) {
-                                ExtraNote extraNote = new ExtraNote("Created on " + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+                                ExtraNote extraNote = new ExtraNote(this.createDefaultNote());
                                 rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()), extraNote);
                             }
                             else {
@@ -928,7 +928,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
-                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(fileName);
+                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(fileName, createTimestamp());
                             try {
                                 FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                             } catch (IOException e) {
@@ -1279,6 +1279,14 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     public void setSearchEventHandler(SearchResultEventHandler searchEventHandler) {
         this.searchEventHandler = searchEventHandler;
+    }
+
+    private String createDefaultNote() {
+        return "This file is created by Mindolph at " + this.createTimestamp();
+    }
+
+    private String createTimestamp() {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
     }
 
 }
