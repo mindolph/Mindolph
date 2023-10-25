@@ -6,7 +6,6 @@ import com.github.swiftech.swstate.trigger.Trigger;
 import com.mindolph.base.Env;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
-import com.mindolph.mfx.util.KeyEventUtils;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -121,7 +120,8 @@ public class InputHelperManager {
      * @param str
      */
     public void consume(KeyEvent event, String str) {
-        if (KeyEventUtils.isModifierKeyDown(event)) {
+        // if (KeyEventUtils.isModifierKeyDown(event)) { // SHIFT should not count
+        if (event.isAltDown() || event.isMetaDown() || event.isControlDown()) {
             return;
         }
         if (!isAllowed(event)) {

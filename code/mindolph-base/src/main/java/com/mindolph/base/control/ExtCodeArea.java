@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.richtext.CaretSelectionBind;
@@ -167,7 +168,7 @@ public class ExtCodeArea extends CodeArea {
                 isInputMethod = false;
                 log.debug("quit input method");
                 this.insertText(this.getCaretPosition(), event.getCommitted());
-                inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWord(getCurrentParagraphText()));
+                inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
             }
         });
 
@@ -177,22 +178,6 @@ public class ExtCodeArea extends CodeArea {
                 this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
             }
         });
-        this.setOnKeyReleased(event -> {
-            if (isInputHelperEnabled() && !isInputMethod) {
-                String p = getCurrentParagraphText();
-                inputHelperManager.consume(event, extractLastWord(p));
-            }
-        });
-    }
-
-    private boolean isInputHelperEnabled() {
-        return PreferenceManager.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
-    }
-
-    // TODO move to base module
-    public static String extractLastWord(String text) {
-        int i = StringUtils.lastIndexOfAny(text, " ", "\t") + 1;
-        return StringUtils.substring(text, Math.max(0, i), text.length());
     }
 
 
@@ -308,8 +293,36 @@ public class ExtCodeArea extends CodeArea {
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
                 ));
             }
+
+            inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {
+                if (isInputHelperEnabled() && !isInputMethod) {
+                    String p = getCurrentParagraphText();
+                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
+                }
+            }));
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
         }
+    }
+
+
+    private boolean isInputHelperEnabled() {
+        return PreferenceManager.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
+    }
+
+    private String extractLastWordFromCaret() {
+        int caretPosition = getCaretPosition();
+        StringBuilder sb = new StringBuilder();
+        String text = this.getText();
+        while (CharUtils.isAsciiAlphanumeric(text.charAt(--caretPosition))) {
+            sb.append(text.charAt(caretPosition));
+        }
+        return sb.reverse().toString();
+    }
+
+    // TODO move to base module
+    public static String extractLastWord(String text) {
+        int i = StringUtils.lastIndexOfAny(text, " ", "\t") + 1;
+        return StringUtils.substring(text, Math.max(0, i), text.length());
     }
 
     /**

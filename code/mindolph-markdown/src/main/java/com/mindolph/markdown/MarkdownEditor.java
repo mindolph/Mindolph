@@ -265,7 +265,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
                     Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
                     if (previewVpHeight != null && previewTotalHeight != null) {
                         currentScrollV = convertScrollPosition(newY, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate(), previewVpHeight, previewTotalHeight);
-                        log.debug("auto scroll preview to: " + currentScrollV);
+                        if (log.isTraceEnabled()) log.trace("auto scroll preview to: %s".formatted(currentScrollV));
                         webView.getEngine().executeScript("setScrollPos(%s, %s);".formatted(currentScrollH, currentScrollV));
                     }
                 } catch (Exception e) {
