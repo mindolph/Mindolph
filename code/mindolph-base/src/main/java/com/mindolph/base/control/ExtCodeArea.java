@@ -434,7 +434,7 @@ public class ExtCodeArea extends CodeArea {
 
     public void addOrTrimHeadToParagraphs(Replacement params, boolean needAddToHead) {
         String tail = params.getTail() == null ? EMPTY : params.getTail();
-        addOrTrimHeadToParagraphs(params, s -> {
+        addOrTrimHeadToParagraphs(params, true, s -> {
             String tailOfLine = (s.endsWith(tail) ? EMPTY : tail);
             if (needAddToHead) {
                 return params.getSubstitute() + s + tailOfLine;
@@ -454,21 +454,28 @@ public class ExtCodeArea extends CodeArea {
      * Add or trim {@code text} to or from head of selected paragraphs.
      *
      * @param params
-     * @parm callback Convert the text line,
+     * @param skipEmptyLine true to skip the empty line when processing, but if there is only one line, ignore this.
+     * @param callback      Convert the text line,
      */
-    public void addOrTrimHeadToParagraphs(Replacement params, Function<String, String> callback) {
+    public void addOrTrimHeadToParagraphs(Replacement params, boolean skipEmptyLine, Function<String, String> callback) {
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
         int startPar = caretSelectionBind.getStartParagraphIndex();
         int endPar = caretSelectionBind.getEndParagraphIndex();
+        int lineCount = endPar - startPar;
         boolean hasSelection = this.getSelection().getLength() != 0;
         if (hasSelection) log.debug("Selected from %s to %s".formatted(startPar, endPar));
 
         List<String> newLines = new ArrayList<>();
         List<Integer> offsets = new ArrayList<>();
         for (int i = startPar; i < endPar + 1; i++) {
-            Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
             String newLine;
-            newLine = callback.apply(p.getText());// params.getSubstitute() + p.getText();
+            Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
+            if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
+                newLine = EMPTY;
+            }
+            else {
+                newLine = callback.apply(p.getText());// params.getSubstitute() + p.getText();
+            }
             newLines.add(newLine);
             offsets.add(newLine.length() - p.getText().length()); // calc offset for each line(but only head and tail will be used)
         }

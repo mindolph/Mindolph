@@ -669,9 +669,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
         codeArea.requestFocus();
     }
 
+    /**
+     *
+     * @param number
+     */
     private void addHeader(int number) {
         String newHead = StringUtils.repeat('#', number) + " ";
-        codeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), original -> {
+        codeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), true, original -> {
             return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)", StringUtils.EMPTY);
         });
         codeArea.requestFocus();
