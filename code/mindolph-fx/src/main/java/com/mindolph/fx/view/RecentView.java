@@ -80,6 +80,9 @@ public class RecentView extends BaseView {
     public void refresh(NodeData fileData) {
         // refresh the list
         Platform.runLater(() -> {
+            if (fileData.isFolder()){
+                return;
+            }
             listView.getItems().remove(fileData);
             listView.getItems().add(0, fileData);
             if (listView.getItems().size() > RecentManager.MAX_SIZE) {
