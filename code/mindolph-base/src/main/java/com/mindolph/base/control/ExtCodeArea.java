@@ -6,6 +6,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.base.util.EventUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.util.TextUtils;
@@ -155,23 +156,6 @@ public class ExtCodeArea extends CodeArea {
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
         });
 
-        this.setOnInputMethodTextChanged(event -> {
-            if (!isInputHelperEnabled()) {
-                return;
-            }
-            if (StringUtils.isBlank(event.getCommitted())) {
-                isInputMethod = true;
-                log.debug("in input method");
-            }
-            else {
-                System.out.println(event.getCommitted());
-                isInputMethod = false;
-                log.debug("quit input method");
-                this.insertText(this.getCaretPosition(), event.getCommitted());
-                inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
-            }
-        });
-
         inputHelperManager.onSelected((selection) -> {
             if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
                 int start = selection.input().length();
@@ -180,6 +164,25 @@ public class ExtCodeArea extends CodeArea {
         });
     }
 
+    @Override
+    protected void handleInputMethodEvent(InputMethodEvent event) {
+        super.handleInputMethodEvent(event);
+        if (!isInputHelperEnabled()) {
+            System.out.printf("'%s'%n", event.getCommitted());
+            return;
+        }
+        if (StringUtils.isBlank(event.getCommitted())) {
+            isInputMethod = true;
+            log.debug("in input method");
+            this.insertText(this.getCaretPosition(), event.getCommitted());
+        }
+        else {
+            System.out.println(event.getCommitted());
+            isInputMethod = false;
+            log.debug("not in input method");
+            inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
+        }
+    }
 
     public void addFeatures(FEATURE... features) {
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();
@@ -296,8 +299,9 @@ public class ExtCodeArea extends CodeArea {
 
             inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {
                 if (isInputHelperEnabled() && !isInputMethod) {
-                    String p = getCurrentParagraphText();
-                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
+                    if (EventUtils.isEditableInput(keyEvent)) {
+                        inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
+                    }
                 }
             }));
             Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
@@ -313,13 +317,19 @@ public class ExtCodeArea extends CodeArea {
         int caretPosition = getCaretPosition();
         StringBuilder sb = new StringBuilder();
         String text = this.getText();
-        while (CharUtils.isAsciiAlphanumeric(text.charAt(--caretPosition))) {
+        if (caretPosition < 0 || caretPosition > text.length()) {
+            return EMPTY;
+        }
+        if (StringUtils.isEmpty(text)) {
+            return EMPTY;
+        }
+        while (caretPosition > 0 && CharUtils.isAsciiPrintable(text.charAt(--caretPosition))) {
             sb.append(text.charAt(caretPosition));
         }
         return sb.reverse().toString();
     }
 
-    // TODO move to base module
+    // @deprecated
     public static String extractLastWord(String text) {
         int i = StringUtils.lastIndexOfAny(text, " ", "\t") + 1;
         return StringUtils.substring(text, Math.max(0, i), text.length());

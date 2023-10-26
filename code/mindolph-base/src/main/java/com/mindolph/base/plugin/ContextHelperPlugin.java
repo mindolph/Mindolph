@@ -48,7 +48,7 @@ public class ContextHelperPlugin implements Plugin {
 
         @Override
         public void updateContextText(String text) {
-            StringTokenizer st = new StringTokenizer(this.extractOnlyLetters(text));
+            StringTokenizer st = new StringTokenizer(extractOnlyLetters(text));
             contextWords.clear();
             while (st.hasNext()) {
                 String token = st.nextToken();
@@ -60,8 +60,9 @@ public class ContextHelperPlugin implements Plugin {
             log.debug("%d context words updated.".formatted(contextWords.size()));
         }
 
-        private String extractOnlyLetters(String text) {
-            String cleanText = RegExUtils.replaceAll(text, "[^a-zA-Z]", " ");
+        public static String extractOnlyLetters(String text) {
+            // this replacement makes more friendly for programming code.
+            String cleanText = RegExUtils.replaceAll(text, "[\\s\\r,]", " ");
             return cleanText;
         }
 

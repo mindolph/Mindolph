@@ -6,6 +6,7 @@ import com.github.swiftech.swstate.trigger.Trigger;
 import com.mindolph.base.Env;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.base.util.EventUtils;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -95,14 +96,6 @@ public class InputHelperManager {
         this.caretY = y;
     }
 
-    // TODO let Plugin decide?
-    private boolean isAllowed(KeyEvent event) {
-        String str = event.getText();
-        return StringUtils.isAlphanumeric(str)
-                || StringUtils.equalsAny(str, " ", "\r", "\t")
-                || KeyCode.BACK_SPACE.equals(event.getCode());
-    }
-
     /**
      * Consume data with payload directly.
      *
@@ -124,7 +117,7 @@ public class InputHelperManager {
         if (event.isAltDown() || event.isMetaDown() || event.isControlDown()) {
             return;
         }
-        if (!isAllowed(event)) {
+        if (!EventUtils.isEditableInput(event)) {
             return;
         }
 
