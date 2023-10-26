@@ -174,6 +174,7 @@ public class InputHelperManager {
             for (String candidate : filtered) {
                 MenuItem mi = new MenuItem(candidate);
                 mi.setUserData(candidate);
+                mi.setMnemonicParsing(false);
                 mi.setOnAction(event -> {
                     selectEvent.push(new Selection(input, (String) mi.getUserData()));
                 });
