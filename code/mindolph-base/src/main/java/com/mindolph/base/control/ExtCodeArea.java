@@ -323,10 +323,15 @@ public class ExtCodeArea extends CodeArea {
         if (StringUtils.isEmpty(text)) {
             return EMPTY;
         }
-        while (caretPosition > 0 && CharUtils.isAsciiPrintable(text.charAt(--caretPosition))) {
+        while (caretPosition > 0 && isCharInWord(text.charAt(--caretPosition))) {
             sb.append(text.charAt(caretPosition));
         }
         return sb.reverse().toString();
+    }
+
+    private boolean isCharInWord(char c) {
+        // somehow the space is printable, so just ignore it.
+        return CharUtils.isAsciiPrintable(c) && c != ' ';
     }
 
     // @deprecated
