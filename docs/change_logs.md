@@ -1,5 +1,10 @@
 # Release Notes
 
+### V1.5.5 Release
+* Fix: the new created folder shouldn't appear in the `recent files` view.
+* Fix: the toolbar buttons inserts redundant symbols to the head of empty lines while multi-line selections.
+* Fix: mouse hover detection doesn't work well for the last bottom node in the mind map tree.
+
 ### V1.6.0 Unstable Release
 * Feature: new input helper to code editor, it collects words(for English only) from the content in editor as candidates to accelerate your input.
 * Feature: add PlantUML syntax keywords to input helper.
