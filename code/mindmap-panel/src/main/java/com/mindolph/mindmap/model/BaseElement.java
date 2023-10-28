@@ -39,6 +39,7 @@ public abstract class BaseElement {
     protected final VisualAttributeImageBlock visualAttributeImageBlock;
 
     protected Rectangle2D bounds = RectangleUtils.newZero();
+    // size of block of the element including all children elements.
     protected Dimension2D blockSize = DimensionUtils.newZero();
 
     protected Color fillColor;
@@ -140,6 +141,14 @@ public abstract class BaseElement {
             }
             drawComponent(isCollapsed() || drawCollapsator);
             g.translate(-this.bounds.getMinX(), -this.bounds.getMinY());
+            // debugging only
+            if (mindMapContext.isDebugMode()){
+                g.drawRect(this.bounds, Color.RED, null);
+                g.drawRect(new Rectangle2D(isLeftDirection() ? this.bounds.getMaxX() - this.blockSize.getWidth() : this.bounds.getMinX(),
+                                this.bounds.getMinY() - (this.blockSize.getHeight() - this.bounds.getHeight()) / 2,
+                        blockSize.getWidth(), blockSize.getHeight()),
+                        Color.RED, null);
+            }
         }
     }
 
@@ -223,7 +232,12 @@ public abstract class BaseElement {
         }
     }
 
-
+    /**
+     *
+     * @param point point in mind map.
+     *
+     * @return
+     */
     public ElementPart findPartForPoint(Point2D point) {
         ElementPart result = ElementPart.NONE;
         if (this.bounds.contains(point)) {
