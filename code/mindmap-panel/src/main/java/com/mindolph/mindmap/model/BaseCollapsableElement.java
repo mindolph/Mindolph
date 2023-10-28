@@ -21,6 +21,9 @@ import static com.mindolph.mfx.util.RectangleUtils.centerY;
 
 public abstract class BaseCollapsableElement extends BaseElement {
 
+    /**
+     * Relative to the element's bounds.
+     */
     protected Rectangle2D collapsatorZone = RectangleUtils.newZero();
 
     protected BaseCollapsableElement(BaseCollapsableElement element) {
@@ -38,15 +41,16 @@ public abstract class BaseCollapsableElement extends BaseElement {
         double w = collapsatorZone.getWidth();
         double h = collapsatorZone.getHeight();
 
-        double DELTA = Math.round(theme.getCollapsatorSize() * 0.3d * mindMapContext.getScale());
+        double delta = Math.round(theme.getCollapsatorSize() * 0.3d * mindMapContext.getScale());
 
         g.setStroke(mindMapContext.safeScale(theme.getCollapsatorBorderWidth(), 0.1f), StrokeType.SOLID);
         Color lineColor = theme.getCollapsatorBorderColor();
         g.drawOval(x, y, w, h, lineColor, theme.getCollapsatorBackgroundColor());
-        g.drawLine(x + DELTA, y + h / 2, x + w - DELTA, y + h / 2, lineColor);
+        g.drawLine(x + delta, y + h / 2, x + w - delta, y + h / 2, lineColor);
         if (collapsed) {
-            g.drawLine(x + w / 2, y + DELTA, x + w / 2, y + h - DELTA, lineColor);
+            g.drawLine(x + w / 2, y + delta, x + w / 2, y + h - delta, lineColor);
         }
+        if (mindMapContext.isDebugMode()) g.drawRect(this.collapsatorZone, Color.RED, null);
     }
 
     @Override
@@ -54,7 +58,10 @@ public abstract class BaseCollapsableElement extends BaseElement {
         ElementPart result = super.findPartForPoint(point);
         if (result == ElementPart.NONE) {
             if (this.hasChildren()) {
-                if (this.collapsatorZone.contains(point.getX() - this.bounds.getMinX(), point.getY() - this.bounds.getMinY())) {
+                double x = point.getX() - this.bounds.getMinX();
+                double y = point.getY() - this.bounds.getMinY();
+                // System.out.printf("%s, %s in %s?%n", x, y, RectangleUtils.rectangleInStr(this.collapsatorZone));
+                if (this.collapsatorZone.contains(x, y)) {
                     result = ElementPart.COLLAPSATOR;
                 }
             }
@@ -223,14 +230,17 @@ public abstract class BaseCollapsableElement extends BaseElement {
     public BaseElement findForPoint(Point2D point) {
         BaseElement result = null;
         if (point != null) {
-            if (this.bounds.contains(point.getX(), point.getY()) || this.collapsatorZone.contains(point.getX() - this.bounds.getMinX(), point.getY() - this.bounds.getMinY())) {
+            if (this.bounds.contains(point.getX(), point.getY())
+                    || this.collapsatorZone.contains(point.getX() - this.bounds.getMinX(), point.getY() - this.bounds.getMinY())) {
                 result = this;
             }
             else if (!isCollapsed()) {
-                double topZoneY = this.bounds.getMinY() - (this.blockSize.getHeight() - this.bounds.getHeight()) / 2;
+                // note: add half of collapsator height is a workaround for including the collapsator of the last bottom topic in the tree(otherwise it can't be detected by mouse event)
+                double topZoneY = this.bounds.getMinY() - (this.blockSize.getHeight() - this.bounds.getHeight()) / 2 + collapsatorZone.getHeight() / 2;
                 double topZoneX = isLeftDirection() ? this.bounds.getMaxX() - this.blockSize.getWidth() : this.bounds.getMinX();
 
-                if (point.getX() >= topZoneX && point.getY() >= topZoneY && point.getX() < (this.blockSize.getWidth() + topZoneX) && point.getY() < (this.blockSize.getHeight() + topZoneY)) {
+                if (point.getX() >= topZoneX && point.getY() >= topZoneY &&
+                        point.getX() < (this.blockSize.getWidth() + topZoneX) && point.getY() < (this.blockSize.getHeight() + topZoneY)) {
                     for (TopicNode t : this.model.getChildren()) {
                         BaseElement w = (BaseElement) t.getPayload();
                         result = w == null ? null : w.findForPoint(point);

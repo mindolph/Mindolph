@@ -31,7 +31,7 @@ public class AboutDialog extends BaseDialogController<Void> {
                 .controller(this)
                 .build();
 
-        lbJvm.setText("%s %s\nby %s".formatted(SystemUtils.JAVA_VM_NAME, SystemUtils.JAVA_VM_VERSION, SystemUtils.JAVA_VM_VENDOR));
+        lbJvm.setText("VM: %s %s\nby %s".formatted(SystemUtils.JAVA_VM_NAME, SystemUtils.JAVA_VM_VERSION, SystemUtils.JAVA_VM_VENDOR));
     }
 
     @FXML
