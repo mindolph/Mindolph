@@ -31,6 +31,7 @@
                      </VBox.margin>
                   </Label>
                   <Label fx:id="lbJvm" />
+                  <Label fx:id="lbLicense" text="This software is released under GPL v3 license"/>
                </children>
                <padding>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
