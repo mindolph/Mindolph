@@ -1,4 +1,4 @@
-# Release Notes
+# Change Logs
 
 ### V1.5.5 Release
 * Fix: the new created folder shouldn't appear in the `recent files` view.
