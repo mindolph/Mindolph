@@ -34,7 +34,26 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 
 ### Screenshots
-![](docs/main.png)
+<p float="left">
+	<img src="docs/screenshots/mindmap_light.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/mindmap_dark.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/markdown1.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/puml_activity.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/puml_sequence.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/puml_component2.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/puml_state.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/find_in_files.jpg" width="45%"/>
+</p>
 
 [see more](docs/screenshots.md)
 

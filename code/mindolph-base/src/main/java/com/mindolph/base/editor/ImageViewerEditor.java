@@ -31,10 +31,19 @@ public class ImageViewerEditor extends BaseViewerEditor {
         Platform.runLater(() -> {
             scrollableImageView.setImage(image);
             afterLoading.run();
+            showImageInfo(1.0f);
         });
         this.scrollableImageView.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
-            EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("%.0f%%".formatted(newValue.doubleValue() * 100)));
+            showImageInfo(newValue.doubleValue());
         });
+    }
+
+    private void showImageInfo(double scale) {
+        Image image = scrollableImageView.getImage();
+        double width = image.getWidth();
+        double height = image.getHeight();
+        String info = "%.0fx%.0f  %.0f%%".formatted(width, height, scale * 100);
+        EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(info));
     }
 
     @Override
