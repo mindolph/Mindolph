@@ -3,7 +3,6 @@ package com.mindolph.fx.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.search.SearchParams;
-import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.fx.control.FileFilterButtonGroup;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -18,6 +17,7 @@ import javafx.scene.control.ToggleButton;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 
@@ -51,7 +51,7 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
         dialog.setOnShown(event -> Platform.runLater(() -> tfKeywords.requestFocus()));
 
         String workspaceName = FilenameUtils.getBaseName(workspaceDir.getPath());
-        String relativePath = FileNameUtils.getRelativePath(dir, workspaceDir);
+        String relativePath = PathUtils.getRelativePath(dir, workspaceDir);
         lbDesc.setText("%s%s%s".formatted(workspaceName, File.separator, relativePath));
 
         Object lastKeyword = FxPreferences.getInstance().getPreference(MINDOLPH_FIND_FILES_KEYWORD, "");

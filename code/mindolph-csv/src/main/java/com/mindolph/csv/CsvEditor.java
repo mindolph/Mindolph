@@ -15,7 +15,6 @@ import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
-import com.mindolph.core.util.IoUtils;
 import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
@@ -48,6 +47,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.IoUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -162,7 +162,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
-        this.text = IoUtils.readAll(fileReader);
+        this.text = IoUtils.readAllToString(fileReader);
         this.undoService.push(this.text);
         this.initTableView();
         prepareSearchingEvent.subscribe(unused -> {

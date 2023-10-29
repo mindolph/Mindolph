@@ -4,7 +4,7 @@ import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchParams;
-import com.mindolph.core.util.FileNameUtils;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.util.Objects;
@@ -69,7 +69,7 @@ public class NodeData {
     }
 
     public boolean isParentOf(NodeData nodeData) {
-        return FileNameUtils.isParentFolder(this.getFile(), nodeData.getFile());
+        return PathUtils.isParentFolder(this.getFile(), nodeData.getFile());
     }
 
     public boolean isMindMap() {
@@ -110,7 +110,7 @@ public class NodeData {
     }
 
     public String getFileRelativePath() {
-        return FileNameUtils.getRelativePath(file, workspaceData.getFile());
+        return PathUtils.getRelativePath(file, workspaceData.getFile());
     }
 
     public void setFile(File file) {

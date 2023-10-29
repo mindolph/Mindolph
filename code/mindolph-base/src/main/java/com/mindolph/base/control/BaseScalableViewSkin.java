@@ -11,7 +11,7 @@ import javafx.scene.control.SkinBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.mindolph.core.util.CalculateUtils.limitIn;
+import static org.swiftboot.util.CalcUtils.limitIn;
 import static com.mindolph.mfx.util.RectangleUtils.rectangleInStr;
 import static com.mindolph.mfx.util.RectangleUtils.sizeInStr;
 

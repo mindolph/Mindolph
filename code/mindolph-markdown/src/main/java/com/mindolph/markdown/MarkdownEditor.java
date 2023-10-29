@@ -26,7 +26,6 @@ import com.mindolph.mfx.dialog.impl.TextBlockDialog;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.DesktopUtils;
-import com.mindolph.mfx.util.UrlUtils;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.sun.javafx.webkit.WebConsoleListener;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
@@ -70,6 +69,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
 import org.swiftboot.util.IoUtils;
+import org.swiftboot.util.PathUtils;
+import org.swiftboot.util.UrlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
@@ -330,7 +331,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     public void onFileLinkClicked(String url) {
         if (!UrlUtils.isValid(url)) {
             File f;
-            if (FileNameUtils.isAbsolutePath(url)) {
+            if (PathUtils.isAbsolutePath(url)) {
                 f = new File(url);
             }
             else {

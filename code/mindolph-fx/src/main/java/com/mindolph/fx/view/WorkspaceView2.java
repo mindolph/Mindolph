@@ -57,6 +57,7 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -1144,7 +1145,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (selectedData.isFolder() || selectedData.isFile()) {
             File workspaceDir = selectedData.getWorkspaceData().getFile();
             SearchParams searchParams = new SearchParams();
-            searchParams.setKeywords(FileNameUtils.getRelativePath(selectedData.getFile(), workspaceDir));
+            searchParams.setKeywords(PathUtils.getRelativePath(selectedData.getFile(), workspaceDir));
             searchParams.setSearchFilter(workspaceConfig.makeFileFilter());
             searchParams.setSearchInDir(workspaceDir);
             searchParams.setWorkspaceDir(workspaceDir);
@@ -1251,7 +1252,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     private boolean beforeFilePathChanged(NodeData nodeData) {
         SearchParams searchParams = new SearchParams();
         File workspaceDir = nodeData.getWorkspaceData().getFile();
-        searchParams.setKeywords(FileNameUtils.getRelativePath(nodeData.getFile(), workspaceDir));
+        searchParams.setKeywords(PathUtils.getRelativePath(nodeData.getFile(), workspaceDir));
         searchParams.setSearchFilter(new WorkspaceConfig().makeFileFilter());
         searchParams.setSearchInDir(workspaceDir);
         searchParams.setWorkspaceDir(workspaceDir);

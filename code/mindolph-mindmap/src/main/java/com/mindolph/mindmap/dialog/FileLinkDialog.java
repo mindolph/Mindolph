@@ -3,7 +3,6 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.util.MindolphFileUtils;
-import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -22,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,7 +120,7 @@ public class FileLinkDialog extends BaseDialogController<FileLink> {
                 try {
                     boolean isRelevantPath = workspaceDir != null && FileUtils.directoryContains(workspaceDir, file);
                     if (isRelevantPath) {
-                        finalPath = FileNameUtils.getRelativePath(file, workspaceDir);
+                        finalPath = PathUtils.getRelativePath(file, workspaceDir);
                     }
                     log.debug("Got final path: " + finalPath);
                     textField.setText(finalPath);

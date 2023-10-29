@@ -1,7 +1,5 @@
 package com.mindolph.core.template;
 
-import com.mindolph.core.util.FileNameUtils;
-import com.mindolph.core.util.ResourceUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -11,6 +9,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.ClasspathResourceUtils;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.util.HashSet;
@@ -90,7 +90,7 @@ public final class HtmlBuilder {
      * @return
      */
     public HtmlBuilder css(String cssResourceUri) {
-        this.css = ResourceUtils.readResourceToString(cssResourceUri);
+        this.css = ClasspathResourceUtils.readResourceToString(cssResourceUri);
         return this;
     }
 
@@ -176,7 +176,7 @@ public final class HtmlBuilder {
             Elements imgs = doc.select("img");
             for (Element img : imgs) {
                 String src = img.attr("src");
-                if (!FileNameUtils.isAbsolutePath(src)) {
+                if (!PathUtils.isAbsolutePath(src)) {
                     // is relative path
                     src = StringUtils.startsWith(src, "./") ? StringUtils.substring(src, 2) : src;
                     src = new File(resourceBaseDir, src).getPath();

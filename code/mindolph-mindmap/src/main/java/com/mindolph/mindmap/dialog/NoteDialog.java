@@ -10,7 +10,6 @@ import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BrowseUtils;
 import com.mindolph.mfx.util.FontUtils;
-import com.mindolph.mfx.util.UrlUtils;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.model.NoteEditorData;
 import com.mindolph.mindmap.model.PasswordData;
@@ -30,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.UrlUtils;
 
 import java.io.File;
 import java.io.IOException;

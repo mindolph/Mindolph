@@ -2,14 +2,16 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
-import com.mindolph.base.event.*;
+import com.mindolph.base.event.EditorReadyEventHandler;
+import com.mindolph.base.event.FileChangedEventHandler;
+import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.constant.SupportFileTypes;
-import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.util.Map;
@@ -64,9 +66,9 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
      * @return
      */
     protected Optional<String> getRelatedPathInCurrentWorkspace(File file) {
-        boolean isSameWorkspace = FileNameUtils.isParentFolder(editorContext.getWorkspaceData().getFile(), file);
+        boolean isSameWorkspace = PathUtils.isParentFolder(editorContext.getWorkspaceData().getFile(), file);
         if (isSameWorkspace){
-            return Optional.of(FileNameUtils.getRelativePath(file, editorContext.getFileData().getFile().getParentFile()));
+            return Optional.of(PathUtils.getRelativePath(file, editorContext.getFileData().getFile().getParentFile()));
         }
         else {
             return Optional.empty();

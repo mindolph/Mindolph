@@ -22,7 +22,7 @@ import javafx.application.Application;
 public class Launcher {
 
     public static void main(String[] args) {
-//        Env.isDevelopment = SystemPropertyUtils.isSystemPropValTrue("dev");
+//        Env.isDevelopment = SysUtils.isSystemPropValTrue("dev");
         String dev = System.getenv("dev");
         if ("false".equals(dev)) {
             Env.isDevelopment = false;
