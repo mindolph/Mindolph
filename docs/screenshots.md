@@ -10,31 +10,40 @@
 ![mindmap1](screenshots/mindmap_classic.jpg)
 
 * Markdown edit and preview
-![markdown1](screenshots/markdown1.png)
+![markdown1](screenshots/markdown1.jpg)
 
 * Markdown edit and preview
-![markdown2](screenshots/markdown2.png)
+![markdown2](screenshots/markdown2.jpg)
+
+* Markdown edit and preview
+![markdown2](screenshots/markdown3.jpg)
 
 * PlantUML activity diagram
-![puml_activity](screenshots/puml_activity.png)
+![puml_activity](screenshots/puml_activity.jpg)
 
 * PlantUML class diagram
-![puml_class](screenshots/puml_class.png)
+![puml_class](screenshots/puml_class.jpg)
 
 * PlantUML component diagram
-![puml_component1](screenshots/puml_component1.png)
+![puml_component1](screenshots/puml_component1.jpg)
 
 * PlantUML component diagram
-![puml_component2](screenshots/puml_component2.png)
+![puml_component2](screenshots/puml_component2.jpg)
 
 * PlantUML sequence diagram
-![puml_sequence](screenshots/puml_sequence.png)
+![puml_sequence](screenshots/puml_sequence.jpg)
 
 * PlantUML state diagram
-![puml_state](screenshots/puml_state.png)
+![puml_state](screenshots/puml_state.jpg)
 
 * PlantUML usecase diagram
-![puml_usecase](screenshots/puml_usecase.png)
+![puml_usecase](screenshots/puml_usecase.jpg)
+
+* PlantUML ER diagram
+![puml_usecase](screenshots/puml_er.jpg)
+
+* PlantUML Deployment diagram
+![puml_usecase](screenshots/puml_er.jpg)
 
 * Find in files by keyword
-![find_in_files](screenshots/find_in_files.png)
+![find_in_files](screenshots/find_in_files.jpg)
