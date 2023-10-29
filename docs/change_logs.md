@@ -1,5 +1,16 @@
 # Change Logs
 
+### V1.6.1 Unstable Release
+* Feature: add new preference option to toggle the input helper for code editor.
+* Improvement: make input helper more friendly for programing language code.
+* Improvement: add default note to new files.
+* Improvement: displaying performance of input helper is slow in a large file.
+* Fix: underline between words doesn't display in input helper.
+* Fix: letters don't display when using system input method.
+* Fix: input help doesn't work while caret is not at the end of line.
+* Fix: all candidate words displays in some cases. 
+* Merged bug fixes from v1.5.5
+
 ### V1.5.5 Release
 * Fix: the new created folder shouldn't appear in the `recent files` view.
 * Fix: the toolbar buttons inserts redundant symbols to the head of empty lines while multi-line selections.
