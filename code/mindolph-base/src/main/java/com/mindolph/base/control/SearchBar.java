@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.textfield.TextFields;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 import org.reactfx.EventSource;
@@ -34,12 +35,16 @@ import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
+ * @see com.mindolph.base.editor.BaseEditor
  */
 public class SearchBar extends VBox {
     private static final Logger log = LoggerFactory.getLogger(SearchBar.class);
 
+    private final TextField tfKeywords;
     @FXML
-    private TextField tfKeywords;
+    private VBox vbKeywords;
+    @FXML
+    private VBox vbReplacement;
     @FXML
     private ToggleButton tbCase;
     @FXML
@@ -50,13 +55,13 @@ public class SearchBar extends VBox {
     private HBox searchPane;
     @FXML
     private HBox replacePane;
-    @FXML
-    private TextField tfReplacement;
+
+    private final TextField tfReplacement;
     @FXML
     private HBox leftPane;
     @FXML
     private AnchorPane rightPane;
-    private Glyph btnClose;
+    private final Glyph btnClose;
     private final ObjectProperty<Map<String, ExtraOption>> extraOptions = new SimpleObjectProperty<>();
 
     private final BooleanProperty showReplace = new SimpleBooleanProperty(false);
@@ -76,6 +81,11 @@ public class SearchBar extends VBox {
     public SearchBar(Map<String, ExtraOption> extraOptions) {
         this.extraOptions.set(extraOptions);
         FxmlUtils.loadUri("/control/search_bar.fxml", this);
+
+        tfKeywords = TextFields.createClearableTextField();
+        tfReplacement = TextFields.createClearableTextField();
+        vbKeywords.getChildren().add(tfKeywords);
+        vbReplacement.getChildren().add(tfReplacement);
 
         btnNext.setGraphic(FontIconManager.getIns().getIcon(IconKey.NEXT));
         btnPrev.setGraphic(FontIconManager.getIns().getIcon(IconKey.PREVIOUS));

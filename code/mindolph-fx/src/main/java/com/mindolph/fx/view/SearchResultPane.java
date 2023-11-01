@@ -20,9 +20,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +44,9 @@ public class SearchResultPane extends AnchorPane {
     @FXML
     private Label label;
 
+    private final TextField tfKeywords;
     @FXML
-    private TextField tfKeywords;
+    private VBox vbKeywords;
 
     @FXML
     private ToggleButton tbCase;
@@ -91,6 +94,8 @@ public class SearchResultPane extends AnchorPane {
             }
         });
 
+        tfKeywords = TextFields.createClearableTextField();
+        vbKeywords.getChildren().add(tfKeywords);
         tfKeywords.textProperty().addListener((observableValue, s, t1) -> searchParams.setKeywords(t1));
         tfKeywords.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {

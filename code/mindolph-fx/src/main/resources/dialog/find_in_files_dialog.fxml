@@ -7,9 +7,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <VBox spacing="8.0">
       <children>
-          <HBox spacing="8.0" alignment="CENTER_LEFT">
+          <HBox fx:id="hbKeywords" spacing="8.0" alignment="CENTER_LEFT">
               <Label text="Keyword: " />
-              <TextField fx:id="tfKeywords" prefWidth="300.0" />
           </HBox>
          <HBox spacing="8.0" alignment="CENTER_LEFT">
             <children>

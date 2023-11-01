@@ -14,7 +14,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.HBox;
 import org.apache.commons.io.FilenameUtils;
+import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.PathUtils;
@@ -31,8 +33,9 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
 
     @FXML
     private Label lbDesc;
-    @FXML
     private TextField tfKeywords;
+    @FXML
+    private HBox hbKeywords;
     @FXML
     private ToggleButton tbCase;
     @FXML
@@ -61,6 +64,9 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
         result = new SearchParams(String.valueOf(lastKeyword), lastCaseSensitivity);
         result.setFileTypeName(String.valueOf(lastFileTypeName));
 
+        tfKeywords = TextFields.createClearableTextField();
+        tfKeywords.setPrefWidth(300);
+        hbKeywords.getChildren().add(tfKeywords);
         tfKeywords.textProperty().addListener((observableValue, s, newKeyword) -> {
             result.setKeywords(newKeyword);
         });

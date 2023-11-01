@@ -20,10 +20,7 @@
             </HBox>
             <HBox spacing="8.0">
                <children>
-                  <TextField fx:id="tfKeywords" prefWidth="300.0">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin></TextField>
+                  <VBox fx:id="vbKeywords" prefWidth="300"/>
                   <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
                   <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
                      <HBox.margin>

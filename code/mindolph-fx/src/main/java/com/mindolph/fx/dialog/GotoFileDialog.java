@@ -21,8 +21,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.textfield.TextFields;
 import org.reactfx.Change;
 import org.reactfx.EventStream;
 import org.reactfx.EventStreams;
@@ -47,7 +49,8 @@ public class GotoFileDialog extends BaseDialogController<Void> {
     private static final Logger log = LoggerFactory.getLogger(GotoFileDialog.class);
 
     @FXML
-    private TextField textField;
+    private VBox vbKeywords;
+    private final TextField tfKeywords;
     @FXML
     private ListView<FileMeta> listView;
     @FXML
@@ -70,30 +73,32 @@ public class GotoFileDialog extends BaseDialogController<Void> {
                 .resizable(true)
                 .controller(this)
                 .build();
+        tfKeywords = TextFields.createClearableTextField();
+        vbKeywords.getChildren().add(tfKeywords);
 
-        dialog.setOnShown(event -> Platform.runLater(() -> textField.requestFocus()));
+        dialog.setOnShown(event -> Platform.runLater(() -> tfKeywords.requestFocus()));
 
         // merge events to trigger the search
-        EventStream<Change<String>> textChanged = EventStreams.changesOf(textField.textProperty());
+        EventStream<Change<String>> textChanged = EventStreams.changesOf(tfKeywords.textProperty());
         EventStream<Change<String>> optionChanged = EventStreams.changesOf(fileFilterButtonGroup.selectedFileTypeProperty());
         EventStream<Tuple2<Change<String>, Change<String>>> combine = EventStreams.combine(textChanged, optionChanged);
         combine.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(400))
                 .subscribe(tuple2 -> {
-                    searchFiles(StringUtils.trim(textField.getText()), fileFilterButtonGroup.getSelectedFileType());
+                    searchFiles(StringUtils.trim(tfKeywords.getText()), fileFilterButtonGroup.getSelectedFileType());
                 });
 
         String lastKeyword = fxPreferences.getPreference(MINDOLPH_NAVIGATE_KEYWORD, String.class);
-        textField.setText(lastKeyword);
+        tfKeywords.setText(lastKeyword);
 
         String fileTypeOption = fxPreferences.getPreference(MINDOLPH_NAVIGATE_OPTIONS, String.class, FILE_OPTION_ALL);
         fileFilterButtonGroup.setSelectedFileType(fileTypeOption);
 
         tbSort.setGraphic(FontIconManager.getIns().getIcon(IconKey.SORT));
         tbSort.setOnAction(event -> {
-            searchFiles(StringUtils.trim(textField.getText()), fileFilterButtonGroup.getSelectedFileType());
+            searchFiles(StringUtils.trim(tfKeywords.getText()), fileFilterButtonGroup.getSelectedFileType());
         });
 
-        textField.setOnKeyPressed(keyEvent -> {
+        tfKeywords.setOnKeyPressed(keyEvent -> {
             if (!listView.isFocused()) {
                 if (keyEvent.getCode() == KeyCode.DOWN) {
                     listView.requestFocus();
