@@ -33,4 +33,7 @@ public interface ShortcutConstants {
     ShortcutKey KEY_UNDO = ShortcutKey.newShortcutKey("global.undo", "undo");
     ShortcutKey KEY_REDO = ShortcutKey.newShortcutKey("global.redo", "redo");
 
+    // markdown
+    ShortcutKey KEY_MD_COMMENT = new ShortcutKey("md.comment", "comment line", "Markdown");
+
 }

@@ -3,7 +3,8 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchBar;
-import com.mindolph.base.control.SearchableCodeArea;
+import com.mindolph.base.editor.MarkdownCodeArea;
+import com.mindolph.base.editor.MarkdownToolbar;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -21,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -65,7 +67,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
     @FXML
     private ToggleButton tbtnReplace;
     @FXML
-    private SearchableCodeArea textArea;
+    private MarkdownCodeArea textArea;
+    private MarkdownToolbar editorToolBar;
+    @FXML
+    private HBox hbToolbar;
     @FXML
     private VBox vbox;
 
@@ -208,6 +213,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 vbox.getChildren().remove(searchBar);
             }
         });
+
+        editorToolBar = new MarkdownToolbar(textArea);
+        hbToolbar.getChildren().add(editorToolBar);
+
         textArea.setStyle(FontUtils.fontToCssStyle(font));
         textArea.setText(origin.getText());
         textArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
@@ -219,6 +228,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     if (!StringUtils.equals(oldValue, newValue)) {
                         this.textArea.doHistory();
                     }
+                    textArea.refresh();
                 }
         );
         textArea.undoAvailableProperty().addListener((observableValue, aBoolean, newValue) -> btnUndo.setDisable(!newValue));
@@ -248,6 +258,8 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             tbtnReplace.setSelected(false);
             textArea.requestFocus();
         });
+
+        textArea.refresh();
 
     }
 }

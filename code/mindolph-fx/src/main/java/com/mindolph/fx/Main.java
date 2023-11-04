@@ -32,7 +32,7 @@ import org.swiftboot.util.pref.StringConverter;
 import java.net.URL;
 import java.util.Objects;
 
-import static com.mindolph.markdown.constant.ShortcutConstants.KEY_MD_COMMENT;
+import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
 import static com.mindolph.plantuml.constant.ShortcutConstants.KEY_PUML_COMMENT;
 import static javafx.scene.input.KeyCombination.ALT_DOWN;
 import static javafx.scene.input.KeyCombination.META_DOWN;

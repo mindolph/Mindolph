@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.mindolph.base.control.SearchableCodeArea?>
+<?import com.mindolph.base.editor.MarkdownCodeArea?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
@@ -20,10 +20,13 @@
                   <ToggleButton fx:id="tbtnProtect" mnemonicParsing="false" text="Protect" />
               </items>
             </ToolBar>
+             <HBox fx:id="hbToolbar">
+
+             </HBox>
              <VirtualizedScrollPane VBox.vgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                  <content>
-                     <SearchableCodeArea fx:id="textArea" wrapText="true"/>
+                     <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
                  </content>
              </VirtualizedScrollPane>
          </children >

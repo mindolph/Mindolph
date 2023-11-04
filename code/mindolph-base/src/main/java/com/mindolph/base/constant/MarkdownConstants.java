@@ -1,4 +1,4 @@
-package com.mindolph.markdown.constant;
+package com.mindolph.base.constant;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -24,7 +24,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <javafx.version>20.0.2</javafx.version>
+        <javafx.version>21.0.1</javafx.version>
         <commons.lang.version>3.12.0</commons.lang.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.text.version>1.10.0</commons.text.version>
@@ -35,7 +35,7 @@
         <swstate.version>2.0</swstate.version>
         <plantuml.version>1.2023.11</plantuml.version>
         <swiftboot.version>2.4.5</swiftboot.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.9</slf4j.version>
         <log4j2.version>2.20.0</log4j2.version>
         <junit.version>5.9.3</junit.version>
         <mfx.version>1.2.3</mfx.version>

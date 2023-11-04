@@ -1,4 +1,4 @@
-package com.mindolph.markdown.dialog;
+package com.mindolph.base.dialog;
 
 
 /**

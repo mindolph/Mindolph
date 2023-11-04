@@ -1,10 +1,10 @@
-package com.mindolph.markdown;
+package com.mindolph.base.editor;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtCodeArea;
-import com.mindolph.markdown.dialog.TableDialog;
-import com.mindolph.markdown.dialog.TableOptions;
+import com.mindolph.base.dialog.TableDialog;
+import com.mindolph.base.dialog.TableOptions;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;

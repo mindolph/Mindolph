@@ -1,9 +1,9 @@
-package com.mindolph.markdown;
+package com.mindolph.base.editor;
 
 import com.mindolph.base.ShortcutManager;
+import com.mindolph.base.constant.ShortcutConstants;
 import com.mindolph.base.control.HighlightCodeArea;
 import com.mindolph.core.constant.SupportFileTypes;
-import com.mindolph.markdown.constant.ShortcutConstants;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
-import static com.mindolph.markdown.constant.MarkdownConstants.*;
+import static com.mindolph.base.constant.MarkdownConstants.*;
 
 /**
  *

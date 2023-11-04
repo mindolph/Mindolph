@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.mindolph.markdown.constant.MarkdownConstants.*;
+import static com.mindolph.base.constant.MarkdownConstants.*;
 
 /**
  * @author mindolph
