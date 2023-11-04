@@ -121,6 +121,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
     private ContextMenu contextMenuNew; // context menu for button "New"
     private ContextMenu itemContextMenu = null;
+    private MenuItem miOpenFile;
     private MenuItem miCopyFile;
     private MenuItem miPasteFile;
     private MenuItem miCopyPathAbsolute;
@@ -599,6 +600,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenu.getItems().add(miNew);
             }
             if (isFile) {
+                miOpenFile = new MenuItem("Open");
+                miOpenFile.setMnemonicParsing(false);
+                miOpenFile.setOnAction(this);
+                contextMenu.getItems().add(miOpenFile);
+
                 Menu miCopy = new Menu("Copy");
                 miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
                 miCopyPathAbsolute = new MenuItem("Absolute Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32));
@@ -955,6 +961,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     }
                 }
             }
+        }
+        else if (source == miOpenFile) {
+            this.openSelectedFile();
         }
         else if (source == miCopyFile) {
             ClipBoardUtils.filesToClipboard(Collections.singletonList(selectedData.getFile()));
