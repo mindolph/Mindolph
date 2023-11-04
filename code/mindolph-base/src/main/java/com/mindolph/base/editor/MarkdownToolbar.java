@@ -53,6 +53,8 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     private Button btnHeader5;
     @FXML
     private Button btnHeader6;
+    @FXML
+    private Button btnSeparator;
 
     private final MarkdownCodeArea markdownCodeArea;
 
@@ -75,6 +77,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnHeader4.setGraphic(fim.getIcon(IconKey.H4));
         btnHeader5.setGraphic(fim.getIcon(IconKey.H5));
         btnHeader6.setGraphic(fim.getIcon(IconKey.H6));
+        btnSeparator.setGraphic(fim.getIcon(IconKey.SEPARATOR));
 
         btnBold.setOnAction(this);
         btnItalic.setOnAction(this);
@@ -90,6 +93,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnHeader4.setOnAction(this);
         btnHeader5.setOnAction(this);
         btnHeader6.setOnAction(this);
+        btnSeparator.setOnAction(this);
     }
 
 
@@ -165,6 +169,9 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
                 }
                 markdownCodeArea.requestFocus();
             });
+        }
+        else if (node == btnSeparator) {
+            markdownCodeArea.insertText("\r---\r");
         }
         markdownCodeArea.requestFocus();
     }

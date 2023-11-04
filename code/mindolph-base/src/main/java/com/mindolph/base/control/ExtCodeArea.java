@@ -410,6 +410,10 @@ public class ExtCodeArea extends CodeArea {
         return lineText;
     }
 
+    public void insertText(String text){
+        this.insertText(this.getCaretPosition(), text);
+    }
+
     /**
      * Insert text to parIndex.
      *
