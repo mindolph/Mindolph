@@ -18,7 +18,7 @@ public class FileNameUtils {
      * @return
      */
     public static String appendFileExtensionIfAbsent(String fileName, String extension) {
-        if (StringUtils.isBlank(FilenameUtils.getExtension(fileName))) {
+        if (!StringUtils.equals(extension, FilenameUtils.getExtension(fileName))) {
             return fileName + "." + extension;
         }
         return fileName;
