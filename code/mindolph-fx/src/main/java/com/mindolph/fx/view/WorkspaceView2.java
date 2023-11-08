@@ -928,7 +928,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
-                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(fileName, createTimestamp());
+                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), createTimestamp());
                             try {
                                 FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                             } catch (IOException e) {
