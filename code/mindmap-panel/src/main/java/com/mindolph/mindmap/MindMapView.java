@@ -104,6 +104,9 @@ public class MindMapView extends BaseScalableView {
 
     private final ObjectProperty<TopicNode> collapsingTopic = new SimpleObjectProperty<>();
 
+    // selected text in input text area
+    private final StringProperty selectedInputText = new SimpleStringProperty();
+
     private StateMachine<String, Serializable> stateMachine;
 
     // This workspace dir is from outsider to handle the link to other files in project.
@@ -1895,5 +1898,17 @@ public class MindMapView extends BaseScalableView {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public String getSelectedInputText() {
+        return selectedInputText.get();
+    }
+
+    public StringProperty selectedInputTextProperty() {
+        return selectedInputText;
+    }
+
+    public void setSelectedInputText(String selectedInputText) {
+        this.selectedInputText.set(selectedInputText);
     }
 }

@@ -1,6 +1,9 @@
 package com.mindolph.mindmap;
 
-import com.igormaznitsa.mindmap.model.*;
+import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraFile;
+import com.igormaznitsa.mindmap.model.MMapURI;
+import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -336,7 +339,7 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public String getSelectionText() {
-        return mindMapView.getFirstSelectedTopic() == null ? null : mindMapView.getFirstSelectedTopic().getText();
+        return mindMapView.getSelectedInputText() == null ? null : mindMapView.getSelectedInputText();
     }
 
     public MindMap<TopicNode> getMindMapModel() {
