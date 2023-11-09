@@ -132,6 +132,9 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             return change;
         }));
 
+        // bind input selection text to control.
+        this.control.selectedInputTextProperty().bind(textArea.selectedTextProperty());
+
         // listen the topic edit event
         this.control.setTopicEditEventHandler(this);
         log.info("MindMapViewSkin constructed.");

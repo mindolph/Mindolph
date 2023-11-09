@@ -66,7 +66,7 @@ public class MenuUtils {
 
     private static List<MenuItem> putAllItemsAsSection(ContextMenu menu, Menu subMenu, List<MenuItem> items) {
         if (!items.isEmpty()) {
-            if (menu.getItems().size() > 0) {
+            if (!menu.getItems().isEmpty()) {
                 menu.getItems().add(new SeparatorMenuItem());
             }
             for (MenuItem i : items) {
@@ -102,7 +102,7 @@ public class MenuUtils {
                 boolean noTopicsNeeded = !(p.needsTopicUnderMouse() || p.needsSelectedTopics());
                 if (noTopicsNeeded
                         || (p.needsTopicUnderMouse() && topicUnderMouse != null)
-                        || (p.needsSelectedTopics() && context.getSelectedTopics().size() > 0)) {
+                        || (p.needsSelectedTopics() && !context.getSelectedTopics().isEmpty())) {
 
                     MenuItem item = p.makeMenuItem(context, topicUnderMouse);
                     if (item != null) {
