@@ -134,10 +134,14 @@ public class ExtCodeArea extends CodeArea {
         // TODO better way is to do updating when new word completed and any other actions that makes text change completed.
         inputHelpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(INPUT_HELP_DELAY_IN_MILLIS))
                 .subscribe(s -> {
-                    Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
-                    for (Plugin plugin : plugins) {
-                        plugin.getInputHelper().updateContextText(s);
+                    // non-blocking
+                    new Thread(() -> {
+                        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
+                        for (Plugin plugin : plugins) {
+                            plugin.getInputHelper().updateContextText(s);
+                        }
                     }
+                    ).start();
                 });
 
         // prepare the context words
@@ -411,7 +415,7 @@ public class ExtCodeArea extends CodeArea {
         return lineText;
     }
 
-    public void insertText(String text){
+    public void insertText(String text) {
         this.insertText(this.getCaretPosition(), text);
     }
 
