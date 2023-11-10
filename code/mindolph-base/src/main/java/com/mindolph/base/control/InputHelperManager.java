@@ -47,8 +47,8 @@ public class InputHelperManager {
     private final StateMachine<String, Serializable> stateMachine;
     private final Trigger isAlphanumeric = (data, payload) -> (data instanceof Character)
             && (Character.isAlphabetic((char) data) || Character.isDigit((Character) data));
-    private final Trigger isStopBackspace = (data, payload) -> KeyCode.BACK_SPACE.equals(data) && StringUtils.isBlank(payload.toString());
-    private final Trigger isKeepBackspace = (data, payload) -> KeyCode.BACK_SPACE.equals(data) && !StringUtils.isBlank(payload.toString());
+    private final Trigger isStopBackspace = (data, payload) -> KeyCode.BACK_SPACE.equals(data) && (StringUtils.isBlank(payload.toString()) || payload.toString().length() == 1); // less than 2 letters stops the helping for performance
+    private final Trigger isKeepBackspace = (data, payload) -> KeyCode.BACK_SPACE.equals(data) && (!StringUtils.isBlank(payload.toString()) && payload.toString().length() > 1); // greater or equal 2 letters keep helping for performance
     private final Trigger isReturn = (data, payload) -> KeyCode.ENTER.equals(data);
     private final Trigger unknownInput = (data, payload) -> UNKNOWN_INPUT.equals(data);
 

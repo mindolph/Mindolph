@@ -156,6 +156,7 @@ public class ExtCodeArea extends CodeArea {
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
         });
 
+        // Insert selected text from input helper.
         inputHelperManager.onSelected((selection) -> {
             if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
                 int start = selection.input().length();
