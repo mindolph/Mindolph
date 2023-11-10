@@ -1,5 +1,10 @@
 # Change Logs
 
+### 1.5.6 Release
+* Improvement: for mind map, use selected text in input box instead of selected topic as default search keyword.
+* Fix: file extension be added to the Markdown doc title, which is not appropriate and makes an unnecessary file link to itself.
+* Fix: the new created file name extension is missing if inputted name contains dot(.) 
+
 ### V1.6.1 Unstable Release
 * Feature: add new preference option to toggle the input helper for code editor.
 * Improvement: make input helper more friendly for programing language code.
