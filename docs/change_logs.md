@@ -1,5 +1,17 @@
 # Change Logs
 
+### 1.6.2 Unstable Release
+* Improvement: support markdown in note editor for mind map.
+* Improvement: the performance of pasting long text to code editor.
+* Improvement: add horizontal rule button to markdown toolbar for quick inserting.
+* Improvement: use clearable text field for keyword input.
+* Improvement: show image resolution in image viewer .
+* Improvement: add `Open` menu item to workspace context menu. 
+* Improvement: add context menu for recent files list view.
+* Fix: pressing backspace to delete letters, the input helper should not work when only 1 letter left. 
+* Update javafx to 21 and other dependencies includes plantuml, slf4j etc. 
+* Merged bug fixes from v1.5.6.
+
 ### 1.5.6 Release
 * Improvement: for mind map, use selected text in input box instead of selected topic as default search keyword.
 * Fix: file extension be added to the Markdown doc title, which is not appropriate and makes an unnecessary file link to itself.
