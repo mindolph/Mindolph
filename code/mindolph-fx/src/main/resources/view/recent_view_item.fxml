@@ -19,7 +19,11 @@
                      <font>
                         <Font size="15.0" />
                      </font></Label>
-                  <Label fx:id="lbFilePath" text="File Path" textFill="#373737" />
+                  <Label fx:id="lbFilePath" text="File Path" textFill="#373737" >
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
                </children>
             </VBox>
          </children>
