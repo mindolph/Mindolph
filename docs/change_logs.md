@@ -1,7 +1,7 @@
 # Change Logs
 
-### 1.6.2 Unstable Release
-* Improvement: support markdown in note editor for mind map.
+### V1.6.2 Unstable Release
+* Feature: support markdown in note editor for mind map.
 * Improvement: the performance of pasting long text to code editor.
 * Improvement: add horizontal rule button to markdown toolbar for quick inserting.
 * Improvement: use clearable text field for keyword input.
@@ -12,7 +12,7 @@
 * Update javafx to 21 and other dependencies includes plantuml, slf4j etc. 
 * Merged bug fixes from v1.5.6.
 
-### 1.5.6 Release
+### V1.5.6 Release
 * Improvement: for mind map, use selected text in input box instead of selected topic as default search keyword.
 * Fix: file extension be added to the Markdown doc title, which is not appropriate and makes an unnecessary file link to itself.
 * Fix: the new created file name extension is missing if inputted name contains dot(.) 
