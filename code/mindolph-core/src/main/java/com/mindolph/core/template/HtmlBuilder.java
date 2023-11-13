@@ -185,7 +185,8 @@ public final class HtmlBuilder {
                 if (resourcePathType == ABSOLUTE) {
                     log.trace(String.format("absolute path: %s%n", src));
                     img.attr("src", "file://%s?%s".formatted(src, resourceToken));
-                } else if (resourcePathType == ResourcePathType.RELATIVE) {
+                }
+                else if (resourcePathType == ResourcePathType.RELATIVE) {
                     String fileName = FilenameUtils.getName(src);
                     img.attr("src", "images/%s?%s".formatted(fileName, resourceToken));
                     File imgFile = new File(src);
@@ -222,7 +223,8 @@ public final class HtmlBuilder {
             if (SystemUtils.IS_OS_WINDOWS) {
                 // for Windows file URI: replace it's '\' to '/' and add an extra '/' as prefix.
                 fontFileUri = "/" + StringUtils.replace(pdfFontFile.getPath(), "\\", "/");
-            } else {
+            }
+            else {
                 fontFileUri = pdfFontFile.getPath();
             }
             styles = """
@@ -240,13 +242,10 @@ public final class HtmlBuilder {
                     </style>
                     """.formatted(styles, fontFileUri);
         }
-        if (StringUtils.isNotBlank(title)) {
-            ret = """
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                    <meta charset="utf-8"/>
-                    <title>%s</title>
+
+        String scripts = StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(onLoadFunction)) {
+            scripts = """
                     <script>
                     %s
                     </script>
@@ -277,13 +276,24 @@ public final class HtmlBuilder {
                         }
                     }
                     </script>
+                    """.formatted(TOOL_SCRIPT, script, onLoadFunction);
+        }
+
+        if (StringUtils.isNotBlank(title)) {
+            ret = """
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="utf-8"/>
+                    <title>%s</title>
+                    %s
                     %s
                     </head>
                     <body onload='onload()'>
                     %s
                     </body>
                     </html>
-                    """.formatted(title, TOOL_SCRIPT, script, onLoadFunction, styles, ret);
+                    """.formatted(title, scripts, styles, ret);
         }
         return ret;
     }
