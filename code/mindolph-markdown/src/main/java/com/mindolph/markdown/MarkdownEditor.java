@@ -729,7 +729,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable, 
     }
 
     /**
-     *
      * @param number
      */
     private void addHeader(int number) {
