@@ -1,5 +1,12 @@
 # Change Logs
 
+### V1.6.3 Unstable Release
+* Merged bug fixes from v1.5.7
+
+### V1.5.7 Release
+* Improvement: optimized recent list view a little bit.
+* Fix: exporting markdown to PDF doesn't work.
+
 ### V1.6.2 Unstable Release
 * Feature: support markdown in note editor for mind map.
 * Improvement: the performance of pasting long text to code editor.
