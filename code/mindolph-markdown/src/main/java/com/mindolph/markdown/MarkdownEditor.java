@@ -427,7 +427,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     FilenameUtils.getBaseName(file.getName()) + ".pdf",
                     new FileChooser.ExtensionFilter("PDF file", "*.pdf"));
             if (pdfFile != null && pdfFile.getParentFile().exists()) {
-                log.debug("Export to pdf file: " + pdfFile);
+                log.info("Export to pdf file: " + pdfFile);
                 new Thread(() -> {
                     try {
                         String fontFilePath = fxPreferences.getPreference(PREF_KEY_MD_FONT_FILE_PDF, String.class);
@@ -457,11 +457,14 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         e.printStackTrace();
+                        log.error("Failed to export to PDF", e);
                         EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: " + e.getLocalizedMessage()));
                     }
-                    EventBus.getIns().notifyStatusMsg(file, new StatusMsg("PDF file exported to: %s".formatted(pdfFile.getPath())));
+                    String success = "PDF file exported to: %s".formatted(pdfFile.getPath());
+                    log.info(success);
+                    EventBus.getIns().notifyStatusMsg(file, new StatusMsg(success));
                 }, "Markdown Export Thread").start();
             }
         });

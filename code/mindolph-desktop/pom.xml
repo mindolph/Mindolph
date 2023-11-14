@@ -18,7 +18,7 @@
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
         <app.version>1.6.2</app.version>
-        <jvm.modules>javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
+        <jvm.modules>java.logging,javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>

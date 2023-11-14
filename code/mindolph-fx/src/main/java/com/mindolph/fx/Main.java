@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.pref.StringConverter;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Objects;
 
@@ -49,6 +51,13 @@ public class Main extends Application implements WindowRestoreListener {
     private Rectangle2D winRect = new Rectangle2D(0, 0, 0, 0);
 
     public Main() {
+        // debug system out
+//        CustomOutputStream cos = new CustomOutputStream(log);
+//        System.setErr(new PrintStream(cos));
+//        System.setOut(new PrintStream(cos));
+//        System.out.println("XXXXXXXXXX");
+
+
         FxPreferences.getInstance().addConverter(Rectangle2D.class, new Rectangle2DStringConverter());
         FxPreferences.getInstance().addConverter(Orientation.class, new StringConverter<Orientation>() {
 
@@ -67,10 +76,12 @@ public class Main extends Application implements WindowRestoreListener {
         if (SystemUtils.IS_OS_MAC) {
             sm.addShortCut(KEY_PUML_COMMENT, new KeyCodeCombination(KeyCode.SLASH, META_DOWN));
             sm.addShortCut(KEY_MD_COMMENT, new KeyCodeCombination(KeyCode.SLASH, META_DOWN));
-        } else if (SystemUtils.IS_OS_LINUX) {
+        }
+        else if (SystemUtils.IS_OS_LINUX) {
             sm.addShortCut(KEY_PUML_COMMENT, new KeyCodeCombination(KeyCode.SLASH, ALT_DOWN));
             sm.addShortCut(KEY_MD_COMMENT, new KeyCodeCombination(KeyCode.SLASH, ALT_DOWN));
-        } else if (SystemUtils.IS_OS_WINDOWS) {
+        }
+        else if (SystemUtils.IS_OS_WINDOWS) {
             sm.addShortCut(KEY_PUML_COMMENT, new KeyCodeCombination(KeyCode.SLASH, ALT_DOWN));
             sm.addShortCut(KEY_MD_COMMENT, new KeyCodeCombination(KeyCode.SLASH, ALT_DOWN));
         }
@@ -169,5 +180,29 @@ public class Main extends Application implements WindowRestoreListener {
         this.window.setHeight(rectangle.getHeight());
     }
 
+    /**
+     * THIS IS FOR DEBUGGING STDOUT OF THE BUNDLED VERSION.
+     */
+    static class CustomOutputStream extends OutputStream {
+        Logger logger;
+        StringBuilder stringBuilder;
 
+        public CustomOutputStream(Logger logger) {
+            this.logger = logger;
+            stringBuilder = new StringBuilder();
+        }
+
+        @Override
+        public final void write(int i) throws IOException {
+            char c = (char) i;
+            if (c == '\r' || c == '\n') {
+                if (!stringBuilder.isEmpty()) {
+                    logger.info(stringBuilder.toString());
+                    stringBuilder = new StringBuilder();
+                }
+            }
+            else
+                stringBuilder.append(c);
+        }
+    }
 }
