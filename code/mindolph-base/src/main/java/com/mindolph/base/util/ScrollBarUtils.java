@@ -15,6 +15,7 @@ public class ScrollBarUtils {
      * @param parent
      * @param or
      * @return
+     * @deprecated
      */
     public static ScrollBar findScrollBar(Node parent, Orientation or) {
         for (Node n : parent.lookupAll(".scroll-bar")) {

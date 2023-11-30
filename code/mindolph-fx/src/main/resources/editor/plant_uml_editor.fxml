@@ -2,7 +2,6 @@
 
 <?import com.mindolph.base.container.FixedSplitPane?>
 <?import com.mindolph.base.control.ImageScrollPane?>
-<?import com.mindolph.base.control.SearchableCodeArea?>
 <?import com.mindolph.base.control.snippet.SnippetView?>
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
@@ -11,15 +10,18 @@
     <children>
         <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300" layoutX="281.0" layoutY="71.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <primary>
-                <AnchorPane fx:id="paneEditor" >
+                <AnchorPane>
                     <children>
                         <FixedSplitPane fx:id="splitPaneCodeEditor" userData="CODE_EDITOR_SPLIT_PANE" fixedSize="100"  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
                             <primary>
-                                <VirtualizedScrollPane>
-                                    <content>
-                                        <PlantUmlCodeArea fx:id="codeArea"/>
-                                    </content>
-                                </VirtualizedScrollPane>
+                                <AnchorPane fx:id="paneCode">
+                                    <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                           AnchorPane.topAnchor="0.0">
+                                        <content>
+                                            <PlantUmlCodeArea fx:id="codeArea"/>
+                                        </content>
+                                    </VirtualizedScrollPane>
+                                </AnchorPane>
                             </primary>
                             <secondary>
                                 <SnippetView fx:id="snippetView"/>

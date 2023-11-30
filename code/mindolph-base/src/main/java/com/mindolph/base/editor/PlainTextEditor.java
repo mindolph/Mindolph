@@ -4,7 +4,9 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.core.constant.SupportFileTypes;
 import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import org.fxmisc.richtext.CharacterHit;
 import org.slf4j.Logger;
@@ -20,12 +22,15 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
 
     private static final Logger log = LoggerFactory.getLogger(PlainTextEditor.class);
 
+    @FXML
+    private AnchorPane paneEditor;
+
     public PlainTextEditor(EditorContext editorContext) {
         super("/editor/plain_text_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_PLAIN_TEXT;
         // consume here otherwise the parent container will receive the double click event
         codeArea.setOnMouseClicked(Event::consume);
-
+        codeArea.withParentPane(paneEditor);
         this.refresh();
     }
 

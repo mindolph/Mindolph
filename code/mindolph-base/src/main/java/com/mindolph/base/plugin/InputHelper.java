@@ -9,12 +9,19 @@ import java.util.List;
  */
 public interface InputHelper {
 
-    List<String> getHelpWords();
+    /**
+     * Get all help words for the editor identified by editorId.
+     *
+     * @param editorId
+     * @return
+     */
+    List<String> getHelpWords(Object editorId);
 
     /**
      * Call this method when context text has been changed to update the help words.
      *
+     * @param editorId
      * @param text
      */
-    void updateContextText(String text);
+    void updateContextText(Object editorId, String text);
 }

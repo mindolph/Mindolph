@@ -27,14 +27,14 @@ public class ContextHelperTest {
     @Test
     public void updateContextText() {
         ContextHelper ch = new ContextHelper();
-        ch.updateContextText("hello\tworld");
-        List<String> words = ch.getHelpWords();
+        ch.updateContextText("editorId", "hello\tworld");
+        List<String> words = ch.getHelpWords("editorId");
         Assertions.assertEquals(2, words.size());
         Assertions.assertEquals("hello", words.get(0));
         Assertions.assertEquals("world", words.get(1));
 
-        ch.updateContextText("hello_world");
-        words = ch.getHelpWords();
+        ch.updateContextText("editorId", "hello_world");
+        words = ch.getHelpWords("editorId");
         Assertions.assertEquals(1, words.size());
         Assertions.assertEquals("hello_world", words.get(0));
     }

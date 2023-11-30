@@ -23,12 +23,14 @@
              <HBox fx:id="hbToolbar">
 
              </HBox>
-             <VirtualizedScrollPane VBox.vgrow="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                 <content>
-                     <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
-                 </content>
-             </VirtualizedScrollPane>
+             <AnchorPane fx:id="paneCode" VBox.vgrow="ALWAYS">
+                 <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                         <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
+                     </content>
+                 </VirtualizedScrollPane>
+             </AnchorPane>
          </children >
       </VBox>
    </children>

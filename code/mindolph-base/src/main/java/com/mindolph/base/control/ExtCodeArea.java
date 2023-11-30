@@ -16,6 +16,7 @@ import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,9 @@ public class ExtCodeArea extends CodeArea {
     public static final int HISTORY_MERGE_DELAY_IN_MILLIS = 200;
     public static final int INPUT_HELP_DELAY_IN_MILLIS = 3000;
 
+    static final int DIRECTION_UP = -1;
+    static final int DIRECTION_DOWN = 1;
+
     private static final Logger log = LoggerFactory.getLogger(ExtCodeArea.class);
 
     private final ShortcutManager sm = ShortcutManager.getIns();
@@ -68,7 +72,7 @@ public class ExtCodeArea extends CodeArea {
 
 
     public ExtCodeArea() {
-        this.inputHelperManager = new InputHelperManager(getFileType());
+        this.inputHelperManager = new InputHelperManager(this.hashCode(), getFileType());
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
         this.setOnContextMenuRequested(contextMenuEvent -> {
@@ -81,7 +85,7 @@ public class ExtCodeArea extends CodeArea {
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
         this.bindCaretCoordinate();
-        this.bindInputHelperContextMenu();
+        this.bindInputHelper();
     }
 
     public void refresh() {
@@ -121,6 +125,15 @@ public class ExtCodeArea extends CodeArea {
         return menu;
     }
 
+    /**
+     * Parent pane is for showing input helper.
+     *
+     * @param parentPane The pane must only contain the code area
+     */
+    public void withParentPane(Pane parentPane) {
+        inputHelperManager.setParentPane(parentPane);
+    }
+
     // @since 1.6
     private void bindCaretCoordinate() {
         this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
@@ -129,7 +142,7 @@ public class ExtCodeArea extends CodeArea {
     }
 
     // @since 1.6
-    private void bindInputHelperContextMenu() {
+    private void bindInputHelper() {
         // delay update context text to reduce redundant calculating.
         // TODO better way is to do updating when new word completed and any other actions that makes text change completed.
         inputHelpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(INPUT_HELP_DELAY_IN_MILLIS))
@@ -138,7 +151,7 @@ public class ExtCodeArea extends CodeArea {
                     new Thread(() -> {
                         Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
                         for (Plugin plugin : plugins) {
-                            plugin.getInputHelper().updateContextText(s);
+                            plugin.getInputHelper().updateContextText(this.hashCode(), s);
                         }
                     }
                     ).start();
@@ -166,6 +179,7 @@ public class ExtCodeArea extends CodeArea {
                 int start = selection.input().length();
                 this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
             }
+            this.requestFocus(); // take back focus from input helper
         });
     }
 
@@ -302,8 +316,45 @@ public class ExtCodeArea extends CodeArea {
                 ));
             }
 
-            inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {
+            inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.UP), keyEvent -> {
                 if (isInputHelperEnabled() && !isInputMethod) {
+                    inputHelperManager.consume(keyEvent, null);
+                    if (!keyEvent.isConsumed()) {
+                        // move caret implicitly
+                        moveCaret(DIRECTION_UP);
+                    }
+                }
+                else {
+                    moveCaret(DIRECTION_UP);
+                }
+            }));
+            inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.DOWN), keyEvent -> {
+                if (isInputHelperEnabled() && !isInputMethod) {
+                    inputHelperManager.consume(keyEvent, null);
+                    if (!keyEvent.isConsumed()) {
+                        // move caret implicitly
+                        moveCaret(DIRECTION_DOWN);
+                    }
+                }
+                else {
+                    moveCaret(DIRECTION_DOWN);
+                }
+            }));
+            inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.ENTER), keyEvent -> {
+                if (isInputHelperEnabled() && !isInputMethod) {
+                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
+                    if (!keyEvent.isConsumed()) {
+                        // line break implicitly
+                        this.replaceSelection("\n");
+                    }
+                }
+                else {
+                    // line break implicitly
+                    this.replaceSelection("\n");
+                }
+            }));
+            inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {
+                if (isInputHelperEnabled() && !isInputMethod && !isUpOrDown(keyEvent)) {
                     if (EventUtils.isEditableInput(keyEvent)) {
                         inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
                     }
@@ -316,6 +367,10 @@ public class ExtCodeArea extends CodeArea {
 
     private boolean isInputHelperEnabled() {
         return PreferenceManager.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
+    }
+
+    private boolean isUpOrDown(KeyEvent keyEvent) {
+        return KeyCode.UP.equals(keyEvent.getCode()) || KeyCode.DOWN.equals(keyEvent.getCode());
     }
 
     private String extractLastWordFromCaret() {
@@ -343,6 +398,20 @@ public class ExtCodeArea extends CodeArea {
     public static String extractLastWord(String text) {
         int i = StringUtils.lastIndexOfAny(text, " ", "\t") + 1;
         return StringUtils.substring(text, Math.max(0, i), text.length());
+    }
+
+    /**
+     * Move caret up or down explicitly.
+     *
+     * @param direction
+     * @since 1.6.4
+     */
+    private void moveCaret(int direction) {
+        int idx = this.getCurrentParagraph();
+        Paragraph<Collection<String>, String, Collection<String>> targetPar = this.getParagraph(idx + direction);
+        if (targetPar != null) {
+            this.moveTo(idx + direction, Math.min(this.getCaretColumn(), targetPar.length()));
+        }
     }
 
     /**
@@ -554,9 +623,6 @@ public class ExtCodeArea extends CodeArea {
         Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
         return paragraph.getText();
     }
-
-    // The file type is needed to
-//    private String fileType;
 
     public String getFileType() {
         return SupportFileTypes.TYPE_PLAIN_TEXT;

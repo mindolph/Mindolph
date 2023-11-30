@@ -4,10 +4,10 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import org.apache.commons.lang3.CharUtils;
+
+import static com.mindolph.base.util.NodeUtils.getTextBounds;
 
 /**
  * @author mindolph.com@gmail.com
@@ -55,13 +55,13 @@ public class TextUtils {
         return buf.toString();
     }
 
-    public static Bounds getTextBounds(String s, Font font) {
-        Text text = new Text(s);
-        text.setFont(font);
-        StackPane stackPane = new StackPane(text);
-        stackPane.layout();
-        return text.getLayoutBounds();
-    }
+//    public static Bounds getTextBounds(String s, Font font) {
+//        Text text = new Text(s);
+//        text.setFont(font);
+//        StackPane stackPane = new StackPane(text);
+//        stackPane.layout();
+//        return text.getLayoutBounds();
+//    }
 
     public static String removeAllISOControlsButTabs(String str) {
         StringBuilder result = new StringBuilder(str.length());

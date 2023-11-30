@@ -17,13 +17,15 @@
                   AnchorPane.topAnchor="0.0">
                <VBox fx:id="vbToolbar">
                </VBox>
-               <VirtualizedScrollPane fx:id="codeScrollPane" minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
-                  <content>
-
-                     <MarkdownCodeArea fx:id="codeArea" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-                  </content>
-               </VirtualizedScrollPane>
+               <AnchorPane fx:id="paneCode" VBox.vgrow="ALWAYS">
+                  <VirtualizedScrollPane fx:id="codeScrollPane" minHeight="0.0" minWidth="0.0"
+                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                         AnchorPane.topAnchor="0.0">
+                      <content>
+                          <MarkdownCodeArea fx:id="codeArea"/>
+                      </content>
+                  </VirtualizedScrollPane>
+               </AnchorPane>
             </VBox>
          </AnchorPane>
       </primary>

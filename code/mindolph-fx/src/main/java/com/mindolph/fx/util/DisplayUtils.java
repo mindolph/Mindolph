@@ -11,7 +11,7 @@ import java.io.File;
 public class DisplayUtils {
 
     /**
-     * Display a file in workspace.
+     * Display a file with workspace.
      *
      * @param workspaceDir
      * @param file
@@ -22,6 +22,13 @@ public class DisplayUtils {
         return "%s(%s)".formatted(StringUtils.substringAfter(file.getPath(), workspaceDir.getPath()), workspaceName);
     }
 
+    /**
+     * Display a file in workspace.
+     *
+     * @param workspaceDir
+     * @param file
+     * @return
+     */
     public static String displayFile(File workspaceDir, File file) {
         return StringUtils.substringAfter(file.getPath(), StringUtils.appendIfMissing(workspaceDir.getPath(), "/"));
     }

@@ -43,12 +43,12 @@ public class ExtCodeAreaDemo implements Initializable {
         public InputHelper getInputHelper() {
             return new InputHelper() {
                 @Override
-                public List<String> getHelpWords() {
+                public List<String> getHelpWords(Object editorId) {
                     return null;
                 }
 
                 @Override
-                public void updateContextText(String text) {
+                public void updateContextText(Object editorId, String text) {
 
                 }
             };

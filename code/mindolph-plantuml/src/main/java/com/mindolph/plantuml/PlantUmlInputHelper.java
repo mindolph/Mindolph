@@ -26,13 +26,13 @@ public class PlantUmlInputHelper implements InputHelper {
     }
 
     @Override
-    public List<String> getHelpWords() {
+    public List<String> getHelpWords(Object editorId) {
         return preDefinedWords;
     }
 
 
     @Override
-    public void updateContextText(String text) {
+    public void updateContextText(Object editorId, String text) {
         // DO NOTHING.
     }
 

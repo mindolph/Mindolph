@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Editor with preview.
- * All implementations should have one SplitPane called 'splitPanel', and AnchorPanes called 'paneEditor' and 'panePreview'
+ * All implementations should have one SplitPane called 'splitPanel', and AnchorPanes called 'paneCode' and 'panePreview'
  *
  * @author mindolph.com@gmail.com
  */
@@ -30,7 +30,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     private FixedSplitPane fixedSplitPane;
 
     @FXML
-    private AnchorPane paneEditor;
+    private AnchorPane paneCode;
 
     @FXML
     private AnchorPane panePreview;
@@ -68,6 +68,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
                 fixedSplitPane.setOrientation(editorContext.getOrientation());
             }
         });
+        codeArea.withParentPane(paneCode);
     }
 
     protected void enablePageSwipe() {

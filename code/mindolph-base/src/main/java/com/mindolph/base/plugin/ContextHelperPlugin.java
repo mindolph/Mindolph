@@ -6,10 +6,7 @@ import org.apache.commons.text.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static com.mindolph.core.constant.SupportFileTypes.*;
 
@@ -38,32 +35,35 @@ public class ContextHelperPlugin implements Plugin {
         return inputHelper;
     }
 
+    /**
+     * Default context helper.
+     */
     public static class ContextHelper implements InputHelper {
-        private final List<String> contextWords = new ArrayList<>();
+        private final Map<Object, List<String>> contextWordsMap = new HashMap<>();
 
         @Override
-        public List<String> getHelpWords() {
-            return contextWords;
+        public List<String> getHelpWords(Object editorId) {
+            return contextWordsMap.get(editorId);
         }
 
         @Override
-        public void updateContextText(String text) {
+        public void updateContextText(Object editorId, String text) {
             StringTokenizer st = new StringTokenizer(extractOnlyLetters(text));
-            contextWords.clear();
+            List<String> words = contextWordsMap.computeIfAbsent(editorId, k -> new ArrayList<>());
+            words.clear();
             while (st.hasNext()) {
                 String token = st.nextToken();
                 if (StringUtils.isBlank(token) || token.length() < 2) {
                     continue;
                 }
-                contextWords.add(token);
+                words.add(token);
             }
-            log.debug("%d context words updated.".formatted(contextWords.size()));
+            log.debug("%d context words updated.".formatted(words.size()));
         }
 
         public static String extractOnlyLetters(String text) {
             // this replacement makes more friendly for programming code.
-            String cleanText = RegExUtils.replaceAll(text, "[\\s\\r,]", " ");
-            return cleanText;
+            return RegExUtils.replaceAll(text, "[\\s\\r,]", " ");
         }
 
     }

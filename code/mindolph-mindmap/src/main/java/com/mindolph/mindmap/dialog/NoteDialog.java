@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -42,7 +43,7 @@ import java.nio.charset.StandardCharsets;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 
 /**
- * Dialog to input note.
+ * Dialog to edit note for mind map.
  *
  * @author mindolph.com@gmail.com
  */
@@ -66,6 +67,8 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
     private ToggleButton tbtnSearch;
     @FXML
     private ToggleButton tbtnReplace;
+    @FXML
+    private AnchorPane paneCode;
     @FXML
     private MarkdownCodeArea textArea;
     private MarkdownToolbar editorToolBar;
@@ -241,6 +244,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             String selectedText = textArea.getText(newValue);
             btnBrowse.setDisable(!UrlUtils.isValid(selectedText));
         });
+        textArea.withParentPane(paneCode);
 
         searchBar.setSearchPrevEventHandler(searchParams -> {
             TextSearchOptions textSearchOptions = new TextSearchOptions();
