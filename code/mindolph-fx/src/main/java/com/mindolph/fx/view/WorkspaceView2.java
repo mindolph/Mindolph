@@ -268,7 +268,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
         btnNew.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnReload.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
+        btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
         btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
 
         // event handler for toolbar buttons.
@@ -638,7 +638,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenu.getItems().add(miOpenInSystem);
             }
             if (isFolder) {
-                miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_ALL));
+                miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);

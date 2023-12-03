@@ -99,11 +99,11 @@
             <artifactId>fontawesomefx-octicons</artifactId>
             <version>4.3.0-17</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>de.jensd</groupId>-->
-<!--            <artifactId>fontawesomefx-icons525</artifactId>-->
-<!--            <version>3.0.0-17</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-icons525</artifactId>
+            <version>3.0.0-17</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>de.jensd</groupId>-->
 <!--            <artifactId>fontawesomefx-emojione</artifactId>-->

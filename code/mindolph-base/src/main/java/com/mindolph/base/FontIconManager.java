@@ -5,6 +5,7 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.model.NodeData;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import de.jensd.fx.glyphs.icons525.Icons525;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.utils.MaterialDesignIconFactory;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
@@ -47,6 +48,7 @@ public class FontIconManager {
         icons.put(IconKey.CLONE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_COPY, DEFAULT_ICON_SIZE));
         icons.put(IconKey.DELETE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.DELETE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.COLLAPSE_ALL, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MINUS_CIRCLE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.COLLAPSE_FOLDERS, () -> FontAwesomeIconFactory.get().createIcon(Icons525.SHRINK, DEFAULT_ICON_SIZE));
         icons.put(IconKey.OK, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CHECK, DEFAULT_ICON_SIZE));
         icons.put(IconKey.YES, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CHECK, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FINISH, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CHECK, DEFAULT_ICON_SIZE));
