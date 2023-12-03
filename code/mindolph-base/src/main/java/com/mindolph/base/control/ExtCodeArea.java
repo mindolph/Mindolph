@@ -177,7 +177,9 @@ public class ExtCodeArea extends CodeArea {
         inputHelperManager.onSelected((selection) -> {
             if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
                 int start = selection.input().length();
-                this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
+                this.deleteText(this.getCaretPosition() - start, this.getCaretPosition());
+                this.insertText(this.getCaretPosition(), selection.selected());
+//                this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
             }
             this.requestFocus(); // take back focus from input helper
         });

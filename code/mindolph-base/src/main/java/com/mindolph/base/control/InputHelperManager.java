@@ -3,7 +3,6 @@ package com.mindolph.base.control;
 import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.github.swiftech.swstate.trigger.Trigger;
-import com.mindolph.base.Env;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
@@ -300,9 +299,6 @@ public class InputHelperManager {
                 this.lvSuggestion.setMaxHeight(actualHeight + 2);// 2 is extra
 
                 // selection
-                if (Env.isDevelopment) {
-
-                }
                 for (String item : lvSuggestion.getItems()) {
                     if (item.equalsIgnoreCase(input)) {
                         lvSuggestion.getSelectionModel().select(item);
