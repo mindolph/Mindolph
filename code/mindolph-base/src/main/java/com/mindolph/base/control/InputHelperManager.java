@@ -10,7 +10,6 @@ import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.base.util.NodeUtils;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -19,7 +18,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -147,16 +145,6 @@ public class InputHelperManager {
                 return listCell;
             }
         });
-        // items changes make size changes.
-        this.lvSuggestion.getItems().addListener((ListChangeListener<String>) change -> {
-            ObservableList<? extends String> items = change.getList();
-            Optional<? extends String> longest = items.stream().sorted((Comparator<String>) (o1, o2) -> o2.length() - o1.length()).findFirst();
-            String longestStr = longest.isPresent() ? longest.get() : "";
-            Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());
-            this.lvSuggestion.setMaxWidth(maxTextBounds.getWidth() + longestStr.length() * 3); // length * 3 is extra
-            this.lvSuggestion.setPrefWidth(maxTextBounds.getWidth() + longestStr.length() * 3);
-            this.lvSuggestion.setMaxHeight(items.size() * DEFAULT_ITEM_HEIGHT + 2);// 2 is extra
-        });
     }
 
     public void updateCaret(Node node, double x, double y) {
@@ -253,11 +241,11 @@ public class InputHelperManager {
         lvSuggestion.getItems().clear();
 
         Map<String, Object> duplicateKiller = new HashMap<>();
-        if (Env.isDevelopment) {
-            MenuItem inputItem = new MenuItem(input);
-            inputItem.setDisable(true);
-            lvSuggestion.getItems().add(input);
-        }
+//        if (Env.isDevelopment) {
+//            MenuItem inputItem = new MenuItem(input);
+//            inputItem.setDisable(true);
+//            lvSuggestion.getItems().add(input);
+//        }
 
         lvSuggestion.setUserData(input); // used for selection handling.
         for (Plugin plugin : supportedPlugins) {
@@ -270,7 +258,7 @@ public class InputHelperManager {
             // get rid of blank, duplicates and the one equals what user input.
             List<String> helpWords = allHelpWords.stream()
                     .filter(StringUtils::isNotBlank)
-                    .filter(s -> !StringUtils.equals(s, input)) // no need to prompt if it equals what you just inputted.
+//                    .filter(s -> !StringUtils.equals(s, input)) // no need to prompt if it equals what you just inputted.
                     .filter(s -> !duplicateKiller.containsKey(s)) // excludes those provided in previous plugin.
                     .distinct().toList();
 
@@ -287,18 +275,39 @@ public class InputHelperManager {
                 duplicateKiller.put(candidate, candidate); // only key is needed for now.
             }
         }
-        if (!lvSuggestion.getItems().isEmpty()) {
+        ObservableList<String> items = lvSuggestion.getItems();
+        if (!items.isEmpty()) {
             Point2D pos = targetNode.screenToLocal(caretX, caretY);
 
             // run later for lvSuggestion to be ready
             Platform.runLater(() -> {
                 Bounds targetBounds = targetNode.getBoundsInParent();
-
                 Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getWidth(), lvSuggestion.getItems().size() * DEFAULT_ITEM_HEIGHT);
                 Point2D newPos = LayoutUtils.bestLocation(targetBounds, hoverBounds, new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
                 this.stackPane.relocate(newPos.getX(), newPos.getY());
                 this.showHelper();
                 log.debug("Suggestion listed");
+
+                Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
+                String longestStr = longest.isPresent() ? longest.get() : "";
+                Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());
+                double actualWidth = maxTextBounds.getWidth() + longestStr.length() * 3; // length * 3 is extra
+                this.lvSuggestion.setMaxWidth(Math.min(250, actualWidth));
+                this.lvSuggestion.setPrefWidth(actualWidth);
+                double actualHeight = items.size() * DEFAULT_ITEM_HEIGHT;
+                actualHeight = actualWidth > 250 ? actualHeight + 15 : actualHeight;
+                this.lvSuggestion.setPrefHeight(actualHeight + 2);
+                this.lvSuggestion.setMaxHeight(actualHeight + 2);// 2 is extra
+
+                // selection
+                if (Env.isDevelopment) {
+
+                }
+                for (String item : lvSuggestion.getItems()) {
+                    if (item.equalsIgnoreCase(input)) {
+                        lvSuggestion.getSelectionModel().select(item);
+                    }
+                }
             });
         }
     }

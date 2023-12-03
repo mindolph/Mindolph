@@ -186,19 +186,18 @@ public class ExtCodeArea extends CodeArea {
     @Override
     protected void handleInputMethodEvent(InputMethodEvent event) {
         super.handleInputMethodEvent(event);
-        if (!isInputHelperEnabled()) {
-            System.out.printf("'%s'%n", event.getCommitted());
-            return;
-        }
+//        if (!isInputHelperEnabled()) {
+//            log.debug("'%s'%n", event.getCommitted());
+//            return;
+//        }
         if (StringUtils.isBlank(event.getCommitted())) {
             isInputMethod = true;
             log.debug("in input method");
             this.insertText(this.getCaretPosition(), event.getCommitted());
         }
         else {
-            System.out.println(event.getCommitted());
             isInputMethod = false;
-            log.debug("not in input method");
+            log.debug("not in input method with: " + event.getCommitted());
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
         }
     }
@@ -317,40 +316,46 @@ public class ExtCodeArea extends CodeArea {
             }
 
             inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.UP), keyEvent -> {
-                if (isInputHelperEnabled() && !isInputMethod) {
-                    inputHelperManager.consume(keyEvent, null);
-                    if (!keyEvent.isConsumed()) {
-                        // move caret implicitly
+                if (!isInputMethod) {
+                    if (isInputHelperEnabled()) {
+                        inputHelperManager.consume(keyEvent, null);
+                        if (!keyEvent.isConsumed()) {
+                            // move caret implicitly
+                            moveCaret(DIRECTION_UP);
+                        }
+                    }
+                    else {
                         moveCaret(DIRECTION_UP);
                     }
                 }
-                else {
-                    moveCaret(DIRECTION_UP);
-                }
             }));
             inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.DOWN), keyEvent -> {
-                if (isInputHelperEnabled() && !isInputMethod) {
-                    inputHelperManager.consume(keyEvent, null);
-                    if (!keyEvent.isConsumed()) {
-                        // move caret implicitly
+                if (!isInputMethod) {
+                    if (isInputHelperEnabled()) {
+                        inputHelperManager.consume(keyEvent, null);
+                        if (!keyEvent.isConsumed()) {
+                            // move caret implicitly
+                            moveCaret(DIRECTION_DOWN);
+                        }
+                    }
+                    else {
                         moveCaret(DIRECTION_DOWN);
                     }
                 }
-                else {
-                    moveCaret(DIRECTION_DOWN);
-                }
             }));
             inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.ENTER), keyEvent -> {
-                if (isInputHelperEnabled() && !isInputMethod) {
-                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
-                    if (!keyEvent.isConsumed()) {
+                if (!isInputMethod) {
+                    if (isInputHelperEnabled() && !isInputMethod) {
+                        inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
+                        if (!keyEvent.isConsumed()) {
+                            // line break implicitly
+                            this.replaceSelection("\n");
+                        }
+                    }
+                    else {
                         // line break implicitly
                         this.replaceSelection("\n");
                     }
-                }
-                else {
-                    // line break implicitly
-                    this.replaceSelection("\n");
                 }
             }));
             inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {

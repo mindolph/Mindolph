@@ -1,6 +1,8 @@
 package com.mindolph.base.util;
 
 /**
+ * Calculation utils for scroll.
+ *
  * @author mindolph.com@gmail.com
  */
 public class ScrollUtils {
