@@ -55,6 +55,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +269,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
 
         btnNew.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnReload.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
+        btnCollapseAll.setGraphic(FontIconManager.getIns().getIcon(SystemUtils.IS_OS_MAC ? IconKey.COLLAPSE_FOLDERS : IconKey.COLLAPSE_ALL));
         btnFindInFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEARCH));
 
         // event handler for toolbar buttons.
@@ -638,7 +639,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenu.getItems().add(miOpenInSystem);
             }
             if (isFolder) {
-                miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
+                miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(SystemUtils.IS_OS_MAC ? IconKey.COLLAPSE_FOLDERS : IconKey.COLLAPSE_ALL));
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
