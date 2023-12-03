@@ -415,6 +415,12 @@ public class ExtCodeArea extends CodeArea {
      */
     private void moveCaret(int direction) {
         int idx = this.getCurrentParagraph();
+        if (idx == 0 && direction == DIRECTION_UP) {
+            return;
+        }
+        if (idx == this.getParagraphs().size() - 1 && direction == DIRECTION_DOWN) {
+            return;
+        }
         Paragraph<Collection<String>, String, Collection<String>> targetPar = this.getParagraph(idx + direction);
         if (targetPar != null) {
             this.moveTo(idx + direction, Math.min(this.getCaretColumn(), targetPar.length()));
