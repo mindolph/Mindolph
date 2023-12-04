@@ -13,12 +13,6 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import de.jensd.fx.glyphs.materialicons.utils.MaterialIconFactory;
 import de.jensd.fx.glyphs.octicons.OctIcon;
 import de.jensd.fx.glyphs.octicons.utils.OctIconFactory;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -258,26 +252,4 @@ public class FontIconManager {
             return getIcon(IconKey.UNKNOWN_FILE); // as default icon
         }
     }
-
-    // Doesn't work
-    public Image getIconImage(IconKey iconKey) {
-        Text icon = getIcon(iconKey);
-        icon.setFill(Color.YELLOW);
-        icon.setStroke(Color.RED);
-        icon.setFont(new Font(24));
-        icon.setWrappingWidth(24);
-        Label label = new Label("X");
-        label.setMinWidth(24);
-        label.setMinHeight(24);
-        label.setPrefWidth(24);
-        label.setPrefHeight(24);
-//        label.setGraphic(icon);
-//        label.setStyle("-fx-background-color: green");
-        StackPane sp = new StackPane();
-        sp.getChildren().add(label);
-        WritableImage img = new WritableImage(200, 200);
-        return sp.snapshot(null, img);
-    }
-
-
 }

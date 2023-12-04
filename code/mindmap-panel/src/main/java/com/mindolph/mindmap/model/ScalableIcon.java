@@ -4,12 +4,15 @@ import javafx.scene.image.Image;
 
 import java.io.InputStream;
 
+/**
+ * @deprecated
+ */
 public final class ScalableIcon {
 
-    public static final ScalableIcon FILE = new ScalableIcon("extra_file.png");
-    public static final ScalableIcon TOPIC = new ScalableIcon("extra_topic.png");
-    public static final ScalableIcon TEXT = new ScalableIcon("extra_note.png");
-    public static final ScalableIcon LINK = new ScalableIcon("extra_uri.png");
+//    public static final ScalableIcon FILE = new ScalableIcon("extra_file.png");
+//    public static final ScalableIcon TOPIC = new ScalableIcon("extra_topic.png");
+//    public static final ScalableIcon TEXT = new ScalableIcon("extra_note.png");
+//    public static final ScalableIcon LINK = new ScalableIcon("extra_uri.png");
 
     public static final double BASE_WIDTH = 16;
     public static final double BASE_HEIGHT = 16;
