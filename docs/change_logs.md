@@ -1,5 +1,9 @@
 # Change Logs
 
+### V1.6.4 Unstable Release
+* Improvement: refactor input helper and optimize the selection from suggestions list.
+* Improvement: use new icon for 'collapse folder'.
+
 ### V1.6.3 Unstable Release
 * Merged bug fixes from v1.5.7
 
