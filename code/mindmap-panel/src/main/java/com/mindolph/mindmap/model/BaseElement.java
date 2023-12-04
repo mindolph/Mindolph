@@ -72,7 +72,7 @@ public abstract class BaseElement {
         this.mindMapContext = context;
         this.textBlock = new TextBlock(this.model.getText(), TextAlign.findForName(model.getAttribute("align")), g, config, context);
         this.textBlock.setTextAlign(TextAlign.findForName(model.getAttribute("align")));
-        this.extrasIconBlock = new IconBlock(model, g, config, context);
+        this.extrasIconBlock = new IconBlock(this, model, g, config, context);
         this.visualAttributeImageBlock = new VisualAttributeImageBlock(model, g, config, context);
         updateColorAttributeFromModel();
     }

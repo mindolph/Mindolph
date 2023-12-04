@@ -75,6 +75,7 @@ public final class ElementRoot extends BaseElement {
 
         // Draw icon
         if (this.extrasIconBlock.hasContent()) {
+            this.extrasIconBlock.setTextColor(this.getTextColor());
             this.extrasIconBlock.paint();
         }
     }
