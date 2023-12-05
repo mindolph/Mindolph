@@ -39,6 +39,8 @@ public interface MindMapConstants {
      */
     DataFormat MMD_DATA_FORMAT  = new DataFormat("application/mindolph-topic-list");
     String MODEL_ATTR_SHOW_JUMPS = "showJumps";
+    double BASE_ICON_WIDTH = 16;
+    double BASE_ICON_HEIGHT = 16;
 
     enum VisualStrategy{
         CENTER, FIT

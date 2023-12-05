@@ -9,6 +9,7 @@ import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
+import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.util.Utils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -31,10 +32,10 @@ public class IconBlock extends Block {
     private List<Extra<?>> currentExtras = null;
     private List<Rectangle2D> boundsList = new ArrayList<>(); // bounds of icons inside
 
-    private static Font awesomeFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/fontawesome/fontawesome-webfont.ttf"), 16);
-    private static Font octFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/octicons/octicons.ttf"), 16);
-    private static Font materialDesignFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/materialdesignicons/materialdesignicons-webfont.ttf"), 16);
-    private static Font materialFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/materialicons/MaterialIcons-Regular.ttf"), 16);
+    private static final Font awesomeFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/fontawesome/fontawesome-webfont.ttf"), 16);
+    private static final Font octFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/octicons/octicons.ttf"), 16);
+    private static final Font materialDesignFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/materialdesignicons/materialdesignicons-webfont.ttf"), 16);
+    private static final Font materialFont = Font.loadFont(IconBlock.class.getResourceAsStream("/de/jensd/fx/glyphs/materialicons/MaterialIcons-Regular.ttf"), 16);
 
     static {
         if (awesomeFont == null || octFont == null || materialDesignFont == null || materialFont == null) {
@@ -50,6 +51,7 @@ public class IconBlock extends Block {
         this.currentExtras = orig.currentExtras;
         this.boundsList = orig.boundsList;
         this.element = orig.element;
+        this.textColor = orig.textColor;
     }
 
     public IconBlock(BaseElement element, TopicNode model, Graphics g, MindMapConfig cfg, MindMapContext mindMapContext) {
@@ -67,8 +69,8 @@ public class IconBlock extends Block {
         if (numberOfIcons != 0) {
             double offsetX = this.bounds.getMinX();
             double offsetY = this.bounds.getMinY();
-            double scaledIconWidth = ScalableIcon.BASE_WIDTH * this.mindMapContext.getScale();
-            double scaledIconHeight = ScalableIcon.BASE_HEIGHT * this.mindMapContext.getScale();
+            double scaledIconWidth = MindMapConstants.BASE_ICON_WIDTH * this.mindMapContext.getScale();
+            double scaledIconHeight = MindMapConstants.BASE_ICON_HEIGHT * this.mindMapContext.getScale();
             for (Extra<?> e : this.currentExtras) {
                 Text icon = null;
                 Font scaledFont = null;
@@ -118,8 +120,8 @@ public class IconBlock extends Block {
             this.contentPresented = false;
         }
         else {
-            double scaledIconWidth = ScalableIcon.BASE_WIDTH * scale;
-            double scaledIconHeight = ScalableIcon.BASE_HEIGHT * scale;
+            double scaledIconWidth = MindMapConstants.BASE_ICON_WIDTH * scale;
+            double scaledIconHeight = MindMapConstants.BASE_ICON_HEIGHT * scale;
             double scaledSpacing = ICON_SPACING * scale;
             double totalSpacing = scaledSpacing * (numberOfIcons - 1);
 
