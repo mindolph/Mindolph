@@ -49,6 +49,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,7 +224,54 @@ public class SVGImageExporter extends BaseExportExtension {
 
 
     private String prepareStylePart(StringBuilder buffer, MindMapConfig config) {
-        return "<style>%s.%s {%s%s}%s</style>".formatted(NEXT_LINE, FONT_CLASS_NAME, NEXT_LINE, font2style(config.getNoteFont()), NEXT_LINE);
+        return """
+                <style>
+                @font-face {
+                    font-family: 'fontawesomeregular';
+                    src: url(data:application/font-woff2;charset=utf-8;base64,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) format('woff2');
+                    font-weight: normal;
+                    font-style: normal;
+                
+                }
+                @font-face {
+                    font-family: 'material_iconsregular';
+                    src: url(data:application/font-woff2;charset=utf-8;base64,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) format('woff2');
+                    font-weight: normal;
+                    font-style: normal;
+                
+                }
+                
+                
+                @font-face {
+                    font-family: 'material_design_iconsregular';
+                    src: url(data:application/font-woff2;charset=utf-8;base64,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) format('woff2');
+                    font-weight: normal;
+                    font-style: normal;
+                
+                }
+                @font-face {
+                    font-family: 'octiconsregular';
+                    src: url(data:application/font-woff2;charset=utf-8;base64,d09GMgABAAAAAAUMABAAAAAAChAAAAStAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP0ZGVE0cGh4GYACCaggCCYRlEQgKghyCMgsoAAE2AiQDTAQgBYJ8B4FODC4b4gjIngV2a8cxiUlDacOQ+p1XXIyH5/ernfu+zMyKS0LqSkJcQsKngUdK2DSERrQo1giN0Nbv06V/DUAKjCKbJRPgroHPQEGukqcQVCmapJo7hzqgjqkouaP8A29nDLhtYBpQ167W1P7N/4ZRIQoXpyNUbkNQAhS2tQ4IVGNraxSg6/hK1cF54yUlh/RnhYC/RzaeAvh2+fA5gH8Xc75BoAV9IAmhi5AjIS+uidPwlBfLnheA6FV2zn6gL4GkqFEcHSrh647cqpvGIQT+V2wDShbqEMDCCQIZKozElNzIB3tHHvaANlVJqXXCjzJoLOHPNwQgCi/leXz5+sX5PjL4HATNL0pCLJGQ+e8E8IAGzIbw/dzaKbl5h2IYazFcpskyla74fkUvWYSnx1gcJr3ngDSLk9nSLesMpVucmfMxxOudUud1ZXFuNltDN/Q98pP2SGl1uuVfbS+equYi08z1O9StlYqxuDADhwctLk3nlDjaKZmOXhjWmFrlisjO8CvXr5phoVSUYXHNpP0DnPu+9kgRZwlNBnGe2MzoPGM77Any5hZquq40O8Z142DFppkNh2ghukJ9zSY9X8rlWkzK4ErasCRqMOonFkjS9GRzrJNvHZXSarKLGHvMsCfs6aHyRsc1XMnWKC0knXkHpfXr2sztW+t1jK5r9Npu6ZbigiZifWc6TVSZaDcNej3w7gbJlh5N51DSZo/EJqOyF9l7bWMiwaJG5XzHEZCwbKfHPl+ta/J5W8oadMX4KpB2d5tkK/nnW1bdPC03V5i4llLtdu6BPeaqyqisrhYtN0MwxcaKtSclXOOYNCaJGZsaZaJbEa+n13KB1FyvdgkScDHTFMc61ozT0mtyTovBrD+XBSG2JRh0A+ZAgQmwG0COl3CjPW5IeR4d3v6PgndPBvq2RDw67B+o5cFed/9U99tj752dCfWama6E50nw69+qOPTjUCpQh6c6HIenIwLklie7V145n5oK4Lud3xoDWJ8HZEl2FW4R6STcUpz1kJ8mDgKVsshlsk5P7940uIJguVF55PIOalpeXff2rS1zmcHZIw7LFhydwV6XsCCew5UQZ1Uoy5sfcXi2c0CkxYa9O8NWO5SZkfHRRXB6wWFXZ0RUkfLDM7MgEPR+uN86Flz622e9D05qBhGlEqo/BoLS9ltgcQsoCfCLu6uwDrgCVWQoXZKsUQfCAh/JDu4k5mPPmiq2btHcfjcJSR8ElwF0eAgBdlUSF5IhQn1u4OhSGOQu8pqQGwKOhLHoTJ/LHYUxGxylZN3xCVGqHZ+RSTq+IMgL+1d4eb/OH3cMuXRw49S257q09Xf/1gHH5Oui/yDSmXv3c9hiq3kbrSCZjDVLukxaRgbaJs0wHdsQgzmR00gth6k2kg+HcxXLdimTz0nRUJkp+2bTHGZM2G7JNkscNqrvr6XH5lzLvC22vOISN2DbAydple4GIUWKLPIoooxKVKMWTdEcLdEabdEeHSLUe/vKfGZmZq3LZEMmZEE25EAu5EE+FEAhFHFVkux6Li9OamsCP1Nl681yrpvi/1icQEvDp1M6hXinnPUn+kzuUC0c0S1319VaTs0alooj0gAAAAA=) format('woff2');
+                    font-weight: normal;
+                    font-style: normal;
+                
+                }
+                .FontAwesome {
+                    font-family: 'fontawesomeregular';
+                }
+                .MaterialIcons {
+                    font-family: 'material_iconsregular';
+                }
+                .MaterialDesignIcons {
+                    font-family: 'material_design_iconsregular';
+                }
+                .octicons {
+                    font-family: 'octiconsregular';
+                }
+                .%s {
+                %s}
+                </style>
+                """.formatted(FONT_CLASS_NAME, font2style(config.getNoteFont()));
     }
 
     @Override
@@ -320,10 +368,6 @@ public class SVGImageExporter extends BaseExportExtension {
             if (color.getOpacity() < 1) {
                 this.buffer.append(" fill-opacity=\"").append(OPACITY.format(color.getOpacity())).append("\" ");
             }
-        }
-
-        private void printFontData() {
-            this.buffer.append("class=\"" + FONT_CLASS_NAME + '\"');
         }
 
         private void printStrokeData(Color color) {
@@ -451,8 +495,22 @@ public class SVGImageExporter extends BaseExportExtension {
                 printFillOpacity(color);
             }
             this.buffer.append(' ');
-            printFontData();
+            this.buffer.append("class=\"").append(FONT_CLASS_NAME).append('\"');
             this.buffer.append('>').append(StringEscapeUtils.escapeXml(text)).append("</text>").append(NEXT_LINE);
+        }
+
+        @Override
+        public void drawFontIcon(Font font, String iconText, double x, double y, Color fill) {
+            this.setFont(font);
+            this.buffer.append("<text x=\"").append(dbl2str(this.translateX + x)).append("\" y=\"").append(dbl2str(this.translateY + y)).append('\"');
+            if (fill != null) {
+                this.buffer.append(" fill=\"").append(svgRgb(fill)).append("\"");
+                printFillOpacity(fill);
+            }
+            this.buffer.append(' ');
+            this.buffer.append("class=\"").append(StringUtils.deleteWhitespace(this.context.getFont().getFamily())).append('\"');
+            String icon = "&#" + (int)iconText.charAt(0) + ";";
+            this.buffer.append('>').append(icon).append("</text>").append(NEXT_LINE);
         }
 
         @Override

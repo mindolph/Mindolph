@@ -5,6 +5,7 @@ import com.mindolph.base.constant.StrokeType;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -13,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 /**
  *
@@ -237,7 +239,21 @@ public class CanvasGraphicsWrapper implements Graphics {
         if (fill != null) {
             gc.setLineWidth(1);
             gc.setFill(fill);
+            gc.setTextAlign(TextAlignment.LEFT);
+            gc.setTextBaseline(VPos.BASELINE);
             gc.fillText(text, x, y);
+        }
+    }
+
+    @Override
+    public void drawFontIcon(Font font, String iconText, double x, double y, Color fill) {
+        this.setFont(font);
+        if (fill != null) {
+            gc.setFont(font);
+            gc.setFill(fill);
+            gc.setTextAlign(TextAlignment.LEFT);
+            gc.setTextBaseline(VPos.BOTTOM);
+            gc.fillText(iconText, x, y);
         }
     }
 
