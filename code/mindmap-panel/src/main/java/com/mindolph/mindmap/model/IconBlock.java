@@ -2,8 +2,6 @@ package com.mindolph.mindmap.model;
 
 import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.ExtraFile;
-import com.mindolph.base.FontIconManager;
-import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.RectangleUtils;
@@ -11,10 +9,14 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.util.Utils;
+import de.jensd.fx.glyphs.GlyphIcons;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import de.jensd.fx.glyphs.octicons.OctIcon;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 
@@ -72,33 +74,32 @@ public class IconBlock extends Block {
             double scaledIconWidth = MindMapConstants.BASE_ICON_WIDTH * this.mindMapContext.getScale();
             double scaledIconHeight = MindMapConstants.BASE_ICON_HEIGHT * this.mindMapContext.getScale();
             for (Extra<?> e : this.currentExtras) {
-                Text icon = null;
+                GlyphIcons icon = null;
                 Font scaledFont = null;
                 switch (e.getType()) {
                     case FILE:
-                        icon = FontIconManager.getIns().getIcon(IconKey.FILE_LINK);
+                        icon = OctIcon.LINK_EXTERNAL;
                         scaledFont = FontUtils.newFontWithSize(octFont, scaledIconWidth);
                         break;
                     case LINK:
                         String uri = e.getAsString();
 //                        ico = uri.startsWith("mailto:") ? ScalableIcon.LINK_EMAIL : ScalableIcon.LINK;
-                        icon = FontIconManager.getIns().getIcon(IconKey.URI);
+                        icon = MaterialDesignIcon.LINK_VARIANT;
                         scaledFont = FontUtils.newFontWithSize(materialDesignFont, scaledIconWidth);
                         break;
                     case NOTE:
-                        icon = FontIconManager.getIns().getIcon(IconKey.NOTE);
+                        icon = FontAwesomeIcon.STICKY_NOTE_ALT;
                         scaledFont = FontUtils.newFontWithSize(awesomeFont, scaledIconWidth);
                         break;
                     case TOPIC:
-                        icon = FontIconManager.getIns().getIcon(IconKey.TOPIC);
+                        icon = MaterialIcon.CHAT_BUBBLE_OUTLINE;
                         scaledFont = FontUtils.newFontWithSize(materialFont, scaledIconWidth);
                         break;
                     default:
                         throw new Error("Unexpected extras");
                 }
                 if (scaledIconWidth >= 1.0d) {
-                    g.setFont(scaledFont);
-                    g.drawString(icon.getText(), offsetX, offsetY + scaledIconHeight, textColor);
+                    g.drawFontIcon(scaledFont, icon.unicode(), offsetX, offsetY + scaledIconHeight, textColor);
                     offsetX += scaledIconWidth + ICON_SPACING * this.mindMapContext.getScale();
                 }
             }

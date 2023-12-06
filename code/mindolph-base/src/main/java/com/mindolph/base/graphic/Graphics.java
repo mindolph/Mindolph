@@ -56,6 +56,8 @@ public interface Graphics {
 
     void drawString(String text, double x, double y, Color fill);
 
+    void drawFontIcon(Font font, String iconText, double x, double y, Color fill);
+
     void setOpacity(double opacity);
 
 }
