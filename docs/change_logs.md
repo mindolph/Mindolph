@@ -1,5 +1,9 @@
 # Change Logs
 
+### V1.5.8 Release
+* Improvement: optimize the displaying of the attributes icons with font icons directly in mind map.
+* Improvement: use new icon for 'collapse folder'
+
 ### V1.6.4 Unstable Release
 * Improvement: refactor input helper and optimize the selection from suggestions list.
 * Improvement: use new icon for 'collapse folder'.
