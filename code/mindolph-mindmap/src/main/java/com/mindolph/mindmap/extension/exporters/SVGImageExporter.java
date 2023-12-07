@@ -508,7 +508,7 @@ public class SVGImageExporter extends BaseExportExtension {
                 printFillOpacity(fill);
             }
             this.buffer.append(' ');
-            this.buffer.append("class=\"").append(StringUtils.deleteWhitespace(this.context.getFont().getFamily())).append('\"');
+            this.buffer.append("class=\"").append(StringUtils.deleteWhitespace(this.context.getFont().getName())).append('\"');
             String icon = "&#" + (int)iconText.charAt(0) + ";";
             this.buffer.append('>').append(icon).append("</text>").append(NEXT_LINE);
         }
