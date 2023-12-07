@@ -137,8 +137,9 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         }
         else if (node == btnCode) {
             IndexRange selection = markdownCodeArea.getSelection();
-            markdownCodeArea.addToSelectionHeadAndTail("```", false);
-            markdownCodeArea.moveTo(selection.getStart() + 3);
+            markdownCodeArea.addToSelectionHead("```\n");
+            markdownCodeArea.addToSelectionTail("```");
+            markdownCodeArea.moveTo(selection.getStart() + 4);
         }
         else if (node == btnLink) {
             String text = ClipBoardUtils.textFromClipboard();
@@ -163,6 +164,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
                             "|" + StringUtils.join(separatorRow, "|") + "|"
                     );
                     content = "\n" + content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
+                    content = content + "\n";
                     IndexRange selection = markdownCodeArea.getSelection();
                     markdownCodeArea.replaceSelection(content);
                     markdownCodeArea.moveTo(selection.getStart() + 2);
