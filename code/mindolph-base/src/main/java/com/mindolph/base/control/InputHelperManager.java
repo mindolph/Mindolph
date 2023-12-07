@@ -186,9 +186,9 @@ public class InputHelperManager {
             data = text.charAt(0);
         }
 
-        if (stateMachine.isState(HELPING)) {
+        if (stateMachine.isState(HELPING) && isHelperShowing()) {
             if (KeyCode.DOWN.equals(event.getCode())) {
-                log.debug("Select next suggestion");
+                log.trace("Select next suggestion");
                 MultipleSelectionModel<String> selectionModel = lvSuggestion.getSelectionModel();
                 if (selectionModel.getSelectedItem() == null) {
                     selectionModel.selectFirst();
@@ -200,7 +200,7 @@ public class InputHelperManager {
                 event.consume();
             }
             else if (KeyCode.UP.equals(event.getCode())) {
-                log.debug("Select prev suggestion");
+                log.trace("Select prev suggestion");
                 MultipleSelectionModel<String> selectionModel = lvSuggestion.getSelectionModel();
                 if (selectionModel.getSelectedItem() == null) {
                     selectionModel.selectLast();
@@ -285,7 +285,6 @@ public class InputHelperManager {
                 Point2D newPos = LayoutUtils.bestLocation(targetBounds, hoverBounds, new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
                 this.stackPane.relocate(newPos.getX(), newPos.getY());
                 this.showHelper();
-                log.debug("Suggestion listed");
 
                 Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
                 String longestStr = longest.isPresent() ? longest.get() : "";
@@ -334,6 +333,10 @@ public class InputHelperManager {
             this.parentPane.getChildren().remove(this.stackPane);
             this.stackPane.setVisible(false);
         }
+    }
+
+    private boolean isHelperShowing() {
+        return this.stackPane.isVisible();
     }
 
     /**
