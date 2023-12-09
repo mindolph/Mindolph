@@ -62,6 +62,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
+|Release Notes| |[v1.5](docs/release-notes/v1.5/v1.5.md)|[v1.6](docs/release-notes/v1.6/v1.6.md)| |
 |MacOS|.dmg|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg) |[v1.6.4](https://github.com/mindolph/Mindolph/releases/download/v1.6.4/Mindolph-1.6.4.dmg) | |
 |Windows|.msi|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.msi) |[v1.6.4](https://github.com/mindolph/Mindolph/releases/download/v1.6.4/Mindolph-1.6.4.msi) | |
 |Debian|.deb|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.deb)|[v1.6.4](https://github.com/mindolph/Mindolph/releases/download/v1.6.4/Mindolph-1.6.4.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
