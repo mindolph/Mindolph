@@ -144,8 +144,9 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         else if (node == btnLink) {
             String text = ClipBoardUtils.textFromClipboard();
             boolean isUrl = UrlUtils.isValid(text);
-            String link = (isUrl ? "[](%s)" : "[%s]()").formatted(text);
             IndexRange selection = markdownCodeArea.getSelection();
+            String url = isUrl ? text : StringUtils.EMPTY;
+            String link = "[%s](%s)".formatted(selection.getLength() > 0 ? markdownCodeArea.getSelectedText() : StringUtils.EMPTY, url);
             markdownCodeArea.replaceSelection(link);
             markdownCodeArea.moveTo(selection.getStart() + (isUrl ? 1 : link.length() - 1));
         }
