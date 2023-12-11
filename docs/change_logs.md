@@ -1,5 +1,12 @@
 # Change Logs
 
+### V1.6.5 Unstable Release
+* Improvement: optimize quick insert from markdown toolbar.
+* Improvement: optimize the displaying of the attributes icons with font icons directly in mind map.
+* Fix: exception when moving caret to the top or bottom in editor.
+* Fix: `Null` is inserted from markdown toolbar `Link` button in some cases.
+* Bundled JRE upgrade to 21.0.1
+
 ### V1.5.8 Release
 * Improvement: optimize the displaying of the attributes icons with font icons directly in mind map.
 * Improvement: use new icon for 'collapse folder'
