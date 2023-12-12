@@ -43,7 +43,7 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。[Engl
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|Release Notes| |[v1.5](release-notes/v1.5/v1.5.md)|[v1.6](release-notes/v1.6/v1.6.md)| |
+|Release Notes| |[v1.5](release-notes/v1.5/v1.5_zh_CN.md)|[v1.6](release-notes/v1.6/v1.6.md)| |
 |MacOS|.dmg|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.dmg)| |
 |Windows|.msi|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.msi)| |
 |Debian|.deb|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.deb)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
