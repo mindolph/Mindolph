@@ -62,12 +62,12 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|Release Notes| |[v1.5](docs/release-notes/v1.5/v1.5.md)|[v1.6](docs/release-notes/v1.6/v1.6.md)| |
+|Release Notes| |[v1.5.x](docs/release-notes/v1.5/v1.5.md)|[v1.6.x](docs/release-notes/v1.6/v1.6.md)| |
 |MacOS|.dmg|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg) |[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.dmg) | |
 |Windows|.msi|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.msi) |[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.msi) | |
 |Debian|.deb|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.deb)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
 |Fedora|.rpm|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.rpm)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.rpm)| |
-|Java Executable|.jar|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.jar)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.jar)| Java 17 is the minimum requirement to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.5.8.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-20`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-20\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar  Mindolph-1.5.8.jar` |
+|Java Executable|.jar|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.jar)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.jar)| Java 17 is the minimum requirement to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.5.8.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar  Mindolph-1.5.8.jar` |
 
 
 [Change logs](docs/change_logs.md)
