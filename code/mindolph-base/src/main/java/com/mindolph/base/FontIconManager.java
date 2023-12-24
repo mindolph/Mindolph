@@ -90,6 +90,8 @@ public class FontIconManager {
         icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SEPARATOR, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.WINDOW_MINIMIZE, DEFAULT_ICON_SIZE));
 
+        icons.put(IconKey.GEN_AI, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC, DEFAULT_ICON_SIZE));
+
         if (SystemUtils.IS_OS_MAC) {
             icons.put(IconKey.SYSTEM, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.APPLE, DEFAULT_ICON_SIZE));
         }

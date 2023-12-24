@@ -1,6 +1,7 @@
 package com.mindolph.base.plugin;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author mindolph.com@gmail.com
@@ -27,6 +28,13 @@ public interface Plugin {
      *
      * @return
      */
-    InputHelper getInputHelper();
+    Optional<InputHelper> getInputHelper();
+
+    /**
+     * Generator for generating text.
+     *
+     * @return
+     */
+    Optional<Generator> getGenerator();
 
 }

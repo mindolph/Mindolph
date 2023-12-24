@@ -3,6 +3,7 @@ package com.mindolph.base.control;
 import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.github.swiftech.swstate.trigger.Trigger;
+import com.mindolph.base.plugin.InputHelper;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
@@ -248,30 +249,33 @@ public class InputHelperManager {
 
         lvSuggestion.setUserData(input); // used for selection handling.
         for (Plugin plugin : supportedPlugins) {
-            List<String> allHelpWords = plugin.getInputHelper().getHelpWords(this.editorId);
-            if (CollectionUtils.isEmpty(allHelpWords)) {
-                continue;
-            }
-            Collections.sort(allHelpWords);
+            Optional<InputHelper> opt = plugin.getInputHelper();
+            if (opt.isPresent()) {
+                List<String> allHelpWords = opt.get().getHelpWords(this.editorId);
+                if (CollectionUtils.isEmpty(allHelpWords)) {
+                    continue;
+                }
+                Collections.sort(allHelpWords);
 
-            // get rid of blank, duplicates and the one equals what user input.
-            List<String> helpWords = allHelpWords.stream()
-                    .filter(StringUtils::isNotBlank)
+                // get rid of blank, duplicates and the one equals what user input.
+                List<String> helpWords = allHelpWords.stream()
+                        .filter(StringUtils::isNotBlank)
 //                    .filter(s -> !StringUtils.equals(s, input)) // no need to prompt if it equals what you just inputted.
-                    .filter(s -> !duplicateKiller.containsKey(s)) // excludes those provided in previous plugin.
-                    .distinct().toList();
+                        .filter(s -> !duplicateKiller.containsKey(s)) // excludes those provided in previous plugin.
+                        .distinct().toList();
 
-            // use user input to filter the help words.
-            List<String> filtered = helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
+                // use user input to filter the help words.
+                List<String> filtered = helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
 
-            if (CollectionUtils.isEmpty(filtered)) {
-                continue;
-            }
+                if (CollectionUtils.isEmpty(filtered)) {
+                    continue;
+                }
 
-            log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
-            for (String candidate : filtered) {
-                lvSuggestion.getItems().add(candidate);
-                duplicateKiller.put(candidate, candidate); // only key is needed for now.
+                log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
+                for (String candidate : filtered) {
+                    lvSuggestion.getItems().add(candidate);
+                    duplicateKiller.put(candidate, candidate); // only key is needed for now.
+                }
             }
         }
         ObservableList<String> items = lvSuggestion.getItems();
@@ -286,6 +290,7 @@ public class InputHelperManager {
                 this.stackPane.relocate(newPos.getX(), newPos.getY());
                 this.showHelper();
 
+                // calculate the appropriate width and height of suggestion list view.
                 Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
                 String longestStr = longest.isPresent() ? longest.get() : "";
                 Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());

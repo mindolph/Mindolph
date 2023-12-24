@@ -14,7 +14,7 @@ import static com.mindolph.core.constant.SupportFileTypes.*;
  * @author mindolph.com@gmail.com
  * @since 1.6
  */
-public class ContextHelperPlugin implements Plugin {
+public class ContextHelperPlugin extends BasePlugin {
 
     private static final Logger log = LoggerFactory.getLogger(ContextHelperPlugin.class);
 
@@ -31,14 +31,15 @@ public class ContextHelperPlugin implements Plugin {
     }
 
     @Override
-    public InputHelper getInputHelper() {
-        return inputHelper;
+    public Optional<InputHelper> getInputHelper() {
+        return Optional.of(inputHelper);
     }
 
     /**
      * Default context helper.
      */
     public static class ContextHelper implements InputHelper {
+        // editor id -> suggestion string list TODO the element should be removed when editor is destroyed.
         private final Map<Object, List<String>> contextWordsMap = new HashMap<>();
 
         @Override

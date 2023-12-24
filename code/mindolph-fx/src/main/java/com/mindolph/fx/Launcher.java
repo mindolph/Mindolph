@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.mindolph.base.Env;
+import com.mindolph.base.genai.GenAiPlugin;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.data.DataMigrator;
@@ -35,6 +36,7 @@ public class Launcher {
         // register plugins TODO
         PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
         PluginManager.getIns().registerPlugin(new ContextHelperPlugin());
+        PluginManager.getIns().registerPlugin(new GenAiPlugin());
 
         Application.launch(Main.class, args);
     }

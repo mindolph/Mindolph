@@ -18,7 +18,7 @@ import java.util.Collection;
  *
  * @author mindolph.com@gmail.com
  */
-public class SearchableCodeArea extends ExtCodeArea {
+public class SearchableCodeArea extends SmartCodeArea {
 
     private static final Logger log = LoggerFactory.getLogger(SearchableCodeArea.class);
 
