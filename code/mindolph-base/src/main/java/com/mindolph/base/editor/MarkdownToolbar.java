@@ -136,10 +136,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
             markdownCodeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("> ", "  "));
         }
         else if (node == btnCode) {
-            IndexRange selection = markdownCodeArea.getSelection();
-            markdownCodeArea.addToSelectionHead("```\n");
-            markdownCodeArea.addToSelectionTail("```");
-            markdownCodeArea.moveTo(selection.getStart() + 4);
+            markdownCodeArea.addToSelectionHeadAndTail("```\n", "\n```", true);
         }
         else if (node == btnLink) {
             String text = ClipBoardUtils.textFromClipboard();
