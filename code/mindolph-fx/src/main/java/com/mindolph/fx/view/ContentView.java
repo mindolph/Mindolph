@@ -93,6 +93,7 @@ public class ContentView extends BaseView {
                 .action("", "SHOW_ALWAYS", "HIDE")
                 .action("", "SHOW", "SHOW_ALWAYS")
                 .action("", "HIDE", "HIDE")
+                .action("", "HIDE", "SHOW_ALWAYS")
                 .initialize("HIDE");
 
         floatingPaneState = new StateMachine<>(floatingPanelStateBuilder);

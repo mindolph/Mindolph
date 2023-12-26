@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.richtext.CaretSelectionBind;
@@ -154,7 +155,7 @@ public class ExtCodeArea extends CodeArea {
                         keyEvent.consume();
                         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
                         if (caretSelectionBind.getEndParagraphIndex() > caretSelectionBind.getStartParagraphIndex()) {
-                            addToSelectionHeadAndTail("```", true);
+                            addToSelectionHeadAndTail("```\n", "\n```", true);
                         }
                         else {
                             addToSelectionHeadAndTail("`", true);
@@ -202,28 +203,28 @@ public class ExtCodeArea extends CodeArea {
                 default:
                     break;
             }
-            // somehow on macOS, the shortcut event not only consumed by editor, but also consumed by application,
-            // which causes the paste action be performed twice.
-            // so disable PASTE shortcut on macOS to avoid conflict with global.
-            if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
-                inputMaps.add(InputMap.consume(
-                        EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
-                ));
-            }
-            // disable undo to avoid conflict with global shortcut
-            if (disableUndo.get() && SystemUtils.IS_OS_MAC) {
-                inputMaps.add(InputMap.consume(
-                        EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
-                ));
-            }
-            // disable redo to avoid conflict with global shortcut
-            if (disableRedo.get() && SystemUtils.IS_OS_MAC) {
-                inputMaps.add(InputMap.consume(
-                        EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
-                ));
-            }
-            Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
         }
+        // somehow on macOS, the shortcut event not only consumed by editor, but also consumed by application,
+        // which causes the paste action be performed twice.
+        // so disable PASTE shortcut on macOS to avoid conflict with global.
+        if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+            ));
+        }
+        // disable undo to avoid conflict with global shortcut
+        if (disableUndo.get() && SystemUtils.IS_OS_MAC) {
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+            ));
+        }
+        // disable redo to avoid conflict with global shortcut
+        if (disableRedo.get() && SystemUtils.IS_OS_MAC) {
+            inputMaps.add(InputMap.consume(
+                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+            ));
+        }
+        Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
     }
 
     protected String extractLastWordFromCaret() {
@@ -320,6 +321,7 @@ public class ExtCodeArea extends CodeArea {
      * @param endParIndex
      */
     private void deleteLinesSafely(int startParIndex, int endParIndex) {
+        if (!super.isEditable()) return;
         int endParLen = super.getParagraphLength(endParIndex);
         boolean isLastLine = endParIndex == super.getParagraphs().size() - 1;
         int endLineLen = isLastLine ? endParLen : endParLen + 1;// condition for last line
@@ -333,6 +335,7 @@ public class ExtCodeArea extends CodeArea {
      * @return without line break.
      */
     private String deleteCurrentLine() {
+        if (!super.isEditable()) return null;
         int curParIdx = this.getCurrentParagraph();
         int lineStart = this.getAbsolutePosition(curParIdx, 0);
         int lineEnd = this.getAbsolutePosition(curParIdx, this.getCurrentLineEndInParargraph() + 1); // +1 include the line break;
@@ -344,6 +347,7 @@ public class ExtCodeArea extends CodeArea {
     }
 
     public void insertText(String text) {
+        if (!super.isEditable()) return;
         this.insertText(this.getCaretPosition(), text);
     }
 
@@ -354,6 +358,7 @@ public class ExtCodeArea extends CodeArea {
      * @param text
      */
     private void insertLinesSafely(int parIndex, String text) {
+        if (!super.isEditable()) return;
         int lines = getParagraphs().size();
         if (parIndex >= lines) {
             // insert new line for end of text area
@@ -366,12 +371,14 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * if any paragraph in selection has no {@code text} start with, the operation will be trimming instead of adding.
+     * if any paragraph in selection has no {@code params.targets} start with, the operation will be trimming instead of adding.
      *
      * @param params text to add to or trim from head of selected paragraphs.
      */
     public void addOrTrimHeadToParagraphsIfAdded(Replacement params) {
+        if (!super.isEditable()) return;
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
+        // find if any paragraph already has the head that needs to be add.
         boolean isAlreadyAdded = true;
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
@@ -384,21 +391,27 @@ public class ExtCodeArea extends CodeArea {
         this.addOrTrimHeadToParagraphs(params, needAddToHead);
     }
 
+    /**
+     * @param params
+     * @param needAddToHead true to add to head, false to trim from head.
+     */
     public void addOrTrimHeadToParagraphs(Replacement params, boolean needAddToHead) {
-        String tail = params.getTail() == null ? EMPTY : params.getTail();
-        addOrTrimHeadToParagraphs(params, true, s -> {
-            String tailOfLine = (s.endsWith(tail) ? EMPTY : tail);
+        if (!super.isEditable()) return;
+        String tail = ObjectUtils.defaultIfNull(params.getTail(), EMPTY);
+        addOrTrimHeadToParagraphs(params, true, parText -> {
+            String tailOfLine = (parText.endsWith(tail) ? EMPTY : tail);
             if (needAddToHead) {
-                return params.getSubstitute() + s + tailOfLine;
+                return params.getSubstitute() + parText + tailOfLine;
             }
             else {
+                // replace targets with blank if given.
                 for (String target : params.getTargets()) {
-                    if (StringUtils.startsWith(s, target)) {
-                        return StringUtils.replaceOnce(s, target, EMPTY) + tailOfLine;
+                    if (StringUtils.startsWith(parText, target)) {
+                        return StringUtils.replaceOnce(parText, target, EMPTY) + tailOfLine;
                     }
                 }
             }
-            return s;
+            return parText;
         });
     }
 
@@ -407,9 +420,10 @@ public class ExtCodeArea extends CodeArea {
      *
      * @param params
      * @param skipEmptyLine true to skip the empty line when processing, but if there is only one line, ignore this.
-     * @param callback      Convert the text line,
+     * @param converter     Convert the text line,
      */
-    public void addOrTrimHeadToParagraphs(Replacement params, boolean skipEmptyLine, Function<String, String> callback) {
+    public void addOrTrimHeadToParagraphs(Replacement params, boolean skipEmptyLine, Function<String, String> converter) {
+        if (!super.isEditable()) return;
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
         int startPar = caretSelectionBind.getStartParagraphIndex();
         int endPar = caretSelectionBind.getEndParagraphIndex();
@@ -418,7 +432,7 @@ public class ExtCodeArea extends CodeArea {
         if (hasSelection) log.debug("Selected from %s to %s".formatted(startPar, endPar));
 
         List<String> newLines = new ArrayList<>();
-        List<Integer> offsets = new ArrayList<>();
+        List<Integer> offsets = new ArrayList<>(); // offsets for each paragraph.
         for (int i = startPar; i < endPar + 1; i++) {
             String newLine;
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
@@ -426,10 +440,12 @@ public class ExtCodeArea extends CodeArea {
                 newLine = EMPTY;
             }
             else {
-                newLine = callback.apply(p.getText());// params.getSubstitute() + p.getText();
+                newLine = converter.apply(p.getText());
             }
             newLines.add(newLine);
-            offsets.add(newLine.length() - p.getText().length()); // calc offset for each line(but only head and tail will be used)
+            // calc offset for each line(but only head will be used)
+            int offset = newLine.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
+            offsets.add(offset);
         }
         if (CollectionUtils.isEmpty(newLines)) {
             return;
@@ -437,8 +453,8 @@ public class ExtCodeArea extends CodeArea {
 
         int startOffset = offsets.get(0);
         int endOffset = offsets.get(offsets.size() - 1);
-        int startInFirstPar = Math.max(this.getParagraphSelection(startPar).getStart() + startOffset, 0);
-        int endInLastPar = Math.max(this.getParagraphSelection(endPar).getEnd() + endOffset, 0);
+        int startInFirstPar = Math.max(super.getParagraphSelection(startPar).getStart() + startOffset, 0);
+        int endInLastPar = Math.max(super.getParagraphSelection(endPar).getEnd() + endOffset, 0);
         int caretInPar = this.getCaretPosition() + endOffset; // this is for non-selection condition only.
         // calculate for replacement
         int start = this.getAbsolutePosition(startPar, 0);
@@ -457,23 +473,47 @@ public class ExtCodeArea extends CodeArea {
     }
 
     public void addToSelectionHead(String text) {
+        if (!super.isEditable()) return;
         IndexRange selection = this.getSelection();
         this.insertText(selection.getStart(), text);
-        this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        if (selection.getLength() > 0) {
+            this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        }
     }
 
     public void addToSelectionTail(String text) {
+        if (!super.isEditable()) return;
         IndexRange selection = this.getSelection();
-        this.insertText(selection.getEnd() + 1, text);
-        this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        super.replaceSelection(super.getSelectedText() + text);
+        if (selection.getLength() > 0) {
+            this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        }
     }
 
     public void addToSelectionHeadAndTail(String text, boolean select) {
+        if (!super.isEditable()) return;
         IndexRange selection = this.getSelection();
         String selectedText = super.getSelectedText();
         super.replaceSelection(text + selectedText + text);
-        if (select) {
+        if (selection.getLength() > 0) {
             this.selectRange(selection.getStart(), selection.getEnd() + text.length() * 2);
+        }
+        else {
+            this.moveTo(super.getCaretPosition() - text.length());
+        }
+    }
+
+    public void addToSelectionHeadAndTail(String head, String tail, boolean select) {
+        if (!super.isEditable()) return;
+        IndexRange selection = this.getSelection();
+        String selectedText = super.getSelectedText();
+        super.replaceSelection(head + selectedText + tail);
+        System.out.println(selection);
+        if (selection.getLength() > 0) {
+            this.selectRange(selection.getStart(), selection.getEnd() + head.length() + tail.length());
+        }
+        else {
+            this.moveTo(super.getCaretPosition() - tail.length());
         }
     }
 

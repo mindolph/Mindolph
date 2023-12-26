@@ -54,7 +54,7 @@ public class ContextHelperPlugin extends BasePlugin {
             words.clear();
             while (st.hasNext()) {
                 String token = st.nextToken();
-                if (StringUtils.isBlank(token) || token.length() < 2) {
+                if (StringUtils.isBlank(token) || token.length() <= 2) {
                     continue;
                 }
                 words.add(token);
