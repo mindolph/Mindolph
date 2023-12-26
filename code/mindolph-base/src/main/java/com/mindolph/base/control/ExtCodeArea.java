@@ -250,7 +250,7 @@ public class ExtCodeArea extends CodeArea {
                         keyEvent.consume();
                         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
                         if (caretSelectionBind.getEndParagraphIndex() > caretSelectionBind.getStartParagraphIndex()) {
-                            addToSelectionHeadAndTail("```", true); // TODO
+                            addToSelectionHeadAndTail("```\n", "\n```", true);
                         }
                         else {
                             addToSelectionHeadAndTail("`", true);
@@ -591,15 +591,22 @@ public class ExtCodeArea extends CodeArea {
         for (int i = startPar; i < endPar + 1; i++) {
             String newLine;
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
-            if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
-                newLine = EMPTY;
+            if (hasSelection) {
+                if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
+                    newLine = EMPTY;
+                }
+                else {
+                    newLine = converter.apply(p.getText());
+                }
             }
             else {
-                newLine = converter.apply(p.getText());// params.getSubstitute() + p.getText();
+                // no selection just add to head
+                newLine = params.getSubstitute();
             }
             newLines.add(newLine);
+            // calc offset for each line(but only head will be used)
             int offset = newLine.length() > p.getText().length() ? params.substitute.length() : -params.substitute.length();
-            offsets.add(offset); // calc offset for each line(but only head will be used)
+            offsets.add(offset);
         }
         if (CollectionUtils.isEmpty(newLines)) {
             return;
@@ -630,14 +637,18 @@ public class ExtCodeArea extends CodeArea {
         if (!super.isEditable()) return;
         IndexRange selection = this.getSelection();
         this.insertText(selection.getStart(), text);
-        this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        if (selection.getLength() > 0) {
+            this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        }
     }
 
     public void addToSelectionTail(String text) {
         if (!super.isEditable()) return;
         IndexRange selection = this.getSelection();
         super.replaceSelection(super.getSelectedText() + text);
-        this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        if (selection.getLength() > 0) {
+            this.selectRange(selection.getStart(), selection.getEnd() + text.length());
+        }
     }
 
     public void addToSelectionHeadAndTail(String text, boolean select) {
