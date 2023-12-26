@@ -35,7 +35,6 @@ import org.swiftboot.util.pref.PreferenceManager;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.mindolph.base.constant.ShortcutConstants.*;
@@ -591,21 +590,15 @@ public class ExtCodeArea extends CodeArea {
         for (int i = startPar; i < endPar + 1; i++) {
             String newLine;
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
-            if (hasSelection) {
-                if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
-                    newLine = EMPTY;
-                }
-                else {
-                    newLine = converter.apply(p.getText());
-                }
+            if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
+                newLine = EMPTY;
             }
             else {
-                // no selection just add to head
-                newLine = params.getSubstitute();
+                newLine = converter.apply(p.getText());
             }
             newLines.add(newLine);
             // calc offset for each line(but only head will be used)
-            int offset = newLine.length() > p.getText().length() ? params.substitute.length() : -params.substitute.length();
+            int offset = newLine.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
             offsets.add(offset);
         }
         if (CollectionUtils.isEmpty(newLines)) {

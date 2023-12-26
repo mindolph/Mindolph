@@ -177,6 +177,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     }
 
     /**
+     *
      * @param number
      */
     private void addHeader(int number) {
