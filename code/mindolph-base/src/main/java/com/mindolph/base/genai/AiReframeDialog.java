@@ -4,10 +4,15 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.AiInputDialog.Temperature;
 import com.mindolph.base.genai.GenAiEvents.ActionType;
+import com.mindolph.base.genai.GenAiEvents.OutputLength;
 import com.mindolph.mfx.util.FxmlUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -24,11 +29,13 @@ public class AiReframeDialog extends StackPane {
     @FXML
     private Button btnAbandon;
     @FXML
-    private ProgressIndicator piProcessing;
+    private ProgressBar pbWaiting;
 
     private Object editorId;
 
     private String inputText;
+
+    private ContextMenu adjustMenu;
 
     public AiReframeDialog(Object editorId, String inputText) {
         this.editorId = editorId;
@@ -48,9 +55,17 @@ public class AiReframeDialog extends StackPane {
             GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), null));// todo
             this.working();
         });
+        btnAdjust.setOnMouseClicked(event -> {
+            if (adjustMenu == null) {
+                adjustMenu = createAdjustMenu();
+                adjustMenu.show(btnAdjust, event.getScreenX(), event.getScreenY());
+            }
+            else {
+                adjustMenu.getItems().clear();
+                adjustMenu.hide();
+            }
+        });
         btnAdjust.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), null));// todo
-            this.working();
         });
         btnAbandon.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABANDON);
@@ -58,12 +73,29 @@ public class AiReframeDialog extends StackPane {
         });
     }
 
+    private ContextMenu createAdjustMenu() {
+        ContextMenu menu = new ContextMenu();
+        EventHandler<ActionEvent> eventHandler = event -> {
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), null));// todo
+            working();
+        };
+        MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
+        MenuItem miLonger = new MenuItem("Longer", FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
+        miShorter.setUserData(OutputLength.SHORTER);
+        miLonger.setUserData(OutputLength.LONGER);
+        miShorter.setOnAction(eventHandler);
+        miLonger.setOnAction(eventHandler);
+        menu.getItems().addAll(miShorter, miLonger);
+        return menu;
+    }
+
     private void working() {
         btnKeep.setDisable(true);
         btnRetry.setDisable(true);
         btnAdjust.setDisable(true);
         btnAbandon.setDisable(true);
-        piProcessing.setDisable(false);
+//        piProcessing.setDisable(false);
+        pbWaiting.setVisible(true);
     }
 
 }

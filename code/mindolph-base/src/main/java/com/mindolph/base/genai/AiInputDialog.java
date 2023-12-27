@@ -4,9 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -30,6 +28,9 @@ public class AiInputDialog extends StackPane {
     private Button btnGenerate;
     @FXML
     private Button btnClose;
+    @FXML
+    private ProgressBar pbWaiting;
+
 
     private Object editorId;
 
@@ -40,7 +41,6 @@ public class AiInputDialog extends StackPane {
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
 
         btnClose.setOnAction(event -> {
-            System.out.println("Close");
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
         });
         taInput.setOnKeyReleased(event -> {
@@ -49,6 +49,7 @@ public class AiInputDialog extends StackPane {
             }
         });
         btnGenerate.setOnAction(event -> {
+            pbWaiting.setVisible(true);
             GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText(), cbTemperature.getValue().getKey(), null));
         });
 

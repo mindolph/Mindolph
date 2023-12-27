@@ -16,7 +16,11 @@ public interface Generator {
 
     void onCancel(Consumer<Object> consumer);
 
-    void onComplete(Consumer<Object> consumer);
+    /**
+     * On completed with whether keep the generated text or not.
+     * @param consumer
+     */
+    void onComplete(Consumer<Boolean> consumer);
 
     // should be called in a new thread
     void onGenerated(Consumer<String> consumer);

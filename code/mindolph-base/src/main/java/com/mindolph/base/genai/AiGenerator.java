@@ -24,7 +24,7 @@ public class AiGenerator implements Generator {
 
     private Consumer<Object> cancelConsumer;
     private Consumer<String> generateConsumer;
-    private Consumer<Object> completeConsumer;
+    private Consumer<Boolean> completeConsumer;
 
     private Plugin plugin;
 
@@ -44,11 +44,10 @@ public class AiGenerator implements Generator {
     public StackPane inputDialog(Object editorId) {
         AiInputDialog aiInputDialog = new AiInputDialog(editorId);
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
-            log.info(input.text());
-            log.info(String.valueOf(input.temperature()));
             inputMap.put(editorId, input.text());
             new Thread(() -> {
                 String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputLength());
+                log.debug(generatedText);
                 Platform.runLater(() -> generateConsumer.accept(generatedText));
             }).start();
         });
@@ -56,11 +55,11 @@ public class AiGenerator implements Generator {
             switch (actionType) {
                 case KEEP -> {
                     log.debug("action type: %s".formatted(actionType));
-                    completeConsumer.accept(null);
+                    completeConsumer.accept(true);
                 }
                 case ABANDON -> {
                     log.debug("action type: %s".formatted(actionType));
-                    completeConsumer.accept(null);
+                    completeConsumer.accept(false);
                 }
                 case CANCEL -> {
                     log.debug("action type: %s".formatted(actionType));
@@ -80,7 +79,7 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public void onComplete(Consumer<Object> consumer) {
+    public void onComplete(Consumer<Boolean> consumer) {
         this.completeConsumer = consumer;
     }
 

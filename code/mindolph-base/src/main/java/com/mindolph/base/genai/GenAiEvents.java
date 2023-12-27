@@ -59,8 +59,7 @@ public class GenAiEvents {
     }
 
     public enum OutputLength {
-        SHORT,
-        MEDIUM,
-        LONG
+        SHORTER,
+        LONGER
     }
 }

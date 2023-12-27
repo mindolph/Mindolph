@@ -7,6 +7,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
+import com.mindolph.mfx.util.PointUtils;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -42,6 +43,10 @@ import java.util.function.Consumer;
  */
 public class SmartCodeArea extends ExtCodeArea {
     private static final Logger log = LoggerFactory.getLogger(SmartCodeArea.class);
+
+    private StackPane inputDialog;
+
+    private StackPane reframeDialog;
 
     private final EventSource<String> inputHelpSource = new EventSource<>();
 
@@ -119,8 +124,6 @@ public class SmartCodeArea extends ExtCodeArea {
         Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
     }
 
-    private StackPane inputDialog;
-    private StackPane reframeDialog;
 
     @Override
     protected ContextMenu createContextMenu() {
@@ -138,12 +141,12 @@ public class SmartCodeArea extends ExtCodeArea {
 
                 generator.onGenerated(generatedText -> {
                     this.closeReframeDialog();
-                    int origin = this.getCaretPosition();
+                    int origin = this.getSelection().getStart();
                     this.replaceSelection(generatedText);
-                    this.closeGeneratorDialog();
+                    log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
-                    StackPane reframeDialog = generator.reframeDialog(this.hashCode());
-                    this.reframeDialog = reframeDialog;
+                    this.closeGeneratorDialog();
+                    this.reframeDialog = generator.reframeDialog(this.hashCode());
                     this.showReframeDialog();
                     super.setEditable(false);
                 });
@@ -151,7 +154,13 @@ public class SmartCodeArea extends ExtCodeArea {
                     this.closeGeneratorDialog();
                     super.setEditable(true);
                 });
-                generator.onComplete(o -> {
+                generator.onComplete(isKeep -> {
+                    if (!isKeep) {
+                        super.replaceSelection(StringUtils.EMPTY);
+                    }
+                    else {
+                        super.selectRange(this.getCaretPosition(), this.getCaretPosition());
+                    }
                     this.closeReframeDialog();
                     super.setEditable(true);
                 });
@@ -178,6 +187,7 @@ public class SmartCodeArea extends ExtCodeArea {
         log.debug("Closing generate dialog");
         parentPane.getChildren().remove(inputDialog);
         inputDialog = null;
+        this.requestFocus();
     }
 
 
@@ -186,6 +196,7 @@ public class SmartCodeArea extends ExtCodeArea {
         parentPane.getChildren().add(reframeDialog);
         Platform.runLater(() -> {
             Point2D p = this.screenToLocal(caretPoint);
+            log.debug("show dialog at: %s".formatted(PointUtils.pointInStr(p)));
             Bounds hoverBounds = new BoundingBox(p.getX(), p.getY(), reframeDialog.getWidth(), reframeDialog.getHeight());
             Point2D p2 = LayoutUtils.bestLocation(this.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
             reframeDialog.relocate(p2.getX(), p2.getY());
@@ -198,6 +209,7 @@ public class SmartCodeArea extends ExtCodeArea {
         log.debug("Closing reframe dialog");
         parentPane.getChildren().remove(reframeDialog);
         reframeDialog = null;
+        this.requestFocus();
     }
 
 
