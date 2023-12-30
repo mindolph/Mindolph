@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.6.6 Unstable Release
+* Improvement: better text selection by quick inserting from toolbar or shortcuts in code editor.
+* Fix: exception when insert some text from toolbar or shortcuts to the end of file.
+* Fix: exception when close all tabs with any markdown or plantuml file opened but never loaded. 
+* Fix: exception when click on error of status bar when a syntax error exists for plantuml. 
+* Fix: wrong behavior when quick inserting markdown code quote while no text selection in code editor. 
+* Fix: limit the input helper suggestions to at least 3 letters. 
+
+
 ### V1.6.5 Unstable Release
 * Improvement: optimize quick insert from markdown toolbar.
 * Improvement: optimize the displaying of the attributes icons with font icons directly in mind map.
