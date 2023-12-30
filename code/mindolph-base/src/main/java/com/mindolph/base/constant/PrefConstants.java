@@ -13,6 +13,18 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
 
+    String GENERAL_AI_VENDOR_ACTIVE = "general.genai.vendor.active";
+    String GENERAL_AI_VENDOR_PROPS = "general.genai.vendor.props";
+//    String GENERAL_API_KEY = "general.genai.apiKey";
+//    String GENERAL_AI_MODEL = "general.genai.aiModel";
+
+    String GENERAL_PROXY_ENABLE = "general.proxy.enable";
+    String GENERAL_PROXY_TYPE = "general.proxy.type";
+    String GENERAL_PROXY_HOST = "general.proxy.host";
+    String GENERAL_PROXY_PORT = "general.proxy.port";
+    String GENERAL_PROXY_USERNAME = "general.proxy.username";
+    String GENERAL_PROXY_PASSWORD = "general.proxy.password";
+
     String PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT = "mmd.addDefaultCommentToRoot";
     String PREF_KEY_MMD_TRIM_TOPIC_TEXT = "mmd.trimTopicText";
 //    String PREF_KEY_MMD_USE_INSIDE_BROWSER = "mmd.useInsideBrowser";
@@ -20,7 +32,9 @@ public interface PrefConstants {
     String PREF_KEY_MMD_UNFOLD_COLLAPSED_TARGET = "mmd.unfoldCollapsedTarget";
     String PREF_KEY_MMD_COPY_COLOR_INFO_TO_NEW_CHILD = "mmd.copyColorInfoToNewChild";
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
-
     String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
+
+    record VendorProps(String apiKey, String aiModel) {
+    }
 
 }

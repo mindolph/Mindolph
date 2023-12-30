@@ -19,7 +19,7 @@
                       <Button fx:id="btnKeep" mnemonicParsing="false" text="Keep" />
                         <Button fx:id="btnRetry" mnemonicParsing="false" text="Retry" />
                         <Button fx:id="btnAdjust" mnemonicParsing="false" text="Adjust" />
-                        <Button fx:id="btnAbandon" mnemonicParsing="false" text="Abandon" />
+                        <Button fx:id="btnDiscard" mnemonicParsing="false" text="Discard" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

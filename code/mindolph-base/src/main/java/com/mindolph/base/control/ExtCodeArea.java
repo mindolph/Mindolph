@@ -508,7 +508,6 @@ public class ExtCodeArea extends CodeArea {
         IndexRange selection = this.getSelection();
         String selectedText = super.getSelectedText();
         super.replaceSelection(head + selectedText + tail);
-        System.out.println(selection);
         if (selection.getLength() > 0) {
             this.selectRange(selection.getStart(), selection.getEnd() + head.length() + tail.length());
         }

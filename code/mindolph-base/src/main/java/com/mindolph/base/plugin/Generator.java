@@ -6,6 +6,8 @@ import javafx.scene.layout.StackPane;
 import java.util.function.Consumer;
 
 /**
+ * Generator that can generate text for editor.
+ *
  * @author mindolph.com@gmail.com
  */
 public interface Generator {

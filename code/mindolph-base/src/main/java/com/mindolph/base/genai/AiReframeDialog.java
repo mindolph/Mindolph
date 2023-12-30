@@ -4,7 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.AiInputDialog.Temperature;
 import com.mindolph.base.genai.GenAiEvents.ActionType;
-import com.mindolph.base.genai.GenAiEvents.OutputLength;
+import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,7 +27,7 @@ public class AiReframeDialog extends StackPane {
     @FXML
     private Button btnAdjust;
     @FXML
-    private Button btnAbandon;
+    private Button btnDiscard;
     @FXML
     private ProgressBar pbWaiting;
 
@@ -45,7 +45,7 @@ public class AiReframeDialog extends StackPane {
         btnKeep.setGraphic(FontIconManager.getIns().getIcon(IconKey.YES));
         btnRetry.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
         btnAdjust.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
-        btnAbandon.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        btnDiscard.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
 
         btnKeep.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.KEEP);
@@ -67,8 +67,8 @@ public class AiReframeDialog extends StackPane {
         });
         btnAdjust.setOnAction(event -> {
         });
-        btnAbandon.setOnAction(event -> {
-            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABANDON);
+        btnDiscard.setOnAction(event -> {
+            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.DISCARD);
             this.working();
         });
     }
@@ -76,13 +76,14 @@ public class AiReframeDialog extends StackPane {
     private ContextMenu createAdjustMenu() {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), null));// todo
+            MenuItem mi = (MenuItem) event.getSource();
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), (OutputAdjust) mi.getUserData()));
             working();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
         MenuItem miLonger = new MenuItem("Longer", FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
-        miShorter.setUserData(OutputLength.SHORTER);
-        miLonger.setUserData(OutputLength.LONGER);
+        miShorter.setUserData(OutputAdjust.SHORTER);
+        miLonger.setUserData(OutputAdjust.LONGER);
         miShorter.setOnAction(eventHandler);
         miLonger.setOnAction(eventHandler);
         menu.getItems().addAll(miShorter, miLonger);
@@ -93,7 +94,7 @@ public class AiReframeDialog extends StackPane {
         btnKeep.setDisable(true);
         btnRetry.setDisable(true);
         btnAdjust.setDisable(true);
-        btnAbandon.setDisable(true);
+        btnDiscard.setDisable(true);
 //        piProcessing.setDisable(false);
         pbWaiting.setVisible(true);
     }

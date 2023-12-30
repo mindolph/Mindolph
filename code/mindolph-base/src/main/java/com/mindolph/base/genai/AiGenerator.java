@@ -46,7 +46,7 @@ public class AiGenerator implements Generator {
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input.text());
             new Thread(() -> {
-                String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputLength());
+                String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
                 log.debug(generatedText);
                 Platform.runLater(() -> generateConsumer.accept(generatedText));
             }).start();
@@ -57,7 +57,7 @@ public class AiGenerator implements Generator {
                     log.debug("action type: %s".formatted(actionType));
                     completeConsumer.accept(true);
                 }
-                case ABANDON -> {
+                case DISCARD -> {
                     log.debug("action type: %s".formatted(actionType));
                     completeConsumer.accept(false);
                 }

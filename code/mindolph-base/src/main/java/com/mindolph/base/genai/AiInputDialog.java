@@ -39,6 +39,7 @@ public class AiInputDialog extends StackPane {
         Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
 
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
+        btnGenerate.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
 
         btnClose.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);

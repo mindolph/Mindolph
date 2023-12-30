@@ -13,6 +13,8 @@ import java.util.Optional;
  */
 public class GenAiPlugin extends BasePlugin {
 
+    private Generator generator;
+
     @Override
     public Collection<String> supportedFileTypes() {
         return Arrays.asList(SupportFileTypes.TYPE_MARKDOWN, SupportFileTypes.TYPE_PLAIN_TEXT, SupportFileTypes.TYPE_PLANTUML);
@@ -20,6 +22,9 @@ public class GenAiPlugin extends BasePlugin {
 
     @Override
     public Optional<Generator> getGenerator() {
-        return Optional.of(new AiGenerator(this));
+        if (generator == null) {
+            generator = new AiGenerator(this);
+        }
+        return Optional.of(generator);
     }
 }

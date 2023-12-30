@@ -48,17 +48,17 @@ public class GenAiEvents {
         System.out.println(es);
     }
 
-    public record Input(String text, float temperature, OutputLength outputLength) {
+    public record Input(String text, float temperature, OutputAdjust outputAdjust) {
 //        public static final Input DEFAULT = new Input("", Temperature.DEFAULT);
     }
 
     public enum ActionType {
         CANCEL, // cancel the generation
         KEEP, // keep the generated text
-        ABANDON // abandon the generated text
+        DISCARD // discard the generated text
     }
 
-    public enum OutputLength {
+    public enum OutputAdjust {
         SHORTER,
         LONGER
     }

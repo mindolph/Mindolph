@@ -11,9 +11,23 @@ import javafx.scene.text.Text;
 import java.util.Set;
 
 /**
+ * Utils for FX Node.
+ *
  * @author mindolph.com@gmail.com
  */
 public class NodeUtils {
+
+    public static void enable(Node... nodes){
+        for (Node node : nodes) {
+            node.setDisable(false);
+        }
+    }
+
+    public static void disable(Node... nodes){
+        for (Node node : nodes) {
+            node.setDisable(true);
+        }
+    }
 
     /**
      * Get a scroll bar from a JavaFX node.
@@ -41,4 +55,5 @@ public class NodeUtils {
         stackPane.layout();
         return text.getLayoutBounds();
     }
+
 }

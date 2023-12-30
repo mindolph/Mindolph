@@ -57,7 +57,7 @@ public class SmartCodeArea extends ExtCodeArea {
 
     private Pane parentPane;
 
-    private Point2D caretPoint;
+    private Point2D caretScreenPoint;
 
     public SmartCodeArea() {
         super();
@@ -136,7 +136,7 @@ public class SmartCodeArea extends ExtCodeArea {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     this.inputDialog = generator.inputDialog(this.hashCode());
-                    this.showGeneratorDialog();
+                    this.showGenerateDialog();
                 });
 
                 generator.onGenerated(generatedText -> {
@@ -145,13 +145,13 @@ public class SmartCodeArea extends ExtCodeArea {
                     this.replaceSelection(generatedText);
                     log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
-                    this.closeGeneratorDialog();
+                    this.closeGenerateDialog();
                     this.reframeDialog = generator.reframeDialog(this.hashCode());
                     this.showReframeDialog();
                     super.setEditable(false);
                 });
                 generator.onCancel(o -> {
-                    this.closeGeneratorDialog();
+                    this.closeGenerateDialog();
                     super.setEditable(true);
                 });
                 generator.onComplete(isKeep -> {
@@ -170,11 +170,18 @@ public class SmartCodeArea extends ExtCodeArea {
     }
 
     // @since 1.7
-    private void showGeneratorDialog() {
+    private void showGenerateDialog() {
         parentPane.getChildren().add(inputDialog);
         Platform.runLater(() -> {
-            Point2D p = this.screenToLocal(caretPoint);
-//            System.out.println(inputDialog.getWidth() + "-" + inputDialog.getHeight());
+
+            System.out.println(getCaretBounds());
+
+            Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
+            System.out.println(this.screenToLocal(new Point2D(optBounds.get().getMaxX(), optBounds.get().getMaxY())));
+            System.out.println(this.screenToLocal(caretScreenPoint));
+            System.out.println(this.screenToLocal(getCaretBounds().get().getMaxX(), getCaretBounds().get().getMaxY())   );
+            Point2D p = this.screenToLocal(caretScreenPoint);
+
             Bounds hoverBounds = new BoundingBox(p.getX(), p.getY(), inputDialog.getWidth(), inputDialog.getHeight());
             Point2D p2 = LayoutUtils.bestLocation(this.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
             inputDialog.relocate(p2.getX(), p2.getY());
@@ -183,7 +190,7 @@ public class SmartCodeArea extends ExtCodeArea {
     }
 
     // @since 1.7
-    private void closeGeneratorDialog() {
+    private void closeGenerateDialog() {
         log.debug("Closing generate dialog");
         parentPane.getChildren().remove(inputDialog);
         inputDialog = null;
@@ -195,7 +202,7 @@ public class SmartCodeArea extends ExtCodeArea {
     private void showReframeDialog() {
         parentPane.getChildren().add(reframeDialog);
         Platform.runLater(() -> {
-            Point2D p = this.screenToLocal(caretPoint);
+            Point2D p = this.screenToLocal(caretScreenPoint);
             log.debug("show dialog at: %s".formatted(PointUtils.pointInStr(p)));
             Bounds hoverBounds = new BoundingBox(p.getX(), p.getY(), reframeDialog.getWidth(), reframeDialog.getHeight());
             Point2D p2 = LayoutUtils.bestLocation(this.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
@@ -247,7 +254,7 @@ public class SmartCodeArea extends ExtCodeArea {
     private void bindCaretCoordinate() {
         this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.ifPresent(bounds -> {
-                caretPoint = new Point2D(bounds.getMaxX(), bounds.getMaxY());
+                caretScreenPoint = new Point2D(bounds.getMaxX(), bounds.getMaxY());
                 inputHelperManager.updateCaret(this, bounds.getMaxX(), bounds.getMaxY());
             });
         });

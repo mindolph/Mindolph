@@ -50,7 +50,7 @@
                         <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
                      </children>
                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
                   </HBox>
                </children>
