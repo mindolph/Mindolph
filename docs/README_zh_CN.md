@@ -43,12 +43,12 @@ Mindolph 是一个支持多平台的开源的个人知识库管理软件。[Engl
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|Release Notes| |[v1.5](release-notes/v1.5/v1.5_zh_CN.md)|[v1.6](release-notes/v1.6/v1.6.md)| |
-|MacOS|.dmg|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.dmg)| |
-|Windows|.msi|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.msi)| |
-|Debian|.deb|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.deb)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.rpm)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.rpm)| |
-|Java Executable|.jar|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.jar)|[v1.6.5](https://github.com/mindolph/Mindolph/releases/download/v1.6.5/Mindolph-1.6.5.jar)| Java 17 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.5.8.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-20`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-20\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar  Mindolph-1.5.8.jar` |
+|Release Notes| |[v1.5.x](release-notes/v1.5/v1.5_zh_CN.md)|[v1.6.x](release-notes/v1.6/v1.6.md)| |
+|MacOS|.dmg|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.dmg)|[v1.6.6](https://github.com/mindolph/Mindolph/releases/download/v1.6.6/Mindolph-1.6.6.dmg)| |
+|Windows|.msi|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.msi)|[v1.6.6](https://github.com/mindolph/Mindolph/releases/download/v1.6.6/Mindolph-1.6.6.msi)| |
+|Debian|.deb|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.deb)|[v1.6.6](https://github.com/mindolph/Mindolph/releases/download/v1.6.6/Mindolph-1.6.6.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.rpm)|[v1.6.6](https://github.com/mindolph/Mindolph/releases/download/v1.6.6/Mindolph-1.6.6.rpm)| |
+|Java Executable|.jar|[v1.5.8](https://github.com/mindolph/Mindolph/releases/download/v1.5.8/Mindolph-1.5.8.jar)|[v1.6.6](https://github.com/mindolph/Mindolph/releases/download/v1.6.6/Mindolph-1.6.6.jar)| Java 17 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.5.8.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-20`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-20\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar  Mindolph-1.5.8.jar` |
 
 
 

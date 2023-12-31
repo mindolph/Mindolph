@@ -64,7 +64,8 @@ public class FileTabView extends BaseView {
     public FileTabView() {
         super("/view/file_tab_view.fxml");
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTab, selectingTab) -> {
-            if (selectingTab != null && selectedTab != selectingTab) {
+            if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
+                // disabled tab means it is closing, no need to be loaded(for close all or close others from context menu)
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
@@ -263,12 +264,20 @@ public class FileTabView extends BaseView {
         });
         miCloseOthers.setOnAction(event -> {
             List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != selectedTab).toList();
+            // disable closing tabs to avoid them to be loaded (in lazy mode).
+            for (Tab otherTab : otherTabs) {
+                otherTab.setDisable(true);
+            }
             for (Tab otherTab : otherTabs) {
                 if (!closeTab(otherTab)) break;
             }
         });
         miCloseAll.setOnAction(event -> {
             LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabPane.getTabs());
+            // disable closing tabs to avoid them to be loaded (in lazy mode).
+            for (Tab tab : tabs) {
+                tab.setDisable(true);
+            }
             for (Tab tab : tabs) {
                 if (!closeTab(tab)) break;
             }

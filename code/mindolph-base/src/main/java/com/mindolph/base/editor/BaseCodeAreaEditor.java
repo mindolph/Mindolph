@@ -282,7 +282,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void dispose() {
-        log.info("Dispose editor: %s".formatted(this.getClass().getName()));
+        log.info("Dispose editor: %s(%s)".formatted(this.getClass().getName(), this.hashCode()));
         codeArea.dispose();
     }
 
