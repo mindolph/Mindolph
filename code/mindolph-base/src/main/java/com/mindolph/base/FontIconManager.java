@@ -90,8 +90,6 @@ public class FontIconManager {
         icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SEPARATOR, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.WINDOW_MINIMIZE, DEFAULT_ICON_SIZE));
 
-        icons.put(IconKey.GEN_AI, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC, DEFAULT_ICON_SIZE));
-
         if (SystemUtils.IS_OS_MAC) {
             icons.put(IconKey.SYSTEM, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.APPLE, DEFAULT_ICON_SIZE));
         }
@@ -128,6 +126,9 @@ public class FontIconManager {
         icons.put(IconKey.SHORT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SHORT_TEXT));
         icons.put(IconKey.LONG_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.REORDER));
         icons.put(IconKey.SEND, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SEND));
+        icons.put(IconKey.TEMPERATURE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.OIL_TEMPERATURE));
+        icons.put(IconKey.GEN_AI, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.ROBOT));
+        icons.put(IconKey.MAGIC, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC));
 
         icons.put(IconKey.EDIT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, DEFAULT_ICON_SIZE));
 //        icons.put(IconKey.ADD_CHILD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PLUS, DEFAULT_ICON_SIZE));

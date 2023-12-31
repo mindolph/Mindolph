@@ -5,10 +5,12 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CaretSelectionBind;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.Paragraph;
@@ -520,6 +523,17 @@ public class ExtCodeArea extends CodeArea {
         int curParIdx = this.getCurrentParagraph();
         Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
         return paragraph.getText();
+    }
+
+    // @since 1.7
+    public Bounds getCaretInLocal() {
+        return super.screenToLocal(getCaretBounds().orElse(BoundsUtils.newZero()));
+    }
+
+    // @since 1.7
+    public double getLineHeight() {
+        VirtualFlow<?, ?> vf = (VirtualFlow<?, ?>) this.lookup(".virtual-flow");
+        return vf.visibleCells().get(0).getNode().getLayoutBounds().getHeight();
     }
 
     public String getFileType() {

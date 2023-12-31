@@ -49,7 +49,7 @@
 <!--               </items>-->
 <!--            </PreferenceItem>-->
             <Separator prefWidth="200.0" />
-            <PreferenceItem name="Vendor">
+            <PreferenceItem name="GenAI Vendor">
                <ChoiceBox fx:id="cbAiVendor" prefWidth="120.0">
                </ChoiceBox>
             </PreferenceItem>

@@ -21,6 +21,8 @@ import static com.mindolph.base.genai.GenAiEvents.Input;
 public class AiInputDialog extends StackPane {
 
     @FXML
+    private Label lbIcon;
+    @FXML
     private TextArea taInput;
     @FXML
     private ChoiceBox<Pair<Float, Temperature>> cbTemperature;
@@ -36,7 +38,9 @@ public class AiInputDialog extends StackPane {
 
     public AiInputDialog(Object editorId) {
         FxmlUtils.loadUri("/genai/ai_input_dialog.fxml", this);
-        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
+//        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
+
+        lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
 
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
         btnGenerate.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));

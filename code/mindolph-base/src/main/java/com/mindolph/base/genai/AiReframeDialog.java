@@ -9,10 +9,7 @@ import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -20,6 +17,8 @@ import javafx.scene.layout.StackPane;
  */
 public class AiReframeDialog extends StackPane {
 
+    @FXML
+    private Label lbIcon;
     @FXML
     private Button btnKeep;
     @FXML
@@ -41,6 +40,8 @@ public class AiReframeDialog extends StackPane {
         this.editorId = editorId;
         this.inputText = inputText;
         FxmlUtils.loadUri("/genai/ai_reframe_dialog.fxml", this);
+
+        lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
 
         btnKeep.setGraphic(FontIconManager.getIns().getIcon(IconKey.YES));
         btnRetry.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
