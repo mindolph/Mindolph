@@ -51,6 +51,7 @@ public class InputHelperManager {
     // trigger data for unknown condition.
     public static final String UNKNOWN_INPUT = "unknown";
 
+    // TODO should be dynamic
     private static final double DEFAULT_ITEM_HEIGHT = 24;
 
     private Pane parentPane; // parent pane that holds the helper and target node.
@@ -77,13 +78,13 @@ public class InputHelperManager {
     private final String fileType;
 
     private Collection<Plugin> supportedPlugins;
-    private final EventSource<String> helpSource = new EventSource<>();
+    private final EventSource<String> helpEvent = new EventSource<>();
 
     public InputHelperManager(Object editorId, String fileType) {
         this.editorId = editorId;
         this.fileType = fileType;
-        helpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(200))
-                .subscribe(this::updateAndShowContextMenu);
+        helpEvent.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(200))
+                .subscribe(this::updateAndShowSuggestions);
         StateBuilder<String, Serializable> stateBuilder = new StateBuilder<>();
         Trigger[] quitTriggers = stateBuilder.triggerBuilder().c(' ', '\t').custom(isEnter).custom(isStopBackspace).custom(unknownInput).custom(isEsc).build();
         stateBuilder
@@ -93,7 +94,7 @@ public class InputHelperManager {
                 })
                 .state(HELP_START).in(str -> stackPane.setVisible(false))
                 .state(HELPING).in(str -> {
-                    helpSource.push((String) str); // delayed to show suggestions.
+                    helpEvent.push((String) str); // delayed to show suggestions.
                 })
                 .initialize(NO_HELP)
                 .action("still-no-help", NO_HELP, NO_HELP, quitTriggers)
@@ -164,7 +165,7 @@ public class InputHelperManager {
     }
 
     /**
-     * Consume key press event with payload.
+     * Consume key pressed or released event with payload.
      *
      * @param event
      * @param str   payload
@@ -221,6 +222,11 @@ public class InputHelperManager {
                     event.consume();
                 }
             }
+            else if (KeyCode.ESCAPE.equals(event.getCode())) {
+                log.debug("Cancel suggestion for: " + str);
+                stateMachine.acceptWithPayload(event.getCode(), str);
+                event.consume();
+            }
             else {
                 stateMachine.acceptWithPayload(data, str);
             }
@@ -230,7 +236,7 @@ public class InputHelperManager {
         }
     }
 
-    private void updateAndShowContextMenu(String input) {
+    private void updateAndShowSuggestions(String input) {
         if (StringUtils.isBlank(input)) {
             return;
         }
@@ -285,12 +291,7 @@ public class InputHelperManager {
             // run later for lvSuggestion to be ready
             Platform.runLater(() -> {
                 Bounds targetBounds = targetNode.getBoundsInParent();
-                Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getWidth(), lvSuggestion.getItems().size() * DEFAULT_ITEM_HEIGHT);
-                Point2D newPos = LayoutUtils.bestLocation(targetBounds, hoverBounds, new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
-                this.stackPane.relocate(newPos.getX(), newPos.getY());
-                this.showHelper();
-
-                // calculate the appropriate width and height of suggestion list view.
+                // Calculate the appropriate width and height of suggestion list.
                 Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
                 String longestStr = longest.isPresent() ? longest.get() : "";
                 Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());
@@ -301,6 +302,11 @@ public class InputHelperManager {
                 actualHeight = actualWidth > 250 ? actualHeight + 15 : actualHeight;
                 this.lvSuggestion.setPrefHeight(actualHeight + 2);
                 this.lvSuggestion.setMaxHeight(actualHeight + 2);// 2 is extra
+                // locate to the best position and show
+                Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getWidth(), this.lvSuggestion.getHeight());
+                Point2D newPos = LayoutUtils.bestLocation(targetBounds, hoverBounds, new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
+                this.stackPane.relocate(newPos.getX(), newPos.getY());
+                this.showHelper();
 
                 // selection
                 for (String item : lvSuggestion.getItems()) {
