@@ -17,7 +17,8 @@ public class EventUtils {
         String str = event.getText();
         return StringUtils.isAsciiPrintable(str)
                 || StringUtils.equalsAny(str, " ", "\r", "\t")
-                || KeyCode.BACK_SPACE.equals(event.getCode());
+                || KeyCode.BACK_SPACE.equals(event.getCode())
+                || KeyCode.ESCAPE.equals(event.getCode());
     }
 
     public static Window getWindowFromEvent(Event event) {
