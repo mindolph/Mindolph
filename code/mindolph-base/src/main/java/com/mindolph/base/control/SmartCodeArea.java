@@ -98,7 +98,7 @@ public class SmartCodeArea extends ExtCodeArea {
         }));
         inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.ENTER), keyEvent -> {
             if (!isInputMethod) {
-                if (isInputHelperEnabled() && !isInputMethod) {
+                if (isInputHelperEnabled()) {
                     inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
                     if (!keyEvent.isConsumed()) {
                         // line break implicitly
