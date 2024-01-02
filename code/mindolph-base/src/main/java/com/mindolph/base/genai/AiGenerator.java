@@ -2,6 +2,7 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import javafx.application.Platform;
@@ -28,7 +29,7 @@ public class AiGenerator implements Generator {
 
     private Plugin plugin;
 
-    private Map<Object, String> inputMap = new HashMap<>();
+    private Map<Object, Input> inputMap = new HashMap<>();
 
     public AiGenerator(Plugin plugin) {
         this.plugin = plugin;
@@ -44,7 +45,7 @@ public class AiGenerator implements Generator {
     public StackPane inputDialog(Object editorId) {
         AiInputDialog aiInputDialog = new AiInputDialog(editorId);
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
-            inputMap.put(editorId, input.text());
+            inputMap.put(editorId, input);
             new Thread(() -> {
                 String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
                 log.debug(generatedText);
@@ -90,7 +91,8 @@ public class AiGenerator implements Generator {
 
     @Override
     public StackPane reframeDialog(Object editorId) {
-        AiReframeDialog aiReframeDialog = new AiReframeDialog(editorId, inputMap.get(editorId));
+        Input input = inputMap.get(editorId);
+        AiReframeDialog aiReframeDialog = new AiReframeDialog(editorId, input.text(), input.temperature());
         return aiReframeDialog;
     }
 

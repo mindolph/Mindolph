@@ -34,11 +34,14 @@ public class AiReframeDialog extends StackPane {
 
     private String inputText;
 
+    private float temperature;
+
     private ContextMenu adjustMenu;
 
-    public AiReframeDialog(Object editorId, String inputText) {
+    public AiReframeDialog(Object editorId, String inputText, float temperature) {
         this.editorId = editorId;
         this.inputText = inputText;
+        this.temperature = temperature;
         FxmlUtils.loadUri("/genai/ai_reframe_dialog.fxml", this);
 
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
@@ -53,7 +56,7 @@ public class AiReframeDialog extends StackPane {
             this.working();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), null));// todo
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.SAFE.value(), null));// todo
             this.working();
         });
         btnAdjust.setOnMouseClicked(event -> {
@@ -78,7 +81,7 @@ public class AiReframeDialog extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.DEFAULT.value(), (OutputAdjust) mi.getUserData()));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, this.temperature, (OutputAdjust) mi.getUserData()));
             working();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));

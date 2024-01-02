@@ -7,10 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
-import org.controlsfx.tools.Borders;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.mindolph.base.genai.GenAiEvents.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
@@ -20,6 +19,8 @@ import static com.mindolph.base.genai.GenAiEvents.Input;
  */
 public class AiInputDialog extends StackPane {
 
+    @FXML
+    private Label lbTemperature;
     @FXML
     private Label lbIcon;
     @FXML
@@ -40,6 +41,7 @@ public class AiInputDialog extends StackPane {
         FxmlUtils.loadUri("/genai/ai_input_dialog.fxml", this);
 //        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
 
+        lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
 
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
@@ -54,14 +56,21 @@ public class AiInputDialog extends StackPane {
             }
         });
         btnGenerate.setOnAction(event -> {
-            pbWaiting.setVisible(true);
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText(), cbTemperature.getValue().getKey(), null));
+            if (StringUtils.isNotBlank(taInput.getText())) {
+                pbWaiting.setVisible(true);
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText(), cbTemperature.getValue().getKey(), null));
+            }
+            else {
+                taInput.requestFocus();
+            }
         });
 
         cbTemperature.getItems().addAll(
-                new Pair<>(Temperature.MIN.value, Temperature.MIN),
-                new Pair<>(Temperature.DEFAULT.value, Temperature.DEFAULT),
-                new Pair<>(Temperature.MAX.value, Temperature.MAX)
+                new Pair<>(Temperature.SAFE.value, Temperature.SAFE),
+                new Pair<>(Temperature.CREATIVE.value, Temperature.CREATIVE),
+                new Pair<>(Temperature.ADVENTUROUS.value, Temperature.ADVENTUROUS),
+                new Pair<>(Temperature.UNCHARTED.value, Temperature.UNCHARTED),
+                new Pair<>(Temperature.CHAOS.value, Temperature.CHAOS)
         );
         cbTemperature.setConverter(new StringConverter<>() {
             @Override
@@ -74,7 +83,7 @@ public class AiInputDialog extends StackPane {
                 return null;
             }
         });
-        cbTemperature.setValue(new Pair<>(Temperature.DEFAULT.value, Temperature.DEFAULT));
+        cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
     }
 
     @Override
@@ -83,9 +92,11 @@ public class AiInputDialog extends StackPane {
     }
 
     public record Temperature(float value, String display) {
-        public static final Temperature DEFAULT = new Temperature(0.5f, "DEFAULT");
-        public static final Temperature MIN = new Temperature(0.0f, "MIN");
-        public static final Temperature MAX = new Temperature(1.0f, "MAX");
+        public static final Temperature SAFE = new Temperature(0.0f, "Safe");
+        public static final Temperature CREATIVE = new Temperature(0.25f, "Creative");
+        public static final Temperature ADVENTUROUS = new Temperature(0.5f, "Adventurous");
+        public static final Temperature UNCHARTED = new Temperature(0.75f, "Uncharted");
+        public static final Temperature CHAOS = new Temperature(1.0f, "Chaos");
 
         @Override
         public String toString() {
