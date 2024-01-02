@@ -8,6 +8,8 @@ import com.mindolph.core.constant.GenAiModelVendor;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.sun.javafx.scene.control.IntegerField;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -180,9 +182,15 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
         rbSocks.setToggleGroup(group);
+        rbHttp.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) fxPreferences.savePreference(GENERAL_PROXY_TYPE, "HTTP");
+        });
+        rbSocks.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) fxPreferences.savePreference(GENERAL_PROXY_TYPE, "SOCKS");
+        });
         super.bindPreference(cbEnableProxy.selectedProperty(), PrefConstants.GENERAL_PROXY_ENABLE, false);
-        super.bindPreference(rbHttp.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, true);
-        super.bindPreference(rbSocks.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, false);
+//        super.bindPreference(rbHttp.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, true);
+//        super.bindPreference(rbSocks.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, false);
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
         super.bindPreference(tfProxyPort.valueProperty(), PrefConstants.GENERAL_PROXY_PORT, 0);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");

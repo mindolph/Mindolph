@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.7
  */
 public class GenAiEvents {
 

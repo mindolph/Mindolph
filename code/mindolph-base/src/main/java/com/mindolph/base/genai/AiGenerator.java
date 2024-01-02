@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.7
  */
 public class AiGenerator implements Generator {
 
@@ -47,9 +48,14 @@ public class AiGenerator implements Generator {
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input);
             new Thread(() -> {
-                String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
-                log.debug(generatedText);
-                Platform.runLater(() -> generateConsumer.accept(generatedText));
+                try {
+                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
+                    log.debug(generatedText);
+                    Platform.runLater(() -> generateConsumer.accept(generatedText));
+                } catch (Exception e) {
+                    log.error("", e);
+                    Platform.runLater(() -> cancelConsumer.accept(null));
+                }
             }).start();
         });
         GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {

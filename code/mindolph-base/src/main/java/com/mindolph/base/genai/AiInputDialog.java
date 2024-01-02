@@ -2,6 +2,7 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -16,6 +17,7 @@ import static com.mindolph.base.genai.GenAiEvents.Input;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.7
  */
 public class AiInputDialog extends StackPane {
 
@@ -58,6 +60,7 @@ public class AiInputDialog extends StackPane {
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 pbWaiting.setVisible(true);
+                NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
                 GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText(), cbTemperature.getValue().getKey(), null));
             }
             else {

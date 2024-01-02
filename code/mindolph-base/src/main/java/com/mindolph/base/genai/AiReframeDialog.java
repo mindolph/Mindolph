@@ -14,6 +14,7 @@ import javafx.scene.layout.StackPane;
 
 /**
  * @author mindolph.com@gmail.com
+ * @since 1.7
  */
 public class AiReframeDialog extends StackPane {
 

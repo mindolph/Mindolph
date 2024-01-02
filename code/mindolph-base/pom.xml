@@ -43,6 +43,10 @@
             <version>${javafx.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.hamawhitegg</groupId>
+            <artifactId>langchain-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.swiftech</groupId>
             <artifactId>swstate</artifactId>
         </dependency>
