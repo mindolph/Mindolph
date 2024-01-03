@@ -4,6 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.AiInputDialog.Temperature;
 import com.mindolph.base.genai.GenAiEvents.ActionType;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
@@ -54,11 +55,11 @@ public class AiReframeDialog extends StackPane {
 
         btnKeep.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.KEEP);
-            this.working();
+            this.onWorking();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, Temperature.SAFE.value(), null));// todo
-            this.working();
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, Temperature.SAFE.value(), null));// todo
+            this.onWorking();
         });
         btnAdjust.setOnMouseClicked(event -> {
             if (adjustMenu == null) {
@@ -74,7 +75,7 @@ public class AiReframeDialog extends StackPane {
         });
         btnDiscard.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.DISCARD);
-            this.working();
+            this.onWorking();
         });
     }
 
@@ -82,8 +83,8 @@ public class AiReframeDialog extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new GenAiEvents.Input(inputText, this.temperature, (OutputAdjust) mi.getUserData()));
-            working();
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, (OutputAdjust) mi.getUserData()));
+            onWorking();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
         MenuItem miLonger = new MenuItem("Longer", FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
@@ -95,12 +96,11 @@ public class AiReframeDialog extends StackPane {
         return menu;
     }
 
-    private void working() {
+    private void onWorking() {
         btnKeep.setDisable(true);
         btnRetry.setDisable(true);
         btnAdjust.setDisable(true);
         btnDiscard.setDisable(true);
-//        piProcessing.setDisable(false);
         pbWaiting.setVisible(true);
     }
 

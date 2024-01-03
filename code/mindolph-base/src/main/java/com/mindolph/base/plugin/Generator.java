@@ -16,7 +16,11 @@ public interface Generator {
 
     StackPane inputDialog(Object editorId);
 
-    void onCancel(Consumer<Object> consumer);
+    /**
+     *
+     * @param consumer with true if cancel normally(by user), false if cancel by exceptions.
+     */
+    void onCancel(Consumer<Boolean> consumer);
 
     /**
      * On completed with whether keep the generated text or not.

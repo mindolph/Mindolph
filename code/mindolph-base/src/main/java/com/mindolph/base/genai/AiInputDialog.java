@@ -89,6 +89,11 @@ public class AiInputDialog extends StackPane {
         cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
     }
 
+    public void onStop() {
+        pbWaiting.setVisible(false);
+        NodeUtils.enable(btnClose, btnGenerate, cbTemperature, taInput);
+    }
+
     @Override
     public void requestFocus() {
         taInput.requestFocus();

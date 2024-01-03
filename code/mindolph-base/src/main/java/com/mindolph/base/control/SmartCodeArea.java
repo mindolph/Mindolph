@@ -147,8 +147,10 @@ public class SmartCodeArea extends ExtCodeArea {
                     this.reframeDialog = generator.reframeDialog(this.hashCode());
                     this.showReframeDialog();
                 });
-                generator.onCancel(o -> {
-                    this.closeGenerateDialog();
+                generator.onCancel(isNormally -> {
+                    if (isNormally) {
+                        this.closeGenerateDialog();
+                    }
                 });
                 generator.onComplete(isKeep -> {
                     if (!isKeep) {

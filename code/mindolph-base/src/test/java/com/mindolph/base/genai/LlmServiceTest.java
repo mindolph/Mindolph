@@ -1,5 +1,6 @@
 package com.mindolph.base.genai;
 
+import com.mindolph.base.genai.llm.LlmService;
 import org.junit.jupiter.api.Test;
 
 /**

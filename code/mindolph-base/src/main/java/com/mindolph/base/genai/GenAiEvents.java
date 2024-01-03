@@ -40,17 +40,14 @@ public class GenAiEvents {
         actionEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
     }
 
-    public void emitActionEvent(Object editorId, ActionType actionType){
+    public void emitActionEvent(Object editorId, ActionType actionType) {
         EventSource<ActionType> es = actionEventSource.computeIfPresent(editorId, (o, actionEventSource) -> {
-            System.out.println("##");
             actionEventSource.push(actionType);
             return actionEventSource;
         });
-        System.out.println(es);
     }
 
     public record Input(String text, float temperature, OutputAdjust outputAdjust) {
-//        public static final Input DEFAULT = new Input("", Temperature.DEFAULT);
     }
 
     public enum ActionType {

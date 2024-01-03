@@ -13,10 +13,8 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
 
-    String GENERAL_AI_VENDOR_ACTIVE = "general.genai.vendor.active";
-    String GENERAL_AI_VENDOR_PROPS = "general.genai.vendor.props";
-//    String GENERAL_API_KEY = "general.genai.apiKey";
-//    String GENERAL_AI_MODEL = "general.genai.aiModel";
+    String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
+    String GENERAL_AI_PROVIDERS = "general.genai.providers";
 
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";
@@ -34,7 +32,7 @@ public interface PrefConstants {
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
     String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
 
-    record VendorProps(String apiKey, String aiModel) {
+    record ProviderProps(String apiKey, String aiModel) {
     }
 
 }

@@ -2,14 +2,13 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
-import com.mindolph.base.genai.LlmService;
+import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiModelVendor;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.sun.javafx.scene.control.IntegerField;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -22,7 +21,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.PrefConstants.*;
 
@@ -49,7 +47,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private CheckBox cbEnableInputHelper;
 
     @FXML
-    private ChoiceBox<Pair<GenAiModelVendor, String>> cbAiVendor;
+    private ChoiceBox<Pair<GenAiModelProvider, String>> cbAiProvider;
     @FXML
     private TextField tfApiKey;
     @FXML
@@ -113,7 +111,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                     return null;
                 }
             });
-            choiceBoxCell.getItems().addAll(Arrays.stream(Orientation.values()).map(e -> new Pair<>(e, e.toString())).collect(Collectors.toList()));
+            choiceBoxCell.getItems().addAll(Arrays.stream(Orientation.values()).map(e -> new Pair<>(e, e.toString())).toList());
             choiceBoxCell.getSelectionModel().select(new Pair<>(param.getValue().orientation, param.getValue().orientation.toString()));
             choiceBoxCell.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (PLANT_UML.equals(param.getValue().editor)) {
@@ -133,23 +131,23 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(cbEnableInputHelper.selectedProperty(), PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
 
         // Gen AI
-        cbAiVendor.setConverter(new StringConverter<>() {
+        cbAiProvider.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Pair<GenAiModelVendor, String> object) {
+            public String toString(Pair<GenAiModelProvider, String> object) {
                 return object.getValue();
             }
 
             @Override
-            public Pair<GenAiModelVendor, String> fromString(String string) {
+            public Pair<GenAiModelProvider, String> fromString(String string) {
                 return null;
             }
         });
-        cbAiVendor.getItems().add(new Pair<>(GenAiModelVendor.OPEN_AI, GenAiModelVendor.OPEN_AI.getName()));
-        cbAiVendor.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            fxPreferences.savePreference(PrefConstants.GENERAL_AI_VENDOR_ACTIVE, newValue.getKey().getName());
-            Map<String, VendorProps> map = LlmService.getIns().loadGenAiVendors();
+        cbAiProvider.getItems().add(new Pair<>(GenAiModelProvider.OPEN_AI, GenAiModelProvider.OPEN_AI.getName()));
+        cbAiProvider.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            fxPreferences.savePreference(PrefConstants.GENERAL_AI_PROVIDER_ACTIVE, newValue.getKey().getName());
+            Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             if (map.containsKey(newValue.getKey().getName())) {
-                VendorProps vendorProps = map.get(newValue.getKey().getName());
+                ProviderProps vendorProps = map.get(newValue.getKey().getName());
                 if (vendorProps != null) {
                     tfApiKey.setText(vendorProps.apiKey());
                     tfAiModel.setText(vendorProps.aiModel());
@@ -160,14 +158,14 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 }
             }
         });
-        cbAiVendor.setValue(new Pair<>(GenAiModelVendor.OPEN_AI, GenAiModelVendor.OPEN_AI.getName()));
+        cbAiProvider.setValue(new Pair<>(GenAiModelProvider.OPEN_AI, GenAiModelProvider.OPEN_AI.getName()));
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            VendorProps vendorProps = new VendorProps(newValue, tfAiModel.getText());
-            LlmService.getIns().saveGenAiVendors(cbAiVendor.getValue().getKey(), vendorProps);
+            ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
+            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
         });
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            VendorProps vendorProps = new VendorProps(tfApiKey.getText(), newValue);
-            LlmService.getIns().saveGenAiVendors(cbAiVendor.getValue().getKey(), vendorProps);
+            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), newValue);
+            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
         });
 
         // proxy
@@ -178,15 +176,22 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
             else {
                 NodeUtils.disable(rbHttp, rbSocks, tfProxyHost, tfProxyPort, tfProxyUsername, pfProxyPassword);
             }
+            this.save(true);
         });
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
         rbSocks.setToggleGroup(group);
         rbHttp.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) fxPreferences.savePreference(GENERAL_PROXY_TYPE, "HTTP");
+            if (newValue) {
+                fxPreferences.savePreference(GENERAL_PROXY_TYPE, "HTTP");
+                this.save(true);
+            }
         });
         rbSocks.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) fxPreferences.savePreference(GENERAL_PROXY_TYPE, "SOCKS");
+            if (newValue) {
+                fxPreferences.savePreference(GENERAL_PROXY_TYPE, "SOCKS");
+                this.save(true);
+            }
         });
         super.bindPreference(cbEnableProxy.selectedProperty(), PrefConstants.GENERAL_PROXY_ENABLE, false);
 //        super.bindPreference(rbHttp.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, true);
@@ -204,7 +209,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
     @Override
     protected void save(boolean notify) {
-
+        if (notify)
+            PluginEventBus.getIns().emitPreferenceChanges();
     }
 
     private record OrientationItem(String editor, Orientation orientation) {
