@@ -43,7 +43,7 @@
 ![puml_usecase](screenshots/puml_er.jpg)
 
 * PlantUML Deployment diagram
-![puml_usecase](screenshots/puml_er.jpg)
+![puml_usecase](screenshots/puml_deployment.jpg)
 
 * Find in files by keyword
 ![find_in_files](screenshots/find_in_files.jpg)
