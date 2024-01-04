@@ -16,6 +16,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -143,22 +144,22 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
             }
         });
         cbAiProvider.getItems().add(new Pair<>(GenAiModelProvider.OPEN_AI, GenAiModelProvider.OPEN_AI.getName()));
-        cbAiProvider.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            fxPreferences.savePreference(PrefConstants.GENERAL_AI_PROVIDER_ACTIVE, newValue.getKey().getName());
-            Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-            if (map.containsKey(newValue.getKey().getName())) {
-                ProviderProps vendorProps = map.get(newValue.getKey().getName());
-                if (vendorProps != null) {
-                    tfApiKey.setText(vendorProps.apiKey());
-                    tfAiModel.setText(vendorProps.aiModel());
-                }
-                else {
-                    tfApiKey.setText("");
-                    tfAiModel.setText("");
-                }
-            }
-        });
-        cbAiProvider.setValue(new Pair<>(GenAiModelProvider.OPEN_AI, GenAiModelProvider.OPEN_AI.getName()));
+        // cbAiProvider.getItems().add(new Pair<>(GenAiModelProvider.GEMINI, GenAiModelProvider.GEMINI.getName()));
+        super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, GenAiModelProvider.OPEN_AI.getName(),
+                value -> value.getKey().getName(),
+                providerName -> new Pair<>(GenAiModelProvider.fromName(providerName), providerName), selected -> {
+                    Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
+                    ProviderProps vendorProps = map.get(selected.getKey().getName());
+                    if (vendorProps != null) {
+                        tfApiKey.setText(vendorProps.apiKey());
+                        tfAiModel.setText(vendorProps.aiModel());
+                    }
+                    else {
+                        tfApiKey.setText("");
+                        tfAiModel.setText("");
+                    }
+                });
+
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
             ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
@@ -169,33 +170,18 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         });
 
         // proxy
-        cbEnableProxy.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                NodeUtils.enable(rbHttp, rbSocks, tfProxyHost, tfProxyPort, tfProxyUsername, pfProxyPassword);
-            }
-            else {
-                NodeUtils.disable(rbHttp, rbSocks, tfProxyHost, tfProxyPort, tfProxyUsername, pfProxyPassword);
-            }
-            this.save(true);
+        super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> aBoolean, str -> str, aBoolean -> {
+            NodeUtils.setDisable(!aBoolean, rbHttp, rbSocks, tfProxyHost, tfProxyPort, tfProxyUsername, pfProxyPassword);
         });
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
         rbSocks.setToggleGroup(group);
-        rbHttp.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                fxPreferences.savePreference(GENERAL_PROXY_TYPE, "HTTP");
-                this.save(true);
-            }
-        });
-        rbSocks.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                fxPreferences.savePreference(GENERAL_PROXY_TYPE, "SOCKS");
-                this.save(true);
-            }
-        });
-        super.bindPreference(cbEnableProxy.selectedProperty(), PrefConstants.GENERAL_PROXY_ENABLE, false);
-//        super.bindPreference(rbHttp.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, true);
-//        super.bindPreference(rbSocks.selectedProperty(), PrefConstants.GENERAL_PROXY_TYPE, false);
+        super.bindPreference(rbHttp.selectedProperty(), GENERAL_PROXY_TYPE, "HTTP",
+                aBoolean -> aBoolean ? "HTTP" : StringUtils.EMPTY,
+                str -> StringUtils.equals(str, "HTTP"));
+        super.bindPreference(rbSocks.selectedProperty(), GENERAL_PROXY_TYPE, "SOCKS",
+                aBoolean -> aBoolean ? "SOCKS" : StringUtils.EMPTY,
+                str -> StringUtils.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
         super.bindPreference(tfProxyPort.valueProperty(), PrefConstants.GENERAL_PROXY_PORT, 0);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
@@ -208,7 +194,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     }
 
     @Override
-    protected void save(boolean notify) {
+    protected void onSave(boolean notify) {
         if (notify)
             PluginEventBus.getIns().emitPreferenceChanges();
     }

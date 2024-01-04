@@ -5,7 +5,8 @@ package com.mindolph.core.constant;
  */
 public enum GenAiModelProvider {
 
-    OPEN_AI("OpenAI");
+    OPEN_AI("OpenAI"),
+    GEMINI("Gemini");
 
     private final String name;
 
