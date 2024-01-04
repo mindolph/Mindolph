@@ -35,6 +35,8 @@ public class AiInputDialog extends StackPane {
     private Button btnClose;
     @FXML
     private ProgressBar pbWaiting;
+    @FXML
+    private Label lbMsg;
 
 
     private Object editorId;
@@ -61,7 +63,7 @@ public class AiInputDialog extends StackPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 pbWaiting.setVisible(true);
                 NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText(), cbTemperature.getValue().getKey(), null));
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null));
             }
             else {
                 taInput.requestFocus();
@@ -89,8 +91,12 @@ public class AiInputDialog extends StackPane {
         cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
     }
 
-    public void onStop() {
+    /**
+     * Be called when the generation is stopped by some reason.
+     */
+    public void onStop(String reason) {
         pbWaiting.setVisible(false);
+        lbMsg.setText(reason);
         NodeUtils.enable(btnClose, btnGenerate, cbTemperature, taInput);
     }
 

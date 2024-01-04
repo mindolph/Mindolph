@@ -1,9 +1,13 @@
 package com.mindolph.base.genai.llm;
 
+import com.hw.langchain.chains.llm.LLMChain;
 import com.hw.langchain.chat.models.openai.ChatOpenAI;
-import com.mindolph.base.genai.GenAiEvents;
+import com.hw.langchain.prompts.prompt.PromptTemplate;
+import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 /**
  * @author mindolph.com@gmail.com
@@ -14,6 +18,11 @@ public class OpenAiProvider extends BaseLlmProvider {
 
     private final String apiKey;
     private final String aiModel;
+    private final String TEMPLATE = """
+            {input}
+            your output must be in format: {format}.
+            your output should be {length}.
+            """;
 
     public OpenAiProvider(String apiKey, String aiModel) {
         super();
@@ -22,13 +31,14 @@ public class OpenAiProvider extends BaseLlmProvider {
     }
 
     private ChatOpenAI buildAI(float temperature) {
-        log.info("Build OpenAI with model %s and access %s proxy".formatted(this.aiModel, super.proxyEnabled ? "with" : "without"));
+        log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
+                super.proxyEnabled ? "with proxy %s".formatted(this.proxyUrl) : "without proxy"));
         ChatOpenAI.ChatOpenAIBuilder<?, ?> builder = ChatOpenAI.builder()
                 .openaiApiKey(this.apiKey)
                 .model(this.aiModel)
                 .stream(false)
                 .maxRetries(1)
-                .requestTimeout(5)
+                .requestTimeout(60)
                 .temperature(temperature);
         if (super.proxyEnabled) {
             builder.openaiProxy(super.proxyUrl);
@@ -37,8 +47,17 @@ public class OpenAiProvider extends BaseLlmProvider {
     }
 
     @Override
-    public String predict(String input, float temperature, GenAiEvents.OutputAdjust outputAdjust) {
-        // TODO with adjust options
-        return buildAI(temperature).predict(input);
+    public String predict(String input, float temperature, OutputAdjust outputAdjust) {
+        PromptTemplate promptTemplate = PromptTemplate.fromTemplate(TEMPLATE);
+        ChatOpenAI chatOpenAI = buildAI(temperature);
+        LLMChain chain = new LLMChain(chatOpenAI, promptTemplate);
+        return chain.predict(new HashMap<>() {
+            {
+                put("input", input);
+                put("format", "Markdown");
+                put("length", outputAdjust == OutputAdjust.SHORTER? "simplified" : "detailed");
+            }
+        });
+//        return chatOpenAI.predict(input);
     }
 }

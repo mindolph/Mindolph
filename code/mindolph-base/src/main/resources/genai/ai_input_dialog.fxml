@@ -14,7 +14,7 @@
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane style="-fx-background-color: #D3D3D3C0;">
+      <AnchorPane style="-fx-background-color: #D3D3D3FF;">
          <children>
             <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -49,7 +49,10 @@
                      <children>
                         <Label fx:id="lbTemperature" />
                         <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
-                        <Pane HBox.hgrow="ALWAYS" />
+                        <Pane HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="lbMsg" />
+                           </children></Pane>
                         <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
                      </children>
                      <padding>

@@ -66,8 +66,10 @@ public class AiGenerator implements Generator {
                     Platform.runLater(() -> generateConsumer.accept(generatedText));
                 } catch (Exception e) {
                     log.error(e.getLocalizedMessage(), e);
-                    Platform.runLater(() -> cancelConsumer.accept(false));
-                    inputDialogMap.get(editorId).onStop();
+                    Platform.runLater(() -> {
+                        cancelConsumer.accept(false);
+                        inputDialogMap.get(editorId).onStop(e.getLocalizedMessage());
+                    });
                 }
             }).start();
         });
