@@ -2,7 +2,7 @@
 
 ![](../DemoWorkspace/app_30.png)
 
-Mindolph 是一个支持多平台的开源的个人知识库管理软件。[English](../README.md)
+Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软件。[English](../README.md)
 
 
 ### 功能
