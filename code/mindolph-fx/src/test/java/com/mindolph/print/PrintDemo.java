@@ -69,7 +69,7 @@ public class PrintDemo extends Application implements Initializable {
             if (pageLayout == null){
                 throw new RuntimeException("Failed get page layout from printer");
             }
-            if (false) {
+            if (true) {
                 // 2214x820
                 //2575.0 x 852.0
                 InputStream inputStream = ClasspathResourceUtils.openResourceStream("print/print_demo.mmd");
