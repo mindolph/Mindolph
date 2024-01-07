@@ -11,7 +11,7 @@
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane style="-fx-background-color: #D3D3D3C0;">
+      <AnchorPane style="-fx-background-color: #D3D3D3FF;">
          <children>
             <VBox>
                <children>

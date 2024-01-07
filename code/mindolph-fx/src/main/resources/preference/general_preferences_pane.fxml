@@ -33,9 +33,9 @@
                </items>
             </PreferenceItem>
             <Separator prefWidth="200.0" />
-            <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="120.0">
+            <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="130.0" minHeight="110">
                <items>
-                  <TableView fx:id="tvOrientation" minHeight="60.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
+                  <TableView fx:id="tvOrientation" minHeight="80.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
                   </TableView>
                </items>
             </PreferenceItem>
