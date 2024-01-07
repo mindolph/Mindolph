@@ -14,9 +14,9 @@ public class LayoutUtils {
      * Limit one component in the area of another component.
      * If the component is out of the area, it will be moved to the best location.
      *
-     * @param targetBounds bounds of target component
+     * @param targetBounds bounds of target component.
      * @param hoverBounds  bounds of hover component which will be limited to the area of target component.
-     * @param extraPadding extra padding to the border of target bounds, optional
+     * @param extraPadding extra padding to the border of target bounds, optional.
      * @return
      */
     public static Point2D bestLocation(Bounds targetBounds, Bounds hoverBounds, Dimension2D extraPadding) {
@@ -26,7 +26,8 @@ public class LayoutUtils {
         double offsetY = (targetBounds.getMaxY() - padHeight) - hoverBounds.getMaxY();
         double newX = offsetX > 0 ? hoverBounds.getMinX() : hoverBounds.getMinX() - hoverBounds.getWidth() - padWidth;
         double newY = offsetY > 0 ? hoverBounds.getMinY() : hoverBounds.getMinY() - hoverBounds.getHeight() - padHeight;
-        newY = newY < 0 ? 0 : newY; // adjust again if it's head still out of target bounds.
+        newX = Math.max(0, newX);
+        newY = Math.max(0, newY); // adjust again if it's head still out of target bounds.
         return new Point2D(newX, newY);
     }
 }

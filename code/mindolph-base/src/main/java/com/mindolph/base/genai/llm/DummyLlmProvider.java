@@ -18,7 +18,7 @@ public class DummyLlmProvider implements LlmProvider {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        if (RandomUtils.nextInt() % 2 == 0) {
+        if (RandomUtils.nextInt() % 3 == 0) {
             throw new RuntimeException("Mock LLM exception");
         }
         String chatId = RandomStringUtils.randomAlphabetic(10);

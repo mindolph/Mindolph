@@ -204,7 +204,9 @@ public class SmartCodeArea extends ExtCodeArea {
     private void relocatedDialogToCaret(StackPane inputDialog) {
         Platform.runLater(() -> {
             Bounds hoverBounds = BoundsUtils.fromPoint(getDialogTargetPoint(), inputDialog.getWidth(), inputDialog.getHeight());
-            Point2D p2 = LayoutUtils.bestLocation(this.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
+            log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
+            log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
+            Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
             inputDialog.relocate(p2.getX(), p2.getY());
             inputDialog.requestFocus();
         });
@@ -215,9 +217,10 @@ public class SmartCodeArea extends ExtCodeArea {
         // calculate target point with x of left side border and y of caret bottom.
         Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
         Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
-        Bounds caretBoundsInScreen = this.getCaretBounds().orElse(BoundsUtils.newZero());
+        // NOTE: getCaretBounds() is not working(return null sometime), so use getCaretBoundsOnScreen() instead.
+        Bounds caretBoundsInScreen = this.getCaretBoundsOnScreen(this.getCaretSelectionBind().getUnderlyingCaret()).orElse(BoundsUtils.newZero());
         Point2D targetPointInScreen = new Point2D(leftSideBoundsInScreen.getMinX(), caretBoundsInScreen.getMaxY());
-        return this.screenToLocal(targetPointInScreen);
+        return parentPane.screenToLocal(targetPointInScreen);
     }
 
     // @since 1.7
