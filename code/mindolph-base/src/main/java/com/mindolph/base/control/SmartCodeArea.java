@@ -43,10 +43,6 @@ import java.util.function.Consumer;
 public class SmartCodeArea extends ExtCodeArea {
     private static final Logger log = LoggerFactory.getLogger(SmartCodeArea.class);
 
-    private StackPane inputDialog;
-
-    private StackPane reframeDialog;
-
     private final EventSource<String> inputHelpSource = new EventSource<>();
 
     private final InputHelperManager inputHelperManager;
@@ -129,12 +125,17 @@ public class SmartCodeArea extends ExtCodeArea {
             Optional<Generator> opt = plugin.getGenerator();
             if (opt.isPresent()) {
                 Generator generator = opt.get();
+                generator.setParentPane(this.hashCode(), parentPane);
+
                 MenuItem menuItem = generator.contextMenuItem(getSelectedText());
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     this.closeGenerateDialog();
-                    this.inputDialog = generator.inputDialog(this.hashCode());
-                    this.showGenerateDialog();
+                    generator.showInputPanel(this.hashCode()); // hash code as editor id.
+                });
+
+                generator.onPanelShowing(stackPane -> {
+                    relocatedPanelToCaret(stackPane);
                 });
 
                 generator.onGenerated(generatedText -> {
@@ -144,7 +145,6 @@ public class SmartCodeArea extends ExtCodeArea {
                     log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
                     this.closeGenerateDialog();
-                    this.reframeDialog = generator.reframeDialog(this.hashCode());
                     this.showReframeDialog();
                 });
                 generator.onCancel(isNormally -> {
@@ -167,16 +167,10 @@ public class SmartCodeArea extends ExtCodeArea {
     }
 
     // @since 1.7
-    private void showGenerateDialog() {
-        parentPane.getChildren().add(inputDialog);
-        relocatedDialogToCaret(inputDialog);
-    }
-
-    // @since 1.7
     private void closeGenerateDialog() {
         log.debug("Closing generate dialog");
-        parentPane.getChildren().remove(inputDialog);
-        inputDialog = null;
+//        parentPane.getChildren().remove(inputDialog);
+//        inputDialog = null;
         super.setEditable(true);
         super.setDisabled(false);
         super.requestFocus();
@@ -184,26 +178,26 @@ public class SmartCodeArea extends ExtCodeArea {
 
     // @since 1.7
     private void showReframeDialog() {
-        parentPane.getChildren().add(reframeDialog);
+//        parentPane.getChildren().add(reframeDialog);
         super.setEditable(false);
         super.setDisabled(true);
-        relocatedDialogToCaret(reframeDialog);
+//        relocatedDialogToCaret(reframeDialog);
     }
 
     // @since 1.7
     private void closeReframeDialog() {
         log.debug("Closing reframe dialog");
-        parentPane.getChildren().remove(reframeDialog);
-        reframeDialog = null;
+//        parentPane.getChildren().remove(reframeDialog);
+//        reframeDialog = null;
         super.setEditable(true);
         super.setDisabled(false);
         super.requestFocus();
     }
 
     // @since 1.7
-    private void relocatedDialogToCaret(StackPane inputDialog) {
+    private void relocatedPanelToCaret(StackPane inputDialog) {
         Platform.runLater(() -> {
-            Bounds hoverBounds = BoundsUtils.fromPoint(getDialogTargetPoint(), inputDialog.getWidth(), inputDialog.getHeight());
+            Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputDialog.getWidth(), inputDialog.getHeight());
             log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
             log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
@@ -213,7 +207,7 @@ public class SmartCodeArea extends ExtCodeArea {
     }
 
     // @since 1.7
-    private Point2D getDialogTargetPoint() {
+    private Point2D getPanelTargetPoint() {
         // calculate target point with x of left side border and y of caret bottom.
         Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
         Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());

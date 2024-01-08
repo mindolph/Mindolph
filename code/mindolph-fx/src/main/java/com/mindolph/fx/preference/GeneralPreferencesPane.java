@@ -7,7 +7,6 @@ import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
-import com.sun.javafx.scene.control.IntegerField;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +62,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     @FXML
     private TextField tfProxyHost;
     @FXML
-    private IntegerField tfProxyPort;
+    private Spinner<Integer> spProxyPort;
     @FXML
     private TextField tfProxyUsername;
     @FXML
@@ -171,7 +170,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
         // proxy
         super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> aBoolean, str -> str, aBoolean -> {
-            NodeUtils.setDisable(!aBoolean, rbHttp, rbSocks, tfProxyHost, tfProxyPort, tfProxyUsername, pfProxyPassword);
+            NodeUtils.setDisable(!aBoolean, rbHttp, rbSocks, tfProxyHost, spProxyPort, tfProxyUsername, pfProxyPassword);
         });
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
@@ -183,7 +182,13 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 aBoolean -> aBoolean ? "SOCKS" : StringUtils.EMPTY,
                 str -> StringUtils.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
-        super.bindPreference(tfProxyPort.valueProperty(), PrefConstants.GENERAL_PROXY_PORT, 0);
+
+        // TODO should these be refactored to a method?
+        spProxyPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 65535, fxPreferences.getPreference(GENERAL_PROXY_PORT, 1), 1));
+        spProxyPort.valueProperty().addListener((observable, oldValue, newValue) -> {
+            fxPreferences.savePreference(GENERAL_PROXY_PORT, newValue);
+        });
+//        super.bindPreference(spProxyPort.property, PrefConstants.GENERAL_PROXY_PORT, 0);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
         super.bindPreference(pfProxyPassword.textProperty(), PrefConstants.GENERAL_PROXY_PASSWORD, "");
     }

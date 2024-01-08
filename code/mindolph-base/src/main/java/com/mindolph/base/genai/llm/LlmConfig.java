@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import static com.mindolph.base.constant.PrefConstants.GENERAL_AI_PROVIDERS;
+import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
 
 /**
  * @author mindolph.com@gmail.com
@@ -26,6 +27,14 @@ public class LlmConfig {
     public static synchronized LlmConfig getIns() {
         if (ins == null) ins = new LlmConfig();
         return ins;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getActiveAiProvider() {
+        return fxPreferences.getPreference(PrefConstants.GENERAL_AI_PROVIDER_ACTIVE, OPEN_AI.getName());
     }
 
     /**

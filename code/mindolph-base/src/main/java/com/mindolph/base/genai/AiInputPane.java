@@ -19,7 +19,7 @@ import static com.mindolph.base.genai.GenAiEvents.Input;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class AiInputDialog extends StackPane {
+public class AiInputPane extends StackPane {
 
     @FXML
     private Label lbTemperature;
@@ -41,8 +41,8 @@ public class AiInputDialog extends StackPane {
 
     private Object editorId;
 
-    public AiInputDialog(Object editorId) {
-        FxmlUtils.loadUri("/genai/ai_input_dialog.fxml", this);
+    public AiInputPane(Object editorId) {
+        FxmlUtils.loadUri("/genai/ai_input_pane.fxml", this);
 //        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
 
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));

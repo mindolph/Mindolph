@@ -1,6 +1,7 @@
 package com.mindolph.base.plugin;
 
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import java.util.function.Consumer;
@@ -13,8 +14,6 @@ import java.util.function.Consumer;
 public interface Generator {
 
     MenuItem contextMenuItem(String selectedText);
-
-    StackPane inputDialog(Object editorId);
 
     /**
      *
@@ -31,6 +30,10 @@ public interface Generator {
     // should be called in a new thread
     void onGenerated(Consumer<String> consumer);
 
-    StackPane reframeDialog(Object editorId);
+    void setParentPane(Object editorId, Pane pane);
+
+    StackPane showInputPanel(Object editorId);
+
+    void onPanelShowing(Consumer<StackPane> consumer);
 
 }

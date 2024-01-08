@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.mindolph.base.container.PreferenceItem?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
-<?import com.sun.javafx.scene.control.IntegerField?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import com.mindolph.base.container.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -69,7 +60,7 @@
             <PreferenceItem name="Address:">
                <items>
                   <TextField fx:id="tfProxyHost" promptText="host" prefWidth="200" disable="true"/>
-                  <IntegerField fx:id="tfProxyPort" promptText="port" prefWidth="50" disable="true"/>
+                  <Spinner fx:id="spProxyPort" min="1" max="65535" editable="true" prefWidth="80" disable="true"/>
                </items>
             </PreferenceItem>
             <PreferenceItem name="Authentication:">

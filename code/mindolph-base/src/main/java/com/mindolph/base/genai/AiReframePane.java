@@ -2,10 +2,11 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.genai.AiInputDialog.Temperature;
+import com.mindolph.base.genai.AiInputPane.Temperature;
 import com.mindolph.base.genai.GenAiEvents.ActionType;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,7 +18,7 @@ import javafx.scene.layout.StackPane;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class AiReframeDialog extends StackPane {
+public class AiReframePane extends StackPane {
 
     @FXML
     private Label lbIcon;
@@ -40,11 +41,11 @@ public class AiReframeDialog extends StackPane {
 
     private ContextMenu adjustMenu;
 
-    public AiReframeDialog(Object editorId, String inputText, float temperature) {
+    public AiReframePane(Object editorId, String inputText, float temperature) {
         this.editorId = editorId;
         this.inputText = inputText;
         this.temperature = temperature;
-        FxmlUtils.loadUri("/genai/ai_reframe_dialog.fxml", this);
+        FxmlUtils.loadUri("/genai/ai_reframe_pane.fxml", this);
 
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
 
@@ -70,8 +71,6 @@ public class AiReframeDialog extends StackPane {
                 adjustMenu.getItems().clear();
                 adjustMenu.hide();
             }
-        });
-        btnAdjust.setOnAction(event -> {
         });
         btnDiscard.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.DISCARD);
@@ -102,6 +101,12 @@ public class AiReframeDialog extends StackPane {
         btnAdjust.setDisable(true);
         btnDiscard.setDisable(true);
         pbWaiting.setVisible(true);
+    }
+
+    public void onStop(String reason) {
+        pbWaiting.setVisible(false);
+//        lbMsg.setText(reason);
+        NodeUtils.enable(btnKeep, btnRetry, btnAdjust, btnDiscard);
     }
 
 }

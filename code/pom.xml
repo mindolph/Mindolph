@@ -66,23 +66,7 @@
                 <exclusions>
                     <exclusion>
                         <groupId>com.squareup.retrofit2</groupId>
-                        <artifactId>retrofit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.squareup.retrofit2</groupId>
-                        <artifactId>adapter-rxjava2</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.squareup.retrofit2</groupId>
-                        <artifactId>converter-jackson</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.squareup.retrofit2</groupId>
                         <artifactId>retrofit-mock</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.squareup.okhttp3</groupId>
-                        <artifactId>logging-interceptor</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.module</groupId>
@@ -91,14 +75,6 @@
                     <exclusion>
                         <groupId>org.hibernate.validator</groupId>
                         <artifactId>hibernate-validator</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.code.gson</groupId>
-                        <artifactId>gson</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.python</groupId>
@@ -115,10 +91,6 @@
                     <exclusion>
                         <groupId>org.reflections</groupId>
                         <artifactId>reflections</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.github.resilience4j</groupId>
-                        <artifactId>resilience4j-retry</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.projectlombok</groupId>
@@ -151,10 +123,6 @@
                     <exclusion>
                         <groupId>io.projectreactor.addons</groupId>
                         <artifactId>reactor-adapter</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.reactivex.rxjava2</groupId>
-                        <artifactId>rxjava</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.google.api-client</groupId>

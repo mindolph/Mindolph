@@ -50,8 +50,8 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         try {
             fxmlloader.load();
         } catch (Exception exception) {
-            exception.printStackTrace();
-            throw new RuntimeException("Failed to load fxml file: " + fxmlResourceUri);
+            log.error("Failed to load fxml file" + fxmlResourceUri, exception);
+            throw new RuntimeException("Failed to load preference pane " + this.getClass());
         }
     }
 
