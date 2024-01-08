@@ -92,13 +92,13 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     }
 
     /**
-     * Bind a {@link Property} with a preference and default value bidirectionally.
+     * Bind one or multiple {@link Property}s with a preference and default value bidirectionally.
      * This method works for cases that property value type is different from preference value type, like RadioButton group.
      * Use saveConverter and loadConverter to convert between property value type and preference value type.
      * NOTE: can't be used for ReadOnlyProperty.
      *
      * @param property
-     * @param prefName
+     * @param prefName one preference name can bind multiple properties(for like group of radio buttons)
      * @param defaultValue
      * @param saveConverter
      * @param loadConverter
@@ -113,7 +113,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
 
     /**
      * @param property
-     * @param prefName
+     * @param prefName one preference name can bind multiple properties(for like group of radio buttons)
      * @param defaultValue
      * @param saveConverter
      * @param loadConverter

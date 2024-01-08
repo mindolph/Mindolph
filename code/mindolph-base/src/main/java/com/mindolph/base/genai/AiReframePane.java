@@ -32,6 +32,8 @@ public class AiReframePane extends StackPane {
     private Button btnDiscard;
     @FXML
     private ProgressBar pbWaiting;
+    @FXML
+    private Label lbMsg;
 
     private Object editorId;
 
@@ -65,12 +67,8 @@ public class AiReframePane extends StackPane {
         btnAdjust.setOnMouseClicked(event -> {
             if (adjustMenu == null) {
                 adjustMenu = createAdjustMenu();
-                adjustMenu.show(btnAdjust, event.getScreenX(), event.getScreenY());
             }
-            else {
-                adjustMenu.getItems().clear();
-                adjustMenu.hide();
-            }
+            adjustMenu.show(btnAdjust, event.getScreenX(), event.getScreenY());
         });
         btnDiscard.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.DISCARD);
@@ -101,11 +99,12 @@ public class AiReframePane extends StackPane {
         btnAdjust.setDisable(true);
         btnDiscard.setDisable(true);
         pbWaiting.setVisible(true);
+        lbMsg.setText(null);
     }
 
     public void onStop(String reason) {
         pbWaiting.setVisible(false);
-//        lbMsg.setText(reason);
+        lbMsg.setText(reason);
         NodeUtils.enable(btnKeep, btnRetry, btnAdjust, btnDiscard);
     }
 

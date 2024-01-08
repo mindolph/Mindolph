@@ -15,6 +15,11 @@
          <children>
             <VBox>
                <children>
+                  <AnchorPane>
+                     <children>
+                        <ProgressBar fx:id="pbWaiting" layoutX="2.822876012942288E-7" prefHeight="8.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label fx:id="lbIcon" />
@@ -27,11 +32,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <AnchorPane>
-                     <children>
-                        <ProgressBar fx:id="pbWaiting" layoutX="2.822876012942288E-7" prefHeight="8.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
+                  <Label fx:id="lbMsg" maxHeight="1.0" prefHeight="0.0" />
                </children>
             </VBox>
          </children>

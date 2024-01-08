@@ -122,16 +122,16 @@ public class SmartCodeArea extends ExtCodeArea {
     protected ContextMenu createContextMenu() {
         ContextMenu menu = super.createContextMenu();
         withPlugins(plugin -> {
-            Optional<Generator> opt = plugin.getGenerator();
+            Optional<Generator> opt = plugin.getGenerator(this.hashCode());
             if (opt.isPresent()) {
                 Generator generator = opt.get();
-                generator.setParentPane(this.hashCode(), parentPane);
+                generator.setParentPane(parentPane);
 
                 MenuItem menuItem = generator.contextMenuItem(getSelectedText());
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
-                    this.closeGenerateDialog();
-                    generator.showInputPanel(this.hashCode()); // hash code as editor id.
+                    this.onCompleted();
+                    generator.showInputPanel(); // hash code as editor id.
                 });
 
                 generator.onPanelShowing(stackPane -> {
@@ -139,17 +139,17 @@ public class SmartCodeArea extends ExtCodeArea {
                 });
 
                 generator.onGenerated(generatedText -> {
-                    this.closeReframeDialog();
+                    this.onCompleted();
                     int origin = this.getSelection().getStart();
                     this.replaceSelection(generatedText);
                     log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
-                    this.closeGenerateDialog();
-                    this.showReframeDialog();
+                    this.onCompleted();
+                    this.onGenerating();
                 });
                 generator.onCancel(isNormally -> {
                     if (isNormally) {
-                        this.closeGenerateDialog();
+                        this.onCompleted();
                     }
                 });
                 generator.onComplete(isKeep -> {
@@ -159,7 +159,7 @@ public class SmartCodeArea extends ExtCodeArea {
                     else {
                         super.selectRange(this.getCaretPosition(), this.getCaretPosition());
                     }
-                    this.closeReframeDialog();
+                    this.onCompleted();
                 });
             }
         });
@@ -167,42 +167,27 @@ public class SmartCodeArea extends ExtCodeArea {
     }
 
     // @since 1.7
-    private void closeGenerateDialog() {
-        log.debug("Closing generate dialog");
-//        parentPane.getChildren().remove(inputDialog);
-//        inputDialog = null;
+    private void onCompleted() {
         super.setEditable(true);
         super.setDisabled(false);
         super.requestFocus();
     }
 
     // @since 1.7
-    private void showReframeDialog() {
-//        parentPane.getChildren().add(reframeDialog);
+    private void onGenerating() {
         super.setEditable(false);
         super.setDisabled(true);
-//        relocatedDialogToCaret(reframeDialog);
     }
 
     // @since 1.7
-    private void closeReframeDialog() {
-        log.debug("Closing reframe dialog");
-//        parentPane.getChildren().remove(reframeDialog);
-//        reframeDialog = null;
-        super.setEditable(true);
-        super.setDisabled(false);
-        super.requestFocus();
-    }
-
-    // @since 1.7
-    private void relocatedPanelToCaret(StackPane inputDialog) {
+    private void relocatedPanelToCaret(StackPane inputPanel) {
         Platform.runLater(() -> {
-            Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputDialog.getWidth(), inputDialog.getHeight());
+            Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputPanel.getWidth(), inputPanel.getHeight());
             log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
             log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
-            inputDialog.relocate(p2.getX(), p2.getY());
-            inputDialog.requestFocus();
+            inputPanel.relocate(p2.getX(), p2.getY());
+            inputPanel.requestFocus();
         });
     }
 
@@ -229,7 +214,7 @@ public class SmartCodeArea extends ExtCodeArea {
     private void withGenerators(Consumer<Generator> consumer) {
         Collection<Plugin> plugins = PluginManager.getIns().findPlugin(this.getFileType());
         for (Plugin plugin : plugins) {
-            Optional<Generator> opt = plugin.getGenerator();
+            Optional<Generator> opt = plugin.getGenerator(this.hashCode());
             if (opt.isPresent()) {
                 Generator generator = opt.get();
                 consumer.accept(generator);

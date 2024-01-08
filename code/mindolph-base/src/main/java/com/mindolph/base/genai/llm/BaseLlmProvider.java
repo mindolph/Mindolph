@@ -22,7 +22,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
             String proxyType = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_TYPE, "HTTP");
             String host = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_HOST, "");
             String port = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PORT, "");
-            proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), host, port);
+            proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), host, port).trim();
             proxyUser = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_USERNAME, "");
             proxyPassword = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PASSWORD, "");
         }

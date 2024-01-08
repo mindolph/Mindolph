@@ -35,14 +35,69 @@ public class AiGenerator implements Generator {
     private Consumer<StackPane> panelShowingConsumer;
 
     private final Plugin plugin;
+    private final Object editorId;
     private Pane parentPane;
 
     private final Map<Object, Input> inputMap = new HashMap<>();
-    private final Map<Object, AiInputPane> inputDialogMap = new HashMap<>();
-    private final Map<Object, AiReframePane> reframePanelMap = new HashMap<>();
+    private AiInputPane inputPanel;
+    private AiReframePane reframePanel;
 
-    public AiGenerator(Plugin plugin) {
+    public AiGenerator(Plugin plugin, Object editorId) {
         this.plugin = plugin;
+        this.editorId = editorId;
+        this.listenGenAiEvents();
+    }
+
+    private void listenGenAiEvents() {
+        GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
+            inputMap.put(editorId, input);
+            new Thread(() -> {
+                try {
+                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
+                    log.debug(generatedText);
+                    Platform.runLater(() -> {
+                        generateConsumer.accept(generatedText);
+                        parentPane.getChildren().remove(reframePanel);
+                        parentPane.getChildren().remove(inputPanel);
+                        reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
+                        parentPane.getChildren().add(reframePanel);
+                        panelShowingConsumer.accept(reframePanel);
+                    });
+                } catch (Exception e) {
+                    log.error(e.getLocalizedMessage(), e);
+                    Platform.runLater(() -> {
+                        cancelConsumer.accept(false);
+                        if (inputPanel != null)
+                            inputPanel.onStop(e.getLocalizedMessage());
+                        if (reframePanel != null)
+                            reframePanel.onStop(e.getLocalizedMessage());
+                    });
+                }
+            }).start();
+        });
+        GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {
+            switch (actionType) {
+                case KEEP -> {
+                    log.debug("action type: %s".formatted(actionType));
+                    completeConsumer.accept(true);
+                    parentPane.getChildren().remove(reframePanel);
+                    parentPane.requestFocus();
+                }
+                case DISCARD -> {
+                    log.debug("action type: %s".formatted(actionType));
+                    completeConsumer.accept(false);
+                    parentPane.getChildren().remove(reframePanel);
+                    parentPane.requestFocus();
+                }
+                case CANCEL -> {
+                    log.debug("action type: %s".formatted(actionType));
+                    cancelConsumer.accept(true);
+                    parentPane.getChildren().remove(inputPanel);
+                    parentPane.requestFocus();
+                }
+                default -> log.warn("unknown action type: %s".formatted(actionType));
+            }
+        });
     }
 
     @Override
@@ -52,16 +107,15 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public StackPane showInputPanel(Object editorId) {
+    public StackPane showInputPanel() {
         if (!checkSettings()) {
             // TODO Should change the way to displaying such error message.
             throw new RuntimeException("You have to set up the AI provider first.");
         }
-        AiInputPane inputFrame = new AiInputPane(editorId);
-        this.listenGenAiEvents(editorId, inputFrame);
-        parentPane.getChildren().add(inputFrame);
-        panelShowingConsumer.accept(inputFrame);
-        return inputFrame;
+        inputPanel = new AiInputPane(editorId);
+        parentPane.getChildren().add(inputPanel);
+        panelShowingConsumer.accept(inputPanel);
+        return inputPanel;
     }
 
     private boolean checkSettings() {
@@ -79,63 +133,6 @@ public class AiGenerator implements Generator {
         return false;
     }
 
-    private void listenGenAiEvents(Object editorId, AiInputPane aiInputDialog) {
-        if (inputDialogMap.containsKey(editorId)) {
-            inputDialogMap.put(editorId, aiInputDialog); // MUST update for manipulating.
-            return;// already registered
-        }
-        inputDialogMap.put(editorId, aiInputDialog);
-        GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
-            inputMap.put(editorId, input);
-            new Thread(() -> {
-                try {
-                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
-                    log.debug(generatedText);
-                    Platform.runLater(() -> {
-                        generateConsumer.accept(generatedText);
-                        parentPane.getChildren().remove(reframePanelMap.get(editorId));
-                        parentPane.getChildren().remove(inputDialogMap.get(editorId));
-                        AiReframePane reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
-                        parentPane.getChildren().add(reframePanel);
-                        reframePanelMap.put(editorId, reframePanel);
-                        panelShowingConsumer.accept(reframePanel);
-                    });
-                } catch (Exception e) {
-                    log.error(e.getLocalizedMessage(), e);
-                    Platform.runLater(() -> {
-                        cancelConsumer.accept(false);
-                        if (inputDialogMap.containsKey(editorId))
-                            inputDialogMap.get(editorId).onStop(e.getLocalizedMessage());
-                        if (reframePanelMap.containsKey(editorId))
-                            reframePanelMap.get(editorId).onStop(e.getLocalizedMessage());
-                    });
-                }
-            }).start();
-        });
-        GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {
-            switch (actionType) {
-                case KEEP -> {
-                    log.debug("action type: %s".formatted(actionType));
-                    completeConsumer.accept(true);
-                    parentPane.getChildren().remove(reframePanelMap.get(editorId));
-                    parentPane.requestFocus();
-                }
-                case DISCARD -> {
-                    log.debug("action type: %s".formatted(actionType));
-                    completeConsumer.accept(false);
-                    parentPane.getChildren().remove(reframePanelMap.get(editorId));
-                    parentPane.requestFocus();
-                }
-                case CANCEL -> {
-                    log.debug("action type: %s".formatted(actionType));
-                    cancelConsumer.accept(true);
-                    parentPane.getChildren().remove(inputDialogMap.get(editorId));
-                    parentPane.requestFocus();
-                }
-                default -> log.warn("unknown action type: %s".formatted(actionType));
-            }
-        });
-    }
 
     @Override
     public void onCancel(Consumer<Boolean> consumer) {
@@ -153,12 +150,13 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public void setParentPane(Object editorId, Pane pane) {
-        this.parentPane = pane;
-    }
-
-    @Override
     public void onPanelShowing(Consumer<StackPane> consumer) {
         this.panelShowingConsumer = consumer;
     }
+
+    @Override
+    public void setParentPane(Pane pane) {
+        this.parentPane = pane;
+    }
+
 }

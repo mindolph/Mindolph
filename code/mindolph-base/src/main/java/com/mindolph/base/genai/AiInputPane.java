@@ -38,7 +38,6 @@ public class AiInputPane extends StackPane {
     @FXML
     private Label lbMsg;
 
-
     private Object editorId;
 
     public AiInputPane(Object editorId) {
@@ -62,6 +61,7 @@ public class AiInputPane extends StackPane {
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 pbWaiting.setVisible(true);
+                lbMsg.setText(null);
                 NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
                 GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null));
             }

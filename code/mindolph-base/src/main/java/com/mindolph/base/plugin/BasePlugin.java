@@ -24,7 +24,7 @@ public class BasePlugin implements Plugin {
     }
 
     @Override
-    public Optional<Generator> getGenerator() {
+    public Optional<Generator> getGenerator(Object editorId) {
         return Optional.empty();
     }
 }

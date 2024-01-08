@@ -35,6 +35,6 @@ public interface Plugin {
      *
      * @return
      */
-    Optional<Generator> getGenerator();
+    Optional<Generator> getGenerator(Object editorId);
 
 }

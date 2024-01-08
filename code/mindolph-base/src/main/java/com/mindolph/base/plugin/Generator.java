@@ -16,13 +16,13 @@ public interface Generator {
     MenuItem contextMenuItem(String selectedText);
 
     /**
-     *
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.
      */
     void onCancel(Consumer<Boolean> consumer);
 
     /**
      * On completed with whether keep the generated text or not.
+     *
      * @param consumer
      */
     void onComplete(Consumer<Boolean> consumer);
@@ -30,9 +30,9 @@ public interface Generator {
     // should be called in a new thread
     void onGenerated(Consumer<String> consumer);
 
-    void setParentPane(Object editorId, Pane pane);
+    void setParentPane(Pane pane);
 
-    StackPane showInputPanel(Object editorId);
+    StackPane showInputPanel();
 
     void onPanelShowing(Consumer<StackPane> consumer);
 

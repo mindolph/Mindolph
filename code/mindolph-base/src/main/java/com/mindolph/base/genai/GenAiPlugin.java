@@ -4,9 +4,7 @@ import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.core.constant.SupportFileTypes;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -14,7 +12,7 @@ import java.util.Optional;
  */
 public class GenAiPlugin extends BasePlugin {
 
-    private Generator generator;
+    private final Map<Object, Generator> generatorMap = new HashMap<>();
 
     @Override
     public Collection<String> supportedFileTypes() {
@@ -22,9 +20,11 @@ public class GenAiPlugin extends BasePlugin {
     }
 
     @Override
-    public Optional<Generator> getGenerator() {
+    public Optional<Generator> getGenerator(Object editorId) {
+        Generator generator = generatorMap.get(editorId);
         if (generator == null) {
-            generator = new AiGenerator(this);
+            generator = new AiGenerator(this, editorId);
+            generatorMap.put(editorId, generator);
         }
         return Optional.of(generator);
     }
