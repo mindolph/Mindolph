@@ -10,6 +10,7 @@ import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -37,6 +38,7 @@ public class AiGenerator implements Generator {
     private final Plugin plugin;
     private final Object editorId;
     private Pane parentPane;
+    private SkinBase<?> parentSkin;
 
     private final Map<Object, Input> inputMap = new HashMap<>();
     private AiInputPane inputPanel;
@@ -57,10 +59,10 @@ public class AiGenerator implements Generator {
                     log.debug(generatedText);
                     Platform.runLater(() -> {
                         generateConsumer.accept(generatedText);
-                        parentPane.getChildren().remove(reframePanel);
-                        parentPane.getChildren().remove(inputPanel);
+                        removeFromParent(reframePanel);
+                        removeFromParent(inputPanel);
                         reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
-                        parentPane.getChildren().add(reframePanel);
+                        addToParent(reframePanel);
                         panelShowingConsumer.accept(reframePanel);
                     });
                 } catch (Exception e) {
@@ -76,24 +78,19 @@ public class AiGenerator implements Generator {
             }).start();
         });
         GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {
+            log.debug("action type: %s".formatted(actionType));
             switch (actionType) {
                 case KEEP -> {
-                    log.debug("action type: %s".formatted(actionType));
                     completeConsumer.accept(true);
-                    parentPane.getChildren().remove(reframePanel);
-                    parentPane.requestFocus();
+                    removeFromParent(reframePanel);
                 }
                 case DISCARD -> {
-                    log.debug("action type: %s".formatted(actionType));
                     completeConsumer.accept(false);
-                    parentPane.getChildren().remove(reframePanel);
-                    parentPane.requestFocus();
+                    removeFromParent(reframePanel);
                 }
                 case CANCEL -> {
-                    log.debug("action type: %s".formatted(actionType));
                     cancelConsumer.accept(true);
-                    parentPane.getChildren().remove(inputPanel);
-                    parentPane.requestFocus();
+                    removeFromParent(inputPanel);
                 }
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
@@ -113,9 +110,35 @@ public class AiGenerator implements Generator {
             throw new RuntimeException("You have to set up the AI provider first.");
         }
         inputPanel = new AiInputPane(editorId);
-        parentPane.getChildren().add(inputPanel);
+        addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
+    }
+
+    private void addToParent(StackPane panel) {
+        if (parentPane != null) {
+            parentPane.getChildren().add(panel);
+        }
+        else if (parentSkin != null) {
+            parentSkin.getChildren().add(panel);
+            panel.setManaged(false);
+        }
+        else {
+            throw new RuntimeException("Parent pane or skin is not set.");
+        }
+    }
+
+    private void removeFromParent(StackPane panel){
+        if (parentPane != null) {
+            parentPane.getChildren().remove(panel);
+            parentPane.requestFocus();
+        }
+        else if (parentSkin != null) {
+            parentSkin.getChildren().remove(panel);
+        }
+        else {
+            throw new RuntimeException("Parent pane or skin is not set.");
+        }
     }
 
     private boolean checkSettings() {
@@ -159,4 +182,8 @@ public class AiGenerator implements Generator {
         this.parentPane = pane;
     }
 
+    @Override
+    public void setParentSkin(SkinBase<?> parentSkin) {
+        this.parentSkin = parentSkin;
+    }
 }

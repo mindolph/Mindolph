@@ -15,6 +15,8 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.ElementUtils;
 import com.mindolph.mindmap.util.TextUtils;
 import javafx.application.Platform;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -70,7 +72,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             if (!StringUtils.equals(oldValue, newValue)) {
                 log.trace(String.format("Text changed from %d to %d (size)", oldValue.length(), newValue.length()));
                 Platform.runLater(() -> { // if not run in this, the display will different, why?
-                    Dimension2D textDim = calTextBoundsWithPaddingAndLimitation(textArea);
+                    Dimension2D textDim = calTextDimensionWithPaddingAndLimitation(textArea);
                     double width = textDim.getWidth();
                     double height = textDim.getHeight();
                     log.trace(String.format("Set topic editor dimension to: %s", DimensionUtils.dimensionInStr(textDim)));
@@ -104,7 +106,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
                 }
                 else if (e.getCode() == TAB) {
                     originalEditingBounds = null; // reset for calculating the new text editor size.
-                    Dimension2D dim = calTextBoundsWithPaddingAndLimitation(textArea);
+                    Dimension2D dim = calTextDimensionWithPaddingAndLimitation(textArea);
                     control.onStartNewTopicEdit(textArea.getText(), new Dimension2D(dim.getWidth(), dim.getHeight()));
                 }
             }
@@ -293,7 +295,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             textArea.setVisible(true); // set visible before request focus.
             textArea.positionCaret(text.length());
             // refresh bounds by new text area, not topic
-            Dimension2D textDim = this.calTextBoundsWithPaddingAndLimitation(textArea);
+            Dimension2D textDim = this.calTextDimensionWithPaddingAndLimitation(textArea);
             textArea.setMinSize(textDim.getWidth(), textDim.getHeight());
             textArea.setPrefSize(textDim.getWidth(), textDim.getHeight());
             log.debug("Text area dimension: %s".formatted(DimensionUtils.dimensionInStr(textDim)));
@@ -335,6 +337,27 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         stackPane.relocate(newX, newY);
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     * @since 1.7
+     */
+    public Bounds getBoundsInCanvas(BaseElement element) {
+        if (element == null) {
+            return null;
+        }
+        Rectangle2D vr = this.control.getViewportRectangle();
+        Rectangle2D bounds = element.getBounds();
+        log.trace("node bounds: %s".formatted(RectangleUtils.rectangleInStr(bounds)));
+        log.trace("viewport bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
+        // subtract the offset only when width/height is exceeds the viewport
+        double x = bounds.getMinX() - (getSkinnable().isWidthOverViewport() ? 0: vr.getMinX());
+        double y = bounds.getMinY() - (getSkinnable().isHeightOverViewport() ? 0: vr.getMinY());
+        log.trace("x,y = %s,%s".formatted(x, y));
+        return new BoundingBox(x, y, bounds.getWidth(), bounds.getHeight());
+    }
+
     @Override
     public void endEdit() {
         log.info("end edit");
@@ -344,7 +367,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             control.onEditCanceled();
         }
         else {
-            Dimension2D dim = calTextBoundsWithPaddingAndLimitation(textArea);
+            Dimension2D dim = calTextDimensionWithPaddingAndLimitation(textArea);
             control.endEdit(text, true);
         }
         Platform.runLater(() -> {
@@ -359,7 +382,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
      * @param textArea
      * @return
      */
-    private Dimension2D calTextBoundsWithPaddingAndLimitation(TextArea textArea) {
+    private Dimension2D calTextDimensionWithPaddingAndLimitation(TextArea textArea) {
         Dimension2D textDim = TextUtils.calculateTextBounds(textArea);
         double width = textDim.getWidth();
         double height = textDim.getHeight();

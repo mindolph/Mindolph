@@ -2,9 +2,10 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.Generator;
-import com.mindolph.core.constant.SupportFileTypes;
 
 import java.util.*;
+
+import static com.mindolph.core.constant.SupportFileTypes.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -16,7 +17,7 @@ public class GenAiPlugin extends BasePlugin {
 
     @Override
     public Collection<String> supportedFileTypes() {
-        return Arrays.asList(SupportFileTypes.TYPE_MARKDOWN, SupportFileTypes.TYPE_PLAIN_TEXT, SupportFileTypes.TYPE_PLANTUML);
+        return Arrays.asList(TYPE_MARKDOWN, TYPE_PLAIN_TEXT, TYPE_PLANTUML, TYPE_MIND_MAP);
     }
 
     @Override

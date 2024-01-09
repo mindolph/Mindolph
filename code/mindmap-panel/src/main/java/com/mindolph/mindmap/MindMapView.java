@@ -407,7 +407,7 @@ public class MindMapView extends BaseScalableView {
         });
 
         this.setOnKeyReleased(e -> {
-            log.trace("Key released: " + e.getText());
+            log.trace("Key released: %s".formatted(e.getText()));
             if (!e.isConsumed()) {
                 if (sm.isKeyEventMatch(e, KEY_MMD_DELETE_TOPIC)) {
                     e.consume();
@@ -772,6 +772,9 @@ public class MindMapView extends BaseScalableView {
     transient BaseElement elementUnderEdit = null;
 
     public void startEdit(BaseElement element) {
+//        if (super.isDisabled()) {
+//            return;
+//        }
         if (element == null) {
             this.elementUnderEdit = null;
         }

@@ -1,6 +1,7 @@
 package com.mindolph.base.plugin;
 
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -30,10 +31,12 @@ public interface Generator {
     // should be called in a new thread
     void onGenerated(Consumer<String> consumer);
 
-    void setParentPane(Pane pane);
 
     StackPane showInputPanel();
 
     void onPanelShowing(Consumer<StackPane> consumer);
 
+    void setParentPane(Pane pane);
+
+    void setParentSkin(SkinBase<?> parentSkin);
 }

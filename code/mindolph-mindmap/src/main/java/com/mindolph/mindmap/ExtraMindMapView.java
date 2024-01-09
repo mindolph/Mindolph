@@ -25,7 +25,7 @@ import com.mindolph.mindmap.extension.importers.*;
 import com.mindolph.mindmap.extension.manipulate.TopicColorExtension;
 import com.mindolph.mindmap.model.*;
 import com.mindolph.mindmap.util.CryptoUtils;
-import com.mindolph.mindmap.util.MenuUtils;
+import com.mindolph.mindmap.util.MmdContextMenuUtils;
 import com.mindolph.mindmap.util.TopicUtils;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -182,7 +182,8 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             contextMenu.hide();
             contextMenu = null;
         }
-        contextMenu = MenuUtils.makePopUp(this, model, false, topic);
+        MindMapViewSkin<MindMapView> skin = getMindMapViewSkin();
+        contextMenu = MmdContextMenuUtils.createContextMenu(this, model, this, skin, false, elementUnderMouse);
         if (contextMenu != null) {
             contextMenu.setOnShowing(windowEvent -> {
                 mouseDragSelection = null;
@@ -490,7 +491,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                         }
                     }
                 }
-                if (!removeLink){
+                if (!removeLink) {
                     changed = !"true".equals(model.getAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS));
                     model.setAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS, "true");
                 }

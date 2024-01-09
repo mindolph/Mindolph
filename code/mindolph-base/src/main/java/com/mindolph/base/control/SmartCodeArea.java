@@ -122,7 +122,7 @@ public class SmartCodeArea extends ExtCodeArea {
     protected ContextMenu createContextMenu() {
         ContextMenu menu = super.createContextMenu();
         withPlugins(plugin -> {
-            Optional<Generator> opt = plugin.getGenerator(this.hashCode());
+            Optional<Generator> opt = plugin.getGenerator(this.hashCode());// hash code as editor id.
             if (opt.isPresent()) {
                 Generator generator = opt.get();
                 generator.setParentPane(parentPane);
@@ -131,7 +131,7 @@ public class SmartCodeArea extends ExtCodeArea {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     this.onCompleted();
-                    generator.showInputPanel(); // hash code as editor id.
+                    generator.showInputPanel();
                 });
 
                 generator.onPanelShowing(stackPane -> {
@@ -144,7 +144,6 @@ public class SmartCodeArea extends ExtCodeArea {
                     this.replaceSelection(generatedText);
                     log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
-                    this.onCompleted();
                     this.onGenerating();
                 });
                 generator.onCancel(isNormally -> {
