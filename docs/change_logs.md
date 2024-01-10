@@ -1,5 +1,11 @@
 # Change Logs
 
+### V1.6.7 Unstable Release
+* Fix: remove build option `jdk.gtk.version` since the JavaFX 21 does no longer support GTK 2. 
+* Fix: suggestion list of input helper is not in the appropriate position when there are too many items in it.
+* Fix: escape from suggestion mode by `ESC` key does not work on Linux.
+* Fix: exception when close all tabs with markdown or plantuml file opened but never loaded. 
+
 ### V1.6.6 Unstable Release
 * Improvement: better text selection after quick inserting from toolbar or shortcuts in code editor.
 * Fix: exception when insert some text from toolbar or shortcuts to the end of file.
