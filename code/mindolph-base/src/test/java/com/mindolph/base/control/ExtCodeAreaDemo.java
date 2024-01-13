@@ -54,7 +54,7 @@ public class ExtCodeAreaDemo implements Initializable {
         }
 
         @Override
-        public Optional<Generator> getGenerator() {
+        public Optional<Generator> getGenerator(Object editorId, String fileType) {
             // TODO
             return Optional.empty();
         }

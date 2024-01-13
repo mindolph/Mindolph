@@ -1,5 +1,6 @@
 package com.mindolph.base.plugin;
 
+import com.mindolph.base.genai.GenAiEvents;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
@@ -16,25 +17,25 @@ public interface Generator {
 
     MenuItem contextMenuItem(String selectedText);
 
+
+    StackPane showInputPanel();
+
     /**
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.
      */
-    void onCancel(Consumer<Boolean> consumer);
+    void setOnCancel(Consumer<Boolean> consumer);
 
     /**
      * On completed with whether keep the generated text or not.
      *
      * @param consumer
      */
-    void onComplete(Consumer<Boolean> consumer);
+    void setOnComplete(Consumer<Boolean> consumer);
 
     // should be called in a new thread
-    void onGenerated(Consumer<String> consumer);
+    void setOnGenerated(Consumer<GenAiEvents.Output> consumer);
 
-
-    StackPane showInputPanel();
-
-    void onPanelShowing(Consumer<StackPane> consumer);
+    void setOnPanelShowing(Consumer<StackPane> consumer);
 
     void setParentPane(Pane pane);
 

@@ -5,6 +5,7 @@ import com.github.swiftech.swstate.StateMachine;
 import com.igormaznitsa.mindmap.model.*;
 import com.igormaznitsa.mindmap.model.Extra.ExtraType;
 import com.mindolph.base.ShortcutManager;
+import com.mindolph.base.control.Anchorable;
 import com.mindolph.base.control.BaseScalableView;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
@@ -38,6 +39,7 @@ import javafx.scene.control.Skin;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import org.apache.commons.collections4.CollectionUtils;
@@ -64,7 +66,7 @@ import static javafx.scene.input.DataFormat.PLAIN_TEXT;
  * @author mindolph.com@gmail.com
  * @see MindMapViewSkin
  */
-public class MindMapView extends BaseScalableView {
+public class MindMapView extends BaseScalableView implements Anchorable {
 
     private static final Logger log = LoggerFactory.getLogger(MindMapView.class);
     private final ShortcutManager sm = ShortcutManager.getIns();
@@ -115,6 +117,8 @@ public class MindMapView extends BaseScalableView {
     protected File file;
 
     protected MindMapContext mindMapContext;
+
+    protected Pane parentPane;
 
     public MindMapView() {
         super();
@@ -221,8 +225,10 @@ public class MindMapView extends BaseScalableView {
                         findDestinationElementForDragged();
                         // auto scroll when dragging close to any border of the viewport.
                         Rectangle2D vr = getViewportRectangle();
-                        if(log.isTraceEnabled())log.trace("mouse position: " + PointUtils.pointInStr(e.getX(), e.getY()));
-                        if(log.isTraceEnabled())log.trace("viewport position: " + PointUtils.pointInStr(vr.getMinX(), vr.getMinY()));
+                        if (log.isTraceEnabled())
+                            log.trace("mouse position: " + PointUtils.pointInStr(e.getX(), e.getY()));
+                        if (log.isTraceEnabled())
+                            log.trace("viewport position: " + PointUtils.pointInStr(vr.getMinX(), vr.getMinY()));
                         int STEP_X = 4; // scroll x 4 pixels each event emitted.
                         int STEP_Y = 2; // scroll Y 2 pixels each event emitted.
                         int offsetx = 0;
@@ -239,7 +245,8 @@ public class MindMapView extends BaseScalableView {
                         else if (e.getY() > (vr.getMaxY() - 50)) {
                             offsety = STEP_Y;
                         }
-                        if(log.isTraceEnabled())log.trace("scroll to: %s %s".formatted(vr.getMinX() + offsetx, vr.getMinY() + offsety));
+                        if (log.isTraceEnabled())
+                            log.trace("scroll to: %s %s".formatted(vr.getMinX() + offsetx, vr.getMinY() + offsety));
                         scrollEventHandler.onScroll(new Point2D(vr.getMinX() + offsetx, vr.getMinY() + offsety), false);
                     }
                     repaint();
@@ -1719,41 +1726,55 @@ public class MindMapView extends BaseScalableView {
         else if (contentTypes.contains(PLAIN_TEXT)) {
             if (clipboard.hasContent(PLAIN_TEXT)) {
                 log.debug("Paste content from clipboard: " + PLAIN_TEXT);
-                int MAX_TEXT_LEN = 96;
                 String clipboardText = clipboard.getString();
                 log.debug("Clipboard content: " + StringUtils.abbreviate(clipboardText, 200));
-
-                if (this.config.isSmartTextPaste()) {
-                    for (TopicNode t : this.getSelectedTopics()) {
-                        List<TopicNode> createdTopics = t.makeSubTreeFromText(clipboardText);
-                        if (createdTopics != null)
-                            newTopics.addAll(createdTopics);
-                    }
-                }
-                else {
-                    clipboardText = clipboardText.trim();
-
-                    String topicText;
-                    String extraNoteText;
-
-                    if (clipboardText.length() > MAX_TEXT_LEN) {
-                        topicText = clipboardText.substring(0, MAX_TEXT_LEN) + "...";
-                        extraNoteText = clipboardText;
-                    }
-                    else {
-                        topicText = clipboardText;
-                        extraNoteText = null;
-                    }
-
-                    newTopics = this.getSelectedTopics().stream().map(topicNode -> new TopicNode(model, topicNode, topicText,
-                            extraNoteText == null ? null : new ExtraNote(extraNoteText))).toList();
-                }
+                newTopics = convertText(clipboardText);
                 result = true;
             }
         }
         if (!newTopics.isEmpty()) {
             onMindMapModelChanged(true);
             ensureVisibilityOfTopic(newTopics);
+        }
+        return result;
+    }
+
+    int MAX_TEXT_LEN = 96;
+
+    public void convertTextAsTopicTree(String text){
+        TopicNode t = this.getFirstSelectedTopic();
+        List<TopicNode> createdTopics = t.makeSubTreeFromText(text);
+        if (createdTopics != null && !createdTopics.isEmpty()) {
+            onMindMapModelChanged(true);
+            ensureVisibilityOfTopic(createdTopics);
+        }
+    }
+
+    private List<TopicNode> convertText(String text) {
+        List<TopicNode> result = new ArrayList<>();
+        if (this.config.isSmartTextPaste()) {
+            for (TopicNode t : this.getSelectedTopics()) {
+                List<TopicNode> createdTopics = t.makeSubTreeFromText(text);
+                if (createdTopics != null)
+                    result.addAll(createdTopics);
+            }
+        }
+        else {
+            text = text.trim();
+            String topicText;
+            String extraNoteText;
+
+            if (text.length() > MAX_TEXT_LEN) {
+                topicText = text.substring(0, MAX_TEXT_LEN) + "...";
+                extraNoteText = text;
+            }
+            else {
+                topicText = text;
+                extraNoteText = null;
+            }
+
+            result = this.getSelectedTopics().stream().map(topicNode -> new TopicNode(model, topicNode, topicText,
+                    extraNoteText == null ? null : new ExtraNote(extraNoteText))).toList();
         }
         return result;
     }
@@ -1913,5 +1934,15 @@ public class MindMapView extends BaseScalableView {
 
     public void setSelectedInputText(String selectedInputText) {
         this.selectedInputText.set(selectedInputText);
+    }
+
+    @Override
+    public void setParentPane(Pane pane) {
+        this.parentPane = pane;
+    }
+
+    @Override
+    public Pane getParentPane() {
+        return parentPane;
     }
 }

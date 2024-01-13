@@ -3,7 +3,6 @@ package com.mindolph.base.genai.llm;
 import com.hw.langchain.chains.llm.LLMChain;
 import com.hw.langchain.chat.models.openai.ChatOpenAI;
 import com.hw.langchain.prompts.prompt.PromptTemplate;
-import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class OpenAiProvider extends BaseLlmProvider {
     }
 
     @Override
-    public String predict(String input, float temperature, OutputAdjust outputAdjust) {
+    public String predict(String input, float temperature, OutputParams outputParams) {
         PromptTemplate promptTemplate = PromptTemplate.fromTemplate(TEMPLATE);
         ChatOpenAI chatOpenAI = buildAI(temperature);
         LLMChain chain = new LLMChain(chatOpenAI, promptTemplate);
@@ -55,7 +54,7 @@ public class OpenAiProvider extends BaseLlmProvider {
             {
                 put("input", input);
                 put("format", "Markdown");
-                put("length", outputAdjust == OutputAdjust.SHORTER? "simplified" : "detailed");
+                put("length", outputParams.outputAdjust() == Constants.OutputAdjust.SHORTER? "simplified" : "detailed");
             }
         });
 //        return chatOpenAI.predict(input);

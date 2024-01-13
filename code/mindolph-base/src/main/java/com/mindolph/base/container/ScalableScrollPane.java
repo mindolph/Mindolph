@@ -86,6 +86,7 @@ public class ScalableScrollPane extends ExtendedScrollPane {
      */
     public void calculateAndUpdateViewportRectangle() {
         Bounds viewportBounds = this.getViewportBounds();
+        if (log.isTraceEnabled()) log.trace("Viewport bounds: %s".formatted(boundsInString(viewportBounds)));
         Rectangle2D viewportRect = null;
         if (scalableView.getViewportRectangle() == null) {
             viewportRect = new Rectangle2D(this.getScrollX(), this.getScrollY(), viewportBounds.getWidth(), viewportBounds.getHeight());

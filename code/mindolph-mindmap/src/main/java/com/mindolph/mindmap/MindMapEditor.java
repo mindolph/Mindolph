@@ -53,8 +53,9 @@ public class MindMapEditor extends BaseEditor {
 
     public MindMapEditor(EditorContext editorContext, MindMapView mindMapView) {
         super("/mindmap_editor.fxml", editorContext);
-        this.mindMapView = mindMapView;
         super.fileType = SupportFileTypes.TYPE_MIND_MAP;
+        this.mindMapView = mindMapView;
+        this.mindMapView.setParentPane(this);
 
         // invalidate the mind-map panel when become focused.
         this.focusedProperty().addListener((observableValue, wasFocused, isFocused) -> {

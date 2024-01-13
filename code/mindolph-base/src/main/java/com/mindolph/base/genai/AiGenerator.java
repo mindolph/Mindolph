@@ -6,6 +6,7 @@ import com.mindolph.base.constant.PrefConstants.ProviderProps;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
+import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import javafx.application.Platform;
@@ -22,7 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static com.mindolph.base.genai.llm.Constants.FILE_OUTPUT_MAPPING;
+
 /**
+ * Each generator is created for each editor.
+ * The setParentPane() should be called to setup anchored pane before using this Generator.
+ *
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
@@ -31,12 +37,13 @@ public class AiGenerator implements Generator {
     private static final Logger log = LoggerFactory.getLogger(AiGenerator.class);
 
     private Consumer<Boolean> cancelConsumer;
-    private Consumer<String> generateConsumer;
+    private Consumer<GenAiEvents.Output> generateConsumer;
     private Consumer<Boolean> completeConsumer;
     private Consumer<StackPane> panelShowingConsumer;
 
     private final Plugin plugin;
-    private final Object editorId;
+    private final Object editorId; // used for event handing only
+    private final String fileType;
     private Pane parentPane;
     private SkinBase<?> parentSkin;
 
@@ -44,9 +51,10 @@ public class AiGenerator implements Generator {
     private AiInputPane inputPanel;
     private AiReframePane reframePanel;
 
-    public AiGenerator(Plugin plugin, Object editorId) {
+    public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
         this.editorId = editorId;
+        this.fileType = fileType;
         this.listenGenAiEvents();
     }
 
@@ -55,10 +63,10 @@ public class AiGenerator implements Generator {
             inputMap.put(editorId, input);
             new Thread(() -> {
                 try {
-                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), input.outputAdjust());
+                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
                     log.debug(generatedText);
                     Platform.runLater(() -> {
-                        generateConsumer.accept(generatedText);
+                        generateConsumer.accept(new GenAiEvents.Output(generatedText, input.isRetry()));
                         removeFromParent(reframePanel);
                         removeFromParent(inputPanel);
                         reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
@@ -128,7 +136,7 @@ public class AiGenerator implements Generator {
         }
     }
 
-    private void removeFromParent(StackPane panel){
+    private void removeFromParent(StackPane panel) {
         if (parentPane != null) {
             parentPane.getChildren().remove(panel);
             parentPane.requestFocus();
@@ -158,22 +166,22 @@ public class AiGenerator implements Generator {
 
 
     @Override
-    public void onCancel(Consumer<Boolean> consumer) {
+    public void setOnCancel(Consumer<Boolean> consumer) {
         this.cancelConsumer = consumer;
     }
 
     @Override
-    public void onComplete(Consumer<Boolean> consumer) {
+    public void setOnComplete(Consumer<Boolean> consumer) {
         this.completeConsumer = consumer;
     }
 
     @Override
-    public void onGenerated(Consumer<String> consumer) {
+    public void setOnGenerated(Consumer<GenAiEvents.Output> consumer) {
         this.generateConsumer = consumer;
     }
 
     @Override
-    public void onPanelShowing(Consumer<StackPane> consumer) {
+    public void setOnPanelShowing(Consumer<StackPane> consumer) {
         this.panelShowingConsumer = consumer;
     }
 

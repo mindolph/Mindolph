@@ -1,7 +1,6 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.constant.PrefConstants.ProviderProps;
-import com.mindolph.base.genai.GenAiEvents.OutputAdjust;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import org.slf4j.Logger;
@@ -32,20 +31,21 @@ public class LlmService {
     }
 
     private void loadActiveLlm() {
-        Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
+            log.warn("Using mock LLM provider");
             llmProvider = new DummyLlmProvider();
         }
         else {
+            Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             ProviderProps props = map.get(GenAiModelProvider.OPEN_AI.getName());
             llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
         }
     }
 
 
-    public String predict(String input, float temperature, OutputAdjust outputAdjust) {
-        log.info("Generate content with LLM provide");
-        return llmProvider.predict(input, temperature, outputAdjust);
+    public String predict(String input, float temperature, OutputParams outputParams) {
+        log.info("Generate content with LLM provider");
+        return llmProvider.predict(input, temperature, outputParams);
     }
 
 }

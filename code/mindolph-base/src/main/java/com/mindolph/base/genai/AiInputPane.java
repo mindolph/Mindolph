@@ -12,7 +12,7 @@ import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.mindolph.base.genai.GenAiEvents.ActionType;
+import static com.mindolph.base.genai.llm.Constants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
 
 /**
@@ -63,7 +63,7 @@ public class AiInputPane extends StackPane {
                 pbWaiting.setVisible(true);
                 lbMsg.setText(null);
                 NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null));
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false));
             }
             else {
                 taInput.requestFocus();

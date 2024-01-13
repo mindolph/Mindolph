@@ -3,10 +3,7 @@ package com.mindolph.mindmap;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.control.BaseScalableViewSkin;
 import com.mindolph.base.graphic.CanvasGraphicsWrapper;
-import com.mindolph.mfx.util.ColorUtils;
-import com.mindolph.mfx.util.DimensionUtils;
-import com.mindolph.mfx.util.KeyEventUtils;
-import com.mindolph.mfx.util.RectangleUtils;
+import com.mindolph.mfx.util.*;
 import com.mindolph.mindmap.event.TopicEditEventHandler;
 import com.mindolph.mindmap.gfx.MindMapCanvas;
 import com.mindolph.mindmap.model.BaseElement;
@@ -15,10 +12,7 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.ElementUtils;
 import com.mindolph.mindmap.util.TextUtils;
 import javafx.application.Platform;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.geometry.Dimension2D;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextFormatter;
@@ -307,6 +301,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
 
     /**
      * Relocate text area by new text dimension which is calculated.
+     * NOTE: calculation in this method only works for component that added to skin directly, not for any component in parent containers.
      *
      * @param textDim
      */
@@ -343,6 +338,26 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
      * @return
      * @since 1.7
      */
+    public Bounds getBoundsInViewport(BaseElement element) {
+        if (element == null) {
+            return null;
+        }
+        Rectangle2D vr = this.control.getViewportRectangle();
+        Rectangle2D bounds = element.getBounds();
+        log.trace("node bounds: %s".formatted(RectangleUtils.rectangleInStr(bounds)));
+        log.trace("viewport bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
+        // subtract the offset only when width/height is exceeds the viewport
+        double x = bounds.getMinX() - vr.getMinX();
+        double y = bounds.getMinY() - vr.getMinY();
+//        log.trace("x, y = %s, %s".formatted(x, y));
+        return new BoundingBox(x, y, bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * @param element
+     * @return
+     * @since 1.7
+     */
     public Bounds getBoundsInCanvas(BaseElement element) {
         if (element == null) {
             return null;
@@ -352,8 +367,8 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         log.trace("node bounds: %s".formatted(RectangleUtils.rectangleInStr(bounds)));
         log.trace("viewport bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
         // subtract the offset only when width/height is exceeds the viewport
-        double x = bounds.getMinX() - (getSkinnable().isWidthOverViewport() ? 0: vr.getMinX());
-        double y = bounds.getMinY() - (getSkinnable().isHeightOverViewport() ? 0: vr.getMinY());
+        double x = bounds.getMinX() - (getSkinnable().isWidthOverViewport() ? 0 : vr.getMinX());
+        double y = bounds.getMinY() - (getSkinnable().isHeightOverViewport() ? 0 : vr.getMinY());
         log.trace("x,y = %s,%s".formatted(x, y));
         return new BoundingBox(x, y, bounds.getWidth(), bounds.getHeight());
     }

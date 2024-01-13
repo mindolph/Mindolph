@@ -122,7 +122,7 @@ public class SmartCodeArea extends ExtCodeArea {
     protected ContextMenu createContextMenu() {
         ContextMenu menu = super.createContextMenu();
         withPlugins(plugin -> {
-            Optional<Generator> opt = plugin.getGenerator(this.hashCode());// hash code as editor id.
+            Optional<Generator> opt = plugin.getGenerator(this.hashCode(), getFileType());// hash code as editor id.
             if (opt.isPresent()) {
                 Generator generator = opt.get();
                 generator.setParentPane(parentPane);
@@ -134,24 +134,24 @@ public class SmartCodeArea extends ExtCodeArea {
                     generator.showInputPanel();
                 });
 
-                generator.onPanelShowing(stackPane -> {
+                generator.setOnPanelShowing(stackPane -> {
                     relocatedPanelToCaret(stackPane);
                 });
 
-                generator.onGenerated(generatedText -> {
+                generator.setOnGenerated(output -> {
                     this.onCompleted();
                     int origin = this.getSelection().getStart();
-                    this.replaceSelection(generatedText);
+                    this.replaceSelection(output.generatedText());
                     log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
                     super.selectRange(origin, this.getCaretPosition());
                     this.onGenerating();
                 });
-                generator.onCancel(isNormally -> {
+                generator.setOnCancel(isNormally -> {
                     if (isNormally) {
                         this.onCompleted();
                     }
                 });
-                generator.onComplete(isKeep -> {
+                generator.setOnComplete(isKeep -> {
                     if (!isKeep) {
                         super.replaceSelection(StringUtils.EMPTY);
                     }
@@ -213,7 +213,7 @@ public class SmartCodeArea extends ExtCodeArea {
     private void withGenerators(Consumer<Generator> consumer) {
         Collection<Plugin> plugins = PluginManager.getIns().findPlugin(this.getFileType());
         for (Plugin plugin : plugins) {
-            Optional<Generator> opt = plugin.getGenerator(this.hashCode());
+            Optional<Generator> opt = plugin.getGenerator(this.hashCode(), this.getFileType());
             if (opt.isPresent()) {
                 Generator generator = opt.get();
                 consumer.accept(generator);

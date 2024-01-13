@@ -1,5 +1,7 @@
 package com.mindolph.base.genai;
 
+import com.mindolph.base.genai.llm.Constants;
+import com.mindolph.base.genai.llm.Constants.OutputAdjust;
 import org.reactfx.EventSource;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class GenAiEvents {
     }
 
     public Map<Object, EventSource<Input>> generateEventSource = new HashMap<>();
-    public Map<Object, EventSource<ActionType>> actionEventSource = new HashMap<>();
+    public Map<Object, EventSource<Constants.ActionType>> actionEventSource = new HashMap<>();
 
 
     public void subscribeGenerateEvent(Object editorId, Consumer<Input> consumer) {
@@ -36,28 +38,21 @@ public class GenAiEvents {
         });
     }
 
-    public void subscribeActionEvent(Object editorId, Consumer<ActionType> consumer) {
+    public void subscribeActionEvent(Object editorId, Consumer<Constants.ActionType> consumer) {
         actionEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
     }
 
-    public void emitActionEvent(Object editorId, ActionType actionType) {
-        EventSource<ActionType> es = actionEventSource.computeIfPresent(editorId, (o, actionEventSource) -> {
+    public void emitActionEvent(Object editorId, Constants.ActionType actionType) {
+        EventSource<Constants.ActionType> es = actionEventSource.computeIfPresent(editorId, (o, actionEventSource) -> {
             actionEventSource.push(actionType);
             return actionEventSource;
         });
     }
 
-    public record Input(String text, float temperature, OutputAdjust outputAdjust) {
+    public record Input(String text, float temperature, OutputAdjust outputAdjust, boolean isRetry) {
     }
 
-    public enum ActionType {
-        CANCEL, // cancel the generation
-        KEEP, // keep the generated text
-        DISCARD // discard the generated text
+    public record Output(String generatedText, boolean isRetry) {
     }
 
-    public enum OutputAdjust {
-        SHORTER,
-        LONGER
-    }
 }

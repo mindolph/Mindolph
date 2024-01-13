@@ -21,10 +21,10 @@ public class GenAiPlugin extends BasePlugin {
     }
 
     @Override
-    public Optional<Generator> getGenerator(Object editorId) {
+    public Optional<Generator> getGenerator(Object editorId, String fileType) {
         Generator generator = generatorMap.get(editorId);
         if (generator == null) {
-            generator = new AiGenerator(this, editorId);
+            generator = new AiGenerator(this, editorId, fileType );
             generatorMap.put(editorId, generator);
         }
         return Optional.of(generator);
