@@ -77,3 +77,8 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 Mindolph is developed based on JavaFX, 
 see [code/README.md](code/README.md) for more details.
+
+Future Plan:  
+* 1.7: Experimental GenAI support.
+* 1.8: Improvement and refactor.
+
