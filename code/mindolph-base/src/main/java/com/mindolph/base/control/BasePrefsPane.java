@@ -8,6 +8,8 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.AnchorPane;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
@@ -137,6 +139,25 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
             }
         };
         property.addListener(changeListener);
+    }
+
+    /**
+     * Bind a {@link Spinner} with a preference.
+     *
+     * @param spinner
+     * @param min
+     * @param max
+     * @param step
+     * @param prefName
+     * @param defaultValue
+     * @since 1.7
+     */
+    protected void bindSpinner(Spinner<Integer> spinner, int min, int max, int step, String prefName, int defaultValue){
+        spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, fxPreferences.getPreference(prefName, defaultValue), step));
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            fxPreferences.savePreference(prefName, newValue);
+            this.onSave(true);
+        });
     }
 
     public void loadPreferences() {

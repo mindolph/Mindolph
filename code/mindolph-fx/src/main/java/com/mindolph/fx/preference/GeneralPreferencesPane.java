@@ -159,13 +159,17 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                     }
                 });
 
+        // TODO
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
             ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
+            this.onSave(true);
         });
+        // TODO
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
             ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), newValue);
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
+            this.onSave(true);
         });
 
         // proxy
@@ -182,13 +186,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 aBoolean -> aBoolean ? "SOCKS" : StringUtils.EMPTY,
                 str -> StringUtils.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
-
-        // TODO should these be refactored to a method?
-        spProxyPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 65535, fxPreferences.getPreference(GENERAL_PROXY_PORT, 1), 1));
-        spProxyPort.valueProperty().addListener((observable, oldValue, newValue) -> {
-            fxPreferences.savePreference(GENERAL_PROXY_PORT, newValue);
-        });
-//        super.bindPreference(spProxyPort.property, PrefConstants.GENERAL_PROXY_PORT, 0);
+        super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
         super.bindPreference(pfProxyPassword.textProperty(), PrefConstants.GENERAL_PROXY_PASSWORD, "");
     }
