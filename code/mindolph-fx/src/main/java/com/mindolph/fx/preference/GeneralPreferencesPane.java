@@ -159,13 +159,13 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                     }
                 });
 
-        // TODO
+        // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
             ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
-        // TODO
+        // Dynamic preference can't use bindPreference.
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
             ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), newValue);
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
@@ -173,7 +173,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         });
 
         // proxy
-        super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> aBoolean, str -> str, aBoolean -> {
+        super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> {
             NodeUtils.setDisable(!aBoolean, rbHttp, rbSocks, tfProxyHost, spProxyPort, tfProxyUsername, pfProxyPassword);
         });
         ToggleGroup group = new ToggleGroup();

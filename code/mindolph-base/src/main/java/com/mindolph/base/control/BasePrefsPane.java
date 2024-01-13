@@ -114,6 +114,22 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     }
 
     /**
+     * Bind a {@link Property} with a preference and default value bidirectionally.
+     * Works for property value type is same as preference value type but needs to do some extra work when saving.
+     *
+     * @param property
+     * @param prefName
+     * @param defaultValue
+     * @param onPropertyChange This will be called before saving value to preference storage.
+     * @param <T>
+     */
+    protected <T> void bindPreference(Property<T> property, String prefName, T defaultValue, Consumer<T> onPropertyChange) {
+        this.bindPreference(property, prefName, defaultValue, t -> t, r -> r, onPropertyChange);
+    }
+
+    /**
+     * Bind one {@link Property} with a preference and default value bidirectionally.
+     *
      * @param property
      * @param prefName one preference name can bind multiple properties(for like group of radio buttons)
      * @param defaultValue
