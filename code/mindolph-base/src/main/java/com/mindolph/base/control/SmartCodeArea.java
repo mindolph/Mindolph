@@ -13,6 +13,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
@@ -131,7 +132,9 @@ public class SmartCodeArea extends ExtCodeArea {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     this.onCompleted();
-                    generator.showInputPanel();
+                    generator.showInputPanel(super.getSelectedText());
+                    IndexRange selection = super.getSelection();
+                    super.moveTo(selection.getEnd());
                 });
 
                 generator.setOnPanelShowing(stackPane -> {

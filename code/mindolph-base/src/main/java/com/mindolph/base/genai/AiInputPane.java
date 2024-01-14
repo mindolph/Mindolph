@@ -40,9 +40,12 @@ public class AiInputPane extends StackPane {
 
     private Object editorId;
 
-    public AiInputPane(Object editorId) {
+    public AiInputPane(Object editorId, String defaultInput) {
         FxmlUtils.loadUri("/genai/ai_input_pane.fxml", this);
 //        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
+
+        taInput.setText(defaultInput);
+        taInput.positionCaret(defaultInput.length());
 
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));

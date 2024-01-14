@@ -18,7 +18,7 @@ public interface Generator {
     MenuItem contextMenuItem(String selectedText);
 
 
-    StackPane showInputPanel();
+    StackPane showInputPanel(String defaultInput);
 
     /**
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.

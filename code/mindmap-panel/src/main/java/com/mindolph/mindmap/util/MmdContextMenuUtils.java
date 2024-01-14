@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated
  */
 public class MmdContextMenuUtils {
 

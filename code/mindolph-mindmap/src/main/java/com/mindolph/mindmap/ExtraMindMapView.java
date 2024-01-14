@@ -252,7 +252,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                         MenuItem menuItem = generator.contextMenuItem(null);
                         ctxMenu.getItems().add(menuItem);
                         menuItem.setOnAction(e -> {
-                            generator.showInputPanel();
+                            generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");
                         });
                         generator.setOnPanelShowing(pane -> {
                             pane.setVisible(false); // avoid flashing
@@ -264,7 +264,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                                 Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
                                 log.debug("bounds of topic in viewport: %s%n".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
                                 log.debug("bounds of pane: %s%n".formatted(BoundsUtils.boundsInString(panelBounds)));
-                                pane.relocate(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY());
+                                pane.relocate(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY() + config.getTheme().getSelectLineWidth());
                                 pane.setVisible(true);
                                 pane.requestFocus();
                                 log.debug(BoundsUtils.boundsInString(pane.getBoundsInLocal()));

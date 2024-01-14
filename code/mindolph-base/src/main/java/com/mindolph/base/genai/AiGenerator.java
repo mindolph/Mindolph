@@ -112,12 +112,12 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public StackPane showInputPanel() {
+    public StackPane showInputPanel(String defaultInput) {
         if (!checkSettings()) {
             // TODO Should change the way to displaying such error message.
             throw new RuntimeException("You have to set up the AI provider first.");
         }
-        inputPanel = new AiInputPane(editorId);
+        inputPanel = new AiInputPane(editorId, defaultInput);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
