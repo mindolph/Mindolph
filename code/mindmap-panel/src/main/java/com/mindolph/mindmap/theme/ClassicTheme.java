@@ -17,7 +17,7 @@ public class ClassicTheme extends MindMapTheme {
         otherLevelHorizontalInset = 32;
         firstLevelVerticalInset = 32;
         firstLevelHorizontalInset = 48;
-        paperMargins = 20;
+        paperMargins = 200;
         selectLineGap = 5;
         horizontalBlockGap = 5;
         drawBackground = true;
