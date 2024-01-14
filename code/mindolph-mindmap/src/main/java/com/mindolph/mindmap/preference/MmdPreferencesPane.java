@@ -140,9 +140,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     public MmdPreferencesPane() {
         super("/preference/mmd_preferences.fxml");
 
-        THEME_ITEM_CLASSIC = new Pair<>(new ThemeKey(ThemeType.CLASSIC.name(), null), ThemeUtils.themeLabel(ThemeType.CLASSIC.name()));
         THEME_ITEM_LIGHT = new Pair<>(new ThemeKey(ThemeType.LIGHT.name(), null), ThemeUtils.themeLabel(ThemeType.LIGHT.name()));
         THEME_ITEM_DARK = new Pair<>(new ThemeKey(ThemeType.DARK.name(), null), ThemeUtils.themeLabel(ThemeType.DARK.name()));
+        THEME_ITEM_CLASSIC = new Pair<>(new ThemeKey(ThemeType.CLASSIC.name(), null), ThemeUtils.themeLabel(ThemeType.CLASSIC.name()));
 
         mindMapConfig = new MindMapConfig();
         mindMapConfig.loadFromPreferences();
@@ -160,9 +160,9 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         });
         // load pre-defined themes
         cbTheme.getItems().addAll(Arrays.asList(
-                THEME_ITEM_CLASSIC,
                 THEME_ITEM_LIGHT,
-                THEME_ITEM_DARK
+                THEME_ITEM_DARK,
+                THEME_ITEM_CLASSIC
         ));
         // load user's themes
         if (mindMapConfig.getUserThemes() != null) {
@@ -237,7 +237,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                     // switch to class theme
                     Pair<ThemeKey, String> deletedItem = new Pair<>(selectedThemeKey, selectedThemeName);
                     cbTheme.getItems().remove(deletedItem);
-                    cbTheme.getSelectionModel().select(THEME_ITEM_CLASSIC);
+                    cbTheme.getSelectionModel().select(THEME_ITEM_LIGHT);
                 }
             });
             contextMenu.getItems().addAll(miDuplicate, miDelete);
