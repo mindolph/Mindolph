@@ -67,6 +67,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.mindolph.base.util.MindolphFileUtils.deleteMacFile;
+import static com.mindolph.base.util.MindolphFileUtils.isFolderEmpty;
 import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static com.mindolph.core.constant.SupportFileTypes.*;
 
@@ -997,7 +999,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miDelete) {
             if (selectedData != null) {
                 try {
-                    if (selectedData.getFile().isDirectory() && !FileUtils.isEmptyDirectory(selectedData.getFile())) {
+                    if (selectedData.getFile().isDirectory() && !isFolderEmpty(selectedData.getFile())) {
                         DialogFactory.errDialog("You can not delete a folder with files.");
                         return;
                     }
@@ -1013,6 +1015,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         return;
                     }
                     log.info("Delete file: %s".formatted(selectedData.getFile()));
+                    if (selectedData.getFile().isDirectory()){
+                        deleteMacFile(selectedData.getFile());
+                    }
                     try {
                         FileUtils.delete(selectedData.getFile());
                     } catch (IOException e) {
