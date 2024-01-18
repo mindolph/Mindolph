@@ -1,6 +1,7 @@
 package com.mindolph.base;
 
 import com.mindolph.base.util.FxImageUtils;
+import com.mindolph.base.util.MindolphFileUtils;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,7 +9,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.WritableImage;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 import static com.mindolph.mfx.util.FxmlUtils.loadUriToStage;
 
@@ -75,5 +81,27 @@ public class DemoMain extends Application {
     @FXML
     private void onExtCodeArea() {
         loadUriToStage("/control/ext_code_area_demo.fxml").show();
+    }
+
+    @FXML
+    private void onFont() {
+        String path = "/System/Library/Fonts/Supplemental/AppleMyungjo.ttf";
+        File f = new File(path);
+        System.out.println(f.exists());
+        System.out.println(f.canRead());
+        try {
+            Font font = Font.loadFont(new FileInputStream(f), 10.0);
+            System.out.println(font);
+            Text text = new Text("你好");
+//            text.getStyleClass().add("glyph-icon");
+//            text.setStyle(String.format("-fx-font-family: %s; -fx-font-size: %s;", "AppleMyungjo", 15));
+            WritableImage result = new WritableImage(100, 100);
+            WritableImage img = text.snapshot(null, result);
+            File snapshotFile = MindolphFileUtils.getTempFile("font-snapshot.png");
+            System.out.println(snapshotFile);
+            com.mindolph.mfx.util.FxImageUtils.writeImage(img, snapshotFile);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

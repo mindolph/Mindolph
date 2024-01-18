@@ -41,7 +41,7 @@ import java.util.function.Consumer;
  *
  * @author mindolph.com@gmail.com
  */
-public class SmartCodeArea extends ExtCodeArea {
+public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     private static final Logger log = LoggerFactory.getLogger(SmartCodeArea.class);
 
     private final EventSource<String> inputHelpSource = new EventSource<>();
@@ -229,9 +229,15 @@ public class SmartCodeArea extends ExtCodeArea {
      *
      * @param parentPane The pane must only contain the code area
      */
-    public void withParentPane(Pane parentPane) {
+    @Override
+    public void setParentPane(Pane parentPane) {
         this.parentPane = parentPane;
         inputHelperManager.setParentPane(parentPane);
+    }
+
+    @Override
+    public Pane getParentPane() {
+        return parentPane;
     }
 
     // @since 1.6

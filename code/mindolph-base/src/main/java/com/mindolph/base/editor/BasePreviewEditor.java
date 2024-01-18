@@ -68,8 +68,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
                 fixedSplitPane.setOrientation(editorContext.getOrientation());
             }
         });
-//        codeArea.withParentPane(paneCode);
-                codeArea.withParentPane(this);
+        codeArea.setParentPane(this);
     }
 
     protected void enablePageSwipe() {

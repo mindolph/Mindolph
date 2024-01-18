@@ -64,7 +64,7 @@ public class ReleaseUtils {
         } catch (Exception e) {
             e.printStackTrace();
             log.info(json);
-            log.error(e.getLocalizedMessage());
+            log.error(e.getLocalizedMessage(), e);
             return null;
         }
     }

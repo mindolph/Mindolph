@@ -38,7 +38,8 @@ public class LlmService {
         else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             ProviderProps props = map.get(GenAiModelProvider.OPEN_AI.getName());
-            llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
+//            llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
+            llmProvider = new OpenAiProvider2(props.apiKey(), props.aiModel());
         }
     }
 

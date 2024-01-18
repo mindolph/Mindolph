@@ -12,6 +12,9 @@ public abstract class BaseLlmProvider implements LlmProvider {
 
     protected boolean proxyEnabled = false;
     protected String proxyUrl;
+    protected String proxyType;
+    protected String proxyHost;
+    protected int proxyPort;
     protected String proxyUser;
     protected String proxyPassword;
 
@@ -19,10 +22,10 @@ public abstract class BaseLlmProvider implements LlmProvider {
         FxPreferences fxPreferences = FxPreferences.getInstance();
         proxyEnabled = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
         if (proxyEnabled) {
-            String proxyType = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_TYPE, "HTTP");
-            String host = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_HOST, "");
-            String port = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PORT, "");
-            proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), host, port).trim();
+            proxyType = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_TYPE, "HTTP");
+            proxyHost = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_HOST, "");
+            proxyPort = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PORT, 0);
+            proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), proxyHost, proxyPort).trim();
             proxyUser = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_USERNAME, "");
             proxyPassword = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PASSWORD, "");
         }

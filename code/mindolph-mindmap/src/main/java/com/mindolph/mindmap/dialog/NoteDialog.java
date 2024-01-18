@@ -244,7 +244,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             String selectedText = textArea.getText(newValue);
             btnBrowse.setDisable(!UrlUtils.isValid(selectedText));
         });
-        textArea.withParentPane(paneCode);
+        textArea.setParentPane(paneCode);
 
         searchBar.setSearchPrevEventHandler(searchParams -> {
             TextSearchOptions textSearchOptions = new TextSearchOptions();

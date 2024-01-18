@@ -30,7 +30,7 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
         super.fileType = SupportFileTypes.TYPE_PLAIN_TEXT;
         // consume here otherwise the parent container will receive the double click event
         codeArea.setOnMouseClicked(Event::consume);
-        codeArea.withParentPane(paneEditor);
+        codeArea.setParentPane(paneEditor);
         this.refresh();
     }
 
