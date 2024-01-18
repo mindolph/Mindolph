@@ -82,20 +82,22 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
             miToTopics.setDisable(false);
 
             List<TopicNode> selectedTopics = context.getSelectedTopics();
-            boolean inSameParent = selectedTopics.stream().collect(Collectors.groupingBy(TopicNode::getParent, LinkedHashMap::new, Collectors.toList())).size() == 1;
-            boolean haveChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
-            miToNote.setOnAction(event -> {
-                TopicNode parentTopic = activeTopic.getParent();
-                Map<Extra.ExtraType, Extra<?>> extras = parentTopic.getExtras();
-                if (extras.containsKey(Extra.ExtraType.NOTE)) {
-                    return;
-                }
-                String note = selectedTopics.stream().map(TopicNode::getText).collect(Collectors.joining("\n"));
-                ExtraNote extraNote = new ExtraNote(note);
-                parentTopic.setExtra(extraNote);
-                removeTopics(context, selectedTopics);
-            });
-            miToNote.setDisable(!inSameParent || haveChildren);
+            if (selectedTopics.stream().noneMatch(Topic::isRoot)) {
+                boolean inSameParent = selectedTopics.stream().collect(Collectors.groupingBy(TopicNode::getParent, LinkedHashMap::new, Collectors.toList())).size() == 1;
+                boolean haveChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
+                miToNote.setOnAction(event -> {
+                    TopicNode parentTopic = activeTopic.getParent();
+                    Map<Extra.ExtraType, Extra<?>> extras = parentTopic.getExtras();
+                    if (extras.containsKey(Extra.ExtraType.NOTE)) {
+                        return;
+                    }
+                    String note = selectedTopics.stream().map(TopicNode::getText).collect(Collectors.joining("\n"));
+                    ExtraNote extraNote = new ExtraNote(note);
+                    parentTopic.setExtra(extraNote);
+                    removeTopics(context, selectedTopics);
+                });
+                miToNote.setDisable(!inSameParent || haveChildren);
+            }
 
             try {
                 URI uri = new URI(activeTopic.getText());
