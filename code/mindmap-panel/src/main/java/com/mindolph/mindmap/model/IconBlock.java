@@ -12,7 +12,6 @@ import com.mindolph.mindmap.util.Utils;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import de.jensd.fx.glyphs.octicons.OctIcon;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
@@ -74,8 +73,8 @@ public class IconBlock extends Block {
             double scaledIconWidth = MindMapConstants.BASE_ICON_WIDTH * this.mindMapContext.getScale();
             double scaledIconHeight = MindMapConstants.BASE_ICON_HEIGHT * this.mindMapContext.getScale();
             for (Extra<?> e : this.currentExtras) {
-                GlyphIcons icon = null;
-                Font scaledFont = null;
+                GlyphIcons icon;
+                Font scaledFont;
                 switch (e.getType()) {
                     case FILE:
                         icon = OctIcon.LINK_EXTERNAL;
@@ -92,8 +91,8 @@ public class IconBlock extends Block {
                         scaledFont = FontUtils.newFontWithSize(awesomeFont, scaledIconWidth);
                         break;
                     case TOPIC:
-                        icon = MaterialIcon.CHAT_BUBBLE_OUTLINE;
-                        scaledFont = FontUtils.newFontWithSize(materialFont, scaledIconWidth);
+                        icon = OctIcon.FILE_SYMLINK_FILE;
+                        scaledFont = FontUtils.newFontWithSize(octFont, scaledIconWidth);
                         break;
                     default:
                         throw new Error("Unexpected extras");
