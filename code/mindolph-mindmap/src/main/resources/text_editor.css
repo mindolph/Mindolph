@@ -1,12 +1,12 @@
-.text-area .text {
+.no-scroll-text-area  .text {
     -fx-line-spacing: 0px;
 }
-.text-area .scroll-bar:horizontal {
+.no-scroll-text-area .scroll-bar:horizontal {
     -fx-pref-height: 1px;
     -fx-opacity: 0;
 }
 
-.text-area .scroll-bar:vertical {
+.no-scroll-text-area .scroll-bar:vertical {
     -fx-pref-width: 1px;
     -fx-opacity: 0;
 }

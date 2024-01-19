@@ -59,6 +59,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         this.stackPane = new StackPane();
         this.stackPane.setManaged(false);
         this.textArea = new TextArea();
+        this.textArea.getStyleClass().add("no-scroll-text-area");
         this.textArea.setVisible(false);
         this.stackPane.getChildren().addAll(textArea);
         this.getChildren().add(stackPane);
