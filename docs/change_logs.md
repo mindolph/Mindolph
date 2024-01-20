@@ -1,5 +1,17 @@
 # Change Logs
 
+### V1.6.8 Unstable Release
+* Improvement: take light theme as default selected theme after deleting a customized theme.
+* Improvement: enlarge canvas margin of mind map
+* Fix: text area in exception dialog has no scroll-bar even the content exceeds.
+* merge improvement and bug fixes from stable.
+
+### V1.5.9 Release
+* Improvement: make the divergent icons same between context menu and mind map topic extra for 'Jump' link.
+* Fix: Unable to delete a folder with only file `.DS_Store` on macOS.
+* Fix: exception when right-click on selected root node and one of its child node in mind map.
+
+
 ### V1.6.7 Unstable Release
 * Fix: remove build option `jdk.gtk.version` since the JavaFX 21 does no longer support GTK 2. 
 * Fix: suggestion list of input helper is not in the appropriate position when there are too many items in it.
