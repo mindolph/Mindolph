@@ -1,5 +1,11 @@
 # Change Logs
 
+### V1.6.8 Unstable Release
+* Improvement: take light theme as default selected theme after deleting a customized theme.
+* Improvement: enlarge canvas margin of mind map
+* Fix: text area in exception dialog has no scroll-bar even the content exceeds.
+* merge improvement and bug fixes from stable.
+
 ### V1.5.9 Release
 * Improvement: make the divergent icons same between context menu and mind map topic extra for 'Jump' link.
 * Fix: Unable to delete a folder with only file `.DS_Store` on macOS.
