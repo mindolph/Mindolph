@@ -7,7 +7,7 @@
     <groupId>com.mindolph</groupId>
     <artifactId>mindolph</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.7</version>
+    <version>1.6.8</version>
     <modules>
         <module>mindolph-fx</module>
         <module>mindolph-core</module>
@@ -33,10 +33,10 @@
         <commons.validator.version>1.6</commons.validator.version>
         <commons.csv.version>1.10.0</commons.csv.version>
         <swstate.version>2.0</swstate.version>
-        <plantuml.version>1.2023.12</plantuml.version>
+        <plantuml.version>1.2023.13</plantuml.version>
         <swiftboot.version>2.4.5</swiftboot.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <log4j2.version>2.22.0</log4j2.version>
+        <slf4j.version>2.0.11</slf4j.version>
+        <log4j2.version>2.22.1</log4j2.version>
         <junit.version>5.10.1</junit.version>
         <mfx.version>1.2.3</mfx.version>
         <gson.version>2.10.1</gson.version>
@@ -44,7 +44,7 @@
         <richtextfx.version>0.11.2</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
-        <jsoup.version>1.17.1</jsoup.version>
+        <jsoup.version>1.17.2</jsoup.version>
         <json.version>20231013</json.version>
         <flexmark.version>0.64.8</flexmark.version>
     </properties>
