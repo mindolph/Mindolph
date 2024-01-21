@@ -8,6 +8,8 @@ import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.mfx.util.BoundsUtils;
+import com.mindolph.mfx.util.DimensionUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -54,7 +56,7 @@ public class InputHelperManager {
     private static final double DEFAULT_ITEM_HEIGHT = 24;
 
     private Pane parentPane; // parent pane that holds the helper and target node.
-    private Node targetNode; // the node that helper displays on.
+//    private Node targetNode; // the node that helper displays on.
     private final Object editorId;
     private double caretX; // in screen coordinate
     private double caretY; // in screen coordinate
@@ -148,7 +150,7 @@ public class InputHelperManager {
     }
 
     public void updateCaret(Node node, double x, double y) {
-        this.targetNode = node;
+//        this.targetNode = node;
         this.caretX = x;
         this.caretY = y;
     }
@@ -282,11 +284,11 @@ public class InputHelperManager {
         }
         ObservableList<String> items = lvSuggestion.getItems();
         if (!items.isEmpty()) {
-            Point2D pos = targetNode.screenToLocal(caretX, caretY);
+            Point2D pos = parentPane.screenToLocal(caretX, caretY);
 
             // run later for lvSuggestion to be ready
             Platform.runLater(() -> {
-                Bounds targetBounds = targetNode.getBoundsInParent();
+                Bounds parentBounds = parentPane.getBoundsInParent();
                 // Calculate the appropriate width and height of suggestion list.
                 Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
                 String longestStr = longest.isPresent() ? longest.get() : "";
@@ -299,8 +301,13 @@ public class InputHelperManager {
                 this.lvSuggestion.setPrefHeight(actualHeight + 2);
                 this.lvSuggestion.setMaxHeight(actualHeight + 2);// 2 is extra
                 // locate to the best position and show
-                Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getWidth(), this.lvSuggestion.getHeight());
-                Point2D newPos = LayoutUtils.bestLocation(targetBounds, hoverBounds, new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
+                Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getMaxWidth(), this.lvSuggestion.getMaxHeight());
+                if(log.isTraceEnabled()) log.trace("parent bounds: " + BoundsUtils.boundsInString(parentBounds));
+                if(log.isTraceEnabled()) log.trace("hover bounds" + BoundsUtils.boundsInString(hoverBounds));
+
+                Point2D newPos = LayoutUtils.bestLocation(parentBounds, hoverBounds, DimensionUtils.newZero(),
+                        new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
+                if(log.isTraceEnabled()) log.trace("new location: " + newPos);
                 this.stackPane.relocate(newPos.getX(), newPos.getY());
                 this.showHelper();
 
