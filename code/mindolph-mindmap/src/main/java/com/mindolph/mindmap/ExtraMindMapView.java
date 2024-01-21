@@ -10,11 +10,14 @@ import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.base.util.GeometryConvertUtils;
+import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.dialog.*;
@@ -37,6 +40,7 @@ import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.TopicUtils;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.ContextMenu;
@@ -255,20 +259,36 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");
                         });
                         generator.setOnPanelShowing(pane -> {
-                            pane.setVisible(false); // avoid flashing
-                            super.setDisable(true);
-                            Platform.runLater(() -> {
-                                Bounds panelBounds = pane.getBoundsInLocal(); // useless now
+                            // do calculation on layout bounds changes to mark sure that the bounds is calculated.
+                            pane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+                                if (oldValue.equals(newValue) || newValue.getWidth() == 0 || newValue.getHeight() == 0) {
+                                    return;
+                                }
+                                pane.setVisible(false); // avoid flashing
+                                super.setDisable(true);
+                                Bounds panelBounds = pane.getBoundsInParent();
                                 // retrieve the element from topic because the original one might have been changed.
                                 BaseElement element = (BaseElement) super.getFirstSelectedTopic().getPayload();
                                 Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
-                                log.debug("bounds of topic in viewport: %s%n".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
-                                log.debug("bounds of pane: %s%n".formatted(BoundsUtils.boundsInString(panelBounds)));
-                                pane.relocate(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY() + config.getTheme().getSelectLineWidth());
-                                pane.setVisible(true);
-                                pane.requestFocus();
-                                log.debug(BoundsUtils.boundsInString(pane.getBoundsInLocal()));
-                                log.debug(BoundsUtils.boundsInString(pane.getBoundsInParent()));
+                                log.debug("bounds of topic in viewport: %s".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
+                                log.debug("bounds of pane: %s".formatted(BoundsUtils.boundsInString(panelBounds)));
+                                log.debug("dimension of pane: %sx%s".formatted(pane.getWidth(), pane.getHeight()));
+
+                                Bounds hoverBounds = BoundsUtils.fromPoint(new Point2D(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY()),
+                                        pane.getWidth(), pane.getHeight());
+
+                                Bounds parentBounds = super.getParentPane().getBoundsInParent();
+                                log.debug("target bounds: " + BoundsUtils.boundsInString(parentBounds));
+                                log.debug("hover bounds: " + BoundsUtils.boundsInString(hoverBounds));
+                                Point2D newPoint = LayoutUtils.bestLocation(parentBounds, hoverBounds, GeometryConvertUtils.boundsToDimension2D(boundsInViewPort),
+                                        new Dimension2D(config.getTheme().getSelectLineWidth(), config.getTheme().getSelectLineWidth()));
+                                log.debug("relocated to new point: %s".formatted(PointUtils.pointInStr(newPoint)));
+
+                                Platform.runLater(() -> {
+                                    pane.relocate(newPoint.getX(), newPoint.getY() + config.getTheme().getSelectLineWidth());
+                                    pane.setVisible(true);
+                                    pane.requestFocus();
+                                });
                             });
                         });
                         generator.setOnGenerated(output -> {

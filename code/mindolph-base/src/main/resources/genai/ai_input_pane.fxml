@@ -34,7 +34,7 @@
                         <Insets />
                      </VBox.margin>
                      <children>
-                        <TextArea fx:id="taInput" prefHeight="50.0" prefWidth="480.0" promptText="Describe what you'd like to create" />
+                        <TextArea fx:id="taInput" prefHeight="64.0" prefWidth="480.0" promptText="Describe what you'd like to create" />
                         <AnchorPane>
                            <children>
                               <ProgressBar fx:id="pbWaiting" prefHeight="8.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />

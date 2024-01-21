@@ -8,6 +8,7 @@ import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.mfx.util.BoundsUtils;
+import com.mindolph.mfx.util.DimensionUtils;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
@@ -185,9 +186,12 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     private void relocatedPanelToCaret(StackPane inputPanel) {
         Platform.runLater(() -> {
             Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputPanel.getWidth(), inputPanel.getHeight());
-            log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
-            log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
-            Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, new Dimension2D(5, 5));
+            Dimension2D targetDimension = new Dimension2D(super.getCaretInLocal().getWidth(), super.getLineHeight());
+            if (log.isTraceEnabled()) log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
+            if (log.isTraceEnabled()) log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
+            if (log.isTraceEnabled()) log.trace("target dimension: " + DimensionUtils.dimensionInStr(targetDimension));
+            Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, targetDimension,
+                    new Dimension2D(5, 5));
             inputPanel.relocate(p2.getX(), p2.getY());
             inputPanel.requestFocus();
         });
