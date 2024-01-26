@@ -89,6 +89,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
                 log.debug("Save preference: %s".formatted(prefName));
                 // save all (call save()) or single? TODO
                 fxPreferences.savePreference(prefName, newValue);
+                this.onSave(true);
             }
         });
     }

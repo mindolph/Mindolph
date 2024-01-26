@@ -52,6 +52,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private TextField tfApiKey;
     @FXML
     private TextField tfAiModel;
+    @FXML
+    private Spinner<Integer> spTimeOut;
 
     @FXML
     private CheckBox cbEnableProxy;
@@ -171,6 +173,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
+        super.bindSpinner(spTimeOut, 1, 300, 1, GENERAL_AI_TIMEOUT, 60);
 
         // proxy
         super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> {

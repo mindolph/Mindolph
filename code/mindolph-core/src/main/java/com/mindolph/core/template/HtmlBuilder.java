@@ -218,7 +218,7 @@ public final class HtmlBuilder {
                     </style>
                     """.formatted(css);
         }
-        if (pdfFontFile != null && pdfFontFile.exists()) {
+        if (pdfFontFile != null && pdfFontFile.exists() && pdfFontFile.canRead()) {
             String fontFileUri;
             if (SystemUtils.IS_OS_WINDOWS) {
                 // for Windows file URI: replace it's '\' to '/' and add an extra '/' as prefix.

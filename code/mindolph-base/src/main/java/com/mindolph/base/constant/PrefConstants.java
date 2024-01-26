@@ -15,6 +15,7 @@ public interface PrefConstants {
 
     String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
     String GENERAL_AI_PROVIDERS = "general.genai.providers";
+    String GENERAL_AI_TIMEOUT = "general.genai.timeout";
 
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";

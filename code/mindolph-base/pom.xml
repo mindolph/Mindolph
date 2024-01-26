@@ -42,10 +42,10 @@
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.hamawhitegg</groupId>
-            <artifactId>langchain-core</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.github.hamawhitegg</groupId>-->
+<!--            <artifactId>langchain-core</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
