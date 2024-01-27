@@ -447,6 +447,12 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         setModel(model, false, false, true);
     }
 
+    private void addToSelection(TopicNode topic) {
+        if (!this.selection.contains(topic)) {
+            this.selection.get().add(topic);
+        }
+    }
+
     public void setModel(MindMap<TopicNode> model, boolean notifyModelChangeListeners, boolean saveToHistory, boolean rootToCenter) {
         log.debug("Set mind map model");
         if (this.elementUnderEdit != null) {
@@ -464,7 +470,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 selectionChanged = true;
             }
             else if (!topic.isHidden()) {
-                this.selection.get().add(topic);
+                this.addToSelection(topic);
             }
         }
         log.debug("Calculate and set original dimension of this mind map");
@@ -1164,7 +1170,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     public void select(TopicNode topic) {
         if (topic != null) {
             log.trace("Select topic: %s".formatted(topic));
-            this.selection.get().add(topic);
+            this.addToSelection(topic);
             repaint(); // this make sure the selection effect before the topic is visible
         }
     }
@@ -1178,7 +1184,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 }
             }
             else {
-                this.selection.get().add(topic);
+                this.addToSelection(topic);
                 updateStatusBarForTopic(topic);
                 repaint(); // this make sure the selection effect before the topic is visible
                 ensureVisibilityOfTopic(topic);
@@ -1743,7 +1749,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     public void convertTextAsTopicTree(String text){
         TopicNode t = this.getFirstSelectedTopic();
-        List<TopicNode> createdTopics = t.makeSubTreeFromText(text);
+        List<TopicNode> createdTopics = t.fromText(text);
         if (createdTopics != null && !createdTopics.isEmpty()) {
             onMindMapModelChanged(true);
             ensureVisibilityOfTopic(createdTopics);
@@ -1754,7 +1760,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         List<TopicNode> result = new ArrayList<>();
         if (this.config.isSmartTextPaste()) {
             for (TopicNode t : this.getSelectedTopics()) {
-                List<TopicNode> createdTopics = t.makeSubTreeFromText(text);
+                List<TopicNode> createdTopics = t.fromText(text);
                 if (createdTopics != null)
                     result.addAll(createdTopics);
             }
