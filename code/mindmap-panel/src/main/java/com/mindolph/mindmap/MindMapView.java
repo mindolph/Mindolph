@@ -221,8 +221,10 @@ public class MindMapView extends BaseScalableView {
                         findDestinationElementForDragged();
                         // auto scroll when dragging close to any border of the viewport.
                         Rectangle2D vr = getViewportRectangle();
-                        if(log.isTraceEnabled())log.trace("mouse position: " + PointUtils.pointInStr(e.getX(), e.getY()));
-                        if(log.isTraceEnabled())log.trace("viewport position: " + PointUtils.pointInStr(vr.getMinX(), vr.getMinY()));
+                        if (log.isTraceEnabled())
+                            log.trace("mouse position: " + PointUtils.pointInStr(e.getX(), e.getY()));
+                        if (log.isTraceEnabled())
+                            log.trace("viewport position: " + PointUtils.pointInStr(vr.getMinX(), vr.getMinY()));
                         int STEP_X = 4; // scroll x 4 pixels each event emitted.
                         int STEP_Y = 2; // scroll Y 2 pixels each event emitted.
                         int offsetx = 0;
@@ -239,7 +241,8 @@ public class MindMapView extends BaseScalableView {
                         else if (e.getY() > (vr.getMaxY() - 50)) {
                             offsety = STEP_Y;
                         }
-                        if(log.isTraceEnabled())log.trace("scroll to: %s %s".formatted(vr.getMinX() + offsetx, vr.getMinY() + offsety));
+                        if (log.isTraceEnabled())
+                            log.trace("scroll to: %s %s".formatted(vr.getMinX() + offsetx, vr.getMinY() + offsety));
                         scrollEventHandler.onScroll(new Point2D(vr.getMinX() + offsetx, vr.getMinY() + offsety), false);
                     }
                     repaint();
@@ -440,6 +443,12 @@ public class MindMapView extends BaseScalableView {
         setModel(model, false, false, true);
     }
 
+    private void addToSelection(TopicNode topic) {
+        if (!this.selection.contains(topic)) {
+            this.selection.get().add(topic);
+        }
+    }
+
     public void setModel(MindMap<TopicNode> model, boolean notifyModelChangeListeners, boolean saveToHistory, boolean rootToCenter) {
         log.debug("Set mind map model");
         if (this.elementUnderEdit != null) {
@@ -457,7 +466,7 @@ public class MindMapView extends BaseScalableView {
                 selectionChanged = true;
             }
             else if (!topic.isHidden()) {
-                this.selection.get().add(topic);
+                this.addToSelection(topic);
             }
         }
         log.debug("Calculate and set original dimension of this mind map");
@@ -1154,7 +1163,7 @@ public class MindMapView extends BaseScalableView {
     public void select(TopicNode topic) {
         if (topic != null) {
             log.trace("Select topic: %s".formatted(topic));
-            this.selection.get().add(topic);
+            this.addToSelection(topic);
             repaint(); // this make sure the selection effect before the topic is visible
         }
     }
@@ -1168,7 +1177,7 @@ public class MindMapView extends BaseScalableView {
                 }
             }
             else {
-                this.selection.get().add(topic);
+                this.addToSelection(topic);
                 updateStatusBarForTopic(topic);
                 repaint(); // this make sure the selection effect before the topic is visible
                 ensureVisibilityOfTopic(topic);
@@ -1722,7 +1731,7 @@ public class MindMapView extends BaseScalableView {
 
                 if (this.config.isSmartTextPaste()) {
                     for (TopicNode t : this.getSelectedTopics()) {
-                        List<TopicNode> createdTopics = t.makeSubTreeFromText(clipboardText);
+                        List<TopicNode> createdTopics = t.fromText(clipboardText);
                         if (createdTopics != null)
                             newTopics.addAll(createdTopics);
                     }
