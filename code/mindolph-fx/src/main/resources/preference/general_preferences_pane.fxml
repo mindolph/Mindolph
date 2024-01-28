@@ -39,17 +39,17 @@
 <!--               </items>-->
 <!--            </PreferenceItem>-->
             <Separator prefWidth="200.0" />
-            <PreferenceItem name="Gen-AI Provider">
+            <PreferenceItem name="Gen-AI Provider:">
                <ChoiceBox fx:id="cbAiProvider" prefWidth="120.0">
                </ChoiceBox>
             </PreferenceItem>
-            <PreferenceItem name="API Key">
+            <PreferenceItem name="API Key:">
                <TextField fx:id="tfApiKey" prefWidth="300.0" />
             </PreferenceItem>
-            <PreferenceItem name="Model">
+            <PreferenceItem name="Model:">
                <TextField fx:id="tfAiModel" prefWidth="300.0" />
             </PreferenceItem>
-            <PreferenceItem name="Time out(second)">
+            <PreferenceItem name="Time out(second):">
                <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
             </PreferenceItem>
             <Separator prefWidth="200.0" />
