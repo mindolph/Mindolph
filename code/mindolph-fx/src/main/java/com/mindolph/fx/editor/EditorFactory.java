@@ -70,6 +70,7 @@ public class EditorFactory {
             case TYPE_PLAIN_TEXT:
                 return new PlainTextEditor(editorContext);
             case TYPE_PLAIN_JPG:
+            case TYPE_PLAIN_JPEG:
             case TYPE_PLAIN_PNG:
                 return new ImageViewerEditor(editorContext);
             default:
