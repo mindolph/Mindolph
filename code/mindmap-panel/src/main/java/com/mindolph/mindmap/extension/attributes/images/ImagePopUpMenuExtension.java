@@ -99,7 +99,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                 String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
                                 String fileName = FilenameUtils.getBaseName(selected.getName());
                                 String filePath;
-                                if (DialogFactory.okCancelConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
+                                if (DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
                                     filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
                                 }
                                 else {
