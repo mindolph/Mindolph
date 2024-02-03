@@ -2,7 +2,7 @@
 
 ### Prerequisite
 * JDK 17+
-* JavaFX 20+
+* JavaFX 21+
 * Maven 3.x
 
 ### How to setup develop environment
@@ -51,11 +51,11 @@ mvn package -Dmaven.test.skip=true
 
 * Install JavaFX jmods:  
 
-    Download JavaFX 20 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-20/`
+    Download JavaFX 21 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-21/`
 
     Set environment variable:
     ```shell
-    export JAVAFX_HOME=/mnt/javafx-jmods-20/
+    export JAVAFX_HOME=/mnt/javafx-jmods-21/
     ```
 
 * Build Mindolph distribution for your operating system:  
