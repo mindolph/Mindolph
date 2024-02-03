@@ -398,7 +398,7 @@ public class FileTabView extends BaseView {
             File saveAsFileWithExt = new File(FileNameUtils.appendFileExtensionIfAbsent(saveAsFile.getPath(), extension));
             log.info("Try to save file as :" + saveAsFileWithExt.getPath());
 
-            // these code are un-implemented, comment for later implementation (to handle save as to an existing(and modified) file)
+            // TODO these code are un-implemented, comment for later implementation (to handle save as to an existing(and modified) file)
 //            NodeData newNodeData = new NodeData(saveAsFileWithExt);
 //            Tab tab = openedFileMap.get(newNodeData);
 //            boolean needReload = false;
@@ -419,10 +419,16 @@ public class FileTabView extends BaseView {
 //            }
 
             try {
-                FileUtils.copyFile(origFile, saveAsFileWithExt);
-            } catch (IOException e) {
+                if (saveAsFileWithExt.equals(origFile)) {
+                    return; // just return since the FileUtils.copyFile will throw exception if source and target are the same.
+                }
+                else {
+                    FileUtils.copyFile(origFile, saveAsFileWithExt);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
-                DialogFactory.errDialog("Failed to save file.");
+                DialogFactory.errDialog("Failed to save file: " + e.getLocalizedMessage());
+                return;
             }
             // Add new file tree item to the parent tree item by file path.
             EventBus.getIns().notifyNewFileToWorkspace(saveAsFileWithExt);
