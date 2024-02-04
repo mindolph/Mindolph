@@ -58,7 +58,6 @@ public class InputHelperManager {
     private static final double DEFAULT_ITEM_HEIGHT = 24;
 
     private Pane parentPane; // parent pane that holds the helper and target node.
-    //    private Node targetNode; // the node that helper displays on.
     private final Object editorId;
     private double caretX; // in screen coordinate
     private double caretY; // in screen coordinate
@@ -137,8 +136,7 @@ public class InputHelperManager {
         });
     }
 
-    public void updateCaret(Node node, double x, double y) {
-//        this.targetNode = node;
+    public void updateCaret(double x, double y) {
         this.caretX = x;
         this.caretY = y;
     }

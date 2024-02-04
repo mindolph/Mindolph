@@ -138,7 +138,7 @@ public class ExtCodeArea extends CodeArea {
     // @since 1.6
     private void bindCaretCoordinate() {
         this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
-            newValue.ifPresent(bounds -> inputHelperManager.updateCaret(this, bounds.getMaxX(), bounds.getMaxY()));
+            newValue.ifPresent(bounds -> inputHelperManager.updateCaret(bounds.getMaxX(), bounds.getMaxY()));
         });
     }
 
