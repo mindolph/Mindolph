@@ -248,7 +248,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     private void bindCaretCoordinate() {
         this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
             newValue.ifPresent(bounds -> {
-                inputHelperManager.updateCaret(this, bounds.getMaxX(), bounds.getMaxY());
+                inputHelperManager.updateCaret(bounds.getMaxX(), bounds.getMaxY());
             });
         });
     }
