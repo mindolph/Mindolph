@@ -10,23 +10,24 @@ import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;
+import com.mindolph.mfx.util.FxmlUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.geometry.Dimension2D;
-import javafx.geometry.Point2D;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactfx.EventSource;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
@@ -56,13 +58,13 @@ public class InputHelperManager {
     private static final double DEFAULT_ITEM_HEIGHT = 24;
 
     private Pane parentPane; // parent pane that holds the helper and target node.
-//    private Node targetNode; // the node that helper displays on.
+    //    private Node targetNode; // the node that helper displays on.
     private final Object editorId;
     private double caretX; // in screen coordinate
     private double caretY; // in screen coordinate
 
     //    private final ContextMenu menu = new ContextMenu();
-    private final ListView<String> lvSuggestion = new ListView<>();
+    private final ListView<Suggestion> lvSuggestion = new ListView<>();
     private final StackPane stackPane = new StackPane();
 
     private final EventSource<Selection> selectEvent = new EventSource<>();
@@ -119,33 +121,19 @@ public class InputHelperManager {
         this.lvSuggestion.setMinWidth(100);
         this.lvSuggestion.setMinHeight(32);
         this.lvSuggestion.setMaxHeight(480);
+        this.lvSuggestion.setPadding(Insets.EMPTY);
         this.stackPane.getChildren().add(lvSuggestion);
 
-        lvSuggestion.setCellFactory(new Callback<>() {
-            @Override
-            public ListCell<String> call(ListView<String> lv) {
-                ListCell<String> listCell = new ListCell<>() {
-                    @Override
-                    protected void updateItem(String item, boolean b) {
-                        super.updateItem(item, b);
-                        if (item == null) {
-                            setText(null);
-                            setGraphic(null);
-                        }
-                        else {
-                            setGraphic(new Text(item));
-                        }
-                    }
-                };
-                listCell.setOnMouseClicked(event -> {
-                    if (event.getClickCount() > 1 && listCell.getItem() != null) {
-                        String input = (String) lvSuggestion.getUserData();
-                        stateMachine.acceptWithPayload(KeyCode.ENTER, input); // double click equals ENTER
-                        selectEvent.push(new Selection(input, listCell.getItem()));
-                    }
-                });
-                return listCell;
-            }
+        lvSuggestion.setCellFactory(param -> {
+            ListCell<Suggestion> listCell = new SuggestionViewCell();
+            listCell.setOnMouseClicked(event -> {
+                if (event.getClickCount() > 1 && listCell.getItem() != null) {
+                    String input = (String) lvSuggestion.getUserData();
+                    stateMachine.acceptWithPayload(KeyCode.ENTER, input); // double click equals ENTER
+                    selectEvent.push(new Selection(input, listCell.getItem().content));
+                }
+            });
+            return listCell;
         });
     }
 
@@ -192,7 +180,7 @@ public class InputHelperManager {
         if (stateMachine.isState(HELPING) && isHelperShowing()) {
             if (KeyCode.DOWN.equals(event.getCode())) {
                 log.trace("Select next suggestion");
-                MultipleSelectionModel<String> selectionModel = lvSuggestion.getSelectionModel();
+                MultipleSelectionModel<Suggestion> selectionModel = lvSuggestion.getSelectionModel();
                 if (selectionModel.getSelectedItem() == null) {
                     selectionModel.selectFirst();
                 }
@@ -204,7 +192,7 @@ public class InputHelperManager {
             }
             else if (KeyCode.UP.equals(event.getCode())) {
                 log.trace("Select prev suggestion");
-                MultipleSelectionModel<String> selectionModel = lvSuggestion.getSelectionModel();
+                MultipleSelectionModel<Suggestion> selectionModel = lvSuggestion.getSelectionModel();
                 if (selectionModel.getSelectedItem() == null) {
                     selectionModel.selectLast();
                 }
@@ -215,11 +203,11 @@ public class InputHelperManager {
                 event.consume();
             }
             else if (KeyCode.ENTER.equals(event.getCode())) {
-                String selectedItem = lvSuggestion.getSelectionModel().getSelectedItem();
-                if (StringUtils.isNotBlank(selectedItem)) {
+                Suggestion selectedItem = lvSuggestion.getSelectionModel().getSelectedItem();
+                if (selectedItem != null && StringUtils.isNotBlank(selectedItem.content)) {
                     log.debug("Use suggestion for: " + str);
                     stateMachine.acceptWithPayload(event.getCode(), str);// todo
-                    selectEvent.push(new Selection(str, selectedItem));
+                    selectEvent.push(new Selection(str, selectedItem.content));
                     event.consume();
                 }
             }
@@ -277,12 +265,19 @@ public class InputHelperManager {
             }
 
             log.debug("%d words are selected to be candidates from plugin %s".formatted(filtered.size(), plugin.getClass().getSimpleName()));
+            boolean firstWithSeparator = !lvSuggestion.getItems().isEmpty();
             for (String candidate : filtered) {
-                lvSuggestion.getItems().add(candidate);
+                if (firstWithSeparator) {
+                    lvSuggestion.getItems().add(new Suggestion(candidate, true));
+                    firstWithSeparator = false;
+                }
+                else {
+                    lvSuggestion.getItems().add(new Suggestion(candidate, false));
+                }
                 duplicateKiller.put(candidate, candidate); // only key is needed for now.
             }
         }
-        ObservableList<String> items = lvSuggestion.getItems();
+        ObservableList<Suggestion> items = lvSuggestion.getItems();
         if (!items.isEmpty()) {
             Point2D pos = parentPane.screenToLocal(caretX, caretY);
 
@@ -290,8 +285,8 @@ public class InputHelperManager {
             Platform.runLater(() -> {
                 Bounds parentBounds = parentPane.getBoundsInParent();
                 // Calculate the appropriate width and height of suggestion list.
-                Optional<? extends String> longest = items.stream().sorted((o1, o2) -> o2.length() - o1.length()).findFirst();
-                String longestStr = longest.isPresent() ? longest.get() : "";
+                Optional<? extends Suggestion> longest = items.stream().sorted((o1, o2) -> o2.content.length() - o1.content.length()).findFirst();
+                String longestStr = longest.isPresent() ? longest.get().content() : "";
                 Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());
                 double actualWidth = maxTextBounds.getWidth() + longestStr.length() * 3; // length * 3 is extra
                 this.lvSuggestion.setMaxWidth(Math.min(250, actualWidth));
@@ -302,18 +297,18 @@ public class InputHelperManager {
                 this.lvSuggestion.setMaxHeight(actualHeight + 2);// 2 is extra
                 // locate to the best position and show
                 Bounds hoverBounds = new BoundingBox(pos.getX(), pos.getY(), this.lvSuggestion.getMaxWidth(), this.lvSuggestion.getMaxHeight());
-                if(log.isTraceEnabled()) log.trace("parent bounds: " + BoundsUtils.boundsInString(parentBounds));
-                if(log.isTraceEnabled()) log.trace("hover bounds" + BoundsUtils.boundsInString(hoverBounds));
+                if (log.isTraceEnabled()) log.trace("parent bounds: " + BoundsUtils.boundsInString(parentBounds));
+                if (log.isTraceEnabled()) log.trace("hover bounds" + BoundsUtils.boundsInString(hoverBounds));
 
                 Point2D newPos = LayoutUtils.bestLocation(parentBounds, hoverBounds, DimensionUtils.newZero(),
                         new Dimension2D(24, DEFAULT_ITEM_HEIGHT));
-                if(log.isTraceEnabled()) log.trace("new location: " + newPos);
+                if (log.isTraceEnabled()) log.trace("new location: " + newPos);
                 this.stackPane.relocate(newPos.getX(), newPos.getY());
                 this.showHelper();
 
                 // selection
-                for (String item : lvSuggestion.getItems()) {
-                    if (item.equalsIgnoreCase(input)) {
+                for (Suggestion item : lvSuggestion.getItems()) {
+                    if (item.content.equalsIgnoreCase(input)) {
                         lvSuggestion.getSelectionModel().select(item);
                     }
                 }
@@ -358,5 +353,48 @@ public class InputHelperManager {
      * @param selected
      */
     public record Selection(String input, String selected) {
+    }
+
+    private record Suggestion(String content, boolean withSeparator) {
+    }
+
+    /**
+     * @since 1.6.9
+     */
+    private static class SuggestionViewCell extends ListCell<Suggestion> {
+        @Override
+        protected void updateItem(Suggestion item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null) {
+                String path = item.withSeparator ? "/control/suggestion_item_with_separator.fxml" : "/control/suggestion_item.fxml";
+                FXMLLoader fxmlLoader = FxmlUtils.loadUri(path, new ItemController(item.content));
+                Node root = fxmlLoader.getRoot();
+                setGraphic(root);
+            }
+            else {
+                setText(null);
+                setGraphic(null);
+            }
+            setPadding(Insets.EMPTY);
+        }
+    }
+
+    /**
+     * @since 1.6.9
+     */
+    private static class ItemController extends AnchorPane implements Initializable {
+
+        private final String content;
+        @FXML
+        private Text text;
+
+        public ItemController(String content) {
+            this.content = content;
+        }
+
+        @Override
+        public void initialize(URL url, ResourceBundle resourceBundle) {
+            this.text.setText(this.content);
+        }
     }
 }
