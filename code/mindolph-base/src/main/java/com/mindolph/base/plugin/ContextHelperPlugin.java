@@ -64,7 +64,7 @@ public class ContextHelperPlugin extends BasePlugin {
 
         public static String extractOnlyLetters(String text) {
             // this replacement makes more friendly for programming code.
-            return RegExUtils.replaceAll(text, "[\\s\\r,]", " ");
+            return RegExUtils.replaceAll(text, "[\\s\\r,.()=\"'`\\[\\]\\\\/\\-\\?:#\\!\\^&%\\$]", " ");
         }
 
     }
