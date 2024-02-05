@@ -91,7 +91,6 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>${richtextfx.version}</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.vladsch.flexmark</groupId>-->
