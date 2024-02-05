@@ -39,11 +39,11 @@
 <!--               </items>-->
 <!--            </PreferenceItem>-->
             <Separator prefWidth="200.0" />
-            <PreferenceItem name="Gen-AI Provider:">
+            <PreferenceItem name="Gen-AI provider:">
                <ChoiceBox fx:id="cbAiProvider" prefWidth="120.0">
                </ChoiceBox>
             </PreferenceItem>
-            <PreferenceItem name="API Key:">
+            <PreferenceItem name="API key:">
                <TextField fx:id="tfApiKey" prefWidth="300.0" />
             </PreferenceItem>
             <PreferenceItem name="Model:">
@@ -68,7 +68,7 @@
             </PreferenceItem>
             <PreferenceItem name="Authentication:">
                <items>
-                  <TextField fx:id="tfProxyUsername" promptText="User Name" prefWidth="150" disable="true"/>
+                  <TextField fx:id="tfProxyUsername" promptText="User name" prefWidth="150" disable="true"/>
                   <PasswordField fx:id="pfProxyPassword" promptText="Password" prefWidth="150" disable="true"/>
                </items>
             </PreferenceItem>
