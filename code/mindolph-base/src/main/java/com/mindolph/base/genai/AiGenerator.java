@@ -2,8 +2,9 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants.ProviderProps;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.llm.Constants.ProviderInfo;
+import com.mindolph.base.genai.llm.Constants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
@@ -103,6 +104,18 @@ public class AiGenerator implements Generator {
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
         });
+    }
+
+    @Override
+    public ProviderInfo getProviderInfo() {
+        LlmConfig config = LlmConfig.getIns();
+        String activeAiProvider = config.getActiveAiProvider();
+        Map<String, ProviderProps> providers = config.loadGenAiProviders();
+        if (providers.containsKey(activeAiProvider)){
+            ProviderProps props = providers.get(activeAiProvider);
+            return new ProviderInfo(activeAiProvider, props.aiModel());
+        }
+        return new ProviderInfo(activeAiProvider, null);
     }
 
     @Override

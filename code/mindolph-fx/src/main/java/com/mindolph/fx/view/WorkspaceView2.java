@@ -25,6 +25,7 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
+import com.mindolph.core.util.TimeUtils;
 import com.mindolph.csv.CsvMatcher;
 import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
@@ -63,8 +64,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -840,7 +839,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (userData == null) return false;
         Template template = (Template) userData;
         try {
-            String snippet = template.getContent().formatted(this.createTimestamp(), FilenameUtils.getBaseName(newFile.getName()));
+            String snippet = template.getContent().formatted(TimeUtils.createTimestamp(), FilenameUtils.getBaseName(newFile.getName()));
             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
             return true;
         } catch (IOException e) {
@@ -937,7 +936,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
-                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), createTimestamp());
+                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), TimeUtils.createTimestamp());
                             try {
                                 FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                             } catch (IOException e) {
@@ -1297,11 +1296,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     private String createDefaultNote() {
-        return "This file is created by Mindolph at " + this.createTimestamp();
+        return "This file is created by Mindolph at " + TimeUtils.createTimestamp();
     }
 
-    private String createTimestamp() {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
-    }
 
 }

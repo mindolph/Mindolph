@@ -1,6 +1,7 @@
 package com.mindolph.base.plugin;
 
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.llm.Constants.ProviderInfo;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
@@ -14,6 +15,8 @@ import java.util.function.Consumer;
  * @author mindolph.com@gmail.com
  */
 public interface Generator {
+
+    ProviderInfo getProviderInfo();
 
     MenuItem contextMenuItem(String selectedText);
 

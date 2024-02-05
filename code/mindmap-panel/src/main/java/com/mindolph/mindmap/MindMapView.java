@@ -1747,13 +1747,22 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     int MAX_TEXT_LEN = 96;
 
-    public void convertTextAsTopicTree(String text){
+    public TopicNode appendTextAsTopicTree(String text, String note) {
         TopicNode t = this.getFirstSelectedTopic();
         List<TopicNode> createdTopics = t.fromText(text);
         if (createdTopics != null && !createdTopics.isEmpty()) {
+            if (StringUtils.isNotBlank(note)){
+                Extra<?> noteExtra = t.getExtras().get(Extra.ExtraType.NOTE);
+                if (noteExtra == null) {
+                    log.debug("add note to parent topic");
+                    t.setExtra(new ExtraNote(note));
+                }
+            }
             onMindMapModelChanged(true);
             ensureVisibilityOfTopic(createdTopics);
+            return t;
         }
+        return null;
     }
 
     private List<TopicNode> convertText(String text) {

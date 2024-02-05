@@ -33,7 +33,4 @@ public interface PrefConstants {
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
     String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
 
-    record ProviderProps(String apiKey, String aiModel) {
-    }
-
 }

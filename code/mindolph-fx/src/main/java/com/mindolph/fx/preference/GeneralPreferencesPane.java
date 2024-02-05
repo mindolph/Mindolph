@@ -2,6 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.genai.llm.Constants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
@@ -149,8 +150,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, GenAiModelProvider.OPEN_AI.getName(),
                 value -> value.getKey().getName(),
                 providerName -> new Pair<>(GenAiModelProvider.fromName(providerName), providerName), selected -> {
-                    Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-                    ProviderProps vendorProps = map.get(selected.getKey().getName());
+                    Map<String, Constants.ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
+                    Constants.ProviderProps vendorProps = map.get(selected.getKey().getName());
                     if (vendorProps != null) {
                         tfApiKey.setText(vendorProps.apiKey());
                         tfAiModel.setText(vendorProps.aiModel());
@@ -163,13 +164,13 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
         // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
+            Constants.ProviderProps vendorProps = new Constants.ProviderProps(newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
         // Dynamic preference can't use bindPreference.
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), newValue);
+            Constants.ProviderProps vendorProps = new Constants.ProviderProps(tfApiKey.getText(), newValue);
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });

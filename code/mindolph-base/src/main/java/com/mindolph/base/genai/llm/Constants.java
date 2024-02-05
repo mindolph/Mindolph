@@ -38,11 +38,17 @@ public interface Constants {
         }
     }
 
-    Map<String, OutputFormat> FILE_OUTPUT_MAPPING = new HashMap<>(){
+    Map<String, OutputFormat> FILE_OUTPUT_MAPPING = new HashMap<>() {
         {
             put(SupportFileTypes.TYPE_PLAIN_TEXT, OutputFormat.TEXT);
             put(SupportFileTypes.TYPE_MARKDOWN, OutputFormat.MARKDOWN);
             put(SupportFileTypes.TYPE_MIND_MAP, OutputFormat.MINDMAP);
         }
     };
+
+    record ProviderProps(String apiKey, String aiModel) {
+    }
+
+    record ProviderInfo(String name, String model) {
+    }
 }
