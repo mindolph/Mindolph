@@ -1,0 +1,25 @@
+<html>
+
+    <body>
+    <a href="https://www.google.com">link</a>
+    <a href="https://www.bing.com">link</a>
+    </body>
+
+    <script>
+        console.log("Start...")
+        const v = document.getElementsByTagName("a")
+        console.log(v.length)
+        for (let i = 0; i < v.length; i++) {
+            let link = v.item(i);
+            link.onmouseenter = () => {
+                console.log(link);
+            }
+
+            link.onclick = () => {
+
+            }
+            console.log("done");
+        }
+        console.log("end")
+    </script>
+</html>
