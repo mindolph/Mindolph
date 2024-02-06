@@ -1,5 +1,17 @@
 # Change Logs
 
+### V1.6.9 Unstable Release
+* Improvement: optimized suggestion list of input helper by removing special characters. 
+* Improvement: add separator to suggestion list for words from different plugins.
+* Fix: the dialog for creating file link after importing image from file to mind map should be the yes/no buttons mode instead of ok/cancel. 
+* Fix: exception when save a file as a new file with the same path. 
+* Fix: missing .jpeg file type support. 
+* Fix: exception when copy&paste some specific indent text to a mind map topic.
+* Fix: selection handling for root node is incorrect after undo in mind map. 
+* Fix: relocating suggestion list to inappropriate point if it exceeds parent pane. 
+* update JavaFX to 21.0.2, bundled Java to 21.0.2.
+
+
 ### V1.6.8 Unstable Release
 * Improvement: take light theme as default selected theme after deleting a customized theme.
 * Improvement: enlarge canvas margin of mind map
