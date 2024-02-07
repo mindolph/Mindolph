@@ -16,6 +16,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -41,6 +42,7 @@ import java.util.function.Consumer;
  * Code area with smart editing support.
  *
  * @author mindolph.com@gmail.com
+ * @since 1.7
  */
 public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     private static final Logger log = LoggerFactory.getLogger(SmartCodeArea.class);
@@ -123,6 +125,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     @Override
     protected ContextMenu createContextMenu() {
         ContextMenu menu = super.createContextMenu();
+        List<MenuItem> pluginMenuItems = new ArrayList<>();
         withPlugins(plugin -> {
             Optional<Generator> opt = plugin.getGenerator(this.hashCode(), getFileType());// hash code as editor id.
             if (opt.isPresent()) {
@@ -130,7 +133,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                 generator.setParentPane(parentPane);
 
                 MenuItem menuItem = generator.contextMenuItem(getSelectedText());
-                menu.getItems().add(menuItem);
+                pluginMenuItems.add(menuItem);
                 menuItem.setOnAction(event -> {
                     this.onCompleted();
                     generator.showInputPanel(super.getSelectedText());
@@ -166,6 +169,10 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                 });
             }
         });
+        if (!pluginMenuItems.isEmpty()) {
+            menu.getItems().add(new SeparatorMenuItem());
+            menu.getItems().addAll(pluginMenuItems);
+        }
         return menu;
     }
 

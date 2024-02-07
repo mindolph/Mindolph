@@ -84,6 +84,11 @@ public class ExtCodeArea extends CodeArea {
         historySource.push(null);
     }
 
+    /**
+     * Override and call this method in sub-class if you want to add more menu items.
+     *
+     * @return
+     */
     protected ContextMenu createContextMenu() {
         ContextMenu menu = new ContextMenu();
         MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
