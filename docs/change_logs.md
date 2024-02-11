@@ -1,5 +1,10 @@
 # Change Logs
 
+### V1.7.0 Unstable Release
+* Feature: new experimental support for Gen-AI, you can now generate content by OpenAI API in mind map, Markdown editor, PlantUML editor.
+* Feature: proxy support for internet access.
+
+
 ### V1.6.9 Unstable Release
 * Improvement: optimized suggestion list of input helper by removing special characters. 
 * Improvement: add separator to suggestion list for words from different plugins.
