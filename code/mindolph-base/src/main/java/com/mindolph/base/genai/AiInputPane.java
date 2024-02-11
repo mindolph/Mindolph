@@ -7,6 +7,7 @@ import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
@@ -16,11 +17,19 @@ import static com.mindolph.base.genai.llm.Constants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
 
 /**
+ * An input panel for gen-ai.
+ *
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
 public class AiInputPane extends StackPane {
 
+    @FXML
+    private HBox hbReady;
+    @FXML
+    private HBox hbGenerating;
+    @FXML
+    private Button btnStop;
     @FXML
     private Label lbTemperature;
     @FXML
@@ -42,7 +51,6 @@ public class AiInputPane extends StackPane {
 
     public AiInputPane(Object editorId, String defaultInput) {
         FxmlUtils.loadUri("/genai/ai_input_pane.fxml", this);
-//        Borders.wrap(this).lineBorder().color(Color.BLACK).build().build();
 
         taInput.setText(defaultInput);
         taInput.positionCaret(defaultInput.length());
@@ -63,14 +71,17 @@ public class AiInputPane extends StackPane {
         });
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
-                pbWaiting.setVisible(true);
                 lbMsg.setText(null);
-                NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
+                this.toggleButtons(true);
                 GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false));
             }
             else {
                 taInput.requestFocus();
             }
+        });
+        btnStop.setOnAction(event -> {
+            this.toggleButtons(false);
+            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
 
         cbTemperature.getItems().addAll(
@@ -92,6 +103,18 @@ public class AiInputPane extends StackPane {
             }
         });
         cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
+    }
+
+    private void toggleButtons(boolean isGenerating) {
+        pbWaiting.setVisible(isGenerating);
+        if (isGenerating)
+            NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
+        else
+            NodeUtils.enable(btnClose, btnGenerate, cbTemperature, taInput);
+        hbReady.setVisible(!isGenerating);
+        hbReady.setManaged(!isGenerating);
+        hbGenerating.setVisible(isGenerating);
+        hbGenerating.setManaged(isGenerating);
     }
 
     /**

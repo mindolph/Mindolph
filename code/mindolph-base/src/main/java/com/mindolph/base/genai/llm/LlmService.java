@@ -16,6 +16,7 @@ public class LlmService {
     private static final Logger log = LoggerFactory.getLogger(LlmService.class);
     private static final LlmService ins = new LlmService();
     private LlmProvider llmProvider;
+    private boolean isStopped;
 
     public static synchronized LlmService getIns() {
         return ins;
@@ -46,7 +47,29 @@ public class LlmService {
 
     public String predict(String input, float temperature, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
-        return llmProvider.predict(input, temperature, outputParams);
+        String generated = null;
+        try {
+            generated = llmProvider.predict(input, temperature, outputParams);
+        } catch (Exception e) {
+            if (isStopped) {
+                return null;
+            }
+            else {
+                throw e;
+            }
+        }
+        if (isStopped) {
+            isStopped = false;
+            return null; // force to return null since it has been stopped by user.
+        }
+        return generated;
+    }
+
+    /**
+     * Stop the LLM prediction (ignore the generated actually)
+     */
+    public void stop() {
+        this.isStopped = true;
     }
 
 }

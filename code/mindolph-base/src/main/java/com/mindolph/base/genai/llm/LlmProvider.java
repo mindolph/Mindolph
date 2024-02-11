@@ -7,4 +7,5 @@ package com.mindolph.base.genai.llm;
 public interface LlmProvider {
 
     String predict(String input, float temperature, OutputParams outputParams);
+
 }

@@ -65,6 +65,10 @@ public class AiGenerator implements Generator {
             new Thread(() -> {
                 try {
                     String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
+                    if (generatedText == null) {
+                        // probably stopped by user.
+                        return;
+                    }
                     log.debug(generatedText);
                     Platform.runLater(() -> {
                         generateConsumer.accept(new GenAiEvents.Output(generatedText, input.isRetry()));
@@ -101,6 +105,9 @@ public class AiGenerator implements Generator {
                     cancelConsumer.accept(true);
                     removeFromParent(inputPanel);
                 }
+                case STOP -> {
+                    LlmService.getIns().stop();
+                }
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
         });
@@ -111,7 +118,7 @@ public class AiGenerator implements Generator {
         LlmConfig config = LlmConfig.getIns();
         String activeAiProvider = config.getActiveAiProvider();
         Map<String, ProviderProps> providers = config.loadGenAiProviders();
-        if (providers.containsKey(activeAiProvider)){
+        if (providers.containsKey(activeAiProvider)) {
             ProviderProps props = providers.get(activeAiProvider);
             return new ProviderInfo(activeAiProvider, props.aiModel());
         }
@@ -149,6 +156,11 @@ public class AiGenerator implements Generator {
         }
     }
 
+    /**
+     * Remove pane from it's parent.
+     *
+     * @param panel
+     */
     private void removeFromParent(StackPane panel) {
         if (parentPane != null) {
             parentPane.getChildren().remove(panel);

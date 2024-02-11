@@ -13,7 +13,8 @@ public interface Constants {
     enum ActionType {
         CANCEL, // cancel the generation
         KEEP, // keep the generated text
-        DISCARD // discard the generated text
+        DISCARD, // discard the generated text
+        STOP
     }
 
     enum OutputAdjust {
