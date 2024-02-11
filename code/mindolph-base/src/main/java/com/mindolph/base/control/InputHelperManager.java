@@ -81,23 +81,25 @@ public class InputHelperManager {
     private final String fileType;
 
     private Collection<Plugin> supportedPlugins;
-    private final EventSource<String> helpEvent = new EventSource<>();
+    private final EventSource<HelpPayload> helpEvent = new EventSource<>();
 
     public InputHelperManager(Object editorId, String fileType) {
         this.editorId = editorId;
         this.fileType = fileType;
         helpEvent.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(200))
-                .subscribe(this::updateAndShowSuggestions);
+                .subscribe(this::handleHelpEvent);
         StateBuilder<String, Serializable> stateBuilder = new StateBuilder<>();
         Trigger[] quitTriggers = stateBuilder.triggerBuilder().c(' ', '\t').custom(isEnter).custom(isStopBackspace).custom(unknownInput).custom(isEsc).build();
         stateBuilder
                 .state(NO_HELP)
                 .in(str -> {
-                    stackPane.setVisible(false);
+                    helpEvent.push(new HelpPayload(true, null));
                 })
-                .state(HELP_START).in(str -> stackPane.setVisible(false))
+                .state(HELP_START).in(str -> {
+                    helpEvent.push(new HelpPayload(true, null));
+                })
                 .state(HELPING).in(str -> {
-                    helpEvent.push((String) str); // delayed to show suggestions.
+                    helpEvent.push(new HelpPayload(false, (String) str)); // delayed to show suggestions.
                 })
                 .initialize(NO_HELP)
                 .action("still-no-help", NO_HELP, NO_HELP, quitTriggers)
@@ -221,6 +223,20 @@ public class InputHelperManager {
         }
         else {
             stateMachine.acceptWithPayload(data, str);
+        }
+    }
+
+    /**
+     *
+     * @param payload
+     * @since 1.6.10
+     */
+    private void handleHelpEvent(HelpPayload payload) {
+        if (payload.isQuitHelp) {
+            stackPane.setVisible(false);
+        }
+        else {
+            updateAndShowSuggestions(payload.input);
         }
     }
 
@@ -358,6 +374,14 @@ public class InputHelperManager {
     }
 
     private record Suggestion(String content, boolean withSeparator) {
+    }
+
+    /**
+     * @param isQuitHelp
+     * @param input
+     * @since 1.6.10
+     */
+    private record HelpPayload(boolean isQuitHelp, String input) {
     }
 
     /**
