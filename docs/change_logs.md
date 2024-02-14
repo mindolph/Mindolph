@@ -1,8 +1,14 @@
 # Change Logs
 
+
 ### V1.7.0 Unstable Release
 * Feature: new experimental support for Gen-AI, you can now generate content by OpenAI API in mind map, Markdown editor, PlantUML editor.
 * Feature: proxy support for internet access.
+
+
+### V1.6.10 Release
+* Fix: suggestion list in code editor doesn't disappear in some cases. 
+* Fix: moving caret in wrapped text doesn't work well since the input helper is introduced.
 
 
 ### V1.6.9 Unstable Release

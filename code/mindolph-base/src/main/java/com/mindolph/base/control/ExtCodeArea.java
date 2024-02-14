@@ -263,23 +263,57 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * Move caret up or down explicitly.
+     * Move caret up or down explicitly even in wrapped text.
      *
      * @param direction
      * @since 1.6.4
      */
     protected void moveCaret(int direction) {
         int idx = this.getCurrentParagraph();
-        if (idx == 0 && direction == DIRECTION_UP) {
+        int currentLine = super.lineIndex(idx, super.getCaretColumn());
+        int lineCount = super.getParagraphLinesCount(idx);
+        if (idx == 0 && currentLine == 0 && direction == DIRECTION_UP) {
             return;
         }
-        if (idx == this.getParagraphs().size() - 1 && direction == DIRECTION_DOWN) {
+        if (idx == this.getParagraphs().size() - 1
+                && currentLine == lineCount - 1
+                && direction == DIRECTION_DOWN) {
             return;
         }
-        Paragraph<Collection<String>, String, Collection<String>> targetPar = this.getParagraph(idx + direction);
+        boolean isDirectionDown = direction == DIRECTION_DOWN;
+
+        int lineCaret = this.getCaretInCurrentLine();
+        boolean isMoveToPar = currentLine == (isDirectionDown ? lineCount - 1 : 0);
+        int targetIdx = isMoveToPar ? idx + direction : idx;
+        if (isMoveToPar) {
+            log.debug("Move caret to next/prev paragraph: %d".formatted(targetIdx));
+            super.moveTo(targetIdx, isDirectionDown ? 0 : Math.max(super.getParagraphLength(targetIdx) - 1, 0)); // move to head or tail of paragraph first
+        }
+        else {
+            log.debug("Move caret to next/prev line");
+            int targetCaret = isDirectionDown ? super.getCurrentLineEndInParargraph() + 1 : super.getCurrentLineStartInParargraph() - 1;
+            super.moveTo(targetIdx, targetCaret); // move to end of prev line or start of next line first
+        }
+        super.moveTo(targetIdx, Math.min(super.getCurrentLineStartInParargraph() + lineCaret, super.getParagraphLength(targetIdx)));
+    }
+
+    /**
+     * @deprecated
+     * @param newParIdx
+     */
+    private void moveCaretToParagraph(int newParIdx) {
+        Paragraph<Collection<String>, String, Collection<String>> targetPar = super.getParagraph(newParIdx);
         if (targetPar != null) {
-            this.moveTo(idx + direction, Math.min(this.getCaretColumn(), targetPar.length()));
+            super.moveTo(newParIdx, Math.min(super.getCaretColumn(), targetPar.length()));
         }
+    }
+
+    private int getCaretInCurrentLine() {
+        return super.getCaretColumn() - super.getCurrentLineStartInParargraph();
+    }
+
+    private int getCurrentLineLength() {
+        return super.getCurrentLineEndInParargraph() - super.getCurrentLineStartInParargraph();
     }
 
     /**
