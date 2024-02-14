@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.6.9</version>
+        <version>1.6.10</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,7 +17,7 @@
     <properties>
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
-        <app.version>1.6.9</app.version>
+        <app.version>1.6.10</app.version>
         <jvm.modules>java.logging,javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
