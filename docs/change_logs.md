@@ -1,5 +1,11 @@
 # Change Logs
 
+
+### V1.6.10 Release
+* Fix: suggestion list in code editor doesn't disappear in some cases. 
+* Fix: moving caret in wrapped text doesn't work well since the input helper is introduced.
+
+
 ### V1.6.9 Unstable Release
 * Improvement: optimized suggestion list of input helper by removing special characters. 
 * Improvement: add separator to suggestion list for words from different plugins.
