@@ -136,6 +136,13 @@ public class InputHelperManager {
             });
             return listCell;
         });
+
+        lvSuggestion.setOnKeyReleased(event -> {
+            System.out.println(event.getCode());
+            if (KeyCode.ESCAPE == event.getCode()) {
+                helpEvent.push(new HelpPayload(true, null));
+            }
+        });
     }
 
     public void updateCaret(double x, double y) {
@@ -226,13 +233,12 @@ public class InputHelperManager {
     }
 
     /**
-     *
      * @param payload
      * @since 1.6.10
      */
     private void handleHelpEvent(HelpPayload payload) {
         if (payload.isQuitHelp) {
-            stackPane.setVisible(false);
+            this.hideHelper();
         }
         else {
             updateAndShowSuggestions(payload.input);
@@ -245,7 +251,7 @@ public class InputHelperManager {
         }
         log.debug("search with: '%s'".formatted(input));
 
-        // note: hide first because there might be no matching at last, in that case the menu needs to be hidden.
+        // note: hide first because there might be no matching at last, in that case the helper pane needs to be hidden.
         this.hideHelper();
         lvSuggestion.getItems().clear();
 
