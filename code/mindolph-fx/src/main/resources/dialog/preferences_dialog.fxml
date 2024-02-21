@@ -7,6 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import com.mindolph.mfx.container.SideTabPane?>
+<?import com.mindolph.fx.preference.GenAiPreferencePane?>
 <AnchorPane prefHeight="680.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <SideTabPane fx:id="tabPane" prefHeight="357.0" prefWidth="560.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
@@ -49,6 +50,14 @@
 <!--                </AnchorPane>-->
 <!--              </content>-->
 <!--            </Tab>-->
+          <Tab fx:id="tabGenAi" text="Gen-AI" userData="genai">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0"  >
+                <GenAiPreferencePane fx:id="genAiPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+              </AnchorPane>
+
+            </content>
+          </Tab>
         </tabs>
       </SideTabPane>
    </children>

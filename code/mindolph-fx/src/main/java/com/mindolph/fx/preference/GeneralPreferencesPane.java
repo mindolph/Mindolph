@@ -2,11 +2,8 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
-import com.mindolph.base.genai.llm.Constants;
-import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -20,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.*;
@@ -46,15 +42,6 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private TableView<OrientationItem> tvOrientation;
     @FXML
     private CheckBox cbEnableInputHelper;
-
-    @FXML
-    private ChoiceBox<Pair<GenAiModelProvider, String>> cbAiProvider;
-    @FXML
-    private TextField tfApiKey;
-    @FXML
-    private TextField tfAiModel;
-    @FXML
-    private Spinner<Integer> spTimeOut;
 
     @FXML
     private CheckBox cbEnableProxy;
@@ -132,49 +119,6 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         tvOrientation.getItems().add(new OrientationItem(PLANT_UML, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_PUML, Orientation.class, Orientation.VERTICAL)));
         tvOrientation.getItems().add(new OrientationItem(MARKDOWN, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_MD, Orientation.class, Orientation.HORIZONTAL)));
         super.bindPreference(cbEnableInputHelper.selectedProperty(), PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
-
-        // Gen AI
-        cbAiProvider.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Pair<GenAiModelProvider, String> object) {
-                return object.getValue();
-            }
-
-            @Override
-            public Pair<GenAiModelProvider, String> fromString(String string) {
-                return null;
-            }
-        });
-        cbAiProvider.getItems().add(new Pair<>(GenAiModelProvider.OPEN_AI, GenAiModelProvider.OPEN_AI.getName()));
-        // cbAiProvider.getItems().add(new Pair<>(GenAiModelProvider.GEMINI, GenAiModelProvider.GEMINI.getName()));
-        super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, GenAiModelProvider.OPEN_AI.getName(),
-                value -> value.getKey().getName(),
-                providerName -> new Pair<>(GenAiModelProvider.fromName(providerName), providerName), selected -> {
-                    Map<String, Constants.ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-                    Constants.ProviderProps vendorProps = map.get(selected.getKey().getName());
-                    if (vendorProps != null) {
-                        tfApiKey.setText(vendorProps.apiKey());
-                        tfAiModel.setText(vendorProps.aiModel());
-                    }
-                    else {
-                        tfApiKey.setText("");
-                        tfAiModel.setText("");
-                    }
-                });
-
-        // Dynamic preference can't use bindPreference.
-        tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            Constants.ProviderProps vendorProps = new Constants.ProviderProps(newValue, tfAiModel.getText());
-            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
-            this.onSave(true);
-        });
-        // Dynamic preference can't use bindPreference.
-        tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            Constants.ProviderProps vendorProps = new Constants.ProviderProps(tfApiKey.getText(), newValue);
-            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
-            this.onSave(true);
-        });
-        super.bindSpinner(spTimeOut, 1, 300, 1, GENERAL_AI_TIMEOUT, 60);
 
         // proxy
         super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> {

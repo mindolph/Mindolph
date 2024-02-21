@@ -3,6 +3,7 @@ package com.mindolph.fx.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.fx.preference.FontPreferencesPane;
+import com.mindolph.fx.preference.GenAiPreferencePane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
 import com.mindolph.mfx.container.SideTabPane;
@@ -42,6 +43,9 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 //    private PlantumlPreferences plantumlPreferences;
 
     @FXML
+    private GenAiPreferencePane genAiPreferences;
+
+    @FXML
     private Tab tabGeneral;
     @FXML
     private Tab tabFont;
@@ -49,6 +53,8 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     private Tab tabMindMap;
     @FXML
     private Tab tabMarkdown;
+    @FXML
+    private Tab tabGenAi;
 
     private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
 
@@ -69,6 +75,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                         fontPreferencesPane.resetToDefault();
                         mmdPreferences.resetToDefault();
                         mdPreferences.resetToDefault();
+                        genAiPreferences.resetToDefault();
 //                        plantumlPreferences.resetToDefault();
                     }
                 })
@@ -81,12 +88,14 @@ public class PreferencesDialog extends BaseDialogController<Void> {
         generalPreferencesPane.loadPreferences();
         mmdPreferences.loadPreferences();
 //        plantumlPreferences.loadPreferences();
+        genAiPreferences.loadPreferences();
 
         Platform.runLater(() -> {
             tabPane.setTabIcon(tabGeneral, FontIconManager.getIns().getIcon(IconKey.GEAR));
             tabPane.setTabIcon(tabFont, FontIconManager.getIns().getIcon(IconKey.FONT));
             tabPane.setTabIcon(tabMindMap, FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
             tabPane.setTabIcon(tabMarkdown, FontIconManager.getIns().getIcon(IconKey.FILE_MD));
+            tabPane.setTabIcon(tabGenAi, FontIconManager.getIns().getIcon(IconKey.MAGIC));
         });
     }
 
