@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.7.1 Unstable release
+* Improvement: new individual preference tab page for Gen-AI settings.
+* Merged bug fixes from v1.6.11
+* Update PlantUML to 1.2024.3, langchain4j to 0.27.1 etc.
+
+
+### V1.6.11 release
+* Fix: unable to quit input helper by ESC in code editor when the suggestion list get focused.
+
 
 ### V1.7.0 Unstable Release
 * Feature: new experimental support for Gen-AI, you can now generate content by OpenAI API in mind map, Markdown editor, PlantUML editor.
