@@ -60,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CharacterHit;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
@@ -80,6 +81,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -126,6 +128,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // used to force refresh resource in page like images.
     private String timestamp;
 
+    private EventSource<Double> scrollEventCode = new EventSource<>();
+    private EventSource<Double> scrollEventPreview = new EventSource<>();
 
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);
@@ -145,6 +149,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         vbToolbar.getChildren().add(markdownToolbar);
 
         webEngine = webView.getEngine();
+        log.debug(webEngine.getUserAgent());
         webView.setContextMenuEnabled(false);
         webEngine.setJavaScriptEnabled(true);
         webEngine.setOnError(event -> log.warn("WebView error: " + event.getMessage(), event.getException()));
@@ -194,28 +199,50 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         parser = Parser.builder(options).build();
         renderer = HtmlRenderer.builder(options).build();
         this.refresh();// to set up the font
+
+        scrollEventCode.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
+                .subscribe(newY -> {
+                    scrollEventPreview.suspenderOf(scrollEventCode.suppressible().suppressible());
+                    scrollSwitch.scrollFirst(() -> {
+                        try {
+                            Integer previewVpHeight = (Integer) webView.getEngine().executeScript("getViewportHeight();");
+                            Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
+                            if (previewVpHeight != null && previewTotalHeight != null) {
+                                currentScrollV = convertScrollPosition(newY, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate(), previewVpHeight, previewTotalHeight);
+                                if (log.isTraceEnabled()) log.trace("auto scroll preview to: %s".formatted(currentScrollV));
+                                webView.getEngine().executeScript("setScrollPos(%s, %s);".formatted(currentScrollH, currentScrollV));
+                            }
+                        } catch (Exception e) {
+                            log.error(e.getLocalizedMessage());
+                        }
+                    });
+                });
+        scrollEventPreview.reduceSuccessions((s1,s2)->s2, Duration.ofMillis(100))
+                .subscribe(newY -> {
+                    scrollSwitch.scrollSecond(() -> {
+                        try {
+                            Integer previewVpHeight = (Integer) webView.getEngine().executeScript("getViewportHeight();");
+                            Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
+                            Integer scrollPos = (Integer) webView.getEngine().executeScript("getScrollPosY();");
+                            double codeScrollTo = convertScrollPosition(scrollPos, previewVpHeight, previewTotalHeight, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate());
+                            if (log.isTraceEnabled()) log.trace("auto scroll code editor to: " + currentScrollV);
+                            codeScrollPane.estimatedScrollYProperty().setValue(codeScrollTo);
+                        } catch (Exception e) {
+                            log.error(e.getLocalizedMessage());
+                        }
+                    });
+                });
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         codeScrollPane.estimatedScrollYProperty().addListener((ov, oldY, newY) -> {
 //            System.out.printf("A: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
             if (!super.getIsAutoScroll() || oldY.equals(newY) || viewMode != ViewMode.BOTH) {
                 return;
             }
-            scrollSwitch.scrollFirst(() -> {
-                try {
-                    Integer previewVpHeight = (Integer) webView.getEngine().executeScript("getViewportHeight();");
-                    Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
-                    if (previewVpHeight != null && previewTotalHeight != null) {
-                        currentScrollV = convertScrollPosition(newY, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate(), previewVpHeight, previewTotalHeight);
-                        if (log.isTraceEnabled()) log.trace("auto scroll preview to: %s".formatted(currentScrollV));
-                        webView.getEngine().executeScript("setScrollPos(%s, %s);".formatted(currentScrollH, currentScrollV));
-                    }
-                } catch (Exception e) {
-                    log.error(e.getLocalizedMessage());
-                }
-            });
+            scrollEventCode.push(newY);
         });
 
         // method onWebviewScroll() will be called when scrolling webview.
@@ -243,18 +270,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         if (!super.getIsAutoScroll() || viewMode != ViewMode.BOTH) {
             return;
         }
-        scrollSwitch.scrollSecond(() -> {
-            try {
-                Integer previewVpHeight = (Integer) webView.getEngine().executeScript("getViewportHeight();");
-                Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
-                Integer scrollPos = (Integer) webView.getEngine().executeScript("getScrollPosY();");
-                double codeScrollTo = convertScrollPosition(scrollPos, previewVpHeight, previewTotalHeight, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate());
-                if (log.isTraceEnabled()) log.trace("auto scroll code editor to: " + currentScrollV);
-                codeScrollPane.estimatedScrollYProperty().setValue(codeScrollTo);
-            } catch (Exception e) {
-                log.error(e.getLocalizedMessage());
-            }
-        });
+        scrollEventPreview.push(y);
     }
 
     @Override

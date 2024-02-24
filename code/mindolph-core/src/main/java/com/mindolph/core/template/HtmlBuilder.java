@@ -285,6 +285,11 @@ public final class HtmlBuilder {
                     <html>
                     <head>
                     <meta charset="utf-8"/>
+                    <style>
+                    html {
+                        scroll-behavior: smooth;
+                    }
+                    </style>
                     <title>%s</title>
                     %s
                     %s
