@@ -1,6 +1,6 @@
 # Mindolph Development
 
-### Prerequisite
+### Prerequisites
 * JDK 17+
 * JavaFX 21+
 * Maven 3.x
@@ -14,12 +14,14 @@
     cd mfx
     mvn install -Dmaven.test.skip=true
     ```
+  > If there is something wrong with the accessing Maven central repository, just use the `aliyun` profile:
+  > `mvn install -Dmaven.test.skip=true -Paliyun`
 
 * Install FontawesomeFX
 
     ```shell
     git clone https://mindolph@bitbucket.org/mindolph-app/fontawesomefx.git
-    cd fontawesomefx
+    cd fontawesomefx/fontawesomefx
     ./gradlew publishToMavenLocal
     ```
 
@@ -35,6 +37,10 @@
 
 ```shell
 mvn package -Dmaven.test.skip=true
+```
+or
+```shell
+mvn package -Dmaven.test.skip=true -Paliyun
 ```
 
 ### How to build platform dependent distribution
@@ -63,5 +69,8 @@ mvn package -Dmaven.test.skip=true
     ```shell
     mvn install -Dmaven.test.skip=true
     ```
-
+    or 
+    ```shell
+    mvn install -Dmaven.test.skip=true -Paliyun
+    ```
     After building is done, an executable jar file and an installer for your platform can be found in `Mindolph/code/mindolph-desktop/target/`
