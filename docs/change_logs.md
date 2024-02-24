@@ -1,5 +1,8 @@
 # Change Logs
 
+### V1.6.11 release
+* Fix: unable to quit input helper by ESC in code editor when the suggestion list get focused.
+
 
 ### V1.7.0 Unstable Release
 * Feature: new experimental support for Gen-AI, you can now generate content by OpenAI API in mind map, Markdown editor, PlantUML editor.
