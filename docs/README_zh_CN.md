@@ -1,3 +1,11 @@
+<p>
+	<a title="Releases" target="_blank" href="https://github.com/mindolph/Mindolph/releases"><img src="https://img.shields.io/github/release/mindolph/Mindolph.svg?style=flat-square&color=9CF"></a>
+	<a title="Downloads" target="_blank" href="https://github.com/mindolph/Mindolph/releases"><img src="https://img.shields.io/github/downloads/mindolph/Mindolph/total.svg?style=flat-square&color=blueviolet"></a>
+	<a title="GitHub Commits" target="_blank" href="https://github.com/mindolph/Mindolph/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/mindolph/Mindolph.svg?style=flat-square"></a>
+	<a title="Last Commit" target="_blank" href="https://github.com/mindolph/Mindolph/commits/main/"><img src="https://img.shields.io/github/last-commit/mindolph/Mindolph.svg?style=flat-square&color=FF9900"></a>
+</p>
+
+
 ### Mindolph
 
 ![](../DemoWorkspace/app_30.png)
@@ -34,7 +42,26 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 
 
 ### 界面
-![](main.png)
+<p float="left">
+	<img src="docs/screenshots/mindmap_light.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/mindmap_dark.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/markdown1.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/puml_activity.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/puml_sequence.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/puml_component2.jpg" width="45%"/>
+</p>
+<p float="left">
+	<img src="docs/screenshots/puml_state.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/find_in_files.jpg" width="45%"/>
+</p>
 
 [更多](screenshots.md)
 
