@@ -104,4 +104,9 @@ public class DemoMain extends Application {
             throw new RuntimeException(ex);
         }
     }
+
+    @FXML
+    private void onSyncScroll() {
+        loadUriToStage("/sync_demo.fxml").show();
+    }
 }

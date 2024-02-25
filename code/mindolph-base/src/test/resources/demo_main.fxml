@@ -18,6 +18,7 @@
             <Button mnemonicParsing="false" onAction="#onExtTableView" text="Ext Table View" />
             <Button mnemonicParsing="false" onAction="#onExtCodeArea" text="ExtCodeArea Demo" />
             <Button mnemonicParsing="false" onAction="#onFont" text="Font" />
+            <Button mnemonicParsing="false" onAction="#onSyncScroll" text="Sync Scroll" />
          </children>
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
