@@ -1,7 +1,8 @@
-package com.mindolph.base.genai;
+package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
