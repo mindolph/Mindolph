@@ -24,6 +24,8 @@
     cd fontawesomefx/fontawesomefx
     ./gradlew publishToMavenLocal
     ```
+    > for JDK 17, switch git branch:
+    > `git switch fontawesomefx-17.0.0`
 
 * Mindolph
 

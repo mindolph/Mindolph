@@ -1,7 +1,7 @@
 package com.mindolph.desktop;
 
 import com.mindolph.base.Env;
-import com.mindolph.base.genai.GenAiPlugin;
+import com.mindolph.genai.GenAiPlugin;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.Main;

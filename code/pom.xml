@@ -19,6 +19,7 @@
         <module>mindmap-model</module>
         <module>mindolph-markdown</module>
         <module>mindolph-csv</module>
+        <module>mindolph-genai</module>
     </modules>
 
     <properties>

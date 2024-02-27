@@ -59,6 +59,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.mindolph</groupId>
+            <artifactId>mindolph-genai</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>

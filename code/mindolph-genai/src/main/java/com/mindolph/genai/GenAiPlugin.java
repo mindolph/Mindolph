@@ -1,4 +1,4 @@
-package com.mindolph.base.genai;
+package com.mindolph.genai;
 
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.Generator;

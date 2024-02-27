@@ -1,7 +1,8 @@
-package com.mindolph.base.genai;
+package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.Constants.ProviderInfo;
 import com.mindolph.base.genai.llm.Constants.ProviderProps;
@@ -10,6 +11,7 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
+import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
@@ -134,8 +136,8 @@ public class AiGenerator implements Generator {
     @Override
     public StackPane showInputPanel(String defaultInput) {
         if (!checkSettings()) {
-            // TODO Should change the way to displaying such error message.
-            throw new RuntimeException("You have to set up the AI provider first.");
+            DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
+            return null;
         }
         inputPanel = new AiInputPane(editorId, defaultInput);
         addToParent(inputPanel);

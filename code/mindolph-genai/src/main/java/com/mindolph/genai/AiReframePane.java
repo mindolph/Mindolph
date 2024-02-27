@@ -1,8 +1,8 @@
-package com.mindolph.base.genai;
+package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.genai.AiInputPane.Temperature;
+import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.Constants.OutputAdjust;
 import com.mindolph.base.genai.llm.Constants;

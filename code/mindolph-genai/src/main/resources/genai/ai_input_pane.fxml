@@ -23,7 +23,7 @@
                         <Label fx:id="lbIcon" />
                         <Label text="Generate content with AI (Experiment)" />
                         <Pane HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
+                        <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../../../../../mindolph-base/src/main/resources/style/icon_button.css">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin></Button>
