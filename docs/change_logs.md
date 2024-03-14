@@ -7,6 +7,7 @@
 
 
 ### V1.6.11 release
+* New installer for macOS with Apple Silicon。
 * Fix: unable to quit input helper by ESC in code editor when the suggestion list get focused.
 
 
