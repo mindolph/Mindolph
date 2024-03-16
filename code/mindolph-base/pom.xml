@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.7.1</version>
+        <version>1.7.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -42,13 +42,13 @@
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.github.hamawhitegg</groupId>-->
-<!--            <artifactId>langchain-core</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-dashscope</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.swiftech</groupId>

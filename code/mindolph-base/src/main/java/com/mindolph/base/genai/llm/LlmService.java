@@ -2,11 +2,13 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.llm.Constants.ProviderProps;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+
+import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
+import static com.mindolph.core.constant.GenAiModelProvider.ALI_Q_WEN;
 
 /**
  * @author mindolph.com@gmail.com
@@ -14,11 +16,14 @@ import java.util.Map;
  */
 public class LlmService {
     private static final Logger log = LoggerFactory.getLogger(LlmService.class);
-    private static final LlmService ins = new LlmService();
+    private static LlmService ins;
     private LlmProvider llmProvider;
     private boolean isStopped;
 
     public static synchronized LlmService getIns() {
+        if (ins == null) {
+            ins = new LlmService();
+        }
         return ins;
     }
 
@@ -35,11 +40,19 @@ public class LlmService {
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
             log.warn("Using mock LLM provider");
             llmProvider = new DummyLlmProvider();
-        }
-        else {
+        } else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-            ProviderProps props = map.get(GenAiModelProvider.OPEN_AI.getName());
-            llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
+            String activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
+            log.info("Using llm provider: " + activeAiProvider);
+            if (OPEN_AI.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(OPEN_AI.getName());
+                llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
+            } else if (ALI_Q_WEN.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(ALI_Q_WEN.getName());
+                llmProvider = new QwenProvider(props.apiKey(), props.aiModel());
+            } else {
+                throw new RuntimeException("No llm provider setup: " + activeAiProvider);
+            }
         }
     }
 
@@ -52,8 +65,7 @@ public class LlmService {
         } catch (Exception e) {
             if (isStopped) {
                 return null;
-            }
-            else {
+            } else {
                 throw e;
             }
         }

@@ -71,7 +71,8 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
 |发布记录| |[v1.6.x](release-notes/v1.6/v1.6_zh_CN.md)|[v1.7.x](release-notes/v1.7/v1.7.md)| |
-|MacOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.dmg)| |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.dmg)| Intel |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11-aarch64.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1-aarch64.dmg) | Apple Silicon |
 |Windows|.msi|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.msi)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.msi)| |
 |Debian|.deb|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.deb)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
 |Fedora|.rpm|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.rpm)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.rpm)| |

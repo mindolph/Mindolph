@@ -70,7 +70,8 @@ Mindolph is an open source personal knowledge management software for all deskto
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
 |Release Notes| |[v1.6.x](docs/release-notes/v1.6/v1.6.md)|[v1.7.x](docs/release-notes/v1.7/v1.7.md)| |
-|MacOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.dmg) | |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.dmg) | Intel |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11-aarch64.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1-aarch64.dmg) | Apple Silicon |
 |Windows|.msi|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.msi) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.msi) | |
 |Debian|.deb|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.deb)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
 |Fedora|.rpm|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.rpm)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.rpm)| |

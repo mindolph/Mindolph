@@ -57,19 +57,21 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         cbAiProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getName()));
 //        cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
+        cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
         super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
                 selected -> {
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-                    ProviderProps vendorProps = map.get(selected.getKey().getName());
-                    if (vendorProps != null) {
-                        tfApiKey.setText(vendorProps.apiKey());
-                        tfAiModel.setText(vendorProps.aiModel());
-                    }
-                    else {
-                        tfApiKey.setText("");
-                        tfAiModel.setText("");
+                    if (selected.getKey() != null) {
+                        ProviderProps vendorProps = map.get(selected.getKey().getName());
+                        if (vendorProps != null) {
+                            tfApiKey.setText(vendorProps.apiKey());
+                            tfAiModel.setText(vendorProps.aiModel());
+                        } else {
+                            tfApiKey.setText("");
+                            tfAiModel.setText("");
+                        }
                     }
                 });
 
