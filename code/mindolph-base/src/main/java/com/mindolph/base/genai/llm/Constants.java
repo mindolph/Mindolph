@@ -41,7 +41,8 @@ public interface Constants {
 
     Map<String, OutputFormat> FILE_OUTPUT_MAPPING = new HashMap<>() {
         {
-            put(SupportFileTypes.TYPE_PLAIN_TEXT, OutputFormat.TEXT);
+            // text doesn't need to indicate the output format.
+//            put(SupportFileTypes.TYPE_PLAIN_TEXT, OutputFormat.TEXT);
             put(SupportFileTypes.TYPE_MARKDOWN, OutputFormat.MARKDOWN);
             put(SupportFileTypes.TYPE_MIND_MAP, OutputFormat.MINDMAP);
         }

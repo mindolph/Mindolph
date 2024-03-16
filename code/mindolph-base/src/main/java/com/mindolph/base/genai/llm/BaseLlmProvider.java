@@ -26,8 +26,8 @@ public abstract class BaseLlmProvider implements LlmProvider {
     protected final String aiModel;
     protected final String TEMPLATE = """
             {{input}}
-            your output must be in format: {{format}}.
-            your output should be {{length}}.
+            {{format}}
+            your output length should be {{length}}.
             """;
 
     /**
@@ -64,7 +64,9 @@ public abstract class BaseLlmProvider implements LlmProvider {
         Prompt prompt = promptTemplate.apply(new HashMap<>() {
             {
                 put("input", input);
-                put("format", outputParams.outputFormat().getName());
+                put("format", outputParams.outputFormat() != null && StringUtils.isNotBlank(outputParams.outputFormat().getName())
+                        ? "your output must be in format: %s.".formatted(outputParams.outputFormat().getName())
+                        : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? "normal" : (outputParams.outputAdjust() == Constants.OutputAdjust.SHORTER ? "simplified" : "detailed"));
             }
         });

@@ -37,16 +37,16 @@
         <plantuml.version>1.2024.3</plantuml.version>
         <swiftboot.version>2.4.5</swiftboot.version>
         <slf4j.version>2.0.12</slf4j.version>
-        <log4j2.version>2.22.1</log4j2.version>
+        <log4j2.version>2.23.1</log4j2.version>
         <junit.version>5.10.2</junit.version>
         <mfx.version>1.2.4</mfx.version>
         <gson.version>2.10.1</gson.version>
-        <controlsfx.version>11.2.0</controlsfx.version>
+        <controlsfx.version>11.2.1</controlsfx.version>
         <richtextfx.version>0.11.2</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
         <jsoup.version>1.17.2</jsoup.version>
-        <json.version>20240205</json.version>
+        <json.version>20240303</json.version>
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>0.28.0</langchain4j.version>
     </properties>
@@ -64,6 +64,11 @@
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-open-ai</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-dashscope</artifactId>
                 <version>${langchain4j.version}</version>
             </dependency>
             <dependency>
