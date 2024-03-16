@@ -21,7 +21,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 * Mind Map:
 	* Edit mind map easily and quickly with key shortcuts.
 	* Supports theme and provides some pre-defined themes(`Classic`, `Light` and `Dark`), customizing themes by duplicating existing theme and setup style of any element freely.
-	* Supports note, file link, URI link, image and emoticon for topic node. 
+	* Supports note, file link, URI link, image and emoticon for topic node.
 	* Import from other mind map formats like Freemind, Mindmup, XMind, Coggle, Novamind.
 	* Export to other file formats like Freemind, Markdown, image file(png/svg), AsciiDoc, etc.
 	* Compatible with files created by `netbeans-mmd-plugin`.
@@ -70,12 +70,12 @@ Mindolph is an open source personal knowledge management software for all deskto
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
 |Release Notes| |[v1.6.x](docs/release-notes/v1.6/v1.6.md)|[v1.7.x](docs/release-notes/v1.7/v1.7.md)| |
-|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.dmg) | Intel |
-|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11-aarch64.dmg) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1-aarch64.dmg) | Apple Silicon |
-|Windows|.msi|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.msi) |[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.msi) | |
-|Debian|.deb|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.deb)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.rpm)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.rpm)| |
-|Java Executable|.jar|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.jar)|[v1.7.1](https://github.com/mindolph/Mindolph/releases/download/v1.7.1/Mindolph-1.7.1.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.6.11.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.6.11.jar` |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.dmg) |[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2.dmg) | Intel |
+|macOS|.dmg|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11-aarch64.dmg) |[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2-aarch64.dmg) | Apple Silicon |
+|Windows|.msi|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.msi) |[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2.msi) | |
+|Debian|.deb|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.deb)|[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.rpm)|[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2.rpm)| |
+|Java Executable|.jar|[v1.6.11](https://github.com/mindolph/Mindolph/releases/download/v1.6.11/Mindolph-1.6.11.jar)|[v1.7.2](https://github.com/mindolph/Mindolph/releases/download/v1.7.2/Mindolph-1.7.2.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.6.11.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.6.11.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -83,10 +83,9 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Development
 
-Mindolph is developed based on JavaFX, 
-see [code/README.md](code/README.md) for more details.
+Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for more details.
 
-Future Plan:  
+Future Plan:
+
 * 1.7: Experimental GenAI support.
 * 1.8: Improvement and refactor.
-
