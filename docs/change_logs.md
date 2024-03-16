@@ -2,9 +2,9 @@
 
 ### V1.7.2 Unstable Release
 * Feature: add Ali Qwen as new LLM provider.
-* Improvement: optimized ai generated content.
-* Fix: buttons are not restored after exceptions in gen-ai dialog.
-* Fix: should show warning dialog instead of exception dialog when try to generate content without gen-ai provider set up.
+* Improvement: optimized AI generated content.
+* Fix: buttons are not restored after exceptions in Gen-AI dialog.
+* Fix: should show warning dialog instead of exception dialog when try to generate content without Gen-AI provider set up.
 * Update langchain4j to 0.28 and other dependencies.
 
 
