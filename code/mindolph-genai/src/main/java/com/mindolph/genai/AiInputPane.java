@@ -122,9 +122,8 @@ public class AiInputPane extends StackPane {
      * Be called when the generation is stopped by some reason.
      */
     public void onStop(String reason) {
-        pbWaiting.setVisible(false);
         lbMsg.setText(reason);
-        NodeUtils.enable(btnClose, btnGenerate, cbTemperature, taInput);
+        toggleButtons(false);
     }
 
     @Override
