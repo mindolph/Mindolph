@@ -1,14 +1,22 @@
 # Change Logs
 
-### V1.7.1 Unstable release
+### V1.7.2 Unstable Release
+* Feature: add Ali Qwen as new LLM provider.
+* Improvement: optimized AI generated content.
+* Fix: buttons are not restored after exceptions in Gen-AI dialog.
+* Fix: should show warning dialog instead of exception dialog when try to generate content without Gen-AI provider set up.
+* Update langchain4j to 0.28 and other dependencies.
+
+
+### V1.7.1 Unstable Release
 * Improvement: new individual preference tab page for Gen-AI settings.
 * Merged bug fixes from v1.6.11
 * Update PlantUML to 1.2024.3, langchain4j to 0.27.1 etc.
 
 
-### V1.6.11 release
-* New installer for macOS with Apple Silicon。
-* Fix: unable to quit input helper by ESC in code editor when the suggestion list get focused.
+### V1.6.11 Release
+* New installer for macOS with Apple Silicon.
+* Fix: unable to quit input helper by `ESC` in code editor when the suggestion list get focused.
 
 
 ### V1.7.0 Unstable Release
@@ -17,19 +25,19 @@
 
 
 ### V1.6.10 Release
-* Fix: suggestion list in code editor doesn't disappear in some cases. 
+* Fix: suggestion list in code editor doesn't disappear in some cases.
 * Fix: moving caret in wrapped text doesn't work well since the input helper is introduced.
 
 
 ### V1.6.9 Unstable Release
-* Improvement: optimized suggestion list of input helper by removing special characters. 
+* Improvement: optimized suggestion list of input helper by removing special characters.
 * Improvement: add separator to suggestion list for words from different plugins.
-* Fix: the dialog for creating file link after importing image from file to mind map should be the yes/no buttons mode instead of ok/cancel. 
-* Fix: exception when save a file as a new file with the same path. 
-* Fix: missing .jpeg file type support. 
+* Fix: the dialog for creating file link after importing image from file to mind map should be the yes/no buttons mode instead of ok/cancel.
+* Fix: exception when save a file as a new file with the same path.
+* Fix: missing .jpeg file type support.
 * Fix: exception when copy&paste some specific indent text to a mind map topic.
-* Fix: selection handling for root node is incorrect after undo in mind map. 
-* Fix: relocating suggestion list to inappropriate point if it exceeds parent pane. 
+* Fix: selection handling for root node is incorrect after undo in mind map.
+* Fix: relocating suggestion list to inappropriate point if it exceeds parent pane.
 * update JavaFX to 21.0.2, bundled Java to 21.0.2.
 
 
@@ -46,18 +54,18 @@
 
 
 ### V1.6.7 Unstable Release
-* Fix: remove build option `jdk.gtk.version` since the JavaFX 21 does no longer support GTK 2. 
+* Fix: remove build option `jdk.gtk.version` since the JavaFX 21 does no longer support GTK 2.
 * Fix: suggestion list of input helper is not in the appropriate position when there are too many items in it.
 * Fix: escape from suggestion mode by `ESC` key does not work on Linux.
-* Fix: exception when close all tabs with markdown or plantuml file opened but never loaded. 
+* Fix: exception when close all tabs with markdown or plantuml file opened but never loaded.
 
 ### V1.6.6 Unstable Release
 * Improvement: better text selection after quick inserting from toolbar or shortcuts in code editor.
 * Fix: exception when insert some text from toolbar or shortcuts to the end of file.
-* Fix: exception when close all tabs with any markdown or plantuml file opened but never loaded. 
-* Fix: exception when click on error of status bar when a syntax error exists for plantuml. 
-* Fix: wrong behavior when quick inserting markdown code quote while no text selection in code editor. 
-* Fix: limit the input helper suggestions to at least 3 letters. 
+* Fix: exception when close all tabs with any markdown or plantuml file opened but never loaded.
+* Fix: exception when click on error of status bar when a syntax error exists for plantuml.
+* Fix: wrong behavior when quick inserting markdown code quote while no text selection in code editor.
+* Fix: limit the input helper suggestions to at least 3 letters.
 
 
 ### V1.6.5 Unstable Release
@@ -88,16 +96,16 @@
 * Improvement: add horizontal rule button to markdown toolbar for quick inserting.
 * Improvement: use clearable text field for keyword input.
 * Improvement: show image resolution in image viewer .
-* Improvement: add `Open` menu item to workspace context menu. 
+* Improvement: add `Open` menu item to workspace context menu.
 * Improvement: add context menu for recent files list view.
-* Fix: pressing backspace to delete letters, the input helper should not work when only 1 letter left. 
-* Update javafx to 21 and other dependencies includes plantuml, slf4j etc. 
+* Fix: pressing backspace to delete letters, the input helper should not work when only 1 letter left.
+* Update javafx to 21 and other dependencies includes plantuml, slf4j etc.
 * Merged bug fixes from v1.5.6.
 
 ### V1.5.6 Release
 * Improvement: for mind map, use selected text in input box instead of selected topic as default search keyword.
 * Fix: file extension be added to the Markdown doc title, which is not appropriate and makes an unnecessary file link to itself.
-* Fix: the new created file name extension is missing if inputted name contains dot(.) 
+* Fix: the new created file name extension is missing if inputted name contains dot(.)
 
 ### V1.6.1 Unstable Release
 * Feature: add new preference option to toggle the input helper for code editor.
@@ -107,7 +115,7 @@
 * Fix: underline between words doesn't display in input helper.
 * Fix: letters don't display when using system input method.
 * Fix: input help doesn't work while caret is not at the end of line.
-* Fix: all candidate words displays in some cases. 
+* Fix: all candidate words displays in some cases.
 * Merged bug fixes from v1.5.5
 
 ### V1.5.5 Release
@@ -125,7 +133,7 @@
 * Improvement: minor improvement of mind map themes.
 * Improvement: optimize the logger performance.
 * Fix: the reset default preferences doesn't work for theme options.
-* Fix: the "show collapsator on mouse over" option is always disabled. 
+* Fix: the "show collapsator on mouse over" option is always disabled.
 * Fix: the installer is unable to launch on macOS 14 Sonoma.
 
 ### V1.5.3 Unstable Release
@@ -165,8 +173,8 @@
 * Fix: dialog is not in center of screen when exporting mind map to image.
 
 ### V1.5.0 Unstable Release
-* New Feature: add preview and resizing dialog for inserting image to mind map topic from clipboard or disk. 
-* Improvement: optimized quality of embedded image in mind map topic. 
+* New Feature: add preview and resizing dialog for inserting image to mind map topic from clipboard or disk.
+* Improvement: optimized quality of embedded image in mind map topic.
 * Merged bug fixes from v1.4.3.
 
 ### V1.4.3 Release
@@ -198,7 +206,7 @@
 	* quote block
 	* code block
 	* table
-* Improvement: 
+* Improvement:
 	* add syntax highlight of emphasis text block, list, numbered list, table for Markdown editor.
 	* improved syntax highlighting for PlantUML editor.
 
@@ -214,7 +222,7 @@
 	* use graphical line breaker instead in result items for code based file type(*.md, *.puml, *.txt).
 	* use graphical connector in result items for Mind Map topics.
 	* precisely locating keyword in editor for opening file from search result.
-* Fix: exception when search blank keyword in the search result panel 
+* Fix: exception when search blank keyword in the search result panel.
 * update demo workspace.
 * Some other refactors.
 
@@ -229,13 +237,13 @@
 * Improvement: new icons for workspace, folder and all kinds of files.
 * Improvement: add more icons to editors and some dialogs.
 * Improvement: changed some icons for contexts menu and dialogs.
-* Fix: menu items to create folder or files doesn't work in some cases. 
-* Fix: the relative file link is unable to be located. 
+* Fix: menu items to create folder or files doesn't work in some cases.
+* Fix: the relative file link is unable to be located.
 * Fix: paste doesn't work in note editor of mind map.
 * update plantuml to 1.2023.8 and other dependencies.
 
 ### V1.2.7 Release
-* Fix: menu items to create folder or files doesn't work in some cases. 
+* Fix: menu items to create folder or files doesn't work in some cases.
 * Fix: the relative file link is unable to be located in mind map.
 
 ### V1.3.1 Unstable Release
@@ -307,13 +315,13 @@
 * Fix: wrong displaying path in context menu from file in workspace.
 
 ### V1.1.2 Release
-* Fix: rename an opened file and edit the file, the file name in tab will be recovered to the original. 
+* Fix: rename an opened file and edit the file, the file name in tab will be recovered to the original.
 * Fix: exception occasionally when locate file in workspace.
 * Fix: exception when exporting mindmap to freemind.
 * Fix: exception when popup menu on a renamed file.
 
 ### V1.2 Beta
-* New Feature: add WYSIWYG CSV file editor. 
+* New Feature: add WYSIWYG CSV file editor.
 * Fix: exception when popup menu on a renamed file.
 * Update JavaFX to 20, PlantUML to 1.2023.5 and some other dependencies.
 
@@ -381,7 +389,7 @@
 
 ### v1.0 RC1
 * Improvement: auto scroll code editor to show the caret when it is out of view-port.
-* Improvement: take original file name as default export file name for mind map file. 
+* Improvement: take original file name as default export file name for mind map file.
 * Improvement: add sorting toggle button for result list of "go to file".
 * Improvement: add status message for zoom in/out mind map, preview content or image file.
 * Improvement: use new icon for search bar, "find in files" dialog and result panel.
