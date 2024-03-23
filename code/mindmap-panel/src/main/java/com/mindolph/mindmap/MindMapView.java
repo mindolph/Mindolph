@@ -1661,12 +1661,14 @@ public class MindMapView extends BaseScalableView {
     public boolean copyTopicsToClipboard(List<TopicNode> topics, boolean cut) {
         boolean result = false;
         this.endEdit(null, false);
-        if (topics.size() > 0) {
+        if (!topics.isEmpty()) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent clipboardContent = new ClipboardContent();
             ClipboardTopicsContainer container = new ClipboardTopicsContainer(topics.toArray(new TopicNode[]{}));
             try {
-                clipboardContent.putString(ClipboardTopicsContainer.convertTopics(topics));
+                String text = ClipboardTopicsContainer.convertTopics(topics);
+                if (log.isTraceEnabled()) log.trace("Text to clipboard: '%s'".formatted(text));
+                clipboardContent.putString(text);
                 clipboardContent.put(MMD_DATA_FORMAT, container);
             } catch (Exception e) {
                 throw new RuntimeException(e);
