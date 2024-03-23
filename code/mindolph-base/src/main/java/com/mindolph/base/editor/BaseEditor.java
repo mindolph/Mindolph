@@ -9,6 +9,8 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.PathUtils;
@@ -67,11 +69,38 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
      */
     protected Optional<String> getRelatedPathInCurrentWorkspace(File file) {
         boolean isSameWorkspace = PathUtils.isParentFolder(editorContext.getWorkspaceData().getFile(), file);
-        if (isSameWorkspace){
+        if (isSameWorkspace) {
             return Optional.of(PathUtils.getRelativePath(file, editorContext.getFileData().getFile().getParentFile()));
-        }
-        else {
+        } else {
             return Optional.empty();
+        }
+    }
+
+    /**
+     * TODO should be a utils method.
+     *
+     * @param text
+     * @return
+     */
+    protected String convertByOs(String text) {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return RegExUtils.replaceAll(text, "\n", "\r\n");
+        } else {
+            return text;
+        }
+    }
+
+    /**
+     * TODO should be a utils method.
+     *
+     * @param text
+     * @return
+     */
+    protected String loadByOs(String text) {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return RegExUtils.replaceAll(text, "\r\n", "\n");
+        } else {
+            return text;
         }
     }
 
