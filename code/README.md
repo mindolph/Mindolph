@@ -14,7 +14,7 @@
     cd mfx
     mvn install -Dmaven.test.skip=true
     ```
-  > If there is something wrong with the accessing Maven central repository, just use the `aliyun` profile:
+  > If there is something wrong with the accessing Maven central repository, just use the `aliyun` profile:  
   > `mvn install -Dmaven.test.skip=true -Paliyun`
 
 * Install FontawesomeFX
@@ -24,8 +24,8 @@
     cd fontawesomefx/fontawesomefx
     ./gradlew publishToMavenLocal
     ```
-    > for JDK 17, switch git branch:
-    > `git switch fontawesomefx-17.0.0`
+    > for JDK 17, switch git branch:  
+`git switch fontawesomefx-17.0.0`
 
 * Mindolph
 
@@ -48,20 +48,20 @@ mvn package -Dmaven.test.skip=true -Paliyun
 ### How to build platform dependent distribution
 
 * Install Packaging Tools:  
-    * macOS
+    * macOS  
       install Xcode command line tools
-    * Debian
+    * Debian  
       install fakeroot package
-    * Fedora
+    * Fedora  
       install rpm-build package
-    * Windows
+    * Windows  
       install third party tool WiX 3.0 or later
 
 * Install JavaFX jmods:  
 
     Download JavaFX 21 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-21/`
 
-    Set environment variable:
+    Set environment variable:  
     ```shell
     export JAVAFX_HOME=/mnt/javafx-jmods-21/
     ```
