@@ -1,5 +1,10 @@
 # Change Logs
 
+### V1.6.12 Release
+* Fix: redundant line break at the end of copied text of topics from mind map.
+* Fix: the CRLF in editor is not handled well on macOS with M chip.
+
+
 ### V1.7.2 Unstable Release
 * Feature: add Ali Qwen as new LLM provider.
 * Improvement: optimized AI generated content.
