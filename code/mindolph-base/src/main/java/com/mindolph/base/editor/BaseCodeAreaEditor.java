@@ -10,7 +10,6 @@ import com.mindolph.core.search.TextAnchor;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.util.FontUtils;
-import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
@@ -96,8 +95,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                     Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
                     if (optPath.isPresent()) {
                         onFilesDropped(hit, file, optPath.get());
-                    }
-                    else {
+                    } else {
                         log.warn("Link files not in same workspace are not supported yet");
                     }
                 }
@@ -119,7 +117,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void loadFile(Runnable afterLoading) throws IOException {
-        String text = TextUtils.convertFromWindows(FileUtils.readFileToString(editorContext.getFileData().getFile(), StandardCharsets.UTF_8));
+        String text = super.loadByOs(FileUtils.readFileToString(editorContext.getFileData().getFile(), StandardCharsets.UTF_8));
         Platform.runLater(() -> {
             this.codeArea.replaceText(text);
             this.codeArea.displaceCaret(0); // caret starts at head of the file.
@@ -185,8 +183,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             codeArea.selectRange(tl.getStartRow(), tl.getStartCol(), tl.getEndRow(), tl.getEndCol());
             codeArea.scrollXToPixel(0);
             codeArea.requestFollowCaret();
-        }
-        else {
+        } else {
             log.warn("No anchor to locate");
         }
     }
@@ -270,7 +267,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     public void save() throws IOException {
         log.info("Save file: " + editorContext.getFileData().getFile());
         FileUtils.write(editorContext.getFileData().getFile(),
-                TextUtils.convertToWindows(codeArea.getText()), StandardCharsets.UTF_8);
+                this.convertByOs(codeArea.getText()), StandardCharsets.UTF_8);
         super.isChanged = false;
         fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
     }

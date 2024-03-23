@@ -668,7 +668,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     public void save() throws IOException {
         log.info("Save cache to file: %s".formatted(editorContext.getFileData().getFile()));
         FileUtils.write(editorContext.getFileData().getFile(),
-                TextUtils.convertToWindows(this.text), StandardCharsets.UTF_8);
+                super.convertByOs(this.text), StandardCharsets.UTF_8);
         super.isChanged = false;
         fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
     }
