@@ -1,6 +1,9 @@
 package com.mindolph.mindmap.clipboard;
 
-import com.igormaznitsa.mindmap.model.*;
+import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraNote;
+import com.igormaznitsa.mindmap.model.ExtraTopic;
+import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.mindmap.model.TopicNode;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +21,6 @@ public final class ClipboardTopicsContainer implements Serializable {
     private final TopicNode[] topics;
 
     /**
-     *
      * @param topics topics that don't have any ancestor-descendant relationship,
      *               otherwise any operations on these topics might with redundant topics.
      */
@@ -35,14 +37,8 @@ public final class ClipboardTopicsContainer implements Serializable {
     }
 
     public static String convertTopics(List<TopicNode> topics) {
-        StringBuilder result = new StringBuilder();
-        for (TopicNode t : topics) {
-            if (result.length() > 0) {
-                result.append(LINE_SEPARATOR);
-            }
-            result.append(convertTopic(t, 0));
-        }
-        return result.toString();
+        List<String> texts = topics.stream().map(topicNode -> convertTopic(topicNode, 0).trim()).toList();
+        return StringUtils.join(texts, LINE_SEPARATOR);
     }
 
     private static String convertTopic(TopicNode topic, int level) {
@@ -64,8 +60,7 @@ public final class ClipboardTopicsContainer implements Serializable {
                     case NOTE: {
                         if (Boolean.parseBoolean(topic.getAttributes().get(ExtraNote.ATTR_ENCRYPTED))) {
                             result.append(LINE_SEPARATOR).append(lineIndent).append("<ENCRYPTED NOTE>");
-                        }
-                        else {
+                        } else {
                             for (String s : e.getValue().getAsString().split(LINE_SEPARATOR)) {
                                 result.append(LINE_SEPARATOR).append(lineIndent).append("> ").append(s.trim());
                             }
