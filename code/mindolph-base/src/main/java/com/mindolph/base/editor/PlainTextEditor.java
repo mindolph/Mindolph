@@ -8,11 +8,15 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.CharacterHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
+
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 
 /**
@@ -35,8 +39,14 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     }
 
     @Override
-    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+    protected void onFileDropped(CharacterHit hit, File file, String filePath) {
         codeArea.insertText(hit.getInsertionIndex(), filePath);
+    }
+
+    @Override
+    protected void onFilesDropped(CharacterHit hit, List<File> files) {
+        List<String> paths = files.stream().map(file -> super.getRelatedPathInCurrentWorkspace(file).orElseGet(file::getPath)).toList();
+        codeArea.insertText(hit.getInsertionIndex(), StringUtils.join(paths, LINE_SEPARATOR));
     }
 
     @Override

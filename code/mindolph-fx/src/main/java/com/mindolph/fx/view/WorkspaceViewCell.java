@@ -4,6 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.event.DragFileEventHandler;
 import com.mindolph.mfx.util.FontUtils;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.ClipboardContent;
@@ -14,12 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
+import java.io.File;
 import java.util.List;
 
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -35,23 +38,23 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
     private static final Font defaultFont = Font.font("Roboto", FontWeight.NORMAL, FontPosture.REGULAR, Font.getDefault().getSize());
     private static final Font boldFont = FontUtils.newFontWithWeight(defaultFont, FontWeight.BOLD);
 
+    // static for sharing.
+    private static List<NodeData> draggingNodeDatas;
+
     private DragFileEventHandler dragFileEventHandler;
-
-    private static NodeData draggingNodeData;
-
     private Background origBackground;// for drag&drop
 
     public WorkspaceViewCell() {
         this.setOnDragDetected(e -> {
-            TreeItem<NodeData> draggedItem = this.getTreeItem();
-            if (draggedItem == null) return;
-            NodeData value = draggedItem.getValue();
-            this.draggingNodeData = value;
-            log.trace("dragged: " + value.getFile());
+            ObservableList<TreeItem<NodeData>> selectedItems = getTreeView().getSelectionModel().getSelectedItems();
+            if (selectedItems == null || selectedItems.isEmpty()) return;
+            draggingNodeDatas = selectedItems.stream().map(TreeItem::getValue).toList();
+            log.trace("dragged %d files".formatted(draggingNodeDatas.size()));
             Dragboard dragboard = this.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
-            content.putString(value.getFile().toString());
-            content.putFiles(Collections.singletonList(value.getFile()));
+            List<File> files = draggingNodeDatas.stream().map(NodeData::getFile).toList();
+            content.putString(StringUtils.join(files, LINE_SEPARATOR));
+            content.putFiles(files);
             dragboard.setContent(content);
             e.consume();
         });
@@ -85,12 +88,12 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
         this.setOnDragDropped(dragEvent -> {
             if (dragEvent.getDragboard().hasString()) {
                 if (getTreeItemData() != null && (getTreeItemData().isFolder() || getTreeItemData().isWorkspace())) {
-                    if (draggingNodeData != null) {
+                    if (draggingNodeDatas != null && !draggingNodeDatas.isEmpty()) {
                         log.info(String.format("Drag %s and drop to %s", dragEvent.getDragboard().getString(), getTreeItemData().getFile().toString()));
-                        dragFileEventHandler.onFilesDragged(List.of(draggingNodeData), getTreeItemData());
+                        dragFileEventHandler.onFilesDragged(draggingNodeDatas, getTreeItemData());
                     }
                     else {
-                        log.debug("No dragging node");
+                        log.debug("No dragging nodes");
                     }
                 }
                 else {
