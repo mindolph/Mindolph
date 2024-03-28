@@ -81,9 +81,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
  * @author mindolph.com@gmail.com
@@ -258,10 +260,22 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
-    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+    protected void onFileDropped(CharacterHit hit, File file, String filePath) {
         String markup = FileNameUtils.isImageFile(file) ? IMG_MARKUP : URL_MARKUP;
         String mdFileMarkup = markup.formatted(file.getName(), filePath);
         codeArea.insertText(hit.getInsertionIndex(), mdFileMarkup);
+    }
+
+    @Override
+    protected void onFilesDropped(CharacterHit hit, List<File> files) {
+        List<String> paths = files.stream().map(
+                file -> {
+                    String markup = FileNameUtils.isImageFile(file) ? IMG_MARKUP : URL_MARKUP;
+                    String filePath = super.getRelatedPathInCurrentWorkspace(file).orElseGet(file::getPath);
+                    String mdFileMarkup = markup.formatted(file.getName(), filePath);
+                    return "%s  ".formatted(mdFileMarkup); // add 2 blanks for Markdown
+                }).toList();
+        codeArea.insertText(hit.getInsertionIndex(), StringUtils.join(paths, LINE_SEPARATOR));
     }
 
     // NOTE: this method will be called from javascript inside the webview.

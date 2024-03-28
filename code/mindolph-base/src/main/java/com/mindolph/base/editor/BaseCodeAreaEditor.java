@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 
@@ -81,24 +81,15 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
                     return;
                 }
-                Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
-                if (optPath.isPresent()) {
-                    dragEvent.acceptTransferModes(TransferMode.LINK);
-                    CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
-                    codeArea.requestFocus();
-                    codeArea.moveTo(hit.getInsertionIndex());
-                }
+                dragEvent.acceptTransferModes(TransferMode.LINK);
+                CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
+                codeArea.requestFocus();
+                codeArea.moveTo(hit.getInsertionIndex());
             });
             codeArea.setOnDragDropped(dragEvent -> {
                 CharacterHit hit = codeArea.hit(dragEvent.getX(), dragEvent.getY());
-                for (File file : dragEvent.getDragboard().getFiles()) {
-                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
-                    if (optPath.isPresent()) {
-                        onFilesDropped(hit, file, optPath.get());
-                    } else {
-                        log.warn("Link files not in same workspace are not supported yet");
-                    }
-                }
+                log.info("Dropped %d files to code area.".formatted(dragEvent.getDragboard().getFiles().size()));
+                onFilesDropped(hit, dragEvent.getDragboard().getFiles());
             });
         }
 
@@ -111,7 +102,11 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      * @param file
      * @param filePath final path to present the provided file in this editor.
      */
-    protected void onFilesDropped(CharacterHit hit, File file, String filePath) {
+    protected void onFileDropped(CharacterHit hit, File file, String filePath) {
+        // INHERIT ME TO HANDLE DROPPED FILE
+    }
+
+    protected void onFilesDropped(CharacterHit hit, List<File> files) {
         // INHERIT ME TO HANDLE DROPPED FILES
     }
 
@@ -183,7 +178,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             codeArea.selectRange(tl.getStartRow(), tl.getStartCol(), tl.getEndRow(), tl.getEndCol());
             codeArea.scrollXToPixel(0);
             codeArea.requestFollowCaret();
-        } else {
+        }
+        else {
             log.warn("No anchor to locate");
         }
     }
