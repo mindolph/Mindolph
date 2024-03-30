@@ -48,7 +48,7 @@ public interface Constants {
         }
     };
 
-    record ProviderProps(String apiKey, String aiModel) {
+    record ProviderProps(String apiKey, String baseUrl, String aiModel) {
     }
 
     record ProviderInfo(String name, String model) {

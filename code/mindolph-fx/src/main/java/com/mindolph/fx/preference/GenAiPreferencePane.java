@@ -32,6 +32,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private TextField tfApiKey;
     @FXML
+    private TextField tfBaseUrl;
+    @FXML
     private TextField tfAiModel;
     @FXML
     private Spinner<Integer> spTimeOut;
@@ -58,18 +60,30 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbAiProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getName()));
 //        cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
         cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
+        cbAiProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getName()));
         super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
                 selected -> {
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
                     if (selected.getKey() != null) {
+                        if (selected.getKey().getType() == ProviderType.API) {
+                            tfApiKey.setDisable(false);
+                            tfBaseUrl.setDisable(true);
+                        }
+                        else if (selected.getKey().getType() == ProviderType.PRIVATE) {
+                            tfApiKey.setDisable(true);
+                            tfBaseUrl.setDisable(false);
+                        }
                         ProviderProps vendorProps = map.get(selected.getKey().getName());
                         if (vendorProps != null) {
                             tfApiKey.setText(vendorProps.apiKey());
+                            tfBaseUrl.setText(vendorProps.baseUrl());
                             tfAiModel.setText(vendorProps.aiModel());
-                        } else {
+                        }
+                        else {
                             tfApiKey.setText("");
+                            tfBaseUrl.setText("");
                             tfAiModel.setText("");
                         }
                     }
@@ -77,13 +91,19 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
 
         // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(newValue, tfAiModel.getText());
+            ProviderProps vendorProps = new ProviderProps(newValue, null, tfAiModel.getText());
+            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
+            this.onSave(true);
+        });
+        // Dynamic preference can't use bindPreference.
+        tfBaseUrl.textProperty().addListener((observable, oldValue, newValue) -> {
+            ProviderProps vendorProps = new ProviderProps(null, newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
         // Dynamic preference can't use bindPreference.
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), newValue);
+            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(), newValue);
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
