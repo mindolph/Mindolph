@@ -1,5 +1,12 @@
 # Change Logs
 
+### V1.7.3 Unstable release
+* Feature: support Ollama for Gen-AI.
+* Improvement: support multi selection operations for nodes in  workspace tree view.
+* Merged bug fixes from v1.6.12
+* update langchain4j to 0.29.1
+
+
 ### V1.6.12 Release
 * Fix: redundant line break at the end of copied text of topics from mind map.
 * Fix: the CRLF in editor is not handled well on macOS with M chip.
