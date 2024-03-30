@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.genai.llm.Constants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
 
@@ -41,8 +42,8 @@ public class LlmConfig {
      * @param provider
      * @param providerProps
      */
-    public void saveGenAiProvider(GenAiModelProvider provider, Constants.ProviderProps providerProps) {
-        Map<String, Constants.ProviderProps> providerPropsMap = this.loadGenAiProviders();
+    public void saveGenAiProvider(GenAiModelProvider provider, ProviderProps providerProps) {
+        Map<String, ProviderProps> providerPropsMap = this.loadGenAiProviders();
         providerPropsMap.put(provider.getName(), providerProps);
         String json = new Gson().toJson(providerPropsMap);
         fxPreferences.savePreference(GENERAL_AI_PROVIDERS, json);
@@ -51,9 +52,9 @@ public class LlmConfig {
     /**
      * @return
      */
-    public Map<String, Constants.ProviderProps> loadGenAiProviders() {
+    public Map<String, ProviderProps> loadGenAiProviders() {
         String json = fxPreferences.getPreference(PrefConstants.GENERAL_AI_PROVIDERS, "{}");
-        Type collectionType = new TypeToken<Map<String, Constants.ProviderProps>>() {
+        Type collectionType = new TypeToken<Map<String, ProviderProps>>() {
         }.getType();
         return new Gson().fromJson(json, collectionType);
     }

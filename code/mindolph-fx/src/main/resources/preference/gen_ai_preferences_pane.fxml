@@ -14,6 +14,9 @@
             <PreferenceItem name="API key:">
                <TextField fx:id="tfApiKey" prefWidth="300.0" />
             </PreferenceItem>
+            <PreferenceItem name="Base URL:">
+               <TextField fx:id="tfBaseUrl" prefWidth="300.0" promptText="eg: http://127.0.0.1:11434"/>
+            </PreferenceItem>
             <PreferenceItem name="Model:">
                <TextField fx:id="tfAiModel" prefWidth="300.0" promptText="eg: gpt-4" />
             </PreferenceItem>

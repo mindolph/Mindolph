@@ -51,6 +51,10 @@
             <artifactId>langchain4j-dashscope</artifactId>
         </dependency>
         <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.swiftech</groupId>
             <artifactId>swstate</artifactId>
         </dependency>

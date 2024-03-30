@@ -11,6 +11,7 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -182,10 +183,18 @@ public class AiGenerator implements Generator {
         if (StringUtils.isNotBlank(activeProvider)) {
             Map<String, ProviderProps> propsMap = config.loadGenAiProviders();
             if (propsMap.containsKey(activeProvider)) {
+                GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
                 ProviderProps props = propsMap.get(activeProvider);
-                if (StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel())) {
-                    return true;
+                if (provider == null || props == null) return false;
+                log.debug(String.valueOf(provider));
+                log.debug(String.valueOf(props));
+                if (provider.getType() == GenAiModelProvider.ProviderType.API) {
+                    return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
                 }
+                else if (provider.getType() == GenAiModelProvider.ProviderType.PRIVATE) {
+                    return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
+                }
+
             }
         }
         return false;

@@ -7,8 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
-import static com.mindolph.core.constant.GenAiModelProvider.ALI_Q_WEN;
+import static com.mindolph.core.constant.GenAiModelProvider.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -40,17 +39,24 @@ public class LlmService {
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
             log.warn("Using mock LLM provider");
             llmProvider = new DummyLlmProvider();
-        } else {
+        }
+        else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             String activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
             log.info("Using llm provider: " + activeAiProvider);
             if (OPEN_AI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(OPEN_AI.getName());
                 llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
-            } else if (ALI_Q_WEN.getName().equals(activeAiProvider)) {
+            }
+            else if (ALI_Q_WEN.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(ALI_Q_WEN.getName());
                 llmProvider = new QwenProvider(props.apiKey(), props.aiModel());
-            } else {
+            }
+            else if (OLLAMA.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(OLLAMA.getName());
+                llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel());
+            }
+            else {
                 throw new RuntimeException("No llm provider setup: " + activeAiProvider);
             }
         }
@@ -65,7 +71,8 @@ public class LlmService {
         } catch (Exception e) {
             if (isStopped) {
                 return null;
-            } else {
+            }
+            else {
                 throw e;
             }
         }
