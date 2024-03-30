@@ -71,7 +71,7 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
 |发布记录| |[v1.6.x](release-notes/v1.6/v1.6_zh_CN.md)|[v1.7.x](release-notes/v1.7/v1.7.md)| |
-|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-x64.dmg)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.dmg)| Intel |
+|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-x64.dmg)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3-x64.dmg)| Intel |
 |macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-aarch64.dmg) |[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
 |Windows|.msi|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.msi)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.msi)| |
 |Debian|.deb|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.deb)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
