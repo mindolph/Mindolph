@@ -1054,12 +1054,13 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content(summary).showAndWait();
 //                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
                 if (needDelete) {
-                    for (NodeData sn : selectedNodes) {
+                    for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
+                        NodeData sn = curItem.getValue();
                         if (!this.beforeFilePathChanged(sn)) {
                             log.debug("Cancel deleting file");
                             return;
                         }
-                        log.info("Delete file: %s".formatted(sn.getFile()));
+                        log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
                         if (sn.getFile().isDirectory()) {
                             deleteMacFile(sn.getFile());
                         }
@@ -1070,10 +1071,11 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                             DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
                             return;
                         }
-                        // remove from recent list if exists
+                        curItem.getParent().getChildren().remove(curItem);
+                        // close opened file tab(if exists) and remove from recent list if exists
                         EventBus.getIns().notifyDeletedFile(sn);
-                        removeTreeNode(sn, false);
                     }
+                    treeView.refresh();
                     treeView.getSelectionModel().clearSelection();
                 }
             }
