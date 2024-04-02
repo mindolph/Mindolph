@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-import static com.mindolph.base.constant.PrefConstants.GENERAL_AI_TIMEOUT;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
 
 /**
  * @author mindolph.com@gmail.com
@@ -45,7 +45,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
         this.apiKey = apiKey;
         this.aiModel = aiModel;
         FxPreferences fxPreferences = FxPreferences.getInstance();
-        this.timeout = fxPreferences.getPreference(GENERAL_AI_TIMEOUT, 60);
+        this.timeout = fxPreferences.getPreference(GEN_AI_TIMEOUT, 60);
         // Proxy settings
         proxyEnabled = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
         if (proxyEnabled) {

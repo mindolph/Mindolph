@@ -13,9 +13,22 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
 
+    /**
+     * @deprecated
+     */
     String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
+    /**
+     * @deprecated
+     */
     String GENERAL_AI_PROVIDERS = "general.genai.providers";
+    /**
+     * @deprecated
+     */
     String GENERAL_AI_TIMEOUT = "general.genai.timeout";
+
+    String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
+    String GEN_AI_PROVIDERS = "genai.providers";
+    String GEN_AI_TIMEOUT = "genai.timeout";
 
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";

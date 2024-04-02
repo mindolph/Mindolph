@@ -559,8 +559,16 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         return folderItem;
     }
 
+    public TreeItem<NodeData> addFolderAndSelect(TreeItem<NodeData> parent, NodeData folderData) {
+        TreeItem<NodeData> folderItem = this.addFolder(parent, folderData);
+        treeView.getSelectionModel().clearSelection();
+        treeView.getSelectionModel().select(folderItem);
+        return folderItem;
+    }
+
     public TreeItem<NodeData> addFileAndSelect(TreeItem<NodeData> parent, NodeData fileData) {
         TreeItem<NodeData> treeItem = this.addFile(parent, fileData);
+        treeView.getSelectionModel().clearSelection();
         treeView.getSelectionModel().select(treeItem);
         return treeItem;
     }
@@ -908,7 +916,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         selectedTreeItem.setExpanded(true);
                         NodeData folderData = new NodeData(NodeType.FOLDER, newDir);
                         folderData.setWorkspaceData(selectedData.getWorkspaceData());
-                        addFolder(selectedTreeItem, folderData);
+                        this.addFolderAndSelect(selectedTreeItem, folderData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
                     }
                 }
@@ -987,7 +995,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         selectedTreeItem.setExpanded(true);
                         NodeData nodeData = new NodeData(newFile);
                         nodeData.setWorkspaceData(selectedData.getWorkspaceData());
-                        addFile(selectedTreeItem, nodeData);
+                        this.addFileAndSelect(selectedTreeItem, nodeData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newFile));
                     }
                 }
