@@ -10,7 +10,7 @@ import com.mindolph.mfx.preference.FxPreferences;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static com.mindolph.base.constant.PrefConstants.GENERAL_AI_PROVIDERS;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
 
 /**
@@ -35,7 +35,8 @@ public class LlmConfig {
      * @return
      */
     public String getActiveAiProvider() {
-        return fxPreferences.getPreference(PrefConstants.GENERAL_AI_PROVIDER_ACTIVE, OPEN_AI.getName());
+        return fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDER_ACTIVE, PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING,
+                OPEN_AI.getName());
     }
 
     /**
@@ -46,14 +47,15 @@ public class LlmConfig {
         Map<String, ProviderProps> providerPropsMap = this.loadGenAiProviders();
         providerPropsMap.put(provider.getName(), providerProps);
         String json = new Gson().toJson(providerPropsMap);
-        fxPreferences.savePreference(GENERAL_AI_PROVIDERS, json);
+        fxPreferences.savePreference(GEN_AI_PROVIDERS, json);
     }
 
     /**
      * @return
      */
     public Map<String, ProviderProps> loadGenAiProviders() {
-        String json = fxPreferences.getPreference(PrefConstants.GENERAL_AI_PROVIDERS, "{}");
+        String json = fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDERS,
+                PrefConstants.GENERAL_AI_PROVIDERS, "{}");
         Type collectionType = new TypeToken<Map<String, ProviderProps>>() {
         }.getType();
         return new Gson().fromJson(json, collectionType);

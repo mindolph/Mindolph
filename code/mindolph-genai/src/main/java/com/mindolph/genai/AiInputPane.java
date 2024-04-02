@@ -3,6 +3,8 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
@@ -13,6 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 import static com.mindolph.base.genai.llm.Constants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
@@ -55,6 +59,16 @@ public class AiInputPane extends StackPane {
 
         taInput.setText(defaultInput);
         taInput.positionCaret(defaultInput.length());
+        String activeProvider = LlmConfig.getIns().getActiveAiProvider();
+        if (StringUtils.isNotBlank(activeProvider)) {
+            Map<String, ProviderProps> providers = LlmConfig.getIns().loadGenAiProviders();
+            if (providers.containsKey(activeProvider)) {
+                ProviderProps props = providers.get(activeProvider);
+                if (StringUtils.isNotBlank(props.aiModel())) {
+                    taInput.setPromptText("The prompt to generate content by %s %s".formatted(activeProvider, props.aiModel()));
+                }
+            }
+        }
 
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));

@@ -17,8 +17,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.base.constant.PrefConstants.GENERAL_AI_PROVIDER_ACTIVE;
-import static com.mindolph.base.constant.PrefConstants.GENERAL_AI_TIMEOUT;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 
 /**
@@ -61,13 +61,13 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
 //        cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
         cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
         cbAiProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getName()));
-        super.bindPreference(cbAiProvider.valueProperty(), GENERAL_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
+        super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
                 selected -> {
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
                     if (selected.getKey() != null) {
-                        if (selected.getKey().getType() == ProviderType.API) {
+                        if (selected.getKey().getType() == ProviderType.PUBLIC) {
                             tfApiKey.setDisable(false);
                             tfBaseUrl.setDisable(true);
                         }
@@ -107,7 +107,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
-        super.bindSpinner(spTimeOut, 1, 300, 1, GENERAL_AI_TIMEOUT, 60);
+        super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
 
     }
 

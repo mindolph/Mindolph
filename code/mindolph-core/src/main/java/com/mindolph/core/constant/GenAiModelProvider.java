@@ -5,9 +5,9 @@ package com.mindolph.core.constant;
  */
 public enum GenAiModelProvider {
 
-    OPEN_AI("OpenAI", ProviderType.API),
-    GEMINI("Gemini", ProviderType.API),
-    ALI_Q_WEN("Qwen", ProviderType.API),
+    OPEN_AI("OpenAI", ProviderType.PUBLIC),
+    GEMINI("Gemini", ProviderType.PUBLIC),
+    ALI_Q_WEN("Qwen", ProviderType.PUBLIC),
     OLLAMA("Ollama", ProviderType.PRIVATE);
 
     private final String name;
@@ -36,6 +36,6 @@ public enum GenAiModelProvider {
     }
 
     public enum ProviderType {
-        API, PRIVATE
+        PUBLIC, PRIVATE
     }
 }
