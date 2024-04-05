@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+            prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mindolph.mindmap.MindMapDrawingDemo">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <children>
+                <ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#onLoad" text="Load"/>
+                </ToolBar>
+                <HBox VBox.vgrow="ALWAYS">
+                    <Pane>
+                        <VBox>
+                            <ScrollPane prefWidth="600" prefHeight="600">
+                                <Canvas fx:id="canvas" height="900.0" width="900.0"/>
+                            </ScrollPane>
+                        </VBox>
+                    </Pane>
+                    <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <HBox>
+                    <Label fx:id="label"/>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
