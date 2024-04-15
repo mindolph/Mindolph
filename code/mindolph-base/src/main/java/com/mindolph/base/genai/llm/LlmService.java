@@ -48,6 +48,10 @@ public class LlmService {
                 ProviderProps props = map.get(OPEN_AI.getName());
                 llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel());
             }
+            else if (GEMINI.getName().equals(activeAiProvider)){
+                ProviderProps props = map.get(GEMINI.getName());
+                llmProvider = new GeminiProvider(props.apiKey(), props.aiModel());
+            }
             else if (ALI_Q_WEN.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(ALI_Q_WEN.getName());
                 llmProvider = new QwenProvider(props.apiKey(), props.aiModel());
@@ -55,6 +59,10 @@ public class LlmService {
             else if (OLLAMA.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(OLLAMA.getName());
                 llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel());
+            }
+            else if (HUGGING_FACE.getName().equals(activeAiProvider)){
+                ProviderProps props = map.get(HUGGING_FACE.getName());
+                llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel());
             }
             else {
                 throw new RuntimeException("No llm provider setup: " + activeAiProvider);
@@ -80,6 +88,12 @@ public class LlmService {
             isStopped = false;
             return null; // force to return null since it has been stopped by user.
         }
+        // strip user input if the generated text contains use input in the head of it.
+        if (generated.startsWith(input)) {
+            generated = generated.substring(input.length());
+        }
+        generated = generated.trim();
+        log.debug("Generated: " + generated);
         return generated;
     }
 

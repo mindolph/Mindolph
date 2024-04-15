@@ -146,7 +146,8 @@ public class AiInputPane extends StackPane {
     }
 
     public record Temperature(float value, String display) {
-        public static final Temperature SAFE = new Temperature(0.0f, "Safe");
+        // set 0.01 instead of 0.0 just because of hugging-face api require positive float value.
+        public static final Temperature SAFE = new Temperature(0.01f, "Safe");
         public static final Temperature CREATIVE = new Temperature(0.25f, "Creative");
         public static final Temperature ADVENTUROUS = new Temperature(0.5f, "Adventurous");
         public static final Temperature UNCHARTED = new Temperature(0.75f, "Uncharted");

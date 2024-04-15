@@ -51,7 +51,7 @@
                         <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
                         <Pane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="lbMsg" />
+                              <Label fx:id="lbMsg" wrapText="true"/>
                            </children></Pane>
                         <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
                      </children>
