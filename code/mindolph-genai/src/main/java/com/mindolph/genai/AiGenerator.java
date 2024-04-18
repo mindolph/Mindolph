@@ -85,10 +85,11 @@ public class AiGenerator implements Generator {
                     log.error(e.getLocalizedMessage(), e);
                     Platform.runLater(() -> {
                         cancelConsumer.accept(false);
+                        String err = "Failed to generate content by %s.\n%s".formatted(LlmService.getIns().getActiveAiProvider(), e.getLocalizedMessage());
                         if (inputPanel != null)
-                            inputPanel.onStop(e.getLocalizedMessage());
+                            inputPanel.onStop(err);
                         if (reframePanel != null)
-                            reframePanel.onStop(e.getLocalizedMessage());
+                            reframePanel.onStop(err);
                     });
                 }
             }).start();

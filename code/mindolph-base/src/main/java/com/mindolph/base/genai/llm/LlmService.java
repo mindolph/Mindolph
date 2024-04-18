@@ -18,6 +18,7 @@ public class LlmService {
     private static LlmService ins;
     private LlmProvider llmProvider;
     private boolean isStopped;
+    private String activeAiProvider;
 
     public static synchronized LlmService getIns() {
         if (ins == null) {
@@ -42,7 +43,7 @@ public class LlmService {
         }
         else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-            String activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
+            activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
             log.info("Using llm provider: " + activeAiProvider);
             if (OPEN_AI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(OPEN_AI.getName());
@@ -104,4 +105,7 @@ public class LlmService {
         this.isStopped = true;
     }
 
+    public String getActiveAiProvider() {
+        return activeAiProvider;
+    }
 }

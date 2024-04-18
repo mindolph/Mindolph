@@ -49,9 +49,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
         log.debug(request.toString());
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                log.error(response.code() + response.message());
                 String strBody = response.body().string();
-                log.error(strBody);
+                log.debug(strBody);
                 JsonObject respBody = JsonParser.parseString(strBody).getAsJsonObject();
                 throw new RuntimeException("%d %s".formatted(response.code(), respBody.get("error").getAsString()));
             }

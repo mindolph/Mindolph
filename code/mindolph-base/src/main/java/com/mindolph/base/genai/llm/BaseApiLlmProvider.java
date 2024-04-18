@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,28 +50,9 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         String formatted = args.entrySet().stream().reduce(TEMPLATE,
                 (s, e) -> s.replace("{{" + e.getKey() + "}}", e.getValue().toString()),
                 (s, s2) -> s);
-        log.debug(formatted);
-        formatted = formatted.trim().replaceAll("\\n", "\\\\n");
         String jsonParams = template.formatted(formatted.trim(), temperature);
-        log.debug(jsonParams);
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);
-        log.debug(requestBody.contentType().toString());
-        try {
-            log.debug(String.valueOf(requestBody.contentLength()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         return requestBody;
-    }
-
-    protected Response callApi(String apiUrl) {
-        // TODO
-        return null;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new String(JsonStringEncoder.getInstance().encodeAsUTF8("hello")));
-        System.out.println(new String(JsonStringEncoder.getInstance().encodeAsUTF8("\"hello")));
     }
 
 }
