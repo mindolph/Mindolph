@@ -11,9 +11,7 @@ import com.mindolph.core.util.DirUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.AbstractFileFilter;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +63,8 @@ public class WorkspaceManager {
     }
 
     public List<NodeData> loadFolder(NodeData parentData, WorkspaceConfig workspaceConfig) {
-        Collection<File> files = FileUtils.listFiles(parentData.getFile(), workspaceConfig.makeFileFilter(), null);
+        Collection<File> files = FileUtils.listFilesAndDirs(parentData.getFile(), workspaceConfig.makeFileFilter(), null);
+        files.remove(parentData.getFile()); // root folder should be excluded.
         return files.stream().map(file -> {
             NodeData nodeData = new NodeData(file.isFile() ? NodeType.FILE : NodeType.FOLDER, file);
             nodeData.setWorkspaceData(parentData.getWorkspaceData());
@@ -128,6 +127,8 @@ public class WorkspaceManager {
         }
 
         Collection<File> dirs = DirUtils.findDirsByKeyword(workspaceDir, keyword);
+        dirs.remove(workspaceDir);
+
         AbstractFileFilter dirFilter = new AbstractFileFilter() {
             @Override
             public boolean accept(File file) {
@@ -136,7 +137,6 @@ public class WorkspaceManager {
             }
         };
         Collection<File> files = FileUtils.listFiles(workspaceDir, fileFilters, dirFilter);
-        dirs.remove(workspaceDir);
         files.remove(workspaceDir);
         return (List<File>) CollectionUtils.union(dirs, files);
     }
