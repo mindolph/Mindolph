@@ -45,13 +45,13 @@
                         </AnchorPane>
                      </children>
                   </VBox>
-                  <HBox fx:id="hbReady" alignment="CENTER_LEFT" spacing="10.0">
+                  <HBox fx:id="hbReady" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label fx:id="lbTemperature" />
                         <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
                         <Pane HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="lbMsg" />
+                              <Label fx:id="lbMsg" maxWidth="350" wrapText="true" />
                            </children></Pane>
                         <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
                      </children>
@@ -59,10 +59,10 @@
                         <Insets bottom="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <HBox fx:id="hbGenerating" visible="false" managed="false">
+                  <HBox fx:id="hbGenerating" managed="false" visible="false">
                      <children>
                         <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" fx:id="btnStop" text="Stop Generating" />
+                        <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Generating" />
                      </children>
                   </HBox>
                </children>

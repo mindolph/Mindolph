@@ -14,7 +14,7 @@ import java.time.Duration;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class OpenAiProvider extends BaseLlmProvider {
+public class OpenAiProvider extends BaseLangchainLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiProvider.class);
 
