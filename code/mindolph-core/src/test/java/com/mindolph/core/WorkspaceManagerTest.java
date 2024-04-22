@@ -9,15 +9,15 @@ import org.swiftboot.collections.tree.Tree;
 /**
  * @author mindolph.com@gmail.com
  */
-class ProjectServiceTest {
+class WorkspaceManagerTest {
 
     @Test
-    void loadProjects() {
-        ProjectService pl = ProjectService.getInstance();
+    void loadWorkspaceRecursively() {
+        WorkspaceManager pl = WorkspaceManager.getIns();
         WorkspaceConfig workspaceConfig = new WorkspaceConfig();
         WorkspaceMeta params = new WorkspaceMeta();
         params.setBaseDirPath("/var/tmp/demo_project");
-        Tree tree = pl.loadProject(workspaceConfig, params);
+        Tree tree = pl.loadWorkspaceRecursively(workspaceConfig, params);
         String json = new Gson().toJson(tree);
         System.out.println(json);
     }

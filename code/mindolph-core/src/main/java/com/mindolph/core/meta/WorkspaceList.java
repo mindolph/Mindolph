@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 public class WorkspaceList {
 
     // keep the name "projects" for compatible with old version(<= 1.0 beta7).
+    // TODO implement migration for this kind of preference loading
     private LinkedHashSet<WorkspaceMeta> projects = new LinkedHashSet<>();
 
     /**

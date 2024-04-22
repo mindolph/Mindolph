@@ -3,7 +3,7 @@
 <?import com.mindolph.base.container.FixedSplitPane?>
 <?import com.mindolph.fx.view.FileTabView?>
 <?import com.mindolph.fx.view.RecentView?>
-<?import com.mindolph.fx.view.WorkspaceView2?>
+<?import com.mindolph.fx.view.WorkspaceViewEditable?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
@@ -127,7 +127,7 @@
                                        <children>
                                           <AnchorPane layoutX="-215.0" layoutY="-87.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <WorkspaceView2 fx:id="workspaceView" layoutX="-29.0" layoutY="-35.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <WorkspaceViewEditable fx:id="workspaceView" layoutX="-29.0" layoutY="-35.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
