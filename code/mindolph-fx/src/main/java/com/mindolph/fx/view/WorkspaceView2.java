@@ -770,6 +770,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 if (curNodeData.getFile().equals(nodeData.getFile())) {
                     log.debug("Found tree item to select");
                     treeItem.setExpanded(true);
+                    treeView.getSelectionModel().clearSelection();
                     treeView.getSelectionModel().select(treeItem);
                     return treeItem; // stop traversing
                 }
