@@ -98,7 +98,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 .title(title, 32)
                 .fxmlUri("dialog/note_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
-                .button(importButtonType, () -> {
+                .button(importButtonType, dialog -> {
                     File selectedFile = DialogFactory.openFileDialog(dialog.getOwner(), SystemUtils.getUserHome());
                     if (selectedFile != null) {
                         try {
@@ -109,7 +109,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                         }
                     }
                 })
-                .button(exportButtonType, () -> {
+                .button(exportButtonType, dialog -> {
                     File file = DialogFactory.openSaveFileDialog(dialog.getOwner(), SystemUtils.getUserHome()
                             , null, new FileChooser.ExtensionFilter("Text File(*.txt)", "*.txt"));
                     if (file != null && !file.exists()) {

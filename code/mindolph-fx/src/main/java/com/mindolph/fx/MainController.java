@@ -488,7 +488,8 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuExit(ActionEvent event) {
         Boolean requireConfirm = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         if (requireConfirm) {
-            if (!new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to quit Mindolph?").showAndWait()) {
+            Boolean quit = new ConfirmDialogBuilder().positive("Quit").cancel().asDefault().content("Are you sure to quit Mindolph?").showAndWait();
+            if (quit == null || !quit) {
                 return;
             }
         }

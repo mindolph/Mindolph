@@ -1026,9 +1026,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 String summary = "Are you sure to delete %s".formatted(
                         selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
                 );
-                boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content(summary).showAndWait();
-//                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
-                if (needDelete) {
+                Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
+                if (needDelete != null && needDelete) {
                     for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
                         NodeData sn = curItem.getValue();
                         if (!this.beforeFilePathChanged(sn)) {
