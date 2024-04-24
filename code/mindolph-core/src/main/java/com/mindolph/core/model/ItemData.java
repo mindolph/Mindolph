@@ -1,20 +1,12 @@
 package com.mindolph.core.model;
 
 /**
- *
  * @since 1.8
  */
-public class ItemData {
+public interface ItemData {
 
-    // This is used only for locating the tree item's position in the VirtualFlow of TreeView.
-    private transient Integer displayIndex;
+    Integer getDisplayIndex();
 
-    public Integer getDisplayIndex() {
-        return displayIndex;
-    }
-
-    public void setDisplayIndex(Integer displayIndex) {
-        this.displayIndex = displayIndex;
-    }
+    void setDisplayIndex(Integer displayIndex);
 
 }

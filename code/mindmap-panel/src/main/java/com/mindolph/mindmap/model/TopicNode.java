@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.Topic;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.core.model.ItemData;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.util.TextUtils;
 import javafx.scene.paint.Color;
@@ -24,7 +25,7 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 /**
  * @author mindolph.com@gmail.com
  */
-public class TopicNode extends Topic<TopicNode> {
+public class TopicNode extends Topic<TopicNode> implements ItemData {
     static final Logger log = LoggerFactory.getLogger(TopicNode.class);
 
     public TopicNode(MindMap<TopicNode> mindMap, TopicNode base, boolean copyChildren) {
@@ -321,4 +322,13 @@ public class TopicNode extends Topic<TopicNode> {
         return new ArrayList<>(List.of(topics));
     }
 
+    @Override
+    public Integer getDisplayIndex() {
+        return 0;
+    }
+
+    @Override
+    public void setDisplayIndex(Integer displayIndex) {
+
+    }
 }

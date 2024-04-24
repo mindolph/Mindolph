@@ -13,12 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @since 1.8
  * @see ItemData
+ * @since 1.8
  */
 public class MTreeView<T extends ItemData> extends TreeView<T> {
 
     private static final Logger log = LoggerFactory.getLogger(MTreeView.class);
+
+    public void collapseAll() {
+        collapseTreeNodes(super.getRoot(), true);
+    }
 
     /**
      * Collapse all it's sub nodes.
@@ -28,14 +32,26 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
      */
     public void collapseTreeNodes(TreeItem<T> treeItem, boolean includeParent) {
         log.debug("Collapse all expanded nodes under " + treeItem);
+        setExpanded(treeItem, includeParent, false);
+    }
+
+    public void expandAll() {
+        expandTreeNodes(super.getRoot(), true);
+    }
+
+    public void expandTreeNodes(TreeItem<T> treeItem, boolean includeParent) {
+        log.debug("Expand all expanded nodes under " + treeItem);
+        setExpanded(treeItem, includeParent, true);
+    }
+
+    private void setExpanded(TreeItem<T> treeItem, boolean includeParent, boolean expand) {
         TreeVisitor.dfsTraverse(treeItem, item -> {
-            if (item.isExpanded()) {
-                log.debug("Collapse node: " + item);
-                item.setExpanded(false);
-            }
+            log.trace("%s node: %s".formatted(expand ? "Expand" : "Collapse", item));
+            item.setExpanded(expand);
             return null;
         });
-        if (includeParent) treeItem.setExpanded(false);
+        if (includeParent) treeItem.setExpanded(expand);
+        super.refresh();
     }
 
     public void select(TreeItem<T> treeItem) {
