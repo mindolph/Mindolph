@@ -629,11 +629,11 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 contextMenu.getItems().add(miPasteFile);
             }
             if (isSingleSelected) {
-                miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
+                miRename = new MenuItem("Rename...", FontIconManager.getIns().getIcon(IconKey.RENAME));
                 miRename.setOnAction(this);
                 contextMenu.getItems().addAll(miRename);
             }
-            miMoveTo = new MenuItem("Move to", FontIconManager.getIns().getIcon(IconKey.MOVE_FOLDER));
+            miMoveTo = new MenuItem("Move to...", FontIconManager.getIns().getIcon(IconKey.MOVE_FOLDER));
             miMoveTo.setOnAction(this);
             contextMenu.getItems().add(miMoveTo);
             if (isFolder && isSingleSelected) {

@@ -15,22 +15,22 @@
               <menus>
                 <Menu mnemonicParsing="true" text="_File">
                   <items>
-                    <MenuItem mnemonicParsing="true" onAction="#onMenuNewWorkspace" text="New _Workspace" />
+                    <MenuItem mnemonicParsing="true" onAction="#onMenuNewWorkspace" text="New _Workspace..." />
 <!--                      <MenuItem mnemonicParsing="true" fx:id="miNewFile" text="New File" disable="true">-->
 <!--                           <accelerator>-->
 <!--                              <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />-->
 <!--                           </accelerator></MenuItem>-->
 <!--                      <SeparatorMenuItem />-->
-                      <MenuItem mnemonicParsing="true" onAction="#onMenuOpenWorkspace" text="_Open Workspace" />
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuOpenWorkspace" text="_Open Workspace..." />
                       <Menu fx:id="menuRecentWorkspaces" mnemonicParsing="true" text="Open Recent Workspace" />
-                      <MenuItem fx:id="menuManageWorkspaces" onAction="#onMenuManageWorkspaces" mnemonicParsing="true" text="_Manage Workspaces" />
+                      <MenuItem fx:id="menuManageWorkspaces" onAction="#onMenuManageWorkspaces" mnemonicParsing="true" text="_Manage Workspaces..." />
 <!--                      <MenuItem mnemonicParsing="true" fx:id="miOpenFile" accelerator="#onMenuOpenFile" text="Open File" disable="true"/>-->
                         <SeparatorMenuItem />
                       <MenuItem mnemonicParsing="true" fx:id="miSave" onAction="#onMenuSave" text="_Save" disable="true">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
-                      <MenuItem mnemonicParsing="true" fx:id="miSaveAs" onAction="#onMenuSaveAs" text="Save _As" disable="true"/>
+                      <MenuItem mnemonicParsing="true" fx:id="miSaveAs" onAction="#onMenuSaveAs" text="Save _As..." disable="true"/>
                       <MenuItem mnemonicParsing="true" fx:id="miSaveAll" text="Save All" onAction="#onMenuSaveAll" disable="true">
                           <accelerator>
                               <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
@@ -78,16 +78,16 @@
                               <KeyCodeCombination alt="UP" code="V" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
                       <SeparatorMenuItem />
-                      <MenuItem mnemonicParsing="true" fx:id="miFind" onAction="#onMenuFind" text="_Find" disable="true">
+                      <MenuItem mnemonicParsing="true" fx:id="miFind" onAction="#onMenuFind" text="_Find..." disable="true">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
-                      <MenuItem mnemonicParsing="true" fx:id="miReplace" onAction="#onMenuReplace" text="_Replace" disable="true">
+                      <MenuItem mnemonicParsing="true" fx:id="miReplace" onAction="#onMenuReplace" text="_Replace..." disable="true">
                           <accelerator>
                               <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
                           </accelerator></MenuItem>
                       <SeparatorMenuItem />
-                      <MenuItem mnemonicParsing="true" onAction="#onMenuPreferences" text="_Preferences">
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuPreferences" text="_Preferences...">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="COMMA" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
@@ -100,7 +100,7 @@
                   </Menu>
                   <Menu mnemonicParsing="true" text="_Navigate">
                       <items>
-                          <MenuItem mnemonicParsing="true" onAction="#onMenuGotoFile" text="_Go to File">
+                          <MenuItem mnemonicParsing="true" onAction="#onMenuGotoFile" text="_Go to File...">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="T" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
@@ -108,7 +108,7 @@
                   </Menu>
                 <Menu mnemonicParsing="true" text="_Help">
                   <items>
-                      <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference" />
+                      <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference..." />
                       <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="_Check for update..." />
                     <MenuItem mnemonicParsing="true" onAction="#onMenuAbout" text="_About" />
                   </items>

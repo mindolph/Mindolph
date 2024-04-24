@@ -383,11 +383,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miViewSource = new MenuItem("View Source");
+        MenuItem miViewSource = new MenuItem("View Source...");
         MenuItem miRefresh = new MenuItem("Refresh", FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        MenuItem miExportHtml = new MenuItem("Export to HTML file", FontIconManager.getIns().getIcon(IconKey.BROWSE));
-        MenuItem miExportImage = new MenuItem("Export to Image file", FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miExportPdf = new MenuItem("Export to PDF file", FontIconManager.getIns().getIcon(IconKey.PDF));
+        MenuItem miExportHtml = new MenuItem("Export to HTML file...", FontIconManager.getIns().getIcon(IconKey.BROWSE));
+        MenuItem miExportImage = new MenuItem("Export to Image file...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExportPdf = new MenuItem("Export to PDF file...", FontIconManager.getIns().getIcon(IconKey.PDF));
 
 
         miViewSource.setOnAction(e -> {

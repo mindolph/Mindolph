@@ -132,7 +132,7 @@ public class AiGenerator implements Generator {
     @Override
     public MenuItem contextMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem("Generate (Experiment)", icon);
+        return new MenuItem("Generate... (Experiment)", icon);
     }
 
     @Override

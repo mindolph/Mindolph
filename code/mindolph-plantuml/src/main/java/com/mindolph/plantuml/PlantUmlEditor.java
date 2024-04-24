@@ -157,7 +157,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             });
             contextMenu.getItems().add(miPageX);
         }
-        MenuItem miExport = new MenuItem("Export Image as File", FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExport = new MenuItem("Export Image as File...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
         MenuItem miCopyImage = new MenuItem("Copy Image to Clipboard");
         miCopyImage.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
