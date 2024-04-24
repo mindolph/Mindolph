@@ -42,7 +42,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private TableView<OrientationItem> tvOrientation;
     @FXML
     private CheckBox cbEnableInputHelper;
-
+    @FXML
+    private CheckBox cbAutoSelectAfterFileOpened;
     @FXML
     private CheckBox cbEnableProxy;
     @FXML
@@ -70,6 +71,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 //        super.bindPreference(ckbEnableAutoCreateProjectFolder.selectedProperty(), PrefConstants.GENERAL_KNOWLEDGE_FOLDER_GENERATION_ALLOWED, false);
         super.bindPreference(ckbShowHiddenFiles.selectedProperty(), PrefConstants.GENERAL_SHOW_HIDDEN_FILES, false);
 //        super.bindPreference(ckbAutoBackupLastEdit.selectedProperty(), "general.autoBackupBeforeSaving", true);
+        super.bindPreference(cbAutoSelectAfterFileOpened.selectedProperty(), GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true);
 
         TableColumn<OrientationItem, Object> colEditor = new TableColumn<>("Editor");
         TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>("Orientation");

@@ -3,62 +3,55 @@
 <?import com.mindolph.base.container.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <PreferenceItem name="Confirm before quitting application:">
-                <CheckBox fx:id="cbConfirmBeforeQuitting" mnemonicParsing="false" />
-            </PreferenceItem>
-            <PreferenceItem name="Open last editing files on startup:">
-               <CheckBox fx:id="cbOpenLastFiles" mnemonicParsing="false" />
-            </PreferenceItem>
-<!--            <PreferenceItem name="Enable auto-creation .projectKnowledge folder:">-->
-<!--               <items>-->
-<!--                  <CheckBox fx:id="ckbEnableAutoCreateProjectFolder" />-->
-<!--               </items>-->
-<!--            </PreferenceItem>-->
-            <PreferenceItem name="Show hidden files(needs folder reload):">
-               <items>
-                  <CheckBox fx:id="ckbShowHiddenFiles" />
-               </items>
-            </PreferenceItem>
-            <Separator prefWidth="200.0" />
-            <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="130.0" minHeight="110">
-               <items>
-                  <TableView fx:id="tvOrientation" minHeight="80.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
-                  </TableView>
-               </items>
-            </PreferenceItem>
-            <PreferenceItem name="Enable input helper:">
-               <CheckBox fx:id="cbEnableInputHelper" mnemonicParsing="false" />
-            </PreferenceItem>
-<!--            <PreferenceItem name="Auto backup last edit:">-->
-<!--               <items>-->
-<!--                  <CheckBox fx:id="ckbAutoBackupLastEdit" />-->
-<!--               </items>-->
-<!--            </PreferenceItem>-->
-            <Separator prefWidth="200.0" />
-             <PreferenceItem name="Enable proxy:">
-               <CheckBox fx:id="cbEnableProxy" mnemonicParsing="false" />
-             </PreferenceItem>
-            <PreferenceItem name="Type:">
-              <RadioButton fx:id="rbHttp" mnemonicParsing="false" text="HTTP" disable="true"/>
-              <RadioButton fx:id="rbSocks" mnemonicParsing="false" text="SOCKS"  disable="true"/>
-            </PreferenceItem>
-            <PreferenceItem name="Address:">
-               <items>
-                  <TextField fx:id="tfProxyHost" promptText="host" prefWidth="200" disable="true"/>
-                  <Spinner fx:id="spProxyPort" min="1" max="65535" editable="true" prefWidth="80" disable="true"/>
-               </items>
-            </PreferenceItem>
-            <PreferenceItem name="Authentication:">
-               <items>
-                  <TextField fx:id="tfProxyUsername" promptText="User name" prefWidth="150" disable="true"/>
-                  <PasswordField fx:id="pfProxyPassword" promptText="Password" prefWidth="150" disable="true"/>
-               </items>
-            </PreferenceItem>
-         </children>
-      </VBox>
-   </children>
+<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+   <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <PreferenceItem name="Confirm before quitting application:">
+         <CheckBox fx:id="cbConfirmBeforeQuitting" mnemonicParsing="false"/>
+      </PreferenceItem>
+      <PreferenceItem name="Open last editing files on startup:">
+         <CheckBox fx:id="cbOpenLastFiles" mnemonicParsing="false"/>
+      </PreferenceItem>
+      <!--            <PreferenceItem name="Enable auto-creation .projectKnowledge folder:">-->
+      <!--               <items>-->
+      <!--                  <CheckBox fx:id="ckbEnableAutoCreateProjectFolder" />-->
+      <!--               </items>-->
+      <!--            </PreferenceItem>-->
+      <PreferenceItem name="Show hidden files(needs folder reload):">
+         <CheckBox fx:id="ckbShowHiddenFiles"/>
+      </PreferenceItem>
+      <PreferenceItem name="Auto select in workspace after a file is opened:">
+         <CheckBox fx:id="cbAutoSelectAfterFileOpened" mnemonicParsing="false"/>
+      </PreferenceItem>
+      <Separator prefWidth="200.0"/>
+      <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="130.0" minHeight="110">
+         <TableView fx:id="tvOrientation" minHeight="80.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
+         </TableView>
+      </PreferenceItem>
+      <PreferenceItem name="Enable input helper:">
+         <CheckBox fx:id="cbEnableInputHelper" mnemonicParsing="false"/>
+      </PreferenceItem>
+      <!--            <PreferenceItem name="Auto backup last edit:">-->
+      <!--               <items>-->
+      <!--                  <CheckBox fx:id="ckbAutoBackupLastEdit" />-->
+      <!--               </items>-->
+      <!--            </PreferenceItem>-->
+      <Separator prefWidth="200.0"/>
+      <PreferenceItem name="Enable proxy:">
+         <CheckBox fx:id="cbEnableProxy" mnemonicParsing="false"/>
+      </PreferenceItem>
+      <PreferenceItem name="Type:">
+         <RadioButton fx:id="rbHttp" mnemonicParsing="false" text="HTTP" disable="true"/>
+         <RadioButton fx:id="rbSocks" mnemonicParsing="false" text="SOCKS" disable="true"/>
+      </PreferenceItem>
+      <PreferenceItem name="Address:">
+         <TextField fx:id="tfProxyHost" promptText="host" prefWidth="200" disable="true"/>
+         <Spinner fx:id="spProxyPort" min="1" max="65535" editable="true" prefWidth="80" disable="true"/>
+      </PreferenceItem>
+      <PreferenceItem name="Authentication:">
+         <TextField fx:id="tfProxyUsername" promptText="User name" prefWidth="150" disable="true"/>
+         <PasswordField fx:id="pfProxyPassword" promptText="Password" prefWidth="150" disable="true"/>
+      </PreferenceItem>
+   </VBox>
 </fx:root>

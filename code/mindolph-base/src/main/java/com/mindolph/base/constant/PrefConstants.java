@@ -12,17 +12,18 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_PUML = "general.editorOrientation.puml";
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
+    String GENERAL_AUTO_SELECT_AFTER_FILE_OPENED = "general.autoSelectAfterFileOpened";
 
     /**
-     * @deprecated
+     * @deprecated delete when 1.8 stable is release
      */
     String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
     /**
-     * @deprecated
+     * @deprecated delete when 1.8 stable is release
      */
     String GENERAL_AI_PROVIDERS = "general.genai.providers";
     /**
-     * @deprecated
+     * @deprecated delete when 1.8 stable is release
      */
     String GENERAL_AI_TIMEOUT = "general.genai.timeout";
 
@@ -39,7 +40,7 @@ public interface PrefConstants {
 
     String PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT = "mmd.addDefaultCommentToRoot";
     String PREF_KEY_MMD_TRIM_TOPIC_TEXT = "mmd.trimTopicText";
-//    String PREF_KEY_MMD_USE_INSIDE_BROWSER = "mmd.useInsideBrowser";
+    //    String PREF_KEY_MMD_USE_INSIDE_BROWSER = "mmd.useInsideBrowser";
 //    String PREF_KEY_MMD_MAKE_RELATIVE_PATH_TO_PROJECT = "mmd.makeRelativePathToProject";
     String PREF_KEY_MMD_UNFOLD_COLLAPSED_TARGET = "mmd.unfoldCollapsedTarget";
     String PREF_KEY_MMD_COPY_COLOR_INFO_TO_NEW_CHILD = "mmd.copyColorInfoToNewChild";

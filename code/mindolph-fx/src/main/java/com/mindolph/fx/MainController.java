@@ -252,16 +252,19 @@ public class MainController extends BaseController implements Initializable,
     }
 
     public void onOpenFile(NodeData fileData, SearchParams searchParams, boolean visibleInWorkspace) {
+        boolean autoSelect = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true) == Boolean.TRUE;
         // the file existence should be validated before this handler for its consequences are different.
         if (fileData.getFile().isFile()) {
             fileData.setSearchParams(searchParams);
             this.openFile(fileData, false);
-            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+            if (autoSelect)
+                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         else if (fileData.getFile().isDirectory()) {
-            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+            if (autoSelect)
+                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
-        if (visibleInWorkspace) {
+        if (visibleInWorkspace && autoSelect) {
             splitPane.showAll();
             tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
         }
