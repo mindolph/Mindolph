@@ -1,6 +1,19 @@
 # Change Logs
 
-### V1.7.3 Unstable release
+
+### V1.7.4 Unstable Release
+* Improvement: support Google Gemini API and Hugging Face API for Gen-AI.
+* Improvement: err message displaying for generating content by AI.
+* Improvement: preference migration implementation.
+* Improvement: limit the width of error message area in Gen-AI panel.
+* Improvement: add hint text to input area of Gen-AI panel.
+* Fix: missing sub-folders when loading folder in workspace since the commons-io update to version 2.16.1
+* Fix: after a new file/folder created under a folder, the folder itself should not be selected automatically.
+* some utils classes refactored.
+* update dependencies.
+
+
+### V1.7.3 Unstable Release
 * Feature: support Ollama for Gen-AI.
 * Improvement: support multi selection operations for nodes in  workspace tree view.
 * Merged bug fixes from v1.6.12
