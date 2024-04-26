@@ -4,45 +4,40 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <fx:root prefWidth="600.0" type="VBox" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox fx:id="searchPane">
-              <children>
-            <HBox fx:id="leftPane" spacing="8.0">
-               <children>
-                  <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Find:" HBox.hgrow="ALWAYS" />
+    <HBox fx:id="searchPane">
+        <HBox fx:id="leftPane" spacing="8.0">
+            <padding>
+                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+            </padding>
+            <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Find:" HBox.hgrow="ALWAYS"/>
 
-                   <VBox fx:id="vbKeywords" prefWidth="250.0"  />
+            <VBox fx:id="vbKeywords" prefWidth="250.0"/>
 
-                        <Button fx:id="btnPrev" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false" onAction="#onSearchPrev">
-                        </Button>
-                        <Button fx:id="btnNext" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false" onAction="#onSearchNext">
-                        </Button>
-                        <ToggleButton fx:id="tbCase" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false" selected="false">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                     <tooltip>
-                        <Tooltip text="Case sensitivity" />
-                     </tooltip>
-                        </ToggleButton>
-               </children>
-               <padding>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding>
-            </HBox>
-            <AnchorPane fx:id="rightPane" HBox.hgrow="ALWAYS" />
-              </children>
-      </HBox>
-      <HBox fx:id="replacePane" spacing="8.0">
-         <children>
-            <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Replace:" />
-             <VBox fx:id="vbReplacement"  prefWidth="250.0" />
-            <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplace" text="Replace" />
-            <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplaceAll" text="Replace All" />
-         </children>
-         <padding>
-            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-         </padding>
-      </HBox>
-   </children>
+            <Button fx:id="btnPrev" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false"
+                    onAction="#onSearchPrev">
+            </Button>
+            <Button fx:id="btnNext" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false"
+                    onAction="#onSearchNext">
+            </Button>
+            <ToggleButton fx:id="tbCase" focusTraversable="false" maxWidth="32.0" mnemonicParsing="false"
+                          selected="false">
+                <HBox.margin>
+                    <Insets/>
+                </HBox.margin>
+                <tooltip>
+                    <Tooltip text="Case sensitivity"/>
+                </tooltip>
+            </ToggleButton>
+        </HBox>
+        <AnchorPane fx:id="rightPane" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox fx:id="replacePane" spacing="8.0">
+        <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+        </padding>
+        <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Replace:"/>
+        <VBox fx:id="vbReplacement" prefWidth="250.0"/>
+        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplace" text="Replace"/>
+        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplaceAll" text="Replace All"/>
+    </HBox>
 </fx:root>

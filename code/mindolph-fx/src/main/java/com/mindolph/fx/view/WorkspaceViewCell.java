@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -76,6 +78,12 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                 origBackground = this.getBackground();
                 this.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
             }
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (!getTreeItem().isExpanded()) getTreeItem().setExpanded(true);
+                }
+            }, 1000);
             dragEvent.consume();
         });
         this.setOnDragExited(dragEvent -> {
