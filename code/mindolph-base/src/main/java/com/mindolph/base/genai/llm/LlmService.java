@@ -1,6 +1,6 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.plugin.PluginEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

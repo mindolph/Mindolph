@@ -11,24 +11,24 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
- * Note: abnormal layout for vertical TODO
+ *
  *
  * @author mindolph.com@gmail.com
  */
 public class PreferenceItemSkin extends SkinBase<PreferenceItem> {
-    private final double DEFAULT_PADDING = 4f;
-    private final double DEFAULT_CONTAINER_PADDING = 8f;
-    private final double DEFAULT_CONTAINER_SPACING = 6f;
+    private static final double DEFAULT_PADDING = 4f;
+    private static final double DEFAULT_CONTAINER_PADDING = 8f;
+    private static final double DEFAULT_CONTAINER_SPACING = 6f;
 
+    private final HBox root;
     private final Pane container;
     private final Label label;
-    private final HBox content;
 
     public PreferenceItemSkin(PreferenceItem control) {
         super(control);
         label = new Label("Label");
         label.textProperty().bind(getSkinnable().nameProperty());
-        content = new HBox();
+        root = new HBox();
 
         if (getSkinnable().getOrientation() == Orientation.HORIZONTAL) {
             container = new HBox();
@@ -37,10 +37,10 @@ public class PreferenceItemSkin extends SkinBase<PreferenceItem> {
             container = new VBox();
         }
         container.getChildren().addAll(getSkinnable().getItems());
-        content.getChildren().add(label);
-        content.getChildren().add(container);
+        root.getChildren().add(label);
+        root.getChildren().add(container);
         getChildren().clear();
-        getChildren().add(content);
+        getChildren().add(root);
         getSkinnable().requestLayout();
     }
 
@@ -51,23 +51,24 @@ public class PreferenceItemSkin extends SkinBase<PreferenceItem> {
         label.setAlignment(Pos.TOP_RIGHT);
         label.setMinWidth(100);
         label.setPrefWidth(300);
-        content.setMinHeight(32);
-        content.setPrefHeight(36);
-        content.setSpacing(16);
-        content.setAlignment(Pos.CENTER);
+        root.setMinHeight(24);
+//        root.setPrefHeight(36); this should not be set since it causes multiple children vertical layout abnormal.
+        root.setSpacing(16);
+        root.setAlignment(Pos.CENTER);
 
-        container.setMinHeight(content.getMinHeight() + DEFAULT_CONTAINER_PADDING * 2);
+//        container.setMinHeight(root.getMinHeight() + DEFAULT_CONTAINER_PADDING * 2);
         container.setPadding(new Insets(DEFAULT_CONTAINER_PADDING));
+        HBox.setHgrow(container, Priority.ALWAYS); // always grow in root node.
 
-        // content
+        //
         if (preferenceItem.getOrientation() == Orientation.HORIZONTAL) {
             ((HBox) container).setAlignment(Pos.CENTER_LEFT);
             ((HBox) container).setSpacing(DEFAULT_CONTAINER_SPACING);
         }
         else {
-            ((VBox) container).setAlignment(Pos.CENTER_LEFT);
+            ((VBox) container).setAlignment(Pos.TOP_LEFT);
             ((VBox) container).setSpacing(DEFAULT_CONTAINER_SPACING);
         }
-        HBox.setHgrow(container, Priority.ALWAYS); // always grow in parent container.
+
     }
 }

@@ -1,7 +1,7 @@
 package com.mindolph.base.plugin;
 
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.base.genai.llm.Constants.ProviderInfo;
+import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;

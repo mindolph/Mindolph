@@ -21,9 +21,9 @@
       <PreferenceItem name="Show hidden files(needs folder reload):">
          <CheckBox fx:id="ckbShowHiddenFiles"/>
       </PreferenceItem>
-      <PreferenceItem name="Auto select in workspace after a file is opened:">
-         <CheckBox fx:id="cbAutoSelectAfterFileOpened" mnemonicParsing="false"/>
-      </PreferenceItem>
+       <PreferenceItem name="Auto select in workspace after a file is opened:">
+           <CheckBox fx:id="cbAutoSelectAfterFileOpened" mnemonicParsing="false"/>
+       </PreferenceItem>
       <Separator prefWidth="200.0"/>
       <PreferenceItem name="Default orientation for preview-able editor:" prefHeight="130.0" minHeight="110">
          <TableView fx:id="tvOrientation" minHeight="80.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
