@@ -75,8 +75,10 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             else if (dragEvent.getDragboard().hasFiles()) {
                 // this is for external files (since the hasString() method has already checked with internal files.)
                 if (this.isDroppable()) {
-                    dragEvent.acceptTransferModes(TransferMode.COPY);
-                    log.trace("ok to drop");
+                    if (dragEvent.getDragboard().getFiles().stream().anyMatch(File::isFile)) {
+                        dragEvent.acceptTransferModes(TransferMode.COPY);
+                        log.trace("ok to drop");
+                    }
                 }
             }
             else {
@@ -130,7 +132,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     boolean noToAll = false;
                     MultiConfirmation multiConfirmation = null;
                     for (File file : files) {
-                        if (!file.isFile()){
+                        if (!file.isFile()) {
                             continue;
                         }
                         File destFile = new File(nodeData.getFile(), file.getName());
