@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
                         ? "your output must be in format: %s.".formatted(outputParams.outputFormat().getName())
                         : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? StringUtils.EMPTY :
-                        "output : " + (outputParams.outputAdjust() == Constants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
+                        "output : " + (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
             }
         };
         return params;

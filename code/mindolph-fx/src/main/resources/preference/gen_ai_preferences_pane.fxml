@@ -3,27 +3,26 @@
 <?import com.mindolph.base.container.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <PreferenceItem name="Gen-AI provider:">
-               <ChoiceBox fx:id="cbAiProvider" prefWidth="120.0">
-               </ChoiceBox>
-            </PreferenceItem>
-            <PreferenceItem name="API key:">
-               <TextField fx:id="tfApiKey" prefWidth="300.0" />
-            </PreferenceItem>
-            <PreferenceItem name="Base URL:">
-               <TextField fx:id="tfBaseUrl" prefWidth="300.0" promptText="eg: http://127.0.0.1:11434"/>
-            </PreferenceItem>
-            <PreferenceItem name="Model:">
-               <TextField fx:id="tfAiModel" prefWidth="300.0" promptText="eg: gpt-4" />
-            </PreferenceItem>
-            <PreferenceItem name="Time out(second):">
-               <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
-            </PreferenceItem>
-         </children>
-      </VBox>
-   </children>
+<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <VBox prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <PreferenceItem name="Gen-AI provider:">
+            <ChoiceBox fx:id="cbAiProvider" prefWidth="160.0">
+            </ChoiceBox>
+        </PreferenceItem>
+        <PreferenceItem name="API key:">
+            <TextField fx:id="tfApiKey" prefWidth="300.0"/>
+        </PreferenceItem>
+        <PreferenceItem name="Base URL:">
+            <TextField fx:id="tfBaseUrl" prefWidth="300.0" promptText="eg: http://127.0.0.1:11434"/>
+        </PreferenceItem>
+        <PreferenceItem name="Model:" orientation="VERTICAL">
+            <ChoiceBox fx:id="cbModel" prefWidth="160.0"/>
+            <TextField fx:id="tfAiModel" prefWidth="300.0" promptText="eg: gpt-4"/>
+        </PreferenceItem>
+        <PreferenceItem name="Time out(second):">
+            <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
+        </PreferenceItem>
+    </VBox>
 </fx:root>

@@ -1,9 +1,9 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,11 +14,14 @@ import javafx.util.Pair;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
+import static com.mindolph.core.constant.GenAiConstants.providerModels;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 
 /**
@@ -27,6 +30,10 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
  */
 public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
 
+    private static final Pair<String, String> MODEL_CUSTOM_ITEM = new Pair<>("Custom", "Custom");
+
+    private static final Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
+
     @FXML
     private ChoiceBox<Pair<GenAiModelProvider, String>> cbAiProvider;
     @FXML
@@ -34,9 +41,12 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private TextField tfBaseUrl;
     @FXML
+    private ChoiceBox<Pair<String, String>> cbModel;
+    @FXML
     private TextField tfAiModel;
     @FXML
     private Spinner<Integer> spTimeOut;
+
 
     public GenAiPreferencePane() {
         super("/preference/gen_ai_preferences_pane.fxml");
@@ -67,20 +77,42 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 providerName -> new Pair<>(fromName(providerName), providerName),
                 selected -> {
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-                    if (selected.getKey() != null) {
-                        if (selected.getKey().getType() == ProviderType.PUBLIC) {
+                    GenAiModelProvider provider = selected.getKey();
+                    if (provider != null) {
+                        if (provider.getType() == ProviderType.PUBLIC) {
                             tfApiKey.setDisable(false);
                             tfBaseUrl.setDisable(true);
                         }
-                        else if (selected.getKey().getType() == ProviderType.PRIVATE) {
+                        else if (provider.getType() == ProviderType.PRIVATE) {
                             tfApiKey.setDisable(true);
                             tfBaseUrl.setDisable(false);
                         }
-                        ProviderProps vendorProps = map.get(selected.getKey().getName());
+                        ProviderProps vendorProps = map.get(provider.getName());
                         if (vendorProps != null) {
                             tfApiKey.setText(vendorProps.apiKey());
                             tfBaseUrl.setText(vendorProps.baseUrl());
                             tfAiModel.setText(vendorProps.aiModel());
+                            Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+
+                            List<Pair<String, String>> models = providerModels.get(provider.getName())
+                                    .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
+                            cbModel.getItems().clear();
+                            if (models.isEmpty()) {
+                                cbModel.getItems().add(MODEL_CUSTOM_ITEM);
+                            }
+                            else {
+                                cbModel.getItems().addAll(models);
+                                cbModel.getItems().add(MODEL_CUSTOM_ITEM);
+                            }
+
+                            if (cbModel.getItems().contains(targetItem)) {
+                                cbModel.getSelectionModel().select(targetItem);
+                                tfAiModel.setDisable(true);
+                            }
+                            else {
+                                cbModel.getSelectionModel().select(MODEL_CUSTOM_ITEM);
+                                tfAiModel.setDisable(false);
+                            }
                         }
                         else {
                             tfApiKey.setText("");
@@ -101,6 +133,28 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             ProviderProps vendorProps = new ProviderProps(null, newValue, tfAiModel.getText());
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
+        });
+        cbModel.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Pair<String, String> object) {
+                return object == null ? "" : object.getValue();
+            }
+
+            @Override
+            public Pair<String, String> fromString(String string) {
+                return null;
+            }
+        });
+        cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            if (MODEL_CUSTOM_ITEM == newValue) {
+                tfAiModel.setDisable(false);
+            }
+            else {
+                tfAiModel.setText(newValue.getValue());
+            }
         });
         // Dynamic preference can't use bindPreference.
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {

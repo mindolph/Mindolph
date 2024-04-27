@@ -3,7 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.FxmlUtils;
@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
-import static com.mindolph.base.genai.llm.Constants.ActionType;
+import static com.mindolph.core.constant.GenAiConstants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
 
 /**

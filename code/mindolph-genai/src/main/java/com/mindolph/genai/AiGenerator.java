@@ -4,8 +4,8 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.genai.llm.Constants.ProviderInfo;
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.mindolph.base.genai.llm.Constants.FILE_OUTPUT_MAPPING;
+import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.

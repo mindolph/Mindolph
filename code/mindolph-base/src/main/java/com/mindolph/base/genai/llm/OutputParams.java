@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.base.genai.llm.Constants.OutputAdjust;
-import com.mindolph.base.genai.llm.Constants.OutputFormat;
+import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.core.constant.GenAiConstants.OutputFormat;
 
 /**
  * @author mindolph.com@gmail.com

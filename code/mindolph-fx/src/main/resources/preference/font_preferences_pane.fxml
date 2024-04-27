@@ -8,27 +8,24 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<fx:root prefHeight="400.0" prefWidth="800.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-
-            <PreferenceItem name="Text:" >
-               <ChoiceBox fx:id="cbText" prefWidth="300.0">
-               </ChoiceBox>
-            </PreferenceItem>
-            <PreferenceItem name="Font:" >
-               <Label fx:id="lbFont"/>
-            </PreferenceItem>
-            <PreferenceItem name="Preview:" prefHeight="150.0">
-               <TextArea fx:id="taPreview"  prefWidth="300.0" prefHeight="150.0" editable="false" focusTraversable="false"
-                         text="The quick brown fox jumps over the lazy dog" wrapText="true" VBox.vgrow="ALWAYS" >
-               </TextArea>
-            </PreferenceItem>
-            <PreferenceItem name="">
-               <Button text="Change" onAction="#onChange"/>
-            </PreferenceItem>
-         </children>
-      </VBox>
-   </children>
+<fx:root prefHeight="400.0" prefWidth="800.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+   <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <PreferenceItem name="Text:">
+         <ChoiceBox fx:id="cbText" prefWidth="300.0">
+         </ChoiceBox>
+      </PreferenceItem>
+      <PreferenceItem name="Font:">
+         <Label fx:id="lbFont"/>
+      </PreferenceItem>
+      <PreferenceItem name="Preview:" prefHeight="150.0">
+         <TextArea fx:id="taPreview" prefWidth="300.0" prefHeight="150.0" editable="false" focusTraversable="false"
+                   text="The quick brown fox jumps over the lazy dog" wrapText="true" VBox.vgrow="ALWAYS">
+         </TextArea>
+      </PreferenceItem>
+      <PreferenceItem name="">
+         <Button text="Change" onAction="#onChange"/>
+      </PreferenceItem>
+   </VBox>
 </fx:root>

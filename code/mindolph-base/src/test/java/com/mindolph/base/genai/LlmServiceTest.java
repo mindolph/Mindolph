@@ -4,8 +4,8 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import org.junit.jupiter.api.Test;
 
-import static com.mindolph.base.genai.llm.Constants.OutputAdjust;
-import static com.mindolph.base.genai.llm.Constants.OutputFormat;
+import static com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import static com.mindolph.core.constant.GenAiConstants.OutputFormat;
 
 /**
  * @author mindolph.com@gmail.com
