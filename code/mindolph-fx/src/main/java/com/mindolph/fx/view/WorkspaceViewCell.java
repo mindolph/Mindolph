@@ -130,6 +130,9 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     boolean noToAll = false;
                     MultiConfirmation multiConfirmation = null;
                     for (File file : files) {
+                        if (!file.isFile()){
+                            continue;
+                        }
                         File destFile = new File(nodeData.getFile(), file.getName());
                         log.debug("try to copy file {} to {}", file, destFile);
                         if (destFile.exists()) {
