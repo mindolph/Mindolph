@@ -27,7 +27,7 @@ import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
@@ -82,7 +82,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
                 if (file.isFile()) {
                     BufferedImage bufferedImage = ImageIO.read(file);
                     String result = AwtImageUtils.imageToBase64(bufferedImage);
-                    topic.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, result);
+                    topic.setAttribute(AttributeUtils.ATTR_KEY, result);
                     break;
                 }
             } catch (Exception ex) {

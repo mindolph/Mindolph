@@ -23,7 +23,7 @@ import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
@@ -205,7 +205,7 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
                         LOG.warn("Can't convert image : " + iconUrl);
                     }
                     else {
-                        topic.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, encoded);
+                        topic.setAttribute(AttributeUtils.ATTR_KEY, encoded);
                     }
                 } catch (Exception ex) {
                     LOG.error("Can't load image : " + iconUrl, ex);

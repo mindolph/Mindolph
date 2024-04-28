@@ -26,7 +26,7 @@ import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
@@ -187,7 +187,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
         String encodedImage = loadFirstSuccessfulImage(foundImageURLs);
         if (encodedImage != null) {
-            topicToProcess.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, encodedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_KEY, encodedImage);
         }
 
         if (succesfullDecodedUrl != null) {

@@ -657,7 +657,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             if (isFolder && isSingleSelected) {
                 miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
                 miCollapseAll.setOnAction(this);
-                miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
+                miFindFiles = new MenuItem("Find in Files...", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }

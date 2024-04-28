@@ -748,7 +748,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         }
         else if (extension instanceof TopicColorExtension) {
             List<TopicNode> selectedTopics = this.getSelectedTopics();
-            processColorDialogForTopics((selectedTopics != null && selectedTopics.size() > 0) ? selectedTopics : List.of(activeTopic));
+            processColorDialogForTopics((selectedTopics != null && !selectedTopics.isEmpty()) ? selectedTopics : List.of(activeTopic));
             requestFocus();
         }
         else {

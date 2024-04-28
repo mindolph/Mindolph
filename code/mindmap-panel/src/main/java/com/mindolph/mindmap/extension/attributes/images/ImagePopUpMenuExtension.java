@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.MMapURI;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.dialog.DialogFileFilters;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.FileDialogBuilder;
 import com.mindolph.mfx.util.AwtImageUtils;
@@ -14,6 +15,7 @@ import com.mindolph.mindmap.dialog.ImagePreviewDialog;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.MenuItem;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
 
@@ -34,15 +37,20 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {
-        boolean hasAttribute = hasAttributes(context, activeTopic);
+        ArrayList<TopicNode> all = new ArrayList<>(context.getSelectedTopics());
+        all.add(activeTopic);
+        boolean hasAttribute = AttributeUtils.hasImageAttributes(all);
 
         MenuItem result;
         if (hasAttribute) {
             result = new MenuItem(I18n.getIns().getString("Images.Extension.MenuTitle.Remove"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
 //            result.setToolTipText(BUNDLE.getString("Images.Extension.MenuTitle.Remove.Tooltip"));
             result.setOnAction(e -> {
-                if (DialogFactory.okCancelConfirmDialog(I18n.getIns().getString("Images.Extension.Remove.Dialog.Title"), I18n.getIns().getString("Images.Extension.Remove.Dialog.Text"))) {
-                    setAttribute(context, activeTopic, null, null, null);
+                Boolean toBeRemoved = new ConfirmDialogBuilder().title(I18n.getIns().getString("Images.Extension.Remove.Dialog.Title")).positive("Remove").cancel().asDefault()
+                        .content(I18n.getIns().getString("Images.Extension.Remove.Dialog.Text"))
+                        .showAndWait();
+                if (toBeRemoved != null && toBeRemoved) {
+                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, null, null, null);
                     ImageVisualAttributeExtension.clearCachedImages();
                     context.doNotifyModelChanged(true);
                 }
@@ -70,11 +78,8 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                 try {
                                     String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(SwingFXUtils.fromFXImage(scaledImage, null));
                                     String filePath = null;
-                                    setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, null);
+                                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, rescaledImageAsBase64, filePath, null);
                                     context.doNotifyModelChanged(true);
-                                } catch (IllegalArgumentException ex) {
-                                    DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                                    log.error("Can't import from clipboard image", ex);
                                 } catch (Exception ex) {
                                     DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
                                     log.error("Unexpected error during image import from clipboard", ex);
@@ -105,7 +110,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                 else {
                                     filePath = null;
                                 }
-                                setAttribute(context, activeTopic, rescaledImageAsBase64, filePath, fileName);
+                                AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, rescaledImageAsBase64, filePath, fileName);
                                 context.doNotifyModelChanged(true);
                             }
                         } catch (IllegalArgumentException ex) {
@@ -120,38 +125,6 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
             });
         }
         return result;
-    }
-
-    private boolean hasAttributes(ExtensionContext context, TopicNode activeTopic) {
-        boolean result = false;
-        if (activeTopic != null) {
-            result |= activeTopic.getAttribute(ImageVisualAttributeExtension.ATTR_KEY) != null;
-        }
-        if (!result) {
-            for (TopicNode t : context.getSelectedTopics()) {
-                result |= t.getAttribute(ImageVisualAttributeExtension.ATTR_KEY) != null;
-                if (result) {
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    private void setAttributeToTopic(TopicNode topic, String packedImage, String imageFilePath, String imageName) {
-        topic.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, packedImage);
-        topic.setAttribute(ImageVisualAttributeExtension.ATTR_IMAGE_NAME, imageName);
-        topic.setAttribute(ImageVisualAttributeExtension.ATTR_IMAGE_URI_KEY, imageFilePath);
-    }
-
-    private void setAttribute(ExtensionContext context, TopicNode activeTopic,
-                              String packedImage, String imageFilePath, String imageName) {
-        if (activeTopic != null) {
-            setAttributeToTopic(activeTopic, packedImage, imageFilePath, imageName);
-        }
-        for (TopicNode t : context.getSelectedTopics()) {
-            this.setAttributeToTopic(t, packedImage, imageFilePath, imageName);
-        }
     }
 
     @Override

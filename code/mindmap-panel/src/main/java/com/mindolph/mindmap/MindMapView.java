@@ -11,7 +11,9 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;
 import com.mindolph.mindmap.clipboard.ClipboardTopicsContainer;
@@ -22,7 +24,9 @@ import com.mindolph.mindmap.event.ModelChangedEventHandler;
 import com.mindolph.mindmap.event.TopicEditEventHandler;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.extension.api.VisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.extension.attributes.emoticon.EmoticonVisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
 import com.mindolph.mindmap.model.*;
 import com.mindolph.mindmap.util.ElementUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
@@ -31,12 +35,14 @@ import com.mindolph.mindmap.util.Utils;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
@@ -60,6 +66,7 @@ import static com.mindolph.mindmap.constant.MindMapConstants.*;
 import static com.mindolph.mindmap.constant.MindMapStates.*;
 import static com.mindolph.mindmap.constant.ShortcutConstants.*;
 import static com.mindolph.mindmap.constant.StandardTopicAttribute.doesContainOnlyStandardAttributes;
+import static javafx.scene.input.DataFormat.IMAGE;
 import static javafx.scene.input.DataFormat.PLAIN_TEXT;
 
 /**
@@ -70,6 +77,8 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     private static final Logger log = LoggerFactory.getLogger(MindMapView.class);
     private final ShortcutManager sm = ShortcutManager.getIns();
+
+    int MAX_TEXT_LEN = 96;
 
     protected volatile MindMap<TopicNode> model;
     protected MindMapConfig config;
@@ -1691,7 +1700,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     /**
-     * Paste topics from clipboard to currently selected ones.
+     * Paste from clipboard to currently selected topics.
      *
      * @return true if there detected topic list in clipboard and these topics
      * added to selected ones, false otherwise
@@ -1710,7 +1719,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                         ClipboardTopicsContainer container = (ClipboardTopicsContainer) data;
                         this.endEdit(null, false);
                         List<TopicNode> selected = this.getSelectedTopics();
-                        if (selected.size() > 0) {
+                        if (!selected.isEmpty()) {
                             for (TopicNode s : selected) { // paste to all selected topics.
                                 // paste topics in clipboard
                                 for (TopicNode t : container.getTopics()) {
@@ -1731,6 +1740,35 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 }
             }
         }
+        else if (contentTypes.contains(IMAGE)) {
+            if (clipboard.hasContent(IMAGE)) {
+                Image image = clipboard.getImage();
+                Boolean allowedToPasteImage = true;
+                if (AttributeUtils.hasImageAttributes(getSelectedTopics())) {
+                    allowedToPasteImage = new ConfirmDialogBuilder().title("Remove existing image").positive("Remove").cancel().asDefault()
+                            .content("There is at least one topic that contains images, are you sure to remove the existing image first before continuing?")
+                            .showAndWait();
+                }
+                if (allowedToPasteImage != null && allowedToPasteImage) {
+                    result = AttributeUtils.rescaleImage(image, scaledImage -> {
+                        if (scaledImage != null) {
+                            log.debug("Scaled image size: %sx%s".formatted(scaledImage.getWidth(), scaledImage.getHeight()));
+                            try {
+                                String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(SwingFXUtils.fromFXImage(scaledImage, null));
+                                String filePath = null;
+                                AttributeUtils.setImageAttribute(getSelectedTopics(), getFirstSelectedTopic(), rescaledImageAsBase64, filePath, null);
+                                ImageVisualAttributeExtension.clearCachedImages(); // TODO this should be refactored to be more elegant.
+                                onMindMapModelChanged(true);
+                            } catch (Exception ex) {
+                                DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+                                log.error("Unexpected error during image import from clipboard", ex);
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }
         else if (contentTypes.contains(PLAIN_TEXT)) {
             if (clipboard.hasContent(PLAIN_TEXT)) {
                 log.debug("Paste content from clipboard: " + PLAIN_TEXT);
@@ -1747,13 +1785,12 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         return result;
     }
 
-    int MAX_TEXT_LEN = 96;
 
     public TopicNode appendTextAsTopicTree(String text, String note) {
         TopicNode t = this.getFirstSelectedTopic();
         List<TopicNode> createdTopics = t.fromText(text);
         if (createdTopics != null && !createdTopics.isEmpty()) {
-            if (StringUtils.isNotBlank(note)){
+            if (StringUtils.isNotBlank(note)) {
                 Extra<?> noteExtra = t.getExtras().get(Extra.ExtraType.NOTE);
                 if (noteExtra == null) {
                     log.debug("add note to parent topic");

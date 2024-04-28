@@ -24,7 +24,7 @@ import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
@@ -171,7 +171,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
             if (imageResourceId != null) {
                 String imageBody = manifest.findResourceImage(imageResourceId);
                 if (imageBody != null) {
-                    processing.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, imageBody);
+                    processing.setAttribute(AttributeUtils.ATTR_KEY, imageBody);
                 }
             }
 

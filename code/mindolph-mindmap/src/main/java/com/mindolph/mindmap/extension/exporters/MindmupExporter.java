@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension.ATTR_KEY;
+import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_KEY;
 
 public class MindmupExporter extends BaseExportExtension {
 
