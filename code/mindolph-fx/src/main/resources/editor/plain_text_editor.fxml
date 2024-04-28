@@ -3,12 +3,11 @@
 <?import com.mindolph.base.control.SearchableCodeArea?>
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
-<fx:root fx:id="paneEditor"  prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
-   <children>
-      <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <content>
-            <SearchableCodeArea fx:id="codeArea" prefHeight="200.0" prefWidth="200.0" />
-         </content>
-      </VirtualizedScrollPane>
-   </children>
+<fx:root fx:id="paneEditor" prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+         xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+   <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                          AnchorPane.topAnchor="0.0">
+      <SearchableCodeArea fx:id="codeArea" prefHeight="200.0" prefWidth="200.0"/>
+   </VirtualizedScrollPane>
 </fx:root>

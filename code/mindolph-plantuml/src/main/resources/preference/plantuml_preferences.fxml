@@ -6,17 +6,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="400.0" prefWidth="680.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="226.0" layoutY="93.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-             <PreferenceItem name="Graphviz DOT file(for PlantUML):">
-                 <items>
-                     <TextField fx:id="tfGraphvizPath" prefWidth="250.0" />
-                     <Button fx:id="btnGraphvizPath" text="..." />
-                 </items>
-             </PreferenceItem>
-         </children>
-      </VBox>
-   </children>
+<fx:root prefHeight="400.0" prefWidth="680.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <VBox layoutX="226.0" layoutY="93.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <PreferenceItem name="Graphviz DOT file(for PlantUML):">
+            <TextField fx:id="tfGraphvizPath" prefWidth="250.0"/>
+            <Button fx:id="btnGraphvizPath" text="..."/>
+        </PreferenceItem>
+    </VBox>
 </fx:root>

@@ -4,34 +4,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
-<AnchorPane prefHeight="420.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox fx:id="vbox" layoutX="40.0" layoutY="36.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                  <ToggleButton fx:id="tbtnSearch" mnemonicParsing="false" text="Search" />
-                  <ToggleButton fx:id="tbtnReplace" mnemonicParsing="false" text="Replace" />
-                  <Button fx:id="btnSave" disable="true" mnemonicParsing="false" text="Save" />
-                  <Button fx:id="btnUndo" disable="true" mnemonicParsing="false" text="Undo" />
-                  <Button fx:id="btnRedo" disable="true" mnemonicParsing="false" text="Redo" />
-                  <Button fx:id="btnClearAll" mnemonicParsing="false" text="Clear All" />
-                  <Button fx:id="btnBrowse" disable="true" mnemonicParsing="false" text="Browse" />
-                  <ToggleButton fx:id="tbtnProtect" mnemonicParsing="false" text="Protect" />
-              </items>
-            </ToolBar>
-             <HBox fx:id="hbToolbar">
+<AnchorPane prefHeight="420.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <VBox fx:id="vbox" layoutX="40.0" layoutY="36.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToggleButton fx:id="tbtnSearch" mnemonicParsing="false" text="Search"/>
+            <ToggleButton fx:id="tbtnReplace" mnemonicParsing="false" text="Replace"/>
+            <Button fx:id="btnSave" disable="true" mnemonicParsing="false" text="Save"/>
+            <Button fx:id="btnUndo" disable="true" mnemonicParsing="false" text="Undo"/>
+            <Button fx:id="btnRedo" disable="true" mnemonicParsing="false" text="Redo"/>
+            <Button fx:id="btnClearAll" mnemonicParsing="false" text="Clear All"/>
+            <Button fx:id="btnBrowse" disable="true" mnemonicParsing="false" text="Browse"/>
+            <ToggleButton fx:id="tbtnProtect" mnemonicParsing="false" text="Protect"/>
+        </ToolBar>
+        <HBox fx:id="hbToolbar">
 
-             </HBox>
-             <AnchorPane fx:id="paneCode" VBox.vgrow="ALWAYS">
-                 <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                         <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
-                     </content>
-                 </VirtualizedScrollPane>
-             </AnchorPane>
-         </children >
-      </VBox>
-   </children>
+        </HBox>
+        <AnchorPane fx:id="paneCode" VBox.vgrow="ALWAYS">
+            <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
+            </VirtualizedScrollPane>
+        </AnchorPane>
+    </VBox>
 </AnchorPane>

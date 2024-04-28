@@ -3,8 +3,9 @@
 
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.*?>
-<fx:root prefHeight="400.0" prefWidth="600.0" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS"  layoutY="100.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-   </children>
+<fx:root prefHeight="400.0" prefWidth="600.0" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+   <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" layoutY="100.0" prefHeight="200.0" prefWidth="200.0"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            AnchorPane.topAnchor="0.0"/>
 </fx:root>

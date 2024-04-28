@@ -6,22 +6,17 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.*?>
 <AnchorPane prefWidth="360.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="50.0" layoutY="35.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
+   <VBox layoutX="50.0" layoutY="35.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <padding>
+         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+      </padding>
 
-            <HBox prefHeight="40.0" prefWidth="240.0" spacing="8.0">
-               <children>
-                  <Spinner fx:id="spRows" prefWidth="80.0" editable="false"/>
-                  <Label text="row(s)" prefWidth="80"/>
-                  <Spinner fx:id="spCols" prefWidth="80.0" editable="false"/>
-                  <Label text="column(s)" prefWidth="80"/>
-               </children>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </VBox>
-   </children>
+      <HBox prefHeight="40.0" prefWidth="240.0" spacing="8.0">
+         <Spinner fx:id="spRows" prefWidth="80.0" editable="false"/>
+         <Label text="row(s)" prefWidth="80"/>
+         <Spinner fx:id="spCols" prefWidth="80.0" editable="false"/>
+         <Label text="column(s)" prefWidth="80"/>
+      </HBox>
+   </VBox>
 </AnchorPane>

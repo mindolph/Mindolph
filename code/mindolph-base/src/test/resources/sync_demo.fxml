@@ -6,17 +6,15 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mindolph.base.SyncDemo">
-    <children>
-        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
-            <VBox prefWidth="300" prefHeight="-Infinity">
-                <Button text="Left" onAction="#onLeft"/>
-                <TextArea fx:id="taLeft" VBox.vgrow="ALWAYS" editable="false"/>
-            </VBox>
-            <VBox prefWidth="300" prefHeight="-Infinity">
-                <Button text="Right" onAction="#onRight"/>
-                <TextArea fx:id="taRight" VBox.vgrow="ALWAYS" editable="false"/>
-            </VBox>
-        </HBox>
-    </children>
+    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <VBox prefWidth="300" prefHeight="-Infinity">
+            <Button text="Left" onAction="#onLeft"/>
+            <TextArea fx:id="taLeft" VBox.vgrow="ALWAYS" editable="false"/>
+        </VBox>
+        <VBox prefWidth="300" prefHeight="-Infinity">
+            <Button text="Right" onAction="#onRight"/>
+            <TextArea fx:id="taRight" VBox.vgrow="ALWAYS" editable="false"/>
+        </VBox>
+    </HBox>
 </AnchorPane>

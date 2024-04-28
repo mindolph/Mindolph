@@ -8,57 +8,49 @@
 <?import javafx.scene.layout.*?>
 <?import com.mindolph.mfx.container.SideTabPane?>
 <?import com.mindolph.fx.preference.GenAiPreferencePane?>
-<AnchorPane prefHeight="680.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <SideTabPane fx:id="tabPane" prefHeight="357.0" prefWidth="560.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                   styleClass="pref_tab" stylesheets="@../style/preferences_dialog.css" rotateGraphic="true">
-        <tabs>
-          <Tab fx:id="tabGeneral" text="General" userData="general">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" >
-                <GeneralPreferencesPane fx:id="generalPreferencesPane"/>
-              </AnchorPane>
-            </content>
-          </Tab>
-          <Tab fx:id="tabFont" text="Font" userData="font">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" >
-                <FontPreferencesPane fx:id="fontPreferencesPane"/>
-              </AnchorPane>
-            </content>
-          </Tab>
-          <Tab fx:id="tabMindMap" text="Mind Map" userData="mmd">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0"  >
-                <MmdPreferencesPane fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-              </AnchorPane>
-              
-            </content>
-          </Tab>
-          <Tab fx:id="tabMarkdown" text="Markdown" userData="md">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0"  >
-                <MarkdownPreferencesPane fx:id="mdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-              </AnchorPane>
+<AnchorPane prefHeight="680.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1">
+  <SideTabPane fx:id="tabPane" prefHeight="357.0" prefWidth="560.0" side="LEFT" tabClosingPolicy="UNAVAILABLE"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+               AnchorPane.topAnchor="0.0"
+               styleClass="pref_tab" stylesheets="@../style/preferences_dialog.css" rotateGraphic="true">
+    <Tab fx:id="tabGeneral" text="General" userData="general">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <GeneralPreferencesPane fx:id="generalPreferencesPane"/>
+      </AnchorPane>
+    </Tab>
+    <Tab fx:id="tabFont" text="Font" userData="font">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <FontPreferencesPane fx:id="fontPreferencesPane"/>
+      </AnchorPane>
+    </Tab>
+    <Tab fx:id="tabMindMap" text="Mind Map" userData="mmd">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <MmdPreferencesPane fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
 
-            </content>
-          </Tab>
-<!--            <Tab text="Plant UML" userData="puml">-->
-<!--              <content>-->
-<!--                <AnchorPane minHeight="0.0" minWidth="0.0" >-->
-<!--                  <PlantumlPreferences fx:id="plantumlPreferences"/>-->
-<!--                </AnchorPane>-->
-<!--              </content>-->
-<!--            </Tab>-->
-          <Tab fx:id="tabGenAi" text="Gen-AI" userData="genai">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0"  >
-                <GenAiPreferencePane fx:id="genAiPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-              </AnchorPane>
+    </Tab>
+    <Tab fx:id="tabMarkdown" text="Markdown" userData="md">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <MarkdownPreferencesPane fx:id="mdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
 
-            </content>
-          </Tab>
-        </tabs>
-      </SideTabPane>
-   </children>
+    </Tab>
+    <!--            <Tab text="Plant UML" userData="puml">-->
+    <!--              <content>-->
+    <!--                <AnchorPane minHeight="0.0" minWidth="0.0" >-->
+    <!--                  <PlantumlPreferences fx:id="plantumlPreferences"/>-->
+    <!--                </AnchorPane>-->
+    <!--              </content>-->
+    <!--            </Tab>-->
+    <Tab fx:id="tabGenAi" text="Gen-AI" userData="genai">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <GenAiPreferencePane fx:id="genAiPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+
+    </Tab>
+  </SideTabPane>
 </AnchorPane>

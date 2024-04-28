@@ -10,24 +10,20 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="54.0" layoutY="37.0" prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label fx:id="lblStatus" />
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-               <children>
-                  <ScrollPane maxHeight="450.0" maxWidth="600.0" minHeight="450.0" minWidth="600.0" prefHeight="450.0" prefWidth="600.0">
-                     <content>
-                        <ImageView fx:id="ivPreview" fitHeight="450.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
-                     </content>
-                  </ScrollPane>
-                  <Slider fx:id="sldSize" majorTickUnit="10.0" min="10.0" minorTickCount="1" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
    <padding>
-      <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+      <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
    </padding>
+   <VBox layoutX="54.0" layoutY="37.0" prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label fx:id="lblStatus"/>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <ScrollPane maxHeight="450.0" maxWidth="600.0" minHeight="450.0" minWidth="600.0" prefHeight="450.0"
+                     prefWidth="600.0">
+            <ImageView fx:id="ivPreview" fitHeight="450.0" fitWidth="600.0" pickOnBounds="true"
+                       preserveRatio="true"/>
+         </ScrollPane>
+         <Slider fx:id="sldSize" majorTickUnit="10.0" min="10.0" minorTickCount="1" orientation="VERTICAL"
+                 showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
+      </HBox>
+   </VBox>
 </AnchorPane>

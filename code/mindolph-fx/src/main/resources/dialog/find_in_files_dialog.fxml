@@ -5,28 +5,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <VBox spacing="8.0">
-      <children>
-          <HBox fx:id="hbKeywords" spacing="8.0" alignment="CENTER_LEFT">
-              <Label text="Keyword: " />
-          </HBox>
-         <HBox spacing="8.0" alignment="CENTER_LEFT">
-            <children>
-                <Label text="Options: " />
-                <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
-                </ToggleButton>
-                <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>
-            </children>
-         </HBox>
-          <Label text="Search files in: " />
-          <Label fx:id="lbDesc" style="-fx-font-weight: bold; -fx-font-size: 15">
-              <VBox.margin>
-                  <Insets left="16.0"/>
-              </VBox.margin>
-          </Label>
-      </children>
-      <padding>
-         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-      </padding>
-   </VBox>
+    <VBox spacing="8.0">
+        <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+        </padding>
+        <HBox fx:id="hbKeywords" spacing="8.0" alignment="CENTER_LEFT">
+            <Label text="Keyword: "/>
+        </HBox>
+        <HBox spacing="8.0" alignment="CENTER_LEFT">
+            <Label text="Options: "/>
+            <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
+            </ToggleButton>
+            <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>
+        </HBox>
+        <Label text="Search files in: "/>
+        <Label fx:id="lbDesc" style="-fx-font-weight: bold; -fx-font-size: 15">
+            <VBox.margin>
+                <Insets left="16.0"/>
+            </VBox.margin>
+        </Label>
+    </VBox>
 </AnchorPane>

@@ -5,36 +5,30 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<fx:root prefHeight="400.0" prefWidth="700.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox spacing="8.0">
-               <children>
-                  <Label fx:id="label"></Label>
-                  <ProgressIndicator fx:id="progressIndicator" prefWidth="16" prefHeight="16"></ProgressIndicator>
-               </children>
-               <padding>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding>
-            </HBox>
-            <HBox spacing="8.0">
-               <children>
-                  <VBox fx:id="vbKeywords" prefWidth="300"/>
-                  <Button fx:id="btnSearch" mnemonicParsing="false" text="Search" />
-                  <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </ToggleButton>
-                  <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>
-               </children>
-               <padding>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding>
-            </HBox>
-            <FileTreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
-   </children>
+<fx:root prefHeight="400.0" prefWidth="700.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
+      <HBox spacing="8.0">
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+         </padding>
+         <Label fx:id="label"></Label>
+         <ProgressIndicator fx:id="progressIndicator" prefWidth="16" prefHeight="16"></ProgressIndicator>
+      </HBox>
+      <HBox spacing="8.0">
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+         </padding>
+         <VBox fx:id="vbKeywords" prefWidth="300"/>
+         <Button fx:id="btnSearch" mnemonicParsing="false" text="Search"/>
+         <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
+            <HBox.margin>
+               <Insets/>
+            </HBox.margin>
+         </ToggleButton>
+         <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>
+      </HBox>
+      <FileTreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+   </VBox>
 </fx:root>

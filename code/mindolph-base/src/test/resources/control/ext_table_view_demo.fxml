@@ -6,21 +6,16 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mindolph.base.control.ExtTableViewDemo">
-    <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
-            <children>
-                <ButtonBar prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                        <Button mnemonicParsing="false" onAction="#onInsertStubRow" text="Insert stub row"/>
-                        <Button mnemonicParsing="false" onAction="#onAppendStubColumn" text="Append stub column"/>
-                        <Button mnemonicParsing="false" onAction="#onDeleteSelectedRows" text="Delete selected rows"/>
-                    </buttons>
-                </ButtonBar>
-                <HBox fx:id="content" prefHeight="100.0" VBox.vgrow="ALWAYS">
-                    <children/>
-                </HBox>
-            </children>
-        </VBox>
-    </children>
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onInsertStubRow" text="Insert stub row"/>
+                <Button mnemonicParsing="false" onAction="#onAppendStubColumn" text="Append stub column"/>
+                <Button mnemonicParsing="false" onAction="#onDeleteSelectedRows" text="Delete selected rows"/>
+            </buttons>
+        </ButtonBar>
+        <HBox fx:id="content" prefHeight="100.0" VBox.vgrow="ALWAYS">
+        </HBox>
+    </VBox>
 </AnchorPane>

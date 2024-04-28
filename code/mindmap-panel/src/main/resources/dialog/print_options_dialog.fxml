@@ -11,38 +11,27 @@
 
 
 <AnchorPane prefWidth="300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="50.0" layoutY="35.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox prefHeight="40.0" prefWidth="200.0" spacing="8.0">
-               <children>
-                  <RadioButton fx:id="rbZoomTo" mnemonicParsing="false" prefWidth="100.0" selected="true" text="Zoom to" />
-                  <ChoiceBox fx:id="cbZoomTo" prefWidth="100.0" />
-               </children>
-            </HBox>
-            <HBox prefHeight="40.0" prefWidth="200.0">
-               <children>
-                  <RadioButton fx:id="rbFitToSinglePage" mnemonicParsing="false" text="Fit to single page" />
-               </children>
-            </HBox>
-            <HBox prefHeight="40.0" prefWidth="200.0" spacing="8.0">
-               <children>
-                  <RadioButton fx:id="rbFitWidthTo" mnemonicParsing="false" prefWidth="100.0" text="Fit width to" />
-                  <Spinner fx:id="spFitWidthTo" disable="true" prefWidth="80.0" />
-                  <Label text="page(s)" />
-               </children>
-            </HBox>
-            <HBox prefHeight="40.0" spacing="8.0">
-               <children>
-                  <RadioButton fx:id="rbFitHeightTo" mnemonicParsing="false" prefWidth="100.0" text="Fit height to" />
-                  <Spinner fx:id="spFitHeightTo" disable="true" prefWidth="80.0" />
-                  <Label text="page(s)" />
-               </children>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </VBox>
-   </children>
+   <VBox layoutX="50.0" layoutY="35.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <padding>
+         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+      </padding>
+      <HBox prefHeight="40.0" prefWidth="200.0" spacing="8.0">
+         <RadioButton fx:id="rbZoomTo" mnemonicParsing="false" prefWidth="100.0" selected="true" text="Zoom to"/>
+         <ChoiceBox fx:id="cbZoomTo" prefWidth="100.0"/>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="200.0">
+         <RadioButton fx:id="rbFitToSinglePage" mnemonicParsing="false" text="Fit to single page"/>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="200.0" spacing="8.0">
+         <RadioButton fx:id="rbFitWidthTo" mnemonicParsing="false" prefWidth="100.0" text="Fit width to"/>
+         <Spinner fx:id="spFitWidthTo" disable="true" prefWidth="80.0"/>
+         <Label text="page(s)"/>
+      </HBox>
+      <HBox prefHeight="40.0" spacing="8.0">
+         <RadioButton fx:id="rbFitHeightTo" mnemonicParsing="false" prefWidth="100.0" text="Fit height to"/>
+         <Spinner fx:id="spFitHeightTo" disable="true" prefWidth="80.0"/>
+         <Label text="page(s)"/>
+      </HBox>
+   </VBox>
 </AnchorPane>

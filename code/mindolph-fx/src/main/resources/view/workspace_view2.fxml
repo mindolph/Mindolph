@@ -5,32 +5,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <HBox alignment="CENTER">
-                    <children>
-                        <WorkspaceSelector fx:id="workspaceSelector" prefWidth="999.0" style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btnNew" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
-                     <tooltip>
-                        <Tooltip text="Create new file to workspace" />
-                     </tooltip></Button>
-                        <Button fx:id="btnReload" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
-                     <tooltip>
-                        <Tooltip text="Refresh opened workspace" />
-                     </tooltip></Button>
-                        <Button fx:id="btnCollapseAll" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
-                     <tooltip>
-                        <Tooltip text="Collapse all folders in workspace" />
-                     </tooltip></Button>
-                        <Button fx:id="btnFindInFiles" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
-                     <tooltip>
-                        <Tooltip text="Find in files of opened workspace" />
-                     </tooltip></Button>
-                    </children>
-                </HBox>
-                <MTreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            </children>
-        </VBox>
-    </children>
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <HBox alignment="CENTER">
+            <WorkspaceSelector fx:id="workspaceSelector" prefWidth="999.0"
+                               style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnNew" mnemonicParsing="false" styleClass="icon_button"
+                    stylesheets="@../style/icon_button.css">
+                <tooltip>
+                    <Tooltip text="Create new file to workspace"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="btnReload" mnemonicParsing="false" styleClass="icon_button"
+                    stylesheets="@../style/icon_button.css">
+                <tooltip>
+                    <Tooltip text="Refresh opened workspace"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="btnCollapseAll" mnemonicParsing="false" styleClass="icon_button"
+                    stylesheets="@../style/icon_button.css">
+                <tooltip>
+                    <Tooltip text="Collapse all folders in workspace"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="btnFindInFiles" mnemonicParsing="false" styleClass="icon_button"
+                    stylesheets="@../style/icon_button.css">
+                <tooltip>
+                    <Tooltip text="Find in files of opened workspace"/>
+                </tooltip>
+            </Button>
+        </HBox>
+        <MTreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+    </VBox>
 </fx:root>

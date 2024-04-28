@@ -9,38 +9,32 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="240.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icons/app_512.png" />
-               </image>
-               <HBox.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </HBox.margin>
-            </ImageView>
-            <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.7.4" />
-                  <Hyperlink onAction="#onLink" text="https://github.com/mindolph/Mindolph" />
-                  <Label text="email: mindolph.com@gmail.com">
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label fx:id="lbJvm" />
-                  <Label fx:id="lbLicense" text="This software is released under GPL v3 license"/>
-               </children>
-               <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </padding>
-            </VBox>
-         </children>
-      </HBox>
-   </children>
+<AnchorPane prefHeight="240.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1">
    <padding>
-      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
    </padding>
+   <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+         <HBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+         </HBox.margin>
+         <Image url="@../icons/app_512.png"/>
+      </ImageView>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" HBox.hgrow="ALWAYS">
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+         </padding>
+         <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.7.4"/>
+         <Hyperlink onAction="#onLink" text="https://github.com/mindolph/Mindolph"/>
+         <Label text="email: mindolph.com@gmail.com">
+            <VBox.margin>
+               <Insets left="5.0"/>
+            </VBox.margin>
+         </Label>
+         <Label fx:id="lbJvm"/>
+         <Label fx:id="lbLicense" text="This software is released under GPL v3 license"/>
+      </VBox>
+   </HBox>
 </AnchorPane>

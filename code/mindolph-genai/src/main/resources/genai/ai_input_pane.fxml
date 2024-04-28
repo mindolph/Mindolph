@@ -13,64 +13,52 @@
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane style="-fx-background-color: #D3D3D3FF;">
-         <children>
-            <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0">
-                     <children>
-                        <Label fx:id="lbIcon" />
-                        <Label text="Generate content with AI (Experiment)" />
-                        <Pane HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../../../../../mindolph-base/src/main/resources/style/icon_button.css">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></Button>
-                     </children>
-                  </HBox>
-                  <VBox>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <children>
-                        <TextArea fx:id="taInput" prefHeight="64.0" prefWidth="480.0" promptText="Describe what you'd like to create" />
-                        <AnchorPane>
-                           <children>
-                              <ProgressBar fx:id="pbWaiting" prefHeight="8.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
-                  <HBox fx:id="hbReady" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label fx:id="lbTemperature" />
-                        <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
-                        <Pane HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label fx:id="lbMsg" maxWidth="350" wrapText="true" />
-                           </children></Pane>
-                        <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
-                  <HBox fx:id="hbGenerating" managed="false" visible="false">
-                     <children>
-                        <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
-                        <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Generating" />
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </VBox>
-         </children>
-      </AnchorPane>
-   </children>
+   <AnchorPane style="-fx-background-color: #D3D3D3FF;">
+      <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+         </padding>
+         <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <Label fx:id="lbIcon"/>
+            <Label text="Generate content with AI (Experiment)"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button"
+                    stylesheets="@../../../../../mindolph-base/src/main/resources/style/icon_button.css">
+               <HBox.margin>
+                  <Insets/>
+               </HBox.margin>
+            </Button>
+         </HBox>
+         <VBox>
+            <VBox.margin>
+               <Insets/>
+            </VBox.margin>
+            <TextArea fx:id="taInput" prefHeight="64.0" prefWidth="480.0"
+                      promptText="Describe what you'd like to create"/>
+            <AnchorPane>
+               <VBox.margin>
+                  <Insets/>
+               </VBox.margin>
+               <ProgressBar fx:id="pbWaiting" prefHeight="8.0" visible="false" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0"/>
+            </AnchorPane>
+         </VBox>
+         <HBox fx:id="hbReady" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+            <padding>
+               <Insets bottom="5.0" top="5.0"/>
+            </padding>
+            <Label fx:id="lbTemperature"/>
+            <ChoiceBox fx:id="cbTemperature" prefWidth="100.0"/>
+            <Pane HBox.hgrow="ALWAYS">
+               <Label fx:id="lbMsg" maxWidth="350" wrapText="true"/>
+            </Pane>
+            <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate"/>
+         </HBox>
+         <HBox fx:id="hbGenerating" managed="false" visible="false">
+            <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+            <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Generating"/>
+         </HBox>
+      </VBox>
+   </AnchorPane>
 </fx:root>

@@ -10,32 +10,24 @@
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane style="-fx-background-color: #D3D3D3FF;">
-         <children>
-            <VBox>
-               <children>
-                  <AnchorPane>
-                     <children>
-                        <ProgressBar fx:id="pbWaiting" layoutX="2.822876012942288E-7" prefHeight="8.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0">
-                     <children>
-                        <Label fx:id="lbIcon" />
-                      <Button fx:id="btnKeep" mnemonicParsing="false" text="Keep" />
-                        <Button fx:id="btnRetry" mnemonicParsing="false" text="Retry" />
-                        <Button fx:id="btnAdjust" mnemonicParsing="false" text="Adjust" />
-                        <Button fx:id="btnDiscard" mnemonicParsing="false" text="Discard" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
-                  <Label fx:id="lbMsg" maxHeight="1.0" prefHeight="0.0" />
-               </children>
-            </VBox>
-         </children>
-      </AnchorPane>
-   </children>
+   <AnchorPane style="-fx-background-color: #D3D3D3FF;">
+      <VBox>
+         <AnchorPane>
+            <ProgressBar fx:id="pbWaiting" layoutX="2.822876012942288E-7" prefHeight="8.0" visible="false"
+                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                         AnchorPane.topAnchor="0.0"/>
+         </AnchorPane>
+         <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <Label fx:id="lbIcon"/>
+            <Button fx:id="btnKeep" mnemonicParsing="false" text="Keep"/>
+            <Button fx:id="btnRetry" mnemonicParsing="false" text="Retry"/>
+            <Button fx:id="btnAdjust" mnemonicParsing="false" text="Adjust"/>
+            <Button fx:id="btnDiscard" mnemonicParsing="false" text="Discard"/>
+         </HBox>
+         <Label fx:id="lbMsg" maxHeight="1.0" prefHeight="0.0"/>
+      </VBox>
+   </AnchorPane>
 </fx:root>
