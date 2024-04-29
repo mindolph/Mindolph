@@ -103,7 +103,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         String attachedImage = extractFirstAttachedImageAsBase64(zipFile, topicElement);
         if (attachedImage != null && !attachedImage.isEmpty()) {
-            topicToProcess.setAttribute(AttributeUtils.ATTR_KEY, attachedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, attachedImage);
         }
 
         String xlink = topicElement.getAttribute("xlink:href");
@@ -421,7 +421,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         String attachedImage = extractFirstAttachedImageAsBase64(zipFile, topicElement);
         if (attachedImage != null && !attachedImage.isEmpty()) {
-            topicToProcess.setAttribute(AttributeUtils.ATTR_KEY, attachedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, attachedImage);
         }
 
         String xlink = topicElement.has("href") ? topicElement.getString("href") : null;

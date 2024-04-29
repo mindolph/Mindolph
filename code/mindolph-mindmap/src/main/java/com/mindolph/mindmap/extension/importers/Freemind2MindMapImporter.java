@@ -82,7 +82,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
                 if (file.isFile()) {
                     BufferedImage bufferedImage = ImageIO.read(file);
                     String result = AwtImageUtils.imageToBase64(bufferedImage);
-                    topic.setAttribute(AttributeUtils.ATTR_KEY, result);
+                    topic.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, result);
                     break;
                 }
             } catch (Exception ex) {

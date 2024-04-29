@@ -171,7 +171,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
             if (imageResourceId != null) {
                 String imageBody = manifest.findResourceImage(imageResourceId);
                 if (imageBody != null) {
-                    processing.setAttribute(AttributeUtils.ATTR_KEY, imageBody);
+                    processing.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, imageBody);
                 }
             }
 

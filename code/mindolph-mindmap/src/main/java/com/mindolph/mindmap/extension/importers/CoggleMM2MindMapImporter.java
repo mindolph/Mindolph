@@ -187,7 +187,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
         String encodedImage = loadFirstSuccessfulImage(foundImageURLs);
         if (encodedImage != null) {
-            topicToProcess.setAttribute(AttributeUtils.ATTR_KEY, encodedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, encodedImage);
         }
 
         if (succesfullDecodedUrl != null) {

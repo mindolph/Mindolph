@@ -50,7 +50,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                         .content(I18n.getIns().getString("Images.Extension.Remove.Dialog.Text"))
                         .showAndWait();
                 if (toBeRemoved != null && toBeRemoved) {
-                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, null, null, null);
+                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), null, null, null);
                     ImageVisualAttributeExtension.clearCachedImages();
                     context.doNotifyModelChanged(true);
                 }
@@ -78,7 +78,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                 try {
                                     String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(SwingFXUtils.fromFXImage(scaledImage, null));
                                     String filePath = null;
-                                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, rescaledImageAsBase64, filePath, null);
+                                    AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, null);
                                     context.doNotifyModelChanged(true);
                                 } catch (Exception ex) {
                                     DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
@@ -110,12 +110,9 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                 else {
                                     filePath = null;
                                 }
-                                AttributeUtils.setImageAttribute(context.getSelectedTopics(), activeTopic, rescaledImageAsBase64, filePath, fileName);
+                                AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, fileName);
                                 context.doNotifyModelChanged(true);
                             }
-                        } catch (IllegalArgumentException ex) {
-                            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                            log.warn("Can't load image file : " + selected);
                         } catch (Exception ex) {
                             DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
                             log.error("Unexpected error during loading image file : " + selected, ex);

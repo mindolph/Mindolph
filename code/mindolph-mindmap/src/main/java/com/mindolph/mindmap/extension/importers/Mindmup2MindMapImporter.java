@@ -205,7 +205,7 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
                         LOG.warn("Can't convert image : " + iconUrl);
                     }
                     else {
-                        topic.setAttribute(AttributeUtils.ATTR_KEY, encoded);
+                        topic.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, encoded);
                     }
                 } catch (Exception ex) {
                     LOG.error("Can't load image : " + iconUrl, ex);

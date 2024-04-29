@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_KEY;
+import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_IMAGE_KEY;
 
 public class MindmupExporter extends BaseExportExtension {
 
@@ -86,7 +86,7 @@ public class MindmupExporter extends BaseExportExtension {
         ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
         ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
 
-        String encodedImage = topic.getAttribute(ATTR_KEY);
+        String encodedImage = topic.getAttribute(ATTR_IMAGE_KEY);
 
         if (jump != null) {
             linkMap.put(uuid, jump.getValue());

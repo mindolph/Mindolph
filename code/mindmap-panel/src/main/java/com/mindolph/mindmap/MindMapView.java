@@ -25,7 +25,6 @@ import com.mindolph.mindmap.event.TopicEditEventHandler;
 import com.mindolph.mindmap.extension.MindMapExtensionRegistry;
 import com.mindolph.mindmap.extension.api.VisualAttributeExtension;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
-import com.mindolph.mindmap.extension.attributes.emoticon.EmoticonVisualAttributeExtension;
 import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
 import com.mindolph.mindmap.model.*;
 import com.mindolph.mindmap.util.ElementUtils;
@@ -1206,7 +1205,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         ExtraNote note = (ExtraNote) topic.getExtras().get(ExtraType.NOTE);
         ExtraLink link = (ExtraLink) topic.getExtras().get(ExtraType.LINK);
         ExtraFile fileLink = (ExtraFile) topic.getExtras().get(ExtraType.FILE);
-        String emoticon = topic.getAttribute(EmoticonVisualAttributeExtension.ATTR_KEY);
+        String emoticon = topic.getAttribute(AttributeUtils.ATTR_ICON_KEY);
         String msg = new TopicInfoBuilder(true).emoticon(emoticon).link(link, 64).file(fileLink, 64).note(note).build();
         if (StringUtils.isNotBlank(msg)) {
             log.debug("final msg length: " + msg.length());
@@ -1756,7 +1755,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                             try {
                                 String rescaledImageAsBase64 = AwtImageUtils.imageToBase64(SwingFXUtils.fromFXImage(scaledImage, null));
                                 String filePath = null;
-                                AttributeUtils.setImageAttribute(getSelectedTopics(), getFirstSelectedTopic(), rescaledImageAsBase64, filePath, null);
+                                AttributeUtils.setImageAttribute(getSelectedTopics(), rescaledImageAsBase64, filePath, null);
                                 ImageVisualAttributeExtension.clearCachedImages(); // TODO this should be refactored to be more elegant.
                                 onMindMapModelChanged(true);
                             } catch (Exception ex) {

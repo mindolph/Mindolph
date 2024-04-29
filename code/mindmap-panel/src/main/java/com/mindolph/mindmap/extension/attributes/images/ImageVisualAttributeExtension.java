@@ -34,7 +34,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
     @Override
     public boolean doesTopicContentMatches(TopicNode topic, File baseFolder, Pattern pattern, Set<Extra.ExtraType> extraTypes) {
         boolean result = false;
-        if (extraTypes != null && topic.getAttribute(AttributeUtils.ATTR_KEY) != null) {
+        if (extraTypes != null && topic.getAttribute(AttributeUtils.ATTR_IMAGE_KEY) != null) {
             if (extraTypes.contains(Extra.ExtraType.NOTE)) {
                 String text = topic.getAttribute(AttributeUtils.ATTR_IMAGE_NAME);
                 if (text != null) {
@@ -65,7 +65,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
 
     private Image extractImage(TopicNode topic) {
         Image result = null;
-        String encoded = topic.getAttribute(AttributeUtils.ATTR_KEY);
+        String encoded = topic.getAttribute(AttributeUtils.ATTR_IMAGE_KEY);
         if (encoded != null) {
             try {
                 result = new Image(new ByteArrayInputStream(CryptoUtils.base64decode(encoded)));
@@ -115,7 +115,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
 
     @Override
     public String getAttributeKey() {
-        return AttributeUtils.ATTR_KEY;
+        return AttributeUtils.ATTR_IMAGE_KEY;
     }
 
     @Override
