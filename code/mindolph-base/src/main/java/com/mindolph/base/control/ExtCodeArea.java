@@ -420,7 +420,7 @@ public class ExtCodeArea extends CodeArea {
     public void addOrTrimHeadToParagraphsIfAdded(Replacement params) {
         if (!super.isEditable()) return;
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
-        // find if any paragraph already has the head that needs to be add.
+        // find if any paragraph already has the head that needs to be added.
         boolean isAlreadyAdded = true;
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
