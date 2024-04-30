@@ -2,7 +2,7 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.control.ExtCodeArea;
+import com.mindolph.base.control.ExtCodeArea.Replacement;
 import com.mindolph.base.dialog.TableDialog;
 import com.mindolph.base.dialog.TableOptions;
 import com.mindolph.mfx.util.ClipBoardUtils;
@@ -125,7 +125,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
             markdownCodeArea.addToSelectionHeadAndTail("*", true);
         }
         else if (node == btnBullet) {
-            markdownCodeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("* "));
+            markdownCodeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("* ", "  "));
         }
 //        else if (node == btnNumber) {
 //            markdownCodeArea.addOrTrimHeadToParagraphs(new Replacement(""), s -> {
@@ -133,7 +133,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
 //            });
 //        }
         else if (node == btnQuote) {
-            markdownCodeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("> ", "  "));
+            markdownCodeArea.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  "));
         }
         else if (node == btnCode) {
             markdownCodeArea.addToSelectionHeadAndTail("```\n", "\n```", true);
@@ -182,7 +182,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
      */
     private void addHeader(int number) {
         String newHead = StringUtils.repeat('#', number) + " ";
-        markdownCodeArea.addOrTrimHeadToParagraphs(new ExtCodeArea.Replacement(newHead), true, original -> {
+        markdownCodeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), true, original -> {
             return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)", StringUtils.EMPTY);
         });
         markdownCodeArea.requestFocus();
