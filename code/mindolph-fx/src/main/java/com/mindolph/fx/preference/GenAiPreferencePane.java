@@ -12,6 +12,8 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Comparator;
@@ -29,6 +31,8 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
  * @since 1.7.1
  */
 public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
+
+    private static final Logger log = LoggerFactory.getLogger(GenAiPreferencePane.class);
 
     private static final Pair<String, String> MODEL_CUSTOM_ITEM = new Pair<>("Custom", "Custom");
 
@@ -93,6 +97,11 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                             tfBaseUrl.setText(vendorProps.baseUrl());
                             tfAiModel.setText(vendorProps.aiModel());
                             Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+
+                            log.debug("Load models for gen-ai provider: %s".formatted(provider.getName()));
+                            for (String m : providerModels.get(provider.getName())) {
+                                log.debug("  %s".formatted(m));
+                            }
 
                             List<Pair<String, String>> models = providerModels.get(provider.getName())
                                     .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
