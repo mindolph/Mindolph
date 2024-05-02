@@ -27,9 +27,9 @@ public abstract class BaseLlmProvider implements LlmProvider {
     protected final String apiKey;
     protected final String aiModel;
     protected final String TEMPLATE = """
-            {{input}}
-            {{format}}
-            {{length}}
+            {{input}}.
+            {{format}}.
+            {{length}}.
             """;
 
     /**
@@ -66,7 +66,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
             {
                 put("input", input);
                 put("format", outputParams.outputFormat() != null && StringUtils.isNotBlank(outputParams.outputFormat().getName())
-                        ? "your output must be in format: %s.".formatted(outputParams.outputFormat().getName())
+                        ? "your output must be in format: %s".formatted(outputParams.outputFormat().getName())
                         : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? StringUtils.EMPTY :
                         "output : " + (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));

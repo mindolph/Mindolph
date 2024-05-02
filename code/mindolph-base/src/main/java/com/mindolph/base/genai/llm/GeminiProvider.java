@@ -54,7 +54,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
 
     @Override
     public String predict(String input, float temperature, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, input, temperature, outputParams);
+        RequestBody requestBody = super.createRequestBody(template, null, input, temperature, outputParams);
         Request request = new Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(aiModel, apiKey))
                 .post(requestBody)

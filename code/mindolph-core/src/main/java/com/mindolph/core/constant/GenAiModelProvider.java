@@ -9,7 +9,8 @@ public enum GenAiModelProvider {
     GEMINI("Gemini", ProviderType.PUBLIC),
     ALI_Q_WEN("Qwen", ProviderType.PUBLIC),
     OLLAMA("Ollama", ProviderType.PRIVATE),
-    HUGGING_FACE("HuggingFace", ProviderType.PUBLIC);
+    HUGGING_FACE("HuggingFace", ProviderType.PUBLIC),
+    CHAT_GLM("ChatGLM", ProviderType.PUBLIC);
 
     private final String name;
     private final ProviderType type;

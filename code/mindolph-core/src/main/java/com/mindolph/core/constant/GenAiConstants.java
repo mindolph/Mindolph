@@ -38,6 +38,8 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-7b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-1.8b-longcontext-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-1.8b-chat");
+            put(GenAiModelProvider.CHAT_GLM.getName(), "glm-4");
+            put(GenAiModelProvider.CHAT_GLM.getName(), "glm-3-turbo");
         }
     };
 

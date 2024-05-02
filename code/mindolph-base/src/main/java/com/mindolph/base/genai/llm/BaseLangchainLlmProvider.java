@@ -13,6 +13,7 @@ import java.util.Map;
  * @since 1.7.4
  */
 public abstract class BaseLangchainLlmProvider extends BaseLlmProvider {
+
     private static final Logger log = LoggerFactory.getLogger(BaseLangchainLlmProvider.class);
 
     public BaseLangchainLlmProvider(String apiKey, String aiModel) {
