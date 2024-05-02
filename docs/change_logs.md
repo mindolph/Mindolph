@@ -1,5 +1,13 @@
 # Change Logs
 
+### V1.7.5 Unstable Release
+* Improvement: add support for ChatGLM to GenAI.
+* Improvement: add pre-set model name list for some LLM providers.
+* Fix: blank text can't be replaced by search&replace in code area.
+* Fix: "select in workspace" does not clear the previous selection before file is located.
+* Fix: maven build profile for aarch64.
+* update mfx to 1.3.0
+
 
 ### V1.7.4 Unstable Release
 * Improvement: support Google Gemini API and Hugging Face API for Gen-AI.

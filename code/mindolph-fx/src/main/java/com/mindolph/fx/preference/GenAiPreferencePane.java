@@ -28,9 +28,9 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
 
 /**
  * @author mindolph.com@gmail.com
- * @since 1.7.1
  * @see com.mindolph.core.constant.GenAiConstants
  * @see GenAiModelProvider
+ * @since 1.7.1
  */
 public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
 
@@ -95,41 +95,38 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                             tfBaseUrl.setDisable(false);
                         }
                         ProviderProps vendorProps = map.get(provider.getName());
-                        if (vendorProps != null) {
-                            tfApiKey.setText(vendorProps.apiKey());
-                            tfBaseUrl.setText(vendorProps.baseUrl());
-                            tfAiModel.setText(vendorProps.aiModel());
-                            Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+                        if (vendorProps == null) {
+                            // init for a vendor who was never been setup.
+                            vendorProps = new ProviderProps("", "", "");
+                        }
+                        tfApiKey.setText(vendorProps.apiKey());
+                        tfBaseUrl.setText(vendorProps.baseUrl());
+                        tfAiModel.setText(vendorProps.aiModel());
+                        Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
 
-                            log.debug("Load models for gen-ai provider: %s".formatted(provider.getName()));
-                            for (String m : providerModels.get(provider.getName())) {
-                                log.debug("  %s".formatted(m));
-                            }
+                        log.debug("Load models for gen-ai provider: %s".formatted(provider.getName()));
+                        for (String m : providerModels.get(provider.getName())) {
+                            log.debug("  %s".formatted(m));
+                        }
 
-                            List<Pair<String, String>> models = providerModels.get(provider.getName())
-                                    .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
-                            cbModel.getItems().clear();
-                            if (models.isEmpty()) {
-                                cbModel.getItems().add(MODEL_CUSTOM_ITEM);
-                            }
-                            else {
-                                cbModel.getItems().addAll(models);
-                                cbModel.getItems().add(MODEL_CUSTOM_ITEM);
-                            }
-
-                            if (cbModel.getItems().contains(targetItem)) {
-                                cbModel.getSelectionModel().select(targetItem);
-                                tfAiModel.setDisable(true);
-                            }
-                            else {
-                                cbModel.getSelectionModel().select(MODEL_CUSTOM_ITEM);
-                                tfAiModel.setDisable(false);
-                            }
+                        List<Pair<String, String>> models = providerModels.get(provider.getName())
+                                .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
+                        cbModel.getItems().clear();
+                        if (models.isEmpty()) {
+                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
                         }
                         else {
-                            tfApiKey.setText("");
-                            tfBaseUrl.setText("");
-                            tfAiModel.setText("");
+                            cbModel.getItems().addAll(models);
+                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
+                        }
+
+                        if (cbModel.getItems().contains(targetItem)) {
+                            cbModel.getSelectionModel().select(targetItem);
+                            tfAiModel.setDisable(true);
+                        }
+                        else {
+                            cbModel.getSelectionModel().select(MODEL_CUSTOM_ITEM);
+                            tfAiModel.setDisable(false);
                         }
                     }
                 });
