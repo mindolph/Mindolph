@@ -23,7 +23,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 "inputs": "%s",
                 "parameters":{
                     "temperature": %s,
-                    "max_new_tokens": 200,
+                    "max_new_tokens": 1024,
                     "max_time": 60,
                     "top_k": 10,
                     "top_p": 0.8
@@ -40,7 +40,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
 
     @Override
     public String predict(String input, float temperature, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, input, temperature, outputParams);
+        RequestBody requestBody = super.createRequestBody(template, null, input, temperature, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(aiModel))
                 .header("Authorization", "Bearer %s".formatted(apiKey))

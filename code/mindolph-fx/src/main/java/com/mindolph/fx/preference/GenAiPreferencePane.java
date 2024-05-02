@@ -29,6 +29,8 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7.1
+ * @see com.mindolph.core.constant.GenAiConstants
+ * @see GenAiModelProvider
  */
 public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
 
@@ -76,6 +78,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
         cbAiProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getName()));
         cbAiProvider.getItems().add(new Pair<>(HUGGING_FACE, HUGGING_FACE.getName()));
+        cbAiProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getName()));
         super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),

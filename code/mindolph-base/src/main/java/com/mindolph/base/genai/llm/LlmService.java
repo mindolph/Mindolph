@@ -65,6 +65,10 @@ public class LlmService {
                 ProviderProps props = map.get(HUGGING_FACE.getName());
                 llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel());
             }
+            else if (CHAT_GLM.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(activeAiProvider);
+                llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel());
+            }
             else {
                 throw new RuntimeException("No llm provider setup: " + activeAiProvider);
             }

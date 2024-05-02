@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 
     public static final MediaType JSON = MediaType.get("application/json");
 
-    private static final Logger log = LoggerFactory.getLogger(GeminiProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseApiLlmProvider.class);
 
     protected OkHttpClient client;
 
@@ -42,15 +43,34 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         client = builder.build();
     }
 
-    protected RequestBody createRequestBody(String template, String input, float temperature, OutputParams outputParams) {
+    /**
+     * @param template     the template should contain only user input and temperature variables.
+     * @param model
+     * @param input
+     * @param temperature
+     * @param outputParams
+     * @return
+     */
+    protected RequestBody createRequestBody(String template, String model, String input, float temperature, OutputParams outputParams) {
+        // compose user prompt first
         input = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input));
-        input = StringEscapeUtils.escapeJson(input);
         Map<String, Object> args = super.formatParams(input, outputParams);
-
-        String formatted = args.entrySet().stream().reduce(TEMPLATE,
+        String formattedPrompt = args.entrySet().stream().reduce(TEMPLATE,
                 (s, e) -> s.replace("{{" + e.getKey() + "}}", e.getValue().toString()),
                 (s, s2) -> s);
-        String jsonParams = template.formatted(formatted.trim(), temperature);
+
+        formattedPrompt = StringEscapeUtils.escapeJson(formattedPrompt);
+        log.debug(formattedPrompt);
+
+        // format the JSON params
+        String jsonParams;
+        if (StringUtils.isNotBlank(model)) {
+            jsonParams = template.formatted(model, formattedPrompt.trim(), temperature);
+        }
+        else {
+            jsonParams = template.formatted(formattedPrompt.trim(), temperature);
+        }
+        log.debug(jsonParams);
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);
         return requestBody;
     }
