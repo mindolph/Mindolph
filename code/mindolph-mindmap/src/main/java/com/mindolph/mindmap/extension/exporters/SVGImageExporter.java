@@ -17,6 +17,8 @@
 package com.mindolph.mindmap.extension.exporters;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.StrokeType;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.base.util.GeometryConvertUtils;
@@ -47,6 +49,7 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -286,8 +289,8 @@ public class SVGImageExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext panel, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext panel, TopicNode actionTopic) {
+        return FontIconManager.getIns().getIcon(IconKey.IMAGE);
     }
 
     @Override

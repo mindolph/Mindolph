@@ -1,19 +1,91 @@
 package com.mindolph.mindmap.util;
 
+import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraNote;
+import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.paint.Color;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.mindolph.base.util.ColorUtils.html2color;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 
 /**
  * @author mindolph.com@gmail.com
  */
 public class TopicUtils {
+
+    /**
+     *
+     * @param topics
+     * @return
+     */
+    public static String convertTopicsToText(List<TopicNode> topics) {
+        List<String> texts = topics.stream().map(topicNode -> convertTopic(topicNode, 0).trim()).toList();
+        return StringUtils.join(texts, LINE_SEPARATOR);
+    }
+
+    private static String oneLineTitle(TopicNode topic) {
+        return topic.getText().replace(LINE_SEPARATOR, " ").trim();
+    }
+
+    private static String convertTopic(TopicNode topic, int level) {
+        StringBuilder result = new StringBuilder();
+        String lineIndent = StringUtils.repeat(" ", level * 2);
+        result.append(lineIndent).append(oneLineTitle(topic));
+        TopicNode linkedTopic = null;
+        for (Map.Entry<Extra.ExtraType, Extra<?>> e : topic.getExtras().entrySet()) {
+            if (e.getKey() == Extra.ExtraType.TOPIC) {
+                ExtraTopic topicLink = ((ExtraTopic) e.getValue());
+                TopicNode root = topic.findRoot();
+                linkedTopic = root.findForAttribute(ExtraTopic.TOPIC_UID_ATTR, topicLink.getValue());
+            }
+        }
+
+        if (!topic.getExtras().isEmpty()) {
+            for (Map.Entry<Extra.ExtraType, Extra<?>> e : topic.getExtras().entrySet()) {
+                switch (e.getKey()) {
+                    case NOTE: {
+                        if (Boolean.parseBoolean(topic.getAttributes().get(ExtraNote.ATTR_ENCRYPTED))) {
+                            result.append(LINE_SEPARATOR).append(lineIndent).append("<ENCRYPTED NOTE>");
+                        } else {
+                            for (String s : e.getValue().getAsString().split(LINE_SEPARATOR)) {
+                                result.append(LINE_SEPARATOR).append(lineIndent).append("> ").append(s.trim());
+                            }
+                        }
+                    }
+                    break;
+                    case TOPIC: {
+                        if (linkedTopic != null) {
+                            result.append(LINE_SEPARATOR).append(lineIndent).append("#(").append(oneLineTitle(linkedTopic)).append(')');
+                        }
+                    }
+                    break;
+                    case FILE: {
+                        result.append(LINE_SEPARATOR).append(lineIndent).append("FILE=").append(e.getValue().getAsString());
+                    }
+                    break;
+                    case LINK: {
+                        result.append(LINE_SEPARATOR).append(lineIndent).append(e.getValue().getAsString());
+                    }
+                    break;
+                }
+            }
+        }
+        result.append(LINE_SEPARATOR);
+        if (topic.hasChildren()) {
+            for (TopicNode c : topic.getChildren()) {
+                result.append(convertTopic(c, level + 1));
+            }
+        }
+        return result.toString();
+    }
 
     public static List<TopicNode> convertSelectedTopicsToDroppedTopics(List<TopicNode> topics) {
         List<TopicNode> result = new ArrayList<>();

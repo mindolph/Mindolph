@@ -17,6 +17,8 @@
 package com.mindolph.mindmap.extension.exporters;
 
 import com.igormaznitsa.mindmap.model.*;
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -29,6 +31,7 @@ import com.mindolph.mindmap.util.TextUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,6 +40,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TBD
+ */
 public class ORGMODEExporter extends BaseExportExtension {
 
     private static final int STARTING_INDEX_FOR_NUMERATION = 5;
@@ -54,10 +60,6 @@ public class ORGMODEExporter extends BaseExportExtension {
         }
 
         return result.toString();
-    }
-
-    private static String getTopicUid(TopicNode topic) {
-        return topic.getAttribute(ExtraTopic.TOPIC_UID_ATTR);
     }
 
     private void writeTopic(TopicNode topic, String listPosition,
@@ -151,7 +153,7 @@ public class ORGMODEExporter extends BaseExportExtension {
     }
 
     private static void printTextBlock(State state, String prefix, String text) {
-        String[] lines = ModelUtils.breakToLines(text);
+        String[] lines = StringUtils.split(text, Constants.NEXT_LINE);
         for (String s : lines) {
             state.append(prefix).append(": ").append(s).nextLine();
         }
@@ -328,8 +330,8 @@ public class ORGMODEExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return FontIconManager.getIns().getIcon(IconKey.IMAGE);
     }
 
     @Override

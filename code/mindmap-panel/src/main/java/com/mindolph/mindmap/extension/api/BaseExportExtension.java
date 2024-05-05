@@ -1,16 +1,16 @@
 package com.mindolph.mindmap.extension.api;
 
 import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.OptionsDialogBuilder;
 import com.mindolph.mindmap.I18n;
-import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.ContextMenuSection;
+import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ import java.util.Optional;
 /**
  *
  */
-public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
+public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
 
     protected static final Format DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     protected static final Format TIME_FORMAT = new SimpleDateFormat("HH:mm:ss z");
@@ -36,7 +36,7 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {
 
-        MenuItem result = new MenuItem(getName(context, activeTopic), new ImageView(getIcon(context, activeTopic)));
+        MenuItem result = new MenuItem(getName(context, activeTopic), getIcon(context, activeTopic));
         Tooltip.install(result.getGraphic(), new Tooltip(getReference(context, activeTopic)));
 
         result.setOnAction(e -> {
@@ -93,6 +93,9 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
         return ContextMenuSection.EXPORT;
     }
 
+    protected static String getTopicUid(TopicNode topic) {
+        return topic.getAttribute(ExtraTopic.TOPIC_UID_ATTR);
+    }
 
     protected Extra<?> findExtra(TopicNode topic, Extra.ExtraType type) {
         Extra<?> result = topic.getExtras().get(type);
@@ -136,6 +139,5 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension{
     public abstract String getReference(ExtensionContext context, TopicNode activeTopic);
 
 
-    public abstract Image getIcon(ExtensionContext context, TopicNode activeTopic);
-
+    public abstract Text getIcon(ExtensionContext context, TopicNode activeTopic);
 }

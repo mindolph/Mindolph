@@ -35,6 +35,10 @@ import com.mindolph.mindmap.extension.attribute.ExtraJumpExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraNoteExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraURIExtension;
 import com.mindolph.mindmap.extension.exporters.*;
+import com.mindolph.mindmap.extension.exporters.branch.AsciiDocBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.MarkdownBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.MindMapBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.TextBranchExporter;
 import com.mindolph.mindmap.extension.importers.*;
 import com.mindolph.mindmap.extension.manipulate.TopicColorExtension;
 import com.mindolph.mindmap.model.*;
@@ -107,6 +111,11 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         MindMapExtensionRegistry.getInstance().registerExtension(new TextExporter());
         MindMapExtensionRegistry.getInstance().registerExtension(new SVGImageExporter());
 
+        // branch exporters
+        MindMapExtensionRegistry.getInstance().registerExtension(new MindMapBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new MarkdownBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new TextBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new AsciiDocBranchExporter());
     }
 
     public ExtraMindMapView() {
@@ -236,10 +245,12 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         Menu importMenu = new Menu(I18n.getIns().getString("MMDImporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
         Menu exportMenu = new Menu(I18n.getIns().getString("MMDExporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu exportBranchesMenu = new Menu("Export branches as", FontIconManager.getIns().getIcon(IconKey.EXPORT));
 
         putAllItemsAsSection(ctxMenu, importMenu, findPopupMenuItems(this, IMPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         if (isModelNotEmpty) {
             putAllItemsAsSection(ctxMenu, exportMenu, findPopupMenuItems(this, EXPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
+            putAllItemsAsSection(ctxMenu, exportBranchesMenu, findPopupMenuItems(this, EXPORT_BRANCHES, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         }
 
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, TOOLS, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
@@ -350,22 +361,22 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             boolean fullScreenModeActive,
             List<MenuItem> menuItems,
             TopicNode topicUnderMouse,
-            List<PopUpMenuItemExtension> extensionMenuItems) {
+            List<PopUpMenuItemExtension> extensions) {
         menuItems.clear();
 
-        for (PopUpMenuItemExtension p : extensionMenuItems) {
-            if (fullScreenModeActive && !p.isCompatibleWithFullScreenMode()) {
+        for (PopUpMenuItemExtension extension : extensions) {
+            if (fullScreenModeActive && !extension.isCompatibleWithFullScreenMode()) {
                 continue;
             }
-            if (p.getSection() == section) {
-                boolean noTopicsNeeded = !(p.needsTopicUnderMouse() || p.needsSelectedTopics());
+            if (extension.getSection() == section) {
+                boolean noTopicsNeeded = !(extension.needsTopicUnderMouse() || extension.needsSelectedTopics());
                 if (noTopicsNeeded
-                        || (p.needsTopicUnderMouse() && topicUnderMouse != null)
-                        || (p.needsSelectedTopics() && !context.getSelectedTopics().isEmpty())) {
+                        || (extension.needsTopicUnderMouse() && topicUnderMouse != null)
+                        || (extension.needsSelectedTopics() && !context.getSelectedTopics().isEmpty())) {
 
-                    MenuItem item = p.makeMenuItem(context, topicUnderMouse);
+                    MenuItem item = extension.makeMenuItem(context, topicUnderMouse);
                     if (item != null) {
-                        item.setDisable(!p.isEnabled(context, topicUnderMouse));
+                        item.setDisable(!extension.isEnabled(context, topicUnderMouse));
                         menuItems.add(item);
                     }
                 }

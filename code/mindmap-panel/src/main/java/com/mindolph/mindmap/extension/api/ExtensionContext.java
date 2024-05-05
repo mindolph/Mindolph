@@ -21,6 +21,8 @@ public interface ExtensionContext {
 
     File getFile();
 
+    TopicNode getActiveTopic();
+
     List<TopicNode> getSelectedTopics();
 
     void openFile(File file, boolean preferSystemBrowser);

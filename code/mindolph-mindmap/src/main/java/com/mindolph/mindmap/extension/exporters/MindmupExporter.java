@@ -32,6 +32,7 @@ import com.mindolph.mindmap.util.TopicUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONStringer;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_IMAGE_KEY;
 
+/**
+ * TBD
+ */
 public class MindmupExporter extends BaseExportExtension {
 
     private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_MINDMUP);
@@ -254,8 +258,8 @@ public class MindmupExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return null;
     }
 
     @Override

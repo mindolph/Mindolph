@@ -16,6 +16,8 @@
 
 package com.mindolph.mindmap.extension.exporters;
 
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
@@ -31,6 +33,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,8 +143,8 @@ public final class PNGImageExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return FontIconManager.getIns().getIcon(IconKey.IMAGE);
     }
 
     @Override
