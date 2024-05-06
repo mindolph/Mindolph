@@ -31,8 +31,8 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
             }
             """;
 
-    public ChatGlmProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public ChatGlmProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

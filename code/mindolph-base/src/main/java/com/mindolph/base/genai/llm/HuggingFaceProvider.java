@@ -3,8 +3,6 @@ package com.mindolph.base.genai.llm;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.huggingface.HuggingFaceChatModel;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.time.Duration;
 
 /**
@@ -12,8 +10,8 @@ import java.time.Duration;
  */
 public class HuggingFaceProvider extends BaseLangchainLlmProvider {
 
-    public HuggingFaceProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public HuggingFaceProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

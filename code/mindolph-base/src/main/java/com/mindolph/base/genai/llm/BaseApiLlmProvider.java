@@ -26,15 +26,15 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 
     protected OkHttpClient client;
 
-    public BaseApiLlmProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public BaseApiLlmProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
         this.initHttpClient();
     }
 
     protected void initHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .readTimeout(timeout, TimeUnit.SECONDS);
-        if (super.proxyEnabled) {
+        if (super.proxyEnabled && super.useProxy) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
             builder.proxy(proxy);
         }
