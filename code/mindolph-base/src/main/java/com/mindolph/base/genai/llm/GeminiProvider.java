@@ -48,8 +48,8 @@ public class GeminiProvider extends BaseApiLlmProvider {
             """;
 
 
-    public GeminiProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public GeminiProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

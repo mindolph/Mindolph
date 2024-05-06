@@ -23,7 +23,6 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-4-turbo");
             put(GenAiModelProvider.GEMINI.getName(), "gemini-1.5-pro-latest");
             put(GenAiModelProvider.GEMINI.getName(), "gemini-pro");
-            put(GenAiModelProvider.GEMINI.getName(), "gemini-pro-vision");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-110b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-72b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-32b-chat");
@@ -84,7 +83,7 @@ public interface GenAiConstants {
         }
     };
 
-    record ProviderProps(String apiKey, String baseUrl, String aiModel) {
+    record ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
     }
 
     record ProviderInfo(String name, String model) {
