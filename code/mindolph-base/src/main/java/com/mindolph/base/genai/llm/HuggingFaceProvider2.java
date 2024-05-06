@@ -34,8 +34,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             }
             """;
 
-    public HuggingFaceProvider2(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public HuggingFaceProvider2(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

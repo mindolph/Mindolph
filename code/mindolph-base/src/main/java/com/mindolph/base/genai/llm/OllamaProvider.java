@@ -13,8 +13,8 @@ public class OllamaProvider extends BaseLangchainLlmProvider {
 
     private final String baseUrl;
 
-    public OllamaProvider(String baseUrl, String aiModel) {
-        super(null, aiModel);
+    public OllamaProvider(String baseUrl, String aiModel, boolean useProxy) {
+        super(null, aiModel, useProxy);
         this.baseUrl = baseUrl;
     }
 

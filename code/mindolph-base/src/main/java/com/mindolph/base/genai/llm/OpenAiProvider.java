@@ -18,8 +18,8 @@ public class OpenAiProvider extends BaseLangchainLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiProvider.class);
 
-    public OpenAiProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public OpenAiProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class OpenAiProvider extends BaseLangchainLlmProvider {
                 .maxRetries(1)
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) temperature);
-        if (super.proxyEnabled) {
+        if (super.proxyEnabled && super.useProxy) {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType);
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
         }

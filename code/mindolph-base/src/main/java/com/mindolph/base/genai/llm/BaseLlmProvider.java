@@ -26,6 +26,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
     protected final int timeout;
     protected final String apiKey;
     protected final String aiModel;
+    protected final boolean useProxy;
     protected final String TEMPLATE = """
             {{input}}.
             {{format}}.
@@ -43,9 +44,10 @@ public abstract class BaseLlmProvider implements LlmProvider {
     protected String proxyUser;
     protected String proxyPassword;
 
-    public BaseLlmProvider(String apiKey, String aiModel) {
+    public BaseLlmProvider(String apiKey, String aiModel, boolean useProxy) {
         this.apiKey = apiKey;
         this.aiModel = aiModel;
+        this.useProxy = useProxy;
         FxPreferences fxPreferences = FxPreferences.getInstance();
         this.timeout = fxPreferences.getPreference(GEN_AI_TIMEOUT, 60);
         // Proxy settings

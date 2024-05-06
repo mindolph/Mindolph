@@ -16,8 +16,8 @@ public abstract class BaseLangchainLlmProvider extends BaseLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseLangchainLlmProvider.class);
 
-    public BaseLangchainLlmProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public BaseLangchainLlmProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

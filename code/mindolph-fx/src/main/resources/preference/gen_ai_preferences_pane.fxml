@@ -24,5 +24,11 @@
         <PreferenceItem name="Time out(second):">
             <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
         </PreferenceItem>
+        <PreferenceItem name="Use proxy:">
+            <tooltip>
+                <Tooltip text="Use global proxy settings"/>
+            </tooltip>
+            <CheckBox fx:id="cbUseProxy"/>
+        </PreferenceItem>
     </VBox>
 </fx:root>
