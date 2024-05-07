@@ -498,7 +498,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     String pass = passwordData.getPassword().trim();
                     try {
                         if (CryptoUtils.decrypt(pass, note.getValue(), decrypted)) {
-                            editingNoteData = new NoteEditorData(decrypted.toString(), note.isEncrypted(), pass, note.getHint());
+                            String strDecrypted = decrypted.toString();
+                            log.trace(strDecrypted);
+                            editingNoteData = new NoteEditorData(strDecrypted, note.isEncrypted(), pass, note.getHint());
                         }
                         else {
                             DialogFactory.errDialog("Wrong password!");
