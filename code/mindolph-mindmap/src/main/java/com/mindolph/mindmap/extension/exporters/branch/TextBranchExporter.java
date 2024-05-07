@@ -82,4 +82,8 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
         return 4;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return true;
+    }
 }

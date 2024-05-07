@@ -51,8 +51,6 @@ import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
  */
 public class FreeMindExporter extends BaseExportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_FREEMIND);
-
     private static String makeUID(TopicNode t) {
         int[] path = t.getPositionPath();
         StringBuilder buffer = new StringBuilder("mmlink");
@@ -246,6 +244,11 @@ public class FreeMindExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 1;
+    }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
 
     private static class State {

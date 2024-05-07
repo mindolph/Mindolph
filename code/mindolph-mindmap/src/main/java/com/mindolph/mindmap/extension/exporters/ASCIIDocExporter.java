@@ -17,7 +17,7 @@ public class ASCIIDocExporter extends AsciiDocBranchExporter {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
-        this.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
+        super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 
     @Override
@@ -43,4 +43,8 @@ public class ASCIIDocExporter extends AsciiDocBranchExporter {
         return 8;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
+    }
 }

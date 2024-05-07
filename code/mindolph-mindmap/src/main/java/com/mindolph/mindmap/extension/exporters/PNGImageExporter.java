@@ -24,8 +24,6 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.gfx.MindMapCanvas;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
@@ -48,7 +46,6 @@ import java.util.List;
 public final class PNGImageExporter extends BaseExportExtension {
 
     private static final Logger log = LoggerFactory.getLogger(PNGImageExporter.class);
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_PNG);
     private boolean flagExpandAllNodes = false;
     private boolean flagDrawBackground = true;
 
@@ -152,4 +149,8 @@ public final class PNGImageExporter extends BaseExportExtension {
         return 4;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
+    }
 }

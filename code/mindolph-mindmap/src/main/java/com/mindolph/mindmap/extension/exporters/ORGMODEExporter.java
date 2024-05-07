@@ -22,13 +22,10 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.TextUtils;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
@@ -46,7 +43,6 @@ import java.util.Map;
 public class ORGMODEExporter extends BaseExportExtension {
 
     private static final int STARTING_INDEX_FOR_NUMERATION = 5;
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_ORGMODE);
 
     private static String makeLineFromString(String text) {
         StringBuilder result = new StringBuilder(text.length());
@@ -337,6 +333,11 @@ public class ORGMODEExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 7;
+    }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
 
     private static class State {

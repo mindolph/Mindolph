@@ -80,6 +80,12 @@ public class MindMapBranchExporter extends BaseExportExtension {
         throw new NotImplementedException("Not Supported");
     }
 
+
+    @Override
+    public ContextMenuSection getSection() {
+        return EXPORT_BRANCHES;
+    }
+
     @Override
     public String getName(ExtensionContext context, TopicNode activeTopic) {
         return "Mind Map";
@@ -101,7 +107,8 @@ public class MindMapBranchExporter extends BaseExportExtension {
     }
 
     @Override
-    public ContextMenuSection getSection() {
-        return EXPORT_BRANCHES; // force to
+    public boolean needsTopicUnderMouse() {
+        return true;
     }
+
 }

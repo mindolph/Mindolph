@@ -210,4 +210,9 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
     public int getOrder() {
         return 2;
     }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return true;
+    }
 }

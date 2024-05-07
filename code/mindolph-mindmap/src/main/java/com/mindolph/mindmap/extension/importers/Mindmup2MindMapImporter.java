@@ -24,11 +24,8 @@ import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.MindMapUtils;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +43,6 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.ATTR_TEXT_COL
 
 public class Mindmup2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_MINDMUP);
     private static final Logger LOG = LoggerFactory.getLogger(Mindmup2MindMapImporter.class);
 
     @Override
@@ -244,7 +240,8 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
 
     @Override
     public javafx.scene.image.Image getIcon(ExtensionContext context) {
-        return ICON;
+//        return ICON;
+        return null;
     }
 
     @Override

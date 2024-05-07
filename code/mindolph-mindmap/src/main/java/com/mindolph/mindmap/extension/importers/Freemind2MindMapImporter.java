@@ -28,8 +28,6 @@ import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.XmlUtils;
@@ -55,7 +53,6 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.ATTR_TEXT_COL
 
 public class Freemind2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_FREEMIND);
     private static final Logger log = LoggerFactory.getLogger(Freemind2MindMapImporter.class);
 
     private static final Set<String> TOKEN_NEEDS_NEXT_LINE = new HashSet<>(Arrays.asList("br", "div", "p", "li"));
@@ -310,7 +307,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
     @Override
 
     public Image getIcon(ExtensionContext context) {
-        return ICON;
+        return null;
     }
 
     @Override

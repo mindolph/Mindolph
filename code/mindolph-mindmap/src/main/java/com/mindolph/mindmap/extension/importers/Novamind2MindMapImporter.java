@@ -25,14 +25,11 @@ import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.Utils;
 import com.mindolph.mindmap.util.XmlUtils;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +49,6 @@ import java.util.zip.ZipFile;
 
 public class Novamind2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_IMPORT_NOVAMIND2MM);
     private static final Logger LOG = LoggerFactory.getLogger(Novamind2MindMapImporter.class);
 
     private static void processURLLinks(MindMap<TopicNode> map, ParsedContent model, ParsedContent.TopicReference topicRef, Map<String, TopicNode> mapTopicRefToTopics) {
@@ -234,7 +230,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
 
     @Override
     public javafx.scene.image.Image getIcon(ExtensionContext context) {
-        return ICON;
+        return null;
     }
 
     @Override

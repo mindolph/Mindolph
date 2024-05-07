@@ -159,4 +159,9 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
     public int getOrder() {
         return 4;
     }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return true;
+    }
 }

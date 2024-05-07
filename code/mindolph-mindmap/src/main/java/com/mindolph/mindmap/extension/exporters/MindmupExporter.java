@@ -22,14 +22,11 @@ import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.TopicUtils;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
@@ -53,7 +50,6 @@ import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_IMAG
  */
 public class MindmupExporter extends BaseExportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_MINDMUP);
     private static final Logger LOGGER = LoggerFactory.getLogger(MindmupExporter.class);
 
     private static String makeHtmlFromExtras(ExtraLink link, ExtraFile file) {
@@ -265,6 +261,11 @@ public class MindmupExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 2;
+    }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
 
     private record TopicId(int id, String uuid, TopicNode topic) {

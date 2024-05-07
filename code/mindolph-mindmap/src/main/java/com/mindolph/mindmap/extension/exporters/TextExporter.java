@@ -47,4 +47,8 @@ public class TextExporter extends TextBranchExporter {
         return 6;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
+    }
 }

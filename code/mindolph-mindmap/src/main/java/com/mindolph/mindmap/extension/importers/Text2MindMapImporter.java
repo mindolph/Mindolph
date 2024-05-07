@@ -20,10 +20,7 @@ import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
-import javafx.scene.image.Image;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -33,7 +30,6 @@ import java.util.List;
 
 public class Text2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_IMPORT_TXT2MM);
     private static final int TAB_POSITIONS = 16;
 
     @Override
@@ -158,7 +154,7 @@ public class Text2MindMapImporter extends BaseImportExtension {
 
     @Override
     public javafx.scene.image.Image getIcon(ExtensionContext context) {
-        return ICON;
+        return null;
     }
 
     @Override

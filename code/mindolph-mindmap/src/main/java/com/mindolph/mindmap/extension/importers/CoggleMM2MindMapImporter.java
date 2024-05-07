@@ -27,8 +27,6 @@ import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.XmlUtils;
@@ -49,7 +47,6 @@ import java.util.regex.Pattern;
 
 public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_IMPORT_COGGLE2MM);
     private static final Logger LOG = LoggerFactory.getLogger(CoggleMM2MindMapImporter.class);
     private static final Pattern MD_IMAGE_LINK = Pattern.compile("\\!\\[(.*?)\\]\\((.*?)\\)", Pattern.MULTILINE | Pattern.UNICODE_CASE);
     private static final Pattern MD_URL_LINK = Pattern.compile("(?<!\\!)\\[(.*?)\\]\\((.*?)\\)", Pattern.MULTILINE | Pattern.UNICODE_CASE);
@@ -265,7 +262,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
     @Override
     public javafx.scene.image.Image getIcon(ExtensionContext context) {
-        return ICON;
+        return null;
     }
 
     @Override

@@ -46,4 +46,8 @@ public class MarkdownExporter extends MarkdownBranchExporter {
         return 3;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
+    }
 }
