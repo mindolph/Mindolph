@@ -169,8 +169,11 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         if (StringUtils.isNotBlank(noteEditorData.getPassword())) {
             tbtnProtect.setSelected(true);
         }
-        tbtnProtect.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+        // listen on mouse click event instead of on selected state change event for
+        // setting the selection state triggers the listener wrongly being invoked.
+        tbtnProtect.setOnMouseClicked(mouseEvent -> {
+            log.warn("onMouseClicked");
+            if (tbtnProtect.isSelected()) {
                 PasswordSettingDialog passwordDialog = new PasswordSettingDialog(null);
                 PasswordData passwordData = passwordDialog.showAndWait();
                 if (passwordData != null) {
@@ -190,9 +193,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     result.setHint(null);
                 }
                 else {
-                    tbtnProtect.setSelected(false);
+                    tbtnProtect.setSelected(true);
                 }
             }
+            mouseEvent.consume();
         });
         tbtnSearch.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {

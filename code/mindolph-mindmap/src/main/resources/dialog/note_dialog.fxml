@@ -17,6 +17,7 @@
             <Button fx:id="btnClearAll" mnemonicParsing="false" text="Clear All"/>
             <Button fx:id="btnBrowse" disable="true" mnemonicParsing="false" text="Browse"/>
             <ToggleButton fx:id="tbtnProtect" mnemonicParsing="false" text="Protect"/>
+
         </ToolBar>
         <HBox fx:id="hbToolbar">
 

@@ -59,7 +59,7 @@ public class LlmProviderTest {
     public void chatglm() {
         disableProxy();
         String apiKey = loadApiKey(CHAT_GLM.getName());
-        ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4");
+        ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4", false);
         String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
         System.out.println(result);
     }
@@ -68,7 +68,7 @@ public class LlmProviderTest {
     public void huggingface() {
         enableProxy();
         String apiKey = loadApiKey(HUGGING_FACE.getName());
-        HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2");
+        HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2", true);
         String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
         System.out.println(result);
     }
@@ -77,7 +77,7 @@ public class LlmProviderTest {
     public void qwen() {
         disableProxy();
         String apiKey = loadApiKey(ALI_Q_WEN.getName());
-        QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo");
+        QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo", false);
         String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
         System.out.println(result);
     }
