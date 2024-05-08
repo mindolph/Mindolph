@@ -106,9 +106,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         MindMapExtensionRegistry.getInstance().registerExtension(new MarkdownExporter());
         MindMapExtensionRegistry.getInstance().registerExtension(new ASCIIDocExporter());
 //        MindMapExtensionRegistry.getInstance().registerExtension(new MindmupExporter()); not supported for now
-        MindMapExtensionRegistry.getInstance().registerExtension(new PNGImageExporter());
 //        MindMapExtensionRegistry.getInstance().registerExtension(new ORGMODEExporter()); not supported for now
         MindMapExtensionRegistry.getInstance().registerExtension(new TextExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new PNGImageExporter());
         MindMapExtensionRegistry.getInstance().registerExtension(new SVGImageExporter());
 
         // branch exporters

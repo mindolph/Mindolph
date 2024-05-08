@@ -25,6 +25,7 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     protected String convertTopics(MindMap<TopicNode> model, List<TopicNode> topics) {
+        topics = MindMapUtils.removeDuplicatedAndDescendants(topics);
         return TopicUtils.convertTopicsToText(topics);
     }
 

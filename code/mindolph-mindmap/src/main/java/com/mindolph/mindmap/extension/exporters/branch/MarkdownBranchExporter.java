@@ -75,6 +75,7 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
                 .append(VendorConstants.GENERATE_BY)
                 .append(Constants.NEXT_LINE);
         buf.append(DateFormatUtils.format(System.currentTimeMillis(), DATE_TIME_FORMAT)).append(Constants.NEXT_LINE).append("-->").append(Constants.NEXT_LINE);
+        topics = MindMapUtils.removeDuplicatedAndDescendants(topics);
         for (TopicNode selectedTopic : topics) {
             model.traverseTopicTree(selectedTopic, topicNode -> {
                 try {

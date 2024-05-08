@@ -14,6 +14,7 @@ import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
+import com.mindolph.mindmap.util.MindMapUtils;
 import javafx.scene.control.Dialog;
 import javafx.scene.text.Text;
 import org.apache.commons.io.FileUtils;
@@ -58,8 +59,12 @@ public class MindMapBranchExporter extends BaseExportExtension {
             ExtraNote extraNote = new ExtraNote("This file is exported from %s at %s".formatted(exportFileName, TimeUtils.createTimestamp()));
             TopicNode rootNode = new TopicNode(newModel, null, input.get(), extraNote);
             newModel.setRoot(rootNode);
-            context.getSelectedTopics().stream().forEach(topicNode -> newModel.getRoot().addChild(topicNode));
-
+            List<TopicNode> topics = MindMapUtils.removeDuplicatedAndDescendants(context.getSelectedTopics());
+            if (topics.isEmpty()) {
+                DialogFactory.infoDialog("Select topic(s) to export");
+                return;
+            }
+            topics.forEach(topicNode -> newModel.getRoot().addChild(topicNode));
 
             File fileToSave = DialogUtils.selectFileToSaveForFileFilter(
                     "Export to mind map",
