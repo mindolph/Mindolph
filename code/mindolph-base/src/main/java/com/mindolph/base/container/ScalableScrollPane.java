@@ -2,6 +2,7 @@ package com.mindolph.base.container;
 
 import com.mindolph.base.control.BaseScalableView;
 import com.mindolph.mfx.container.ExtendedScrollPane;
+import com.mindolph.mfx.util.PointUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import org.slf4j.Logger;
@@ -92,8 +93,12 @@ public class ScalableScrollPane extends ExtendedScrollPane {
             viewportRect = new Rectangle2D(this.getScrollX(), this.getScrollY(), viewportBounds.getWidth(), viewportBounds.getHeight());
         }
         else {
-            double x = scalableView.isWidthOverViewport() ? this.getScrollX() : -(viewportBounds.getWidth() - scalableView.getLayoutBounds().getWidth()) / 2;
-            double y = scalableView.isHeightOverViewport() ? this.getScrollY() : -(viewportBounds.getHeight() - scalableView.getLayoutBounds().getHeight()) / 2;
+            // don't use scalableView.isWidthOverViewport() due to it's a loop dependency on viewportRectangle property.
+            boolean isContentWithOverViewport = scalableView.getLayoutBounds().getWidth() > viewportBounds.getWidth();
+            boolean isContentHeightOverViewport = scalableView.getLayoutBounds().getHeight() > viewportBounds.getHeight();
+            double x = isContentWithOverViewport ? getScrollX() : -(viewportBounds.getWidth() - scalableView.getLayoutBounds().getWidth()) / 2;
+            double y = isContentHeightOverViewport ? getScrollY() : -(viewportBounds.getHeight() - scalableView.getLayoutBounds().getHeight()) / 2;
+            if (log.isTraceEnabled()) log.trace(PointUtils.pointInStr(x, y));
             viewportRect = new Rectangle2D(x, y, viewportBounds.getWidth(), viewportBounds.getHeight());
         }
         scalableView.setViewportRectangle(viewportRect);
