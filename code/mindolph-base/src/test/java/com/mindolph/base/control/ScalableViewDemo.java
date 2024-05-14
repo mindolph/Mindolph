@@ -137,8 +137,20 @@ public class ScalableViewDemo implements Initializable {
 
 //            log.debug("[DEMO] Draw rectangle for control bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
 
+            // Choose different begin coordinate and dimension because drawing in viewport and over viewport are different.
+            double beginX = Math.min(vr.getMinX(), 0);
+            double beginY = Math.min(vr.getMinY(), 0);
+            double totalWidth = vr.getWidth() + Math.max(vr.getMinX(), 0);
+            double totalHeight = vr.getHeight() + Math.max(vr.getMinY(), 0);
+
             log.debug("[DEMO] Draw bounds for control: %s".formatted(BoundsUtils.boundsInString(bounds)));
             log.debug("[DEMO] Draw viewport: %s".formatted(RectangleUtils.rectangleInStr(vr)));
+
+            // viewport background
+            gc.setFill(Color.LIGHTGRAY);
+            gc.fillRect(0, 0, totalWidth, totalHeight);
+
+            // bounds background
             gc.setFill(Color.PINK);
             gc.fillRect(bounds.getMinX() - vr.getMinX(), bounds.getMinY() - vr.getMinY(), bounds.getWidth(), bounds.getHeight());
 
@@ -146,11 +158,7 @@ public class ScalableViewDemo implements Initializable {
             super.translateGraphicsContext(false);
             gc.setStroke(Color.BLACK);
             gc.setLineWidth(1);
-            // Choose different begin coordinate and dimension because drawing in viewport and over viewport are different.
-            double beginX = vr.getMinX() < 0 ? vr.getMinX() : 0;
-            double beginY = vr.getMinY() < 0 ? vr.getMinY() : 0;
-            double totalWidth = vr.getWidth() + (vr.getMinX() < 0 ? 0 : vr.getMinX());
-            double totalHeight = vr.getHeight() + (vr.getMinY() < 0 ? 0 : vr.getMinY());
+
             // Draw vertical lines (only within the viewport)
             log.debug("[DEMO] Draw vertical line from (%.1f, %.1f)(%.1f x %.1f)".formatted(beginX, beginY, totalWidth, totalHeight));
             for (double x = beginX; x < totalWidth; x += scaledGridSize) {
