@@ -134,7 +134,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * @param property
      * @param prefName one preference name can bind multiple properties(for like group of radio buttons)
      * @param defaultValue
-     * @param saveConverter
+     * @param saveConverter if returns null, no preference will be saved.
      * @param loadConverter
      * @param onPropertyChange This will be called before saving value to preference storage.
      * @param <T>
@@ -151,8 +151,10 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
             if (isLoaded) {
                 log.debug("Save preference: %s".formatted(prefName));
                 R converted = saveConverter.apply(property.getValue());
-                fxPreferences.savePreference(prefName, converted);
-                this.onSave(true);
+                if (converted != null) {
+                    fxPreferences.savePreference(prefName, converted);
+                    this.onSave(true);
+                }
             }
         };
         property.addListener(changeListener);
