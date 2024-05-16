@@ -131,6 +131,7 @@ public class SearchResultPane extends AnchorPane {
             searchParams.setFileTypeName(fileFilterButtonGroup.getSelectedFileType());
             reSearch();
         });
+        fileFilterButtonGroup.setAllowFolder(false);
     }
 
     /**

@@ -80,6 +80,7 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
 
         fileFilterButtonGroup.selectedFileTypeProperty().addListener((observableValue, s, fileTypeName) -> result.setFileTypeName(fileTypeName));
         fileFilterButtonGroup.setSelectedFileType(String.valueOf(lastFileTypeName));
+        fileFilterButtonGroup.setAllowFolder(false);
     }
 
 }

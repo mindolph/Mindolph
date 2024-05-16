@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.FolderConstants;
 import com.mindolph.core.constant.NodeType;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
@@ -11,7 +12,9 @@ import com.mindolph.core.util.DirUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.*;
+import org.apache.commons.io.filefilter.AbstractFileFilter;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- *
  * @author mindolph.com@gmail.com
  * @see WorkspaceMeta
  * @see WorkspaceList
@@ -38,9 +40,11 @@ public class WorkspaceManager {
     private final Comparator<File> SORTING_NODES = (o1, o2) -> {
         if (o1.isDirectory() && o2.isDirectory() || o1.isFile() && o2.isFile()) {
             return o1.getName().compareTo(o2.getName());
-        } else if (o1.isDirectory()) {
+        }
+        else if (o1.isDirectory()) {
             return -1;
-        } else {
+        }
+        else {
             return 1;
         }
     };
@@ -124,7 +128,8 @@ public class WorkspaceManager {
         File dir = new File(workspaceMeta.getBaseDirPath());
         if (dir.exists() && dir.isDirectory()) {
             this.loadFolderRecursively(root, dir, workspaceConfig.makeFileFilter());
-        } else {
+        }
+        else {
             String msg = "Failed to read files from: " + dir;
             log.warn(msg);
         }
@@ -176,7 +181,8 @@ public class WorkspaceManager {
                 fileData.setWorkspaceData(parentData.getWorkspaceData());
                 Node fileNode = new Node(fileData);
                 parent.getChildren().add(fileNode);
-            } else if (file.isDirectory()) {
+            }
+            else if (file.isDirectory()) {
                 NodeData folderData = new NodeData(NodeType.FOLDER, file);
                 folderData.setWorkspaceData(parentData.getWorkspaceData());
                 Node subFolder = new Node(folderData);
@@ -216,43 +222,51 @@ public class WorkspaceManager {
         if (workspaceDir == null || !workspaceDir.exists()) {
             return new ArrayList<>();
         }
-        IOFileFilter fileFilters;
-        AbstractFileFilter fileNameFilter = new AbstractFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return StringUtils.containsIgnoreCase(FilenameUtils.getBaseName(file.getPath()), keyword);
-            }
-        };
 
-        if (StringUtils.isBlank(fileExt)) {
-            fileFilters = fileNameFilter;
+        Collection<File> dirs = List.of();
+        Collection<File> files = List.of();
+
+        if (fileExt == null || StringUtils.equalsAny(fileExt, SupportFileTypes.TYPE_FOLDER)) {
+            dirs = DirUtils.findDirsByKeyword(workspaceDir, keyword);
+            dirs.remove(workspaceDir);
         }
-        else {
-            fileFilters = FileFilterUtils.and(fileNameFilter, new IOFileFilter() {
+        if (StringUtils.isBlank(fileExt) || !SupportFileTypes.TYPE_FOLDER.equals(fileExt)) {
+            // for file types
+            IOFileFilter fileFilters;
+            AbstractFileFilter fileNameFilter = new AbstractFileFilter() {
                 @Override
                 public boolean accept(File file) {
-                    return FilenameUtils.isExtension(file.getName(), fileExt);
+                    return StringUtils.containsIgnoreCase(FilenameUtils.getBaseName(file.getPath()), keyword);
                 }
+            };
 
-                @Override
-                public boolean accept(File dir, String name) {
-                    return false;
-                }
-            });
-        }
-
-        Collection<File> dirs = DirUtils.findDirsByKeyword(workspaceDir, keyword);
-        dirs.remove(workspaceDir);
-
-        AbstractFileFilter dirFilter = new AbstractFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                // this can't be used for filter dirs, this will filter out not only specified dirs but also it's sub-folders.
-                return !FolderConstants.EXCLUDE_DIRS.contains(file.getName());
+            if (StringUtils.isBlank(fileExt)) {
+                fileFilters = fileNameFilter;
             }
-        };
-        Collection<File> files = FileUtils.listFiles(workspaceDir, fileFilters, dirFilter);
-        files.remove(workspaceDir);
+            else {
+                fileFilters = FileFilterUtils.and(fileNameFilter, new IOFileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return FilenameUtils.isExtension(file.getName(), fileExt);
+                    }
+
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return false;
+                    }
+                });
+            }
+
+            AbstractFileFilter dirFilter = new AbstractFileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    // this can't be used for filter dirs, this will filter out not only specified dirs but also it's sub-folders.
+                    return !FolderConstants.EXCLUDE_DIRS.contains(file.getName());
+                }
+            };
+            files = FileUtils.listFiles(workspaceDir, fileFilters, dirFilter);
+            files.remove(workspaceDir);
+        }
         return (List<File>) CollectionUtils.union(dirs, files);
     }
 
