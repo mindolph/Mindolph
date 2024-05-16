@@ -14,6 +14,7 @@ public interface GenAiConstants {
 
     MultiValuedMap<String, String> providerModels = new HashSetValuedHashMap<>(){
         {
+            // https://platform.openai.com/docs/models
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-3.5");
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-3.5-turbo");
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-3.5-turbo-instruct");
@@ -21,8 +22,12 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-4");
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-4-32k");
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-4-turbo");
+            put(GenAiModelProvider.OPEN_AI.getName(), "gpt-4o");
+            // https://ai.google.dev/gemini-api/docs/models/gemini
+//            put(GenAiModelProvider.GEMINI.getName(), "gemini-1.5-flash");
             put(GenAiModelProvider.GEMINI.getName(), "gemini-1.5-pro-latest");
             put(GenAiModelProvider.GEMINI.getName(), "gemini-pro");
+            //
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-110b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-72b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen1.5-32b-chat");
@@ -40,6 +45,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-7b-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-1.8b-longcontext-chat");
             put(GenAiModelProvider.ALI_Q_WEN.getName(), "qwen-1.8b-chat");
+            //
             put(GenAiModelProvider.CHAT_GLM.getName(), "glm-4");
             put(GenAiModelProvider.CHAT_GLM.getName(), "glm-3-turbo");
         }

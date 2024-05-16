@@ -129,11 +129,12 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
         rbSocks.setToggleGroup(group);
+
         super.bindPreference(rbHttp.selectedProperty(), GENERAL_PROXY_TYPE, "HTTP",
-                aBoolean -> aBoolean ? "HTTP" : StringUtils.EMPTY,
+                aBoolean -> aBoolean ? "HTTP" : null, // null indicate that no event emits since it will cause exception.
                 str -> StringUtils.equals(str, "HTTP"));
         super.bindPreference(rbSocks.selectedProperty(), GENERAL_PROXY_TYPE, "SOCKS",
-                aBoolean -> aBoolean ? "SOCKS" : StringUtils.EMPTY,
+                aBoolean -> aBoolean ? "SOCKS" : null, // null indicate that no event emits since it will cause exception.
                 str -> StringUtils.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
         super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);

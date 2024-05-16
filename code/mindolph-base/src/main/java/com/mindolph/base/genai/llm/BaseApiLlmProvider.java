@@ -33,13 +33,16 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 
     protected void initHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .callTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS);
         if (super.proxyEnabled && super.useProxy) {
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
+            Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
             builder.proxy(proxy);
         }
         log.info("Build HTTP client to access '%s' %s".formatted(this.aiModel,
-                super.proxyEnabled ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType), this.proxyUrl) : "without proxy"));
+                super.proxyEnabled ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
+        builder.retryOnConnectionFailure(false);
         client = builder.build();
     }
 

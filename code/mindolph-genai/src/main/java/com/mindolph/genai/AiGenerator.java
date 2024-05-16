@@ -187,8 +187,8 @@ public class AiGenerator implements Generator {
                 GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
                 ProviderProps props = propsMap.get(activeProvider);
                 if (provider == null || props == null) return false;
-                log.debug(String.valueOf(provider));
-                log.debug(String.valueOf(props));
+                log.debug("Provider: %s".formatted(provider));
+                log.trace(String.valueOf(props));
                 if (provider.getType() == GenAiModelProvider.ProviderType.PUBLIC) {
                     return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
                 }

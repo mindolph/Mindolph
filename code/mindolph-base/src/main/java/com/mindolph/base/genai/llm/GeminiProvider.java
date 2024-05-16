@@ -71,6 +71,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
             }
 
             String resBodyInJson = response.body().string();
+            log.trace(resBodyInJson);
             JsonObject resBody = (JsonObject) JsonParser.parseString(resBodyInJson);
             String result = resBody.get("candidates").getAsJsonArray()
                     .get(0).getAsJsonObject()

@@ -25,7 +25,7 @@ public class OpenAiProvider extends BaseLangchainLlmProvider {
     @Override
     protected ChatLanguageModel buildAI(float temperature) {
         log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
-                super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType), this.proxyUrl) : "without proxy"));
+                super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(this.apiKey)
                 .modelName(this.aiModel)
@@ -33,7 +33,7 @@ public class OpenAiProvider extends BaseLangchainLlmProvider {
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) temperature);
         if (super.proxyEnabled && super.useProxy) {
-            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType);
+            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
         }
         OpenAiChatModel model = builder.build();
