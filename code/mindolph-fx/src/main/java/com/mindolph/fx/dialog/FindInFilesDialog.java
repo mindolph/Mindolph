@@ -2,6 +2,7 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.control.DirBreadCrumb;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.control.FileFilterButtonGroup;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -40,6 +41,8 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
     private ToggleButton tbCase;
     @FXML
     private FileFilterButtonGroup fileFilterButtonGroup;
+    @FXML
+    private DirBreadCrumb bcbDirPath;
 
     public FindInFilesDialog(File workspaceDir, File dir) {
         dialog = new CustomDialogBuilder<SearchParams>()
@@ -53,9 +56,9 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
                 .build();
         dialog.setOnShown(event -> Platform.runLater(() -> tfKeywords.requestFocus()));
 
-        String workspaceName = FilenameUtils.getBaseName(workspaceDir.getPath());
-        String relativePath = PathUtils.getRelativePath(dir, workspaceDir);
-        lbDesc.setText("%s%s%s".formatted(workspaceName, File.separator, relativePath));
+//        String workspaceName = FilenameUtils.getBaseName(workspaceDir.getPath());
+//        String relativePath = PathUtils.getRelativePath(dir, workspaceDir);
+//        lbDesc.setText("%s%s%s".formatted(workspaceName, File.separator, relativePath));
 
         Object lastKeyword = FxPreferences.getInstance().getPreference(MINDOLPH_FIND_FILES_KEYWORD, "");
         Boolean lastCaseSensitivity = FxPreferences.getInstance().getPreference(MINDOLPH_FIND_FILES_CASE_SENSITIVITY, Boolean.FALSE);
@@ -64,8 +67,15 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
         result = new SearchParams(String.valueOf(lastKeyword), lastCaseSensitivity);
         result.setFileTypeName(String.valueOf(lastFileTypeName));
 
+        bcbDirPath.selectedCrumbProperty().addListener((observable, oldValue, newValue) -> {
+            DirBreadCrumb.Crumb value = newValue.getValue();
+            log.debug("move to dir: %s".formatted(value.path()));
+            result.setSearchInDir(value.path().toFile());
+        });
+        bcbDirPath.init(workspaceDir, dir);
+
         tfKeywords = TextFields.createClearableTextField();
-        tfKeywords.setPrefWidth(300);
+        tfKeywords.setPrefWidth(280);
         hbKeywords.getChildren().add(tfKeywords);
         tfKeywords.textProperty().addListener((observableValue, s, newKeyword) -> {
             result.setKeywords(newKeyword);

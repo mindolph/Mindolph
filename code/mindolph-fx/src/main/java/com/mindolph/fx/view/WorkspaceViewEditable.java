@@ -1157,7 +1157,6 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {
                     IOFileFilter searchFilter = workspaceConfig.makeFileFilter();
                     searchParams.setWorkspaceDir(selectedData.getWorkspaceData().getFile());
-                    searchParams.setSearchInDir(selectedData.getFile());
                     searchParams.setSearchFilter(searchFilter);
                     fxPreferences.savePreference(MINDOLPH_FIND_FILES_KEYWORD, searchParams.getKeywords());
                     fxPreferences.savePreference(MINDOLPH_FIND_FILES_CASE_SENSITIVITY, searchParams.isCaseSensitive());

@@ -2,6 +2,7 @@ package com.mindolph.fx.view;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.control.DirBreadCrumb;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.core.model.NodeData;
@@ -60,6 +61,8 @@ public class SearchResultPane extends AnchorPane {
     private FileFilterButtonGroup fileFilterButtonGroup;
     @FXML
     private ProgressIndicator progressIndicator;
+    @FXML
+    private DirBreadCrumb bcbDirPath;
 
     private final TreeItem<FileTreeViewData> rootItem;
 
@@ -114,6 +117,15 @@ public class SearchResultPane extends AnchorPane {
     public void init(SearchParams searchParams) {
         this.searchParams = searchParams;
         treeView.init(searchParams);
+
+        bcbDirPath.selectedCrumbProperty().addListener((observable, oldValue, newValue) -> {
+            DirBreadCrumb.Crumb value = newValue.getValue();
+            log.debug("move to dir: %s".formatted(value.path()));
+            searchParams.setSearchInDir(value.path().toFile());
+            this.reSearch();
+        });
+        bcbDirPath.init(searchParams.getWorkspaceDir(), searchParams.getSearchInDir());
+
         tfKeywords.setText(searchParams.getKeywords());
         tbCase.setSelected(searchParams.isCaseSensitive());
         fileFilterButtonGroup.setSelectedFileType(searchParams.getFileTypeName());
@@ -155,7 +167,8 @@ public class SearchResultPane extends AnchorPane {
     }
 
     private void updateSearchResult() {
-        label.setText("Found %d files in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
+//        label.setText("Found %d files in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
+        label.setText("Found %d files.".formatted(foundFiles.size()));
         rootItem.getChildren().clear();
         for (FoundFile foundFile : foundFiles) {
             TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile.getFile()));

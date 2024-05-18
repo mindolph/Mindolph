@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
  *
  *
  * @author mindolph.com@gmail.com
+ * @see PreferenceItem
  */
 public class PreferenceItemSkin extends SkinBase<PreferenceItem> {
     private static final double DEFAULT_PADDING = 4f;
