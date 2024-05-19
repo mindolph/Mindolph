@@ -9,11 +9,18 @@
    <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <PreferenceItem name="Font file path for export to PDF:">
+      </PreferenceItem>
+      <PreferenceItem name="Sans-serif:">
          <HBox spacing="4">
-            <TextField fx:id="tfFontFile" minWidth="200.0" prefWidth="400.0"/>
-            <Button fx:id="btnSelect" mnemonicParsing="false" text="Select"/>
+            <TextField fx:id="tfSansFontFile" minWidth="200.0" prefWidth="400.0"/>
+            <Button fx:id="btnSelectSans" mnemonicParsing="false" text="Select"/>
          </HBox>
-
+      </PreferenceItem>
+      <PreferenceItem name="Fixed-width:">
+         <HBox spacing="4">
+            <TextField fx:id="tfMonoFontFile" minWidth="200.0" prefWidth="400.0"/>
+            <Button fx:id="btnSelectMono" mnemonicParsing="false" text="Select"/>
+         </HBox>
       </PreferenceItem>
    </VBox>
 </fx:root>

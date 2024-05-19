@@ -45,6 +45,12 @@ public interface PrefConstants {
     String PREF_KEY_MMD_UNFOLD_COLLAPSED_TARGET = "mmd.unfoldCollapsedTarget";
     String PREF_KEY_MMD_COPY_COLOR_INFO_TO_NEW_CHILD = "mmd.copyColorInfoToNewChild";
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
+
+    /**
+     * @deprecated
+     */
     String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
+    String PREF_KEY_MD_SANS_FONT_FILE = "md.fontFilePath.sans";
+    String PREF_KEY_MD_MONO_FONT_FILE = "md.fontFilePath.mono";
 
 }

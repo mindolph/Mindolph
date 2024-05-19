@@ -59,7 +59,9 @@ public final class HtmlBuilder {
 
     private String markdownClassName;
 
-    private File pdfFontFile;
+    // for PDF export
+    private File sansFontFile;
+    private File monoFontFile;
 
     private Set<File> images;
 
@@ -145,11 +147,12 @@ public final class HtmlBuilder {
     /**
      * Font file for exporting PDF with correct font.
      *
-     * @param fontFile
+     * @param sansFontFile
      * @return
      */
-    public HtmlBuilder pdf(File fontFile) {
-        this.pdfFontFile = fontFile;
+    public HtmlBuilder pdf(File sansFontFile, File monoFontFile) {
+        this.sansFontFile = sansFontFile;
+        this.monoFontFile = monoFontFile;
         return this;
     }
 
@@ -204,10 +207,10 @@ public final class HtmlBuilder {
 //                    <link rel="stylesheet" href="https://github.com/sindresorhus/github-markdown-css/blob/main/github-markdown.css"/>
 //                    """;
             ret = """
-                    <article class="markdown-body">
+                    <article class="%s">
                     %s
                     </article>
-                    """.formatted(ret);
+                    """.formatted(this.markdownClassName, ret);
         }
 
         String styles = null;
@@ -218,29 +221,34 @@ public final class HtmlBuilder {
                     </style>
                     """.formatted(css);
         }
-        if (pdfFontFile != null && pdfFontFile.exists() && pdfFontFile.canRead()) {
-            String fontFileUri;
-            if (SystemUtils.IS_OS_WINDOWS) {
-                // for Windows file URI: replace it's '\' to '/' and add an extra '/' as prefix.
-                fontFileUri = "/" + StringUtils.replace(pdfFontFile.getPath(), "\\", "/");
-            }
-            else {
-                fontFileUri = pdfFontFile.getPath();
-            }
+        if (fontFileAvailable(sansFontFile) || fontFileAvailable(monoFontFile)) {
+            // build with font file for PDF export
             styles = """
                     %s
                     <style>
                     @font-face {
-                      font-family: 'pdf-font';
+                      font-family: 'pdf-font-sans';
                       src: url('file://%s');
                       font-weight: normal;
                       font-style: normal;
                     }
-                    * {
-                      font-family: 'pdf-font', sans-serif;
+                    @font-face {
+                      font-family: 'pdf-font-mono';
+                      src: url('file://%s');
+                      font-weight: normal;
+                      font-style: normal;
+                    }
+                    body {
+                      font-family: 'pdf-font-sans', sans-serif;
+                    }
+                    var,
+                    code,
+                    kbd,
+                    pre {
+                      font: 0.9em 'pdf-font-mono', Consolas, "Liberation Mono", Menlo, Courier, monospace;
                     }
                     </style>
-                    """.formatted(styles, fontFileUri);
+                    """.formatted(styles, toFontFileUri(sansFontFile), toFontFileUri(monoFontFile));
         }
 
         String scripts = StringUtils.EMPTY;
@@ -301,6 +309,25 @@ public final class HtmlBuilder {
                     """.formatted(title, scripts, styles, ret);
         }
         return ret;
+    }
+
+    private boolean fontFileAvailable(File fontFile) {
+        return sansFontFile != null && sansFontFile.exists() && sansFontFile.canRead();
+    }
+
+    private String toFontFileUri(File fontFile) {
+        if (fontFile == null) {
+            return StringUtils.EMPTY;
+        }
+        String fontFileUri;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            // for Windows file URI: replace it's '\' to '/' and add an extra '/' as prefix.
+            fontFileUri = "/" + StringUtils.replace(fontFile.getPath(), "\\", "/");
+        }
+        else {
+            fontFileUri = fontFile.getPath();
+        }
+        return fontFileUri;
     }
 
 }
