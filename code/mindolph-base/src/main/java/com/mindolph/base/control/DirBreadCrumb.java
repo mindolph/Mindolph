@@ -11,14 +11,21 @@ import java.util.List;
 
 import static com.mindolph.base.control.DirBreadCrumb.Crumb;
 
+/**
+ * @since 1.8
+ */
 public class DirBreadCrumb extends BreadCrumbBar<Crumb> {
 
-
+    /**
+     * Init the bread crumb bar with base workspace dir and target dir.
+     *
+     * @param workspaceDir
+     * @param displayDir
+     */
     public void init(File workspaceDir, File displayDir) {
-        Path path = null;
         try {
             Path workspacePath = Path.of(workspaceDir.toURI());
-            path = Path.of(displayDir.toURI());
+            Path path = Path.of(displayDir.toURI());
             List<Crumb> ret = new ArrayList<>();
             Path cur = path;
             do {
@@ -27,7 +34,6 @@ public class DirBreadCrumb extends BreadCrumbBar<Crumb> {
                 }
                 ret.add(new Crumb(cur));
                 cur = cur.getParent();
-                System.out.println(cur);
             } while(cur !=null);
             Collections.reverse(ret);
             TreeItem<Crumb> pathTreeItem = BreadCrumbBar.buildTreeModel(ret.toArray(new Crumb[]{}));
@@ -35,7 +41,6 @@ public class DirBreadCrumb extends BreadCrumbBar<Crumb> {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public record Crumb(Path path){
