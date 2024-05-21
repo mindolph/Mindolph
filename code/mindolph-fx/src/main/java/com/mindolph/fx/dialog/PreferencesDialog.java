@@ -56,6 +56,8 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     @FXML
     private Tab tabGenAi;
 
+    private static int lastActivatedTagIndex = 0;
+
     private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
 
     public PreferencesDialog() {
@@ -90,17 +92,21 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 //        plantumlPreferences.loadPreferences();
         genAiPreferences.loadPreferences();
 
+        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> lastActivatedTagIndex = newValue.intValue());
+
         Platform.runLater(() -> {
             tabPane.setTabIcon(tabGeneral, FontIconManager.getIns().getIcon(IconKey.GEAR));
             tabPane.setTabIcon(tabFont, FontIconManager.getIns().getIcon(IconKey.FONT));
             tabPane.setTabIcon(tabMindMap, FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
             tabPane.setTabIcon(tabMarkdown, FontIconManager.getIns().getIcon(IconKey.FILE_MD));
             tabPane.setTabIcon(tabGenAi, FontIconManager.getIns().getIcon(IconKey.MAGIC));
+            this.selectTab(lastActivatedTagIndex);
         });
     }
 
     public void selectTab(int initialTabIndex) {
         tabPane.getSelectionModel().select(initialTabIndex);
+        lastActivatedTagIndex = initialTabIndex;
     }
 
     public void selectTab(String name) {
@@ -108,6 +114,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
             if (name.equals(tab.getUserData())) {
                 int i = tabPane.getTabs().indexOf(tab);
                 tabPane.getSelectionModel().select(i);
+                lastActivatedTagIndex = i;
                 break;
             }
         }
