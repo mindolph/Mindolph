@@ -773,6 +773,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             }
             if (changed) {
                 onMindMapModelChanged(true);
+                ensureVisibilityOfTopic(lastSelectedTopic);
             }
         }
     }
