@@ -1,6 +1,6 @@
 package com.mindolph.base.plugin;
 
-import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.GenAiEvents.Output;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
@@ -36,10 +36,20 @@ public interface Generator {
     void setOnComplete(Consumer<Boolean> consumer);
 
     // should be called in a new thread
-    void setOnGenerated(Consumer<GenAiEvents.Output> consumer);
+    void setOnGenerated(Consumer<Output> consumer);
 
+    /**
+     * Listen on panel showing.
+     *
+     * @param consumer
+     */
     void setOnPanelShowing(Consumer<StackPane> consumer);
 
+    /**
+     * Set parent pane to display user input panel.
+     *
+     * @param pane
+     */
     void setParentPane(Pane pane);
 
     void setParentSkin(SkinBase<?> parentSkin);
