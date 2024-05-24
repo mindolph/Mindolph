@@ -26,7 +26,7 @@ public class LayoutUtils {
         double padHeight = extraPadding == null ? 1f : extraPadding.getHeight(); // use 1 to avoid calculation bias
         double offsetX = (parentBounds.getMaxX() - padWidth) - hoverBounds.getMaxX();
         double offsetY = (parentBounds.getMaxY() - padHeight) - hoverBounds.getMaxY();
-        // different strategy from x and y
+        // different strategy from x to y
         double newX = offsetX > 0 ? hoverBounds.getMinX() : hoverBounds.getMinX() + offsetX;
         double newY = offsetY > 0 ? hoverBounds.getMinY() : hoverBounds.getMinY() - hoverBounds.getHeight() - targetDim.getHeight() - padHeight;
         newX = Math.max(0, newX);
