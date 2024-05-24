@@ -254,6 +254,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     if (opt.isPresent()) {
                         Generator generator = opt.get();
 //                    generator.setParentSkin(parentSkin);
+                        // the parent panel is the editor itself for mind map.
                         generator.setParentPane(super.getParentPane());
                         MenuItem menuItem = generator.contextMenuItem(null);
                         ctxMenu.getItems().add(menuItem);
@@ -261,36 +262,42 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");
                         });
                         generator.setOnPanelShowing(pane -> {
-                            // do calculation on layout bounds changes to mark sure that the bounds is calculated.
+                            // do calculation on layout bounds changes to make sure that the bounds is calculated.
                             pane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
                                 if (oldValue.equals(newValue) || newValue.getWidth() == 0 || newValue.getHeight() == 0) {
                                     return;
                                 }
-                                pane.setVisible(false); // avoid flashing
                                 super.setDisable(true);
                                 Bounds panelBounds = pane.getBoundsInParent();
                                 // retrieve the element from topic because the original one might have been changed.
                                 BaseElement element = (BaseElement) super.getFirstSelectedTopic().getPayload();
-                                Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
-                                log.debug("bounds of topic in viewport: %s".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
-                                log.debug("bounds of pane: %s".formatted(BoundsUtils.boundsInString(panelBounds)));
-                                log.debug("dimension of pane: %sx%s".formatted(pane.getWidth(), pane.getHeight()));
 
-                                Bounds hoverBounds = BoundsUtils.fromPoint(new Point2D(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY()),
-                                        pane.getWidth(), pane.getHeight());
+                                // the selected topic might be out of viewport once generated topics are appended to it,
+                                // so before locating panel, the scrolling should be done first.
+                                scrollDoneEvents.subscribeFor(1, unused -> {
+                                    pane.setVisible(false); // avoid flashing
+                                    Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
+                                    log.debug("bounds of topic in viewport: %s".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
+                                    log.debug("bounds of pane: %s".formatted(BoundsUtils.boundsInString(panelBounds)));
+                                    log.debug("dimension of pane: %sx%s".formatted(pane.getWidth(), pane.getHeight()));
 
-                                Bounds parentBounds = super.getParentPane().getBoundsInParent();
-                                log.debug("target bounds: " + BoundsUtils.boundsInString(parentBounds));
-                                log.debug("hover bounds: " + BoundsUtils.boundsInString(hoverBounds));
-                                Point2D newPoint = LayoutUtils.bestLocation(parentBounds, hoverBounds, GeometryConvertUtils.boundsToDimension2D(boundsInViewPort),
-                                        new Dimension2D(config.getTheme().getSelectLineWidth(), config.getTheme().getSelectLineWidth()));
-                                log.debug("relocated to new point: %s".formatted(PointUtils.pointInStr(newPoint)));
+                                    Bounds parentBounds = getParentPane().getBoundsInParent();
+                                    Bounds hoverBounds = BoundsUtils.fromPoint(new Point2D(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY()),
+                                            pane.getWidth(), pane.getHeight());
+                                    log.debug("parent bounds: %s".formatted(BoundsUtils.boundsInString(parentBounds)));
+                                    log.debug("hover bounds: %s".formatted(BoundsUtils.boundsInString(hoverBounds)));
+                                    Point2D newPoint = LayoutUtils.bestLocation(parentBounds, hoverBounds, GeometryConvertUtils.boundsToDimension2D(boundsInViewPort),
+                                            new Dimension2D(config.getTheme().getSelectLineWidth(), config.getTheme().getSelectLineWidth()));
+                                    log.debug("relocated to new point: %s".formatted(PointUtils.pointInStr(newPoint)));
 
-                                Platform.runLater(() -> {
-                                    pane.relocate(newPoint.getX(), newPoint.getY() + config.getTheme().getSelectLineWidth());
-                                    pane.setVisible(true);
-                                    pane.requestFocus();
+                                    Platform.runLater(() -> {
+                                        pane.relocate(newPoint.getX(), newPoint.getY() + config.getTheme().getSelectLineWidth());
+                                        pane.setVisible(true);
+                                        pane.requestFocus();
+                                    });
                                 });
+                                ensureVisibilityOfTopic(getFirstSelectedTopic());
+
                             });
                         });
                         generator.setOnGenerated(output -> {
