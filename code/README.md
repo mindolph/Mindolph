@@ -59,7 +59,7 @@ mvn package -Dmaven.test.skip=true -Paliyun
 
 * Install JavaFX jmods:  
 
-    Download JavaFX 21 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-21/`
+    Download latest JavaFX 21 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-21/`
 
     Set environment variable:  
     ```shell
