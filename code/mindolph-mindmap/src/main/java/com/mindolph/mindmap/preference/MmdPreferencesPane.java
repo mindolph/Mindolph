@@ -178,7 +178,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 mindMapConfig.getTheme().loadFromPreferences();
             }
             this.initControlsFromPreferences();
-            this.save(true);
+            this.onSave(true);
             // bind
             this.bindTheme();
             // toggle disable state of theme controls by theme type and specific items.
@@ -418,7 +418,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             if (isLoaded) {
                 log.debug("Save preference to cache from control: %s".formatted(property.getBean()));
                 saveFunction.accept(newValue);
-                save(false);
+                onSave(false);
                 changed = true;
             }
         };
@@ -437,7 +437,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
 //        this.initControlsFromPreferences(); // reset all customized preferences by setting value of controls.
     }
 
-    public void save(boolean notify) {
+    public void onSave(boolean notify) {
         if (!changed) {
             return;
         }

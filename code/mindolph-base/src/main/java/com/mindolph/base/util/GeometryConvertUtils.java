@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 public class GeometryConvertUtils {
 
     public static Rectangle rectangle2D2Rectangle(Rectangle2D rectangle2D) {
-        return new Rectangle(rectangle2D.getMinX(), rectangle2D.getMinY(),rectangle2D.getWidth(), rectangle2D.getHeight());
+        return new Rectangle(rectangle2D.getMinX(), rectangle2D.getMinY(), rectangle2D.getWidth(), rectangle2D.getHeight());
     }
 
     public static Bounds rectangle2Bounds(Rectangle2D rect) {
@@ -22,11 +22,15 @@ public class GeometryConvertUtils {
         return new BoundingBox(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
 
-    public static Bounds dimension2DToBounds(Dimension2D dim) {
-        return new BoundingBox(0, 0, dim.getWidth(), dim.getHeight());
+    public static Rectangle2D boundsToRectangle2D(Bounds bounds) {
+        return new Rectangle2D(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
     }
 
-    public static Rectangle2D boundsToRectangle2D(Bounds bounds) {
-        return new Rectangle2D(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(),  bounds.getHeight());
+    public static Dimension2D boundsToDimension2D(Bounds bounds) {
+        return new Dimension2D(bounds.getWidth(), bounds.getHeight());
+    }
+
+    public static Bounds dimension2DToBounds(Dimension2D dim) {
+        return new BoundingBox(0, 0, dim.getWidth(), dim.getHeight());
     }
 }

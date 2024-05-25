@@ -9,8 +9,8 @@
 --input ${project.build.directory}/dependency
 --runtime-image ${project.build.directory}/jvm-image
 --temp ${project.build.directory}/installer-work
---java-options '${log4j.config} -Xms128M -Xmx512M -Dhttps.protocols=TLSv1.2,TLSv1.1,SSLv3'
+--java-options '${log4j.config} -Xms128M -Xmx512M -Djdk.tls.client.protocols=TLSv1.3 -Dhttps.protocols=TLSv1.3,TLSv1.2,TLSv1.1,SSLv3'
 --linux-menu-group 'Office'
---linux-deb-maintainer 'awsksupport@gmail.com'
+--linux-deb-maintainer 'mindolph.com@gmail.com'
 --linux-app-category 'Office'
 --linux-package-deps

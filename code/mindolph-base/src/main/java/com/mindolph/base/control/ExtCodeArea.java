@@ -3,25 +3,23 @@ package com.mindolph.base.control;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants;
-import com.mindolph.base.plugin.Plugin;
-import com.mindolph.base.plugin.PluginManager;
-import com.mindolph.base.util.EventUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.Pane;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CaretSelectionBind;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.Paragraph;
@@ -31,7 +29,6 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.swiftboot.util.pref.PreferenceManager;
 
 import java.time.Duration;
 import java.util.*;
@@ -64,16 +61,8 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
-    private final EventSource<String> inputHelpSource = new EventSource<>();
-
-    private final InputHelperManager inputHelperManager;
-
-    // Indicate that whether the input method is using, if true, the input helper is paused until it becomes false.
-    private boolean isInputMethod = false;
-
 
     public ExtCodeArea() {
-        this.inputHelperManager = new InputHelperManager(this.hashCode(), getFileType());
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
         this.setOnContextMenuRequested(contextMenuEvent -> {
@@ -85,8 +74,6 @@ public class ExtCodeArea extends CodeArea {
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
-        this.bindCaretCoordinate();
-        this.bindInputHelper();
     }
 
     public void refresh() {
@@ -97,7 +84,12 @@ public class ExtCodeArea extends CodeArea {
         historySource.push(null);
     }
 
-    private ContextMenu createContextMenu() {
+    /**
+     * Override and call this method in sub-class if you want to add more menu items.
+     *
+     * @return
+     */
+    protected ContextMenu createContextMenu() {
         ContextMenu menu = new ContextMenu();
         MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
         MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
@@ -126,84 +118,6 @@ public class ExtCodeArea extends CodeArea {
         return menu;
     }
 
-    /**
-     * Parent pane is for showing input helper.
-     *
-     * @param parentPane The pane must only contain the code area
-     */
-    public void withParentPane(Pane parentPane) {
-        inputHelperManager.setParentPane(parentPane);
-    }
-
-    // @since 1.6
-    private void bindCaretCoordinate() {
-        this.caretBoundsProperty().addListener((observable, oldValue, newValue) -> {
-            newValue.ifPresent(bounds -> inputHelperManager.updateCaret(bounds.getMaxX(), bounds.getMaxY()));
-        });
-    }
-
-    // @since 1.6
-    private void bindInputHelper() {
-        // delay update context text to reduce redundant calculating.
-        // TODO better way is to do updating when new word completed and any other actions that makes text change completed.
-        inputHelpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(INPUT_HELP_DELAY_IN_MILLIS))
-                .subscribe(s -> {
-                    // non-blocking
-                    new Thread(() -> {
-                        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
-                        for (Plugin plugin : plugins) {
-                            plugin.getInputHelper().updateContextText(this.hashCode(), s);
-                        }
-                    }
-                    ).start();
-                });
-
-        // prepare the context words
-        this.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!isInputHelperEnabled()) {
-                return;
-            }
-            if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
-        });
-
-        // stop helping when paragraph is changed by like mouse click.
-        this.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
-            if (!isInputHelperEnabled()) {
-                return;
-            }
-            inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, null);
-        });
-
-        // Insert selected text from input helper.
-        inputHelperManager.onSelected((selection) -> {
-            if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
-                int start = selection.input().length();
-                this.deleteText(this.getCaretPosition() - start, this.getCaretPosition());
-                this.insertText(this.getCaretPosition(), selection.selected());
-//                this.insertText(this.getCaretPosition(), StringUtils.substring(selection.selected(), start));
-            }
-            this.requestFocus(); // take back focus from input helper
-        });
-    }
-
-    @Override
-    protected void handleInputMethodEvent(InputMethodEvent event) {
-        super.handleInputMethodEvent(event);
-//        if (!isInputHelperEnabled()) {
-//            log.debug("'%s'%n", event.getCommitted());
-//            return;
-//        }
-        if (StringUtils.isBlank(event.getCommitted())) {
-            isInputMethod = true;
-            log.debug("in input method");
-            this.insertText(this.getCaretPosition(), event.getCommitted());
-        }
-        else {
-            isInputMethod = false;
-            log.debug("not in input method with: " + event.getCommitted());
-            inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
-        }
-    }
 
     public void addFeatures(FEATURE... features) {
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();
@@ -318,70 +232,10 @@ public class ExtCodeArea extends CodeArea {
                     EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
             ));
         }
-
-        inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.UP), keyEvent -> {
-            if (!isInputMethod) {
-                if (isInputHelperEnabled()) {
-                    inputHelperManager.consume(keyEvent, null);
-                    if (!keyEvent.isConsumed()) {
-                        // move caret implicitly
-                        moveCaret(DIRECTION_UP);
-                    }
-                }
-                else {
-                    moveCaret(DIRECTION_UP);
-                }
-            }
-        }));
-        inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.DOWN), keyEvent -> {
-            if (!isInputMethod) {
-                if (isInputHelperEnabled()) {
-                    inputHelperManager.consume(keyEvent, null);
-                    if (!keyEvent.isConsumed()) {
-                        // move caret implicitly
-                        moveCaret(DIRECTION_DOWN);
-                    }
-                }
-                else {
-                    moveCaret(DIRECTION_DOWN);
-                }
-            }
-        }));
-        inputMaps.add(InputMap.consume(EventPattern.keyPressed(KeyCode.ENTER), keyEvent -> {
-            if (!isInputMethod) {
-                if (isInputHelperEnabled()) {
-                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
-                    if (!keyEvent.isConsumed()) {
-                        // line break implicitly
-                        this.replaceSelection("\n");
-                    }
-                }
-                else {
-                    // line break implicitly
-                    this.replaceSelection("\n");
-                }
-            }
-        }));
-        inputMaps.add(InputMap.consume(EventPattern.keyReleased(), keyEvent -> {
-            if (isInputHelperEnabled() && !isInputMethod && !isUpOrDown(keyEvent)) {
-                if (EventUtils.isEditableInput(keyEvent)) {
-                    inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
-                }
-            }
-        }));
         Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
     }
 
-
-    private boolean isInputHelperEnabled() {
-        return PreferenceManager.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
-    }
-
-    private boolean isUpOrDown(KeyEvent keyEvent) {
-        return KeyCode.UP.equals(keyEvent.getCode()) || KeyCode.DOWN.equals(keyEvent.getCode());
-    }
-
-    private String extractLastWordFromCaret() {
+    protected String extractLastWordFromCaret() {
         int caretPosition = getCaretPosition();
         StringBuilder sb = new StringBuilder();
         String text = this.getText();
@@ -414,7 +268,7 @@ public class ExtCodeArea extends CodeArea {
      * @param direction
      * @since 1.6.4
      */
-    private void moveCaret(int direction) {
+    protected void moveCaret(int direction) {
         int idx = this.getCurrentParagraph();
         int currentLine = super.lineIndex(idx, super.getCaretColumn());
         int lineCount = super.getParagraphLinesCount(idx);
@@ -696,7 +550,6 @@ public class ExtCodeArea extends CodeArea {
         IndexRange selection = this.getSelection();
         String selectedText = super.getSelectedText();
         super.replaceSelection(head + selectedText + tail);
-        System.out.println(selection);
         if (selection.getLength() > 0) {
             this.selectRange(selection.getStart(), selection.getEnd() + head.length() + tail.length());
         }
@@ -709,6 +562,17 @@ public class ExtCodeArea extends CodeArea {
         int curParIdx = this.getCurrentParagraph();
         Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
         return paragraph.getText();
+    }
+
+    // @since 1.7
+    public Bounds getCaretInLocal() {
+        return super.screenToLocal(getCaretBounds().orElse(BoundsUtils.newZero()));
+    }
+
+    // @since 1.7
+    public double getLineHeight() {
+        VirtualFlow<?, ?> vf = (VirtualFlow<?, ?>) this.lookup(".virtual-flow");
+        return vf.visibleCells().get(0).getNode().getLayoutBounds().getHeight();
     }
 
     public String getFileType() {

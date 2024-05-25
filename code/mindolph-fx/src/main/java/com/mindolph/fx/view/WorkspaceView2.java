@@ -25,6 +25,7 @@ import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.core.template.Template;
 import com.mindolph.core.util.FileNameUtils;
+import com.mindolph.core.util.TimeUtils;
 import com.mindolph.csv.CsvMatcher;
 import com.mindolph.fx.dialog.FileReferenceDialog;
 import com.mindolph.fx.dialog.FindInFilesDialog;
@@ -63,15 +64,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.mindolph.base.util.MindolphFileUtils.deleteMacFile;
 import static com.mindolph.base.util.MindolphFileUtils.isFolderEmpty;
 import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static com.mindolph.core.constant.SupportFileTypes.*;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
  * Load workspaces.
@@ -207,11 +208,12 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         rootItem.setExpanded(true);
         treeView.setRoot(rootItem);
         treeView.setShowRoot(false);
+        treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         treeView.setOnKeyPressed(event -> {
             log.debug("key pressed: %s".formatted(event.getCode()));
             if (event.getCode() == KeyCode.ENTER) {
-                openSelectedFile();
+                openSelectedFiles();
                 event.consume();
             }
         });
@@ -259,6 +261,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 log.debug("Drop %d files to %s".formatted(nodeDatas.size(), toDir.getPath()));
                 TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
                 moveToTreeItem(nodeDatas, treeItemFolder);
+                treeView.getSelectionModel().clearSelection();
             });
             return cell;
         });
@@ -359,6 +362,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             return;
         }
         boolean needReload = false;
+        List<File> failedFiles = new LinkedList<>();
         for (NodeData nodeData : nodeDatas) {
             File fileToBeMoved = nodeData.getFile();
             // update the tree
@@ -390,7 +394,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     needReload = true;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    throw new RuntimeException("Moving file failed");
+                    failedFiles.add(nodeData.getFile());
+//                    throw new RuntimeException("Moving file failed");
                 }
             }
         }
@@ -406,6 +411,9 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 targetTreeItem.setExpanded(true);
             }
             treeView.refresh();
+        }
+        if (!failedFiles.isEmpty()) {
+            DialogFactory.warnDialog("Failed files: \n" + StringUtils.join(failedFiles, LINE_SEPARATOR));
         }
     }
 
@@ -551,8 +559,16 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         return folderItem;
     }
 
+    public TreeItem<NodeData> addFolderAndSelect(TreeItem<NodeData> parent, NodeData folderData) {
+        TreeItem<NodeData> folderItem = this.addFolder(parent, folderData);
+        treeView.getSelectionModel().clearSelection();
+        treeView.getSelectionModel().select(folderItem);
+        return folderItem;
+    }
+
     public TreeItem<NodeData> addFileAndSelect(TreeItem<NodeData> parent, NodeData fileData) {
         TreeItem<NodeData> treeItem = this.addFile(parent, fileData);
+        treeView.getSelectionModel().clearSelection();
         treeView.getSelectionModel().select(treeItem);
         return treeItem;
     }
@@ -579,7 +595,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             if (nodeData.isFile()) {
                 if (!nodeData.getFile().exists()) {
                     DialogFactory.errDialog("File doesn't exist, it might be deleted or moved externally.");
-                    removeTreeNode(nodeData);
+                    removeTreeNode(nodeData, true);
                     EventBus.getIns().notifyDeletedFile(nodeData);
                     return;
                 }
@@ -589,15 +605,31 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
     }
 
+    private void openSelectedFiles() {
+        List<NodeData> selectedItemsData = getSelectedItemsData();
+        for (NodeData snd : selectedItemsData) {
+            if (snd.isFile()) {
+                if (!snd.getFile().exists()) {
+                    removeTreeNode(snd, true);
+                    EventBus.getIns().notifyDeletedFile(snd);
+                    continue;
+                }
+                log.info("Open file: " + snd.getFile());
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(snd.getFile()));
+            }
+        }
+    }
+
 
     private ContextMenu createItemContextMenu(TreeItem<NodeData> treeItem) {
         ContextMenu contextMenu = new ContextMenu();
+        boolean isSingleSelected = treeView.getSelectionModel().getSelectedItems().size() == 1;
         if (treeItem != null) {
             log.debug("create context menu for item: " + treeItem.getValue().getName());
             NodeData nodeData = treeItem.getValue();
             boolean isFolder = !nodeData.isFile();
             boolean isFile = nodeData.isFile();
-            if (isFolder) {
+            if (isFolder && isSingleSelected) {
                 Menu miNew = createMenuNew();
                 contextMenu.getItems().add(miNew);
             }
@@ -608,7 +640,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 contextMenu.getItems().add(miOpenFile);
 
                 Menu miCopy = new Menu("Copy");
-                miCopyFile = new MenuItem("File", FontIconManager.getIns().getIcon(IconKey.FILE));
+                miCopyFile = new MenuItem("File(s)", FontIconManager.getIns().getIcon(IconKey.FILE));
                 miCopyPathAbsolute = new MenuItem("Absolute Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32));
                 miCopyPathRelative = new MenuItem("Relative Path: " + StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32));
                 miCopyPathAbsolute.setMnemonicParsing(false);
@@ -619,21 +651,23 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 miCopy.getItems().addAll(miCopyFile, miCopyPathAbsolute, miCopyPathRelative);
                 contextMenu.getItems().add(miCopy);
             }
-            if (isFolder) {
+            if (isFolder && isSingleSelected) {
                 miPasteFile = new MenuItem("Paste");
                 miPasteFile.setDisable(!Clipboard.getSystemClipboard().hasFiles());
                 miPasteFile.setOnAction(this);
                 contextMenu.getItems().add(miPasteFile);
             }
-            miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
-            miRename.setOnAction(this);
-            contextMenu.getItems().addAll(miRename);
-            if (isFolder) {
+            if (isSingleSelected) {
+                miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
+                miRename.setOnAction(this);
+                contextMenu.getItems().addAll(miRename);
+            }
+            if (isFolder && isSingleSelected) {
                 miReload = new MenuItem("Reload", FontIconManager.getIns().getIcon(IconKey.REFRESH));
                 miReload.setOnAction(this);
                 contextMenu.getItems().addAll(miReload);
             }
-            else if (nodeData.isFile()) {
+            else if (nodeData.isFile() && isSingleSelected) {
                 miClone = new MenuItem("Clone", FontIconManager.getIns().getIcon(IconKey.CLONE));
                 miClone.setOnAction(this);
                 contextMenu.getItems().add(miClone);
@@ -641,21 +675,23 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
             miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setOnAction(this);
             contextMenu.getItems().addAll(miDelete);
-            if (!nodeData.isMindMap()) {
+            if (!nodeData.isMindMap() && isSingleSelected) {
                 miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
                 miOpenInSystem.setOnAction(this);
                 contextMenu.getItems().add(miOpenInSystem);
             }
-            if (isFolder) {
+            if (isFolder && isSingleSelected) {
                 miCollapseAll = new MenuItem("Collapse All", FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
                 miCollapseAll.setOnAction(this);
                 miFindFiles = new MenuItem("Find in Files", FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
-            miUsage = new MenuItem("Find Usage");
-            miUsage.setOnAction(this);
-            contextMenu.getItems().add(miUsage);
+            if (isSingleSelected) {
+                miUsage = new MenuItem("Find Usage");
+                miUsage.setOnAction(this);
+                contextMenu.getItems().add(miUsage);
+            }
         }
         return contextMenu;
     }
@@ -734,6 +770,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                 if (curNodeData.getFile().equals(nodeData.getFile())) {
                     log.debug("Found tree item to select");
                     treeItem.setExpanded(true);
+                    treeView.getSelectionModel().clearSelection();
                     treeView.getSelectionModel().select(treeItem);
                     return treeItem; // stop traversing
                 }
@@ -840,7 +877,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         if (userData == null) return false;
         Template template = (Template) userData;
         try {
-            String snippet = template.getContent().formatted(this.createTimestamp(), FilenameUtils.getBaseName(newFile.getName()));
+            String snippet = template.getContent().formatted(TimeUtils.createTimestamp(), FilenameUtils.getBaseName(newFile.getName()));
             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
             return true;
         } catch (IOException e) {
@@ -859,6 +896,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         MenuItem source = (MenuItem) event.getSource();
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
         NodeData selectedData = selectedTreeItem.getValue(); // use selected tree item as target even for workspace folder(the root item), because the user data of tree item might be used for other purpose.
+        List<NodeData> selectedNodes = getSelectedItemsData();
         if (selectedData == null || selectedData.getFile() == null) {
             return;
         }
@@ -879,7 +917,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         selectedTreeItem.setExpanded(true);
                         NodeData folderData = new NodeData(NodeType.FOLDER, newDir);
                         folderData.setWorkspaceData(selectedData.getWorkspaceData());
-                        addFolder(selectedTreeItem, folderData);
+                        this.addFolderAndSelect(selectedTreeItem, folderData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
                     }
                 }
@@ -937,7 +975,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     else if (TYPE_MARKDOWN.equals(fileType)) {
                         newFile = createEmptyFile(fileName, selectedData, "md");
                         if (newFile != null) {
-                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), createTimestamp());
+                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), TimeUtils.createTimestamp());
                             try {
                                 FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                             } catch (IOException e) {
@@ -958,23 +996,23 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                         selectedTreeItem.setExpanded(true);
                         NodeData nodeData = new NodeData(newFile);
                         nodeData.setWorkspaceData(selectedData.getWorkspaceData());
-                        addFile(selectedTreeItem, nodeData);
+                        this.addFileAndSelect(selectedTreeItem, nodeData);
                         EventBus.getIns().notifyOpenFile(new OpenFileEvent(newFile));
                     }
                 }
             }
         }
         else if (source == miOpenFile) {
-            this.openSelectedFile();
+            this.openSelectedFiles();
         }
         else if (source == miCopyFile) {
-            ClipBoardUtils.filesToClipboard(Collections.singletonList(selectedData.getFile()));
+            ClipBoardUtils.filesToClipboard(selectedNodes.stream().map(NodeData::getFile).toList());
         }
         else if (source == miCopyPathAbsolute) {
-            ClipBoardUtils.textToClipboard(selectedData.getFile().getAbsolutePath());
+            ClipBoardUtils.textToClipboard(selectedNodes.stream().map(nodeData -> nodeData.getFile().getAbsolutePath()).collect(Collectors.joining(LINE_SEPARATOR)));
         }
         else if (source == miCopyPathRelative) {
-            ClipBoardUtils.textToClipboard(selectedData.getFileRelativePath());
+            ClipBoardUtils.textToClipboard(selectedNodes.stream().map(NodeData::getFileRelativePath).collect(Collectors.joining(LINE_SEPARATOR)));
         }
         else if (source == miPasteFile) {
             this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
@@ -1009,35 +1047,45 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         else if (source == miDelete) {
             if (selectedData != null) {
                 try {
-                    if (selectedData.getFile().isDirectory() && !isFolderEmpty(selectedData.getFile())) {
-                        DialogFactory.errDialog("You can not delete a folder with files.");
-                        return;
+                    for (NodeData sn : selectedNodes) {
+                        if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
+                            DialogFactory.errDialog("Deleting a folder with files is not allowed");
+                            return;
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
                 }
-                boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to delete %s".formatted(selectedData.getName())).showAndWait();
+                String summary = "Are you sure to delete %s".formatted(
+                        selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
+                );
+                boolean needDelete = new ConfirmDialogBuilder().yes().no().asDefault().content(summary).showAndWait();
 //                boolean needDelete = DialogFactory.yesNoConfirmDialog("Are you sure to delete %s".formatted(selectedData.getName()));
                 if (needDelete) {
-                    if (!this.beforeFilePathChanged(selectedData)) {
-                        log.debug("Cancel deleting file");
-                        return;
+                    for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
+                        NodeData sn = curItem.getValue();
+                        if (!this.beforeFilePathChanged(sn)) {
+                            log.debug("Cancel deleting file");
+                            return;
+                        }
+                        log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
+                        if (sn.getFile().isDirectory()) {
+                            deleteMacFile(sn.getFile());
+                        }
+                        try {
+                            FileUtils.delete(sn.getFile());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
+                            return;
+                        }
+                        curItem.getParent().getChildren().remove(curItem);
+                        // close opened file tab(if exists) and remove from recent list if exists
+                        EventBus.getIns().notifyDeletedFile(sn);
                     }
-                    log.info("Delete file: %s".formatted(selectedData.getFile()));
-                    if (selectedData.getFile().isDirectory()){
-                        deleteMacFile(selectedData.getFile());
-                    }
-                    try {
-                        FileUtils.delete(selectedData.getFile());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
-                        return;
-                    }
-                    // remove from recent list if exists
-                    EventBus.getIns().notifyDeletedFile(selectedData);
-                    removeTreeNode(selectedData);
+                    treeView.refresh();
+                    treeView.getSelectionModel().clearSelection();
                 }
             }
         }
@@ -1203,6 +1251,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         }
     }
 
+    private List<NodeData> getSelectedItemsData() {
+        return treeView.getSelectionModel().getSelectedItems().stream().map(TreeItem::getValue).toList();
+    }
+
     /**
      * Get the workspace node for selected node.
      *
@@ -1255,12 +1307,15 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
         });
     }
 
-    public void removeTreeNode(NodeData nodeData) {
+    public void removeTreeNode(NodeData nodeData, boolean safely) {
         TreeItem<NodeData> selectedTreeItem = getSelectedTreeItem();
-        if (selectedTreeItem.getValue() == nodeData) {
-            selectedTreeItem.getParent().getChildren().remove(selectedTreeItem);
-            treeView.refresh();
+        if (safely) {
+            if (selectedTreeItem.getValue() != nodeData) {
+                return;
+            }
         }
+        selectedTreeItem.getParent().getChildren().remove(selectedTreeItem);
+        treeView.refresh();
     }
 
     private boolean beforeFilePathChanged(NodeData nodeData) {
@@ -1297,11 +1352,8 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
     }
 
     private String createDefaultNote() {
-        return "This file is created by Mindolph at " + this.createTimestamp();
+        return "This file is created by Mindolph at " + TimeUtils.createTimestamp();
     }
 
-    private String createTimestamp() {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
-    }
 
 }

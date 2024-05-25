@@ -1,8 +1,6 @@
 package com.mindolph.base.control;
 
-import com.mindolph.base.plugin.InputHelper;
-import com.mindolph.base.plugin.Plugin;
-import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.base.plugin.*;
 import com.mindolph.core.constant.SupportFileTypes;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +8,7 @@ import javafx.fxml.Initializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -19,7 +18,7 @@ import java.util.ResourceBundle;
 public class ExtCodeAreaDemo implements Initializable {
 
     @FXML
-    private ExtCodeArea extCodeArea;
+    private SmartCodeArea extCodeArea;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -27,7 +26,7 @@ public class ExtCodeAreaDemo implements Initializable {
         PluginManager.getIns().registerPlugin(new TestPlugin());
     }
 
-    private static class TestPlugin implements Plugin {
+    private static class TestPlugin extends BasePlugin {
 
         @Override
         public Integer getOrder() {
@@ -40,8 +39,8 @@ public class ExtCodeAreaDemo implements Initializable {
         }
 
         @Override
-        public InputHelper getInputHelper() {
-            return new InputHelper() {
+        public Optional<InputHelper> getInputHelper() {
+            return Optional.of(new InputHelper() {
                 @Override
                 public List<String> getHelpWords(Object editorId) {
                     return null;
@@ -51,7 +50,13 @@ public class ExtCodeAreaDemo implements Initializable {
                 public void updateContextText(Object editorId, String text) {
 
                 }
-            };
+            });
+        }
+
+        @Override
+        public Optional<Generator> getGenerator(Object editorId, String fileType) {
+            // TODO
+            return Optional.empty();
         }
     }
 

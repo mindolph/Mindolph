@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.6.12</version>
+        <version>1.7.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -59,6 +59,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.mindolph</groupId>
+            <artifactId>mindolph-genai</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
@@ -91,7 +96,6 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>${richtextfx.version}</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.vladsch.flexmark</groupId>-->

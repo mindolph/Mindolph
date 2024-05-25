@@ -2,6 +2,8 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -11,14 +13,13 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
-import static com.mindolph.base.constant.PrefConstants.GENERAL_EDITOR_ORIENTATION_MD;
-import static com.mindolph.base.constant.PrefConstants.GENERAL_EDITOR_ORIENTATION_PUML;
+import static com.mindolph.base.constant.PrefConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -31,7 +32,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private CheckBox cbConfirmBeforeQuitting;
     @FXML
     private CheckBox cbOpenLastFiles;
-//    @FXML
+    //    @FXML
 //    private CheckBox ckbEnableAutoCreateProjectFolder;
     @FXML
     private CheckBox ckbShowHiddenFiles;
@@ -41,6 +42,21 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private TableView<OrientationItem> tvOrientation;
     @FXML
     private CheckBox cbEnableInputHelper;
+
+    @FXML
+    private CheckBox cbEnableProxy;
+    @FXML
+    private RadioButton rbHttp;
+    @FXML
+    private RadioButton rbSocks;
+    @FXML
+    private TextField tfProxyHost;
+    @FXML
+    private Spinner<Integer> spProxyPort;
+    @FXML
+    private TextField tfProxyUsername;
+    @FXML
+    private PasswordField pfProxyPassword;
 
 
     public GeneralPreferencesPane() {
@@ -85,7 +101,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                     return null;
                 }
             });
-            choiceBoxCell.getItems().addAll(Arrays.stream(Orientation.values()).map(e -> new Pair<>(e, e.toString())).collect(Collectors.toList()));
+            choiceBoxCell.getItems().addAll(Arrays.stream(Orientation.values()).map(e -> new Pair<>(e, e.toString())).toList());
             choiceBoxCell.getSelectionModel().select(new Pair<>(param.getValue().orientation, param.getValue().orientation.toString()));
             choiceBoxCell.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (PLANT_UML.equals(param.getValue().editor)) {
@@ -103,6 +119,25 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         tvOrientation.getItems().add(new OrientationItem(PLANT_UML, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_PUML, Orientation.class, Orientation.VERTICAL)));
         tvOrientation.getItems().add(new OrientationItem(MARKDOWN, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_MD, Orientation.class, Orientation.HORIZONTAL)));
         super.bindPreference(cbEnableInputHelper.selectedProperty(), PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
+
+        // proxy
+        super.bindPreference(cbEnableProxy.selectedProperty(), GENERAL_PROXY_ENABLE, false, aBoolean -> {
+            NodeUtils.setDisable(!aBoolean, rbHttp, rbSocks, tfProxyHost, spProxyPort, tfProxyUsername, pfProxyPassword);
+        });
+        ToggleGroup group = new ToggleGroup();
+        rbHttp.setToggleGroup(group);
+        rbSocks.setToggleGroup(group);
+
+        super.bindPreference(rbHttp.selectedProperty(), GENERAL_PROXY_TYPE, "HTTP",
+                aBoolean -> aBoolean ? "HTTP" : null, // null indicate that no event emits since it will cause exception.
+                str -> StringUtils.equals(str, "HTTP"));
+        super.bindPreference(rbSocks.selectedProperty(), GENERAL_PROXY_TYPE, "SOCKS",
+                aBoolean -> aBoolean ? "SOCKS" : null, // null indicate that no event emits since it will cause exception.
+                str -> StringUtils.equals(str, "SOCKS"));
+        super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
+        super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);
+        super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
+        super.bindPreference(pfProxyPassword.textProperty(), PrefConstants.GENERAL_PROXY_PASSWORD, "");
     }
 
     @Override
@@ -111,8 +146,9 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     }
 
     @Override
-    protected void save(boolean notify) {
-
+    protected void onSave(boolean notify) {
+        if (notify)
+            PluginEventBus.getIns().emitPreferenceChanges();
     }
 
     private record OrientationItem(String editor, Orientation orientation) {

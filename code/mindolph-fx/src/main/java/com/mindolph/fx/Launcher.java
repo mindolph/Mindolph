@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.mindolph.base.Env;
+import com.mindolph.genai.GenAiPlugin;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.data.DataMigrator;
@@ -10,9 +11,10 @@ import javafx.application.Application;
 
 /**
  * Launch with possible environment variables:
- * disable-reopen=True|false
- * disable-window-resize=true|False
  * dev=True|false
+ * disable-reopen=true|false
+ * disable-window-resize=true|false
+ * mock-llm=true|false
  *
  * If more log output required, add -Dlog4j2.configurationFile=log4j2-debug.xml to application arguments.
  * Add -Djdk.gtk.version=2 to JVM options if CJK input method is used on Linux.
@@ -35,6 +37,7 @@ public class Launcher {
         // register plugins TODO
         PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
         PluginManager.getIns().registerPlugin(new ContextHelperPlugin());
+        PluginManager.getIns().registerPlugin(new GenAiPlugin());
 
         Application.launch(Main.class, args);
     }

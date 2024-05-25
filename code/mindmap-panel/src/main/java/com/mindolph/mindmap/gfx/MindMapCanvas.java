@@ -115,10 +115,10 @@ public class MindMapCanvas {
             else {
                 if (log.isTraceEnabled())
                     log.trace(String.format("Draw background within %s", rectangleInStr(clipBounds)));
-                double beginX = clipBounds.getMinX() < 0 ? clipBounds.getMinX() : 0;
-                double beginY = clipBounds.getMinY() < 0 ? clipBounds.getMinY() : 0;
-                double totalWidth = (clipBounds.getWidth() + (clipBounds.getMinX() < 0 ? 0 : clipBounds.getMinX()));
-                double totalHeight = (clipBounds.getHeight() + (clipBounds.getMinY() < 0 ? 0 : clipBounds.getMinY()));
+                double beginX = Math.min(clipBounds.getMinX(), 0);
+                double beginY = Math.min(clipBounds.getMinY(), 0);
+                double totalWidth = (clipBounds.getWidth() + Math.max(clipBounds.getMinX(), 0));
+                double totalHeight = (clipBounds.getHeight() + Math.max(clipBounds.getMinY(), 0));
                 g.drawRect(beginX, beginY, totalWidth, totalHeight, null, config.getTheme().getPaperColor());
                 //g.drawRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height, null, cfg.getPaperColor());
 

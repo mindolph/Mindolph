@@ -1,3 +1,10 @@
+<p>
+	<a title="Releases" target="_blank" href="https://github.com/mindolph/Mindolph/releases"><img src="https://img.shields.io/github/release/mindolph/Mindolph.svg?style=flat-square&color=9CF"></a>
+	<a title="Downloads" target="_blank" href="https://github.com/mindolph/Mindolph/releases"><img src="https://img.shields.io/github/downloads/mindolph/Mindolph/total.svg?style=flat-square&color=blueviolet"></a>
+	<a title="GitHub Commits" target="_blank" href="https://github.com/mindolph/Mindolph/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/mindolph/Mindolph.svg?style=flat-square"></a>
+	<a title="Last Commit" target="_blank" href="https://github.com/mindolph/Mindolph/commits/main/"><img src="https://img.shields.io/github/last-commit/mindolph/Mindolph.svg?style=flat-square&color=FF9900"></a>
+</p>
+
 ### Mindolph
 
 ![](./DemoWorkspace/app_30.png)
@@ -14,7 +21,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 * Mind Map:
 	* Edit mind map easily and quickly with key shortcuts.
 	* Supports theme and provides some pre-defined themes(`Classic`, `Light` and `Dark`), customizing themes by duplicating existing theme and setup style of any element freely.
-	* Supports note, file link, URI link, image and emoticon for topic node. 
+	* Supports note, file link, URI link, image and emoticon for topic node.
 	* Import from other mind map formats like Freemind, Mindmup, XMind, Coggle, Novamind.
 	* Export to other file formats like Freemind, Markdown, image file(png/svg), AsciiDoc, etc.
 	* Compatible with files created by `netbeans-mmd-plugin`.
@@ -62,12 +69,13 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|Release Notes| |[v1.5.x](docs/release-notes/v1.5/v1.5.md)|[v1.6.x](docs/release-notes/v1.6/v1.6.md)| |
-|MacOS|.dmg|[v1.5.9](https://github.com/mindolph/Mindolph/releases/download/v1.5.9/Mindolph-1.5.9.dmg) |[v1.6.9](https://github.com/mindolph/Mindolph/releases/download/v1.6.9/Mindolph-1.6.6.dmg) | |
-|Windows|.msi|[v1.5.9](https://github.com/mindolph/Mindolph/releases/download/v1.5.9/Mindolph-1.5.9.msi) |[v1.6.9](https://github.com/mindolph/Mindolph/releases/download/v1.6.9/Mindolph-1.6.6.msi) | |
-|Debian|.deb|[v1.5.9](https://github.com/mindolph/Mindolph/releases/download/v1.5.9/Mindolph-1.5.9.deb)|[v1.6.9](https://github.com/mindolph/Mindolph/releases/download/v1.6.9/Mindolph-1.6.6.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.5.9](https://github.com/mindolph/Mindolph/releases/download/v1.5.9/Mindolph-1.5.9.rpm)|[v1.6.9](https://github.com/mindolph/Mindolph/releases/download/v1.6.9/Mindolph-1.6.6.rpm)| |
-|Java Executable|.jar|[v1.5.9](https://github.com/mindolph/Mindolph/releases/download/v1.5.9/Mindolph-1.5.9.jar)|[v1.6.9](https://github.com/mindolph/Mindolph/releases/download/v1.6.9/Mindolph-1.6.6.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.5.9.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web -jar  Mindolph-1.5.9.jar` |
+|Release Notes| |[v1.6.x](docs/release-notes/v1.6/v1.6.md)|[v1.7.x](docs/release-notes/v1.7/v1.7.md)| |
+|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-x64.dmg) |[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5-x64.dmg) | Intel |
+|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-aarch64.dmg) |[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.msi) |[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5.msi) | |
+|Debian|.deb|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.deb)|[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.rpm)|[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5.rpm)| |
+|Java Executable|.jar|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.jar)|[v1.7.5](https://github.com/mindolph/Mindolph/releases/download/v1.7.5/Mindolph-1.7.5.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.6.12.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.6.12.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -75,10 +83,9 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Development
 
-Mindolph is developed based on JavaFX, 
-see [code/README.md](code/README.md) for more details.
+Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for more details.
 
-Future Plan:  
+Future Plan:
+
 * 1.7: Experimental GenAI support.
 * 1.8: Improvement and refactor.
-

@@ -18,7 +18,7 @@ import java.util.Collection;
  *
  * @author mindolph.com@gmail.com
  */
-public class SearchableCodeArea extends ExtCodeArea {
+public class SearchableCodeArea extends SmartCodeArea {
 
     private static final Logger log = LoggerFactory.getLogger(SearchableCodeArea.class);
 
@@ -95,7 +95,8 @@ public class SearchableCodeArea extends ExtCodeArea {
     }
 
     public boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
-        if (StringUtils.isBlank(keywords)) {
+        // blank string CAN be replaced.
+        if (StringUtils.isEmpty(keywords)) {
             return false;
         }
         boolean match = isCaseSensitivity ? keywords.equals(getSelectedText()) : keywords.equalsIgnoreCase(getSelectedText());

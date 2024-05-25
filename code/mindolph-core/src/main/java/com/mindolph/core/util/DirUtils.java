@@ -53,12 +53,12 @@ public class DirUtils {
         if (subDirs == null) {
             return;
         }
-        // search dirs (recursively)
+        // search sub dirs (recursively)
         for (File subDir : subDirs) {
             findRecursively(subDir, dirFilter, dirFileFilter, result);
         }
         File[] dirs = dir.listFiles((FileFilter) dirFileFilter);
-        if (ArrayUtils.isNotEmpty(dirs)) {
+        if (dirs != null && ArrayUtils.isNotEmpty(dirs)) {
             result.addAll(List.of(dirs));
         }
     }

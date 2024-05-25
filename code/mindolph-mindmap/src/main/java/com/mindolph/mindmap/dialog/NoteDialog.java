@@ -98,7 +98,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 .title(title, 32)
                 .fxmlUri("dialog/note_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
-                .button(importButtonType, () -> {
+                .button(importButtonType, dlg -> {
                     File selectedFile = DialogFactory.openFileDialog(dialog.getOwner(), SystemUtils.getUserHome());
                     if (selectedFile != null) {
                         try {
@@ -109,7 +109,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                         }
                     }
                 })
-                .button(exportButtonType, () -> {
+                .button(exportButtonType, dlg -> {
                     File file = DialogFactory.openSaveFileDialog(dialog.getOwner(), SystemUtils.getUserHome()
                             , null, new FileChooser.ExtensionFilter("Text File(*.txt)", "*.txt"));
                     if (file != null && !file.exists()) {
@@ -169,8 +169,11 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         if (StringUtils.isNotBlank(noteEditorData.getPassword())) {
             tbtnProtect.setSelected(true);
         }
-        tbtnProtect.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+        // listen on mouse click event instead of on selected state change event for
+        // setting the selection state triggers the listener wrongly being invoked.
+        tbtnProtect.setOnMouseClicked(mouseEvent -> {
+            log.warn("onMouseClicked");
+            if (tbtnProtect.isSelected()) {
                 PasswordSettingDialog passwordDialog = new PasswordSettingDialog(null);
                 PasswordData passwordData = passwordDialog.showAndWait();
                 if (passwordData != null) {
@@ -190,9 +193,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     result.setHint(null);
                 }
                 else {
-                    tbtnProtect.setSelected(false);
+                    tbtnProtect.setSelected(true);
                 }
             }
+            mouseEvent.consume();
         });
         tbtnSearch.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -244,7 +248,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             String selectedText = textArea.getText(newValue);
             btnBrowse.setDisable(!UrlUtils.isValid(selectedText));
         });
-        textArea.withParentPane(paneCode);
+        textArea.setParentPane(paneCode);
 
         searchBar.setSearchPrevEventHandler(searchParams -> {
             TextSearchOptions textSearchOptions = new TextSearchOptions();

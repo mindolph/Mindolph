@@ -53,8 +53,9 @@ public class MindMapEditor extends BaseEditor {
 
     public MindMapEditor(EditorContext editorContext, MindMapView mindMapView) {
         super("/mindmap_editor.fxml", editorContext);
-        this.mindMapView = mindMapView;
         super.fileType = SupportFileTypes.TYPE_MIND_MAP;
+        this.mindMapView = mindMapView;
+        this.mindMapView.setParentPane(this);
 
         // invalidate the mind-map panel when become focused.
         this.focusedProperty().addListener((observableValue, wasFocused, isFocused) -> {
@@ -65,7 +66,8 @@ public class MindMapEditor extends BaseEditor {
         });
 
         this.mindMapView.setOnDragOver(dragEvent -> {
-            if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
+            if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())
+                    || dragEvent.getDragboard().getFiles().size() > 1) {
                 return;
             }
             Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
@@ -85,6 +87,7 @@ public class MindMapEditor extends BaseEditor {
         this.mindMapView.setOnDragDropped(dragEvent -> {
             BaseElement ele = mindMapView.findTopicForDragging(dragEvent);
             if (ele != null) {
+                // TODO should only accept one file for now
                 for (File file : dragEvent.getDragboard().getFiles()) {
                     Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(file);
                     if (optPath.isPresent()) {

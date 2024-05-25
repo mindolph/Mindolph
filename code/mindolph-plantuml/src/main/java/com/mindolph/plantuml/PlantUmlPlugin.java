@@ -1,17 +1,18 @@
 package com.mindolph.plantuml;
 
+import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.InputHelper;
-import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.SupportFileTypes;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * @author mindolph.com@gmail.com
  * @since 1.6
  */
-public class PlantUmlPlugin implements Plugin {
+public class PlantUmlPlugin extends BasePlugin {
 
     @Override
     public Integer getOrder() {
@@ -24,8 +25,8 @@ public class PlantUmlPlugin implements Plugin {
     }
 
     @Override
-    public InputHelper getInputHelper() {
-        return new PlantUmlInputHelper();
+    public Optional<InputHelper> getInputHelper() {
+        return Optional.of(new PlantUmlInputHelper());
     }
 
 }
