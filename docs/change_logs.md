@@ -1,12 +1,12 @@
 # Change Logs
 
 ### V1.7.6 Release
-* Improvement: add 'use proxy' option for different llm providers to enable proxy separately.  
+* Improvement: add 'use proxy' option for different LLM providers to enable proxy separately.  
 * Improvement: add gpt-4o to open-ai provider.  
 * Improvement: more pre-set LLM models.  
-* Improvement: optimize the HTTP connecting to llm providers.
+* Improvement: optimize the HTTP connecting to LLM providers.
 * Fix: the gen-ai reframe panel shows out of the viewport if generated topics make the selected topic out of the viewport.   
-* Fix: exception when switch proxy type in preference diaog.  
+* Fix: exception when switch proxy type in preference dialog.  
 * Fix: the background of mind map doesn't always render correctly when maximize&recover the editor by double-clicking tab of opened file.   
 * Fix: in Mind Map, the protected topic note can't be opened by password.   
 * Fix: in Mind Map, after canceling the setting password dialog for topic note, a password reset dialog appears.  
