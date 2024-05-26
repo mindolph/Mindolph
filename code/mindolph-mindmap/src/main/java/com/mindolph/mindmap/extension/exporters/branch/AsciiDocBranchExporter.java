@@ -29,6 +29,7 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
         this.doConvertingAndSave(context.getModel(), context.getSelectedTopics(), exportFileName, out);
     }
 
@@ -74,21 +75,25 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
     }
 
     public String convertTopic(TopicNode topic, int baseLevel) throws IOException {
-        StringBuilder state = new StringBuilder();
+        StringBuilder buf = new StringBuilder();
         int level = topic.getTopicLevel() - baseLevel;
         String uid = getTopicUid(topic);
 
         if (uid != null) {
-            state.append("anchor:").append(uid).append("[]").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
+            buf.append("anchor:").append(uid).append("[]").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
         }
         String prefix = StringUtils.repeat('=', level + 1);
-        state.append(prefix).append(' ').append(topic.getText().replace("\n", " pass:[<br>]")).append(Constants.NEXT_LINE);
+        buf.append(prefix).append(' ').append(topic.getText().replace("\n", " pass:[<br>]")).append(Constants.NEXT_LINE);
 
         if (level == 0) {
-            state.append(":encoding: UTF-8").append(Constants.NEXT_LINE);
-            state.append(":Date: ").append(DATE_FORMAT.format(new Date())).append(Constants.NEXT_LINE);
+            buf.append(":encoding: UTF-8").append(Constants.NEXT_LINE);
+            buf.append(":Date: ").append(DATE_FORMAT.format(new Date())).append(Constants.NEXT_LINE);
         }
-        state.append(Constants.NEXT_LINE);
+        buf.append(Constants.NEXT_LINE);
+
+        if (!includeAttributes) {
+            return buf.toString();
+        }
 
         ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
         ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
@@ -97,43 +102,43 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
 
         if (note != null) {
             for (String s : StringUtils.split(note.getValue(), Constants.NEXT_LINE)) {
-                state.append(s).append(" +");
-                state.append(Constants.NEXT_LINE);
+                buf.append(s).append(" +");
+                buf.append(Constants.NEXT_LINE);
             }
-            state.append(Constants.NEXT_LINE);
+            buf.append(Constants.NEXT_LINE);
         }
 
         if (file != null) {
             MMapURI fileURI = file.getValue();
             String filePathAsText =
                     fileURI.isAbsolute() ? fileURI.asFile(null).getAbsolutePath() : fileURI.toString();
-            state.append("link:++").append(filePathAsText).append("++[File]").append(Constants.NEXT_LINE)
+            buf.append("link:++").append(filePathAsText).append("++[File]").append(Constants.NEXT_LINE)
                     .append(Constants.NEXT_LINE);
         }
 
         if (link != null) {
             String url = link.getValue().toString();
             String ascurl = link.getValue().asString(true, true);
-            state.append("link:").append(ascurl).append("[Link]").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
+            buf.append("link:").append(ascurl).append("[Link]").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
         }
 
         if (transition != null) {
             TopicNode linkedTopic = topic.getMap().findTopicForLink(transition);
             if (linkedTopic != null) {
-                state.append("<<").append(getTopicUid(linkedTopic)).append(",Go to>>").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
+                buf.append("<<").append(getTopicUid(linkedTopic)).append(",Go to>>").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
             }
         }
 
         for (Map.Entry<String, String> s : topic.getCodeSnippets().entrySet()) {
-            state.append("[source,").append(s.getKey()).append("]").append(Constants.NEXT_LINE);
-            state.append("----").append(Constants.NEXT_LINE);
-            state.append(s.getValue());
-            if (state.charAt(state.length() - 1) != '\n') {
-                state.append(Constants.NEXT_LINE);
+            buf.append("[source,").append(s.getKey()).append("]").append(Constants.NEXT_LINE);
+            buf.append("----").append(Constants.NEXT_LINE);
+            buf.append(s.getValue());
+            if (buf.charAt(buf.length() - 1) != '\n') {
+                buf.append(Constants.NEXT_LINE);
             }
-            state.append("----").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
+            buf.append("----").append(Constants.NEXT_LINE).append(Constants.NEXT_LINE);
         }
-        return state.toString();
+        return buf.toString();
     }
 
     @Override

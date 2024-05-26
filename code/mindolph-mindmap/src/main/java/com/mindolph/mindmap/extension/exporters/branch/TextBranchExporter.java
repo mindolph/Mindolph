@@ -19,18 +19,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
+ * @author mindolph.com@gmail.com
  * @since 1.8
  */
 public class TextBranchExporter extends BaseLiteralExportExtension {
 
     @Override
-    protected String convertTopics(MindMap<TopicNode> model, List<TopicNode> topics) {
-        topics = MindMapUtils.removeDuplicatedAndDescendants(topics);
-        return TopicUtils.convertTopicsToText(topics);
-    }
-
-    @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
         this.doConvertingAndSave(context.getModel(), context.getSelectedTopics(), exportFileName, out);
     }
 
@@ -56,6 +52,12 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
                 }
             }
         }
+    }
+
+    @Override
+    protected String convertTopics(MindMap<TopicNode> model, List<TopicNode> topics) {
+        topics = MindMapUtils.removeDuplicatedAndDescendants(topics);
+        return TopicUtils.convertTopicsToText(topics, this.includeAttributes);
     }
 
     @Override

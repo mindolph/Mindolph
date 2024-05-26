@@ -13,10 +13,13 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ */
 public class ASCIIDocExporter extends AsciiDocBranchExporter {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
         super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 

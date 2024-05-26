@@ -1682,7 +1682,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             ClipboardContent clipboardContent = new ClipboardContent();
             ClipboardTopicsContainer container = new ClipboardTopicsContainer(topics.toArray(new TopicNode[]{}));
             try {
-                String text = TopicUtils.convertTopicsToText(topics);
+                String text = TopicUtils.convertTopicsToText(topics, true);
                 if (log.isTraceEnabled()) log.trace("Text to clipboard: '%s'".formatted(text));
                 clipboardContent.putString(text);
                 clipboardContent.put(MMD_DATA_FORMAT, container);

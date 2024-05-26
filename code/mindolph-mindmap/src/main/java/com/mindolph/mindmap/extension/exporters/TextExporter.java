@@ -19,16 +19,17 @@ import java.util.List;
 public class TextExporter extends TextBranchExporter {
 
     @Override
+    public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
+        super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
+    }
+
+    @Override
     public void doExportToClipboard(ExtensionContext context, List<Boolean> options) throws IOException {
         String text = super.convertTopics(context.getModel(), Collections.singletonList(context.getModel().getRoot()));
         ClipboardContent cc = new ClipboardContent();
         cc.putString(text);
         Clipboard.getSystemClipboard().setContent(cc);
-    }
-
-    @Override
-    public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
-        super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 
     @Override

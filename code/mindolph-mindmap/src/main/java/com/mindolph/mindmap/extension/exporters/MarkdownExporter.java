@@ -14,12 +14,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * @author mindolph.com@gmail.com
  * @since 1.8
  */
 public class MarkdownExporter extends MarkdownBranchExporter {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
         super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 

@@ -22,12 +22,12 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 public class TopicUtils {
 
     /**
-     *
      * @param topics
+     * @param includeAttributes ignore attributes if false
      * @return
      */
-    public static String convertTopicsToText(List<TopicNode> topics) {
-        List<String> texts = topics.stream().map(topicNode -> convertTopic(topicNode, 0).trim()).toList();
+    public static String convertTopicsToText(List<TopicNode> topics, boolean includeAttributes) {
+        List<String> texts = topics.stream().map(topicNode -> convertTopic(topicNode, 0, includeAttributes).trim()).toList();
         return StringUtils.join(texts, LINE_SEPARATOR);
     }
 
@@ -35,7 +35,7 @@ public class TopicUtils {
         return topic.getText().replace(LINE_SEPARATOR, " ").trim();
     }
 
-    private static String convertTopic(TopicNode topic, int level) {
+    private static String convertTopic(TopicNode topic, int level, boolean includeAttributes) {
         StringBuilder result = new StringBuilder();
         String lineIndent = StringUtils.repeat(" ", level * 2);
         result.append(lineIndent).append(oneLineTitle(topic));
@@ -48,13 +48,14 @@ public class TopicUtils {
             }
         }
 
-        if (!topic.getExtras().isEmpty()) {
+        if (includeAttributes && !topic.getExtras().isEmpty()) {
             for (Map.Entry<Extra.ExtraType, Extra<?>> e : topic.getExtras().entrySet()) {
                 switch (e.getKey()) {
                     case NOTE: {
                         if (Boolean.parseBoolean(topic.getAttributes().get(ExtraNote.ATTR_ENCRYPTED))) {
                             result.append(LINE_SEPARATOR).append(lineIndent).append("<ENCRYPTED NOTE>");
-                        } else {
+                        }
+                        else {
                             for (String s : e.getValue().getAsString().split(LINE_SEPARATOR)) {
                                 result.append(LINE_SEPARATOR).append(lineIndent).append("> ").append(s.trim());
                             }
@@ -81,7 +82,7 @@ public class TopicUtils {
         result.append(LINE_SEPARATOR);
         if (topic.hasChildren()) {
             for (TopicNode c : topic.getChildren()) {
-                result.append(convertTopic(c, level + 1));
+                result.append(convertTopic(c, level + 1, includeAttributes));
             }
         }
         return result.toString();
@@ -97,7 +98,8 @@ public class TopicUtils {
         result.sort((o1, o2) -> {
             if (o1.getParent() != o2.getParent()) {
                 return 0; // keep selected order
-            } else {
+            }
+            else {
                 return o1.getParent().getChildren().indexOf(o1) - o2.getParent().getChildren().indexOf(o2); // keep original order
             }
         });
@@ -136,7 +138,8 @@ public class TopicUtils {
                     result = cfg.getTheme().getOtherLevelBackgroundColor();
                 }
             }
-        } else {
+        }
+        else {
             result = extracted;
         }
         return result;
@@ -158,7 +161,8 @@ public class TopicUtils {
                     result = cfg.getTheme().getOtherLevelTextColor();
                 }
             }
-        } else {
+        }
+        else {
             result = extracted;
         }
         return result;

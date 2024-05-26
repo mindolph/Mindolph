@@ -29,6 +29,7 @@ import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
 import static com.mindolph.mindmap.util.TextUtils.removeAllISOControlsButTabs;
 
 /**
+ * @author mindolph.com@gmail.com
  * @since 1.8
  */
 public class MarkdownBranchExporter extends BaseLiteralExportExtension {
@@ -40,6 +41,7 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
         this.doConvertingAndSave(context.getModel(), context.getSelectedTopics(), exportFileName, out);
     }
 
@@ -111,6 +113,10 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
             }
             buf.append(ModelUtils.escapeMarkdownStr(topic.getText())).append("  ")
                     .append(Constants.NEXT_LINE);
+        }
+
+        if (!includeAttributes) {
+            return buf.toString();
         }
 
         ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);

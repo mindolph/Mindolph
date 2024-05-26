@@ -34,6 +34,7 @@ import java.util.Optional;
 import static com.mindolph.mindmap.extension.ContextMenuSection.EXPORT_BRANCHES;
 
 /**
+ * @author mindolph.com@gmail.com
  * @since 1.8
  */
 public class MindMapBranchExporter extends BaseExportExtension {
