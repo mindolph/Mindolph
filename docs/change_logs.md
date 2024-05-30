@@ -24,8 +24,6 @@
 * Bug Fixes:
 	* in Mind Map editor, moving any selected topics by shortcut out of viewport doesn't trigger automatically scrolling.
 	* Emphasis text doesn't work in markdown preview.
-	* the protected topic note can't be opened by password; 
-	* after canceled the setting password dialog for topic note, a password reset dialog appears.
 	* external folder should not be able to drag&drop to workspace.
 	* blank text can't be replaced by search&replace in code area.
 * Others
