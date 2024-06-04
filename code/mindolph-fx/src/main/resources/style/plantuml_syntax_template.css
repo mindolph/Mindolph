@@ -1,0 +1,51 @@
+.styled-text-area {
+    -fx-font-family: ${mono-font-family};
+    -fx-font-weight: ${mono-font-weight};
+    -fx-font-style: ${mono-font-posture};
+    -fx-font-size: ${mono-font-size};
+}
+
+.diagramkeyword {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.directive {
+    -fx-fill: indigo;
+    -fx-font-weight: bold;
+}
+
+.containing {
+    -fx-fill: crimson;
+    -fx-font-weight: bold;
+}
+
+.keyword {
+    -fx-fill: goldenrod;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-font-family: ${sans-font-family};
+    -fx-font-weight: ${sans-font-weight};
+    /*-fx-font-style: ${sans-font-posture};*/
+    -fx-font-size: ${sans-font-size};
+    -fx-fill: grey;
+    -fx-font-style: italic;
+}
+
+.connector {
+    -fx-fill: blue;
+}
+
+.quote {
+    -fx-font-family: ${sans-font-family};
+    -fx-font-weight: ${sans-font-weight};
+    -fx-font-style: ${sans-font-posture};
+    -fx-font-size: ${sans-font-size};
+    -fx-fill: green;
+}
+
+.activity {
+    -fx-font-style: italic;
+}

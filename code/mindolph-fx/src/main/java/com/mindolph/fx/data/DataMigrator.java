@@ -19,6 +19,7 @@ public class DataMigrator {
         this.migrations = new ArrayList<>() {
             {
                 add(new MigrationV1());
+                add(new MigrationV2());
             }
         };
     }
@@ -28,7 +29,7 @@ public class DataMigrator {
         for (Migration mig : migrations) {
             // only un-migrated will be executed.
             if (mig.getVersion() > migratedVersion) {
-                log.info("Do migration: " + mig.getClass().getName());
+                log.info("Do migration: %s".formatted(mig.getClass().getName()));
                 mig.doFixing();
                 FxPreferences.getInstance().savePreference("migration.version", mig.getVersion());
             }

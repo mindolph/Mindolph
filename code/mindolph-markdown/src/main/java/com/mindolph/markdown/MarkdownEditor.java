@@ -4,7 +4,6 @@ package com.mindolph.markdown;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.editor.BasePreviewEditor;
@@ -15,6 +14,7 @@ import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.print.PrinterManager;
+import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -86,6 +86,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
@@ -228,7 +230,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
                             Integer scrollPos = (Integer) webView.getEngine().executeScript("getScrollPosY();");
                             double codeScrollTo = convertScrollPosition(scrollPos, previewVpHeight, previewTotalHeight, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate());
-                            if (log.isTraceEnabled()) log.trace("auto scroll code editor to: " + currentScrollV);
+                            if (log.isTraceEnabled())
+                                log.trace("auto scroll code editor to: %s".formatted(currentScrollV));
                             codeScrollPane.estimatedScrollYProperty().setValue(codeScrollTo);
                         } catch (Exception e) {
                             log.error(e.getLocalizedMessage());
@@ -334,11 +337,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         }
     }
 
-    @Override
-    public String getFontPrefKey() {
-        return FontConstants.KEY_MD_EDITOR;
-    }
-
     private URL getCssResourceURI() {
         return ClasspathResourceUtils.getResourceURI("style/markdown_preview_github.css");
     }
@@ -359,6 +357,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
+        this.refresh();
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
     }
 
     @Override

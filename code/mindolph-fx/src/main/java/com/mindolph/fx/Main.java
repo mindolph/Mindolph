@@ -122,8 +122,8 @@ public class Main extends Application implements WindowRestoreListener {
             primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/icons/app_512.png")));
             scene = new Scene(root, 1100, 800);
             scene.getStylesheets().add(getClass().getResource("/style/syntax.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("/style/markdown_syntax.css").toExternalForm());
-            scene.getStylesheets().add(getClass().getResource("/style/plantuml_syntax.css").toExternalForm());
+//            scene.getStylesheets().add(getClass().getResource("/style/markdown_syntax.css").toExternalForm());
+//            scene.getStylesheets().add(getClass().getResource("/style/plantuml_syntax.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/style/editor.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/text_editor.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/editor/csv_editor.css").toExternalForm());
