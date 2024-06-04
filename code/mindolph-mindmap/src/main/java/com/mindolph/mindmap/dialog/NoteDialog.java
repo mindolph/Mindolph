@@ -1,16 +1,17 @@
 package com.mindolph.mindmap.dialog;
 
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.editor.MarkdownCodeArea;
 import com.mindolph.base.editor.MarkdownToolbar;
+import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BrowseUtils;
-import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.model.NoteEditorData;
 import com.mindolph.mindmap.model.PasswordData;
@@ -98,7 +99,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 .title(title, 32)
                 .fxmlUri("dialog/note_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
-                .button(importButtonType, () -> {
+                .button(importButtonType, dialog -> {
                     File selectedFile = DialogFactory.openFileDialog(dialog.getOwner(), SystemUtils.getUserHome());
                     if (selectedFile != null) {
                         try {
@@ -109,7 +110,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                         }
                     }
                 })
-                .button(exportButtonType, () -> {
+                .button(exportButtonType, dialog -> {
                     File file = DialogFactory.openSaveFileDialog(dialog.getOwner(), SystemUtils.getUserHome()
                             , null, new FileChooser.ExtensionFilter("Text File(*.txt)", "*.txt"));
                     if (file != null && !file.exists()) {
@@ -169,8 +170,11 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         if (StringUtils.isNotBlank(noteEditorData.getPassword())) {
             tbtnProtect.setSelected(true);
         }
-        tbtnProtect.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+        // listen on mouse click event instead of on selected state change event for
+        // setting the selection state triggers the listener wrongly being invoked.
+        tbtnProtect.setOnMouseClicked(mouseEvent -> {
+            log.warn("onMouseClicked");
+            if (tbtnProtect.isSelected()) {
                 PasswordSettingDialog passwordDialog = new PasswordSettingDialog(null);
                 PasswordData passwordData = passwordDialog.showAndWait();
                 if (passwordData != null) {
@@ -190,9 +194,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     result.setHint(null);
                 }
                 else {
-                    tbtnProtect.setSelected(false);
+                    tbtnProtect.setSelected(true);
                 }
             }
+            mouseEvent.consume();
         });
         tbtnSearch.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -220,7 +225,9 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         editorToolBar = new MarkdownToolbar(textArea);
         hbToolbar.getChildren().add(editorToolBar);
 
-        textArea.setStyle(FontUtils.fontToCssStyle(font));
+        CssUtils.applyFontCss(textArea, "/style/markdown_syntax_template.css",
+                FontConstants.KEY_MMD_NOTE_FONT, FontConstants.KEY_MMD_NOTE_FONT_MONO);
+
         textArea.setText(origin.getText());
         textArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
         textArea.scrollYToPixel(0);

@@ -2,6 +2,7 @@ package com.mindolph.mindmap.extension.attributes.emoticon;
 
 import com.igormaznitsa.mindmap.model.Extra;
 import com.mindolph.mindmap.MindMapConfig;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.EmoticonService;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -17,13 +18,12 @@ import java.util.regex.Pattern;
 
 public class EmoticonVisualAttributeExtension implements VisualAttributeExtension {
 
-    public static final String ATTR_KEY = "mmd.emoticon";
-
+    // TODO remove from cache when mind map view closed.
     private final Map<String, Image> IMAGE_CACHE = new HashMap<>();
 
     @Override
     public Image getScaledImage(MindMapConfig config, TopicNode topic) {
-        String name = topic.getAttribute(ATTR_KEY);
+        String name = topic.getAttribute(AttributeUtils.ATTR_ICON_KEY);
         if (name == null) {
             return null;
         }
@@ -43,7 +43,7 @@ public class EmoticonVisualAttributeExtension implements VisualAttributeExtensio
 
         boolean result = false;
         if (extraTypes != null && extraTypes.contains(Extra.ExtraType.NOTE)) {
-            String name = topic.getAttribute(ATTR_KEY);
+            String name = topic.getAttribute(AttributeUtils.ATTR_ICON_KEY);
             if (name != null) {
                 result = pattern.matcher(name).find();
             }
@@ -60,7 +60,7 @@ public class EmoticonVisualAttributeExtension implements VisualAttributeExtensio
 
     @Override
     public String getToolTip(TopicNode topic) {
-        return topic.getAttribute(ATTR_KEY);
+        return topic.getAttribute(AttributeUtils.ATTR_ICON_KEY);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class EmoticonVisualAttributeExtension implements VisualAttributeExtensio
 
     @Override
     public String getAttributeKey() {
-        return ATTR_KEY;
+        return AttributeUtils.ATTR_ICON_KEY;
     }
 
     @Override

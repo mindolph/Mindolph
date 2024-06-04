@@ -23,11 +23,12 @@ import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.*;
+import com.mindolph.mindmap.util.CryptoUtils;
+import com.mindolph.mindmap.util.MindMapUtils;
+import com.mindolph.mindmap.util.Utils;
+import com.mindolph.mindmap.util.XmlUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.apache.commons.io.IOUtils;
@@ -48,7 +49,6 @@ import java.util.zip.ZipFile;
 
 public class XMind2MindMapImporter extends BaseImportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_IMPORT_XMIND2MM);
     private static final Logger LOGGER = LoggerFactory.getLogger(XMind2MindMapImporter.class);
 
 
@@ -103,7 +103,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         String attachedImage = extractFirstAttachedImageAsBase64(zipFile, topicElement);
         if (attachedImage != null && !attachedImage.isEmpty()) {
-            topicToProcess.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, attachedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, attachedImage);
         }
 
         String xlink = topicElement.getAttribute("xlink:href");
@@ -421,7 +421,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         String attachedImage = extractFirstAttachedImageAsBase64(zipFile, topicElement);
         if (attachedImage != null && !attachedImage.isEmpty()) {
-            topicToProcess.setAttribute(ImageVisualAttributeExtension.ATTR_KEY, attachedImage);
+            topicToProcess.setAttribute(AttributeUtils.ATTR_IMAGE_KEY, attachedImage);
         }
 
         String xlink = topicElement.has("href") ? topicElement.getString("href") : null;
@@ -622,7 +622,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
     @Override
     public Image getIcon(ExtensionContext context) {
-        return ICON;
+        return null;
     }
 
     @Override

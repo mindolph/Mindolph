@@ -14,6 +14,8 @@ import org.swiftboot.util.BeanUtils;
 import java.util.Map;
 
 /**
+ * Migrate the mmd config to default mmd 'classic' theme.
+ *
  * @author mindolph
  */
 public class MigrationV1 implements Migration {

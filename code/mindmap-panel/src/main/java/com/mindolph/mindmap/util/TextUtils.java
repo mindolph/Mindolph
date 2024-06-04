@@ -67,6 +67,17 @@ public class TextUtils {
 //        return text.getLayoutBounds();
 //    }
 
+    public static String removeAllISOControls(String str) {
+        StringBuilder result = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            if (Character.isISOControl(c)) {
+                continue;
+            }
+            result.append(c);
+        }
+        return result.toString();
+    }
+
     public static String removeAllISOControlsButTabs(String str) {
         StringBuilder result = new StringBuilder(str.length());
         for (char c : str.toCharArray()) {

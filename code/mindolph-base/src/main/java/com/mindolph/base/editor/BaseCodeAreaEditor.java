@@ -1,7 +1,6 @@
 package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
-import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.NotificationType;
@@ -9,11 +8,9 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextAnchor;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.search.TextSearchOptions;
-import com.mindolph.mfx.util.FontUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
-import javafx.scene.text.Font;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -157,18 +154,14 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      */
     protected abstract void refresh(String text);
 
+    /**
+     *
+     */
     @Override
     public void refresh() {
-        String fontPrefKey = getFontPrefKey();
-        if (getFontPrefKey() != null) {
-            Font defFont = FontConstants.DEFAULT_FONTS.get(fontPrefKey);
-            Font font = fxPreferences.getPreference(fontPrefKey, Font.class, defFont);
-            log.debug("set font: %s".formatted(font));
-            codeArea.setStyle(FontUtils.fontToCssStyle(font));
-        }
+        // DO NOTHING FOR NOW
+        log.debug("Refresh editor: %s".formatted(this.getClass().getSimpleName()));
     }
-
-    public abstract String getFontPrefKey();
 
     @Override
     public void locate(Anchor anchor) {

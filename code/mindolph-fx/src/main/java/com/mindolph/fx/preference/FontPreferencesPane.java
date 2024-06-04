@@ -37,6 +37,8 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     @FXML
     private TextArea taPreview;
 
+    private static int lastActivatedChoiceIndex = 0;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
@@ -55,16 +57,20 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
             Font font = fxPreferences.getPreference(newChoice.getKey().prefId(), Font.class, DEFAULT_FONTS.get(newChoice.getKey().prefId()));
             lbFont.setText(FontUtils.fontToString(font));
             taPreview.setFont(font);
+            lastActivatedChoiceIndex = cbText.getItems().indexOf(newChoice);
         });
         cbText.getItems().addAll(Arrays.asList(
                 new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"),
                 new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT, TYPE_MIND_MAP), "Mind Map Note Editor"),
-                new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), "PlantUML Editor"),
+                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT_MONO, TYPE_MIND_MAP), "Mind Map Note Editor Code"),
+                new Pair<>(new PrefKey(KEY_PUML_EDITOR_MONO, TYPE_PLANTUML), "PlantUML Editor"),
+                new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), "PlantUML Editor Descriptive&Comment"),
                 new Pair<>(new PrefKey(KEY_MD_EDITOR, TYPE_MARKDOWN), "Markdown Editor"),
+                new Pair<>(new PrefKey(KEY_MD_EDITOR_MONO, TYPE_MARKDOWN), "Markdown Code"),
                 new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), "Plain Text Editor"),
                 new Pair<>(new PrefKey(KEY_CSV_EDITOR, TYPE_PLAIN_TEXT), "CSV Editor")
         ));
-        cbText.setValue(new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"));
+        cbText.getSelectionModel().select(lastActivatedChoiceIndex);
     }
 
     @FXML

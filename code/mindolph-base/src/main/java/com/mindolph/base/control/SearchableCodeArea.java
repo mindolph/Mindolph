@@ -95,7 +95,8 @@ public class SearchableCodeArea extends SmartCodeArea {
     }
 
     public boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
-        if (StringUtils.isBlank(keywords)) {
+        // blank string CAN be replaced.
+        if (StringUtils.isEmpty(keywords)) {
             return false;
         }
         boolean match = isCaseSensitivity ? keywords.equals(getSelectedText()) : keywords.equalsIgnoreCase(getSelectedText());

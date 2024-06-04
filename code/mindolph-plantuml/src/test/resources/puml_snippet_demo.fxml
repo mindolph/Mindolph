@@ -7,20 +7,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.plantuml.PumlSnippetDemo">
-   <children>
-      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox prefWidth="200.0">
-               <children>
-                  <Button mnemonicParsing="false" text="Page Setup">
-                  </Button>
-                  <Button mnemonicParsing="false" text="Print Setup" />
-               </children>
-            </HBox>
-            <SnippetView fx:id="snippetView" VBox.vgrow="ALWAYS" />
-            <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" />
-         </children>
-      </VBox>
-   </children>
+<AnchorPane prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mindolph.plantuml.PumlSnippetDemo">
+   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox prefWidth="200.0">
+         <Button mnemonicParsing="false" text="Page Setup">
+         </Button>
+         <Button mnemonicParsing="false" text="Print Setup"/>
+      </HBox>
+      <SnippetView fx:id="snippetView" VBox.vgrow="ALWAYS"/>
+      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0"/>
+   </VBox>
 </AnchorPane>

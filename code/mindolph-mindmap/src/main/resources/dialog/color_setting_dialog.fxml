@@ -9,40 +9,31 @@
 
 
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="100.0" layoutY="39.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox >
-               <children>
-                  <Label fx:id="lblBorderColor" alignment="CENTER" prefWidth="160.0" text="Border Color">
-                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </padding>
-                  </Label>
-                  <ColorPicker fx:id="cpBorderColor" prefWidth="160.0" />
-               </children>
-            </HBox>
-            <HBox >
-               <children>
-                  <Label fx:id="lblFillColor" alignment="CENTER" prefWidth="160.0" text="Fill Color">
-                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </padding>
-                  </Label>
-                  <ColorPicker fx:id="cpFillColor" prefWidth="160.0" />
-               </children>
-            </HBox>
-            <HBox >
-               <children>
-                  <Label fx:id="lblTextColor" alignment="CENTER" prefWidth="160.0" text="Text Color">
-                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </padding>
-                  </Label>
-                  <ColorPicker fx:id="cpTextColor" prefWidth="160.0" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+   <VBox layoutX="100.0" layoutY="39.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox>
+         <Label fx:id="lblBorderColor" alignment="CENTER" prefWidth="160.0" text="Border Color">
+            <padding>
+               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
+         </Label>
+         <ColorPicker fx:id="cpBorderColor" prefWidth="160.0"/>
+      </HBox>
+      <HBox>
+         <Label fx:id="lblFillColor" alignment="CENTER" prefWidth="160.0" text="Fill Color">
+            <padding>
+               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
+         </Label>
+         <ColorPicker fx:id="cpFillColor" prefWidth="160.0"/>
+      </HBox>
+      <HBox>
+         <Label fx:id="lblTextColor" alignment="CENTER" prefWidth="160.0" text="Text Color">
+            <padding>
+               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
+         </Label>
+         <ColorPicker fx:id="cpTextColor" prefWidth="160.0"/>
+      </HBox>
+   </VBox>
 </AnchorPane>

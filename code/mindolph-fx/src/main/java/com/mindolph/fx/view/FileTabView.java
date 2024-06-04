@@ -15,6 +15,7 @@ import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.fx.TabManager;
 import com.mindolph.fx.editor.EditorFactory;
 import com.mindolph.markdown.MarkdownEditor;
+import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
@@ -649,7 +650,9 @@ public class FileTabView extends BaseView {
             return true; // also close non-editor tab
         }
         if (editor.isChanged()) {
-            Boolean needSave = DialogFactory.yesNoCancelConfirmDialog("You are closing an unsaved file, do you want to save it? " + fileData.getName());
+            Boolean needSave = new ConfirmDialogBuilder().title("Confirm unsaved file")
+                    .content("You are closing an unsaved file, do you want to save it? " + fileData.getName())
+                    .positive("Save").asDefault().no().cancel().showAndWait();
             if (needSave == null) {
                 return false;// cancel closing file
             }

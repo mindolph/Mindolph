@@ -32,6 +32,7 @@ import com.mindolph.mindmap.util.TopicUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -45,9 +46,10 @@ import java.util.List;
 
 import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
 
+/**
+ * TBD
+ */
 public class FreeMindExporter extends BaseExportExtension {
-
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_FREEMIND);
 
     private static String makeUID(TopicNode t) {
         int[] path = t.getPositionPath();
@@ -235,13 +237,18 @@ public class FreeMindExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return null;
     }
 
     @Override
     public int getOrder() {
         return 1;
+    }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
 
     private static class State {

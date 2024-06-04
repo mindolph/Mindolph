@@ -14,7 +14,7 @@ import static org.apache.commons.io.FilenameUtils.isExtension;
 /**
  * @author mindolph.com@gmail.com
  */
-public class NodeData {
+public class NodeData implements ItemData {
 
     // This is used only for locating the tree item's position in the VirtualFlow of TreeView.
     private transient Integer displayIndex;
@@ -46,14 +46,6 @@ public class NodeData {
     public NodeData(String name) {
         this.name = name;
         this.nodeType = NodeType.WORKSPACE;
-    }
-
-    public Integer getDisplayIndex() {
-        return displayIndex;
-    }
-
-    public void setDisplayIndex(Integer displayIndex) {
-        this.displayIndex = displayIndex;
     }
 
     public boolean isWorkspace() {
@@ -95,6 +87,16 @@ public class NodeData {
     public boolean isImage() {
         return isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_JPG)
                 || isExtension(getFile().getName(), SupportFileTypes.TYPE_PLAIN_PNG);
+    }
+
+    @Override
+    public Integer getDisplayIndex() {
+        return displayIndex;
+    }
+
+    @Override
+    public void setDisplayIndex(Integer displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     public String getName() {

@@ -4,7 +4,6 @@ package com.mindolph.markdown;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.editor.BasePreviewEditor;
@@ -15,6 +14,7 @@ import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.print.PrinterManager;
+import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -86,7 +86,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_FONT_FILE_PDF;
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
+import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
@@ -211,7 +213,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
                             if (previewVpHeight != null && previewTotalHeight != null) {
                                 currentScrollV = convertScrollPosition(newY, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate(), previewVpHeight, previewTotalHeight);
-                                if (log.isTraceEnabled()) log.trace("auto scroll preview to: %s".formatted(currentScrollV));
+                                if (log.isTraceEnabled())
+                                    log.trace("auto scroll preview to: %s".formatted(currentScrollV));
                                 webView.getEngine().executeScript("setScrollPos(%s, %s);".formatted(currentScrollH, currentScrollV));
                             }
                         } catch (Exception e) {
@@ -219,7 +222,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         }
                     });
                 });
-        scrollEventPreview.reduceSuccessions((s1,s2)->s2, Duration.ofMillis(100))
+        scrollEventPreview.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
                 .subscribe(newY -> {
                     scrollSwitch.scrollSecond(() -> {
                         try {
@@ -227,7 +230,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             Integer previewTotalHeight = (Integer) webView.getEngine().executeScript("getTotalHeight();");
                             Integer scrollPos = (Integer) webView.getEngine().executeScript("getScrollPosY();");
                             double codeScrollTo = convertScrollPosition(scrollPos, previewVpHeight, previewTotalHeight, codeArea.getViewportHeight(), codeArea.getTotalHeightEstimate());
-                            if (log.isTraceEnabled()) log.trace("auto scroll code editor to: " + currentScrollV);
+                            if (log.isTraceEnabled())
+                                log.trace("auto scroll code editor to: %s".formatted(currentScrollV));
                             codeScrollPane.estimatedScrollYProperty().setValue(codeScrollTo);
                         } catch (Exception e) {
                             log.error(e.getLocalizedMessage());
@@ -333,11 +337,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         }
     }
 
-    @Override
-    public String getFontPrefKey() {
-        return FontConstants.KEY_MD_EDITOR;
-    }
-
     private URL getCssResourceURI() {
         return ClasspathResourceUtils.getResourceURI("style/markdown_preview_github.css");
     }
@@ -358,6 +357,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
+        this.refresh();
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
     }
 
     @Override
@@ -383,11 +389,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miViewSource = new MenuItem("View Source");
+        MenuItem miViewSource = new MenuItem("View Source...");
         MenuItem miRefresh = new MenuItem("Refresh", FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        MenuItem miExportHtml = new MenuItem("Export to HTML file", FontIconManager.getIns().getIcon(IconKey.BROWSE));
-        MenuItem miExportImage = new MenuItem("Export to Image file", FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miExportPdf = new MenuItem("Export to PDF file", FontIconManager.getIns().getIcon(IconKey.PDF));
+        MenuItem miExportHtml = new MenuItem("Export to HTML file...", FontIconManager.getIns().getIcon(IconKey.BROWSE));
+        MenuItem miExportImage = new MenuItem("Export to Image file...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExportPdf = new MenuItem("Export to PDF file...", FontIconManager.getIns().getIcon(IconKey.PDF));
 
 
         miViewSource.setOnAction(e -> {
@@ -457,17 +463,22 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     FilenameUtils.getBaseName(file.getName()) + ".pdf",
                     new FileChooser.ExtensionFilter("PDF file", "*.pdf"));
             if (pdfFile != null && pdfFile.getParentFile().exists()) {
-                log.info("Export to pdf file: " + pdfFile);
+                log.info("Export to pdf file: %s".formatted(pdfFile));
                 new Thread(() -> {
                     try {
-                        String fontFilePath = fxPreferences.getPreference(PREF_KEY_MD_FONT_FILE_PDF, String.class);
+                        String sansFontFilePath = fxPreferences.getPreferenceAlias(PREF_KEY_MD_SANS_FONT_FILE, PREF_KEY_MD_FONT_FILE_PDF, String.class);
+                        String monoFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_MONO_FONT_FILE, String.class);
                         String finalHtml = new HtmlBuilder(html)
                                 .title(editorContext.getFileData().getName())
                                 .absoluteUri(editorContext.getFileData().getFile().getParentFile())
-                                .css("style/markdown_preview_github.css")
+                                .css("style/markdown_export_pdf.css")
                                 .markdown("markdown-body")
-                                .pdf(new File(fontFilePath))
+                                .pdf(new File(sansFontFilePath), new File(monoFontFilePath))
                                 .build(timestamp);
+
+                        if (log.isTraceEnabled()) {
+                            System.out.println(finalHtml);
+                        }
 
                         PdfRendererBuilder builder = new PdfRendererBuilder();
                         builder.useFastMode();

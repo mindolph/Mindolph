@@ -7,12 +7,12 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.ShortcutConstants;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
-import com.mindolph.base.genai.llm.Constants;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.base.util.LayoutUtils;
+import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -35,6 +35,10 @@ import com.mindolph.mindmap.extension.attribute.ExtraJumpExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraNoteExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraURIExtension;
 import com.mindolph.mindmap.extension.exporters.*;
+import com.mindolph.mindmap.extension.exporters.branch.AsciiDocBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.MarkdownBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.MindMapBranchExporter;
+import com.mindolph.mindmap.extension.exporters.branch.TextBranchExporter;
 import com.mindolph.mindmap.extension.importers.*;
 import com.mindolph.mindmap.extension.manipulate.TopicColorExtension;
 import com.mindolph.mindmap.model.*;
@@ -102,11 +106,16 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         MindMapExtensionRegistry.getInstance().registerExtension(new MarkdownExporter());
         MindMapExtensionRegistry.getInstance().registerExtension(new ASCIIDocExporter());
 //        MindMapExtensionRegistry.getInstance().registerExtension(new MindmupExporter()); not supported for now
-        MindMapExtensionRegistry.getInstance().registerExtension(new PNGImageExporter());
 //        MindMapExtensionRegistry.getInstance().registerExtension(new ORGMODEExporter()); not supported for now
         MindMapExtensionRegistry.getInstance().registerExtension(new TextExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new PNGImageExporter());
         MindMapExtensionRegistry.getInstance().registerExtension(new SVGImageExporter());
 
+        // branch exporters
+        MindMapExtensionRegistry.getInstance().registerExtension(new MindMapBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new MarkdownBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new TextBranchExporter());
+        MindMapExtensionRegistry.getInstance().registerExtension(new AsciiDocBranchExporter());
     }
 
     public ExtraMindMapView() {
@@ -236,10 +245,12 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         Menu importMenu = new Menu(I18n.getIns().getString("MMDImporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
         Menu exportMenu = new Menu(I18n.getIns().getString("MMDExporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu exportBranchesMenu = new Menu("Export branches as", FontIconManager.getIns().getIcon(IconKey.EXPORT));
 
         putAllItemsAsSection(ctxMenu, importMenu, findPopupMenuItems(this, IMPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         if (isModelNotEmpty) {
             putAllItemsAsSection(ctxMenu, exportMenu, findPopupMenuItems(this, EXPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
+            putAllItemsAsSection(ctxMenu, exportBranchesMenu, findPopupMenuItems(this, EXPORT_BRANCHES, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         }
 
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, TOOLS, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
@@ -254,6 +265,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     if (opt.isPresent()) {
                         Generator generator = opt.get();
 //                    generator.setParentSkin(parentSkin);
+                        // the parent panel is the editor itself for mind map.
                         generator.setParentPane(super.getParentPane());
                         MenuItem menuItem = generator.contextMenuItem(null);
                         ctxMenu.getItems().add(menuItem);
@@ -261,36 +273,42 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");
                         });
                         generator.setOnPanelShowing(pane -> {
-                            // do calculation on layout bounds changes to mark sure that the bounds is calculated.
+                            // do calculation on layout bounds changes to make sure that the bounds is calculated.
                             pane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
                                 if (oldValue.equals(newValue) || newValue.getWidth() == 0 || newValue.getHeight() == 0) {
                                     return;
                                 }
-                                pane.setVisible(false); // avoid flashing
                                 super.setDisable(true);
                                 Bounds panelBounds = pane.getBoundsInParent();
                                 // retrieve the element from topic because the original one might have been changed.
                                 BaseElement element = (BaseElement) super.getFirstSelectedTopic().getPayload();
-                                Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
-                                log.debug("bounds of topic in viewport: %s".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
-                                log.debug("bounds of pane: %s".formatted(BoundsUtils.boundsInString(panelBounds)));
-                                log.debug("dimension of pane: %sx%s".formatted(pane.getWidth(), pane.getHeight()));
 
-                                Bounds hoverBounds = BoundsUtils.fromPoint(new Point2D(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY()),
-                                        pane.getWidth(), pane.getHeight());
+                                // the selected topic might be out of viewport once generated topics are appended to it,
+                                // so before locating panel, the scrolling should be done first.
+                                scrollDoneEvents.subscribeFor(1, unused -> {
+                                    pane.setVisible(false); // avoid flashing
+                                    Bounds boundsInViewPort = getMindMapViewSkin().getBoundsInViewport(element);
+                                    log.debug("bounds of topic in viewport: %s".formatted(BoundsUtils.boundsInString(boundsInViewPort)));
+                                    log.debug("bounds of pane: %s".formatted(BoundsUtils.boundsInString(panelBounds)));
+                                    log.debug("dimension of pane: %sx%s".formatted(pane.getWidth(), pane.getHeight()));
 
-                                Bounds parentBounds = super.getParentPane().getBoundsInParent();
-                                log.debug("target bounds: " + BoundsUtils.boundsInString(parentBounds));
-                                log.debug("hover bounds: " + BoundsUtils.boundsInString(hoverBounds));
-                                Point2D newPoint = LayoutUtils.bestLocation(parentBounds, hoverBounds, GeometryConvertUtils.boundsToDimension2D(boundsInViewPort),
-                                        new Dimension2D(config.getTheme().getSelectLineWidth(), config.getTheme().getSelectLineWidth()));
-                                log.debug("relocated to new point: %s".formatted(PointUtils.pointInStr(newPoint)));
+                                    Bounds parentBounds = getParentPane().getBoundsInParent();
+                                    Bounds hoverBounds = BoundsUtils.fromPoint(new Point2D(boundsInViewPort.getMinX(), boundsInViewPort.getMaxY()),
+                                            pane.getWidth(), pane.getHeight());
+                                    log.debug("parent bounds: %s".formatted(BoundsUtils.boundsInString(parentBounds)));
+                                    log.debug("hover bounds: %s".formatted(BoundsUtils.boundsInString(hoverBounds)));
+                                    Point2D newPoint = LayoutUtils.bestLocation(parentBounds, hoverBounds, GeometryConvertUtils.boundsToDimension2D(boundsInViewPort),
+                                            new Dimension2D(config.getTheme().getSelectLineWidth(), config.getTheme().getSelectLineWidth()));
+                                    log.debug("relocated to new point: %s".formatted(PointUtils.pointInStr(newPoint)));
 
-                                Platform.runLater(() -> {
-                                    pane.relocate(newPoint.getX(), newPoint.getY() + config.getTheme().getSelectLineWidth());
-                                    pane.setVisible(true);
-                                    pane.requestFocus();
+                                    Platform.runLater(() -> {
+                                        pane.relocate(newPoint.getX(), newPoint.getY() + config.getTheme().getSelectLineWidth());
+                                        pane.setVisible(true);
+                                        pane.requestFocus();
+                                    });
                                 });
+                                ensureVisibilityOfTopic(getFirstSelectedTopic());
+
                             });
                         });
                         generator.setOnGenerated(output -> {
@@ -298,7 +316,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             if (output.isRetry()) {
                                 super.undo();
                             }
-                            Constants.ProviderInfo providerInfo = generator.getProviderInfo();
+                            ProviderInfo providerInfo = generator.getProviderInfo();
                             super.appendTextAsTopicTree(output.generatedText(), "sub-topics were generated by %s(%s) at %s".formatted(providerInfo.name(), providerInfo.model(), TimeUtils.createTimestamp()));
                         });
                         generator.setOnCancel(isNormally -> {
@@ -350,22 +368,22 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             boolean fullScreenModeActive,
             List<MenuItem> menuItems,
             TopicNode topicUnderMouse,
-            List<PopUpMenuItemExtension> extensionMenuItems) {
+            List<PopUpMenuItemExtension> extensions) {
         menuItems.clear();
 
-        for (PopUpMenuItemExtension p : extensionMenuItems) {
-            if (fullScreenModeActive && !p.isCompatibleWithFullScreenMode()) {
+        for (PopUpMenuItemExtension extension : extensions) {
+            if (fullScreenModeActive && !extension.isCompatibleWithFullScreenMode()) {
                 continue;
             }
-            if (p.getSection() == section) {
-                boolean noTopicsNeeded = !(p.needsTopicUnderMouse() || p.needsSelectedTopics());
+            if (extension.getSection() == section) {
+                boolean noTopicsNeeded = !(extension.needsTopicUnderMouse() || extension.needsSelectedTopics());
                 if (noTopicsNeeded
-                        || (p.needsTopicUnderMouse() && topicUnderMouse != null)
-                        || (p.needsSelectedTopics() && !context.getSelectedTopics().isEmpty())) {
+                        || (extension.needsTopicUnderMouse() && topicUnderMouse != null)
+                        || (extension.needsSelectedTopics() && !context.getSelectedTopics().isEmpty())) {
 
-                    MenuItem item = p.makeMenuItem(context, topicUnderMouse);
+                    MenuItem item = extension.makeMenuItem(context, topicUnderMouse);
                     if (item != null) {
-                        item.setDisable(!p.isEnabled(context, topicUnderMouse));
+                        item.setDisable(!extension.isEnabled(context, topicUnderMouse));
                         menuItems.add(item);
                     }
                 }
@@ -498,7 +516,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     String pass = passwordData.getPassword().trim();
                     try {
                         if (CryptoUtils.decrypt(pass, note.getValue(), decrypted)) {
-                            editingNoteData = new NoteEditorData(decrypted.toString(), note.isEncrypted(), pass, note.getHint());
+                            String strDecrypted = decrypted.toString();
+                            log.trace(strDecrypted);
+                            editingNoteData = new NoteEditorData(strDecrypted, note.isEncrypted(), pass, note.getHint());
                         }
                         else {
                             DialogFactory.errDialog("Wrong password!");
@@ -748,7 +768,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         }
         else if (extension instanceof TopicColorExtension) {
             List<TopicNode> selectedTopics = this.getSelectedTopics();
-            processColorDialogForTopics((selectedTopics != null && selectedTopics.size() > 0) ? selectedTopics : List.of(activeTopic));
+            processColorDialogForTopics((selectedTopics != null && !selectedTopics.isEmpty()) ? selectedTopics : List.of(activeTopic));
             requestFocus();
         }
         else {

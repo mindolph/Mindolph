@@ -15,6 +15,7 @@ import javafx.scene.control.Skin;
 
 /**
  * @author mindolph.com@gmail.com
+ * @see PreferenceItemSkin
  */
 @DefaultProperty("items")
 public class PreferenceItem extends Control {

@@ -4,8 +4,8 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.genai.llm.Constants.ProviderInfo;
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.mindolph.base.genai.llm.Constants.FILE_OUTPUT_MAPPING;
+import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.
@@ -85,10 +85,11 @@ public class AiGenerator implements Generator {
                     log.error(e.getLocalizedMessage(), e);
                     Platform.runLater(() -> {
                         cancelConsumer.accept(false);
+                        String err = "Failed to generate content by %s.\n%s".formatted(LlmService.getIns().getActiveAiProvider(), e.getLocalizedMessage());
                         if (inputPanel != null)
-                            inputPanel.onStop(e.getLocalizedMessage());
+                            inputPanel.onStop(err);
                         if (reframePanel != null)
-                            reframePanel.onStop(e.getLocalizedMessage());
+                            reframePanel.onStop(err);
                     });
                 }
             }).start();
@@ -131,7 +132,7 @@ public class AiGenerator implements Generator {
     @Override
     public MenuItem contextMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem("Generate (Experiment)", icon);
+        return new MenuItem("Generate... (Experiment)", icon);
     }
 
     @Override
@@ -186,8 +187,8 @@ public class AiGenerator implements Generator {
                 GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
                 ProviderProps props = propsMap.get(activeProvider);
                 if (provider == null || props == null) return false;
-                log.debug(String.valueOf(provider));
-                log.debug(String.valueOf(props));
+                log.debug("Provider: %s".formatted(provider));
+                log.trace(String.valueOf(props));
                 if (provider.getType() == GenAiModelProvider.ProviderType.PUBLIC) {
                     return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
                 }

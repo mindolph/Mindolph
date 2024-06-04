@@ -40,7 +40,7 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
         if (activeTopic == null) {
             return null;
         }
-        Menu menu = new Menu("Convert to...", FontIconManager.getIns().getIcon(IconKey.CONVERT));
+        Menu menu = new Menu("Convert to", FontIconManager.getIns().getIcon(IconKey.CONVERT));
         MenuItem miToTopics = new MenuItem("Topics", FontIconManager.getIns().getIcon(IconKey.TOPIC));
 //        MenuItem miToMerge = new MenuItem("Merge", ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_CLONE_TOPIC));
         MenuItem miToNote = new MenuItem("Note", FontIconManager.getIns().getIcon(IconKey.NOTE));

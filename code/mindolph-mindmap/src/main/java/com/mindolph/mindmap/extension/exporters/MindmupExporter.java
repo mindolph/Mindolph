@@ -22,16 +22,14 @@ import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.TopicUtils;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONStringer;
 import org.slf4j.Logger;
@@ -45,11 +43,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExtension.ATTR_KEY;
+import static com.mindolph.mindmap.extension.attributes.AttributeUtils.ATTR_IMAGE_KEY;
 
+/**
+ * TBD
+ */
 public class MindmupExporter extends BaseExportExtension {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_MINDMUP);
     private static final Logger LOGGER = LoggerFactory.getLogger(MindmupExporter.class);
 
     private static String makeHtmlFromExtras(ExtraLink link, ExtraFile file) {
@@ -86,7 +86,7 @@ public class MindmupExporter extends BaseExportExtension {
         ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
         ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
 
-        String encodedImage = topic.getAttribute(ATTR_KEY);
+        String encodedImage = topic.getAttribute(ATTR_IMAGE_KEY);
 
         if (jump != null) {
             linkMap.put(uuid, jump.getValue());
@@ -254,13 +254,18 @@ public class MindmupExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return null;
     }
 
     @Override
     public int getOrder() {
         return 2;
+    }
+
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
 
     private record TopicId(int id, String uuid, TopicNode topic) {

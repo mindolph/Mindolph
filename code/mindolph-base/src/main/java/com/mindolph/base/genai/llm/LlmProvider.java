@@ -6,6 +6,13 @@ package com.mindolph.base.genai.llm;
  */
 public interface LlmProvider {
 
+    /**
+     *
+     * @param input
+     * @param temperature
+     * @param outputParams
+     * @return
+     */
     String predict(String input, float temperature, OutputParams outputParams);
 
 }

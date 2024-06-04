@@ -5,12 +5,16 @@ import dev.langchain4j.model.ollama.OllamaChatModel;
 
 import java.time.Duration;
 
-public class OllamaProvider extends BaseLlmProvider {
+/**
+ * @author mindolph.com@gmail.com
+ * @since 1.7.3
+ */
+public class OllamaProvider extends BaseLangchainLlmProvider {
 
     private final String baseUrl;
 
-    public OllamaProvider(String baseUrl, String aiModel) {
-        super(null, aiModel);
+    public OllamaProvider(String baseUrl, String aiModel, boolean useProxy) {
+        super(null, aiModel, useProxy);
         this.baseUrl = baseUrl;
     }
 

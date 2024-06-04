@@ -66,7 +66,6 @@ import static org.apache.commons.lang3.StringUtils.length;
  * @author mindolph.com@gmail.com
  */
 public class MainController extends BaseController implements Initializable,
-        SearchResultEventHandler,
         WorkspaceRestoreListener, OpenedFileRestoreListener,
         FileRenamedEventHandler, FileChangedEventHandler,
         WorkspaceViewSizeRestoreListener {
@@ -80,7 +79,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private FixedSplitPane splitPane;
     @FXML
-    private WorkspaceView2 workspaceView;
+    private WorkspaceViewEditable workspaceView;
     @FXML
     private RecentView recentView;
     @FXML
@@ -142,7 +141,7 @@ public class MainController extends BaseController implements Initializable,
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
-        workspaceView.setSearchEventHandler(this);
+        workspaceView.subscribeSearchEvent(this::onSearchStart);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
             onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
         }).subscribeFilePathChanged(filePathChangedEvent -> {
@@ -196,7 +195,7 @@ public class MainController extends BaseController implements Initializable,
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
                 workspaceView.selectByNodeDataInAppropriateWorkspace(nodeData);
-                workspaceView.scrollToSelected(); // force to scroll if current workspace is target workspace.
+                // force to scroll and focus if current workspace is target workspace.
                 workspaceView.requestFocus();
             });
         });
@@ -253,17 +252,19 @@ public class MainController extends BaseController implements Initializable,
     }
 
     public void onOpenFile(NodeData fileData, SearchParams searchParams, boolean visibleInWorkspace) {
+        boolean autoSelect = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true) == Boolean.TRUE;
         // the file existence should be validated before this handler for its consequences are different.
         if (fileData.getFile().isFile()) {
-//            NodeData fileData = new NodeData(file);
             fileData.setSearchParams(searchParams);
             this.openFile(fileData, false);
-            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+            if (autoSelect)
+                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         else if (fileData.getFile().isDirectory()) {
-            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+            if (autoSelect)
+                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
-        if (visibleInWorkspace) {
+        if (visibleInWorkspace && autoSelect) {
             splitPane.showAll();
             tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
         }
@@ -278,7 +279,6 @@ public class MainController extends BaseController implements Initializable,
         fileTabView.closeFileTabSafely(fileData);
     }
 
-    @Override
     public void onSearchStart(SearchParams searchParams) {
         String keyword = searchParams.getKeywords();
         SearchResultPane searchResultPane = new SearchResultPane();
@@ -375,7 +375,7 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onMenuManageWorkspaces(ActionEvent event) {
-        WorkspaceDialog dialog = new WorkspaceDialog();
+        WorkspaceManagementDialog dialog = new WorkspaceManagementDialog();
         dialog.showAndWait();
     }
 
@@ -491,7 +491,8 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuExit(ActionEvent event) {
         Boolean requireConfirm = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         if (requireConfirm) {
-            if (!new ConfirmDialogBuilder().yes().no().asDefault().content("Are you sure to quit Mindolph?").showAndWait()) {
+            Boolean quit = new ConfirmDialogBuilder().positive("Quit").cancel().asDefault().content("Are you sure to quit Mindolph?").showAndWait();
+            if (quit == null || !quit) {
                 return;
             }
         }

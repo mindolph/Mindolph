@@ -1,5 +1,8 @@
 package com.mindolph.mindmap.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -16,9 +19,8 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public final class CryptoUtils {
-    private CryptoUtils() {
 
-    }
+    private static final Logger log = LoggerFactory.getLogger(CryptoUtils.class);
 
     public static byte[] sha256(byte[] data) {
         try {
@@ -52,8 +54,10 @@ public final class CryptoUtils {
                         "Data can't be encrypted! Check encryption provider and settings!");
             }
             return new String(Base64.getEncoder().encode(encodedData));
-        } catch (NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | IOException ex) {
-            throw new RuntimeException(ex);
+        } catch (NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException |
+                 BadPaddingException | IOException ex) {
+            log.error("Failed to encrypt text", ex);
+            return null;
         }
     }
 
@@ -68,6 +72,7 @@ public final class CryptoUtils {
             if (decrypted.length < 32) {
                 return false;
             }
+            decrypted = cipher.doFinal(decrypted);
             byte[] sha256data = Arrays.copyOfRange(decrypted, 0, 32);
             byte[] textPart = Arrays.copyOfRange(decrypted, 32, decrypted.length);
             byte[] calculatedHash = sha256(textPart);
@@ -76,8 +81,10 @@ public final class CryptoUtils {
             }
             output.append(new String(textPart, StandardCharsets.UTF_8));
             return true;
-        } catch (NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
+        } catch (NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | IllegalBlockSizeException |
+                 BadPaddingException ex) {
+            log.error("Failed to decrypt text", ex);
+            return false;
         }
     }
 

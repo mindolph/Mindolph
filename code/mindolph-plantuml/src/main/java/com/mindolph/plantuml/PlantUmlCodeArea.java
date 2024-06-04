@@ -1,7 +1,6 @@
 package com.mindolph.plantuml;
 
 import com.mindolph.base.ShortcutManager;
-import com.mindolph.base.control.ExtCodeArea;
 import com.mindolph.base.control.HighlightCodeArea;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.plantuml.constant.ShortcutConstants;
@@ -18,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.AUTO_INDENT;
 import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
 
 /**
@@ -42,7 +40,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
 
         // comment or uncomment for plantuml.
         InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_PUML_COMMENT)), keyEvent -> {
-            super.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("'"));
+            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("'"));
         });
         Nodes.addInputMap(this, comment);
     }

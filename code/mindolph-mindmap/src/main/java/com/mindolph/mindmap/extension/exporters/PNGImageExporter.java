@@ -16,14 +16,14 @@
 
 package com.mindolph.mindmap.extension.exporters;
 
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.gfx.MindMapCanvas;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
@@ -31,6 +31,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,6 @@ import java.util.List;
 public final class PNGImageExporter extends BaseExportExtension {
 
     private static final Logger log = LoggerFactory.getLogger(PNGImageExporter.class);
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_PNG);
     private boolean flagExpandAllNodes = false;
     private boolean flagDrawBackground = true;
 
@@ -140,8 +140,8 @@ public final class PNGImageExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
+    public Text getIcon(ExtensionContext context, TopicNode actionTopic) {
+        return FontIconManager.getIns().getIcon(IconKey.IMAGE);
     }
 
     @Override
@@ -149,4 +149,8 @@ public final class PNGImageExporter extends BaseExportExtension {
         return 4;
     }
 
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
+    }
 }

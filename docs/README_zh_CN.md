@@ -37,30 +37,37 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 	* 导出成 PDF 或 HTML 文件。
 * CSV 表格
 	* 可视化显示和编辑 csv 文件。
+* 实验性的 Gen-AI 支持，你可以通过大模型的 API 来生成文本内容，支持思维导图, Markdown，PlantUML 和纯文本编辑器。支持的大语言模型:  
+	* OpenAI  
+	* 阿里通义千问  
+	* Ollama  
+	* Google Gemini API  
+	* Hugging Face API  
+	* ChatGLM  
 * 支持多种桌面操作系统，包括 `macOS`, `Windows` 和 `Linux`.
 * 其他各种功能。
 
 
 ### 界面
 <p float="left">
-	<img src="docs/screenshots/mindmap_light.jpg" width="45%"/>
+	<img src="screenshots/mindmap_light.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/mindmap_dark.jpg" width="45%"/>
+	<img src="screenshots/mindmap_dark.jpg" width="45%"/>
 </p>
 <p float="left">
-	<img src="docs/screenshots/markdown1.jpg" width="45%"/>
+	<img src="screenshots/markdown1.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/puml_activity.jpg" width="45%"/>
+	<img src="screenshots/puml_activity.jpg" width="45%"/>
 </p>
 <p float="left">
-	<img src="docs/screenshots/puml_sequence.jpg" width="45%"/>
+	<img src="screenshots/puml_sequence.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/puml_component2.jpg" width="45%"/>
+	<img src="screenshots/puml_component2.jpg" width="45%"/>
 </p>
 <p float="left">
-	<img src="docs/screenshots/puml_state.jpg" width="45%"/>
+	<img src="screenshots/puml_state.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/find_in_files.jpg" width="45%"/>
+	<img src="screenshots/find_in_files.jpg" width="45%"/>
 </p>
 
 [更多](screenshots.md)
@@ -70,13 +77,13 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|发布记录| |[v1.6.x](release-notes/v1.6/v1.6_zh_CN.md)|[v1.7.x](release-notes/v1.7/v1.7.md)| |
-|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-x64.dmg)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3-x64.dmg)| Intel |
-|macOS|.dmg|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12-aarch64.dmg) |[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
-|Windows|.msi|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.msi)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.msi)| |
-|Debian|.deb|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.deb)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.rpm)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.rpm)| |
-|Java Executable|.jar|[v1.6.12](https://github.com/mindolph/Mindolph/releases/download/v1.6.12/Mindolph-1.6.12.jar)|[v1.7.3](https://github.com/mindolph/Mindolph/releases/download/v1.7.3/Mindolph-1.7.3.jar)| Java 17 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.6.12.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-20`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-20\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.6.12.jar` |
+|| |[v1.7.x](release-notes/v1.7/v1.7_zh_CN.md)|[v1.8.x](release-notes/v1.8/v1.8_zh_CN.md)| 发布记录 |
+|macOS|.dmg|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6-x64.dmg)|[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0-x64.dmg)| Intel |
+|macOS|.dmg|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6-aarch64.dmg) |[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
+|Windows|.msi|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.msi)|[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0.msi)| |
+|Debian|.deb|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.deb)|[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.rpm)|[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0.rpm)| |
+|Java Executable|.jar|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.jar)|[v1.8.0](https://github.com/mindolph/Mindolph/releases/download/v1.8.0/Mindolph-1.8.0.jar)| Java 17 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.7.6.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-21`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-21\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.7.6.jar` |
 
 
 
@@ -88,5 +95,4 @@ Mindolph 是基于 JavaFX 开发的, 更多详情请点击[code/README.md](../co
 
 计划:
 
-* 1.7: 生成式AI支持（实验性）
 * 1.8: 功能优化和重构。

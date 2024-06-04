@@ -1,7 +1,7 @@
 package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
-import com.mindolph.base.constant.FontConstants;
+import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
+import static com.mindolph.base.constant.FontConstants.KEY_TXT_EDITOR;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 
@@ -50,13 +51,14 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     }
 
     @Override
-    public String getFontPrefKey() {
-        return FontConstants.KEY_TXT_EDITOR;
+    protected void refresh(String text) {
+        this.refresh();
     }
 
     @Override
-    protected void refresh(String text) {
-        // DO NOTHING FOR NOW
+    public void refresh() {
+        super.refresh();
+        CssUtils.applyFontCss(codeArea,KEY_TXT_EDITOR);
     }
 
     @Override

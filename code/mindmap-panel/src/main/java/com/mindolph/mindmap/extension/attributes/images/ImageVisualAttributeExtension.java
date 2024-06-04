@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MMapURI;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.MindMapConfig;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.api.Extension;
@@ -23,10 +24,6 @@ import java.util.regex.Pattern;
 
 public class ImageVisualAttributeExtension implements VisualAttributeExtension {
 
-    public static final String ATTR_KEY = "mmd.image";
-    public static final String ATTR_IMAGE_NAME = "mmd.image.name";
-    public static final String ATTR_IMAGE_URI_KEY = "mmd.image.uri";
-
     private static final Logger log = LoggerFactory.getLogger(ImageVisualAttributeExtension.class);
     private static final Map<TopicNode, Image> CACHED_IMAGES = new WeakHashMap<>();
 
@@ -37,9 +34,9 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
     @Override
     public boolean doesTopicContentMatches(TopicNode topic, File baseFolder, Pattern pattern, Set<Extra.ExtraType> extraTypes) {
         boolean result = false;
-        if (extraTypes != null && topic.getAttribute(ATTR_KEY) != null) {
+        if (extraTypes != null && topic.getAttribute(AttributeUtils.ATTR_IMAGE_KEY) != null) {
             if (extraTypes.contains(Extra.ExtraType.NOTE)) {
-                String text = topic.getAttribute(ATTR_IMAGE_NAME);
+                String text = topic.getAttribute(AttributeUtils.ATTR_IMAGE_NAME);
                 if (text != null) {
                     result = pattern.matcher(text).find();
                 }
@@ -47,7 +44,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
             if (!result &&
                     (extraTypes.contains(Extra.ExtraType.LINK) ||
                             extraTypes.contains(Extra.ExtraType.FILE))) {
-                String text = topic.getAttribute(ATTR_IMAGE_URI_KEY);
+                String text = topic.getAttribute(AttributeUtils.ATTR_IMAGE_URI_KEY);
                 if (text != null) {
                     result = pattern.matcher(MMapURI.makeFromFilePath(baseFolder, text, null).toString()).find();
                 }
@@ -68,7 +65,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
 
     private Image extractImage(TopicNode topic) {
         Image result = null;
-        String encoded = topic.getAttribute(ATTR_KEY);
+        String encoded = topic.getAttribute(AttributeUtils.ATTR_IMAGE_KEY);
         if (encoded != null) {
             try {
                 result = new Image(new ByteArrayInputStream(CryptoUtils.base64decode(encoded)));
@@ -82,7 +79,7 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
     @Override
     public boolean onClick(ExtensionContext context, TopicNode topic, boolean activeGroupModifier, int clickCount) {
         if (clickCount > 1) {
-            String imageFilePathUri = topic.getAttribute(ATTR_IMAGE_URI_KEY);
+            String imageFilePathUri = topic.getAttribute(AttributeUtils.ATTR_IMAGE_URI_KEY);
             if (imageFilePathUri != null) {
                 log.debug("Open image file: " + imageFilePathUri);
                 try {
@@ -103,22 +100,22 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
 
     @Override
     public String getToolTip(TopicNode activeTopic) {
-        String result = activeTopic.getAttribute(ATTR_IMAGE_URI_KEY);
+        String result = activeTopic.getAttribute(AttributeUtils.ATTR_IMAGE_URI_KEY);
         if (result == null) {
-            result = activeTopic.getAttribute(ATTR_IMAGE_NAME);
+            result = activeTopic.getAttribute(AttributeUtils.ATTR_IMAGE_NAME);
         }
         return result;
     }
 
     @Override
     public boolean isClickable(TopicNode activeTopic) {
-        String imageFilePath = activeTopic.getAttribute(ATTR_IMAGE_URI_KEY);
+        String imageFilePath = activeTopic.getAttribute(AttributeUtils.ATTR_IMAGE_URI_KEY);
         return imageFilePath != null;
     }
 
     @Override
     public String getAttributeKey() {
-        return ATTR_KEY;
+        return AttributeUtils.ATTR_IMAGE_KEY;
     }
 
     @Override

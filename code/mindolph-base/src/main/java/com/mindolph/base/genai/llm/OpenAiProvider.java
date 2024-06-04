@@ -14,26 +14,26 @@ import java.time.Duration;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class OpenAiProvider extends BaseLlmProvider {
+public class OpenAiProvider extends BaseLangchainLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiProvider.class);
 
-    public OpenAiProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+    public OpenAiProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override
     protected ChatLanguageModel buildAI(float temperature) {
         log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
-                super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType), this.proxyUrl) : "without proxy"));
+                super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(this.apiKey)
                 .modelName(this.aiModel)
                 .maxRetries(1)
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) temperature);
-        if (super.proxyEnabled) {
-            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType);
+        if (super.proxyEnabled && super.useProxy) {
+            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
         }
         OpenAiChatModel model = builder.build();

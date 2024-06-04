@@ -2,6 +2,7 @@ package com.mindolph.core.search;
 
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,9 +32,12 @@ public class SearchParams {
     }
 
     public SearchParams(String keywords, boolean caseSensitive) {
-//        this.keywords = keywords;
         this.caseSensitive = caseSensitive;
         this.setKeywords(keywords);
+    }
+
+    public String getRelativeSearchDirPath() {
+        return PathUtils.getRelativePath(searchInDir, workspaceDir);
     }
 
     /**

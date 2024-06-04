@@ -6,24 +6,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label fx:id="lblIcon" />
-            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label fx:id="lbWorkspaceName" text="Workspace Name">
-                     <font>
-                        <Font size="15.0" />
-                     </font></Label>
-                  <Label fx:id="lbWorkspacePath" text="Workspace Path" textFill="#373737" />
-               </children>
-            </VBox>
-            <Button fx:id="btnActions" mnemonicParsing="false" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-   </children>
    <padding>
-      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
    </padding>
+   <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
+      <Label fx:id="lblIcon"/>
+      <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+         <Label fx:id="lbWorkspaceName" text="Workspace Name">
+            <font>
+               <Font size="15.0"/>
+            </font>
+         </Label>
+         <Label fx:id="lbWorkspacePath" text="Workspace Path" textFill="#373737"/>
+      </VBox>
+      <Button fx:id="btnActions" mnemonicParsing="false" HBox.hgrow="ALWAYS"/>
+   </HBox>
 </fx:root>

@@ -85,20 +85,6 @@ public class EventBus {
         return this;
     }
 
-    public EventBus notifyWorkspaceLoaded(TreeItem<NodeData> treeItem) {
-        workspaceLoaded.push(treeItem);
-        return this;
-    }
-
-    public EventBus notifyWorkspacesRestored() {
-        workspacesRestored.push("");
-        return this;
-    }
-
-    public EventBus notifyWorkspaceRenamed(WorkspaceRenameEvent event) {
-        workspaceRenamed.push(event);
-        return this;
-    }
 
     public EventBus notifyWorkspaceClosed(WorkspaceMeta workspaceMeta) {
         workspaceClosed.push(workspaceMeta);
@@ -158,23 +144,10 @@ public class EventBus {
         return this;
     }
 
-    public EventBus notifyOpenedFileChange(List<File> openedFiles) {
-        openedFileChange.push(openedFiles);
+    public EventBus notifyWorkspaceLoaded(TreeItem<NodeData> treeItem) {
+        workspaceLoaded.push(treeItem);
         return this;
     }
-
-
-
-    public EventBus notifyLocateInWorkspace(NodeData data) {
-        locateInWorkspace.push(data);
-        return this;
-    }
-
-    public EventBus notifyDeletedFile(NodeData fileData) {
-        fileDeleted.push(fileData);
-        return this;
-    }
-
 
     public EventBus subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
         if (workspaceLoaded == null) workspaceLoaded = new EventSource<>();
@@ -182,9 +155,19 @@ public class EventBus {
         return this;
     }
 
+    public EventBus notifyWorkspacesRestored() {
+        workspacesRestored.push("");
+        return this;
+    }
+
     public EventBus subscribeWorkspacesRestored(Consumer<String> subscriber) {
         if (workspacesRestored == null) workspacesRestored = new EventSource<>();
         workspacesRestored.subscribe(subscriber);
+        return this;
+    }
+
+    public EventBus notifyWorkspaceRenamed(WorkspaceRenameEvent event) {
+        workspaceRenamed.push(event);
         return this;
     }
 
@@ -222,6 +205,11 @@ public class EventBus {
         return this;
     }
 
+    public EventBus notifyOpenedFileChange(List<File> openedFiles) {
+        openedFileChange.push(openedFiles);
+        return this;
+    }
+
     public EventBus subscribeOpenedFileChanges(Consumer<List<File>> consumer) {
         openedFileChange.subscribe(consumer);
         return this;
@@ -247,8 +235,20 @@ public class EventBus {
         return this;
     }
 
+
+    public EventBus notifyLocateInWorkspace(NodeData data) {
+        locateInWorkspace.push(data);
+        return this;
+    }
+
     public EventBus subscribeLocateInWorkspace(Consumer<NodeData> consumer) {
         locateInWorkspace.subscribe(consumer);
+        return this;
+    }
+
+
+    public EventBus notifyDeletedFile(NodeData fileData) {
+        fileDeleted.push(fileData);
         return this;
     }
 

@@ -1,12 +1,11 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.base.genai.llm.Constants.OutputFormat;
+import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author mindolph.com@gmail.com
@@ -29,7 +28,7 @@ public class DummyLlmProvider implements LlmProvider {
             * ask me anything you want.
             * I can do more.""";
 
-    String templateMmd = """
+    String templateMmdNormal = """
             %s(%.1f)
                 %s
                     Hi, I'm AI assistant,
@@ -37,11 +36,49 @@ public class DummyLlmProvider implements LlmProvider {
                     I can do more.
             """;
 
-    Map<OutputFormat, String> map = new HashMap<>() {
+    String templateMmdLong = """
+            %s(%.1f)
+                %s
+                    Hi, I'm AI assistant,
+                    ask me anything you want.
+                    I can do more.
+                    aaaa
+                    bbbb
+                    cccc
+                    dddd
+                    eeee
+                    ffff
+                    gggg
+                    hhhh
+                    iiii
+                    jjjj
+                    kkkk
+                    llll
+                    mmmm
+                    nnnn
+                    oooo
+                    pppp
+                    qqqq
+                    rrrr
+                    ssss
+                    tttt
+                    uuuu
+                    vvvv
+                    wwww
+                    xxxx
+                    yyyy
+                    zzzz
+            """;
+
+    String LENGTH_NORMAL = "normal";
+    String LENGTH_LONG = "long";
+
+    MultiKeyMap<String, String> mkMap = new MultiKeyMap<>() {
         {
-            put(OutputFormat.TEXT, templateText);
-            put(OutputFormat.MARKDOWN, templateMarkdown);
-            put(OutputFormat.MINDMAP, templateMmd);
+            put(OutputFormat.TEXT.name(), LENGTH_NORMAL, templateText);
+            put(OutputFormat.MARKDOWN.name(), LENGTH_NORMAL, templateMarkdown);
+            put(OutputFormat.MINDMAP.name(), LENGTH_NORMAL, templateMmdNormal);
+            put(OutputFormat.MINDMAP.name(), LENGTH_LONG, templateMmdLong);
         }
     };
 
@@ -57,13 +94,18 @@ public class DummyLlmProvider implements LlmProvider {
         }
         String chatId = RandomStringUtils.randomAlphabetic(10);
 
-        String template = map.get(outputParams.outputFormat());
+        String length = LENGTH_NORMAL;
+        if (input.contains(LENGTH_LONG)) {
+            length = LENGTH_LONG;
+        }
+
+        String template = mkMap.get(outputParams.outputFormat().name(), length);
 
         String generated = template.formatted(input, temperature, chatId);
-        if (outputParams.outputAdjust() == Constants.OutputAdjust.SHORTER) {
+        if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER) {
             return StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
         }
-        else if (outputParams.outputAdjust() == Constants.OutputAdjust.LONGER) {
+        else if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.LONGER) {
             switch (outputParams.outputFormat()) {
                 case TEXT:
                     return generated + "\nI can do more.";

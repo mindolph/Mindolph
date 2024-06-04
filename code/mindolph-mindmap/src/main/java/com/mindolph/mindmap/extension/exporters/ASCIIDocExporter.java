@@ -1,168 +1,39 @@
-/*
- * Copyright 2015-2018 Igor Maznitsa.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.mindolph.mindmap.extension.exporters;
 
-import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.mindmap.I18n;
-import com.mindolph.mindmap.extension.api.BaseExportExtension;
+import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
+import com.mindolph.mindmap.extension.exporters.branch.AsciiDocBranchExporter;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.DialogUtils;
-import com.mindolph.mindmap.util.MindMapUtils;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.util.Date;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class ASCIIDocExporter extends BaseExportExtension {
+/**
+ */
+public class ASCIIDocExporter extends AsciiDocBranchExporter {
 
-    private static final Image ICON = ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_EXPORT_ASCIIDOC);
-
-    private static String escapeAsciiDoc(String text, boolean head) {
-        String result = text;
-        if (head) {
-            result = text.replace("\n", " pass:[<br>]");
-        }
-        return result;
-    }
-
-    private static String generateString(char chr, int length) {
-        return String.valueOf(chr).repeat(Math.max(0, length));
-    }
-
-    private static String getTopicUid(TopicNode topic) {
-        return topic.getAttribute(ExtraTopic.TOPIC_UID_ATTR);
-    }
-
-    private void writeTopic(TopicNode topic, State state) throws IOException {
-        int level = topic.getTopicLevel();
-        String uid = getTopicUid(topic);
-
-        if (uid != null) {
-            state.append("anchor:").append(uid).append("[]").appendNextLine().appendNextLine();
-        }
-        String prefix = generateString('=', level + 1);
-        state.append(prefix).append(' ').appendHead(topic.getText()).appendNextLine();
-
-        if (level == 0) {
-            state.append(":encoding: UTF-8").appendNextLine();
-            state.append(":Date: ").append(DATE_FORMAT.format(new Date())).appendNextLine();
-        }
-        state.appendNextLine();
-
-        ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
-        ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
-        ExtraNote note = (ExtraNote) this.findExtra(topic, Extra.ExtraType.NOTE);
-        ExtraTopic transition = (ExtraTopic) this.findExtra(topic, Extra.ExtraType.TOPIC);
-
-        if (note != null) {
-            state.appendParagraphText(note.getValue());
-            state.appendNextLine();
-        }
-
-        if (file != null) {
-            MMapURI fileURI = file.getValue();
-            String filePathAsText =
-                    fileURI.isAbsolute() ? fileURI.asFile(null).getAbsolutePath() : fileURI.toString();
-            state.append("link:++").append(filePathAsText).append("++[File]").appendNextLine()
-                    .appendNextLine();
-        }
-
-        if (link != null) {
-            String url = link.getValue().toString();
-            String ascurl = link.getValue().asString(true, true);
-            state.append("link:").append(ascurl).append("[Link]").appendNextLine().appendNextLine();
-        }
-
-        if (transition != null) {
-            TopicNode linkedTopic = topic.getMap().findTopicForLink(transition);
-            if (linkedTopic != null) {
-                state.append("<<").append(getTopicUid(linkedTopic)).append(",Go to>>").appendNextLine().appendNextLine();
-            }
-        }
-
-        for (Map.Entry<String, String> s : topic.getCodeSnippets().entrySet()) {
-            state.append("[source,").append(s.getKey()).append("]").appendNextLine();
-            state.append("----").appendNextLine();
-            state.append(s.getValue());
-            state.appendConditionalNextLine();
-            state.append("----").appendNextLine().appendNextLine();
-        }
-
-        for (TopicNode t : topic.getChildren()) {
-            writeTopic(t, state);
-        }
-    }
-
-    private String makeContent(MindMap<TopicNode> model) throws IOException {
-        State state = new State();
-        state.append("// Generated by Mindolph AsciiDoc exporter https://github.com/mindolph/Mindolph").appendNextLine();
-        TopicNode root = model.getRoot();
-        if (root != null) {
-            writeTopic(root, state);
-        }
-        return state.toString();
+    @Override
+    public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
+        super.includeAttributes = options.get(0);
+        super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 
     @Override
     public void doExportToClipboard(ExtensionContext context, List<Boolean> options) throws IOException {
-        String text = makeContent(context.getModel());
-        ClipboardContent content = new ClipboardContent();
-        content.putString(text);
-        Clipboard.getSystemClipboard().setContent(content);
+        String text = super.convertTopics(context.getModel(), Collections.singletonList(context.getModel().getRoot()));
+        ClipboardContent cc = new ClipboardContent();
+        cc.putString(text);
+        Clipboard.getSystemClipboard().setContent(cc);
     }
 
     @Override
-    public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
-        String text = makeContent(context.getModel());
-
-        File fileToSaveMap = null;
-        OutputStream theOut = out;
-        if (theOut == null) {
-            fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
-                    I18n.getIns().getString("ASCIIDOCExporter.saveDialogTitle"),
-                    null,
-                    ".asciidoc",
-                    I18n.getIns().getString("ASCIIDOCExporter.filterDescription"),
-                    exportFileName);
-            fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".asciidoc");
-            theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
-        }
-        if (theOut != null) {
-            try {
-                IOUtils.write(text, theOut, "UTF-8");
-            } finally {
-                if (fileToSaveMap != null) {
-                    IOUtils.closeQuietly(theOut);
-                }
-            }
-        }
-    }
-
-    @Override
-    public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("ASCIIDOCExporter.exporterName");
+    public ContextMenuSection getSection() {
+        return ContextMenuSection.EXPORT;
     }
 
     @Override
@@ -171,65 +42,12 @@ public class ASCIIDocExporter extends BaseExportExtension {
     }
 
     @Override
-    public Image getIcon(ExtensionContext context, TopicNode actionTopic) {
-        return ICON;
-    }
-
-    @Override
     public int getOrder() {
         return 8;
     }
 
-    private static class State {
-
-        private static final String NEXT_LINE = System.getProperty("line.separator", "\n");
-        private final StringBuilder buffer = new StringBuilder(16384);
-
-        public State append(char ch) {
-            this.buffer.append(ch);
-            return this;
-        }
-
-        public State nextStringMarker() {
-            this.buffer.append("  ");
-            return this;
-        }
-
-        public State appendHead(String str) {
-            this.buffer.append(escapeAsciiDoc(str, true));
-            return this;
-        }
-
-        public State appendParagraphText(String str) {
-            for (String s : ModelUtils.breakToLines(str)) {
-                this.buffer.append(escapeAsciiDoc(s, false)).append(" +");
-                appendNextLine();
-            }
-            return this;
-        }
-
-        public State append(String str) {
-            this.buffer.append(str);
-            return this;
-        }
-
-        public State appendNextLine() {
-            this.buffer.append(NEXT_LINE);
-            return this;
-        }
-
-        public State appendConditionalNextLine() {
-            if (this.buffer.charAt(this.buffer.length() - 1) != '\n') {
-                this.buffer.append(NEXT_LINE);
-            }
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return this.buffer.toString();
-        }
-
+    @Override
+    public boolean needsTopicUnderMouse() {
+        return false;
     }
-
 }

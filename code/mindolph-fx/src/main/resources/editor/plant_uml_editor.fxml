@@ -6,41 +6,42 @@
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import com.mindolph.plantuml.PlantUmlCodeArea?>
-<fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300" layoutX="281.0" layoutY="71.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <primary>
-                <AnchorPane>
-                    <children>
-                        <FixedSplitPane fx:id="splitPaneCodeEditor" userData="CODE_EDITOR_SPLIT_PANE" fixedSize="100"  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
-                            <primary>
-                                <AnchorPane fx:id="paneCode">
-                                    <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                           AnchorPane.topAnchor="0.0">
-                                        <content>
-                                            <PlantUmlCodeArea fx:id="codeArea"/>
-                                        </content>
-                                    </VirtualizedScrollPane>
-                                </AnchorPane>
-                            </primary>
-                            <secondary>
-                                <SnippetView fx:id="snippetView"/>
-                            </secondary>
-                        </FixedSplitPane>
-                    </children>
-                </AnchorPane>
-            </primary>
-            <secondary>
-                <AnchorPane fx:id="panePreview" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                    <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <ImageScrollPane fx:id="previewPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-                    </children>
-                </AnchorPane>
-            </secondary>
-        </FixedSplitPane>
-    </children>
+<fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+         xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300" layoutX="281.0" layoutY="71.0"
+                    orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <primary>
+            <AnchorPane>
+                <FixedSplitPane fx:id="splitPaneCodeEditor" userData="CODE_EDITOR_SPLIT_PANE" fixedSize="100"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <primary>
+                        <AnchorPane fx:id="paneCode">
+                            <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                                   AnchorPane.rightAnchor="0.0"
+                                                   AnchorPane.topAnchor="0.0">
+                                <content>
+                                    <PlantUmlCodeArea fx:id="codeArea"/>
+                                </content>
+                            </VirtualizedScrollPane>
+                        </AnchorPane>
+                    </primary>
+                    <secondary>
+                        <SnippetView fx:id="snippetView"/>
+                    </secondary>
+                </FixedSplitPane>
+            </AnchorPane>
+        </primary>
+        <secondary>
+            <AnchorPane fx:id="panePreview" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <ImageScrollPane fx:id="previewPane" prefHeight="200.0" prefWidth="200.0"
+                                     VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </AnchorPane>
+        </secondary>
+    </FixedSplitPane>
 </fx:root>

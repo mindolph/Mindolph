@@ -15,245 +15,173 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Button?>
-<fx:root prefHeight="800.0" prefWidth="640.0" type="AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <tabs>
-          <Tab text="Style">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                         <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <HBox HBox.hgrow="ALWAYS">
+<fx:root prefHeight="800.0" prefWidth="640.0" type="AnchorPane" xmlns="http://javafx.com/javafx/18"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Tab text="Style">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <HBox HBox.hgrow="ALWAYS">
                         <VBox prefWidth="640">
-                           <children>
-                               <PreferenceItem name="Theme:" >
-                                   <ChoiceBox fx:id="cbTheme">
-                                   </ChoiceBox>
-                                   <Button fx:id="btnActions"/>
-                               </PreferenceItem>
-                               <Separator prefWidth="200.0" />
-                               <PreferenceItem name="Show grid:">
-                                   <items>
-                                       <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Drop shadow:">
-                                   <items>
-                                       <CheckBox fx:id="ckbDropShadow" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Connector style:" >
-                                   <ChoiceBox fx:id="cbConnectorStyle">
-                                   </ChoiceBox>
-                               </PreferenceItem>
-                               <Separator prefWidth="200.0" />
+                            <PreferenceItem name="Theme:">
+                                <ChoiceBox fx:id="cbTheme">
+                                </ChoiceBox>
+                                <Button fx:id="btnActions"/>
+                            </PreferenceItem>
+                            <Separator prefWidth="200.0"/>
+                            <PreferenceItem name="Show grid:">
+                                <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Drop shadow:">
+                                <CheckBox fx:id="ckbDropShadow"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Connector style:">
+                                <ChoiceBox fx:id="cbConnectorStyle">
+                                </ChoiceBox>
+                            </PreferenceItem>
+                            <Separator prefWidth="200.0"/>
 
-                               <PreferenceItem name="Grid size:">
-                                   <items>
-                                       <Spinner fx:id="spnGridStep" editable="true" />
-                                   </items>
-                               </PreferenceItem>
+                            <PreferenceItem name="Grid size:">
+                                <Spinner fx:id="spnGridStep" editable="true"/>
+                            </PreferenceItem>
 
-                               <PreferenceItem name="Topic connector width:">
-                                   <items>
-                                       <Spinner fx:id="spnConnectorWidth" editable="true" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Jump link width:">
-                                   <items>
-                                       <Spinner fx:id="spnJumpLinkWidth" editable="true" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Collapsator width:">
-                                   <items>
-                                       <Spinner fx:id="spnCollapsatorWidth" editable="true" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Collapsator size:">
-                                   <items>
-                                       <Spinner fx:id="spnCollapsatorSize" editable="true" />
-                                   </items>
-                               </PreferenceItem>
+                            <PreferenceItem name="Topic connector width:">
+                                <Spinner fx:id="spnConnectorWidth" editable="true"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Jump link width:">
+                                <Spinner fx:id="spnJumpLinkWidth" editable="true"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Collapsator width:">
+                                <Spinner fx:id="spnCollapsatorWidth" editable="true"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Collapsator size:">
+                                <Spinner fx:id="spnCollapsatorSize" editable="true"/>
+                            </PreferenceItem>
 
-                               <PreferenceItem name="Topic border width:">
-                                   <items>
-                                       <Spinner fx:id="spnBorderWidth" editable="true" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Topic round radius:">
-                                   <items>
-                                       <Spinner fx:id="spnRoundRadius" editable="true" />
-                                   </items>
-                               </PreferenceItem>
+                            <PreferenceItem name="Topic border width:">
+                                <Spinner fx:id="spnBorderWidth" editable="true"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Topic round radius:">
+                                <Spinner fx:id="spnRoundRadius" editable="true"/>
+                            </PreferenceItem>
 
-                               <PreferenceItem name="Selection frame width:">
-                                   <items>
-                                       <Spinner fx:id="spnSelectionWidth" editable="true" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Selection frame gap:">
-                                   <items>
-                                       <Spinner fx:id="spnSelectionGap" editable="true" />
-                                   </items>
-                               </PreferenceItem>
+                            <PreferenceItem name="Selection frame width:">
+                                <Spinner fx:id="spnSelectionWidth" editable="true"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Selection frame gap:">
+                                <Spinner fx:id="spnSelectionGap" editable="true"/>
+                            </PreferenceItem>
 
-                               <Separator prefWidth="200.0" />
-                               <PreferenceItem name="1st level horizontal gap:">
-                                   <items>
-                                       <Slider fx:id="sld1stLevelHGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="1st level vertical gap:">
-                                   <items>
-                                       <Slider fx:id="sld1stLevelVGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="2nd level horizontal gap:">
-                                   <items>
-                                       <Slider fx:id="sld2ndLevelHGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="2nd level vertical gap:">
-                                   <items>
-                                       <Slider fx:id="sld2ndLevelVGap" max="210.0" min="10.0" majorTickUnit="50" prefWidth="240.0" showTickLabels="true" showTickMarks="true" value="10.0" />
-                                   </items>
-                               </PreferenceItem>
-                               <Separator prefWidth="200.0" />
-                               <PreferenceItem name="Grid color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpGridColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Background fill color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpBackgroundFillColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Topic border color">
-                                   <items>
-                                       <ColorPicker fx:id="cpTopicBorderColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Collapsator fill color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpCollapsatorFillColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Collapsator border color">
-                                   <items>
-                                       <ColorPicker fx:id="cpCollapsatorBorderColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Connector color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpConnectorColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Jump link color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpJumpLinkColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Root fill color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpRootFillColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Root text color">
-                                   <items>
-                                       <ColorPicker fx:id="cpRootTextColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="1st level fill color:">
-                                   <items>
-                                       <ColorPicker fx:id="cp1stLevelColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="1st level text color:">
-                                   <items>
-                                       <ColorPicker fx:id="cp1stLevelTextColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="2nd level fill color:">
-                                   <items>
-                                       <ColorPicker fx:id="cp2ndLevelColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="2nd level text color:">
-                                   <items>
-                                       <ColorPicker fx:id="cp2ndLevelTextColor" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Selection frame color:">
-                                   <items>
-                                       <ColorPicker fx:id="cpSelectionColor" />
-                                   </items>
-                               </PreferenceItem>
-                           </children>
+                            <Separator prefWidth="200.0"/>
+                            <PreferenceItem name="1st level horizontal gap:">
+                                <Slider fx:id="sld1stLevelHGap" max="210.0" min="10.0"
+                                        majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
+                                        showTickMarks="true" value="10.0"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="1st level vertical gap:">
+                                <Slider fx:id="sld1stLevelVGap" max="210.0" min="10.0"
+                                        majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
+                                        showTickMarks="true" value="10.0"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="2nd level horizontal gap:">
+                                <Slider fx:id="sld2ndLevelHGap" max="210.0" min="10.0"
+                                        majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
+                                        showTickMarks="true" value="10.0"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="2nd level vertical gap:">
+                                <Slider fx:id="sld2ndLevelVGap" max="210.0" min="10.0"
+                                        majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
+                                        showTickMarks="true" value="10.0"/>
+                            </PreferenceItem>
+                            <Separator prefWidth="200.0"/>
+                            <PreferenceItem name="Grid color:">
+                                <ColorPicker fx:id="cpGridColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Background fill color:">
+                                <ColorPicker fx:id="cpBackgroundFillColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Topic border color">
+                                <ColorPicker fx:id="cpTopicBorderColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Collapsator fill color:">
+                                <ColorPicker fx:id="cpCollapsatorFillColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Collapsator border color">
+                                <ColorPicker fx:id="cpCollapsatorBorderColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Connector color:">
+                                <ColorPicker fx:id="cpConnectorColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Jump link color:">
+                                <ColorPicker fx:id="cpJumpLinkColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Root fill color:">
+                                <ColorPicker fx:id="cpRootFillColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Root text color">
+                                <ColorPicker fx:id="cpRootTextColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="1st level fill color:">
+                                <ColorPicker fx:id="cp1stLevelColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="1st level text color:">
+                                <ColorPicker fx:id="cp1stLevelTextColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="2nd level fill color:">
+                                <ColorPicker fx:id="cp2ndLevelColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="2nd level text color:">
+                                <ColorPicker fx:id="cp2ndLevelTextColor"/>
+                            </PreferenceItem>
+                            <PreferenceItem name="Selection frame color:">
+                                <ColorPicker fx:id="cpSelectionColor"/>
+                            </PreferenceItem>
                         </VBox>
-                        </HBox>
-                         </ScrollPane>
+                    </HBox>
+                </ScrollPane>
 
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Options">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <VBox layoutX="135.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                               <PreferenceItem name="Add default comment to root node">
-                                   <items>
-                                       <CheckBox fx:id="ckbAddDefaultCommentToRoot" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Trim topic text before set:">
-                                   <items>
-                                       <CheckBox fx:id="ckbTrimTopicText" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Show collapsator when mouse hover">
-                                   <items>
-                                       <CheckBox fx:id="ckbShowCollapsatorOnMouseHover" mnemonicParsing="false" />
-                                   </items>
-                               </PreferenceItem>
-<!--                               <PreferenceItem name="Prefer internal browser to open URL:">-->
-<!--                                   <items>-->
-<!--                                       <CheckBox fx:id="ckbPreferInternalBrowser" />-->
-<!--                                   </items>-->
-<!--                               </PreferenceItem>-->
-<!--                               <PreferenceItem name="Use relevant path for project files:">-->
-<!--                                   <items>-->
-<!--                                       <CheckBox fx:id="ckbUseRelevantPathForProjectFiles" />-->
-<!--                                   </items>-->
-<!--                               </PreferenceItem>-->
-                               <PreferenceItem name="Unfold collapsed drop target:">
-                                   <items>
-                                       <CheckBox fx:id="ckbUnfoldCollapsedDropTarget" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Copy parent color info to new child:">
-                                   <items>
-                                       <CheckBox fx:id="ckbCopyParentColorToNewChild" />
-                                   </items>
-                               </PreferenceItem>
-                               <PreferenceItem name="Smart text paste:">
-                                   <items>
-                                       <CheckBox fx:id="ckbSmartTextPaste" />
-                                   </items>
-                               </PreferenceItem>
-                              <PreferenceItem name="Max size of undo/redo history(10-50):">
-                                 <items>
-                                    <Spinner fx:id="spnUndRedo" editable="true" />
-                                 </items>
-                              </PreferenceItem>
-                           </children></VBox>
-                     </children></AnchorPane>
-              </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </children>
+            </AnchorPane>
+        </Tab>
+        <Tab text="Options">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <VBox layoutX="135.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0"
+                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                      AnchorPane.topAnchor="0.0">
+                    <PreferenceItem name="Add default comment to root node">
+                        <CheckBox fx:id="ckbAddDefaultCommentToRoot"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Trim topic text before set:">
+                        <CheckBox fx:id="ckbTrimTopicText"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Show collapsator when mouse hover">
+                        <CheckBox fx:id="ckbShowCollapsatorOnMouseHover" mnemonicParsing="false"/>
+                    </PreferenceItem>
+                    <!--                               <PreferenceItem name="Prefer internal browser to open URL:">-->
+                    <!--                                   <items>-->
+                    <!--                                       <CheckBox fx:id="ckbPreferInternalBrowser" />-->
+                    <!--                                   </items>-->
+                    <!--                               </PreferenceItem>-->
+                    <!--                               <PreferenceItem name="Use relevant path for project files:">-->
+                    <!--                                   <items>-->
+                    <!--                                       <CheckBox fx:id="ckbUseRelevantPathForProjectFiles" />-->
+                    <!--                                   </items>-->
+                    <!--                               </PreferenceItem>-->
+                    <PreferenceItem name="Unfold collapsed drop target:">
+                        <CheckBox fx:id="ckbUnfoldCollapsedDropTarget"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Copy parent color info to new child:">
+                        <CheckBox fx:id="ckbCopyParentColorToNewChild"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Smart text paste:">
+                        <CheckBox fx:id="ckbSmartTextPaste"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Max size of undo/redo history(10-50):">
+                        <Spinner fx:id="spnUndRedo" editable="true"/>
+                    </PreferenceItem>
+                </VBox>
+            </AnchorPane>
+        </Tab>
+    </TabPane>
 </fx:root>

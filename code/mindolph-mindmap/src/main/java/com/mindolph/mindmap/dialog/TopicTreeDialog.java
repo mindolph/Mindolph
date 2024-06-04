@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.control.MTreeView;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -32,7 +33,7 @@ public class TopicTreeDialog extends BaseDialogController<TopicNode> {
     @FXML
     private Button btnSelectNone;
     @FXML
-    private TreeView<TopicNode> treeView;
+    private MTreeView<TopicNode> treeView;
     private final MindMap<TopicNode> mindMap;
     private final TopicNode topic;
 //    private Topic linkTopic; // link from selected topic (if it has)
@@ -65,22 +66,8 @@ public class TopicTreeDialog extends BaseDialogController<TopicNode> {
         btnUnfoldAll.setGraphic(FontIconManager.getIns().getIcon(IconKey.UNFOLD));
         btnSelectNone.setGraphic(FontIconManager.getIns().getIcon(IconKey.UNSELECT));
 
-        btnUnfoldAll.setOnAction(event -> {
-            treeView.getRoot().setExpanded(true);
-            TreeVisitor.dfsTraverse(treeView.getRoot(), node -> {
-                node.setExpanded(true);
-                return null;
-            });
-            treeView.refresh();
-        });
-        btnFoldAll.setOnAction(event -> {
-            treeView.getRoot().setExpanded(true);
-            TreeVisitor.dfsTraverse(treeView.getRoot(), node -> {
-                node.setExpanded(false);
-                return null;
-            });
-            treeView.refresh();
-        });
+        btnUnfoldAll.setOnAction(event -> treeView.expandAll());
+        btnFoldAll.setOnAction(event -> treeView.collapseAll());
         btnSelectNone.setOnAction(event -> {
             treeView.getSelectionModel().clearSelection();
             treeView.refresh();
@@ -132,7 +119,7 @@ public class TopicTreeDialog extends BaseDialogController<TopicNode> {
                     if (!topic.equals(nodeTopic)
                             && Objects.equals(origin.getAttribute(ExtraTopic.TOPIC_UID_ATTR), nodeTopic.getAttribute(ExtraTopic.TOPIC_UID_ATTR))) {
                         log.debug(String.format("Found topic '%s' and select", nodeTopic.getText()));
-                        treeView.getSelectionModel().select(treeItem);
+                        treeView.select(treeItem);
                     }
                     return null;
                 });

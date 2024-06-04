@@ -1,0 +1,52 @@
+.styled-text-area {
+    -fx-font-family: ${sans-font-family};
+    -fx-font-weight: ${sans-font-weight};
+    -fx-font-style: ${sans-font-posture};
+    -fx-font-size: ${sans-font-size};
+}
+
+.heading {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+
+.list {
+    -fx-fill: red;
+    -fx-font-weight: bold;
+}
+
+.table {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.code {
+    -fx-font-family: 'monofont';
+    -fx-fill: green;
+}
+
+.code-block {
+    -fx-font-family: 'monofont';
+    -fx-fill: green;
+}
+
+.code {
+    -fx-font-family: ${mono-font-family};
+    -fx-font-weight: ${mono-font-weight};
+    -fx-font-style: ${mono-font-posture};
+    -fx-font-size: ${mono-font-size};
+    -fx-fill: green;
+}
+
+.code-block {
+    -fx-font-family: ${mono-font-family};
+    -fx-font-weight: ${mono-font-weight};
+    -fx-font-style: ${mono-font-posture};
+    -fx-font-size: ${mono-font-size};
+    -fx-fill: green;
+}
+
+.md-quote {
+    -fx-fill: grey;
+    -fx-font-weight: normal;
+}

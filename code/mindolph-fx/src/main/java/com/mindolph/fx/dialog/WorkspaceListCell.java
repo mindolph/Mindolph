@@ -36,7 +36,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_ACTIVE_WORKSPA
 
 /**
  * @author mindolph.com@gmail.com
- * @see WorkspaceDialog
+ * @see WorkspaceManagementDialog
  */
 public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
 

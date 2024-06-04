@@ -5,6 +5,7 @@ public enum ContextMenuSection {
     MANIPULATE,
     EXTRAS,
     EXPORT,
+    EXPORT_BRANCHES,
     IMPORT,
     TOOLS,
     MISC

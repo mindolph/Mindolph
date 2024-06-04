@@ -10,6 +10,17 @@ import java.io.File;
  * @author mindolph.com@gmail.com
  */
 public class FileNameUtils {
+
+    /**
+     * Extract all dir names in file path.
+     *
+     * @param path absolute or relative path
+     * @return
+     */
+    public static String[] parseDirNames(String path) {
+        return StringUtils.split(path, File.separatorChar);
+    }
+
     /**
      * Append extension to a file name if it doesn't exist.
      *

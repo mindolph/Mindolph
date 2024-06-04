@@ -1,6 +1,7 @@
 package com.mindolph.core.meta;
 
 import org.apache.commons.io.FilenameUtils;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.util.Objects;
@@ -17,6 +18,16 @@ public class WorkspaceMeta {
 
     public WorkspaceMeta(String baseDirPath) {
         this.baseDirPath = baseDirPath;
+    }
+
+    /**
+     * Whether the file is in the workspace, includes the base path of folder itself.
+     *
+     * @param file
+     * @return
+     */
+    public boolean contains(File file) {
+        return baseDirPath.equals(file.getPath()) || PathUtils.isParentFolder(new File(baseDirPath), file);
     }
 
     public String getName() {

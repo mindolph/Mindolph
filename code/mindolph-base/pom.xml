@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.7.3</version>
+        <version>1.8.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -53,6 +53,10 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-hugging-face</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.swiftech</groupId>

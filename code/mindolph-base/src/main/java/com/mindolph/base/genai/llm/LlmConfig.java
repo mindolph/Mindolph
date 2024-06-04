@@ -3,7 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
-import com.mindolph.base.genai.llm.Constants.ProviderProps;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
 

@@ -2,7 +2,6 @@ package com.mindolph.plantuml;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.constant.FontConstants;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.control.ImageScrollPane;
@@ -10,6 +9,7 @@ import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
+import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -52,6 +52,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
 
 /**
  * @author mindolph.com@gmail.com
@@ -134,11 +137,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         });
     }
 
-    @Override
-    public String getFontPrefKey() {
-        return FontConstants.KEY_PUML_EDITOR;
-    }
-
     protected void createContextMenu() {
         contextMenu.getItems().clear();
         log.info("Total pages: " + indicator.totalPages);
@@ -157,7 +155,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             });
             contextMenu.getItems().add(miPageX);
         }
-        MenuItem miExport = new MenuItem("Export Image as File", FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExport = new MenuItem("Export Image as File...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
         MenuItem miCopyImage = new MenuItem("Copy Image to Clipboard");
         miCopyImage.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
@@ -253,12 +251,19 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
+        this.refresh();
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        CssUtils.applyFontCss(codeArea, "/style/plantuml_syntax_template.css", KEY_PUML_EDITOR, KEY_PUML_EDITOR_MONO);
     }
 
     @Override
     public void refreshPreview(String text, Callback<Object, Void> previewConsumer) {
         indicator.reset();
-        log.debug("Current page: " + indicator.page);
+        log.debug("Current page: %d".formatted(indicator.page));
 
         // The FileFormat uses AWT resources, so it should be run in Swing thread, otherwise it will be blocked.
         SwingUtilities.invokeLater(() -> {

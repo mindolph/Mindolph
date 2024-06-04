@@ -9,52 +9,47 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.base.container.FixedSplitPaneDemo">
-    <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <ButtonBar prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                        <Button mnemonicParsing="false" onAction="#onHidePrimary" text="Hide Primary" />
-                        <Button mnemonicParsing="false" onAction="#onHideSecondary" text="Hide Secondary" />
-                        <Button mnemonicParsing="false" onAction="#onShowAll" text="Show All" />
-                        <Button mnemonicParsing="false" onAction="#onToggleOrientation" text="Toggle Orientation" />
-                    </buttons>
-                </ButtonBar>
-                <ButtonBar prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                  <Button mnemonicParsing="false" onAction="#onNoFixed" text="No Fixed" />
-                        <Button mnemonicParsing="false" onAction="#onPrimaryFixed" text="Fixed Partial Primary" />
-                        <Button mnemonicParsing="false" onAction="#onSecondaryFixed" text="Fixed Partial Secondary" />
-                        <Button mnemonicParsing="false" onAction="#onSetFixedSize" text="Set Fixed Size" />
-                  <Button mnemonicParsing="false" onAction="#onCenterSplitter" text="Center Splitter" />
-                    </buttons>
-                </ButtonBar>
-                <FixedSplitPane fx:id="fixedSplitPane" orientation="HORIZONTAL" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                    <primary>
-                        <AnchorPane minHeight="0.0" minWidth="100" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: Aquamarine " userData="PRIMARY">
-                            <children>
-                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <Label minWidth="100" text="This is primary" />
-                                    <TreeView fx:id="treeView" VBox.vgrow="ALWAYS" />
-                                </VBox>
-                            </children>
-                        </AnchorPane>
-                    </primary>
-                    <secondary>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: GoldenRod" userData="'SECONDARY">
-                            <children>
-                                <Label text="This is secondary" />
-                            </children>
-                        </AnchorPane>
-                    </secondary>
-                </FixedSplitPane>
-                <HBox fx:id="hBox">
-                    <children>
-
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
-    </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mindolph.base.container.FixedSplitPaneDemo">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onHidePrimary" text="Hide Primary"/>
+                <Button mnemonicParsing="false" onAction="#onHideSecondary" text="Hide Secondary"/>
+                <Button mnemonicParsing="false" onAction="#onShowAll" text="Show All"/>
+                <Button mnemonicParsing="false" onAction="#onToggleOrientation" text="Toggle Orientation"/>
+            </buttons>
+        </ButtonBar>
+        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onNoFixed" text="No Fixed"/>
+                <Button mnemonicParsing="false" onAction="#onPrimaryFixed" text="Fixed Partial Primary"/>
+                <Button mnemonicParsing="false" onAction="#onSecondaryFixed" text="Fixed Partial Secondary"/>
+                <Button mnemonicParsing="false" onAction="#onSetFixedSize" text="Set Fixed Size"/>
+                <Button mnemonicParsing="false" onAction="#onCenterSplitter" text="Center Splitter"/>
+            </buttons>
+        </ButtonBar>
+        <FixedSplitPane fx:id="fixedSplitPane" orientation="HORIZONTAL" prefHeight="160.0" prefWidth="200.0"
+                        VBox.vgrow="ALWAYS">
+            <primary>
+                <AnchorPane minHeight="0.0" minWidth="100" prefHeight="160.0" prefWidth="100.0"
+                            style="-fx-background-color: Aquamarine " userData="PRIMARY">
+                    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                          AnchorPane.topAnchor="0.0">
+                        <Label minWidth="100" text="This is primary"/>
+                        <TreeView fx:id="treeView" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                </AnchorPane>
+            </primary>
+            <secondary>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0"
+                            style="-fx-background-color: GoldenRod" userData="'SECONDARY">
+                    <Label text="This is secondary"/>
+                </AnchorPane>
+            </secondary>
+        </FixedSplitPane>
+        <HBox fx:id="hBox"></HBox>
+    </VBox>
 </AnchorPane>

@@ -147,6 +147,7 @@ public class FontIconManager {
         icons.put(IconKey.IMPORT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.IMPORT, DEFAULT_ICON_SIZE));
         icons.put(IconKey.TOPIC, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CHAT_BUBBLE_OUTLINE, DEFAULT_ICON_SIZE));
         icons.put(IconKey.FOLDER, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE));
+        icons.put(IconKey.MOVE_FOLDER, ()-> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_MOVE));
     }
 
     public Text getIcon(IconKey iconKey) {

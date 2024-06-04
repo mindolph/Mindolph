@@ -7,16 +7,13 @@
 <?import javafx.scene.text.Text?>
 
 <fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Pane prefHeight="1.0" style="-fx-background-color: lightgray;" />
-            <Text fx:id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-               <VBox.margin>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="3.0" />
-               </VBox.margin>
-            </Text>
-         </children>
-      </VBox>
-   </children>
+   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+         AnchorPane.topAnchor="0.0">
+      <Pane prefHeight="1.0" style="-fx-background-color: lightgray;"/>
+      <Text fx:id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+         <VBox.margin>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="3.0"/>
+         </VBox.margin>
+      </Text>
+   </VBox>
 </fx:root>

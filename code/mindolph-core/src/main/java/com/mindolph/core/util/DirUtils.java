@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implement this dir search utils because neither JDK nor Commons-io can't search
+ * Implement this dir search utils because neither JDK nor Commons-io can search
  * sub-dirs recursively when a dir is ignored during searching.
  *
  * @author mindolph.com@gmail.com
@@ -53,12 +53,12 @@ public class DirUtils {
         if (subDirs == null) {
             return;
         }
-        // search dirs (recursively)
+        // search sub dirs (recursively)
         for (File subDir : subDirs) {
             findRecursively(subDir, dirFilter, dirFileFilter, result);
         }
         File[] dirs = dir.listFiles((FileFilter) dirFileFilter);
-        if (ArrayUtils.isNotEmpty(dirs)) {
+        if (dirs != null && ArrayUtils.isNotEmpty(dirs)) {
             result.addAll(List.of(dirs));
         }
     }

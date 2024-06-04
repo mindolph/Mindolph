@@ -61,36 +61,6 @@ public final class ModelUtils {
         return result;
     }
 
-    public static boolean onlyFromChar(String line, char chr) {
-        if (line.isEmpty()) {
-            return false;
-        }
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) != chr) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public static Object[] joinArrays(Object[]... arrs) {
-        int totalLen = 0;
-        for (Object[] a : arrs) {
-            totalLen += a.length;
-        }
-
-        Object[] result = new Object[totalLen];
-
-        int pos = 0;
-        for (Object[] a : arrs) {
-            System.arraycopy(a, 0, result, pos, a.length);
-            pos += a.length;
-        }
-        return result;
-    }
-
-
     public static String makePreBlock(String text) {
         return String.format("<pre>%s</pre>", escapeTextForPreBlock(text));
     }
@@ -212,32 +182,6 @@ public final class ModelUtils {
         }
         return result;
     }
-
-    /**
-     * @deprecated use StringUtils.split()
-     * @param text
-     * @return
-     */
-    public static String[] breakToLines(String text) {
-        int lineNum = countLines(text);
-        String[] result = new String[lineNum];
-        StringBuilder line = new StringBuilder();
-
-        int index = 0;
-
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '\n') {
-                result[index++] = line.toString();
-                line.setLength(0);
-            }
-            else {
-                line.append(text.charAt(i));
-            }
-        }
-        result[index] = line.toString();
-        return result;
-    }
-
 
     public static String makeQueryStringForURI(Properties properties) {
         if (properties == null || properties.isEmpty()) {

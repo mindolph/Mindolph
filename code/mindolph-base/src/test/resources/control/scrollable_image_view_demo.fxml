@@ -7,26 +7,23 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.base.control.ScrollableImageViewDemo">
-   <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <ButtonBar prefHeight="40.0" prefWidth="200.0">
-              <buttons>
-                  <Button mnemonicParsing="false" onAction="#onChangeImage3" text="Image 3" />
-                <Button mnemonicParsing="false" onAction="#onChangeImage2" text="Image 2" />
-                  <Button mnemonicParsing="false" onAction="#onChangeImage1" text="Image 1" />
-              </buttons>
-            </ButtonBar>
-            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-               <Button mnemonicParsing="false" text="Test Focus" />
-                <ImageScrollPane fx:id="scrollableImageView" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                    <content>
-                    </content>
-                </ImageScrollPane>
-               <Button mnemonicParsing="false" text="Test Focus" />
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mindolph.base.control.ScrollableImageViewDemo">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onChangeImage3" text="Image 3"/>
+                <Button mnemonicParsing="false" onAction="#onChangeImage2" text="Image 2"/>
+                <Button mnemonicParsing="false" onAction="#onChangeImage1" text="Image 1"/>
+            </buttons>
+        </ButtonBar>
+        <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <Button mnemonicParsing="false" text="Test Focus"/>
+            <ImageScrollPane fx:id="scrollableImageView" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+            </ImageScrollPane>
+            <Button mnemonicParsing="false" text="Test Focus"/>
+        </HBox>
+    </VBox>
 </AnchorPane>

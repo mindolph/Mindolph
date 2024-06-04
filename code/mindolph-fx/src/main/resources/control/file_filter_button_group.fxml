@@ -4,11 +4,40 @@
 <?import org.controlsfx.control.SegmentedButton?>
 <fx:root type="SegmentedButton" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <buttons>
-        <ToggleButton mnemonicParsing="false" selected="true" text="all" userData="all"/>
-        <ToggleButton mnemonicParsing="false" text=".mmd" userData="mmd"/>
-        <ToggleButton mnemonicParsing="false" text=".puml" userData="puml"/>
-        <ToggleButton mnemonicParsing="false" text=".md" userData="md"/>
-        <ToggleButton mnemonicParsing="false" text=".csv" userData="csv"/>
-        <ToggleButton mnemonicParsing="false" text=".txt" userData="txt"/>
+        <ToggleButton mnemonicParsing="false" selected="true" text="all" userData="all">
+            <tooltip>
+                <Tooltip text="All matched folders and files"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton fx:id="tbFolder" mnemonicParsing="false" userData="folder" minHeight="26">
+            <tooltip>
+                <Tooltip text="Folder"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton mnemonicParsing="false" userData="mmd" minHeight="26">
+            <tooltip>
+                <Tooltip text="Mind map(.mmd)"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton mnemonicParsing="false" userData="puml" minHeight="26">
+            <tooltip>
+                <Tooltip text="Plant UML(.puml)"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton mnemonicParsing="false" userData="md" minHeight="26">
+            <tooltip>
+                <Tooltip text="Markdown(.md)"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton mnemonicParsing="false" userData="csv" minHeight="26">
+            <tooltip>
+                <Tooltip text="CSV(.csv)"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton mnemonicParsing="false" userData="txt" minHeight="26">
+            <tooltip>
+                <Tooltip text="Plain text(.txt)"/>
+            </tooltip>
+        </ToggleButton>
     </buttons>
 </fx:root>

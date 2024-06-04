@@ -7,9 +7,9 @@ import dev.langchain4j.model.dashscope.QwenChatModel;
  * @author mindolph.com@gmail.com
  * @since 1.7.2
  */
-public class QwenProvider extends BaseLlmProvider {
-    public QwenProvider(String apiKey, String aiModel) {
-        super(apiKey, aiModel);
+public class QwenProvider extends BaseLangchainLlmProvider {
+    public QwenProvider(String apiKey, String aiModel, boolean useProxy) {
+        super(apiKey, aiModel, useProxy);
     }
 
     @Override

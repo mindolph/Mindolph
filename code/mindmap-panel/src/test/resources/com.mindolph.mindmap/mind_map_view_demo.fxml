@@ -12,59 +12,44 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mindolph.mindmap.MindMapViewDemo">
-   <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button fx:id="btnZoomIn" mnemonicParsing="false" text="Zoom In" />
-                  <Button fx:id="btnZoomOut" mnemonicParsing="false" text="Zoom Out" />
-                  <Button fx:id="btnResetZoom" mnemonicParsing="false" text="Reset Zoom" />
-                  <Button fx:id="btnResize" mnemonicParsing="false" text="Resize width" />
-                  <Button fx:id="btnFitToViewportWidth" mnemonicParsing="false" text="Fix to viewport width" />
-                  <Button fx:id="btnFitToViewportHeight" mnemonicParsing="false" text="Fix to viewport height" />
-                  <CheckBox fx:id="showStatusBar" mnemonicParsing="false" text="Status Bar" />
-              </items>
-            </ToolBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                  <TextField fx:id="searchField" />
-                  <Button fx:id="btnSnapshot" mnemonicParsing="false" text="Snapshot" />
-                  <Button fx:id="btnRepaint" mnemonicParsing="false" text="Repaint" />
-                <Button fx:id="btnUndo" mnemonicParsing="false" text="Undo" />
-                  <Button fx:id="btnRedo" mnemonicParsing="false" text="Redo" />
-              </items>
-            </ToolBar>
-            <HBox VBox.vgrow="ALWAYS">
-               <children>
-                  <Pane>
-                     <children>
-                        <VBox>
-                           <children>
-                              <Label fx:id="statusBar" text="Label" />
-                              <ScalableScrollPane fx:id="scrollPane" prefHeight="516.5" prefWidth="516.5">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+            prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mindolph.mindmap.MindMapViewDemo">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <Button fx:id="btnZoomIn" mnemonicParsing="false" text="Zoom In"/>
+            <Button fx:id="btnZoomOut" mnemonicParsing="false" text="Zoom Out"/>
+            <Button fx:id="btnResetZoom" mnemonicParsing="false" text="Reset Zoom"/>
+            <Button fx:id="btnResize" mnemonicParsing="false" text="Resize width"/>
+            <Button fx:id="btnFitToViewportWidth" mnemonicParsing="false" text="Fix to viewport width"/>
+            <Button fx:id="btnFitToViewportHeight" mnemonicParsing="false" text="Fix to viewport height"/>
+            <CheckBox fx:id="showStatusBar" mnemonicParsing="false" text="Status Bar"/>
+        </ToolBar>
+        <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <TextField fx:id="searchField"/>
+            <Button fx:id="btnSnapshot" mnemonicParsing="false" text="Snapshot"/>
+            <Button fx:id="btnRepaint" mnemonicParsing="false" text="Repaint"/>
+            <Button fx:id="btnUndo" mnemonicParsing="false" text="Undo"/>
+            <Button fx:id="btnRedo" mnemonicParsing="false" text="Redo"/>
+        </ToolBar>
+        <HBox VBox.vgrow="ALWAYS">
+            <Pane>
+                <VBox>
+                    <Label fx:id="statusBar" text="Label"/>
+                    <ScalableScrollPane fx:id="scrollPane" prefHeight="516.5" prefWidth="516.5">
 
-                        </ScalableScrollPane>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0">
-                                <items>
-                                  <Button mnemonicParsing="false" onAction="#onBig" text="Big" />
-                                    <Button mnemonicParsing="false" onAction="#onSmall" text="Small" />
-                                </items>
-                              </ToolBar>
-                           </children>
-                        </VBox>
-                     </children>
-                  </Pane>
-                  <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               </children>
-            </HBox>
-            <HBox>
-               <children>
-                  <Label fx:id="label" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
+                    </ScalableScrollPane>
+                    <ToolBar prefHeight="40.0" prefWidth="200.0">
+                        <Button mnemonicParsing="false" onAction="#onBig" text="Big"/>
+                        <Button mnemonicParsing="false" onAction="#onSmall" text="Small"/>
+                    </ToolBar>
+                </VBox>
+            </Pane>
+            <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <HBox>
+            <Label fx:id="label"/>
+        </HBox>
+    </VBox>
 </AnchorPane>

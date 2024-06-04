@@ -110,7 +110,7 @@
 
 .markdown-body b,
 .markdown-body strong {
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .markdown-body dfn {
@@ -705,7 +705,7 @@
 }
 
 .markdown-body table th {
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .markdown-body table th,

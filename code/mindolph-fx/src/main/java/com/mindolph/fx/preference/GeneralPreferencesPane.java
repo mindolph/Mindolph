@@ -42,7 +42,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private TableView<OrientationItem> tvOrientation;
     @FXML
     private CheckBox cbEnableInputHelper;
-
+    @FXML
+    private CheckBox cbAutoSelectAfterFileOpened;
     @FXML
     private CheckBox cbEnableProxy;
     @FXML
@@ -70,6 +71,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 //        super.bindPreference(ckbEnableAutoCreateProjectFolder.selectedProperty(), PrefConstants.GENERAL_KNOWLEDGE_FOLDER_GENERATION_ALLOWED, false);
         super.bindPreference(ckbShowHiddenFiles.selectedProperty(), PrefConstants.GENERAL_SHOW_HIDDEN_FILES, false);
 //        super.bindPreference(ckbAutoBackupLastEdit.selectedProperty(), "general.autoBackupBeforeSaving", true);
+        super.bindPreference(cbAutoSelectAfterFileOpened.selectedProperty(), GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true);
 
         TableColumn<OrientationItem, Object> colEditor = new TableColumn<>("Editor");
         TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>("Orientation");
@@ -127,11 +129,12 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         ToggleGroup group = new ToggleGroup();
         rbHttp.setToggleGroup(group);
         rbSocks.setToggleGroup(group);
+
         super.bindPreference(rbHttp.selectedProperty(), GENERAL_PROXY_TYPE, "HTTP",
-                aBoolean -> aBoolean ? "HTTP" : StringUtils.EMPTY,
+                aBoolean -> aBoolean ? "HTTP" : null, // null indicate that no event emits since it will cause exception.
                 str -> StringUtils.equals(str, "HTTP"));
         super.bindPreference(rbSocks.selectedProperty(), GENERAL_PROXY_TYPE, "SOCKS",
-                aBoolean -> aBoolean ? "SOCKS" : StringUtils.EMPTY,
+                aBoolean -> aBoolean ? "SOCKS" : null, // null indicate that no event emits since it will cause exception.
                 str -> StringUtils.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
         super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);

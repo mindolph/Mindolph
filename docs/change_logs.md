@@ -1,6 +1,68 @@
 # Change Logs
 
-### V1.7.3 Unstable release
+### V1.8.0 Unstable Release
+
+* New Features:
+	* allows exporting selected topics as a new file as Mind Map, Markdown, AsciiDoc or structured plain text.  
+	* copy&paste image from clipboard to selected topics directly by shortcut.  
+	* Allow dragging external files to any folder in workspace to copy those files.  
+	* add new preference for automatically selecting in workspace after a file is opened.  
+	* add `Move to` functionality to workspace view. 
+* Improvement:
+	* Remembers the last active tab and switches back to it when opening the preferences dialog (until the application is killed).
+	* optimized the PDF exported for markdown files;
+	* support the CJK characters in code blocks within exported PDF file from markdown.
+		> Need to setup the CJK font files for either sans-serif or mono.
+	* allow to select any parent folder in `Find in files` and it's result panel.
+	* add new `folder` button to filter folders in `Go to file` dialog
+	* Improved the user interface for file type options in `Go to file` and `Search in file` dialogs using icon buttons.
+	* add blank tail to markdown bullet list.
+	* automatically expands node in workspace when dragging any file/folder over it.
+	* improved app menu and context menu displaying.
+	* optimized button text in confirm dialogs.
+	* optimized the scroll sync for markdown editor.
+* Bug Fixes:
+	* in Mind Map editor, moving any selected topics by shortcut out of viewport doesn't trigger automatically scrolling.
+	* Emphasis text doesn't work in markdown preview.
+	* external folder should not be able to drag&drop to workspace.
+	* blank text can't be replaced by search&replace in code area.
+* Others
+	* A few of refactoring especially for Mind Map.  
+
+### V1.7.6 Release
+* Improvement: add 'use proxy' option for different LLM providers to enable proxy separately.  
+* Improvement: add gpt-4o to open-ai provider.  
+* Improvement: more pre-set LLM models.  
+* Improvement: optimize the HTTP connecting to LLM providers.
+* Fix: the gen-ai reframe panel shows out of the viewport if generated topics make the selected topic out of the viewport.   
+* Fix: exception when switch proxy type in preference dialog.  
+* Fix: the background of mind map doesn't always render correctly when maximize&recover the editor by double-clicking tab of opened file.   
+* Fix: in Mind Map, the protected topic note can't be opened by password.   
+* Fix: in Mind Map, after canceling the setting password dialog for topic note, a password reset dialog appears.  
+
+
+### V1.7.5 Unstable Release
+* Improvement: add support for ChatGLM to GenAI.
+* Improvement: add pre-set model name list for some LLM providers.
+* Fix: blank text can't be replaced by search&replace in code area.
+* Fix: "select in workspace" does not clear the previous selection before file is located.
+* Fix: maven build profile for aarch64.
+* update mfx to 1.3.0
+
+
+### V1.7.4 Unstable Release
+* Improvement: support Google Gemini API and Hugging Face API for Gen-AI.
+* Improvement: err message displaying for generating content by AI.
+* Improvement: preference migration implementation.
+* Improvement: limit the width of error message area in Gen-AI panel.
+* Improvement: add hint text to input area of Gen-AI panel.
+* Fix: missing sub-folders when loading folder in workspace since the commons-io update to version 2.16.1
+* Fix: after a new file/folder created under a folder, the folder itself should not be selected automatically.
+* some utils classes refactored.
+* update dependencies.
+
+
+### V1.7.3 Unstable Release
 * Feature: support Ollama for Gen-AI.
 * Improvement: support multi selection operations for nodes in  workspace tree view.
 * Merged bug fixes from v1.6.12

@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.Topic;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.core.model.ItemData;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.util.TextUtils;
 import javafx.scene.paint.Color;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +25,7 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 /**
  * @author mindolph.com@gmail.com
  */
-public class TopicNode extends Topic<TopicNode> {
+public class TopicNode extends Topic<TopicNode> implements ItemData {
     static final Logger log = LoggerFactory.getLogger(TopicNode.class);
 
     public TopicNode(MindMap<TopicNode> mindMap, TopicNode base, boolean copyChildren) {
@@ -220,32 +220,28 @@ public class TopicNode extends Topic<TopicNode> {
      */
     public List<TopicNode> fromText(String text) {
         List<TopicNode> result = null;
-        try {
-            List<String> lines = IOUtils.readLines(new ByteArrayInputStream(text.getBytes()), "UTF-8");
-            if (CollectionUtils.isNotEmpty(lines)) {
-                result = new ArrayList<>();
-                TopicNode parentNode = this;
-                int lastIndentCount = -1;
-                for (String line : lines) {
-                    if (StringUtils.isBlank(line)){
-                        continue;
-                    }
-                    int indentCount = TextUtils.countIndent(line, 1);
-                    log.trace("[%d] '%s'".formatted(indentCount, line));
-                    if (indentCount <= lastIndentCount) {
-                        parentNode = parentNode.getParent(); // might be sibling or parents sibling.
-                        if (indentCount < lastIndentCount) {
-                            parentNode = parentNode.getParent(); // is parents sibling.
-                        }
-                    }
-                    TopicNode newTopicNode = parentNode.makeChild(line.trim(), null);
-                    parentNode = newTopicNode;
-                    result.add(newTopicNode);
-                    lastIndentCount = indentCount;
+        List<String> lines = IOUtils.readLines(new ByteArrayInputStream(text.getBytes()), "UTF-8");
+        if (CollectionUtils.isNotEmpty(lines)) {
+            result = new ArrayList<>();
+            TopicNode parentNode = this;
+            int lastIndentCount = -1;
+            for (String line : lines) {
+                if (StringUtils.isBlank(line)) {
+                    continue;
                 }
+                int indentCount = TextUtils.countIndent(line, 1);
+                log.trace("[%d] '%s'".formatted(indentCount, line));
+                if (indentCount <= lastIndentCount) {
+                    parentNode = parentNode.getParent(); // might be sibling or parents sibling.
+                    if (indentCount < lastIndentCount) {
+                        parentNode = parentNode.getParent(); // is parents sibling.
+                    }
+                }
+                TopicNode newTopicNode = parentNode.makeChild(line.trim(), null);
+                parentNode = newTopicNode;
+                result.add(newTopicNode);
+                lastIndentCount = indentCount;
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return result;
     }
@@ -326,4 +322,13 @@ public class TopicNode extends Topic<TopicNode> {
         return new ArrayList<>(List.of(topics));
     }
 
+    @Override
+    public Integer getDisplayIndex() {
+        return 0;
+    }
+
+    @Override
+    public void setDisplayIndex(Integer displayIndex) {
+
+    }
 }
