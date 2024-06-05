@@ -26,7 +26,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -88,9 +87,8 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
     /**
      * @param title
      * @param noteEditorData
-     * @param font
      */
-    public NoteDialog(TopicNode topic, String title, NoteEditorData noteEditorData, Font font) {
+    public NoteDialog(TopicNode topic, String title, NoteEditorData noteEditorData) {
         super(noteEditorData);
         this.result = new NoteEditorData(origin.getText(), origin.isEncrypted(), origin.getPassword(), origin.getHint());
 //        Platform.runLater(() -> {

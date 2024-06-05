@@ -503,7 +503,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             // create new
             editingNoteData = new NoteEditorData();
             NoteDialog noteDialog = new NoteDialog(topic,
-                    String.format("Create Note of '%s'", topic.getText()), editingNoteData, getMindMapConfig().getNoteFont());
+                    String.format("Create Note of '%s'", topic.getText()), editingNoteData);
             noteDialog.show(callbackForNoteEdit);
         }
         else {
@@ -538,7 +538,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                 editingNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, null);
             }
             new NoteDialog(topic,
-                    String.format("Edit note of '%s'", topic.getText()), editingNoteData, getMindMapConfig().getNoteFont())
+                    String.format("Edit note of '%s'", topic.getText()), editingNoteData)
                     .show(callbackForNoteEdit);
         }
         // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.

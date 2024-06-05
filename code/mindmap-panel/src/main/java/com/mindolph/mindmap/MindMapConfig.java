@@ -107,10 +107,18 @@ public final class MindMapConfig implements EditorConfig, Serializable {
         this.topicFont = topicFont;
     }
 
+    /**
+     * @deprecated
+     * @return
+     */
     public Font getNoteFont() {
         return noteFont;
     }
 
+    /**
+     * @deprecated
+     * @param noteFont
+     */
     public void setNoteFont(Font noteFont) {
         this.noteFont = noteFont;
     }
