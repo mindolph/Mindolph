@@ -24,6 +24,13 @@
         <FontPreferencesPane fx:id="fontPreferencesPane"/>
       </AnchorPane>
     </Tab>
+    <Tab fx:id="tabGenAi" text="Gen-AI" userData="genai">
+      <AnchorPane minHeight="0.0" minWidth="0.0">
+        <GenAiPreferencePane fx:id="genAiPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+
+    </Tab>
     <Tab fx:id="tabMindMap" text="Mind Map" userData="mmd">
       <AnchorPane minHeight="0.0" minWidth="0.0">
         <MmdPreferencesPane fx:id="mmdPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -45,12 +52,6 @@
     <!--                </AnchorPane>-->
     <!--              </content>-->
     <!--            </Tab>-->
-    <Tab fx:id="tabGenAi" text="Gen-AI" userData="genai">
-      <AnchorPane minHeight="0.0" minWidth="0.0">
-        <GenAiPreferencePane fx:id="genAiPreferences" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-      </AnchorPane>
 
-    </Tab>
   </SideTabPane>
 </AnchorPane>
