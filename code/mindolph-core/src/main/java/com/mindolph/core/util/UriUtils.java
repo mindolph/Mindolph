@@ -15,7 +15,7 @@ public class UriUtils {
 
     public static String filePathToResourceUriStr(String filePath) {
         if (StringUtils.contains(filePath, "\\")) {
-            return "file://" + StringUtils.replace(filePath, "\\", "/");
+            return "file:///" + StringUtils.replace(filePath, "\\", "/");
         }
         else {
             return "file://" + filePath;
