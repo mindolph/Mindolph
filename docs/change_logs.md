@@ -1,5 +1,12 @@
 # Change Logs
 
+### V1.8.1 Unstable Release
+
+* Improvement: optimize preference dialog and markdown preference layout  
+* Improvement: text in markdown editor and plantuml editor can be set different font between descriptive content and code.  
+* Improvement: add option `include attributes` for exporting mind map (branches) to literal format files.  
+* Update dependencies  
+
 ### V1.8.0 Unstable Release
 
 * New Features:
