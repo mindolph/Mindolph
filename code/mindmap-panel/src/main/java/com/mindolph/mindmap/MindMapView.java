@@ -1068,6 +1068,20 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
+    private boolean unfoldToShowTopic(TopicNode topic) {
+        TopicNode parent = topic.getParent();
+        if (parent == null) return false;
+        boolean parentChanged = this.unfoldToShowTopic(parent);
+        BaseElement parentPayload = (BaseElement) parent.getPayload();
+        if (parent.isCollapsed()) {
+            parentPayload.getModel().foldOrUnfoldChildren(false, 1);
+            return true;
+        }
+        else {
+            return parentChanged;
+        }
+    }
+
     private void doFoldOrUnfoldTopic(List<BaseElement> elements, boolean fold, boolean onlyFirstLevel) {
         boolean changed = false;
         for (BaseElement e : elements) {
@@ -1544,6 +1558,11 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
 
         if (found != null) {
+            // try unfold in case the found topic is invisible
+            if (this.unfoldToShowTopic(found)) {
+                this.onMindMapModelChanged(true);
+            }
+            // clear selection and focus.
             this.removeAllSelection();
             this.focusTo(found);
         }
@@ -1733,9 +1752,9 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
         else if (contentTypes.contains(PLAIN_TEXT)) {
             if (clipboard.hasContent(PLAIN_TEXT)) {
-                log.debug("Paste content from clipboard: " + PLAIN_TEXT);
+                log.debug("Paste content from clipboard: %s".formatted(PLAIN_TEXT));
                 String clipboardText = clipboard.getString();
-                log.debug("Clipboard content: " + StringUtils.abbreviate(clipboardText, 200));
+                log.debug("Clipboard content: %s".formatted(StringUtils.abbreviate(clipboardText, 200)));
                 newTopics = convertText(clipboardText);
                 result = true;
             }
@@ -1753,7 +1772,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         TopicNode t = this.getFirstSelectedTopic();
         List<TopicNode> createdTopics = t.fromText(text);
         if (createdTopics != null && !createdTopics.isEmpty()) {
-            if (StringUtils.isNotBlank(note)){
+            if (StringUtils.isNotBlank(note)) {
                 Extra<?> noteExtra = t.getExtras().get(Extra.ExtraType.NOTE);
                 if (noteExtra == null) {
                     log.debug("add note to parent topic");
