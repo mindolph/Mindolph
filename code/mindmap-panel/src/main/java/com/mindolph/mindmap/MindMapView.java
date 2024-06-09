@@ -1077,6 +1077,33 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
+    /**
+     * Unfold topic's ancestors to let the topic be visible.
+     *
+     * @param topic
+     * @return
+     */
+    private boolean unfoldToShowTopic(TopicNode topic) {
+        TopicNode parent = topic.getParent();
+        if (parent == null) return false;
+        boolean parentChanged = this.unfoldToShowTopic(parent);
+        BaseElement parentPayload = (BaseElement) parent.getPayload();
+        if (parent.isCollapsed()) {
+            parentPayload.getModel().foldOrUnfoldChildren(false, 1);
+            return true;
+        }
+        else {
+            return parentChanged;
+        }
+    }
+
+    /**
+     * Fold or unfold topics (with or without children) no matter theirs parents are visible,
+     *
+     * @param elements
+     * @param fold
+     * @param onlyFirstLevel
+     */
     private void doFoldOrUnfoldTopic(List<BaseElement> elements, boolean fold, boolean onlyFirstLevel) {
         boolean changed = false;
         for (BaseElement e : elements) {
@@ -1553,6 +1580,11 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
 
         if (found != null) {
+            // try to unfold in case the found topic is invisible
+            if (this.unfoldToShowTopic(found)) {
+                this.onMindMapModelChanged(true);
+            }
+            // clear selection and focus.
             this.removeAllSelection();
             this.focusTo(found);
         }
@@ -1575,7 +1607,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
             onMindMapModelChanged(true);
-            log.debug("  with new text: " + newText);
+            log.debug("  with new text: %s".formatted(newText));
         }
     }
 
@@ -1594,7 +1626,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
             replaced = true;
-            log.debug("  with new text: " + newText);
+            log.debug("  with new text: %s".formatted(newText));
             Pattern pattern = SearchUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
             found = this.getModel().findNext(null, found, pattern, true, null, TOPIC_FINDERS);
         }
@@ -1771,9 +1803,9 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
         else if (contentTypes.contains(PLAIN_TEXT)) {
             if (clipboard.hasContent(PLAIN_TEXT)) {
-                log.debug("Paste content from clipboard: " + PLAIN_TEXT);
+                log.debug("Paste content from clipboard: %s".formatted(PLAIN_TEXT));
                 String clipboardText = clipboard.getString();
-                log.debug("Clipboard content: " + StringUtils.abbreviate(clipboardText, 200));
+                log.debug("Clipboard content: %s".formatted(StringUtils.abbreviate(clipboardText, 200)));
                 newTopics = convertText(clipboardText);
                 result = true;
             }

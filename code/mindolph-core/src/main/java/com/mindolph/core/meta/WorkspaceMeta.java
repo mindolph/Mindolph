@@ -20,6 +20,10 @@ public class WorkspaceMeta {
         this.baseDirPath = baseDirPath;
     }
 
+    public boolean exists() {
+        return new File(this.baseDirPath).exists();
+    }
+
     /**
      * Whether the file is in the workspace, includes the base path of folder itself.
      *
