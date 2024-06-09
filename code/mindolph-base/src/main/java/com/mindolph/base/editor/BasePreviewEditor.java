@@ -118,6 +118,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             }
             case BOTH -> {
                 fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
+                this.refresh(codeArea.getText()); // refresh preview from possible updated text
             }
         }
     }
