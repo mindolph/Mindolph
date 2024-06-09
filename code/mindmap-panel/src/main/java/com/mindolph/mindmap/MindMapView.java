@@ -1068,6 +1068,12 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
+    /**
+     * Unfold topic's ancestors to let the topic be visible.
+     *
+     * @param topic
+     * @return
+     */
     private boolean unfoldToShowTopic(TopicNode topic) {
         TopicNode parent = topic.getParent();
         if (parent == null) return false;
@@ -1082,6 +1088,13 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
+    /**
+     * Fold or unfold topics (with or without children) no matter theirs parents are visible,
+     *
+     * @param elements
+     * @param fold
+     * @param onlyFirstLevel
+     */
     private void doFoldOrUnfoldTopic(List<BaseElement> elements, boolean fold, boolean onlyFirstLevel) {
         boolean changed = false;
         for (BaseElement e : elements) {
@@ -1558,7 +1571,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
 
         if (found != null) {
-            // try unfold in case the found topic is invisible
+            // try to unfold in case the found topic is invisible
             if (this.unfoldToShowTopic(found)) {
                 this.onMindMapModelChanged(true);
             }
@@ -1585,7 +1598,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
             onMindMapModelChanged(true);
-            log.debug("  with new text: " + newText);
+            log.debug("  with new text: %s".formatted(newText));
         }
     }
 
@@ -1604,7 +1617,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
             replaced = true;
-            log.debug("  with new text: " + newText);
+            log.debug("  with new text: %s".formatted(newText));
             Pattern pattern = SearchUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
             found = this.getModel().findNext(null, found, pattern, true, null, TOPIC_FINDERS);
         }
