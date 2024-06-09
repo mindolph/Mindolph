@@ -449,6 +449,10 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
      * @param workspaceMeta
      */
     public void loadWorkspace(WorkspaceMeta workspaceMeta) {
+        if (!workspaceMeta.exists()) {
+            DialogFactory.errDialog("The workspace '%s' does not exist, it might has been moved or deleted from storage.".formatted(workspaceMeta.getName()));
+            return;
+        }
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
             activeWorkspaceData = workspaceDataTreeItem.getValue();
             expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());

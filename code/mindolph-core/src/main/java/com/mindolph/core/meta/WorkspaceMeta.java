@@ -19,6 +19,10 @@ public class WorkspaceMeta {
         this.baseDirPath = baseDirPath;
     }
 
+    public boolean exists() {
+        return new File(this.baseDirPath).exists();
+    }
+
     public String getName() {
         return FilenameUtils.getBaseName(baseDirPath);
     }
