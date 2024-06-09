@@ -27,6 +27,8 @@ public class SearchableCodeArea extends SmartCodeArea {
      */
     private final TextNavigator textNavigator = new TextNavigator();
 
+    private boolean searchAtEnd = false;
+
     // TODO
     Selection<Collection<String>, String, Collection<String>> extraSelection = new SelectionImpl<>("main selection", this,
             path -> {
@@ -68,9 +70,17 @@ public class SearchableCodeArea extends SmartCodeArea {
             this.requestFollowCaret();
         }
         else {
-            this.moveTo(0); // move to the start of doc
+            if (searchAtEnd) {
+                this.moveTo(0); // move to the start of doc
+                searchNext(keyword, options); // and restart
+                searchAtEnd = false;
+            }
+            else {
+                searchAtEnd = true;
+            }
         }
     }
+
 
     public void searchPrev(String keyword, TextSearchOptions options) {
         textNavigator.setText(this.getText(), !options.isForReplacement());
