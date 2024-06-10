@@ -1,5 +1,15 @@
 # Change Logs
 
+
+### V1.7.7 Release
+
+* Improvement: optimize the searching reach the beginning or the end in Markdown, PlantUML and plain text editors.    
+* Improvement: optimize gen-ai dialog UI.  
+* Fix: no response when change current workspace to a no longer existed one.  
+* Fix: markdown preview panel is not updated when the view mode is changed from `text only` to `both`.  
+* Fix: collapsed topics in mind map can't be located and focused when found by searching.  
+* Fix: the custom LLM model input should be disabled when select any pre-set model from the model list.  
+
 ### V1.8.1 Unstable Release
 
 * Improvement: optimize preference dialog and markdown preference layout  
