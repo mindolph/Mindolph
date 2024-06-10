@@ -170,6 +170,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 tfAiModel.setDisable(false);
             }
             else {
+                tfAiModel.setDisable(true);
                 tfAiModel.setText(newValue.getValue());
             }
         });

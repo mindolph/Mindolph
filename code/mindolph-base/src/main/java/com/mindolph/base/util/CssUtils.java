@@ -2,6 +2,7 @@ package com.mindolph.base.util;
 
 import com.mindolph.base.constant.FontConstants;
 import com.mindolph.core.util.TemplateUtils;
+import com.mindolph.core.util.UriUtils;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.scene.Parent;
@@ -44,9 +45,10 @@ public class CssUtils {
             String name = "editor_%d.css".formatted(root.hashCode());
             File file = new File(SystemUtils.getJavaIoTmpDir(), name);
             FileUtils.writeStringToFile(file, formatted, StandardCharsets.UTF_8);
-            log.debug("load font css file: {}", file.getAbsolutePath());
+            String resRui = UriUtils.filePathToResourceUriStr(file.getAbsolutePath());
+            log.debug("load font css file: {}", resRui);
             root.getStylesheets().clear();
-            root.getStylesheets().add("file://" + file.getAbsolutePath());
+            root.getStylesheets().add(resRui);
             root.layout();
         } catch (IOException e) {
             throw new RuntimeException(e);

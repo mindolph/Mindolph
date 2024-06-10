@@ -27,6 +27,9 @@ public class SearchableCodeArea extends SmartCodeArea {
      */
     private final TextNavigator textNavigator = new TextNavigator();
 
+    private boolean searchAtEnd = false;
+    private boolean searchAtBeginning = false;
+
     // TODO
     Selection<Collection<String>, String, Collection<String>> extraSelection = new SelectionImpl<>("main selection", this,
             path -> {
@@ -55,6 +58,7 @@ public class SearchableCodeArea extends SmartCodeArea {
      * @param options
      */
     public void searchNext(String keyword, TextSearchOptions options) {
+        boolean isFromBeginning = super.getCaretPosition() == 0; // to avoid infinite loop when nothing found in whole content.
         textNavigator.setText(this.getText(), !options.isForReplacement());
         int curRow = this.getCurrentParagraph();
         int curCol = this.getCaretColumn();
@@ -68,11 +72,20 @@ public class SearchableCodeArea extends SmartCodeArea {
             this.requestFollowCaret();
         }
         else {
-            this.moveTo(0); // move to the start of doc
+            if (!isFromBeginning && searchAtEnd) {
+                this.moveTo(0); // move to the start of doc
+                searchNext(keyword, options); // and restart searching.
+                searchAtEnd = false;
+            }
+            else {
+                searchAtEnd = true; // setup flag and skip one search step
+            }
         }
     }
 
+
     public void searchPrev(String keyword, TextSearchOptions options) {
+        boolean isFromEnd = super.getCaretPosition() == getText().length(); // to avoid infinite loop when nothing found in whole content.
         textNavigator.setText(this.getText(), !options.isForReplacement());
         IndexRange selection = this.getSelection();
         int row = this.getCurrentParagraph();
@@ -90,7 +103,14 @@ public class SearchableCodeArea extends SmartCodeArea {
             this.requestFollowCaret();
         }
         else {
-            this.moveTo(getText().length()); // move to the end of doc
+            if (!isFromEnd && searchAtBeginning) {
+                this.moveTo(getText().length()); // move to the end of doc
+                this.searchPrev(keyword, options);
+                searchAtBeginning = false;
+            }
+            else {
+                searchAtBeginning = true; // setup flag and skip one search step
+            }
         }
     }
 

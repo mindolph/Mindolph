@@ -21,16 +21,6 @@
 }
 
 .code {
-    -fx-font-family: 'monofont';
-    -fx-fill: green;
-}
-
-.code-block {
-    -fx-font-family: 'monofont';
-    -fx-fill: green;
-}
-
-.code {
     -fx-font-family: ${mono-font-family};
     -fx-font-weight: ${mono-font-weight};
     -fx-font-style: ${mono-font-posture};
