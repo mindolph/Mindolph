@@ -1007,55 +1007,51 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
         }
         else if (source == miClone) {
-            if (selectedData != null) {
-                if (selectedData.isFile()) {
-                    File file = selectedData.getFile();
-                    this.copyFile(selectedTreeItem.getParent(), file);
-                }
+            if (selectedData.isFile()) {
+                File file = selectedData.getFile();
+                this.copyFile(selectedTreeItem.getParent(), file);
             }
         }
         else if (source == miDelete) {
-            if (selectedData != null) {
-                try {
-                    for (NodeData sn : selectedNodes) {
-                        if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
-                            DialogFactory.errDialog("Deleting a folder with files is not allowed");
-                            return;
-                        }
+            try {
+                for (NodeData sn : selectedNodes) {
+                    if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
+                        DialogFactory.errDialog("The folder you want to delete is not empty");
+                        return;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
                 }
-                String summary = "Are you sure to delete %s".formatted(
-                        selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
-                );
-                Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
-                if (needDelete != null && needDelete) {
-                    for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
-                        NodeData sn = curItem.getValue();
-                        if (!this.beforeFilePathChanged(sn)) {
-                            log.debug("Cancel deleting file");
-                            return;
-                        }
-                        log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
-                        if (sn.getFile().isDirectory()) {
-                            deleteMacFile(sn.getFile());
-                        }
-                        try {
-                            FileUtils.delete(sn.getFile());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
-                            return;
-                        }
-                        curItem.getParent().getChildren().remove(curItem);
-                        // close opened file tab(if exists) and remove from recent list if exists
-                        EventBus.getIns().notifyDeletedFile(sn);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            String summary = "Are you sure to delete %s".formatted(
+                    selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
+            );
+            Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
+            if (needDelete != null && needDelete) {
+                for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
+                    NodeData sn = curItem.getValue();
+                    if (!this.beforeFilePathChanged(sn)) {
+                        log.debug("Cancel deleting file");
+                        return;
                     }
-                    treeView.refresh();
-                    treeView.getSelectionModel().clearSelection();
+                    log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
+                    if (sn.getFile().isDirectory()) {
+                        deleteMacFile(sn.getFile());
+                    }
+                    try {
+                        FileUtils.delete(sn.getFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
+                        return;
+                    }
+                    curItem.getParent().getChildren().remove(curItem);
+                    // close opened file tab(if exists) and remove from recent list if exists
+                    EventBus.getIns().notifyDeletedFile(sn);
                 }
+                treeView.refresh();
+                treeView.getSelectionModel().clearSelection();
             }
         }
         else if (source == miReload) {
@@ -1073,21 +1069,19 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             this.launchUsageDialog(selectedData);
         }
         else if (source == miOpenInSystem) {
-            if (selectedData != null) {
-                log.info("Try to open file: " + selectedData.getFile());
-                if (selectedData.isMindMap()) {
-                    this.openSelectedFile(); // always open mmd file in Mindolph
-                }
-                else {
-                    MindolphFileUtils.openFileInSystem(selectedData.getFile());
-                }
+            log.info("Try to open file: %s".formatted(selectedData.getFile()));
+            if (selectedData.isMindMap()) {
+                this.openSelectedFile(); // always open mmd file in Mindolph
+            }
+            else {
+                MindolphFileUtils.openFileInSystem(selectedData.getFile());
             }
         }
         else if (source == miCollapseAll) {
             treeView.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
         }
         else {
-            log.debug("Unknown event source: " + source);
+            log.debug("Unknown event source: %s".formatted(source));
         }
     }
 

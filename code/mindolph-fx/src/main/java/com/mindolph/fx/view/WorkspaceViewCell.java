@@ -87,7 +87,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             dragEvent.consume();
         });
         this.setOnDragEntered(dragEvent -> {
-            log.trace("drag entered: " + (this.getTreeItem() == null ? EMPTY : this.getTreeItem().getValue()));
+            log.trace("drag entered: %s".formatted(this.getTreeItem() == null ? EMPTY : this.getTreeItem().getValue()));
             if (this.isDroppable()) {
                 origBackground = this.getBackground();
                 this.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));

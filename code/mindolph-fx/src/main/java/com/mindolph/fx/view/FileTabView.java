@@ -397,7 +397,7 @@ public class FileTabView extends BaseView {
         else {
             // append original extension if user deleted it, otherwise save as user input (which means user can change the extension)
             File saveAsFileWithExt = new File(FileNameUtils.appendFileExtensionIfAbsent(saveAsFile.getPath(), extension));
-            log.info("Try to save file as :" + saveAsFileWithExt.getPath());
+            log.info("Try to save file as :%s".formatted(saveAsFileWithExt.getPath()));
 
             // TODO these code are un-implemented, comment for later implementation (to handle save as to an existing(and modified) file)
 //            NodeData newNodeData = new NodeData(saveAsFileWithExt);
