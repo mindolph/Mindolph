@@ -39,6 +39,12 @@ import static javafx.scene.input.KeyCode.TAB;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
+ * Supports:
+ * Context Menu.
+ * Features registration and handling.
+ * Specific shortcuts for macOS.
+ * Common methods for handing text.
+ *
  * @author mindolph.com@gmail.com
  */
 public class ExtCodeArea extends CodeArea {
