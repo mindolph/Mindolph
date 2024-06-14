@@ -313,13 +313,20 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 //            return;
 //        }
         if (StringUtils.isBlank(event.getCommitted())) {
-            isInputMethod = true;
-            log.debug("in input method");
-            this.insertText(this.getCaretPosition(), event.getCommitted());
+            if (event.getComposed().isEmpty()) {
+                // input method is canceled
+                log.debug("canceled input method");
+                isInputMethod = false;
+            }
+            else {
+                isInputMethod = true;
+                log.debug("in input method%s".formatted(event.getComposed()));
+//                this.insertText(this.getCaretPosition(), event.getCommitted());
+            }
         }
         else {
             isInputMethod = false;
-            log.debug("not in input method with: " + event.getCommitted());
+            log.debug("not in input method with: %s".formatted(event.getCommitted()));
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
         }
     }
