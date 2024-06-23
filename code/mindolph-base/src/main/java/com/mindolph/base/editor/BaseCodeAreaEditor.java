@@ -3,7 +3,6 @@ package com.mindolph.base.editor;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.base.event.NotificationType;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextAnchor;
 import com.mindolph.core.search.TextLocation;
@@ -108,22 +107,24 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     }
 
     @Override
-    public void loadFile(Runnable afterLoading) throws IOException {
+    public void loadFile() throws IOException {
+        log.debug("Load file: %s".formatted(editorContext.getFileData().getFile()));
         String text = super.loadByOs(FileUtils.readFileToString(editorContext.getFileData().getFile(), StandardCharsets.UTF_8));
         Platform.runLater(() -> {
             this.codeArea.replaceText(text);
             this.codeArea.displaceCaret(0); // caret starts at head of the file.
             this.codeArea.getUndoManager().forgetHistory();
             this.codeArea.getUndoManager().mark();
-            // notify file loaded event for scrolling to top after file content is loaded.
-            EventBus.getIns().notify(NotificationType.FILE_LOADED);
 
+            // refresh before listening the text change event.
             this.refresh(text);
+
             // add text change listener should after CodeArea init content.
-            this.codeArea.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (!StringUtils.equals(oldValue, newValue)) {
+            this.codeArea.textProperty().addListener((observable, oldValue, newText) -> {
+                if (!StringUtils.equals(oldValue, newText)) {
                     this.codeArea.doHistory();
-                    refresh(newValue);
+                    log.debug("Refresh editor since text are changed.");
+                    refresh(newText);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.UNDO, this.codeArea.getUndoManager().isUndoAvailable());
@@ -142,8 +143,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 i++;
                 if (log.isTraceEnabled()) log.trace("%d: %s".formatted(i, paragraph.getText()));
             }
-            afterLoading.run();
-            this.editorReadyEventHandler.onEditorReady();
+
+            // emit file content loaded event for like scrolling to pos of anchor or updating menu state, etc.
+            EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
+
         });
     }
 
@@ -165,9 +168,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void locate(Anchor anchor) {
+        log.debug("Locate anchor: %s".formatted(anchor));
         if (anchor instanceof TextAnchor ta) {
             TextLocation tl = ta.getTextLocation();
-            log.debug("Select range:  " + tl);
+            log.debug("Select range:  %s".formatted(tl));
             codeArea.selectRange(tl.getStartRow(), tl.getStartCol(), tl.getEndRow(), tl.getEndCol());
             codeArea.scrollXToPixel(0);
             codeArea.requestFollowCaret();

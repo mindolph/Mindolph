@@ -2,7 +2,6 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
-import com.mindolph.base.event.EditorReadyEventHandler;
 import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -32,8 +31,6 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
 
     protected EditorContext editorContext;
 
-    protected EditorReadyEventHandler editorReadyEventHandler;
-
     protected FileChangedEventHandler fileChangedEventHandler;
 
     protected FileSavedEventHandler fileSavedEventHandler;
@@ -56,7 +53,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
             loader.setController(this);
             loader.load();
         } catch (Exception exception) {
-            log.error("Failed to load: " + fxmlResourcePath, exception);
+            log.error("Failed to load: %s".formatted(fxmlResourcePath), exception);
             throw new RuntimeException(exception);
         }
     }
@@ -71,7 +68,8 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
         boolean isSameWorkspace = PathUtils.isParentFolder(editorContext.getWorkspaceData().getFile(), file);
         if (isSameWorkspace) {
             return Optional.of(PathUtils.getRelativePath(file, editorContext.getFileData().getFile().getParentFile()));
-        } else {
+        }
+        else {
             return Optional.empty();
         }
     }
@@ -85,7 +83,8 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     protected String convertByOs(String text) {
         if (SystemUtils.IS_OS_WINDOWS) {
             return RegExUtils.replaceAll(text, "\n", "\r\n");
-        } else {
+        }
+        else {
             return text;
         }
     }
@@ -99,7 +98,8 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     protected String loadByOs(String text) {
         if (SystemUtils.IS_OS_WINDOWS) {
             return RegExUtils.replaceAll(text, "\r\n", "\n");
-        } else {
+        }
+        else {
             return text;
         }
     }
@@ -132,11 +132,6 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     @Override
     public EditorContext getEditorContext() {
         return editorContext;
-    }
-
-    @Override
-    public void setEditorReadyEventHandler(EditorReadyEventHandler editorReadyEventHandler) {
-        this.editorReadyEventHandler = editorReadyEventHandler;
     }
 
     public void setOnFileChangedListener(FileChangedEventHandler fileChangeHandler) {

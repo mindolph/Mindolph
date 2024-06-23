@@ -108,17 +108,20 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     }
 
     public void changeViewMode(ViewMode viewMode) {
-        this.viewMode = viewMode;
-        switch (viewMode) {
-            case TEXT_ONLY -> {
-                fixedSplitPane.hideSecondary();
-            }
-            case PREVIEW_ONLY -> {
-                fixedSplitPane.hidePrimary();
-            }
-            case BOTH -> {
-                fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
-                this.refresh(codeArea.getText()); // refresh preview from possible updated text
+        boolean changed = this.viewMode != viewMode;
+        if (changed) {
+            this.viewMode = viewMode;
+            switch (viewMode) {
+                case TEXT_ONLY -> {
+                    fixedSplitPane.hideSecondary();
+                }
+                case PREVIEW_ONLY -> {
+                    fixedSplitPane.hidePrimary();
+                }
+                case BOTH -> {
+                    fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
+                    this.refresh(codeArea.getText()); // refresh preview from possible updated text
+                }
             }
         }
     }

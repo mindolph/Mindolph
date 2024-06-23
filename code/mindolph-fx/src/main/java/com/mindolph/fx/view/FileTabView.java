@@ -70,8 +70,8 @@ public class FileTabView extends BaseView {
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
+                Object tabUserData = selectingTab.getUserData();
                 if (editor == null) {
-                    Object tabUserData = selectingTab.getUserData();
                     if (tabUserData != null) {
                         NodeData fileData = (NodeData) tabUserData;
                         this.loadEditorToTab(fileData, selectingTab);
@@ -83,6 +83,7 @@ public class FileTabView extends BaseView {
                         editor.setNeedRefresh(false);
                     }
                     editor.requestFocus();
+                    editor.locate(((NodeData)tabUserData).getAnchor()); // locate for 'find in files'
                     this.updateMenuState(editor);
                 }
             }
@@ -149,9 +150,9 @@ public class FileTabView extends BaseView {
         else {
             log.debug("file tab already exists: %s".formatted(fileData.getFile()));
             log.debug(StringUtils.join(openedFileMap.keySet()));
+            tab.setUserData(fileData);// update user data because the file data is probably updated(with Anchor for example)
             tabPane.getSelectionModel().select(tab);
             tabEditorMap.get(tab).requestFocus();
-            tabEditorMap.get(tab).locate(fileData.getAnchor());
         }
         EventBus.getIns().notifyMenuStateChange(CLOSE_TAB, true);
         EventBus.getIns().notifyMenuStateChange(SAVE_AS, true);
@@ -185,8 +186,35 @@ public class FileTabView extends BaseView {
         this.tabEditorMap.put(tab, editor);
         this.createContextMenuForTab(tab);
 
-        // do something when editor is ready.
-        editor.setEditorReadyEventHandler(() -> editor.locate(fileData.getAnchor()));
+        // do something to init the editor when file is loaded and update menu states.
+        EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
+            Platform.runLater(()-> {
+                editor.locate(fileData.getAnchor());
+
+                editor.setOnFileChangedListener(changedFileData -> {
+                    if (log.isTraceEnabled())log.trace("File changed: %s".formatted(changedFileData.getFile()));
+                    Tab changedTab = openedFileMap.get(changedFileData);
+                    changedTab.setText("*" + changedFileData.getName());
+                    // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
+                    EventBus.getIns().notifyMenuStateChange(SAVE, true);
+                    EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
+                });
+                editor.setFileSavedEventHandler(savedFileData -> {
+                    log.info("File %s saved.".formatted(savedFileData.getFile()));
+                    Tab curTab = getCurrentTab();
+                    curTab.setText(fileData.getName());
+                    // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
+                    EventBus.getIns().notifyMenuStateChange(SAVE, false);
+                });
+
+                if (editor instanceof BasePreviewEditor) {
+                    // center the splitter on loading only.
+                    ((BasePreviewEditor) editor).centerSplitter();
+                }
+
+                this.updateMenuState(editor);
+            });
+        });
 
         new Thread(() -> {
             try {
@@ -196,30 +224,7 @@ public class FileTabView extends BaseView {
                         contentView.updateStatusBar(statusMsg);
                     });
                 });
-                editor.loadFile(() -> {
-                    editor.setOnFileChangedListener(changedFileData -> {
-                        log.trace("File changed: %s".formatted(changedFileData.getFile()));
-                        Tab changedTab = openedFileMap.get(changedFileData);
-                        changedTab.setText("*" + changedFileData.getName());
-                        // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
-                        EventBus.getIns().notifyMenuStateChange(SAVE, true);
-                        EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
-                    });
-                    editor.setFileSavedEventHandler(savedFileData -> {
-                        log.info("File %s saved.".formatted(savedFileData.getFile()));
-                        Tab curTab = getCurrentTab();
-                        curTab.setText(fileData.getName());
-                        // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
-                        EventBus.getIns().notifyMenuStateChange(SAVE, false);
-                    });
-
-                    if (editor instanceof BasePreviewEditor) {
-                        // center the splitter on loading only.
-                        ((BasePreviewEditor) editor).centerSplitter();
-                    }
-
-                    this.updateMenuState(editor);
-                });
+                editor.loadFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -20,4 +20,10 @@ public class TextAnchor implements Anchor{
         this.textLocation = textLocation;
     }
 
+    @Override
+    public String toString() {
+        return "TextAnchor{" +
+                "textLocation=" + textLocation +
+                '}';
+    }
 }

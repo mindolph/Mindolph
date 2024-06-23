@@ -2,7 +2,6 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
-import com.mindolph.base.event.EditorReadyEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
@@ -20,15 +19,13 @@ public interface Editable {
      *
      * @throws IOException
      */
-    void loadFile(Runnable afterLoading) throws IOException;
+    void loadFile() throws IOException;
 
     /**
      * Refresh editor in some cases like config changed.
      * Don't load data in the method.
      */
     void refresh();
-
-    void setEditorReadyEventHandler(EditorReadyEventHandler editorReadyEventHandler);
 
     void setFileSavedEventHandler(FileSavedEventHandler fileSavedEventHandler);
 

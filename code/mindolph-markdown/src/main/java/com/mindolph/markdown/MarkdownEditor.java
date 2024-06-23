@@ -10,7 +10,6 @@ import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.editor.MarkdownCodeArea;
 import com.mindolph.base.editor.MarkdownToolbar;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.print.PrinterManager;
@@ -34,7 +33,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -141,12 +139,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         timestamp = String.valueOf(System.currentTimeMillis());
 
-        EventBus.getIns().subscribe(notificationType -> {
-            if (notificationType == NotificationType.FILE_LOADED) {
-                // scroll to top when file loaded.
-                Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
-            }
-        });
+        // comment because not sure if this is necessary
+//        EventBus.getIns().subscribeFileLoaded(editorContext.getFileData(), fileData -> {
+//            Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
+//        });
+
 
         // init the toolbar
         markdownToolbar = new MarkdownToolbar((MarkdownCodeArea) codeArea);
@@ -202,7 +199,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         parser = Parser.builder(options).build();
         renderer = HtmlRenderer.builder(options).build();
-        this.refresh();// to set up the font
+        // this.refresh();// to set up the font
 
         scrollEventCode.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
                 .subscribe(newY -> {

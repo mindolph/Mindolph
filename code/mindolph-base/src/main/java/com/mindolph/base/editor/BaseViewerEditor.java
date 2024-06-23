@@ -15,7 +15,7 @@ public abstract class BaseViewerEditor extends BaseEditor {
     }
 
     @Override
-    public void loadFile(Runnable afterLoading) throws IOException {
+    public void loadFile() throws IOException {
 
     }
 

@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
+ * Subscribe and emit events globally.
+ *
  * @author mindolph.com@gmail.com
  */
 public class EventBus {
@@ -27,6 +29,8 @@ public class EventBus {
     // Events for workspace
     private EventSource<String> workspacesRestored;
     private EventSource<TreeItem<NodeData>> workspaceLoaded;
+    //    private EventSource<NodeData> fileLoaded;
+    private final Map<NodeData, EventSource<NodeData>> fileLoadedEvents = new HashMap<>();
     private EventSource<WorkspaceRenameEvent> workspaceRenamed;
     private EventSource<WorkspaceMeta> workspaceClosed;
     private final EventSource<TreeExpandCollapseEvent> treeExpandCollapseEventEventSource = new EventSource<>();
@@ -104,29 +108,16 @@ public class EventBus {
         return this;
     }
 
-    /**
-     * send empty status msg.
-     *
-     * @param file
-     */
-    public EventBus notifyStatusMsg(File file) {
-        notifyStatusMsg(file, new StatusMsg());
-        return this;
-    }
-
-    public EventBus notifyStatusMsg(File file, StatusMsg statusMsg) {
-        EventSource<StatusMsg> eventSource = statusMsgEvents.get(file);
-        if (eventSource != null) {
-            if (!eventSource.isObservingInputs()) {
-                log.warn("No observer for event of file: %s".formatted(file));
-            }
-            else {
-                eventSource.push(statusMsg);
-            }
+    public EventBus subscribeMenuStateChange(MenuTag menuTag, Consumer<Boolean> subscriber) {
+        if (!menuStateEvens.containsKey(menuTag)) {
+            EventSource<Boolean> eventSource = new EventSource<>();
+            menuStateEvens.put(menuTag, eventSource);
         }
         else {
-            log.warn("Not found");
+            log.debug("Subscriber for %s already exists, no registration again".formatted(menuTag));
         }
+        EventStream<Boolean> eventSource = menuStateEvens.get(menuTag);
+        eventSource.subscribe(subscriber);
         return this;
     }
 
@@ -152,6 +143,16 @@ public class EventBus {
     public EventBus subscribeWorkspaceLoaded(int max, Consumer<TreeItem<NodeData>> subscriber) {
         if (workspaceLoaded == null) workspaceLoaded = new EventSource<>();
         workspaceLoaded.subscribeFor(max, subscriber);
+        return this;
+    }
+
+    public EventBus notifyFileLoaded(NodeData fileData) {
+        this.notify(fileLoadedEvents, fileData, fileData);
+        return this;
+    }
+
+    public EventBus subscribeFileLoaded(NodeData fileData, Consumer<NodeData> consumer) {
+        this.subscribe(fileLoadedEvents, fileData, consumer);
         return this;
     }
 
@@ -183,14 +184,28 @@ public class EventBus {
         return this;
     }
 
-    public EventBus subscribeMenuStateChange(MenuTag menuTag, Consumer<Boolean> subscriber) {
-        if (!menuStateEvens.containsKey(menuTag)) {
-            EventSource<Boolean> eventSource = new EventSource<>();
-            eventSource.subscribe(subscriber);
-            menuStateEvens.put(menuTag, eventSource);
+    /**
+     * send empty status msg.
+     *
+     * @param file
+     */
+    public EventBus notifyStatusMsg(File file) {
+        notifyStatusMsg(file, new StatusMsg());
+        return this;
+    }
+
+    public EventBus notifyStatusMsg(File file, StatusMsg statusMsg) {
+        EventSource<StatusMsg> eventSource = statusMsgEvents.get(file);
+        if (eventSource != null) {
+            if (!eventSource.isObservingInputs()) {
+                log.warn("No observer for event of file: %s".formatted(file));
+            }
+            else {
+                eventSource.push(statusMsg);
+            }
         }
         else {
-            log.debug("Subscriber for %s already exists, no registration again".formatted(menuTag));
+            log.warn("Not found");
         }
         return this;
     }
@@ -266,6 +281,45 @@ public class EventBus {
         preferenceChanged.push(fileType);
         return this;
     }
+
+
+    /**
+     * Emit event with payload <code>p</code> to all it's consumers.
+     *
+     * @param map Mapping from target to event source.
+     * @param t Target for event emitting.
+     * @param p Payload for event emitting.
+     * @param <T> Type of target
+     * @param <P> Type of payload
+     */
+    private <T, P> void notify(Map<T, EventSource<P>> map, T t, P p) {
+        if (map.containsKey(t)) {
+            EventSource<P> eventSource = map.get(t);
+            if (eventSource != null) {
+                eventSource.push(p);
+            }
+        }
+    }
+
+    /**
+     * Subscribe event for target <code>t</code> with <code>consumer</code>.
+     * Invoking this method again to same target registers multiple consumers.
+     *
+     * @param map Mapping from target to event source.
+     * @param t Target for event emitting.
+     * @param consumer Consumer for handling event to target
+     * @param <T> Type of target
+     * @param <P> Type of payload
+     */
+    private <T, P> void subscribe(Map<T, EventSource<P>> map, T t, Consumer<P> consumer) {
+        if (!map.containsKey(t)) {
+            EventSource<P> eventSource = new EventSource<>();
+            map.put(t, eventSource);
+        }
+        EventSource<P> eventSource = map.get(t);
+        eventSource.subscribe(consumer);
+    }
+
 
     public enum MenuTag {
         UNDO, REDO, CUT, COPY, PASTE, NEW_FILE, OPEN_FILE, SAVE, SAVE_AS, SAVE_ALL, PRINT, CLOSE_TAB, FIND, REPLACE

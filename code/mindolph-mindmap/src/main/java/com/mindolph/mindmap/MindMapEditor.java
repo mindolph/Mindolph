@@ -152,11 +152,13 @@ public class MindMapEditor extends BaseEditor {
             firstInTree = this.getMindMapModel().findFirstInTree(t -> {
                 log.debug("  %s".formatted(t.getText()));
                 // TODO within extra contents if how to display them in the result has been resolved.
-                return ma.getText().equals(t.getText()) && ma.getParentText().equals(t.getParent().getText());
+                return ma.getText().equals(t.getText())
+                        && (t.getParent() == null || ma.getParentText().equals(t.getParent().getText()));
             });
         }
         if (firstInTree.isPresent()) {
-            log.debug("Find topic node: " + firstInTree.get().getText());
+            log.debug("Find topic node: %s".formatted(firstInTree.get().getText()));
+            this.mindMapView.getSelection().clear();
             this.mindMapView.selectAndUpdate(firstInTree.get(), false);
         }
         else {
@@ -166,7 +168,7 @@ public class MindMapEditor extends BaseEditor {
     }
 
     @Override
-    public void loadFile(Runnable afterLoading) throws IOException {
+    public void loadFile() throws IOException {
         try {
             Platform.runLater(() -> {
                 mindMapView.setFocusTraversable(true);
@@ -187,7 +189,7 @@ public class MindMapEditor extends BaseEditor {
                         if (rootToCenter) {
                             mindMapView.rootToCentre();
                         }
-                        MindMapEditor.this.editorReadyEventHandler.onEditorReady();
+                        EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
                         mindMapView.requestFocus();
                     });
                 });
@@ -213,8 +215,6 @@ public class MindMapEditor extends BaseEditor {
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.CUT, !CollectionUtils.isEmpty(selectedTopics));
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !CollectionUtils.isEmpty(selectedTopics));
                 });
-
-                afterLoading.run();
             });
         } catch (Exception e) {
             e.printStackTrace();

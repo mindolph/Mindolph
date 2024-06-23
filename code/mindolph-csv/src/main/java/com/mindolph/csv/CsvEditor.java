@@ -19,7 +19,6 @@ import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FontUtils;
-import com.mindolph.mfx.util.TextUtils;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.utils.MaterialDesignIconFactory;
 import javafx.application.Platform;
@@ -160,7 +159,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
 
     @Override
-    public void loadFile(Runnable afterLoading) throws IOException {
+    public void loadFile() throws IOException {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         this.text = IoUtils.readAllToString(fileReader);
         this.undoService.push(this.text);
@@ -175,7 +174,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 csvNavigator.setData(tableView.stream().toList(), rowSize);
             }
         });
-        Platform.runLater(afterLoading);
     }
 
     private void initTableView() throws IOException {
@@ -297,7 +295,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             log.debug("%d data columns and %d row initialized".formatted(tableView.getColumnSize(), tableView.getItems().size()));
 
-            this.editorReadyEventHandler.onEditorReady();
+//            this.editorReadyEventHandler.onEditorReady();
+            EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
         });
     }
 
