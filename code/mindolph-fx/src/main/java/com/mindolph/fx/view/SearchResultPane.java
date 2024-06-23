@@ -118,13 +118,13 @@ public class SearchResultPane extends AnchorPane {
         this.searchParams = searchParams;
         treeView.init(searchParams);
 
+        bcbDirPath.init(searchParams.getWorkspaceDir(), searchParams.getSearchInDir());
         bcbDirPath.selectedCrumbProperty().addListener((observable, oldValue, newValue) -> {
             DirBreadCrumb.Crumb value = newValue.getValue();
             log.debug("move to dir: %s".formatted(value.path()));
             searchParams.setSearchInDir(value.path().toFile());
             this.reSearch();
         });
-        bcbDirPath.init(searchParams.getWorkspaceDir(), searchParams.getSearchInDir());
 
         tfKeywords.setText(searchParams.getKeywords());
         tbCase.setSelected(searchParams.isCaseSensitive());
