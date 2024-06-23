@@ -1,6 +1,14 @@
 # Change Logs
 
+### V1.8.2 Unstable Release
+
+* Fix: the order of search results list changes randomly.  
+* Fix: duplicate search result items since the breadcrumb was introduced.  
+* Fix: unexpected refresh in active editor when shortcuts key reference dialog popup.
+* Merge bug fixes from stable versions.  
+
 ### V1.7.8 Release
+
 * Fix: exception when locating root topic of mind map from search result.   
 * Fix: when locating a mind map topic from the search results, the selected topics are not cleared.  
 * Fix: breaking line and moving caret up/down does not work in some cases after IME dialog popup and hide.  
