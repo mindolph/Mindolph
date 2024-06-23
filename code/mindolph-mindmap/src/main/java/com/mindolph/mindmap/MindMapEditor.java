@@ -152,11 +152,13 @@ public class MindMapEditor extends BaseEditor {
             firstInTree = this.getMindMapModel().findFirstInTree(t -> {
                 log.debug("  %s".formatted(t.getText()));
                 // TODO within extra contents if how to display them in the result has been resolved.
-                return ma.getText().equals(t.getText()) && ma.getParentText().equals(t.getParent().getText());
+                return ma.getText().equals(t.getText())
+                        && (t.getParent() == null || ma.getParentText().equals(t.getParent().getText()));
             });
         }
         if (firstInTree.isPresent()) {
-            log.debug("Find topic node: " + firstInTree.get().getText());
+            log.debug("Find topic node: %s".formatted(firstInTree.get().getText()));
+            this.mindMapView.getSelection().clear();
             this.mindMapView.selectAndUpdate(firstInTree.get(), false);
         }
         else {
