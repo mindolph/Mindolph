@@ -325,7 +325,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      */
     private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
         if (targetTreeItem == null) {
-            log.warn("No tree item folder provided");
+            log.warn("No tree item folder provided!");
             return;
         }
         boolean needReload = false;
@@ -980,9 +980,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     boolean isSameWorkspace = selection.workspaceMeta().contains(activeWorkspaceData.getFile());
                     File targetFolder = selection.folderPath();
                     List<NodeData> toBeMoved = treeView.getSelectedItemsData();
-                    EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+                    EventBus.getIns().subscribeWorkspaceLoaded(1, rootTreeItem -> {
                         log.debug("Move %d files to %s".formatted(toBeMoved.size(), targetFolder));
                         TreeItem<NodeData> targetTreeItem = this.findTreeItemByFile(targetFolder);
+                        if (targetTreeItem == null) {
+                            // no target tree item found means workspace root has been selected.
+                            targetTreeItem = rootTreeItem;
+                        }
                         this.moveToTreeItem(toBeMoved, targetTreeItem);
                         treeView.reselect(targetTreeItem); // TODO refactor to moved files and workspace.
                         treeView.refresh();
@@ -992,7 +996,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     if (targetFolder != null && targetFolder.isDirectory()) {
                         log.debug(targetFolder.getPath());
                         if (isSameWorkspace) {
-                            // utilize the workspace loaded event.
+                            // utilize the workspace loaded event to execute files movement.
                             EventBus.getIns().notifyWorkspaceLoaded(rootItem);
                         }
                         else {
