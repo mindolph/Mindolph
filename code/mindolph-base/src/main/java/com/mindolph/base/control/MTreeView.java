@@ -31,7 +31,7 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
      * @param includeParent specified tree item collapse either.
      */
     public void collapseTreeNodes(TreeItem<T> treeItem, boolean includeParent) {
-        log.debug("Collapse all expanded nodes under " + treeItem);
+        log.debug("Collapse all expanded nodes under %s".formatted(treeItem));
         setExpanded(treeItem, includeParent, false);
     }
 
@@ -40,7 +40,7 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
     }
 
     public void expandTreeNodes(TreeItem<T> treeItem, boolean includeParent) {
-        log.debug("Expand all expanded nodes under " + treeItem);
+        log.debug("Expand all expanded nodes under %s".formatted(treeItem));
         setExpanded(treeItem, includeParent, true);
     }
 
@@ -66,6 +66,15 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
     public void reselect(TreeItem<T> treeItem) {
         super.getSelectionModel().clearSelection();
         super.getSelectionModel().select(treeItem);
+    }
+
+    /**
+     * Clear current selection and select specified tree items.
+     * @param treeItems
+     */
+    public void reselect(List<TreeItem<T>> treeItems) {
+        super.getSelectionModel().clearSelection();
+        treeItems.forEach(super.getSelectionModel()::select);
     }
 
     public void scrollToSelected() {

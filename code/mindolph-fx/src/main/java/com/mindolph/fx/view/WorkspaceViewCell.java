@@ -1,6 +1,7 @@
 package com.mindolph.fx.view;
 
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.control.MTreeView;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.event.DragFileEventHandler;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -109,6 +110,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
         });
         this.setOnDragDropped(dragEvent -> {
             if (dragEvent.getDragboard().hasString()) {
+                // implement the dragging&dropping internal files.
                 if (this.isDroppable()) {
                     if (draggingNodeDatas != null && !draggingNodeDatas.isEmpty()) {
                         log.info(String.format("Drag %s and drop to %s", dragEvent.getDragboard().getString(), getTreeItemData().getFile().toString()));
@@ -123,6 +125,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                 }
             }
             else if (dragEvent.getDragboard().hasFiles()) {
+                // implement the dragging&dropping external files as copies.
                 getTreeView().requestFocus();
                 if (this.isDroppable()) {
                     List<File> files = dragEvent.getDragboard().getFiles();
@@ -149,7 +152,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                                 try {
                                     FileUtils.copyFile(file, destFile);
                                 } catch (IOException e) {
-                                    DialogFactory.errDialog("Failed to copy file " + file.getName() + " to " + destFile.getAbsolutePath());
+                                    DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
                                 }
                                 log.debug("copy file {} with overwrite done", file);
                             }
@@ -160,7 +163,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                             try {
                                 FileUtils.copyFile(file, destFile);
                             } catch (IOException e) {
-                                DialogFactory.errDialog("Failed to copy file " + file.getName() + " to " + destFile.getAbsolutePath());
+                                DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
                             }
                             log.debug("copy file {} done", file);
                             NodeData destNodeData = new NodeData(destFile);
@@ -169,8 +172,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                         }
                     }
                     getTreeItem().getChildren().addAll(newItems);
-                    getTreeView().getSelectionModel().clearSelection();
-                    newItems.forEach(ti -> getTreeView().getSelectionModel().select(ti));
+                    ((MTreeView<NodeData>)getTreeView()).reselect(newItems);
                     getTreeView().refresh();
                     getTreeView().requestFocus();
                 }

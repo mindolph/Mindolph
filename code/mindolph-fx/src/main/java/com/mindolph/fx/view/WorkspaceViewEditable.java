@@ -228,12 +228,11 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 log.debug("Drop %d files to %s".formatted(nodeDatas.size(), toDir.getPath()));
                 TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
                 moveToTreeItem(nodeDatas, treeItemFolder);
-                treeView.getSelectionModel().clearSelection();
             });
             return cell;
         });
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedItem) -> {
-            log.debug("Selection changed: " + selectedItem);
+            log.debug("Selection changed: %s".formatted(selectedItem));
             Optional<NodeData> selectedValue = treeView.getSelectedData();
             EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.NEW_FILE,
                     selectedValue.isPresent()
@@ -318,18 +317,21 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Move file(s) to target tree node.
+     * Move file(s) to target tree node in either current workspace or other workspace.
+     * If any file is moved successfully, the treeview's selection will be cleared and moved files will be selected.
      *
-     * @param nodeDatas
-     * @param targetTreeItem
+     * @param nodeDatas selected files in current workspace.
+     * @param targetTreeItem target tree item in current or other workspace.
+     * @return moved files.
      */
-    private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
+    private List<File> moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
         if (targetTreeItem == null) {
             log.warn("No tree item folder provided!");
-            return;
+            return null;
         }
         boolean needReload = false;
         List<File> failedFiles = new LinkedList<>();
+        List<File> newFiles = new LinkedList<>();
         for (NodeData nodeData : nodeDatas) {
             File fileToBeMoved = nodeData.getFile();
             if (!this.beforeFilePathChanged(nodeData)) {
@@ -340,14 +342,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 // in same workspace
                 TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
                 if (treeItemToBeMoved == null || treeItemToBeMoved == targetTreeItem || treeItemToBeMoved.getParent() == targetTreeItem) {
-                    log.debug("Not move this item: " + treeItemToBeMoved);
+                    log.debug("Not move this item: %s".formatted(treeItemToBeMoved));
                 }
                 else {
-
                     log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
-                    treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                     try {
-                        this.moveFile(nodeData, targetTreeItem.getValue().getFile());
+                        newFiles.add(this.moveFile(nodeData, targetTreeItem.getValue().getFile()));
+                        treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                         FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                         needReload = true;
                     } catch (Exception e) {
@@ -359,7 +360,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             else {
                 // Moving to different workspace doesn't require
                 try {
-                    this.moveFile(nodeData, targetTreeItem.getValue().getFile());
+                    newFiles.add(this.moveFile(nodeData, targetTreeItem.getValue().getFile()));
                     FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                     needReload = true;
                 } catch (IOException e) {
@@ -379,14 +380,25 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 targetTreeItem.setExpanded(false);
                 targetTreeItem.setExpanded(true);
             }
+            treeView.reselect(newFiles.stream().map(this::findTreeItemByFile).toList());
             treeView.refresh();
         }
         if (!failedFiles.isEmpty()) {
             DialogFactory.warnDialog("Failed files: \n" + StringUtils.join(failedFiles, LINE_SEPARATOR));
         }
+        return newFiles;
     }
 
-    private void moveFile(NodeData toBeMoved, File targetFolder) throws IOException {
+    /**
+     * Move file from NodeData to a target folder.
+     * After that, notify the MainController and RecentView to do necessary update.
+     *
+     * @param toBeMoved
+     * @param targetFolder
+     * @return
+     * @throws IOException
+     */
+    private File moveFile(NodeData toBeMoved, File targetFolder) throws IOException {
         File fileToBeMoved = toBeMoved.getFile();
         File newFile = new File(targetFolder, toBeMoved.getName());
         if (toBeMoved.isFile()) {
@@ -399,6 +411,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         }
         EventBus.getIns().notifyFilePathChanged(toBeMoved, newFile);
         toBeMoved.setFile(newFile);
+        return newFile;
     }
 
     /**
@@ -987,10 +1000,10 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                             // no target tree item found means workspace root has been selected.
                             targetTreeItem = rootTreeItem;
                         }
-                        this.moveToTreeItem(toBeMoved, targetTreeItem);
-                        treeView.reselect(targetTreeItem); // TODO refactor to moved files and workspace.
-                        treeView.refresh();
-                        treeView.scrollToSelected();
+                        List<File> movedFiles = this.moveToTreeItem(toBeMoved, targetTreeItem);
+                        if (movedFiles != null) {
+                            treeView.scrollToSelected();
+                        }
                     });
 
                     if (targetFolder != null && targetFolder.isDirectory()) {
