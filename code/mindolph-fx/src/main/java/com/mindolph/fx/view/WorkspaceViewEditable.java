@@ -132,7 +132,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     private List<File> foundFiles;
 
     public WorkspaceViewEditable() {
-        super("/view/workspace_view2.fxml");
+        super("/view/workspace_view_editable.fxml");
         log.info("Init workspace view");
         rootItem = new TreeItem<>(new NodeData("Workspace Stub"));
 
