@@ -376,7 +376,6 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     break;
                 }
                 log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
-                treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
 
                 File newFile = new File(targetTreeItem.getValue().getFile(), nodeData.getName());
                 try {
@@ -391,6 +390,7 @@ public class WorkspaceView2 extends BaseView implements EventHandler<ActionEvent
                     EventBus.getIns().notifyFilePathChanged(nodeData, newFile);
                     nodeData.setFile(newFile);
                     FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
+                    treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                     needReload = true;
                 } catch (Exception e) {
                     e.printStackTrace();
