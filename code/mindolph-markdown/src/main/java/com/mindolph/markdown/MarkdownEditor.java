@@ -153,7 +153,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         log.debug(webEngine.getUserAgent());
         webView.setContextMenuEnabled(false);
         webEngine.setJavaScriptEnabled(true);
-        webEngine.setOnError(event -> log.warn("WebView error: " + event.getMessage(), event.getException()));
+        webEngine.setOnError(event -> log.warn("WebView error: %s".formatted(event.getMessage()), event.getException()));
         webEngine.setOnAlert(event -> {
             String[] split = StringUtils.split(event.getData(), ",");
             if (ArrayUtils.isNotEmpty(split) && split.length == 2) {
@@ -162,7 +162,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             }
         });
         URL cssUri = getCssResourceURI();
-        log.debug("Set webview with css: " + cssUri);
+        log.debug("Set webview with css: %s".formatted(cssUri));
         webEngine.setUserStyleSheetLocation(cssUri.toString());
         webEngine.getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) ->
                 log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))));
@@ -431,7 +431,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     if (builder.getImages() != null) {
                         for (File oriImageFile : builder.getImages()) {
                             File destImgFile = new File(htmlFile.getParentFile(), "images/" + oriImageFile.getName());
-                            log.debug("copy file to " + destImgFile);
+                            log.debug("copy file to %s".formatted(destImgFile));
                             FileUtils.copyFile(oriImageFile, destImgFile);
                         }
                     }
@@ -533,7 +533,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
 //        System.out.println(finalHtml);
 
-        log.info("markdown rendered as html done with length: " + finalHtml.length());
+        log.info("markdown rendered as html done with length: %d".formatted(finalHtml.length()));
         if (webEngine != null) {
             webEngine.loadContent(finalHtml);
         }

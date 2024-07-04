@@ -4,6 +4,8 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.editor.Editable;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -40,17 +42,24 @@ public class ShortcutsDialog extends BaseDialogController<Void> {
         File shortcutsFile = new File(tmpDir, "mindolph_shortcuts.md");
         log.debug("write to file: %s".formatted(shortcutsFile));
 //        if (!shortcutsFile.exists()) {
-            String markdown = ShortcutManager.getIns().exportToMarkdown();
-            try {
-                FileUtils.writeStringToFile(shortcutsFile, markdown, Charset.defaultCharset());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        String markdown = ShortcutManager.getIns().exportToMarkdown();
+        try {
+            FileUtils.writeStringToFile(shortcutsFile, markdown, Charset.defaultCharset());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 //        }
 
         EditorContext editorContext = new EditorContext();
         editorContext.setFileData(new NodeData(shortcutsFile));
         MarkdownEditor markdownEditor = new MarkdownEditor(editorContext);
+
+        // dummy node data object for temporary shortcut file.
+        NodeData nodeData = new NodeData(shortcutsFile);
+        // change view mode here since it requires everything is ready.
+        EventBus.getIns().subscribeFileLoaded(nodeData, nodeData1 -> {
+            markdownEditor.changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
+        });
         new Thread(() -> {
             try {
                 markdownEditor.loadFile();
