@@ -51,14 +51,13 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     }
 
     @Override
-    protected void refresh(String text) {
-        this.refresh();
+    public void applyStyles() {
+        CssUtils.applyFontCss(codeArea,KEY_TXT_EDITOR);
     }
 
     @Override
-    public void refresh() {
-        super.refresh();
-        CssUtils.applyFontCss(codeArea,KEY_TXT_EDITOR);
+    protected void refresh(String text) {
+        this.refresh();
     }
 
     @Override

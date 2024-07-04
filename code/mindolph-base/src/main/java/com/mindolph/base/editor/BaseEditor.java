@@ -107,6 +107,7 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     @Override
     public void refresh() {
         // inherit me
+        log.debug("Refresh editor: %s".formatted(this.getClass().getSimpleName()));
     }
 
     @Override

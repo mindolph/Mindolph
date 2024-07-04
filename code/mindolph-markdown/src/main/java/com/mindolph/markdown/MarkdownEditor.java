@@ -351,16 +351,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    public void applyStyles() {
+        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
+    }
+
+    @Override
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
         this.refresh();
-    }
-
-    @Override
-    public void refresh() {
-        super.refresh();
-        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
     }
 
     @Override

@@ -79,11 +79,12 @@ public class FileTabView extends BaseView {
                 }
                 else {
                     if (editor.isNeedRefresh()) {
+                        editor.applyStyles();
                         editor.refresh();
                         editor.setNeedRefresh(false);
                     }
                     editor.requestFocus();
-                    editor.locate(((NodeData)tabUserData).getAnchor()); // locate for 'find in files'
+                    editor.locate(((NodeData) tabUserData).getAnchor()); // locate for 'find in files'
                     this.updateMenuState(editor);
                 }
             }
@@ -188,11 +189,11 @@ public class FileTabView extends BaseView {
 
         // do something to init the editor when file is loaded and update menu states.
         EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
-            Platform.runLater(()-> {
+            Platform.runLater(() -> {
                 editor.locate(fileData.getAnchor());
 
                 editor.setOnFileChangedListener(changedFileData -> {
-                    if (log.isTraceEnabled())log.trace("File changed: %s".formatted(changedFileData.getFile()));
+                    if (log.isTraceEnabled()) log.trace("File changed: %s".formatted(changedFileData.getFile()));
                     Tab changedTab = openedFileMap.get(changedFileData);
                     changedTab.setText("*" + changedFileData.getName());
                     // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
@@ -500,6 +501,7 @@ public class FileTabView extends BaseView {
         for (Tab tab : tabEditorMap.keySet()) {
             BaseEditor editor = (BaseEditor) tabEditorMap.get(tab);
             if (tab.isSelected()) {
+                editor.applyStyles();
                 editor.refresh();
             }
             else {

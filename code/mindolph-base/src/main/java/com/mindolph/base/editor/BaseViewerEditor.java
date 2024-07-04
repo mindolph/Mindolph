@@ -20,6 +20,11 @@ public abstract class BaseViewerEditor extends BaseEditor {
     }
 
     @Override
+    public void applyStyles() {
+        // DO NOTHING
+    }
+
+    @Override
     public void searchNext(String keyword, TextSearchOptions options) {
         // DO NOTHING
     }

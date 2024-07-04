@@ -112,6 +112,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         String text = super.loadByOs(FileUtils.readFileToString(editorContext.getFileData().getFile(), StandardCharsets.UTF_8));
         Platform.runLater(() -> {
             this.codeArea.replaceText(text);
+            this.applyStyles();
             this.codeArea.displaceCaret(0); // caret starts at head of the file.
             this.codeArea.getUndoManager().forgetHistory();
             this.codeArea.getUndoManager().mark();
@@ -150,6 +151,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         });
     }
 
+
     /**
      * Refresh anything from text if needed.
      *
@@ -157,14 +159,6 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      */
     protected abstract void refresh(String text);
 
-    /**
-     *
-     */
-    @Override
-    public void refresh() {
-        // DO NOTHING FOR NOW
-        log.debug("Refresh editor: %s".formatted(this.getClass().getSimpleName()));
-    }
 
     @Override
     public void locate(Anchor anchor) {

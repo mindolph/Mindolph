@@ -163,6 +163,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         this.text = IoUtils.readAllToString(fileReader);
         this.undoService.push(this.text);
+        this.applyStyles();
         this.initTableView();
         prepareSearchingEvent.subscribe(unused -> {
             // todo only available for searching
@@ -331,9 +332,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
         tableView.refresh();
     }
 
-
     @Override
-    public void refresh() {
+    public void applyStyles() {
         Font defFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_CSV_EDITOR);
         Font font = fxPreferences.getPreference(FontConstants.KEY_CSV_EDITOR, Font.class, defFont);
         tableView.setStyle(FontUtils.fontToCssStyle(font));

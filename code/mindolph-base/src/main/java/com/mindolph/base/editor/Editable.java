@@ -22,8 +22,16 @@ public interface Editable {
     void loadFile() throws IOException;
 
     /**
+     * Apply styles to editor, this method should be call only when the editor is loaded or any style preference is changed.
+     * @since 1.8.3
+     */
+    void applyStyles();
+
+    /**
      * Refresh editor in some cases like config changed.
      * Don't load data in the method.
+     *
+     * @deprecated only implemented by mind map editor, so...
      */
     void refresh();
 

@@ -222,6 +222,11 @@ public class MindMapEditor extends BaseEditor {
     }
 
     @Override
+    public void applyStyles() {
+        // TODO do applying styles after mind map editor is refactored.
+    }
+
+    @Override
     public void refresh() {
         mindMapView.reload();
     }

@@ -248,16 +248,15 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    public void applyStyles() {
+        CssUtils.applyFontCss(codeArea, "/style/plantuml_syntax_template.css", KEY_PUML_EDITOR, KEY_PUML_EDITOR_MONO);
+    }
+
+    @Override
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
         this.refresh();
-    }
-
-    @Override
-    public void refresh() {
-        super.refresh();
-        CssUtils.applyFontCss(codeArea, "/style/plantuml_syntax_template.css", KEY_PUML_EDITOR, KEY_PUML_EDITOR_MONO);
     }
 
     @Override
