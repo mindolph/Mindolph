@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.8.3 Release
+
+* Improvement: optimize the handling of dragging mouse hover on folder. 
+* Improvement: auto select moved files either by drag&drop or by `Move to`.
+* Fix: inappropriate view mode in keys reference dialog.
+* Fix: performance improved by removing redundant style applying for editors.
+* Fix: selected file disappear in workspace tree after failed to drag&drop to another folder with same name file exists.
+* Fix: unable to use `Move to` to move files to root folder of a workspace. 
+
 ### V1.8.2 Unstable Release
 
 * Fix: the order of search results list changes randomly.  
