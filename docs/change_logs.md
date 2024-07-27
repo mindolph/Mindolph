@@ -1,6 +1,6 @@
 # Change Logs
 
-### V1.8.3 Release
+### V1.8.3 Unstable Release
 
 * Improvement: optimize the handling of dragging mouse hover on folder. 
 * Improvement: auto select moved files either by drag&drop or by `Move to`.
