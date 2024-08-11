@@ -270,24 +270,10 @@ public class FileTabView extends BaseView {
             closeTab(selectedTab);
         });
         miCloseOthers.setOnAction(event -> {
-            List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != selectedTab).toList();
-            // disable closing tabs to avoid them to be loaded (in lazy mode).
-            for (Tab otherTab : otherTabs) {
-                otherTab.setDisable(true);
-            }
-            for (Tab otherTab : otherTabs) {
-                if (!closeTab(otherTab)) break;
-            }
+            this.closeAllTabsExcept(selectedTab);
         });
         miCloseAll.setOnAction(event -> {
-            LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabPane.getTabs());
-            // disable closing tabs to avoid them to be loaded (in lazy mode).
-            for (Tab tab : tabs) {
-                tab.setDisable(true);
-            }
-            for (Tab tab : tabs) {
-                if (!closeTab(tab)) break;
-            }
+            this.closeAllTabs();
         });
         miSelectInTree.setOnAction(event -> {
 //            log.debug("selected tab user data: %s".formatted(((NodeData) selectedTabUserData).getFile().getPath()));
@@ -579,7 +565,7 @@ public class FileTabView extends BaseView {
             if (editor != null) editor.dispose();// editor may not be loaded
             Tab nextTab = TabManager.getIns().previousTabFrom(tab);
             if (nextTab != null) {
-                log.debug("Active tab: " + nextTab.getText());
+                log.debug("Active tab: %s".formatted(nextTab.getText()));
                 tabPane.getSelectionModel().select(nextTab);
             }
             this.closeFileTab(tab, fileData);
@@ -597,7 +583,7 @@ public class FileTabView extends BaseView {
      * @param fileData
      */
     public void closeTabSilently(NodeData fileData) {
-        log.debug("Close tab silently for file: " + fileData.getFile());
+        log.debug("Close tab silently for file: %s".formatted(fileData.getFile()));
         Tab tab = openedFileMap.get(fileData);
         if (tab != null) {
             Editable editor = tabEditorMap.get(tab);
@@ -633,12 +619,47 @@ public class FileTabView extends BaseView {
     }
 
     /**
+     * Close all tabs no matter what the lading status is except specified one.
+     *
+     * @param ignoredTab
+     * @since 1.9
+     */
+    public void closeAllTabsExcept(Tab ignoredTab) {
+        List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != ignoredTab).toList();
+        // disable closing tabs to avoid them to be loaded (in lazy mode).
+        for (Tab otherTab : otherTabs) {
+            otherTab.setDisable(true);
+        }
+        for (Tab otherTab : otherTabs) {
+            if (!closeTab(otherTab)) break;
+        }
+    }
+
+    /**
+     * Close all tabs no matter what the lading status is.
+     *
+     * @since 1.9
+     */
+    public void closeAllTabs() {
+        LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabPane.getTabs());
+        // disable closing tabs to avoid them to be loaded (in lazy mode).
+        for (Tab tab : tabs) {
+            tab.setDisable(true);
+        }
+        for (Tab tab : tabs) {
+            if (!closeTab(tab)) break;
+        }
+    }
+
+    /**
+     * Close all tabs with all opened files.
+     *
      * @return false if any tab cancels closing by user.
      */
-    public boolean closeAllTabs() {
+    public boolean closeAllTabsWithOpenedFiles() {
         LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabEditorMap.keySet());
         for (Tab tab : tabs) {
-            log.trace("Closing tab: " + tab.getText());
+            log.trace("Closing tab: %s".formatted(tab.getText()));
             if (!this.closeTab(tab)) {
                 return false;
             }
@@ -681,5 +702,14 @@ public class FileTabView extends BaseView {
 
     public Tab getCurrentTab() {
         return tabPane.getSelectionModel().getSelectedItem();
+    }
+
+    public List<File> getAllOpenedFiles() {
+        return tabPane.getTabs().stream().map(tab -> {
+            if (tab.getUserData() instanceof NodeData nd) {
+                return nd.getFile();
+            }
+            return null;
+        }).filter(file -> file != null && file.isFile()).toList();
     }
 }

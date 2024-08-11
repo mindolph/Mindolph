@@ -5,7 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.core.collection.Comparators;
+import com.mindolph.core.util.Comparators;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.FileMeta;

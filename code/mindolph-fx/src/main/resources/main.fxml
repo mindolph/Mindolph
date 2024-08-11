@@ -133,6 +133,13 @@
                     </accelerator>
                 </MenuItem>
             </Menu>
+            <Menu fx:id="menuCollections" text="_Collections">
+                <MenuItem onAction="#onCreateCollection" text="Create Collection..."/>
+                <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
+                <MenuItem onAction="#onRemoveCollection" text="Remove Collection"/>
+                <SeparatorMenuItem/>
+                <RadioMenuItem fx:id="rmiCollectionDefault" onAction="#onDefaultCollection" text="default" selected="true"/>
+            </Menu>
             <Menu mnemonicParsing="true" text="_Help">
                 <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference..."/>
                 <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="_Check for update..."/>

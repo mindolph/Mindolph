@@ -3,6 +3,7 @@ package com.mindolph.fx;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.collection.CollectionManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.container.FixedSplitPane;
@@ -33,6 +34,7 @@ import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.BaseController;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
@@ -53,12 +55,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_ACTIVE_WORKSPACE;
-import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_PROJECTS_RECENT;
+import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.length;
 
@@ -74,6 +73,8 @@ public class MainController extends BaseController implements Initializable,
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
+    private final CollectionManager cm = CollectionManager.getIns();
+
     @FXML
     private FileTabView fileTabView;
     @FXML
@@ -86,6 +87,10 @@ public class MainController extends BaseController implements Initializable,
     private MenuBar menuBar;
     @FXML
     private Menu menuRecentWorkspaces;
+    @FXML
+    private Menu menuCollections;
+    @FXML
+    private RadioMenuItem rmiCollectionDefault;
     @FXML
     private MenuItem menuManageWorkspaces;
     @FXML
@@ -125,6 +130,8 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private MenuItem miReplace;
 
+    private ToggleGroup collectionToggleGroup;
+
     private WorkspaceList workspaceList;
 
     private WorkspaceViewResizedEventHandler workspaceViewResizedEventHandler;
@@ -133,6 +140,42 @@ public class MainController extends BaseController implements Initializable,
     public void initialize(URL location, ResourceBundle resources) {
         log.info("initialize main scene controller");
         menuBar.setUseSystemMenuBar(true);
+        collectionToggleGroup = new ToggleGroup();
+        rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
+        rmiCollectionDefault.setUserData("default");
+
+        String activeCollName = this.cm.getActiveCollectionName();
+        Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
+        if (fileCollectionMap.isEmpty()) {
+            // init the default collection from opened file list
+            List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
+            this.cm.saveCollectionFilePaths("default", openedFileList);
+            this.cm.saveActiveCollectionName("default");
+            log.info("The 'default' collection is created from last opened file list");
+        }
+        else {
+            log.info("Load %d collections.".formatted(fileCollectionMap.size()));
+
+            List<String> filesInDefault = fileCollectionMap.get("default");
+            if (filesInDefault != null) {
+                rmiCollectionDefault.setText("default(%d)".formatted(filesInDefault.size()));
+            }
+
+            fileCollectionMap.keySet().stream().filter(collName -> !"default".equals(collName)).forEach(collName -> {
+                List<String> filePaths = fileCollectionMap.get(collName);
+                RadioMenuItem rmi = new RadioMenuItem("%s(%d)".formatted(collName, filePaths.size()));
+                rmi.setUserData(collName);
+                rmi.setOnAction(event -> {
+                    onSelectCollection((String) rmi.getUserData());
+                });
+                if (collName.equals(activeCollName)) {
+                    rmi.setSelected(true);
+                }
+                rmi.setToggleGroup(collectionToggleGroup);
+                menuCollections.getItems().add(rmi);
+            });
+        }
+
         SceneRestore sceneRestore = SceneRestore.getInstance();
 
         // register state changes to store.
@@ -499,7 +542,7 @@ public class MainController extends BaseController implements Initializable,
         log.debug("exit Mindolph");
         event.consume(); // this probably avoid the default quitting action, but actually doesn't work.
         SceneRestore.getInstance().stop(); // stop store state to avoid clean all the opened files state.
-        if (fileTabView.closeAllTabs()) {
+        if (fileTabView.closeAllTabsWithOpenedFiles()) {
             this.dispose();
             System.exit(0);
         }
@@ -574,6 +617,131 @@ public class MainController extends BaseController implements Initializable,
             splitPane.hidePrimary();
         }
     }
+
+    /**
+     * @param selectCollectionName null means not select any collection
+     */
+    private void resetCollectionSelection(String selectCollectionName) {
+        menuCollections.getItems().stream().filter(mi -> mi instanceof RadioMenuItem)
+                .forEach(cmi -> ((RadioMenuItem) cmi).setSelected(cmi.getUserData().equals(selectCollectionName)));
+    }
+
+    @FXML
+    public void onCreateCollection() {
+        if (fileTabView.getAllOpenedFiles().isEmpty()) {
+            DialogFactory.warnDialog("No files is opened for creating new collection.");
+            return;
+        }
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Create a new collection with all opened files")
+                .content("New Collection Name")
+                .width(500)
+                .build();
+        Optional<String> optColName = dialog.showAndWait();
+        if (optColName.isPresent()) {
+            String newColName = optColName.get().trim();
+            if (this.cm.getFileCollectionMap().containsKey(newColName)) {
+                DialogFactory.warnDialog("The name '%s' already exists!".formatted(newColName));
+                return;
+            }
+
+            this.resetCollectionSelection(null);
+            RadioMenuItem mi = new RadioMenuItem("%s(%d)".formatted(newColName, fileTabView.getAllOpenedFiles().size()));
+            mi.setOnAction(event -> {
+                onSelectCollection((String) mi.getUserData());
+            });
+            mi.setUserData(newColName);
+            mi.setToggleGroup(collectionToggleGroup);
+            menuCollections.getItems().add(mi);
+
+            this.resetCollectionSelection(newColName);
+
+            this.cm.saveCollectionFilePaths(newColName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
+
+            this.cm.saveActiveCollectionName(newColName);
+        }
+    }
+
+    @FXML
+    public void onSaveCollection() {
+        // save current collection with opened files
+        String activeCollectionName = this.cm.getActiveCollectionName();
+        if (StringUtils.isBlank(activeCollectionName)) {
+            log.warn("No active collection found");
+            return;
+        }
+        if (fileTabView.getAllOpenedFiles().isEmpty()) {
+            DialogFactory.warnDialog("No files is opened for saving collection.");
+            return;
+        }
+        this.cm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
+
+        // reset the file counter in the text of menu item.
+        Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem -> menuItem.getUserData().equals(activeCollectionName)).findFirst();
+        first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
+    }
+
+    @FXML
+    public void onRemoveCollection() {
+        // remove current user defined collection.
+        String activeCollectionName = this.cm.getActiveCollectionName();
+        if (StringUtils.isBlank(activeCollectionName) || "default".equalsIgnoreCase(activeCollectionName)) {
+            DialogFactory.warnDialog("The default collection cannot be removed.");
+            return;
+        }
+        boolean confirmRemove = DialogFactory.yesNoConfirmDialog("Are you sure to remove collection '%s' \n(NO files will be deleted) ".formatted(activeCollectionName));
+        if (confirmRemove) {
+            // switch to no collection and load last opened files
+//            this.onSelectCollection(null);
+//            this.cm.deleteCollection(activeCollectionName);
+//            menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
+//            resetCollectionSelection(null);
+
+
+            // switch to default collection first
+            onSelectCollection("default");
+            // delete current user-defined collection
+            this.cm.deleteCollection(activeCollectionName);
+            menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
+            resetCollectionSelection("default");
+        }
+    }
+
+    @FXML
+    public void onDefaultCollection() {
+        // emit event to close all files of current collection and load default collection.
+        this.onSelectCollection("default");
+    }
+
+    @FXML
+    public void onSelectCollection(String collectionName) {
+        List<String> files;
+        if (StringUtils.isNotBlank(collectionName)) {
+            // get files of selected collection.
+            files = this.cm.getCollectionFilePaths(collectionName);
+        }
+        else {
+            files = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
+        }
+
+        if (files == null || files.isEmpty()) {
+            log.warn("No files found in collection %s".formatted(collectionName));
+            return;
+        }
+
+        log.info("Load collection %s".formatted(collectionName));
+
+        // close current opened files(no matter what collection is).
+        fileTabView.closeAllTabs();
+
+        // load files
+        if (files != null && !files.isEmpty()) {
+            onOpenedFileRestore(files.stream().map(File::new).toList());
+        }
+        this.cm.saveActiveCollectionName(collectionName);
+    }
+
 
     @FXML
     public void onMenuShortcuts() {

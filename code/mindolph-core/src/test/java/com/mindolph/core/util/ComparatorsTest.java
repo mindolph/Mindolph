@@ -1,4 +1,4 @@
-package com.mindolph.core.collection;
+package com.mindolph.core.util;
 
 import org.junit.jupiter.api.Test;
 import org.swiftboot.util.ClasspathResourceUtils;
