@@ -33,6 +33,7 @@ import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.XmlUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
@@ -40,10 +41,12 @@ import org.w3c.dom.*;
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -168,13 +171,20 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
         if (file == null) {
             return null;
         }
+        try (final FileInputStream in = new FileInputStream(file)) {
+            final File rootFolder = file.getParentFile();
+            return this.extractTopics(rootFolder == null ? file : rootFolder, in);
+        }
+    }
 
-        Document document = XmlUtils.loadHtmlDocument(new FileInputStream(file), "UTF-8", true);
+    MindMap<TopicNode> extractTopics(final File rootFolder, final FileInputStream inputStream)
+            throws IOException, XPathExpressionException {
+        Document document = XmlUtils.loadDocument(inputStream, "UTF-8", Parser.xmlParser(), true);
         XPath xpath = XPathFactory.newInstance().newXPath();
-        Element rootElement = (Element) xpath.evaluate("/html/body/map", document, XPathConstants.NODE);
+        Element rootElement = (Element) xpath.evaluate("/map", document, XPathConstants.NODE);
 
         if (rootElement == null) {
-            throw new IllegalArgumentException("Can't parse freemind file as xhtml");
+            throw new IllegalArgumentException("Can't parse FreeMind file as xhtml");
         }
 
         Map<String, TopicNode> idTopicMap = new HashMap<>();
@@ -187,7 +197,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
             resultedMap.getRoot().setText("Empty");
         }
         else {
-            parseTopic(file.getParentFile(), resultedMap, null, resultedMap.getRoot(), list.get(0), idTopicMap, linksMap);
+            parseTopic(rootFolder, resultedMap, null, resultedMap.getRoot(), list.get(0), idTopicMap, linksMap);
         }
 
         for (Map.Entry<String, String> l : linksMap.entrySet()) {
