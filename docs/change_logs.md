@@ -1,5 +1,9 @@
 # Change Logs
 
+### V1.7.9 Release
+* Fix: exception when import mind map from Freemind mm file(https://github.com/mindolph/Mindolph/issues/9)
+
+
 ### V1.8.3 Unstable Release
 
 * Improvement: optimize the handling of dragging mouse hover on folder. 
