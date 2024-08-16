@@ -75,8 +75,10 @@ public class SearchParams {
 
     public void setCaseSensitive(boolean caseSensitive) {
         if (this.caseSensitive || caseSensitive) {
-            String normalKeyword = SearchUtils.normalizeSpace(keywords);
-            this.pattern = SearchUtils.string2pattern(normalKeyword, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+            if (StringUtils.isNotBlank(keywords)) {
+                String normalKeyword = SearchUtils.normalizeSpace(keywords);
+                this.pattern = SearchUtils.string2pattern(normalKeyword, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+            }
         }
         this.caseSensitive = caseSensitive;
     }
