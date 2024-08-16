@@ -187,6 +187,9 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     @Override
     public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
+        if (StringUtils.isEmpty(keywords)) {
+            return;
+        }
         if (!isSelected()) {
             codeArea.searchNext(keywords, searchOptions); // select first for replacement
         }

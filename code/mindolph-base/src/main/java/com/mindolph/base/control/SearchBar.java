@@ -115,7 +115,7 @@ public class SearchBar extends VBox {
         AnchorPane.setRightAnchor(btnClose, 8d);
         rightPane.getChildren().add(btnClose);
 
-        tbCase.selectedProperty().addListener((observableValue, aBoolean, t1) -> searchParams.setCaseSensitive(t1));
+        tbCase.selectedProperty().addListener((observableValue, aBoolean, caseSensitive) -> searchParams.setCaseSensitive(caseSensitive));
         if (extraOptions != null) {
             for (String optKey : extraOptions.keySet()) {
                 ExtraOption option = extraOptions.get(optKey);
