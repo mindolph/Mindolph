@@ -1,7 +1,17 @@
 # Change Logs
 
+### V1.9.0 Unstable Release
+
+* Feature: new file collections functionality that lets you save opened files as a named collection and switch between different collections.
+
+### V1.8.4 Release
+
+* Fix: exceptions when no search keyword is provided in search&replace panel.
+* merged bug fixes from v1.7.9
+
 ### V1.7.9 Release
-* Fix: exception when import mind map from Freemind mm file(https://github.com/mindolph/Mindolph/issues/9)
+
+* Fix: exception when import mind map from Freemind mm file.(https://github.com/mindolph/Mindolph/issues/9)
 
 
 ### V1.8.3 Unstable Release
