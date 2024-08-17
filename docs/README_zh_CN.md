@@ -77,7 +77,7 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|| |[v1.7.x](release-notes/v1.7/v1.7_zh_CN.md)|[v1.8.x](release-notes/v1.8/v1.8_zh_CN.md)| 发布记录 |
+|| |[v1.8.x](release-notes/v1.8/v1.8_zh_CN.md)|[v1.9.x](release-notes/v1.9/v1.9_zh_CN.md)| 发布记录 |
 |macOS|.dmg|[v1.8.4](https://github.com/mindolph/Mindolph/releases/download/v1.8.4/Mindolph-1.8.4-x64.dmg)|[v1.9.0](https://github.com/mindolph/Mindolph/releases/download/v1.9.0/Mindolph-1.9.0-x64.dmg)| Intel |
 |macOS|.dmg|[v1.8.4](https://github.com/mindolph/Mindolph/releases/download/v1.8.4/Mindolph-1.8.4-aarch64.dmg) |[v1.9.0](https://github.com/mindolph/Mindolph/releases/download/v1.9.0/Mindolph-1.9.0-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
 |Windows|.msi|[v1.8.4](https://github.com/mindolph/Mindolph/releases/download/v1.8.4/Mindolph-1.8.4.msi)|[v1.9.0](https://github.com/mindolph/Mindolph/releases/download/v1.9.0/Mindolph-1.9.0.msi)| |
