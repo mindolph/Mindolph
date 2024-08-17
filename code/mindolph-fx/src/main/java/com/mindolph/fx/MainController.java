@@ -144,13 +144,17 @@ public class MainController extends BaseController implements Initializable,
         rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
         rmiCollectionDefault.setUserData("default");
 
+        // handle the file collections.
         String activeCollName = this.cm.getActiveCollectionName();
         Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
         if (fileCollectionMap.isEmpty()) {
-            // init the default collection from opened file list
+            // init the default collection from opened file list for the first time.
             List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
             this.cm.saveCollectionFilePaths("default", openedFileList);
             this.cm.saveActiveCollectionName("default");
+            if (openedFileList != null) {
+                rmiCollectionDefault.setText("default(%d)".formatted(openedFileList.size()));
+            }
             log.info("The 'default' collection is created from last opened file list");
         }
         else {
@@ -678,7 +682,8 @@ public class MainController extends BaseController implements Initializable,
         this.cm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
 
         // reset the file counter in the text of menu item.
-        Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem -> menuItem.getUserData().equals(activeCollectionName)).findFirst();
+        Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
+                menuItem.getUserData()!=null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
     }
 
