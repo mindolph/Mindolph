@@ -190,7 +190,7 @@ public class MainController extends BaseController implements Initializable,
         workspaceViewResizedEventHandler = sceneRestore;
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
-        tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
+        tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);

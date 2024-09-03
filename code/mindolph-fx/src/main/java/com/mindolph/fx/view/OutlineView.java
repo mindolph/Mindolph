@@ -49,7 +49,7 @@ public class OutlineView extends BaseView {
                     }
                     else {
                         setText(item.getName());
-                        setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
+                        setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE_ITEM));
                     }
                 }
             };
