@@ -12,6 +12,7 @@ import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
@@ -35,6 +36,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.IoUtils;
+import org.swiftboot.util.TextUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +59,7 @@ import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
 import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
+import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_START;
 
 /**
  * @author mindolph.com@gmail.com
@@ -84,6 +89,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         super("/editor/plant_uml_editor.fxml", editorContext, false);
         super.fileType = SupportFileTypes.TYPE_PLANTUML;
         log.info("initialize plantuml editor");
+
+        threadPoolService = Executors.newSingleThreadExecutor();
 
         this.previewPane.setOnContextMenuRequested(event -> {
             log.debug("context menu requested");
@@ -299,28 +306,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     }
                 }
                 else {
-                    // TODO to be refactored for multiline title.
-                    List<String> definition = block.getDefinition(false);
-                    List<String> prediction = definition.stream()
-                            .filter(string -> string.trim().startsWith("title") || string.trim().startsWith("caption")).collect(Collectors.toList());
-                    if (CollectionUtils.isNotEmpty(prediction)) {
-                        String title = prediction.get(0);
-                        if (title.startsWith("title")) {
-                            title = StringUtils.substringAfter(title, "title");
-                            if (StringUtils.isBlank(title)) {
-                                // TODO
-                            }
-                        }
-                        else {
-                            title = StringUtils.substringAfter(title, "caption");
-                        }
-                        indicator.addPageTitle(StringUtils.strip(title.trim(), "\"").trim());
-                    }
-                    else {
-                        indicator.addPageTitle(StringUtils.EMPTY);
-                    }
+                    indicator.addPageTitle(this.extractDiagramTitle(block.getDefinition(false)));
                 }
-
             }
             indicator.totalPages = reader.getBlocks().size();
             indicator.fitPage();
@@ -355,6 +342,30 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         });
     }
 
+    private String extractDiagramTitle(List<String> lines) {
+        // TODO to be refactored for multiline title.
+        List<String> prediction = lines.stream()
+                .filter(string -> string.trim().startsWith("title") || string.trim().startsWith("caption")).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(prediction)) {
+            String title = prediction.get(0);
+            if (title.startsWith("title")) {
+                title = StringUtils.substringAfter(title, "title");
+                if (StringUtils.isBlank(title)) {
+                    // TODO
+                }
+                title = TextUtils.removeQuotes(title);
+
+            }
+            else {
+                title = StringUtils.substringAfter(title, "caption");
+            }
+            return title;
+        }
+        else {
+            return "[Unnamed]";
+        }
+    }
+
     @Override
     protected void render(Object renderObject) {
         Image image = (Image) renderObject;
@@ -363,6 +374,35 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             previewPane.setImage(image);
         }
 
+    }
+
+    @Override
+    protected String getOutlinePattern() {
+        return "(@)(" + String.join("|", DIAGRAM_KEYWORDS_START) + ")";
+    }
+
+    @Override
+    protected String getHeadingLevelTag() {
+        return null;// no level for now
+    }
+
+    @Override
+    protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
+        log.debug("extract outline title for heading:%s".formatted(heading));
+        // extract title by cutting the diagram code block.
+        int startPos = codeArea.getAbsolutePosition(location.getEndRow(), location.getEndCol());
+        int endPos = nextBlockLocation == null ? codeArea.getText().length() : codeArea.getAbsolutePosition(nextBlockLocation.getStartRow(), nextBlockLocation.getStartCol());
+        String block = StringUtils.substring(codeArea.getText(), startPos, endPos);
+        try {
+            List<String> lines = IoUtils.readToStringList(new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8)));
+            String title =  this.extractDiagramTitle(lines);
+//            if ("[Unnamed]".equals(title)){
+//                return heading;
+//            }
+            return title;
+        } catch (IOException e) {
+            return heading;
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.mindolph.base.editor;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.TextLocation;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -63,6 +64,21 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     @Override
     public void export() {
 
+    }
+
+    @Override
+    protected String getOutlinePattern() {
+        return null;
+    }
+
+    @Override
+    protected String getHeadingLevelTag() {
+        return null;
+    }
+
+    @Override
+    protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
+        return null;
     }
 
     public Image getImage() {

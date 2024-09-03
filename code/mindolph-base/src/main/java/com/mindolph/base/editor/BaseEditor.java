@@ -2,6 +2,7 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -17,6 +18,7 @@ import org.swiftboot.util.PathUtils;
 import java.io.File;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Base class for all editor class,
@@ -26,6 +28,8 @@ import java.util.Optional;
 public abstract class BaseEditor extends AnchorPane implements Editable {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEditor.class);
+
+    protected ExecutorService threadPoolService;
 
     protected FxPreferences fxPreferences;
 
@@ -123,6 +127,10 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     @Override
     public boolean cut() {
         return false;
+    }
+
+    public void outline() {
+        EventBus.getIns().notifyOutline(null); // no outline by default
     }
 
     @Override

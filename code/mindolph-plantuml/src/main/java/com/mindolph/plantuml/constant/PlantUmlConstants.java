@@ -1,15 +1,23 @@
 package com.mindolph.plantuml.constant;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  * @author mindolph.com@gmail.com
  */
 public interface PlantUmlConstants {
 
-    String[] DIAGRAM_KEYWORDS = new String[]{
-            "startsalt", "endsalt", "startgantt", "endgantt", "startlatex", "endlatex", "startmath", "endmath", "startdot", "enddot",
-            "startuml", "enduml", "startmindmap", "endmindmap", "startwbs", "endwbs", "startyaml", "endyaml", "startjson", "endjson"
+    String[] DIAGRAM_KEYWORDS_START = new String[]{
+            "startsalt", "startgantt", "startlatex", "startmath", "startdot",
+            "startuml", "startmindmap", "startwbs", "startyaml", "startjson"
     };
-    String DIAGRAM_PATTERN = "@(" + String.join("|", DIAGRAM_KEYWORDS) + ")";
+
+    String[] DIAGRAM_KEYWORDS_END = new String[]{
+            "endsalt",  "endgantt",  "endlatex",  "endmath",  "enddot",
+            "enduml",  "endmindmap",  "endwbs",  "endyaml",  "endjson"
+    };
+
+    String DIAGRAM_PATTERN = "@(" + String.join("|", ArrayUtils.addAll(DIAGRAM_KEYWORDS_START, DIAGRAM_KEYWORDS_END)) + ")";
     String[] DIRECTIVE = new String[]{
             "include", "function", "endfunction", "procedure", "endprocedure", "\\$"
     };

@@ -35,6 +35,7 @@ public class ImageViewerEditor extends BaseViewerEditor {
         this.scrollableImageView.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
             showImageInfo(newValue.doubleValue());
         });
+        this.outline();
     }
 
     private void showImageInfo(double scale) {

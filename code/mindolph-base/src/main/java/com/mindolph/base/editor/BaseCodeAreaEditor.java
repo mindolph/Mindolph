@@ -3,10 +3,9 @@ package com.mindolph.base.editor;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.core.search.Anchor;
-import com.mindolph.core.search.TextAnchor;
-import com.mindolph.core.search.TextLocation;
-import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.search.*;
+import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
@@ -18,12 +17,17 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.Paragraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 
@@ -41,6 +45,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     protected SearchableCodeArea codeArea;
 
     protected boolean acceptDraggingFiles = false;
+
+    private Pattern outlinePattern; // used to extract outline
 
 //    protected String fontPrefKey;
 
@@ -110,6 +116,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     public void loadFile() throws IOException {
         log.debug("Load file: %s".formatted(editorContext.getFileData().getFile()));
         String text = super.loadByOs(FileUtils.readFileToString(editorContext.getFileData().getFile(), StandardCharsets.UTF_8));
+        if (StringUtils.isNoneBlank(this.getOutlinePattern()))
+            outlinePattern = Pattern.compile(this.getOutlinePattern());
         Platform.runLater(() -> {
             this.codeArea.replaceText(text);
             this.applyStyles();
@@ -128,6 +136,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                     refresh(newText);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
+                    this.outline();
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.UNDO, this.codeArea.getUndoManager().isUndoAvailable());
                 }
             });
@@ -147,7 +156,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
             // emit file content loaded event for like scrolling to pos of anchor or updating menu state, etc.
             EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
-
+            this.outline();
         });
     }
 
@@ -159,6 +168,74 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      */
     protected abstract void refresh(String text);
 
+    protected abstract String getOutlinePattern();
+
+    protected abstract String getHeadingLevelTag();
+
+    protected abstract String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation);
+
+    @Override
+    public void outline() {
+        if (StringUtils.isBlank(this.getOutlinePattern()) || outlinePattern == null) {
+            Tree tree = new Tree();
+            tree.init("");
+            tree.getRootNode().addChild(new Node(new OutlineItemData("No outlines for this file")));
+            EventBus.getIns().notifyOutline(tree);
+            return;
+        }
+        threadPoolService.execute(() -> {
+            Matcher matcher = outlinePattern.matcher(codeArea.getText());
+            if (!matcher.hasMatch()) {
+                log.warn("No outline found by: %s".formatted(getOutlinePattern()));
+            }
+            Tree tree = new Tree();
+            Node root = new Node("Stub");
+            root.setLevel(0);
+            tree.init(root);
+
+            Node curNode = root;
+            TextNavigator tn = new TextNavigator(); // locating the found heading
+            tn.setText(codeArea.getText(), true);
+            List<HeadingLocation> l = new ArrayList<>();
+
+            while (matcher.find()) {
+                String heading = matcher.group(2);// TODO this 2 should be...
+                int n = TextUtils.countInStarting(heading, this.getHeadingLevelTag());
+                TextLocation textLocation = tn.locateNext(heading, true);
+                textLocation.setStartCol(0);
+                textLocation.setEndRow(textLocation.getStartRow());
+                textLocation.setEndCol(textLocation.getEndCol() + 1);
+                l.add(new HeadingLocation(heading, n, textLocation));
+            }
+            for (int i = 0; i < l.size(); i++) {
+                HeadingLocation hl = l.get(i);
+                String title = this.extractOutlineTitle(hl.heading, hl.textLocation(), (i + 1) < l.size() ? l.get(i + 1).textLocation : null);
+                log.debug("  %d - %s".formatted(hl.level(), title));
+
+                TextAnchor ta = new TextAnchor(hl.textLocation);
+                OutlineItemData outlineItemData = new OutlineItemData(title, ta);
+
+                Node newNode = new Node(outlineItemData);
+                newNode.setLevel(hl.level);
+
+                if (hl.level > curNode.getLevel()) {
+                    // as child
+                    log.debug("    as child");
+                    curNode.addChild(newNode);
+                    newNode.setParent(curNode);
+                }
+                else {
+                    // as sibling
+                    log.debug("    as sibling");
+                    Node ancestor = curNode.findAncestor(node -> node.getLevel() <= newNode.getLevel() - 1);
+                    ancestor.addChild(newNode);
+                    newNode.setParent(ancestor);
+                }
+                curNode = newNode;
+            }
+            EventBus.getIns().notifyOutline(tree);
+        });
+    }
 
     @Override
     public void locate(Anchor anchor) {
@@ -270,11 +347,16 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     @Override
     public void dispose() {
         log.info("Dispose editor: %s(%s)".formatted(this.getClass().getName(), this.hashCode()));
+        if (threadPoolService != null) threadPoolService.close();
         codeArea.dispose();
     }
 
     @Override
     public String getSelectionText() {
         return codeArea.getSelectedText();
+    }
+
+
+    private record HeadingLocation(String heading, int level, TextLocation textLocation) {
     }
 }

@@ -2,11 +2,13 @@ package com.mindolph.base.event;
 
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.core.search.Anchor;
 import javafx.scene.control.TreeItem;
 import org.reactfx.EventSource;
 import org.reactfx.EventStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Tree;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ public class EventBus {
     private EventSource<TreeItem<NodeData>> workspaceLoaded;
     //    private EventSource<NodeData> fileLoaded;
     private final Map<NodeData, EventSource<NodeData>> fileLoadedEvents = new HashMap<>();
+    private EventSource<Anchor> locateInFileEvents;
+    private EventSource<Tree> outlineEvents;
     private EventSource<WorkspaceRenameEvent> workspaceRenamed;
     private EventSource<WorkspaceMeta> workspaceClosed;
     private final EventSource<TreeExpandCollapseEvent> treeExpandCollapseEventEventSource = new EventSource<>();
@@ -88,7 +92,6 @@ public class EventBus {
         filePathChanged.subscribe(consumer);
         return this;
     }
-
 
     public EventBus notifyWorkspaceClosed(WorkspaceMeta workspaceMeta) {
         workspaceClosed.push(workspaceMeta);
@@ -153,6 +156,33 @@ public class EventBus {
 
     public EventBus subscribeFileLoaded(NodeData fileData, Consumer<NodeData> consumer) {
         this.subscribe(fileLoadedEvents, fileData, consumer);
+        return this;
+    }
+
+    public EventBus unsubscribeFileLoaded(NodeData fileData) {
+        this.unsubscribe(fileLoadedEvents, fileData);
+        return this;
+    }
+
+    public EventBus notifyLocateInFile(Anchor anchor) {
+        this.locateInFileEvents.push(anchor);
+        return this;
+    }
+
+    public EventBus subscribeLocateInFile(Consumer<Anchor> anchor) {
+        if (locateInFileEvents == null) locateInFileEvents = new EventSource<>();
+        this.locateInFileEvents.subscribe(anchor);
+        return this;
+    }
+
+    public EventBus notifyOutline(Tree outlineTree) {
+        this.outlineEvents.push(outlineTree);
+        return this;
+    }
+
+    public EventBus subscribeOutline(Consumer<Tree> outlineTree) {
+        if (outlineEvents == null) outlineEvents = new EventSource<>();
+        this.outlineEvents.subscribe(outlineTree);
         return this;
     }
 
@@ -261,7 +291,6 @@ public class EventBus {
         return this;
     }
 
-
     public EventBus notifyDeletedFile(NodeData fileData) {
         fileDeleted.push(fileData);
         return this;
@@ -318,6 +347,18 @@ public class EventBus {
         }
         EventSource<P> eventSource = map.get(t);
         eventSource.subscribe(consumer);
+    }
+
+    /**
+     * Remove subscription.
+     *
+     * @param map
+     * @param t
+     * @param <T>
+     * @param <P>
+     */
+    private <T, P> void unsubscribe(Map<T, EventSource<P>> map, T t) {
+        map.remove(t);
     }
 
 

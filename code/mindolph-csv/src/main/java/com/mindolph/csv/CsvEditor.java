@@ -175,6 +175,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 csvNavigator.setData(tableView.stream().toList(), rowSize);
             }
         });
+        this.outline();
     }
 
     private void initTableView() throws IOException {
@@ -632,11 +633,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
         return reduced.orElse(EMPTY);
-    }
-
-    public static void main(String[] args) {
-        List<String> l = Arrays.asList("a", "b", "c");
-        System.out.println(l.stream().filter(s -> l.indexOf(s) != 2).collect(Collectors.joining(",")));
     }
 
     private boolean saveToCache() {

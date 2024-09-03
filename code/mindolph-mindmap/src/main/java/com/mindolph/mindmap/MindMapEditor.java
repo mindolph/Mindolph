@@ -12,6 +12,7 @@ import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.model.OutlineItemData;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
@@ -26,12 +27,16 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -53,6 +58,7 @@ public class MindMapEditor extends BaseEditor {
 
     public MindMapEditor(EditorContext editorContext, MindMapView mindMapView) {
         super("/mindmap_editor.fxml", editorContext);
+        super.threadPoolService = Executors.newSingleThreadExecutor();
         super.fileType = SupportFileTypes.TYPE_MIND_MAP;
         this.mindMapView = mindMapView;
         this.mindMapView.setParentPane(this);
@@ -178,6 +184,7 @@ public class MindMapEditor extends BaseEditor {
                 mindMapView.setModelChangedEventHandler(() -> {
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
+                    this.outline();
                 });
                 // TODO this handler probably set after event raised(from setModel() of MindMapView,
                 //  which might causes the mind map not in center during loading. (TBD)
@@ -190,6 +197,7 @@ public class MindMapEditor extends BaseEditor {
                             mindMapView.rootToCentre();
                         }
                         EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
+                        this.outline();
                         mindMapView.requestFocus();
                     });
                 });
@@ -218,6 +226,33 @@ public class MindMapEditor extends BaseEditor {
             });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void outline() {
+        super.threadPoolService.execute(() -> {
+            Tree tree = new Tree();
+            tree.init(new Node("Stub"));
+            Node firstNode = new Node(new OutlineItemData(getMindMapModel().getRoot().getText()));
+            tree.getRootNode().addChild(firstNode);
+            this.makeOutlinesRecursively(getMindMapModel().getRoot(), firstNode);
+            EventBus.getIns().notifyOutline(tree);
+        });
+    }
+
+    private void makeOutlinesRecursively(TopicNode rootTopic, Node rootNode) {
+        // only root, second and third level topics are accepted.
+        if (rootTopic.getTopicLevel() >= 2) {
+            return;
+        }
+        for (TopicNode childTopic : rootTopic.getChildren()) {
+            String content = StringUtils.abbreviate(childTopic.getText(), 30);
+            MindMapAnchor mindMapAnchor = new MindMapAnchor();
+            mindMapAnchor.setText(childTopic.getText());
+            mindMapAnchor.setParentText(rootTopic.getText());
+            Node newNode = new Node(new OutlineItemData(content, mindMapAnchor));
+            rootNode.addChild(newNode);
+            this.makeOutlinesRecursively(childTopic, newNode);
         }
     }
 
@@ -340,6 +375,7 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public void dispose() {
+        if (threadPoolService != null) threadPoolService.close();
         if (mindMapView != null) mindMapView.dispose();
         MindmapEvents.unsubscribeMmdSaveEvent(mindMapView);
         System.gc();

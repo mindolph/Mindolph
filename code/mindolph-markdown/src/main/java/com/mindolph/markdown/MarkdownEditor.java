@@ -17,6 +17,7 @@ import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -83,9 +84,11 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
 import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
 import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
+import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
@@ -136,6 +139,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
+
+        threadPoolService = Executors.newSingleThreadExecutor();
 
         timestamp = String.valueOf(System.currentTimeMillis());
 
@@ -420,7 +425,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     .markdown("markdown-body");
             String finalHtml = builder.build(timestamp);
 
-            log.trace("Export to html: " + StringUtils.abbreviate(finalHtml, 50));
+            log.trace("Export to html: %s".formatted(StringUtils.abbreviate(finalHtml, 50)));
             File file = editorContext.getFileData().getFile();
             File htmlFile = DialogFactory.openSaveFileDialog(getScene().getWindow(), file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".html",
@@ -575,6 +580,21 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         webEngine.load(null);
         webEngine = null;
         webView = null;
+    }
+
+    @Override
+    protected String getOutlinePattern() {
+        return HEADING_PATTERN;
+    }
+
+    @Override
+    protected String getHeadingLevelTag() {
+        return "#";
+    }
+
+    @Override
+    protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
+        return RegExUtils.replacePattern(heading, "#" , "");
     }
 
 }

@@ -20,7 +20,7 @@ public class PlantUmlInputHelper implements InputHelper {
 
     public PlantUmlInputHelper() {
         preDefinedWords.addAll(List.of(PlantUmlConstants.KEYWORDS));
-        preDefinedWords.addAll(List.of(PlantUmlConstants.DIAGRAM_KEYWORDS));
+        preDefinedWords.addAll(List.of(PlantUmlConstants.DIAGRAM_KEYWORDS_START));
         preDefinedWords.addAll(List.of(PlantUmlConstants.CONTAINING_KEYWORDS));
         preDefinedWords.addAll(List.of(PlantUmlConstants.DIRECTIVE));
     }

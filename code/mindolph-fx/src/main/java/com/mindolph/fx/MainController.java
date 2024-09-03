@@ -84,6 +84,8 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private RecentView recentView;
     @FXML
+    private OutlineView outlineView;
+    @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuRecentWorkspaces;
@@ -99,6 +101,8 @@ public class MainController extends BaseController implements Initializable,
     private Tab tabWorkspaces;
     @FXML
     private Tab tabRecentFiles;
+    @FXML
+    private Tab tabOutline;
     @FXML
     private CheckMenuItem miToggleWorkspaceView;
     @FXML
@@ -186,6 +190,7 @@ public class MainController extends BaseController implements Initializable,
         workspaceViewResizedEventHandler = sceneRestore;
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
+        tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);

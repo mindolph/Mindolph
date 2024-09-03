@@ -86,6 +86,7 @@ public class FileTabView extends BaseView {
                     editor.requestFocus();
                     editor.locate(((NodeData) tabUserData).getAnchor()); // locate for 'find in files'
                     this.updateMenuState(editor);
+                    editor.outline();
                 }
             }
             else {
@@ -97,6 +98,13 @@ public class FileTabView extends BaseView {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                     EventBus.getIns().notify(NotificationType.DOUBLE_CLICKED_TAB);
                 }
+            }
+        });
+        // listen locate in file for outline
+        EventBus.getIns().subscribeLocateInFile(anchor -> {
+            Editable editor = this.tabEditorMap.get(getCurrentTab());
+            if (editor != null) {
+                editor.locate(anchor);
             }
         });
         // listen file deleted
@@ -609,6 +617,7 @@ public class FileTabView extends BaseView {
         tabPane.getTabs().remove(tab);
         openedFileMap.remove(fileData);
         tabEditorMap.remove(tab);
+        EventBus.getIns().unsubscribeFileLoaded(fileData);
         EventBus.getIns().notifyOpenedFileChange(tabPane.getTabs().stream()
                 .filter(tab1 -> tab1.getUserData() instanceof NodeData && ((NodeData) tab1.getUserData()).isFile())
                 .map(tb -> ((NodeData) tb.getUserData()).getFile()).collect(Collectors.toList()));
