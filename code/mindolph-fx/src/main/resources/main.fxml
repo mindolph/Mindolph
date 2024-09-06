@@ -154,7 +154,10 @@
                              prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE"
                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <Tab fx:id="tabWorkspaces" text="Workspaces">
+                        <Tab fx:id="tabWorkspaces">
+                            <tooltip>
+                                <Tooltip text="Workspaces"/>
+                            </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <AnchorPane layoutX="-215.0" layoutY="-87.0" prefHeight="400.0"
@@ -171,7 +174,10 @@
                                 </AnchorPane>
                             </AnchorPane>
                         </Tab>
-                        <Tab fx:id="tabRecentFiles" text="Recent Files">
+                        <Tab fx:id="tabRecentFiles">
+                            <tooltip>
+                                <Tooltip text="Recent Files"/>
+                            </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <RecentView fx:id="recentView" layoutX="24.0" layoutY="44.0"
@@ -181,7 +187,10 @@
                                             AnchorPane.topAnchor="0.0"/>
                             </AnchorPane>
                         </Tab>
-                        <Tab fx:id="tabOutline" text="Outline">
+                        <Tab fx:id="tabOutline">
+                            <tooltip>
+                                <Tooltip text="Outline"/>
+                            </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <OutlineView fx:id="outlineView" layoutX="24.0" layoutY="44.0"
