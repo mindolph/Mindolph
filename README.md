@@ -94,5 +94,4 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 
 Future Plan:
 
-* 1.8: Improvement and refactor.
-* 1.9: File Collection and Structure.
+* 1.9: File Collection and Outline.
