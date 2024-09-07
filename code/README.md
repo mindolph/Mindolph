@@ -1,7 +1,7 @@
 # Mindolph Development
 
 ### Prerequisites
-* JDK 17+
+* JDK 21+
 * JavaFX 21+
 * Maven 3.x
 

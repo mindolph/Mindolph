@@ -1,5 +1,10 @@
 # Change Logs
 
+### V1.9.1 Unstable Release
+
+* Feature: new outline view to outline the content for Mind map, Markdown and PlantUML files. 
+* Improvement: minimize the displaying of tabs on the left side panel since the outline view is introduced.
+
 ### V1.9.0 Unstable Release
 
 * Feature: new file collections functionality that lets you save opened files as a named collection and switch between different collections.
