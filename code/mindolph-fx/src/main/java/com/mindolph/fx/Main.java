@@ -115,10 +115,7 @@ public class Main extends Application implements WindowRestoreListener {
             }
             FXMLLoader loader = new FXMLLoader(resource);
             Parent root = loader.load();
-            String appVersion = getClass().getPackage().getImplementationVersion();
-            primaryStage.setTitle(String.format("Mindolph %s %s",
-                    Env.isDevelopment ? "Dev" : StringUtils.EMPTY,
-                    StringUtils.isNotBlank(appVersion) ? appVersion : StringUtils.EMPTY));
+            primaryStage.setTitle("Mindolph");
             primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/icons/app_512.png")));
             scene = new Scene(root, 1100, 800);
             scene.getStylesheets().add(getClass().getResource("/style/syntax.css").toExternalForm());
