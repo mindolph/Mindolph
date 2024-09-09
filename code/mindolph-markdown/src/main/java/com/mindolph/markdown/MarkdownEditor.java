@@ -78,6 +78,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -172,7 +173,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         webEngine.getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) ->
                 log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))));
         webEngine.getLoadWorker().exceptionProperty().addListener((observableValue, throwable, t1) -> {
-            t1.printStackTrace();
+            if (t1 != null) log.error("Markdown Preview Error", t1);
         });
 
         webEngine.documentProperty().addListener((observable, oldValue, newValue) -> {
@@ -309,14 +310,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // NOTE: this method will be called from javascript inside the webview.
     public void onFileLinkClicked(String url) {
         if (!UrlUtils.isValid(url)) {
+            String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
             File f;
-            if (PathUtils.isAbsolutePath(url)) {
-                f = new File(url);
+            if (PathUtils.isAbsolutePath(decodedUrl)) {
+                f = new File(decodedUrl);
             }
             else {
-                f = new File(editorContext.getFileData().getFile().getParentFile(), url);
+                f = new File(editorContext.getFileData().getFile().getParentFile(), decodedUrl);
             }
-            log.debug("Try to open file: " + f.getPath());
+            log.debug("Try to open file: %s".formatted(f.getPath()));
             EventBus.getIns().notifyOpenFile(new OpenFileEvent(f, true));
         }
     }
@@ -500,7 +502,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             throw new RuntimeException(e);
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
                         log.error("Failed to export to PDF", e);
                         EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: " + e.getLocalizedMessage()));
                     }
