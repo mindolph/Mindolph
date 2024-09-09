@@ -91,6 +91,7 @@ public class FileTabView extends BaseView {
             }
             else {
                 this.updateMenuState(null);
+                EventBus.getIns().notifyOutline(null); // clear the outline view since there is no tab exists.
             }
         });
         tabPane.setOnMouseClicked(mouseEvent -> {
