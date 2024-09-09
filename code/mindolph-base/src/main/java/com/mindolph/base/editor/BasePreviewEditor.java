@@ -92,18 +92,19 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             if (speed > SCROLL_SPEED_THRESHOLD) {
                 log.trace("Swipe right");
                 prevPage();
-            } else if (speed < -SCROLL_SPEED_THRESHOLD) {
+            }
+            else if (speed < -SCROLL_SPEED_THRESHOLD) {
                 log.trace("Swipe left");
                 nextPage();
             }
         });
     }
 
-    protected void nextPage(){
+    protected void nextPage() {
         // IMPLEMENTED IN INHERITOR
     }
 
-    protected void prevPage(){
+    protected void prevPage() {
         // IMPLEMENTED IN INHERITOR
     }
 
@@ -145,7 +146,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     protected double convertScrollPosition(double srcValue, double srcViewport, double srcTotal, double destViewport, double destTotal) {
         double src = srcTotal - srcViewport;
         double dest = destTotal - destViewport;
-        log.trace("convert: position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
+        if (log.isTraceEnabled())
+            log.trace("convert: position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
         return (srcValue / src) * dest;
     }
 
