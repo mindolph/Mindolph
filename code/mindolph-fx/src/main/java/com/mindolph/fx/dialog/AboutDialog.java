@@ -34,8 +34,8 @@ public class AboutDialog extends BaseDialogController<Void> {
                 .build();
 
         String appVersion = getClass().getPackage().getImplementationVersion();
-        dialog.setTitle(String.format("About Mindolph (%s) %s",
-                Env.isDevelopment ? "Dev" : StringUtils.EMPTY,
+        dialog.setTitle(String.format("About Mindolph %s %s",
+                Env.isDevelopment ? "(Dev)" : StringUtils.EMPTY,
                 StringUtils.isNotBlank(appVersion) ? appVersion : StringUtils.EMPTY));
 
         lbJvm.setText("VM: %s %s\nby %s".formatted(SystemUtils.JAVA_VM_NAME, SystemUtils.JAVA_VM_VERSION, SystemUtils.JAVA_VM_VENDOR));

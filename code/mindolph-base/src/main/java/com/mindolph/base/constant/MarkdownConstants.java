@@ -1,5 +1,7 @@
 package com.mindolph.base.constant;
 
+import com.mindolph.core.constant.SyntaxConstants;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +11,7 @@ import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
  * @author mindolph
  * @since 1.4
  */
-public interface MarkdownConstants {
+public interface MarkdownConstants extends SyntaxConstants {
 
     String EMPHASIS_KW = "[^*_\\r\\n\\t\\f\\v ]"; // visible letters but without '*' and '_
     String EMPHASIS_CONTENT = "[^*_\\r\\n\\f\\v]";
