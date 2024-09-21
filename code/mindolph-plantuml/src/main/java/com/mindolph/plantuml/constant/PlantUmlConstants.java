@@ -1,9 +1,11 @@
 package com.mindolph.plantuml.constant;
 
+import com.mindolph.core.constant.SyntaxConstants;
+
 /**
  * @author mindolph.com@gmail.com
  */
-public interface PlantUmlConstants {
+public interface PlantUmlConstants extends SyntaxConstants {
 
     String[] DIAGRAM_KEYWORDS = new String[]{
             "startsalt", "endsalt", "startgantt", "endgantt", "startlatex", "endlatex", "startmath", "endmath", "startdot", "enddot",
@@ -34,7 +36,7 @@ public interface PlantUmlConstants {
             "center", "footer", "return"
     };
     String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    String COMMENT_PATTERN = "^[\\s ]*'.*";
+    String COMMENT_PATTERN = "(" + BLANK_CHAR + "*'.*)";
     String BLOCK_COMMENT_PATTERN = "\\/'[.\\s\\S]+?'\\/";
 
     String ARROW1 = "[<>ox#\\*\\{\\}\\+\\^]";

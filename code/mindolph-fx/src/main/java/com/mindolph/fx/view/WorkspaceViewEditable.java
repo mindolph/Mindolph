@@ -63,7 +63,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -912,7 +915,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         newFile = createEmptyFile(fileName, selectedData, "txt");
                     }
                     else if (TYPE_PLANTUML.equals(fileType)) {
-                        log.debug("Handle dynamic menu item: " + source.getText());
+                        log.debug("Handle dynamic menu item: %s".formatted(source.getText()));
                         newFile = createEmptyFile(fileName, selectedData, "puml");
                         if (newFile != null) {
                             this.handlePlantumlCreation(source, newFile);
@@ -1134,7 +1137,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             log.debug("Cancel renaming file");
             return;
         }
-        Dialog dialog = new TextDialogBuilder()
+        Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename %s".formatted(selectedData.getName()))
                 .content("Input a new name")
