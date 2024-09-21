@@ -304,8 +304,8 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * @deprecated
      * @param newParIdx
+     * @deprecated
      */
     private void moveCaretToParagraph(int newParIdx) {
         Paragraph<Collection<String>, String, Collection<String>> targetPar = super.getParagraph(newParIdx);
@@ -343,14 +343,17 @@ public class ExtCodeArea extends CodeArea {
             if (newStartPar >= 0
                     && (newEndPar < this.getParagraphs().size())) {
                 String toBeMoved = this.getText(startParIndex, 0, endParIndex, endParLen);
-                log.trace("to be moved text: '%s'".formatted(StringUtils.abbreviateMiddle(toBeMoved, "...", 50)));
-                log.trace("delete text from %d,%d to %d,%d".formatted(startParIndex, 0, endParIndex, endParLen + 1));
+                if (log.isTraceEnabled())
+                    log.trace("to be moved text: '%s'".formatted(StringUtils.abbreviateMiddle(toBeMoved, "...", 50)));
+                if (log.isTraceEnabled())
+                    log.trace("delete text from %d,%d to %d,%d".formatted(startParIndex, 0, endParIndex, endParLen + 1));
                 this.deleteLinesSafely(startParIndex, endParIndex);
-                log.trace("insert lines at: %d".formatted(newStartPar));
+                if (log.isTraceEnabled()) log.trace("insert lines at: %d".formatted(newStartPar));
                 this.insertLinesSafely(newStartPar, toBeMoved);
-                log.trace("length of selection: " + selectionBind.getLength());
+                if (log.isTraceEnabled()) log.trace("length of selection: " + selectionBind.getLength());
                 if (selectionLen > 0) {
-                    log.trace("Select text from %d,%d to %d,%d".formatted(newStartPar, startColIndex, newEndPar, endColIndex));
+                    if (log.isTraceEnabled())
+                        log.trace("Select text from %d,%d to %d,%d".formatted(newStartPar, startColIndex, newEndPar, endColIndex));
                     this.selectRange(newStartPar, startColIndex, newEndPar, endColIndex);
                 }
                 else {
@@ -579,6 +582,32 @@ public class ExtCodeArea extends CodeArea {
     public double getLineHeight() {
         VirtualFlow<?, ?> vf = (VirtualFlow<?, ?>) this.lookup(".virtual-flow");
         return vf.visibleCells().get(0).getNode().getLayoutBounds().getHeight();
+    }
+
+    /**
+     *
+     * @return
+     * @since 1.8.4
+     */
+    protected Bounds getFirstVisibleBoundsOnScreen() {
+        for (int i = 0; i < super.getParagraphs().size(); i++) {
+            Optional<Bounds> opBounds = super.getParagraphBoundsOnScreen(i);
+            log.debug(" for " + i);
+            if (opBounds.isPresent()) {
+                log.debug("%d - %s".formatted(i, BoundsUtils.boundsInString(opBounds.get())));
+                return opBounds.get();
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     * @since 1.8.4
+     */
+    protected Bounds getFirstVisibleBounds() {
+        return super.screenToLocal(this.getFirstVisibleBoundsOnScreen());
     }
 
     public String getFileType() {

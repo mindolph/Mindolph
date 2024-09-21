@@ -1,10 +1,10 @@
 package com.mindolph.mindmap.utils;
 
-import com.mindolph.mindmap.util.TextUtils;
 import com.mindolph.mindmap.util.Utils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UtilsTest {
 
@@ -18,10 +18,4 @@ public class UtilsTest {
         assertFalse(Utils.isUriCorrect(""));
     }
 
-    @Test
-    public void countHeading() {
-        assertEquals(0, TextUtils.countHeading("aaabbb", 'x'));
-        assertEquals(3, TextUtils.countHeading("aaabbb", 'a'));
-        assertEquals(3, TextUtils.countHeading("aaabbbaaa", 'a'));
-    }
 }

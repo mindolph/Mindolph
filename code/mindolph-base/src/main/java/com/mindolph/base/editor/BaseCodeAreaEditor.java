@@ -245,7 +245,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             log.debug("Select range:  %s".formatted(tl));
             codeArea.selectRange(tl.getStartRow(), tl.getStartCol(), tl.getEndRow(), tl.getEndCol());
             codeArea.scrollXToPixel(0);
-            codeArea.requestFollowCaret();
+            codeArea.centerTheCaretY();
         }
         else {
             log.warn("No anchor to locate");
