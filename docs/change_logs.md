@@ -1,5 +1,11 @@
 # Change Logs
 
+### V1.8.5 Release
+
+* Fix: blank chars are not in correct font before comment line/block in PlantUML.
+* Fix: unable to open file link with CJK characters.
+* Fix: wrong redundant highlighting of '#' in non-header text in Markdown file.
+
 ### V1.9.1 Unstable Release
 
 * Feature: new outline view to outline the content for Mind map, Markdown and PlantUML files. 
