@@ -118,6 +118,9 @@ public class SearchableCodeArea extends SmartCodeArea {
         }
     }
 
+    /**
+     * @since 1.8.5
+     */
     public void centerTheCaretY() {
         // Try to center the Y of caret but doesn't work well since the getParagraphBoundsOnScreen()
         // does not always return the correct caret bounds(probably a bug). // TODO

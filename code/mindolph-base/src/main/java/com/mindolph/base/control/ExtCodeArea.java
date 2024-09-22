@@ -587,14 +587,12 @@ public class ExtCodeArea extends CodeArea {
     /**
      *
      * @return
-     * @since 1.8.4
+     * @since 1.8.5
      */
     protected Bounds getFirstVisibleBoundsOnScreen() {
         for (int i = 0; i < super.getParagraphs().size(); i++) {
             Optional<Bounds> opBounds = super.getParagraphBoundsOnScreen(i);
-            log.debug(" for " + i);
             if (opBounds.isPresent()) {
-                log.debug("%d - %s".formatted(i, BoundsUtils.boundsInString(opBounds.get())));
                 return opBounds.get();
             }
         }
@@ -604,7 +602,7 @@ public class ExtCodeArea extends CodeArea {
     /**
      *
      * @return
-     * @since 1.8.4
+     * @since 1.8.5
      */
     protected Bounds getFirstVisibleBounds() {
         return super.screenToLocal(this.getFirstVisibleBoundsOnScreen());
