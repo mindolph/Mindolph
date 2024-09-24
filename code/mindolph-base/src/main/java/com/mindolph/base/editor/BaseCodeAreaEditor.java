@@ -210,7 +210,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             for (int i = 0; i < l.size(); i++) {
                 HeadingLocation hl = l.get(i);
                 String title = this.extractOutlineTitle(hl.heading, hl.textLocation(), (i + 1) < l.size() ? l.get(i + 1).textLocation : null);
-                log.debug("  %d - %s".formatted(hl.level(), title));
+                if (log.isTraceEnabled()) log.trace("  %d - %s".formatted(hl.level(), title));
 
                 TextAnchor ta = new TextAnchor(hl.textLocation);
                 OutlineItemData outlineItemData = new OutlineItemData(title, ta);
@@ -220,13 +220,13 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
                 if (hl.level > curNode.getLevel()) {
                     // as child
-                    log.debug("    as child");
+                    log.trace("    as child");
                     curNode.addChild(newNode);
                     newNode.setParent(curNode);
                 }
                 else {
                     // as sibling
-                    log.debug("    as sibling");
+                    log.trace("    as sibling");
                     Node ancestor = curNode.findAncestor(node -> node.getLevel() <= newNode.getLevel() - 1);
                     ancestor.addChild(newNode);
                     newNode.setParent(ancestor);

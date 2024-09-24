@@ -149,40 +149,7 @@ public class MainController extends BaseController implements Initializable,
         rmiCollectionDefault.setUserData("default");
 
         // handle the file collections.
-        String activeCollName = this.cm.getActiveCollectionName();
-        Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
-        if (fileCollectionMap.isEmpty()) {
-            // init the default collection from opened file list for the first time.
-            List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
-            this.cm.saveCollectionFilePaths("default", openedFileList);
-            this.cm.saveActiveCollectionName("default");
-            if (openedFileList != null) {
-                rmiCollectionDefault.setText("default(%d)".formatted(openedFileList.size()));
-            }
-            log.info("The 'default' collection is created from last opened file list");
-        }
-        else {
-            log.info("Load %d collections.".formatted(fileCollectionMap.size()));
-
-            List<String> filesInDefault = fileCollectionMap.get("default");
-            if (filesInDefault != null) {
-                rmiCollectionDefault.setText("default(%d)".formatted(filesInDefault.size()));
-            }
-
-            fileCollectionMap.keySet().stream().filter(collName -> !"default".equals(collName)).forEach(collName -> {
-                List<String> filePaths = fileCollectionMap.get(collName);
-                RadioMenuItem rmi = new RadioMenuItem("%s(%d)".formatted(collName, filePaths.size()));
-                rmi.setUserData(collName);
-                rmi.setOnAction(event -> {
-                    onSelectCollection((String) rmi.getUserData());
-                });
-                if (collName.equals(activeCollName)) {
-                    rmi.setSelected(true);
-                }
-                rmi.setToggleGroup(collectionToggleGroup);
-                menuCollections.getItems().add(rmi);
-            });
-        }
+        this.loadCollections();
 
         SceneRestore sceneRestore = SceneRestore.getInstance();
 
@@ -300,6 +267,49 @@ public class MainController extends BaseController implements Initializable,
             if (DialogFactory.yesNoConfirmDialog("Before starting to use Mindolph, you should create your first workspace, do you want to proceed?")) {
                 onMenuNewWorkspace();
             }
+        }
+    }
+
+    /**
+     * @since 1.9.x
+     */
+    private void loadCollections() {
+        Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
+        if (fileCollectionMap.isEmpty()) {
+            // init the default collection from opened file list for the first time.
+            List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
+            this.cm.saveCollectionFilePaths("default", openedFileList);
+            this.cm.saveActiveCollectionName("default");
+            if (openedFileList != null) {
+                rmiCollectionDefault.setText("default(%d)".formatted(openedFileList.size()));
+            }
+            log.info("The 'default' collection is created from last opened file list");
+        }
+        else {
+            log.info("Load %d collections.".formatted(fileCollectionMap.size()));
+
+            List<String> filesInDefault = fileCollectionMap.get("default");
+            if (filesInDefault != null) {
+                rmiCollectionDefault.setText("default(%d)".formatted(filesInDefault.size()));
+            }
+
+            String activeCollName = this.cm.getActiveCollectionName();
+            // load sorted collection names to menu
+            fileCollectionMap.keySet().stream()
+                    .sorted(Comparator.comparing(String::toString))
+                    .filter(collName -> !"default".equals(collName)).forEach(collName -> {
+                        List<String> filePaths = fileCollectionMap.get(collName);
+                        RadioMenuItem rmi = new RadioMenuItem("%s(%d)".formatted(collName, filePaths.size()));
+                        rmi.setUserData(collName);
+                        rmi.setOnAction(event -> {
+                            onSelectCollection((String) rmi.getUserData());
+                        });
+                        if (collName.equals(activeCollName)) {
+                            rmi.setSelected(true);
+                        }
+                        rmi.setToggleGroup(collectionToggleGroup);
+                        menuCollections.getItems().add(rmi);
+                    });
         }
     }
 
@@ -631,6 +641,7 @@ public class MainController extends BaseController implements Initializable,
      * @param selectCollectionName null means not select any collection
      */
     private void resetCollectionSelection(String selectCollectionName) {
+        // select the selected one
         menuCollections.getItems().stream().filter(mi -> mi instanceof RadioMenuItem)
                 .forEach(cmi -> ((RadioMenuItem) cmi).setSelected(cmi.getUserData().equals(selectCollectionName)));
     }
@@ -655,20 +666,15 @@ public class MainController extends BaseController implements Initializable,
                 return;
             }
 
-            this.resetCollectionSelection(null);
-            RadioMenuItem mi = new RadioMenuItem("%s(%d)".formatted(newColName, fileTabView.getAllOpenedFiles().size()));
-            mi.setOnAction(event -> {
-                onSelectCollection((String) mi.getUserData());
-            });
-            mi.setUserData(newColName);
-            mi.setToggleGroup(collectionToggleGroup);
-            menuCollections.getItems().add(mi);
-
-            this.resetCollectionSelection(newColName);
-
             this.cm.saveCollectionFilePaths(newColName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
-
             this.cm.saveActiveCollectionName(newColName);
+
+            // remove for resorting first.
+            menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
+
+            // load all again to resort collections.
+            this.loadCollections();
+
         }
     }
 
@@ -688,7 +694,7 @@ public class MainController extends BaseController implements Initializable,
 
         // reset the file counter in the text of menu item.
         Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
-                menuItem.getUserData()!=null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
+                menuItem.getUserData() != null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
     }
 
@@ -746,7 +752,7 @@ public class MainController extends BaseController implements Initializable,
         fileTabView.closeAllTabs();
 
         // load files
-        if (files != null && !files.isEmpty()) {
+        if (!files.isEmpty()) {
             onOpenedFileRestore(files.stream().map(File::new).toList());
         }
         this.cm.saveActiveCollectionName(collectionName);
