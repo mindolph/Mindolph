@@ -33,8 +33,8 @@ public interface MarkdownConstants extends SyntaxConstants {
             + "|((__)" + EMPHASIS + "(__))";
     String ITALIC_PATTERN = "(\\*" + EMPHASIS + "\\*)"
             + "|(_" + EMPHASIS + "_)";
-    String CODE_PATTERN = "`[\\s\\S]*?`";
-    String CODE_BLOCK_PATTERN = "`{3}[\\s\\S]*?`{3}";
+    String CODE_PATTERN = BLANK_CHAR + "*`[\\s\\S]*?`";
+    String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
     String QUOTE_PATTERN = "> [\\s\\S]*?(?=" + LINE_SEPARATOR + ")";
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 
