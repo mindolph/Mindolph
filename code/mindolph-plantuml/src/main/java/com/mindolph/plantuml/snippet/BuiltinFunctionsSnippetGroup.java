@@ -1,7 +1,7 @@
 package com.mindolph.plantuml.snippet;
 
 import com.mindolph.base.control.snippet.BaseSnippetGroup;
-import com.mindolph.base.control.snippet.Snippet;
+import com.mindolph.core.model.Snippet;
 
 import java.util.Arrays;
 

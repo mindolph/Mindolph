@@ -1,6 +1,8 @@
 package com.mindolph.base.control.snippet;
 
 import com.mindolph.base.BaseView;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.core.model.Snippet;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
@@ -12,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author mindolph.com@gmail.com
@@ -31,8 +32,6 @@ public class SnippetView extends BaseView {
     @FXML
     private VBox vBox;
 
-    private SnippetEventHandler snippetEventHandler;
-
     public SnippetView() {
         super("/control/snippet_view.fxml");
         tfKeyword = TextFields.createClearableTextField();
@@ -46,9 +45,12 @@ public class SnippetView extends BaseView {
         });
     }
 
-    public void load(List<BaseSnippetGroup> snippetGroups) {
-        this.snippetGroups = snippetGroups;
-        this.filter(null);
+    public void reload(List<BaseSnippetGroup> snippetGroups) {
+        accordion.getPanes().clear();
+        if (snippetGroups != null && !snippetGroups.isEmpty()) {
+            this.snippetGroups = snippetGroups;
+            this.filter(null);
+        }
     }
 
     /**
@@ -64,7 +66,7 @@ public class SnippetView extends BaseView {
                 filteredSnippets = filteredSnippets.stream().filter(snippet -> snippet.getTitle().contains(keyword)
                                 || (snippet.getDescription() != null && snippet.getDescription().contains(keyword))
                                 || (snippet.getCode() != null && snippet.getCode().contains(keyword)))
-                        .collect(Collectors.toList());
+                        .toList();
             }
             if (!filteredSnippets.isEmpty() || snippetGroup.isAlwaysShow()) {
                 ListView<Snippet> listView = new ListView<>();
@@ -73,15 +75,16 @@ public class SnippetView extends BaseView {
                 listView.setOnMouseClicked(mouseEvent -> {
                     if (mouseEvent.getClickCount() == 2) {
                         Snippet selectedSnippet = listView.getSelectionModel().getSelectedItem();
-                        snippetEventHandler.onSnippet(selectedSnippet);
+                        EventBus.getIns().notifySnippetApply(selectedSnippet);
                     }
                 });
+                listView.setPrefHeight(9999); // extend the snippet view as possible
                 TitledPane pane = new TitledPane(snippetGroup.getTitle(), listView);
                 accordion.getPanes().add(pane);
             }
         }
         // Expand first panel in accordion.
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             if (!accordion.getPanes().isEmpty()) {
                 TitledPane first = accordion.getPanes().get(0);
                 if (first != null) {
@@ -91,7 +94,4 @@ public class SnippetView extends BaseView {
         });
     }
 
-    public void setSnippetEventHandler(SnippetEventHandler snippetEventHandler) {
-        this.snippetEventHandler = snippetEventHandler;
-    }
 }

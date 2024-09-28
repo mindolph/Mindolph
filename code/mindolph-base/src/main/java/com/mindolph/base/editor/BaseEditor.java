@@ -2,6 +2,7 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
@@ -131,6 +132,11 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
 
     public void outline() {
         EventBus.getIns().notifyOutline(null); // no outline by default
+    }
+
+    @Override
+    public void onSnippet(Snippet snippet) {
+        // do nothing by default
     }
 
     @Override

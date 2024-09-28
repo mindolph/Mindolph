@@ -1,6 +1,7 @@
 package com.mindolph.base.control.snippet;
 
 import com.mindolph.base.util.ColorUtils;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +32,7 @@ public class SnippetCell extends ListCell<Snippet> {
     protected void updateItem(Snippet item, boolean empty) {
         super.updateItem(item, empty);
         if (item != null) {
-            FXMLLoader fxmlLoader = FxmlUtils.loadUri("/control/snippet_item.fxml", new SnippetCell.ItemController(item));
+            FXMLLoader fxmlLoader = FxmlUtils.loadUri("/control/snippet_item.fxml", new ItemController(item));
             Node root = fxmlLoader.getRoot();
             setGraphic(root);
         }
@@ -41,7 +42,7 @@ public class SnippetCell extends ListCell<Snippet> {
         }
     }
 
-    private class ItemController extends AnchorPane implements Initializable {
+    private static class ItemController extends AnchorPane implements Initializable {
         @FXML
         private Label title;
         @FXML
@@ -60,7 +61,7 @@ public class SnippetCell extends ListCell<Snippet> {
                 tooltip.setText(snippet.getDescription());
                 Tooltip.install(this, tooltip);
             }
-            if (snippet.isColor()) {
+            if (snippet instanceof ColorSnippet) {
                 String colorName = StringUtils.remove(snippet.getTitle(), '#');
                 Color color = Color.valueOf(colorName);
                 if (color != null) {

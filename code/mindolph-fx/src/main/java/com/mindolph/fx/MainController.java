@@ -7,6 +7,7 @@ import com.mindolph.base.collection.CollectionManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.container.FixedSplitPane;
+import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.editor.ImageViewerEditor;
 import com.mindolph.base.editor.PlainTextEditor;
@@ -40,6 +41,7 @@ import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.plantuml.PlantUmlEditor;
+import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -66,8 +68,7 @@ import static org.apache.commons.lang3.StringUtils.length;
  */
 public class MainController extends BaseController implements Initializable,
         WorkspaceRestoreListener, OpenedFileRestoreListener,
-        FileRenamedEventHandler, FileChangedEventHandler,
-        WorkspaceViewSizeRestoreListener {
+        FileChangedEventHandler, WorkspaceViewSizeRestoreListener {
 
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
@@ -86,6 +87,8 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private OutlineView outlineView;
     @FXML
+    private SnippetView snippetView;
+    @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuRecentWorkspaces;
@@ -103,6 +106,8 @@ public class MainController extends BaseController implements Initializable,
     private Tab tabRecentFiles;
     @FXML
     private Tab tabOutline;
+    @FXML
+    private Tab tabSnippet;
     @FXML
     private CheckMenuItem miToggleWorkspaceView;
     @FXML
@@ -151,6 +156,42 @@ public class MainController extends BaseController implements Initializable,
         // handle the file collections.
         this.loadCollections();
 
+        // for snippet
+        EventBus.getIns().subscribeFileActivated(fileChange -> {
+            NodeData nodeData = fileChange.newData();
+            if (fileChange.oldData() != null && fileChange.newData() != null
+                    && fileChange.oldData().isSameFileType(fileChange.newData())) {
+                return;
+            }
+            if (nodeData == null) {
+                snippetView.reload(null);
+                return;
+            }
+            switch (nodeData.getNodeType()) {
+                case FOLDER -> {
+                    snippetView.reload(null);
+                }
+                case FILE -> {
+                    if (nodeData.isPlantUml()) {
+                        snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
+                                        new DiagramSnippetGroup(),
+                                        new SkinparamSnippetGroup(),
+                                        new ColorSnippetGroup(),
+                                        new ThemeSnippetGroup(),
+                                        new CreoleSnippetGroup(),
+                                        new ProcessingSnippetGroup(),
+                                        new BuiltinFunctionsSnippetGroup()
+//                        new CustomSnippetGroup()
+                                )
+                        );
+                    }
+                    else {
+                        snippetView.reload(null);
+                    }
+                }
+            }
+        });
+
         SceneRestore sceneRestore = SceneRestore.getInstance();
 
         // register state changes to store.
@@ -158,6 +199,7 @@ public class MainController extends BaseController implements Initializable,
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
         tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE));
+        tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);
@@ -475,7 +517,6 @@ public class MainController extends BaseController implements Initializable,
         });
     }
 
-    @Override
     public void onFileRenamed(NodeData nodeData, File renamedFile) {
         log.debug("file renamed from %s to %s".formatted(nodeData.getFile(), renamedFile));
         if (nodeData.isFile()) {

@@ -1,5 +1,7 @@
 package com.mindolph.base.control.snippet;
 
+import com.mindolph.core.model.Snippet;
+
 import java.util.ArrayList;
 import java.util.List;
 
