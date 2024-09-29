@@ -696,6 +696,11 @@ public class MainController extends BaseController implements Initializable,
         Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
                 menuItem.getUserData() != null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
+
+        Platform.runLater(() -> {
+            Notifications.create().title("Save collection")
+                    .text("Collection '%s' is saved successfully.".formatted(activeCollectionName)).showWarning();
+        });
     }
 
     @FXML
@@ -708,19 +713,16 @@ public class MainController extends BaseController implements Initializable,
         }
         boolean confirmRemove = DialogFactory.yesNoConfirmDialog("Are you sure to remove collection '%s' \n(NO files will be deleted) ".formatted(activeCollectionName));
         if (confirmRemove) {
-            // switch to no collection and load last opened files
-//            this.onSelectCollection(null);
-//            this.cm.deleteCollection(activeCollectionName);
-//            menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
-//            resetCollectionSelection(null);
-
-
             // switch to default collection first
-            onSelectCollection("default");
+            this.onSelectCollection("default");
             // delete current user-defined collection
             this.cm.deleteCollection(activeCollectionName);
             menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
-            resetCollectionSelection("default");
+            this.resetCollectionSelection("default");
+            Platform.runLater(() -> {
+                Notifications.create().title("Delete collection")
+                        .text("Collection '%s' is deleted successfully.".formatted(activeCollectionName)).showWarning();
+            });
         }
     }
 
