@@ -139,7 +139,6 @@
                 <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
                 <MenuItem onAction="#onRemoveCollection" text="Remove Collection"/>
                 <SeparatorMenuItem/>
-                <RadioMenuItem fx:id="rmiCollectionDefault" onAction="#onDefaultCollection" text="default" selected="true"/>
             </Menu>
             <Menu mnemonicParsing="true" text="_Help">
                 <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference..."/>

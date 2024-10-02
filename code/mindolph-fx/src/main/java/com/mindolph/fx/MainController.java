@@ -144,9 +144,6 @@ public class MainController extends BaseController implements Initializable,
     public void initialize(URL location, ResourceBundle resources) {
         log.info("initialize main scene controller");
         menuBar.setUseSystemMenuBar(true);
-        collectionToggleGroup = new ToggleGroup();
-        rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
-        rmiCollectionDefault.setUserData("default");
 
         // handle the file collections.
         this.loadCollections();
@@ -210,7 +207,7 @@ public class MainController extends BaseController implements Initializable,
 
         EventBus.getIns().subscribeLocateInWorkspace(nodeData -> {
             splitPane.showAll(); // show project view if hidden
-            log.debug("Select file in workspace view: " + nodeData.getFile());
+            log.debug("Select file in workspace view: %s".formatted(nodeData.getFile()));
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
                 workspaceView.selectByNodeDataInAppropriateWorkspace(nodeData);
@@ -274,6 +271,11 @@ public class MainController extends BaseController implements Initializable,
      * @since 1.9.x
      */
     private void loadCollections() {
+        collectionToggleGroup = new ToggleGroup();
+        rmiCollectionDefault = new RadioMenuItem("default");
+        rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
+        menuCollections.getItems().add(rmiCollectionDefault);
+
         Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
         if (fileCollectionMap.isEmpty()) {
             // init the default collection from opened file list for the first time.
