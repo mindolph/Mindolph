@@ -92,8 +92,6 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private Menu menuCollections;
     @FXML
-    private RadioMenuItem rmiCollectionDefault;
-    @FXML
     private MenuItem menuManageWorkspaces;
     @FXML
     private TabPane leftTabPane;
@@ -133,6 +131,8 @@ public class MainController extends BaseController implements Initializable,
     private MenuItem miFind;
     @FXML
     private MenuItem miReplace;
+
+    private RadioMenuItem rmiCollectionDefault;
 
     private ToggleGroup collectionToggleGroup;
 
@@ -274,6 +274,10 @@ public class MainController extends BaseController implements Initializable,
         collectionToggleGroup = new ToggleGroup();
         rmiCollectionDefault = new RadioMenuItem("default");
         rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
+        rmiCollectionDefault.setOnAction(event -> {
+            // emit event to close all files of current collection and load default collection.
+            this.onSelectCollection("default");
+        });
         menuCollections.getItems().add(rmiCollectionDefault);
 
         Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
@@ -726,12 +730,6 @@ public class MainController extends BaseController implements Initializable,
                         .text("Collection '%s' is deleted successfully.".formatted(activeCollectionName)).showWarning();
             });
         }
-    }
-
-    @FXML
-    public void onDefaultCollection() {
-        // emit event to close all files of current collection and load default collection.
-        this.onSelectCollection("default");
     }
 
     @FXML
