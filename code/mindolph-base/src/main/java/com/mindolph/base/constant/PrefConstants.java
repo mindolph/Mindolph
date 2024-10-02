@@ -15,15 +15,15 @@ public interface PrefConstants {
     String GENERAL_AUTO_SELECT_AFTER_FILE_OPENED = "general.autoSelectAfterFileOpened";
 
     /**
-     * @deprecated delete when 1.8 stable is release
+     * @deprecated delete when 1.8 stable is released
      */
     String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
     /**
-     * @deprecated delete when 1.8 stable is release
+     * @deprecated delete when 1.8 stable is released
      */
     String GENERAL_AI_PROVIDERS = "general.genai.providers";
     /**
-     * @deprecated delete when 1.8 stable is release
+     * @deprecated delete when 1.8 stable is released
      */
     String GENERAL_AI_TIMEOUT = "general.genai.timeout";
 
@@ -47,7 +47,7 @@ public interface PrefConstants {
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
 
     /**
-     * @deprecated
+     * @deprecated since 1.8
      */
     String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
     String PREF_KEY_MD_SANS_FONT_FILE = "md.fontFilePath.sans";

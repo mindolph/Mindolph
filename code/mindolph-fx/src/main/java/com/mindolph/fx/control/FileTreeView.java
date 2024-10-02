@@ -47,6 +47,7 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                         // styleProperty().set("-fx-background-color: gainsboro");
                     }
                     else {
+                        setText(null);
                         // highlight the searching keyword in the result.
                         TextFlow textFlow = new TextFlow();
                         MatchedItem matchedItem = item.getMatchedItem();
@@ -67,6 +68,9 @@ public class FileTreeView extends TreeView<FileTreeView.FileTreeViewData> {
                             }
                             String past = substring(normalText, last, normalText.length());
                             textFlow.getChildren().add(new Text(past));
+                            setGraphic(textFlow);
+                        }
+                        else {
                             setGraphic(textFlow);
                         }
                     }

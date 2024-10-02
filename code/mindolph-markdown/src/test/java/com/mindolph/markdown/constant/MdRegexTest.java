@@ -17,11 +17,14 @@ public class MdRegexTest {
     @Test
     public void heading() {
         Pattern p = Pattern.compile(HEADING_PATTERN);
-        Assertions.assertTrue(p.matcher("#\n").matches());
-        Assertions.assertTrue(p.matcher("##\n").matches());
-        Assertions.assertTrue(p.matcher("###\n").matches());
-        Assertions.assertTrue(p.matcher("# Header 1\n").matches());
-        Assertions.assertTrue(p.matcher("## Header 2\n").matches());
+        Assertions.assertTrue(p.matcher("\n# Header 1\n").find());
+        Assertions.assertTrue(p.matcher("\n## Header 2\n").find());
+        Assertions.assertTrue(p.matcher("\n# \n").find());
+        Assertions.assertTrue(p.matcher("\n## \n").find());
+        Assertions.assertTrue(p.matcher("\n### \n").find());
+        Assertions.assertFalse(p.matcher("\n#\n").find());
+        Assertions.assertFalse(p.matcher("\n##\n").find());
+        Assertions.assertFalse(p.matcher("\n###\n").find());
     }
 
     @Test

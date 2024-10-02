@@ -24,9 +24,9 @@ public class SearchService {
     private static final Logger log = LoggerFactory.getLogger(SearchService.class);
 
     // for searching content in files
-    private final Map<String, SearchMatcher> textMatchers = new HashMap<>();
+    private final Map<String, SearchMatcher> textMatchers = new TreeMap<>();
     // for searching file links in files
-    private final Map<String, SearchMatcher> fileLinkMatchers = new HashMap<>();
+    private final Map<String, SearchMatcher> fileLinkMatchers = new TreeMap<>();
 
     public static SearchService getIns() {
         return ins;

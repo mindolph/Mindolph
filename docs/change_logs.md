@@ -1,5 +1,74 @@
 # Change Logs
 
+### V1.9.2 Unstable Release
+
+* Improvement: add toast notification for saving and deleting collection.
+* Improvement: resort collections when new one is created.
+* Improvement: center the caret in the view-port after locating to any paragraph in code editor.
+* Fix: outline view doesn't cleared when all files are closed.
+* update JavaFX to 22.0.2 and update other dependencies.
+* merged bug fixes from v1.8.6.
+
+### V1.8.6 Release
+
+* Fix: blank chars are not in correct font before code block in Markdown.
+
+### V1.8.5 Release
+
+* Fix: blank chars are not in correct font before comment line/block in PlantUML.
+* Fix: unable to open file link with CJK characters.
+* Fix: wrong redundant highlighting of '#' in non-header text in Markdown file.
+
+### V1.9.1 Unstable Release
+
+* Feature: new outline view to outline the content for Mind map, Markdown and PlantUML files. 
+* Improvement: minimize the displaying of tabs on the left side panel since the outline view is introduced.
+
+### V1.9.0 Unstable Release
+
+* Feature: new file collections functionality that lets you save opened files as a named collection and switch between different collections.
+
+### V1.8.4 Release
+
+* Fix: exceptions when no search keyword is provided in search&replace panel.
+* merged bug fixes from v1.7.9
+
+### V1.7.9 Release
+
+* Fix: exception when import mind map from Freemind mm file.(https://github.com/mindolph/Mindolph/issues/9)
+
+
+### V1.8.3 Unstable Release
+
+* Improvement: optimize the handling of dragging mouse hover on folder. 
+* Improvement: auto select moved files either by drag&drop or by `Move to`.
+* Fix: inappropriate view mode in keys reference dialog.
+* Fix: performance improved by removing redundant style applying for editors.
+* Fix: selected file disappear in workspace tree after failed to drag&drop to another folder with same name file exists.
+* Fix: unable to use `Move to` to move files to root folder of a workspace. 
+
+### V1.8.2 Unstable Release
+
+* Fix: the order of search results list changes randomly.  
+* Fix: duplicate search result items since the breadcrumb was introduced.  
+* Fix: unexpected refresh in active editor when shortcuts key reference dialog popup.
+* Merge bug fixes from stable versions.  
+
+### V1.7.8 Release
+
+* Fix: exception when locating root topic of mind map from search result.   
+* Fix: when locating a mind map topic from the search results, the selected topics are not cleared.  
+* Fix: breaking line and moving caret up/down does not work in some cases after IME dialog popup and hide.  
+
+### V1.7.7 Release
+
+* Improvement: optimize the searching reach the beginning or the end in Markdown, PlantUML and plain text editors.    
+* Improvement: optimize gen-ai dialog UI.  
+* Fix: no response when change current workspace to a no longer existed one.  
+* Fix: markdown preview panel is not updated when the view mode is changed from `text only` to `both`.  
+* Fix: collapsed topics in mind map can't be located and focused when found by searching.  
+* Fix: the custom LLM model input should be disabled when select any pre-set model from the model list.  
+
 ### V1.8.1 Unstable Release
 
 * Improvement: optimize preference dialog and markdown preference layout  

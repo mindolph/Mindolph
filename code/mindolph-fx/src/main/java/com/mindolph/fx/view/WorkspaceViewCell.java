@@ -1,6 +1,7 @@
 package com.mindolph.fx.view;
 
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.control.MTreeView;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.event.DragFileEventHandler;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -19,15 +20,16 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.reactfx.AwaitingEventStream;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -47,9 +49,11 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
 
     // static for sharing.
     private static List<NodeData> draggingNodeDatas;
-
+    // since multi event handler is not allowed, use extra handler to do more.
     private DragFileEventHandler dragFileEventHandler;
-    private Background origBackground;// for drag&drop
+    private Background origBackground; // for drag&drop
+    private boolean isDragHover = false; // use this flag to cancel expanding dragging mouse hovered tree item.
+    private EventSource<Integer> dragHoverEventSource; // handle dragging mouse hover on tree item
 
     public WorkspaceViewCell() {
         this.setOnDragDetected(e -> {
@@ -87,28 +91,38 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             dragEvent.consume();
         });
         this.setOnDragEntered(dragEvent -> {
-            log.trace("drag entered: " + (this.getTreeItem() == null ? EMPTY : this.getTreeItem().getValue()));
+            log.trace("drag entered: %s".formatted(this.getTreeItem() == null ? EMPTY : this.getTreeItem().getValue()));
+            isDragHover = true;
             if (this.isDroppable()) {
                 origBackground = this.getBackground();
                 this.setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
             }
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (!getTreeItem().isExpanded()) getTreeItem().setExpanded(true);
+            if (!getTreeItem().isExpanded()) {
+                if (dragHoverEventSource == null) {
+                    dragHoverEventSource = new EventSource<>();
                 }
-            }, 1500);
+                AwaitingEventStream<Integer> accum = dragHoverEventSource.reduceSuccessions(Integer::sum, Duration.ofMillis(1500));
+                accum.subscribe(integer -> {
+                    if (isDragHover && getTreeItem() != null && !getTreeItem().isExpanded())
+                        getTreeItem().setExpanded(true);
+                    this.setBorder(null); // remove hover border
+                });
+                dragHoverEventSource.push(1);
+            }
             dragEvent.consume();
         });
         this.setOnDragExited(dragEvent -> {
             log.trace("drag exited");
+            isDragHover = false;
             if (this.isDroppable()) {
                 this.setBorder(null);
             }
             dragEvent.consume();
         });
         this.setOnDragDropped(dragEvent -> {
+            isDragHover = false;
             if (dragEvent.getDragboard().hasString()) {
+                // implement the dragging&dropping internal files.
                 if (this.isDroppable()) {
                     if (draggingNodeDatas != null && !draggingNodeDatas.isEmpty()) {
                         log.info(String.format("Drag %s and drop to %s", dragEvent.getDragboard().getString(), getTreeItemData().getFile().toString()));
@@ -123,6 +137,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                 }
             }
             else if (dragEvent.getDragboard().hasFiles()) {
+                // implement the dragging&dropping external files as copies.
                 getTreeView().requestFocus();
                 if (this.isDroppable()) {
                     List<File> files = dragEvent.getDragboard().getFiles();
@@ -149,7 +164,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                                 try {
                                     FileUtils.copyFile(file, destFile);
                                 } catch (IOException e) {
-                                    DialogFactory.errDialog("Failed to copy file " + file.getName() + " to " + destFile.getAbsolutePath());
+                                    DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
                                 }
                                 log.debug("copy file {} with overwrite done", file);
                             }
@@ -160,7 +175,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                             try {
                                 FileUtils.copyFile(file, destFile);
                             } catch (IOException e) {
-                                DialogFactory.errDialog("Failed to copy file " + file.getName() + " to " + destFile.getAbsolutePath());
+                                DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
                             }
                             log.debug("copy file {} done", file);
                             NodeData destNodeData = new NodeData(destFile);
@@ -169,8 +184,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                         }
                     }
                     getTreeItem().getChildren().addAll(newItems);
-                    getTreeView().getSelectionModel().clearSelection();
-                    newItems.forEach(ti -> getTreeView().getSelectionModel().select(ti));
+                    ((MTreeView<NodeData>) getTreeView()).reselect(newItems);
                     getTreeView().refresh();
                     getTreeView().requestFocus();
                 }

@@ -5,8 +5,8 @@ import com.igormaznitsa.mindmap.model.MindMap;
 import com.igormaznitsa.mindmap.model.Topic;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.model.ItemData;
+import com.mindolph.mfx.util.TextUtils;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
-import com.mindolph.mindmap.util.TextUtils;
 import javafx.scene.paint.Color;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -266,7 +266,7 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
                 continue;
             }
             line = line.replace("\t", "    ");
-            int leadingSpacesNumber = TextUtils.countHeading(line, ' ');
+            int leadingSpacesNumber = TextUtils.countInStarting(line, ' ');
             ignoredLeadingSpaces = Math.min(leadingSpacesNumber, ignoredLeadingSpaces);
         }
 

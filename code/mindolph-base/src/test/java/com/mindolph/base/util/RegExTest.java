@@ -1,18 +1,72 @@
 package com.mindolph.base.util;
 
+import com.mindolph.base.constant.MarkdownConstants;
 import org.apache.commons.lang3.RegExUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author mindolph.com@gmail.com
  */
 public class RegExTest {
 
+    @Test
+    public void testHasMatch() {
+        Pattern p = Pattern.compile(MarkdownConstants.HEADING_PATTERN);
+        Matcher matcher = null;
+        matcher = p.matcher("# \n");
+        matcher.find();
+        Assertions.assertTrue(matcher.hasMatch());
+        matcher = p.matcher("## \n");
+        matcher.find();
+        Assertions.assertTrue(matcher.hasMatch());
+    }
+
+    @Test
+    public void testReplacePattern() {
+        String s = RegExUtils.replacePattern("###...", "#", "");
+        Assertions.assertEquals("...", s);
+    }
+
+    @Test
+    public void test() {
+//        String p = "(^(?<HA>#+[\\s\\S]*?(?=\\n)))|(\n(?<HB>#+[\\s\\S]*?(?=\\n)))";
+        String p = "(^|\n)(?<HA>#+[\\s\\S]*?(?=\\n))";
+        Pattern pattern = Pattern.compile(p);
+        Matcher matcher = pattern.matcher("# foobar\n");
+        Assertions.assertTrue(matcher.find());
+        Assertions.assertEquals("# foobar", matcher.group(2));
+
+        matcher = pattern.matcher("### foobar\n");
+        Assertions.assertTrue(matcher.find());
+        Assertions.assertEquals("### foobar", matcher.group(2));
+
+        matcher = pattern.matcher("void\n# foobar\nvoid");
+        Assertions.assertTrue(matcher.find());
+//        Assertions.assertEquals("# foobar", matcher.group("HB"));
+        Assertions.assertEquals("# foobar", matcher.group(2));
+
+        matcher = pattern.matcher("void\n### foobar\nvoid");
+        Assertions.assertTrue(matcher.find());
+//        Assertions.assertEquals("### foobar", matcher.group("HB"));
+        Assertions.assertEquals("### foobar", matcher.group(2));
+
+
+        // negative
+        Assertions.assertFalse(pattern.matcher("foobar\n").find());
+
+    }
+
+
     public static void main(String[] args) {
         String text = """
                 # Awesome JavaFX [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
                                 
                 A curated list of awesome JavaFX frameworks, libraries, books etc... .
-                
+                                
                 ----
                                 
                 ## Contents

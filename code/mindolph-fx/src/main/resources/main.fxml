@@ -7,6 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.*?>
 <?import javafx.scene.layout.*?>
+<?import com.mindolph.fx.view.OutlineView?>
 <AnchorPane prefHeight="551.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mindolph.fx.MainController">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -133,6 +134,13 @@
                     </accelerator>
                 </MenuItem>
             </Menu>
+            <Menu fx:id="menuCollections" text="_Collections">
+                <MenuItem onAction="#onCreateCollection" text="Create Collection..."/>
+                <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
+                <MenuItem onAction="#onRemoveCollection" text="Remove Collection"/>
+                <SeparatorMenuItem/>
+                <RadioMenuItem fx:id="rmiCollectionDefault" onAction="#onDefaultCollection" text="default" selected="true"/>
+            </Menu>
             <Menu mnemonicParsing="true" text="_Help">
                 <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference..."/>
                 <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="_Check for update..."/>
@@ -146,7 +154,10 @@
                              prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE"
                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <Tab fx:id="tabWorkspaces" text="Workspaces">
+                        <Tab fx:id="tabWorkspaces">
+                            <tooltip>
+                                <Tooltip text="Workspaces"/>
+                            </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <AnchorPane layoutX="-215.0" layoutY="-87.0" prefHeight="400.0"
@@ -163,7 +174,10 @@
                                 </AnchorPane>
                             </AnchorPane>
                         </Tab>
-                        <Tab fx:id="tabRecentFiles" text="Recent Files">
+                        <Tab fx:id="tabRecentFiles">
+                            <tooltip>
+                                <Tooltip text="Recent Files"/>
+                            </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <RecentView fx:id="recentView" layoutX="24.0" layoutY="44.0"
@@ -171,6 +185,19 @@
                                             AnchorPane.bottomAnchor="0.0"
                                             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                             AnchorPane.topAnchor="0.0"/>
+                            </AnchorPane>
+                        </Tab>
+                        <Tab fx:id="tabOutline">
+                            <tooltip>
+                                <Tooltip text="Outline"/>
+                            </tooltip>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
+                                        prefWidth="200.0">
+                                <OutlineView fx:id="outlineView" layoutX="24.0" layoutY="44.0"
+                                             prefHeight="200.0" prefWidth="200.0"
+                                             AnchorPane.bottomAnchor="0.0"
+                                             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                             AnchorPane.topAnchor="0.0"/>
                             </AnchorPane>
                         </Tab>
                     </TabPane>

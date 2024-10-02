@@ -3,6 +3,7 @@ package com.mindolph.mindmap.util;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
+import org.jsoup.parser.Parser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,9 +25,10 @@ import java.util.List;
  * @author mindolph.com@gmail.com
  */
 public class XmlUtils {
-    public static Document loadHtmlDocument(InputStream inStream, String charset, boolean autoClose) throws IOException {
+
+    public static Document loadDocument(InputStream inStream, String charset, Parser parser, boolean autoClose) throws IOException {
         try {
-            org.jsoup.nodes.Document result = Jsoup.parse(IOUtils.toString(inStream, charset));
+            org.jsoup.nodes.Document result = Jsoup.parse(IOUtils.toString(inStream, charset), parser);
             return new W3CDom().fromJsoup(result);
         } finally {
             if (autoClose) {
@@ -45,7 +47,6 @@ public class XmlUtils {
      * @throws IOException                  will be thrown if transport error
      * @throws ParserConfigurationException will be thrown if parsing error
      * @throws SAXException                 will be thrown if SAX error
-     * 
      */
 
     public static Document loadXmlDocument(InputStream inStream, String charset, boolean autoClose) throws SAXException, IOException, ParserConfigurationException {
@@ -99,7 +100,6 @@ public class XmlUtils {
      * @param node        element to find children
      * @param elementName name of child element
      * @return found first child or null if not found
-     * 
      */
     public static Element findFirstElement(Element node, String elementName) {
         Element result = null;
@@ -116,7 +116,6 @@ public class XmlUtils {
      * @param element          parent element
      * @param childElementname child element name
      * @return list of found elements
-     * 
      */
     public static List<Element> findDirectChildrenForName(Element element, String childElementname) {
         List<Element> resultList = new ArrayList<>();

@@ -70,8 +70,8 @@ public class FileTabView extends BaseView {
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
+                Object tabUserData = selectingTab.getUserData();
                 if (editor == null) {
-                    Object tabUserData = selectingTab.getUserData();
                     if (tabUserData != null) {
                         NodeData fileData = (NodeData) tabUserData;
                         this.loadEditorToTab(fileData, selectingTab);
@@ -79,15 +79,19 @@ public class FileTabView extends BaseView {
                 }
                 else {
                     if (editor.isNeedRefresh()) {
+                        editor.applyStyles();
                         editor.refresh();
                         editor.setNeedRefresh(false);
                     }
                     editor.requestFocus();
+                    editor.locate(((NodeData) tabUserData).getAnchor()); // locate for 'find in files'
                     this.updateMenuState(editor);
+                    editor.outline();
                 }
             }
             else {
                 this.updateMenuState(null);
+                EventBus.getIns().notifyOutline(null); // clear the outline view since there is no tab exists.
             }
         });
         tabPane.setOnMouseClicked(mouseEvent -> {
@@ -95,6 +99,13 @@ public class FileTabView extends BaseView {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                     EventBus.getIns().notify(NotificationType.DOUBLE_CLICKED_TAB);
                 }
+            }
+        });
+        // listen locate in file for outline
+        EventBus.getIns().subscribeLocateInFile(anchor -> {
+            Editable editor = this.tabEditorMap.get(getCurrentTab());
+            if (editor != null) {
+                editor.locate(anchor);
             }
         });
         // listen file deleted
@@ -149,9 +160,9 @@ public class FileTabView extends BaseView {
         else {
             log.debug("file tab already exists: %s".formatted(fileData.getFile()));
             log.debug(StringUtils.join(openedFileMap.keySet()));
+            tab.setUserData(fileData);// update user data because the file data is probably updated(with Anchor for example)
             tabPane.getSelectionModel().select(tab);
             tabEditorMap.get(tab).requestFocus();
-            tabEditorMap.get(tab).locate(fileData.getAnchor());
         }
         EventBus.getIns().notifyMenuStateChange(CLOSE_TAB, true);
         EventBus.getIns().notifyMenuStateChange(SAVE_AS, true);
@@ -185,8 +196,35 @@ public class FileTabView extends BaseView {
         this.tabEditorMap.put(tab, editor);
         this.createContextMenuForTab(tab);
 
-        // do something when editor is ready.
-        editor.setEditorReadyEventHandler(() -> editor.locate(fileData.getAnchor()));
+        // do something to init the editor when file is loaded and update menu states.
+        EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
+            Platform.runLater(() -> {
+                editor.locate(fileData.getAnchor());
+
+                editor.setOnFileChangedListener(changedFileData -> {
+                    if (log.isTraceEnabled()) log.trace("File changed: %s".formatted(changedFileData.getFile()));
+                    Tab changedTab = openedFileMap.get(changedFileData);
+                    changedTab.setText("*" + changedFileData.getName());
+                    // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
+                    EventBus.getIns().notifyMenuStateChange(SAVE, true);
+                    EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
+                });
+                editor.setFileSavedEventHandler(savedFileData -> {
+                    log.info("File %s saved.".formatted(savedFileData.getFile()));
+                    Tab curTab = getCurrentTab();
+                    curTab.setText(fileData.getName());
+                    // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
+                    EventBus.getIns().notifyMenuStateChange(SAVE, false);
+                });
+
+                if (editor instanceof BasePreviewEditor) {
+                    // center the splitter on loading only.
+                    ((BasePreviewEditor) editor).centerSplitter();
+                }
+
+                this.updateMenuState(editor);
+            });
+        });
 
         new Thread(() -> {
             try {
@@ -196,30 +234,7 @@ public class FileTabView extends BaseView {
                         contentView.updateStatusBar(statusMsg);
                     });
                 });
-                editor.loadFile(() -> {
-                    editor.setOnFileChangedListener(changedFileData -> {
-                        log.trace("File changed: %s".formatted(changedFileData.getFile()));
-                        Tab changedTab = openedFileMap.get(changedFileData);
-                        changedTab.setText("*" + changedFileData.getName());
-                        // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
-                        EventBus.getIns().notifyMenuStateChange(SAVE, true);
-                        EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
-                    });
-                    editor.setFileSavedEventHandler(savedFileData -> {
-                        log.info("File %s saved.".formatted(savedFileData.getFile()));
-                        Tab curTab = getCurrentTab();
-                        curTab.setText(fileData.getName());
-                        // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
-                        EventBus.getIns().notifyMenuStateChange(SAVE, false);
-                    });
-
-                    if (editor instanceof BasePreviewEditor) {
-                        // center the splitter on loading only.
-                        ((BasePreviewEditor) editor).centerSplitter();
-                    }
-
-                    this.updateMenuState(editor);
-                });
+                editor.loadFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -264,24 +279,10 @@ public class FileTabView extends BaseView {
             closeTab(selectedTab);
         });
         miCloseOthers.setOnAction(event -> {
-            List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != selectedTab).toList();
-            // disable closing tabs to avoid them to be loaded (in lazy mode).
-            for (Tab otherTab : otherTabs) {
-                otherTab.setDisable(true);
-            }
-            for (Tab otherTab : otherTabs) {
-                if (!closeTab(otherTab)) break;
-            }
+            this.closeAllTabsExcept(selectedTab);
         });
         miCloseAll.setOnAction(event -> {
-            LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabPane.getTabs());
-            // disable closing tabs to avoid them to be loaded (in lazy mode).
-            for (Tab tab : tabs) {
-                tab.setDisable(true);
-            }
-            for (Tab tab : tabs) {
-                if (!closeTab(tab)) break;
-            }
+            this.closeAllTabs();
         });
         miSelectInTree.setOnAction(event -> {
 //            log.debug("selected tab user data: %s".formatted(((NodeData) selectedTabUserData).getFile().getPath()));
@@ -397,7 +398,7 @@ public class FileTabView extends BaseView {
         else {
             // append original extension if user deleted it, otherwise save as user input (which means user can change the extension)
             File saveAsFileWithExt = new File(FileNameUtils.appendFileExtensionIfAbsent(saveAsFile.getPath(), extension));
-            log.info("Try to save file as :" + saveAsFileWithExt.getPath());
+            log.info("Try to save file as :%s".formatted(saveAsFileWithExt.getPath()));
 
             // TODO these code are un-implemented, comment for later implementation (to handle save as to an existing(and modified) file)
 //            NodeData newNodeData = new NodeData(saveAsFileWithExt);
@@ -495,6 +496,7 @@ public class FileTabView extends BaseView {
         for (Tab tab : tabEditorMap.keySet()) {
             BaseEditor editor = (BaseEditor) tabEditorMap.get(tab);
             if (tab.isSelected()) {
+                editor.applyStyles();
                 editor.refresh();
             }
             else {
@@ -572,7 +574,7 @@ public class FileTabView extends BaseView {
             if (editor != null) editor.dispose();// editor may not be loaded
             Tab nextTab = TabManager.getIns().previousTabFrom(tab);
             if (nextTab != null) {
-                log.debug("Active tab: " + nextTab.getText());
+                log.debug("Active tab: %s".formatted(nextTab.getText()));
                 tabPane.getSelectionModel().select(nextTab);
             }
             this.closeFileTab(tab, fileData);
@@ -590,7 +592,7 @@ public class FileTabView extends BaseView {
      * @param fileData
      */
     public void closeTabSilently(NodeData fileData) {
-        log.debug("Close tab silently for file: " + fileData.getFile());
+        log.debug("Close tab silently for file: %s".formatted(fileData.getFile()));
         Tab tab = openedFileMap.get(fileData);
         if (tab != null) {
             Editable editor = tabEditorMap.get(tab);
@@ -616,6 +618,7 @@ public class FileTabView extends BaseView {
         tabPane.getTabs().remove(tab);
         openedFileMap.remove(fileData);
         tabEditorMap.remove(tab);
+        EventBus.getIns().unsubscribeFileLoaded(fileData);
         EventBus.getIns().notifyOpenedFileChange(tabPane.getTabs().stream()
                 .filter(tab1 -> tab1.getUserData() instanceof NodeData && ((NodeData) tab1.getUserData()).isFile())
                 .map(tb -> ((NodeData) tb.getUserData()).getFile()).collect(Collectors.toList()));
@@ -626,12 +629,47 @@ public class FileTabView extends BaseView {
     }
 
     /**
+     * Close all tabs no matter what the lading status is except specified one.
+     *
+     * @param ignoredTab
+     * @since 1.9
+     */
+    public void closeAllTabsExcept(Tab ignoredTab) {
+        List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != ignoredTab).toList();
+        // disable closing tabs to avoid them to be loaded (in lazy mode).
+        for (Tab otherTab : otherTabs) {
+            otherTab.setDisable(true);
+        }
+        for (Tab otherTab : otherTabs) {
+            if (!closeTab(otherTab)) break;
+        }
+    }
+
+    /**
+     * Close all tabs no matter what the lading status is.
+     *
+     * @since 1.9
+     */
+    public void closeAllTabs() {
+        LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabPane.getTabs());
+        // disable closing tabs to avoid them to be loaded (in lazy mode).
+        for (Tab tab : tabs) {
+            tab.setDisable(true);
+        }
+        for (Tab tab : tabs) {
+            if (!closeTab(tab)) break;
+        }
+    }
+
+    /**
+     * Close all tabs with all opened files.
+     *
      * @return false if any tab cancels closing by user.
      */
-    public boolean closeAllTabs() {
+    public boolean closeAllTabsWithOpenedFiles() {
         LinkedHashSet<Tab> tabs = new LinkedHashSet<>(tabEditorMap.keySet());
         for (Tab tab : tabs) {
-            log.trace("Closing tab: " + tab.getText());
+            log.trace("Closing tab: %s".formatted(tab.getText()));
             if (!this.closeTab(tab)) {
                 return false;
             }
@@ -674,5 +712,14 @@ public class FileTabView extends BaseView {
 
     public Tab getCurrentTab() {
         return tabPane.getSelectionModel().getSelectedItem();
+    }
+
+    public List<File> getAllOpenedFiles() {
+        return tabPane.getTabs().stream().map(tab -> {
+            if (tab.getUserData() instanceof NodeData nd) {
+                return nd.getFile();
+            }
+            return null;
+        }).filter(file -> file != null && file.isFile()).toList();
     }
 }

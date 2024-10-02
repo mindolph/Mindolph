@@ -1,4 +1,4 @@
-package com.mindolph.core.collection;
+package com.mindolph.core.util;
 
 import java.io.File;
 import java.util.Comparator;

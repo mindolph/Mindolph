@@ -63,7 +63,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -132,7 +135,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     private List<File> foundFiles;
 
     public WorkspaceViewEditable() {
-        super("/view/workspace_view2.fxml");
+        super("/view/workspace_view_editable.fxml");
         log.info("Init workspace view");
         rootItem = new TreeItem<>(new NodeData("Workspace Stub"));
 
@@ -228,12 +231,11 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 log.debug("Drop %d files to %s".formatted(nodeDatas.size(), toDir.getPath()));
                 TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
                 moveToTreeItem(nodeDatas, treeItemFolder);
-                treeView.getSelectionModel().clearSelection();
             });
             return cell;
         });
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedItem) -> {
-            log.debug("Selection changed: " + selectedItem);
+            log.debug("Selection changed: %s".formatted(selectedItem));
             Optional<NodeData> selectedValue = treeView.getSelectedData();
             EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.NEW_FILE,
                     selectedValue.isPresent()
@@ -318,18 +320,21 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Move file(s) to target tree node.
+     * Move file(s) to target tree node in either current workspace or other workspace.
+     * If any file is moved successfully, the treeview's selection will be cleared and moved files will be selected.
      *
-     * @param nodeDatas
-     * @param targetTreeItem
+     * @param nodeDatas selected files in current workspace.
+     * @param targetTreeItem target tree item in current or other workspace.
+     * @return moved files.
      */
-    private void moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
+    private List<File> moveToTreeItem(List<NodeData> nodeDatas, TreeItem<NodeData> targetTreeItem) {
         if (targetTreeItem == null) {
-            log.warn("No tree item folder provided");
-            return;
+            log.warn("No tree item folder provided!");
+            return null;
         }
         boolean needReload = false;
         List<File> failedFiles = new LinkedList<>();
+        List<File> newFiles = new LinkedList<>();
         for (NodeData nodeData : nodeDatas) {
             File fileToBeMoved = nodeData.getFile();
             if (!this.beforeFilePathChanged(nodeData)) {
@@ -340,14 +345,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 // in same workspace
                 TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
                 if (treeItemToBeMoved == null || treeItemToBeMoved == targetTreeItem || treeItemToBeMoved.getParent() == targetTreeItem) {
-                    log.debug("Not move this item: " + treeItemToBeMoved);
+                    log.debug("Not move this item: %s".formatted(treeItemToBeMoved));
                 }
                 else {
-
                     log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
-                    treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                     try {
-                        this.moveFile(nodeData, targetTreeItem.getValue().getFile());
+                        newFiles.add(this.moveFile(nodeData, targetTreeItem.getValue().getFile()));
+                        treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                         FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                         needReload = true;
                     } catch (Exception e) {
@@ -359,7 +363,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             else {
                 // Moving to different workspace doesn't require
                 try {
-                    this.moveFile(nodeData, targetTreeItem.getValue().getFile());
+                    newFiles.add(this.moveFile(nodeData, targetTreeItem.getValue().getFile()));
                     FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                     needReload = true;
                 } catch (IOException e) {
@@ -379,14 +383,25 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 targetTreeItem.setExpanded(false);
                 targetTreeItem.setExpanded(true);
             }
+            treeView.reselect(newFiles.stream().map(this::findTreeItemByFile).toList());
             treeView.refresh();
         }
         if (!failedFiles.isEmpty()) {
             DialogFactory.warnDialog("Failed files: \n" + StringUtils.join(failedFiles, LINE_SEPARATOR));
         }
+        return newFiles;
     }
 
-    private void moveFile(NodeData toBeMoved, File targetFolder) throws IOException {
+    /**
+     * Move file from NodeData to a target folder.
+     * After that, notify the MainController and RecentView to do necessary update.
+     *
+     * @param toBeMoved
+     * @param targetFolder
+     * @return
+     * @throws IOException
+     */
+    private File moveFile(NodeData toBeMoved, File targetFolder) throws IOException {
         File fileToBeMoved = toBeMoved.getFile();
         File newFile = new File(targetFolder, toBeMoved.getName());
         if (toBeMoved.isFile()) {
@@ -399,6 +414,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         }
         EventBus.getIns().notifyFilePathChanged(toBeMoved, newFile);
         toBeMoved.setFile(newFile);
+        return newFile;
     }
 
     /**
@@ -899,7 +915,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         newFile = createEmptyFile(fileName, selectedData, "txt");
                     }
                     else if (TYPE_PLANTUML.equals(fileType)) {
-                        log.debug("Handle dynamic menu item: " + source.getText());
+                        log.debug("Handle dynamic menu item: %s".formatted(source.getText()));
                         newFile = createEmptyFile(fileName, selectedData, "puml");
                         if (newFile != null) {
                             this.handlePlantumlCreation(source, newFile);
@@ -980,19 +996,23 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     boolean isSameWorkspace = selection.workspaceMeta().contains(activeWorkspaceData.getFile());
                     File targetFolder = selection.folderPath();
                     List<NodeData> toBeMoved = treeView.getSelectedItemsData();
-                    EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+                    EventBus.getIns().subscribeWorkspaceLoaded(1, rootTreeItem -> {
                         log.debug("Move %d files to %s".formatted(toBeMoved.size(), targetFolder));
                         TreeItem<NodeData> targetTreeItem = this.findTreeItemByFile(targetFolder);
-                        this.moveToTreeItem(toBeMoved, targetTreeItem);
-                        treeView.reselect(targetTreeItem); // TODO refactor to moved files and workspace.
-                        treeView.refresh();
-                        treeView.scrollToSelected();
+                        if (targetTreeItem == null) {
+                            // no target tree item found means workspace root has been selected.
+                            targetTreeItem = rootTreeItem;
+                        }
+                        List<File> movedFiles = this.moveToTreeItem(toBeMoved, targetTreeItem);
+                        if (movedFiles != null) {
+                            treeView.scrollToSelected();
+                        }
                     });
 
                     if (targetFolder != null && targetFolder.isDirectory()) {
                         log.debug(targetFolder.getPath());
                         if (isSameWorkspace) {
-                            // utilize the workspace loaded event.
+                            // utilize the workspace loaded event to execute files movement.
                             EventBus.getIns().notifyWorkspaceLoaded(rootItem);
                         }
                         else {
@@ -1007,55 +1027,51 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
         }
         else if (source == miClone) {
-            if (selectedData != null) {
-                if (selectedData.isFile()) {
-                    File file = selectedData.getFile();
-                    this.copyFile(selectedTreeItem.getParent(), file);
-                }
+            if (selectedData.isFile()) {
+                File file = selectedData.getFile();
+                this.copyFile(selectedTreeItem.getParent(), file);
             }
         }
         else if (source == miDelete) {
-            if (selectedData != null) {
-                try {
-                    for (NodeData sn : selectedNodes) {
-                        if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
-                            DialogFactory.errDialog("Deleting a folder with files is not allowed");
-                            return;
-                        }
+            try {
+                for (NodeData sn : selectedNodes) {
+                    if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
+                        DialogFactory.errDialog("The folder you want to delete is not empty");
+                        return;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
                 }
-                String summary = "Are you sure to delete %s".formatted(
-                        selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
-                );
-                Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
-                if (needDelete != null && needDelete) {
-                    for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
-                        NodeData sn = curItem.getValue();
-                        if (!this.beforeFilePathChanged(sn)) {
-                            log.debug("Cancel deleting file");
-                            return;
-                        }
-                        log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
-                        if (sn.getFile().isDirectory()) {
-                            deleteMacFile(sn.getFile());
-                        }
-                        try {
-                            FileUtils.delete(sn.getFile());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
-                            return;
-                        }
-                        curItem.getParent().getChildren().remove(curItem);
-                        // close opened file tab(if exists) and remove from recent list if exists
-                        EventBus.getIns().notifyDeletedFile(sn);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            String summary = "Are you sure to delete %s".formatted(
+                    selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size())
+            );
+            Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
+            if (needDelete != null && needDelete) {
+                for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
+                    NodeData sn = curItem.getValue();
+                    if (!this.beforeFilePathChanged(sn)) {
+                        log.debug("Cancel deleting file");
+                        return;
                     }
-                    treeView.refresh();
-                    treeView.getSelectionModel().clearSelection();
+                    log.info("Delete file '%s' attached with %s".formatted(sn.getFile(), curItem));
+                    if (sn.getFile().isDirectory()) {
+                        deleteMacFile(sn.getFile());
+                    }
+                    try {
+                        FileUtils.delete(sn.getFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
+                        return;
+                    }
+                    curItem.getParent().getChildren().remove(curItem);
+                    // close opened file tab(if exists) and remove from recent list if exists
+                    EventBus.getIns().notifyDeletedFile(sn);
                 }
+                treeView.refresh();
+                treeView.getSelectionModel().clearSelection();
             }
         }
         else if (source == miReload) {
@@ -1073,21 +1089,19 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             this.launchUsageDialog(selectedData);
         }
         else if (source == miOpenInSystem) {
-            if (selectedData != null) {
-                log.info("Try to open file: " + selectedData.getFile());
-                if (selectedData.isMindMap()) {
-                    this.openSelectedFile(); // always open mmd file in Mindolph
-                }
-                else {
-                    MindolphFileUtils.openFileInSystem(selectedData.getFile());
-                }
+            log.info("Try to open file: %s".formatted(selectedData.getFile()));
+            if (selectedData.isMindMap()) {
+                this.openSelectedFile(); // always open mmd file in Mindolph
+            }
+            else {
+                MindolphFileUtils.openFileInSystem(selectedData.getFile());
             }
         }
         else if (source == miCollapseAll) {
             treeView.collapseTreeNodes(treeView.getSelectionModel().getSelectedItem(), true);
         }
         else {
-            log.debug("Unknown event source: " + source);
+            log.debug("Unknown event source: %s".formatted(source));
         }
     }
 
@@ -1123,7 +1137,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             log.debug("Cancel renaming file");
             return;
         }
-        Dialog dialog = new TextDialogBuilder()
+        Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename %s".formatted(selectedData.getName()))
                 .content("Input a new name")

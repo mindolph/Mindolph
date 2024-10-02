@@ -10,7 +10,6 @@ import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.editor.MarkdownCodeArea;
 import com.mindolph.base.editor.MarkdownToolbar;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.base.print.PrinterManager;
@@ -18,6 +17,7 @@ import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -34,7 +34,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -79,15 +78,18 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
 import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
 import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
+import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
@@ -139,14 +141,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         super("/editor/markdown_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
 
+        threadPoolService = Executors.newSingleThreadExecutor();
+
         timestamp = String.valueOf(System.currentTimeMillis());
 
-        EventBus.getIns().subscribe(notificationType -> {
-            if (notificationType == NotificationType.FILE_LOADED) {
-                // scroll to top when file loaded.
-                Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
-            }
-        });
+        // comment because not sure if this is necessary
+//        EventBus.getIns().subscribeFileLoaded(editorContext.getFileData(), fileData -> {
+//            Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
+//        });
+
 
         // init the toolbar
         markdownToolbar = new MarkdownToolbar((MarkdownCodeArea) codeArea);
@@ -156,7 +159,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         log.debug(webEngine.getUserAgent());
         webView.setContextMenuEnabled(false);
         webEngine.setJavaScriptEnabled(true);
-        webEngine.setOnError(event -> log.warn("WebView error: " + event.getMessage(), event.getException()));
+        webEngine.setOnError(event -> log.warn("WebView error: %s".formatted(event.getMessage()), event.getException()));
         webEngine.setOnAlert(event -> {
             String[] split = StringUtils.split(event.getData(), ",");
             if (ArrayUtils.isNotEmpty(split) && split.length == 2) {
@@ -165,12 +168,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             }
         });
         URL cssUri = getCssResourceURI();
-        log.debug("Set webview with css: " + cssUri);
+        log.debug("Set webview with css: %s".formatted(cssUri));
         webEngine.setUserStyleSheetLocation(cssUri.toString());
         webEngine.getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) ->
                 log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))));
         webEngine.getLoadWorker().exceptionProperty().addListener((observableValue, throwable, t1) -> {
-            t1.printStackTrace();
+            if (t1 != null) log.error("Markdown Preview Error", t1);
         });
 
         webEngine.documentProperty().addListener((observable, oldValue, newValue) -> {
@@ -202,7 +205,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         parser = Parser.builder(options).build();
         renderer = HtmlRenderer.builder(options).build();
-        this.refresh();// to set up the font
+        // this.refresh();// to set up the font
 
         scrollEventCode.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
                 .subscribe(newY -> {
@@ -307,14 +310,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // NOTE: this method will be called from javascript inside the webview.
     public void onFileLinkClicked(String url) {
         if (!UrlUtils.isValid(url)) {
+            String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
             File f;
-            if (PathUtils.isAbsolutePath(url)) {
-                f = new File(url);
+            if (PathUtils.isAbsolutePath(decodedUrl)) {
+                f = new File(decodedUrl);
             }
             else {
-                f = new File(editorContext.getFileData().getFile().getParentFile(), url);
+                f = new File(editorContext.getFileData().getFile().getParentFile(), decodedUrl);
             }
-            log.debug("Try to open file: " + f.getPath());
+            log.debug("Try to open file: %s".formatted(f.getPath()));
             EventBus.getIns().notifyOpenFile(new OpenFileEvent(f, true));
         }
     }
@@ -354,16 +358,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    public void applyStyles() {
+        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
+    }
+
+    @Override
     protected void refresh(String text) {
         codeArea.refresh();
         super.refresh(text);
         this.refresh();
-    }
-
-    @Override
-    public void refresh() {
-        super.refresh();
-        CssUtils.applyFontCss(codeArea, "/style/markdown_syntax_template.css", KEY_MD_EDITOR, KEY_MD_EDITOR_MONO);
     }
 
     @Override
@@ -424,7 +427,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     .markdown("markdown-body");
             String finalHtml = builder.build(timestamp);
 
-            log.trace("Export to html: " + StringUtils.abbreviate(finalHtml, 50));
+            log.trace("Export to html: %s".formatted(StringUtils.abbreviate(finalHtml, 50)));
             File file = editorContext.getFileData().getFile();
             File htmlFile = DialogFactory.openSaveFileDialog(getScene().getWindow(), file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".html",
@@ -435,7 +438,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     if (builder.getImages() != null) {
                         for (File oriImageFile : builder.getImages()) {
                             File destImgFile = new File(htmlFile.getParentFile(), "images/" + oriImageFile.getName());
-                            log.debug("copy file to " + destImgFile);
+                            log.debug("copy file to %s".formatted(destImgFile));
                             FileUtils.copyFile(oriImageFile, destImgFile);
                         }
                     }
@@ -499,7 +502,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             throw new RuntimeException(e);
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
                         log.error("Failed to export to PDF", e);
                         EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: " + e.getLocalizedMessage()));
                     }
@@ -537,7 +539,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
 //        System.out.println(finalHtml);
 
-        log.info("markdown rendered as html done with length: " + finalHtml.length());
+        log.info("markdown rendered as html done with length: %d".formatted(finalHtml.length()));
         if (webEngine != null) {
             webEngine.loadContent(finalHtml);
         }
@@ -579,6 +581,21 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         webEngine.load(null);
         webEngine = null;
         webView = null;
+    }
+
+    @Override
+    protected String getOutlinePattern() {
+        return HEADING_PATTERN;
+    }
+
+    @Override
+    protected String getHeadingLevelTag() {
+        return "#";
+    }
+
+    @Override
+    protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
+        return RegExUtils.replacePattern(heading, "#" , "");
     }
 
 }

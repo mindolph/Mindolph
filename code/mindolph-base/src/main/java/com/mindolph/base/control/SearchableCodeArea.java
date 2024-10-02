@@ -3,15 +3,20 @@ package com.mindolph.base.control;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.search.TextNavigator;
 import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.util.BoundsUtils;
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
+import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.Selection;
 import org.fxmisc.richtext.SelectionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Code area with text locating functionality.
@@ -69,7 +74,7 @@ public class SearchableCodeArea extends SmartCodeArea {
             log.debug("found next at: %s,%s -> %s,%s".formatted(tloc.getStartRow(), tloc.getStartCol(), tloc.getEndRow(), tloc.getEndCol()));
             this.selectRange(tloc.getStartRow(), tloc.getStartCol(), tloc.getEndRow(), tloc.getEndCol() + 1);
             this.scrollXToPixel(0);
-            this.requestFollowCaret();
+            this.centerTheCaretY();
         }
         else {
             if (!isFromBeginning && searchAtEnd) {
@@ -82,7 +87,6 @@ public class SearchableCodeArea extends SmartCodeArea {
             }
         }
     }
-
 
     public void searchPrev(String keyword, TextSearchOptions options) {
         boolean isFromEnd = super.getCaretPosition() == getText().length(); // to avoid infinite loop when nothing found in whole content.
@@ -100,7 +104,7 @@ public class SearchableCodeArea extends SmartCodeArea {
             log.debug("found previous at: %s,%s -> %s,%s".formatted(tloc.getStartRow(), tloc.getStartCol(), tloc.getEndRow(), tloc.getEndCol()));
             this.selectRange(tloc.getStartRow(), tloc.getStartCol(), tloc.getEndRow(), tloc.getEndCol() + 1);
             this.scrollXToPixel(0);
-            this.requestFollowCaret();
+            this.centerTheCaretY();
         }
         else {
             if (!isFromEnd && searchAtBeginning) {
@@ -112,6 +116,38 @@ public class SearchableCodeArea extends SmartCodeArea {
                 searchAtBeginning = true; // setup flag and skip one search step
             }
         }
+    }
+
+    /**
+     * @since 1.8.5
+     */
+    public void centerTheCaretY() {
+        // Try to center the Y of caret but doesn't work well since the getParagraphBoundsOnScreen()
+        // does not always return the correct caret bounds(probably a bug). // TODO
+        Platform.runLater(() -> {
+            CaretNode caret = this.getCaretSelectionBind().getUnderlyingCaret();
+            log.debug("caret index in paragraph %d".formatted(caret.getParagraphIndex()));
+            Optional<Bounds> paragraphBoundsOnScreen = this.getParagraphBoundsOnScreen(caret.getParagraphIndex());
+            if (paragraphBoundsOnScreen.isPresent()) {
+                log.debug("caret bounds on screen: %s".formatted(BoundsUtils.boundsInString(paragraphBoundsOnScreen.get())));
+                Bounds caretBounds = this.screenToLocal(paragraphBoundsOnScreen.get());
+                log.debug("caret bounds in viewport: %s".formatted(BoundsUtils.boundsInString(caretBounds)));
+                double viewportHeight = this.getViewportHeight();
+                double scrollTo = caretBounds.getCenterY() - viewportHeight / 2;
+                log.debug("caret Y: %s".formatted(caretBounds.getCenterY()));
+                log.debug("scroll to: %s".formatted(scrollTo));
+                this.scrollYBy(scrollTo);
+            }
+            else {
+                log.debug("no bounds exists for caret %s".formatted(caret));
+//                for (int i = 0; i < super.getParagraphs().size(); i++) {
+//                    Optional<Bounds> opBounds = super.getParagraphBoundsOnScreen(i);
+//                    if (opBounds.isPresent()) {
+//                        log.debug("%d - %s".formatted(i, BoundsUtils.boundsInString(this.screenToLocal(opBounds.get()))));
+//                    }
+//                }
+            }
+        });
     }
 
     public boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {

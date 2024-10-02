@@ -1,5 +1,7 @@
 package com.mindolph.base.constant;
 
+import com.mindolph.core.constant.SyntaxConstants;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,13 +11,13 @@ import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
  * @author mindolph
  * @since 1.4
  */
-public interface MarkdownConstants {
+public interface MarkdownConstants extends SyntaxConstants {
 
     String EMPHASIS_KW = "[^*_\\r\\n\\t\\f\\v ]"; // visible letters but without '*' and '_
     String EMPHASIS_CONTENT = "[^*_\\r\\n\\f\\v]";
     String EMPHASIS = "(()|(" + EMPHASIS_KW + EMPHASIS_CONTENT + "*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
-    String HEADING_PATTERN = "#+[\\s\\S]*?(?=" + LINE_SEPARATOR + ")";
+    String HEADING_PATTERN = "(^|" + LINE_SEPARATOR + ")(#+\\s+[\\s\\S]*?(?=" + LINE_SEPARATOR + "))";
     String LIST_PATTERN = "(^|" + LINE_SEPARATOR + ")[\\t ]*((\\* )|(\\+ )|(- )|(\\d. ))";
     // "(\\|[\\s\\S]*?)+\\|" +
     String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|-+)+\\|" + LINE_SEPARATOR;
@@ -31,8 +33,8 @@ public interface MarkdownConstants {
             + "|((__)" + EMPHASIS + "(__))";
     String ITALIC_PATTERN = "(\\*" + EMPHASIS + "\\*)"
             + "|(_" + EMPHASIS + "_)";
-    String CODE_PATTERN = "`[\\s\\S]*?`";
-    String CODE_BLOCK_PATTERN = "`{3}[\\s\\S]*?`{3}";
+    String CODE_PATTERN = BLANK_CHAR + "*`[\\s\\S]*?`";
+    String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
     String QUOTE_PATTERN = "> [\\s\\S]*?(?=" + LINE_SEPARATOR + ")";
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 

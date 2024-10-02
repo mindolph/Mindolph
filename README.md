@@ -76,13 +76,13 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|| |[v1.7.x](docs/release-notes/v1.7/v1.7.md)|[v1.8.x](docs/release-notes/v1.8/v1.8.md)| Release notes |
-|macOS|.dmg|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6-x64.dmg) |[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1-x64.dmg) | Intel |
-|macOS|.dmg|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6-aarch64.dmg) |[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.msi) |[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1.msi) | |
-|Debian|.deb|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.deb)|[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.rpm)|[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1.rpm)| |
-|Java Executable|.jar|[v1.7.6](https://github.com/mindolph/Mindolph/releases/download/v1.7.6/Mindolph-1.7.6.jar)|[v1.8.1](https://github.com/mindolph/Mindolph/releases/download/v1.8.1/Mindolph-1.8.1.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.7.6.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.7.6.jar` |
+|| |[v1.8.x](docs/release-notes/v1.8/v1.8.md)|[v1.9.x](docs/release-notes/v1.9/v1.9.md)| Release notes |
+|macOS|.dmg|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6-x64.dmg) |[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2-x64.dmg) | Intel |
+|macOS|.dmg|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6-aarch64.dmg) |[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.msi) |[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.msi) | |
+|Debian|.deb|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.deb)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.rpm)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.rpm)| |
+|Java Executable|.jar|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.jar)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.8.6.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-21`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-21\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.8.6.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -94,4 +94,5 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 
 Future Plan:
 
-* 1.8: Improvement and refactor.
+* 1.9: File Collection and Outline.
+* 1.10: Redesign Code Snippet and support for more file types.

@@ -22,4 +22,10 @@ public interface SceneStatePrefs {
     // for mind map
     String MINDOLPH_MMD_FILE_LINK_LAST_FOLDER = "mindolph.mmd.file_link.last_folder";
     String MINDOLPH_MMD_FILE_LINK_IS_OPEN_IN_SYS = "mindolph.mmd.file_link.is_open_in_sys";
+
+    // save all collections name(unique) and files
+    String MINDOLPH_COLLECTION_ACTIVE = "mindolph.collection.active";
+    String MINDOLPH_COLLECTION_MAP = "mindolph.collection.map";
+
+
 }

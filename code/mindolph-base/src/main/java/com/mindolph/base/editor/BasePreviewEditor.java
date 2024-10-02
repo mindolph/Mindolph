@@ -92,33 +92,37 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             if (speed > SCROLL_SPEED_THRESHOLD) {
                 log.trace("Swipe right");
                 prevPage();
-            } else if (speed < -SCROLL_SPEED_THRESHOLD) {
+            }
+            else if (speed < -SCROLL_SPEED_THRESHOLD) {
                 log.trace("Swipe left");
                 nextPage();
             }
         });
     }
 
-    protected void nextPage(){
+    protected void nextPage() {
         // IMPLEMENTED IN INHERITOR
     }
 
-    protected void prevPage(){
+    protected void prevPage() {
         // IMPLEMENTED IN INHERITOR
     }
 
     public void changeViewMode(ViewMode viewMode) {
-        this.viewMode = viewMode;
-        switch (viewMode) {
-            case TEXT_ONLY -> {
-                fixedSplitPane.hideSecondary();
-            }
-            case PREVIEW_ONLY -> {
-                fixedSplitPane.hidePrimary();
-            }
-            case BOTH -> {
-                fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
-                this.refresh(codeArea.getText()); // refresh preview from possible updated text
+        boolean changed = this.viewMode != viewMode;
+        if (changed) {
+            this.viewMode = viewMode;
+            switch (viewMode) {
+                case TEXT_ONLY -> {
+                    fixedSplitPane.hideSecondary();
+                }
+                case PREVIEW_ONLY -> {
+                    fixedSplitPane.hidePrimary();
+                }
+                case BOTH -> {
+                    fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
+                    this.refresh(codeArea.getText()); // refresh preview from possible updated text
+                }
             }
         }
     }
@@ -142,7 +146,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     protected double convertScrollPosition(double srcValue, double srcViewport, double srcTotal, double destViewport, double destTotal) {
         double src = srcTotal - srcViewport;
         double dest = destTotal - destViewport;
-        log.trace("convert: position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
+        if (log.isTraceEnabled())
+            log.trace("convert: position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
         return (srcValue / src) * dest;
     }
 

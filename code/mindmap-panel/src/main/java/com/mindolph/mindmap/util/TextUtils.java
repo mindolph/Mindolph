@@ -6,10 +6,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.mindolph.base.util.NodeUtils.getTextBounds;
 
@@ -89,32 +85,5 @@ public class TextUtils {
         return result.toString();
     }
 
-    public static int countHeading(String str, char c) {
-        char[] chars = str.toCharArray();
-        int count = 0;
-        for (char aChar : chars) {
-            if (aChar != c) {
-                return count;
-            }
-            count++;
-        }
-        return count;
-    }
-
-    /**
-     *
-     * @param str
-     * @param minSpaceSize
-     * @return
-     */
-    public static int countIndent(String str, int minSpaceSize) {
-        Pattern p = Pattern.compile("(?<INDENT>\\s*?)(\\S+[\\s\\S]*)");
-        Matcher matcher = p.matcher(str);
-        if (matcher.matches()) {
-            String indent = matcher.group("INDENT");
-            return StringUtils.countMatches(indent, "\t")  + StringUtils.countMatches(indent, StringUtils.repeat(' ', minSpaceSize));
-        }
-        return 0;
-    }
 
 }

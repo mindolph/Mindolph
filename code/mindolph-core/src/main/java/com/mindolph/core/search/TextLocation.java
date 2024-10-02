@@ -52,7 +52,7 @@ public class TextLocation {
 
     @Override
     public String toString() {
-        return "%d %d %d %d".formatted(startRow, startCol, endRow, endCol);
+        return "%d,%d %d,%d".formatted(startRow, startCol, endRow, endCol);
     }
 
     @Override

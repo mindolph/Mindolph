@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
+ * For displaying workspaces and folder tree to select folder.
+ *
  * @since 1.8
  */
 public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Selection> {
@@ -42,7 +44,10 @@ public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Select
                 .build();
         workspaceSelector.getSelectionModel().selectedItemProperty().addListener((observableValue, workspaceMeta, selectedWorkspace) -> {
             if (selectedWorkspace != null) {
-                workspaceView.loadWorkspace(selectedWorkspace.getValue(), true, true);
+                WorkspaceMeta selectedWorkspaceMeta = selectedWorkspace.getValue();
+                workspaceView.loadWorkspace(selectedWorkspaceMeta, true, true);
+                // workspace dir path as selected dir
+                result = new Selection(selectedWorkspaceMeta, new File(selectedWorkspaceMeta.getBaseDirPath()));
             }
             else {
                 // clear the tree view if last workspace is closed.
@@ -60,8 +65,8 @@ public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Select
 
         // after target folder selected.
         workspaceView.subscribeSelected(nodeData -> {
-            log.debug("Selected target workspace: " + workspaceSelector.getSelectionModel().getSelectedItem().getKey());
-            log.debug("Selected target folder: " + nodeData.getFile().getPath());
+            log.debug("Selected target workspace: %s".formatted(workspaceSelector.getSelectionModel().getSelectedItem().getKey()));
+            log.debug("Selected target folder: %s".formatted(nodeData.getFile().getPath()));
             result = new Selection(workspaceSelector.getSelectionModel().getSelectedItem().getValue(), nodeData.getFile());
         });
     }

@@ -19,7 +19,6 @@ import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FontUtils;
-import com.mindolph.mfx.util.TextUtils;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.utils.MaterialDesignIconFactory;
 import javafx.application.Platform;
@@ -160,10 +159,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
 
     @Override
-    public void loadFile(Runnable afterLoading) throws IOException {
+    public void loadFile() throws IOException {
         FileReader fileReader = new FileReader(editorContext.getFileData().getFile(), StandardCharsets.UTF_8);
         this.text = IoUtils.readAllToString(fileReader);
         this.undoService.push(this.text);
+        this.applyStyles();
         this.initTableView();
         prepareSearchingEvent.subscribe(unused -> {
             // todo only available for searching
@@ -175,7 +175,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 csvNavigator.setData(tableView.stream().toList(), rowSize);
             }
         });
-        Platform.runLater(afterLoading);
+        this.outline();
     }
 
     private void initTableView() throws IOException {
@@ -297,7 +297,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             log.debug("%d data columns and %d row initialized".formatted(tableView.getColumnSize(), tableView.getItems().size()));
 
-            this.editorReadyEventHandler.onEditorReady();
+//            this.editorReadyEventHandler.onEditorReady();
+            EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
         });
     }
 
@@ -332,9 +333,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
         tableView.refresh();
     }
 
-
     @Override
-    public void refresh() {
+    public void applyStyles() {
         Font defFont = FontConstants.DEFAULT_FONTS.get(FontConstants.KEY_CSV_EDITOR);
         Font font = fxPreferences.getPreference(FontConstants.KEY_CSV_EDITOR, Font.class, defFont);
         tableView.setStyle(FontUtils.fontToCssStyle(font));
@@ -633,11 +633,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 })
                 .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
         return reduced.orElse(EMPTY);
-    }
-
-    public static void main(String[] args) {
-        List<String> l = Arrays.asList("a", "b", "c");
-        System.out.println(l.stream().filter(s -> l.indexOf(s) != 2).collect(Collectors.joining(",")));
     }
 
     private boolean saveToCache() {
