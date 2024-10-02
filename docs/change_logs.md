@@ -1,5 +1,18 @@
 # Change Logs
 
+### V1.9.2 Unstable Release
+
+* Improvement: add toast notification for saving and deleting collection.
+* Improvement: resort collections when new one is created.
+* Improvement: center the caret in the view-port after locating to any paragraph in code editor.
+* Fix: outline view doesn't cleared when all files are closed.
+* update JavaFX to 22.0.2 and update other dependencies.
+* merged bug fixes from v1.8.6.
+
+### V1.8.6 Release
+
+* Fix: blank chars are not in correct font before code block in Markdown.
+
 ### V1.8.5 Release
 
 * Fix: blank chars are not in correct font before comment line/block in PlantUML.
