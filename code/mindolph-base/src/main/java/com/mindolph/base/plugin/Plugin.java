@@ -1,5 +1,7 @@
 package com.mindolph.base.plugin;
 
+import com.mindolph.base.control.snippet.SnippetViewable;
+
 import java.util.Collection;
 import java.util.Optional;
 
@@ -36,5 +38,13 @@ public interface Plugin {
      * @return
      */
     Optional<Generator> getGenerator(Object editorId, String fileType);
+
+    /**
+     * Snippet view by snippet type.
+     *
+     * @return
+     * @since 1.10
+     */
+    <T extends SnippetViewable> Optional<T> getSnippetView();
 
 }

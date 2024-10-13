@@ -54,4 +54,10 @@ public interface ExtensionContext {
     void forceRefresh();
 
     void focusTo(TopicNode theTopic);
+
+    /**
+     * @param iconName
+     * @since 1.10
+     */
+    void setIconForSelectedTopics(String iconName);
 }

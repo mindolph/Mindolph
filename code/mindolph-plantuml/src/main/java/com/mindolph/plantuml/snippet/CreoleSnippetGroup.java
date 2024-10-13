@@ -1,6 +1,5 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
 import com.mindolph.core.model.Snippet;
 
 import java.util.Arrays;
@@ -10,7 +9,7 @@ import java.util.Arrays;
  *
  * @author mindolph.com@gmail.com
  */
-public class CreoleSnippetGroup extends BaseSnippetGroup {
+public class CreoleSnippetGroup extends BasePlantUmlSnippetGroup {
     @Override
     public void init() {
         super.snippets.addAll(Arrays.asList(

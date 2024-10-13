@@ -116,6 +116,7 @@ public class FileTabView extends BaseView {
 
         // handle snippet applying event
         EventBus.getIns().subscribeSnippetApply(snippet -> {
+            log.debug("Apply snippet: %s".formatted(snippet.getTitle()));
             Editable editor = this.tabEditorMap.get(getCurrentTab());
             if (editor != null) {
                 editor.onSnippet(snippet);

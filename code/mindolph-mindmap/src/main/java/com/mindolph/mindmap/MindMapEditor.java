@@ -9,10 +9,12 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.ScalableScrollPane;
 import com.mindolph.base.control.SearchBar;
+import com.mindolph.base.control.snippet.ImageSnippet;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
@@ -357,6 +359,15 @@ public class MindMapEditor extends BaseEditor {
         isChanged = false;
         fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
 //        }
+    }
+
+    @Override
+    public void onSnippet(Snippet snippet) {
+        if (snippet instanceof ImageSnippet is) {
+            String selectedName = is.getCode();
+            ((ExtraMindMapView) this.mindMapView).setIconForSelectedTopics(selectedName);
+            this.mindMapView.requestFocus();
+        }
     }
 
     @Override

@@ -11,8 +11,11 @@ import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.editor.ImageViewerEditor;
 import com.mindolph.base.editor.PlainTextEditor;
-import com.mindolph.base.event.*;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.EventBus.MenuTag;
+import com.mindolph.base.event.FileChangedEventHandler;
+import com.mindolph.base.event.NotificationType;
+import com.mindolph.base.event.WorkspaceViewResizedEventHandler;
 import com.mindolph.base.print.PrinterManager;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.meta.WorkspaceList;
@@ -40,6 +43,7 @@ import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.snippet.IconSnippetGroup;
 import com.mindolph.plantuml.PlantUmlEditor;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
@@ -181,6 +185,10 @@ public class MainController extends BaseController implements Initializable,
 //                        new CustomSnippetGroup()
                                 )
                         );
+                    }
+                    else if (nodeData.isMindMap()) {
+                        IconSnippetGroup iconSnippetGroup = new IconSnippetGroup();
+                        snippetView.reload(List.of(iconSnippetGroup));
                     }
                     else {
                         snippetView.reload(null);

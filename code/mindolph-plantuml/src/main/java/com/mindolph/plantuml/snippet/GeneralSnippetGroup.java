@@ -1,6 +1,5 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
 import com.mindolph.base.control.snippet.ImageSnippet;
 
 import java.util.Arrays;
@@ -8,7 +7,7 @@ import java.util.Arrays;
 /**
  * @author mindolph.com@gmail.com
  */
-public class GeneralSnippetGroup extends BaseSnippetGroup {
+public class GeneralSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {

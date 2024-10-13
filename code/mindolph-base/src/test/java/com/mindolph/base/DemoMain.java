@@ -63,6 +63,11 @@ public class DemoMain extends Application {
     }
 
     @FXML
+    public void onIconView(ActionEvent event) {
+        loadUriToStage("/control/icon_view_demo.fxml").show();
+    }
+
+    @FXML
     public void onScalableView(ActionEvent event) {
         loadUriToStage("/control/scalable_view_demo.fxml").show();
     }

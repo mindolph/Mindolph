@@ -1,6 +1,5 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
 import com.mindolph.base.control.snippet.ColorSnippet;
 import com.mindolph.core.model.Snippet;
 
@@ -9,7 +8,7 @@ import java.util.Arrays;
 /**
  * @author mindolph.com@gmail.com
  */
-public class ColorSnippetGroup extends BaseSnippetGroup {
+public class ColorSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public void init() {

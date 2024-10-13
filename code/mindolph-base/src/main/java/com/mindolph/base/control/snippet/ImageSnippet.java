@@ -14,11 +14,25 @@ public class ImageSnippet extends Snippet<ImageSnippet> {
      */
     protected boolean isColor = false;
 
+    /**
+     * True means {@code image} is generated from code, not specified.
+     */
+    private boolean generateImage = false;
+    /**
+     * if not specified and generateImage = true, generate it in runtime and loaded from disk.
+     * if not specified and generateImage = false, use title as image.
+     */
+    private Image image;
+
     public ImageSnippet() {
     }
 
     public ImageSnippet(String title) {
         super(title);
+    }
+
+    public ImageSnippet(Image image) {
+        this.image = image;
     }
 
     /**
@@ -38,15 +52,6 @@ public class ImageSnippet extends Snippet<ImageSnippet> {
         this.image = image;
     }
 
-    /**
-     * True means {@code image} is generated from code, not specified.
-     */
-    private boolean generateImage = false;
-    /**
-     * if not specified and generateImage = true, generate it in runtime and loaded from disk.
-     * if not specified and generateImage = false, use title as image.
-     */
-    private Image image;
 
     public boolean isGenerateImage() {
         return generateImage;

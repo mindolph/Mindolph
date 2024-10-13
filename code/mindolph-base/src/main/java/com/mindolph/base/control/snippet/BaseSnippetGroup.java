@@ -10,13 +10,13 @@ import java.util.List;
  *
  * @author mindolph.com@gmail.com
  */
-public abstract class BaseSnippetGroup {
+public abstract class BaseSnippetGroup<T extends Snippet<?>> {
 
     protected String title = "[No title]";
     protected String description = "[No description]";
     protected boolean alwaysShow = false;
 
-    protected List<Snippet> snippets = new ArrayList<>();
+    protected List<T> snippets = new ArrayList<>();
 
     public BaseSnippetGroup() {
         init();
@@ -32,7 +32,9 @@ public abstract class BaseSnippetGroup {
         return description;
     }
 
-    public List<Snippet> getSnippets() {
+    public abstract String getFileType();
+
+    public List<T> getSnippets() {
         return snippets;
     }
 

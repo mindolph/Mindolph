@@ -1,5 +1,7 @@
 package com.mindolph.plantuml;
 
+import com.mindolph.base.control.snippet.ListSnippetView;
+import com.mindolph.base.control.snippet.SnippetViewable;
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.InputHelper;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -29,4 +31,9 @@ public class PlantUmlPlugin extends BasePlugin {
         return Optional.of(new PlantUmlInputHelper());
     }
 
+    @Override
+    public Optional<SnippetViewable> getSnippetView() {
+        ListSnippetView listSnippetView = new ListSnippetView();
+        return Optional.of(listSnippetView);
+    }
 }

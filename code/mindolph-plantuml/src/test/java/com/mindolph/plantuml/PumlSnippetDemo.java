@@ -2,6 +2,7 @@ package com.mindolph.plantuml;
 
 import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class PumlSnippetDemo extends Application implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println(Color.YELLOW.getSaturation());
         System.out.println(Color.YELLOW.getBrightness());
+        PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
         snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
                         new SkinparamSnippetGroup(),
                         new ColorSnippetGroup(),
