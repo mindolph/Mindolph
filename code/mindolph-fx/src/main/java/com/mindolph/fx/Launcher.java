@@ -6,6 +6,7 @@ import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.data.DataMigrator;
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mindmap.MindMapPlugin;
 import com.mindolph.plantuml.PlantUmlPlugin;
 import javafx.application.Application;
 
@@ -38,6 +39,7 @@ public class Launcher {
         PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
         PluginManager.getIns().registerPlugin(new ContextHelperPlugin());
         PluginManager.getIns().registerPlugin(new GenAiPlugin());
+        PluginManager.getIns().registerPlugin(new MindMapPlugin());
 
         Application.launch(Main.class, args);
     }

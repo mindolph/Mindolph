@@ -1,7 +1,6 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
-import com.mindolph.base.control.snippet.Snippet;
+import com.mindolph.base.control.snippet.ImageSnippet;
 
 import java.util.Arrays;
 
@@ -10,7 +9,7 @@ import java.util.Arrays;
  *
  * @author mindolph.com@gmail.com
  */
-public class DiagramSnippetGroup extends BaseSnippetGroup {
+public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
@@ -20,7 +19,7 @@ public class DiagramSnippetGroup extends BaseSnippetGroup {
     @Override
     public void init() {
         super.snippets.addAll(Arrays.asList(
-                        new Snippet("alt").code("""
+                        new ImageSnippet("alt").code("""
                                 alt successful case
                                 ⨁
                                 else some kind of failure
@@ -29,39 +28,39 @@ public class DiagramSnippetGroup extends BaseSnippetGroup {
                                                                 
                                 end
                                 """).generateImage(),
-                        new Snippet("group").code("""
+                        new ImageSnippet("group").code("""
                                 group Main Label [Second Label]
                                 ⨁
                                 end
                                 """).generateImage(),
-                        new Snippet("loop").code("""
+                        new ImageSnippet("loop").code("""
                                 loop 1000 times
                                 ⨁
                                 end
                                 """).generateImage(),
-                        new Snippet("activate").code("""
+                        new ImageSnippet("activate").code("""
                                 activate ⨁
                                                                 
                                 deactivate ⨁
                                 """).generateImage(),
-                        new Snippet("activate return").code("""
+                        new ImageSnippet("activate return").code("""
                                 activate ⨁
                                                                 
                                 return
                                 """).generateImage(),
-                        new Snippet("if").code("""
+                        new ImageSnippet("if").code("""
                                 if (⨁) then (Y)
                                                                 
                                 endif
                                 """).generateImage(),
-                        new Snippet("if else").code("""
+                        new ImageSnippet("if else").code("""
                                 if (⨁) then (Y)
 
                                 else (n)
                                                                 
                                 endif
                                 """).generateImage(),
-                        new Snippet("if elseif").code("""
+                        new ImageSnippet("if elseif").code("""
                                 if (⨁) then (Y)
 
                                 elseif (⨁) then (Y)
@@ -70,21 +69,21 @@ public class DiagramSnippetGroup extends BaseSnippetGroup {
                                                      
                                 endif
                                 """).generateImage(),
-                        new Snippet("vertical mode(if elseif)").code("""
+                        new ImageSnippet("vertical mode(if elseif)").code("""
                                 !pragma useVerticalIf on
                                 """).generateImage(),
-                        new Snippet().title("while").code("""
+                        new ImageSnippet().title("while").code("""
                                 while (⨁) is (N)
                                                                 
                                 endwhile (Y)
                                 """).generateImage(),
-                        new Snippet().title("repeat").code("""
+                        new ImageSnippet().title("repeat").code("""
                                 repeat
                                                                 
                                 backward: this is backward
                                 repeat while (⨁) is (Y)
                                 """).generateImage(),
-                        new Snippet("switch").code("""
+                        new ImageSnippet("switch").code("""
                                 switch (⨁?)
                                 case ( condition A )
                                                                 
@@ -92,14 +91,14 @@ public class DiagramSnippetGroup extends BaseSnippetGroup {
                                                                 
                                 endswitch
                                 """).generateImage(),
-                        new Snippet("fork").code("""
+                        new ImageSnippet("fork").code("""
                                 fork
                                 ⨁
                                 fork again
                                       
                                 end fork
                                 """).generateImage(),
-                        new Snippet("split").code("""
+                        new ImageSnippet("split").code("""
                                 split
                                 ⨁
                                 split again

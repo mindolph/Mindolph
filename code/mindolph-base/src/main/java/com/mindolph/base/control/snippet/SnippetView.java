@@ -1,18 +1,27 @@
 package com.mindolph.base.control.snippet;
 
 import com.mindolph.base.BaseView;
+import com.mindolph.base.plugin.Plugin;
+import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.core.model.Snippet;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.textfield.TextFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author mindolph.com@gmail.com
@@ -21,7 +30,9 @@ import java.util.stream.Collectors;
  */
 public class SnippetView extends BaseView {
 
-    private List<BaseSnippetGroup> snippetGroups;
+    private final static Logger log = LoggerFactory.getLogger(SnippetView.class);
+
+    private List<BaseSnippetGroup> snippetGroups; //TBD
 
     @FXML
     private Accordion accordion;
@@ -31,14 +42,11 @@ public class SnippetView extends BaseView {
     @FXML
     private VBox vBox;
 
-    private SnippetEventHandler snippetEventHandler;
-
     public SnippetView() {
         super("/control/snippet_view.fxml");
         tfKeyword = TextFields.createClearableTextField();
         vBox.getChildren().add(0, tfKeyword);
         tfKeyword.textProperty().addListener((observableValue, s, newKeyword) -> {
-            accordion.getPanes().clear();
             this.filter(newKeyword);
         });
         Platform.runLater(() -> {
@@ -46,42 +54,49 @@ public class SnippetView extends BaseView {
         });
     }
 
-    public void load(List<BaseSnippetGroup> snippetGroups) {
-        this.snippetGroups = snippetGroups;
-        this.filter(null);
+    /**
+     * Reload when like target file type is changed.
+     *
+     * @param snippetGroups
+     */
+    public void reload(List<BaseSnippetGroup> snippetGroups) {
+        accordion.getPanes().clear();
+        if (snippetGroups != null && !snippetGroups.isEmpty()) {
+            this.snippetGroups = snippetGroups;
+            for (BaseSnippetGroup snippetGroup : snippetGroups) {
+                log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
+                Collection<Plugin> plugins = PluginManager.getIns().findPlugin(snippetGroup.getFileType());
+                for (Plugin plugin : plugins) {
+                    if (plugin == null) {
+                        log.debug("No plugin for %s".formatted(snippetGroup.getTitle()));
+                        continue;
+                    }
+                    log.debug("Plugin: %s".formatted(plugin));
+                    Optional<SnippetViewable> optSnippetView = plugin.getSnippetView();
+                    if (optSnippetView.isPresent()) {
+                        SnippetViewable snippetView = optSnippetView.get();
+                        log.debug("Load snippet view: %s".formatted(snippetView));
+                        // TODO SHOULD have no conversion (Node)
+                        TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) snippetView);
+                        accordion.getPanes().add(pane);
+                        ((Node) snippetView).setUserData(snippetGroup.getTitle());
+                        snippetView.setItems(FXCollections.observableList(snippetGroup.snippets));
+                        break; // ONLY FIRST FOUND PLUGIN WILL BE USED TO HANDLE THE SNIPPETS
+                    }
+                }
+            }
+            this.filter(null);
+        }
     }
 
     /**
-     * Filter snippets by keyword, if the no match for a group, the group will not show.
-     * Before filter starts, the Accordion must be cleared.
+     * Filter snippets by keyword, if there is no match for a group, the group will not show.
      *
      * @param keyword
      */
     public void filter(String keyword) {
-        for (BaseSnippetGroup snippetGroup : snippetGroups) {
-            List<Snippet> filteredSnippets = snippetGroup.getSnippets();
-            if (StringUtils.isNotBlank(keyword)) {
-                filteredSnippets = filteredSnippets.stream().filter(snippet -> snippet.getTitle().contains(keyword)
-                                || (snippet.getDescription() != null && snippet.getDescription().contains(keyword))
-                                || (snippet.getCode() != null && snippet.getCode().contains(keyword)))
-                        .collect(Collectors.toList());
-            }
-            if (!filteredSnippets.isEmpty() || snippetGroup.isAlwaysShow()) {
-                ListView<Snippet> listView = new ListView<>();
-                listView.setCellFactory(param -> new SnippetCell());
-                listView.getItems().addAll(filteredSnippets);
-                listView.setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getClickCount() == 2) {
-                        Snippet selectedSnippet = listView.getSelectionModel().getSelectedItem();
-                        snippetEventHandler.onSnippet(selectedSnippet);
-                    }
-                });
-                TitledPane pane = new TitledPane(snippetGroup.getTitle(), listView);
-                accordion.getPanes().add(pane);
-            }
-        }
         // Expand first panel in accordion.
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             if (!accordion.getPanes().isEmpty()) {
                 TitledPane first = accordion.getPanes().get(0);
                 if (first != null) {
@@ -89,9 +104,36 @@ public class SnippetView extends BaseView {
                 }
             }
         });
+        for (TitledPane pane : this.accordion.getPanes()) {
+            if (pane.getContent() instanceof SnippetViewable<?> sv) {
+                SnippetViewable<Snippet> sv2 = (SnippetViewable<Snippet>) sv;
+                String title = (String) ((Node) sv).getUserData();
+                BaseSnippetGroup<?> snippetGroup = snippetGroupByTitle(title);
+                if (snippetGroup != null) {
+                    if (StringUtils.isNotEmpty(keyword)) {
+                        ObservableList<Snippet> filteredSnippets;
+                        List<?> filtered = snippetGroup.snippets.stream().filter(snippet -> snippet.getTitle().contains(keyword)
+                                        || (snippet.getDescription() != null && snippet.getDescription().contains(keyword))
+                                        || (snippet.getCode() != null && snippet.getCode().contains(keyword)))
+                                .toList();
+                        filteredSnippets = FXCollections.observableList(filtered.stream()
+                                .map((Function<Object, Snippet>) o -> (Snippet) o).toList());
+                        ((SnippetViewable<Snippet>) sv).setItems(filteredSnippets);
+                    }
+                    else {
+                        sv2.setItems(FXCollections.observableList((List<Snippet>) snippetGroup.snippets));
+                    }
+                }
+            }
+        }
+
     }
 
-    public void setSnippetEventHandler(SnippetEventHandler snippetEventHandler) {
-        this.snippetEventHandler = snippetEventHandler;
+    private BaseSnippetGroup<?> snippetGroupByTitle(String title) {
+        Optional<BaseSnippetGroup> optSnippetGroup = snippetGroups.stream()
+                .filter(baseSnippetGroup -> baseSnippetGroup.getTitle().equalsIgnoreCase(title.toLowerCase())).findFirst();
+        return optSnippetGroup.orElse(null);
     }
+
+
 }

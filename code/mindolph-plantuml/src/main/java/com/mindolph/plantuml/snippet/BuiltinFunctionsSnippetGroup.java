@@ -1,14 +1,13 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
-import com.mindolph.base.control.snippet.Snippet;
+import com.mindolph.core.model.Snippet;
 
 import java.util.Arrays;
 
 /**
  * @author mindolph.com@gmail.com
  */
-public class BuiltinFunctionsSnippetGroup extends BaseSnippetGroup {
+public class BuiltinFunctionsSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public void init() {

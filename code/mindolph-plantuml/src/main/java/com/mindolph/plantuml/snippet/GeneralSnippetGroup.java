@@ -1,14 +1,13 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
-import com.mindolph.base.control.snippet.Snippet;
+import com.mindolph.base.control.snippet.ImageSnippet;
 
 import java.util.Arrays;
 
 /**
  * @author mindolph.com@gmail.com
  */
-public class GeneralSnippetGroup extends BaseSnippetGroup {
+public class GeneralSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
@@ -18,39 +17,39 @@ public class GeneralSnippetGroup extends BaseSnippetGroup {
     @Override
     public void init() {
         super.snippets.addAll(Arrays.asList(
-                        new Snippet().title("Title").code("""
+                        new ImageSnippet().title("Title").code("""
                                 title
                                  <u>This</u> title
                                  on <i>several</i> lines and using <back:cadetblue>creole tags</back>
                                 end title
                                 """).generateImage(),
-                        new Snippet().title("Header and footer").code("""
+                        new ImageSnippet().title("Header and footer").code("""
                                 header
                                 <font color=red>Header:</font>
                                 This is a header
                                 endheader
                                 center footer "this is a center footer"
                                 """).generateImage(),
-                        new Snippet().title("Caption").code("""
+                        new ImageSnippet().title("Caption").code("""
                                 "caption this is a caption"
                                 """).generateImage(),
-                        new Snippet().title("Legend").code("""
+                        new ImageSnippet().title("Legend").code("""
                                 legend top left
                                   This is a legend
                                 endlegend
                                 """).generateImage(),
-                        new Snippet().title("Block Comment").code("""
+                        new ImageSnippet().title("Block Comment").code("""
                                 /'
                                 many lines comments
                                 here⨁
                                 '/
                                 """).generateImage(),
-                        new Snippet().title("Style").code("""
+                        new ImageSnippet().title("Style").code("""
                                 <style>
                                 ⨁
                                 </style>
                                 """),
-                        new Snippet().title("Mainframe").code("""
+                        new ImageSnippet().title("Mainframe").code("""
                                 mainframe This is a **mainframe**
                                 """).generateImage()
                 )

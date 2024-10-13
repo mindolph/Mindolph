@@ -3,9 +3,8 @@ package com.mindolph.plantuml;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.control.ImageScrollPane;
-import com.mindolph.base.control.snippet.SnippetView;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
@@ -14,7 +13,6 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -48,7 +46,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -66,12 +63,6 @@ import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_
  */
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
-
-    @FXML
-    private SnippetView snippetView;
-
-    @FXML
-    private FixedSplitPane splitPaneCodeEditor;
 
     @FXML
     private ImageScrollPane previewPane;
@@ -111,37 +102,20 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
         super.enablePageSwipe();
 
-        // register: replacing selected text with snippet code
-        snippetView.setSnippetEventHandler(snippet -> {
-            String code = snippet.getCode();
-            int caretPos = StringUtils.indexOf(code, "⨁");
-            String codeToInsert = StringUtils.remove(code, "⨁");
-            codeArea.replaceSelection(codeToInsert);
-            if (caretPos > 0) {
-                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
-            }
-            codeArea.requestFocus();
-
-        });
-        // load all snippet groups for plantuml.
-        snippetView.load(Arrays.asList(new GeneralSnippetGroup(),
-                        new DiagramSnippetGroup(),
-                        new SkinparamSnippetGroup(),
-                        new ColorSnippetGroup(),
-                        new ThemeSnippetGroup(),
-                        new CreoleSnippetGroup(),
-                        new ProcessingSnippetGroup(),
-                        new BuiltinFunctionsSnippetGroup()
-//                        new CustomSnippetGroup()
-                )
-        );
-
         this.refresh();// to set up the font
+    }
 
-        Platform.runLater(() -> {
-            splitPaneCodeEditor.setFixedSize(180);
-            splitPaneCodeEditor.setFixed(splitPaneCodeEditor.getSecondary());
-        });
+    @Override
+    public void onSnippet(Snippet snippet) {
+        // replacing selected text with snippet code
+        String code = snippet.getCode();
+        int caretPos = StringUtils.indexOf(code, "⨁");
+        String codeToInsert = StringUtils.remove(code, "⨁");
+        codeArea.replaceSelection(codeToInsert);
+        if (caretPos > 0) {
+            codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
+        }
+        codeArea.requestFocus();
     }
 
     protected void createContextMenu() {

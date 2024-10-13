@@ -3,6 +3,8 @@ package com.mindolph.base.util;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * @author mindolph
@@ -32,5 +34,12 @@ public class LayoutUtils {
         newX = Math.max(0, newX);
         newY = Math.max(0, newY); // adjust again if it's head still out of target bounds.
         return new Point2D(newX, newY);
+    }
+
+    public static void anchor(Node node, double value) {
+        AnchorPane.setLeftAnchor(node, value);
+        AnchorPane.setTopAnchor(node, value);
+        AnchorPane.setRightAnchor(node, value);
+        AnchorPane.setBottomAnchor(node, value);
     }
 }
