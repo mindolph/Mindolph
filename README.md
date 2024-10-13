@@ -95,4 +95,8 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 Future Plan:
 
 * 1.9: File Collection and Outline.
-* 1.10: Redesign Code Snippet and support for more file types.
+* 1.10: Snippet Feature to quickly insert snippet for many file types.
+
+### Buy me a cup of coffee
+
+<img src="docs/bmc_qr.png" width="30%"/>
