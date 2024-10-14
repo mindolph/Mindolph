@@ -43,11 +43,16 @@ public class SnippetView extends BaseView {
     private VBox vBox;
 
     public SnippetView() {
-        super("/control/snippet_view.fxml");
+        super("/control/snippet_view.fxml", false);
         tfKeyword = TextFields.createClearableTextField();
         vBox.getChildren().add(0, tfKeyword);
         tfKeyword.textProperty().addListener((observableValue, s, newKeyword) -> {
             this.filter(newKeyword);
+        });
+        super.activeProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                this.reload(this.snippetGroups);
+            }
         });
         Platform.runLater(() -> {
             accordion.requestLayout();
@@ -60,22 +65,23 @@ public class SnippetView extends BaseView {
      * @param snippetGroups
      */
     public void reload(List<BaseSnippetGroup> snippetGroups) {
+        this.snippetGroups = snippetGroups;
+        if (!super.getActive()) return;
         accordion.getPanes().clear();
         if (snippetGroups != null && !snippetGroups.isEmpty()) {
-            this.snippetGroups = snippetGroups;
             for (BaseSnippetGroup snippetGroup : snippetGroups) {
                 log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
                 Collection<Plugin> plugins = PluginManager.getIns().findPlugin(snippetGroup.getFileType());
                 for (Plugin plugin : plugins) {
                     if (plugin == null) {
-                        log.debug("No plugin for %s".formatted(snippetGroup.getTitle()));
+                        if (log.isTraceEnabled()) log.trace("No plugin for %s".formatted(snippetGroup.getTitle()));
                         continue;
                     }
-                    log.debug("Plugin: %s".formatted(plugin));
+                    if (log.isTraceEnabled()) log.trace("Plugin: %s".formatted(plugin));
                     Optional<SnippetViewable> optSnippetView = plugin.getSnippetView();
                     if (optSnippetView.isPresent()) {
                         SnippetViewable snippetView = optSnippetView.get();
-                        log.debug("Load snippet view: %s".formatted(snippetView));
+                        if (log.isTraceEnabled()) log.trace("Load snippet view: %s".formatted(snippetView));
                         // TODO SHOULD have no conversion (Node)
                         TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) snippetView);
                         accordion.getPanes().add(pane);

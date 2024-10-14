@@ -160,7 +160,7 @@ public class MainController extends BaseController implements Initializable,
         // handle the file collections.
         this.loadCollections();
 
-        // for snippet
+        // for snippet TODO consider moving to SnippetView
         EventBus.getIns().subscribeFileActivated(fileChange -> {
             NodeData nodeData = fileChange.newData();
             if (fileChange.oldData() != null && fileChange.newData() != null
@@ -274,6 +274,7 @@ public class MainController extends BaseController implements Initializable,
         tabViewMap.put(tabOutline, outlineView);
         tabViewMap.put(tabWorkspaces, workspaceView);
         tabViewMap.put(tabRecentFiles, recentView);
+        tabViewMap.put(tabSnippet, snippetView);
         leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedTab) -> {
             if (selectedTab == tabRecentFiles) {
                 // load recent files only at the first time

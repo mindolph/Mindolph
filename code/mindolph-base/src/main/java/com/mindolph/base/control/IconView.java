@@ -151,7 +151,7 @@ public class IconView extends ScrollPane implements SnippetViewable<ImageSnippet
             return;
         }
         log.debug("do layout for icons %d".formatted(getItems().size()));
-        // TBD: using findScrollBar()
+        // TBD: using findScrollBar()?
         ScrollBar scrollBar = ScrollBarUtils.findScrollBar(this, Orientation.VERTICAL);
         double scrollWidth = (scrollBar != null && scrollBar.isVisible()) ? scrollBar.getWidth() : 0;
         columnCount = Math.max(1, (int) ((bounds.getWidth() - scrollWidth) / iconRegionSize));
