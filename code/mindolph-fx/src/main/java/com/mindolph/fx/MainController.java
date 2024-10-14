@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.base.BaseView;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.collection.CollectionManager;
@@ -74,6 +75,8 @@ public class MainController extends BaseController implements Initializable,
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
     private final CollectionManager cm = CollectionManager.getIns();
+
+    private final Map<Tab, BaseView> tabViewMap = new HashMap<>();
 
     @FXML
     private FileTabView fileTabView;
@@ -218,12 +221,19 @@ public class MainController extends BaseController implements Initializable,
 
         EventBus.getIns().subscribePreferenceChanged(fileType -> fileTabView.reloadEditorsByType(fileType));
 
-        leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == tabRecentFiles) {
+        tabViewMap.put(tabOutline, outlineView);
+        tabViewMap.put(tabWorkspaces, workspaceView);
+        tabViewMap.put(tabRecentFiles, recentView);
+        leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedTab) -> {
+            if (selectedTab == tabRecentFiles) {
                 // load recent files only at the first time
                 if (!recentView.hasData()) {
                     recentView.load();
                 }
+            }
+            // switch the activation of all views with tabs.
+            for (Tab tab : tabViewMap.keySet()) {
+                tabViewMap.get(tab).setActive(tab == selectedTab);
             }
         });
         log.debug("Main controller initialized");

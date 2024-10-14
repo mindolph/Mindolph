@@ -14,6 +14,7 @@ import javafx.scene.control.TreeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
 
 import java.util.Optional;
 
@@ -29,8 +30,11 @@ public class OutlineView extends BaseView {
     private MTreeView<OutlineItemData> treeView;
     private final TreeItem<OutlineItemData> rootItem; // root node is not visible
 
+    // data tree for outline of one file.
+    private Tree tree;
+
     public OutlineView() {
-        super("/view/outline_view.fxml");
+        super("/view/outline_view.fxml", false);
         rootItem = new TreeItem<>(new OutlineItemData("Outline Stub"));
         rootItem.setExpanded(true);
         treeView.setRoot(rootItem);
@@ -64,29 +68,37 @@ public class OutlineView extends BaseView {
             });
             return cell;
         });
-        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
-        });
 
         EventBus.getIns().subscribeOutline(tree -> {
-            // since the events are in threads.
-            Platform.runLater(() -> {
-                treeView.removeAll();
-                if (tree != null && tree.getRootNode() != null) {
-                    treeView.setRoot(rootItem);
-                    loadOutlineTreeNode(rootItem, tree.getRootNode());
-//                treeView.refresh();
-                }
-                else {
-                    log.debug("No outline for this document");
-                }
-            });
+            this.tree = tree;
+            this.refresh();
         });
 
+        super.activeProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                this.refresh();
+            }
+        });
 
     }
 
+    private void refresh() {
+        // run later since the events are emitted in threads.
+        if (!super.getActive()) return; // avoid unnecessary refreshing.
+        Platform.runLater(() -> {
+            treeView.removeAll();
+            if (tree != null && tree.getRootNode() != null) {
+                treeView.setRoot(rootItem);
+                loadOutlineTreeNode(rootItem, tree.getRootNode());
+            }
+            else {
+                log.debug("No outline for this document");
+            }
+        });
+    }
+
     private void loadOutlineTreeNode(TreeItem<OutlineItemData> treeItem, Node parentNode) {
+        if (log.isTraceEnabled()) log.trace("Load items of a tree node to tree view node");
         for (Node node : parentNode.getChildren()) {
             TreeItem<OutlineItemData> childTreeItem = new TreeItem<>((OutlineItemData) node.getData());
             childTreeItem.setExpanded(true);
