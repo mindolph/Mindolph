@@ -94,7 +94,8 @@ public class SnippetView extends BaseView {
     }
 
     private void reloadForFileType(String fileType) {
-        Optional<Plugin> optPlugin = PluginManager.getIns().getFirstPlugin(fileType);
+        Optional<Plugin> optPlugin = PluginManager.getIns().findFirstPlugin(plugin -> plugin.supportedFileTypes().contains(fileType)
+                && plugin.getSnippetHelper().isPresent());
         if (optPlugin.isPresent()) {
             Optional<SnippetHelper> snippetHelper = optPlugin.get().getSnippetHelper();
             if (snippetHelper.isPresent()) {
@@ -114,7 +115,7 @@ public class SnippetView extends BaseView {
         accordion.getPanes().clear();
         if (snippetGroups != null && !snippetGroups.isEmpty()) {
             for (BaseSnippetGroup snippetGroup : snippetGroups) {
-                log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
+//                log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
                 Collection<Plugin> plugins = PluginManager.getIns().findPlugins(snippetGroup.getFileType());
                 for (Plugin plugin : plugins) {
                     if (plugin == null) {

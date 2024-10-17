@@ -5,6 +5,7 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * @author mindolph.com@gmail.com
@@ -41,12 +42,20 @@ public class PluginManager {
         return pluginMap.get(fileType);
     }
 
-    public Optional<Plugin> getFirstPlugin(String fileType) {
+    public Collection<Plugin> findPlugins(Predicate<Plugin> filter) {
+        return fileTypeMap.keys().stream().filter(filter).toList();
+    }
+
+    public Optional<Plugin> findFirstPlugin(String fileType) {
         Collection<Plugin> plugins = pluginMap.get(fileType);
         if (plugins.isEmpty()) {
             return Optional.empty();
         }
         return plugins.stream().findFirst();
+    }
+
+    public Optional<Plugin> findFirstPlugin(Predicate<Plugin> filter) {
+        return fileTypeMap.keys().stream().filter(filter).findFirst();
     }
 
     public Collection<Plugin> getPlugins() {
