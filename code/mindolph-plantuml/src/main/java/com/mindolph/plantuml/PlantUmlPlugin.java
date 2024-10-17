@@ -1,14 +1,19 @@
 package com.mindolph.plantuml;
 
+import com.mindolph.base.control.snippet.BaseSnippetGroup;
 import com.mindolph.base.control.snippet.ListSnippetView;
 import com.mindolph.base.control.snippet.SnippetViewable;
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.InputHelper;
+import com.mindolph.base.plugin.SnippetHelper;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.plantuml.snippet.BuiltinFunctionsSnippetGroup;
+import com.mindolph.plantuml.snippet.DiagramSnippetGroup;
+import com.mindolph.plantuml.snippet.GeneralSnippetGroup;
+import com.mindolph.plantuml.snippet.SkinparamSnippetGroup;
+import com.mindolph.plantuml.snippet.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -31,9 +36,30 @@ public class PlantUmlPlugin extends BasePlugin {
         return Optional.of(new PlantUmlInputHelper());
     }
 
+
     @Override
-    public Optional<SnippetViewable> getSnippetView() {
-        ListSnippetView listSnippetView = new ListSnippetView();
-        return Optional.of(listSnippetView);
+    public Optional<SnippetHelper> getSnippetHelper() {
+        return Optional.of(new SnippetHelper() {
+
+            @Override
+            public Optional<SnippetViewable> createView() {
+                ListSnippetView listSnippetView = new ListSnippetView();
+                return Optional.of(listSnippetView);
+            }
+
+            @Override
+            public List<BaseSnippetGroup> getSnippetGroups(String fileType) {
+                return Arrays.asList(new GeneralSnippetGroup(),
+                        new DiagramSnippetGroup(),
+                        new SkinparamSnippetGroup(),
+                        new ColorSnippetGroup(),
+                        new ThemeSnippetGroup(),
+                        new CreoleSnippetGroup(),
+                        new ProcessingSnippetGroup(),
+                        new BuiltinFunctionsSnippetGroup()
+//                        new CustomSnippetGroup()
+                );
+            }
+        });
     }
 }

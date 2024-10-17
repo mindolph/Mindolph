@@ -1,8 +1,12 @@
 package com.mindolph.base.control.snippet;
 
 import com.mindolph.base.BaseView;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.base.plugin.SnippetHelper;
+import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.model.NodeData;
 import com.mindolph.core.model.Snippet;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -54,9 +58,49 @@ public class SnippetView extends BaseView {
                 this.reload(this.snippetGroups);
             }
         });
+
+        // for switching snippets by listening file activation.
+        EventBus.getIns().subscribeFileActivated(fileChange -> {
+            NodeData nodeData = fileChange.newData();
+            if (fileChange.oldData() != null && fileChange.newData() != null
+                    && fileChange.oldData().isSameFileType(fileChange.newData())) {
+                return;
+            }
+            if (nodeData == null) {
+                this.reload(null);
+                return;
+            }
+            switch (nodeData.getNodeType()) {
+                case FOLDER -> {
+                    this.reload(null);
+                }
+                case FILE -> {
+                    if (nodeData.isPlantUml()) {
+                        this.reloadForFileType(SupportFileTypes.TYPE_PLANTUML);
+                    }
+                    else if (nodeData.isMindMap()) {
+                        this.reloadForFileType(SupportFileTypes.TYPE_MIND_MAP);
+                    }
+                    else {
+                        this.reload(null);
+                    }
+                }
+            }
+        });
+
         Platform.runLater(() -> {
             accordion.requestLayout();
         });
+    }
+
+    private void reloadForFileType(String fileType) {
+        Optional<Plugin> optPlugin = PluginManager.getIns().getFirstPlugin(fileType);
+        if (optPlugin.isPresent()) {
+            Optional<SnippetHelper> snippetHelper = optPlugin.get().getSnippetHelper();
+            if (snippetHelper.isPresent()) {
+                this.reload(snippetHelper.get().getSnippetGroups(fileType));
+            }
+        }
     }
 
     /**
@@ -71,23 +115,26 @@ public class SnippetView extends BaseView {
         if (snippetGroups != null && !snippetGroups.isEmpty()) {
             for (BaseSnippetGroup snippetGroup : snippetGroups) {
                 log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
-                Collection<Plugin> plugins = PluginManager.getIns().findPlugin(snippetGroup.getFileType());
+                Collection<Plugin> plugins = PluginManager.getIns().findPlugins(snippetGroup.getFileType());
                 for (Plugin plugin : plugins) {
                     if (plugin == null) {
                         if (log.isTraceEnabled()) log.trace("No plugin for %s".formatted(snippetGroup.getTitle()));
                         continue;
                     }
                     if (log.isTraceEnabled()) log.trace("Plugin: %s".formatted(plugin));
-                    Optional<SnippetViewable> optSnippetView = plugin.getSnippetView();
-                    if (optSnippetView.isPresent()) {
-                        SnippetViewable snippetView = optSnippetView.get();
-                        if (log.isTraceEnabled()) log.trace("Load snippet view: %s".formatted(snippetView));
-                        // TODO SHOULD have no conversion (Node)
-                        TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) snippetView);
-                        accordion.getPanes().add(pane);
-                        ((Node) snippetView).setUserData(snippetGroup.getTitle());
-                        snippetView.setItems(FXCollections.observableList(snippetGroup.snippets));
-                        break; // ONLY FIRST FOUND PLUGIN WILL BE USED TO HANDLE THE SNIPPETS
+                    Optional<SnippetHelper> optionalSnippetHelper = plugin.getSnippetHelper();
+                    if (optionalSnippetHelper.isPresent()) {
+                        Optional<SnippetViewable> optSnippetView = optionalSnippetHelper.get().createView();
+                        if (optSnippetView.isPresent()) {
+                            SnippetViewable snippetView = optSnippetView.get();
+                            if (log.isTraceEnabled()) log.trace("Load snippet view: %s".formatted(snippetView));
+                            // TODO SHOULD have no conversion (Node)
+                            TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) snippetView);
+                            accordion.getPanes().add(pane);
+                            ((Node) snippetView).setUserData(snippetGroup.getTitle());
+                            snippetView.setItems(FXCollections.observableList(snippetGroup.snippets));
+                            break; // ONLY FIRST FOUND PLUGIN WILL BE USED TO HANDLE THE SNIPPETS
+                        }
                     }
                 }
             }

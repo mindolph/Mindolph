@@ -44,9 +44,7 @@ import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.snippet.IconSnippetGroup;
 import com.mindolph.plantuml.PlantUmlEditor;
-import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -159,46 +157,6 @@ public class MainController extends BaseController implements Initializable,
 
         // handle the file collections.
         this.loadCollections();
-
-        // for snippet TODO consider moving to SnippetView
-        EventBus.getIns().subscribeFileActivated(fileChange -> {
-            NodeData nodeData = fileChange.newData();
-            if (fileChange.oldData() != null && fileChange.newData() != null
-                    && fileChange.oldData().isSameFileType(fileChange.newData())) {
-                return;
-            }
-            if (nodeData == null) {
-                snippetView.reload(null);
-                return;
-            }
-            switch (nodeData.getNodeType()) {
-                case FOLDER -> {
-                    snippetView.reload(null);
-                }
-                case FILE -> {
-                    if (nodeData.isPlantUml()) {
-                        snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
-                                        new DiagramSnippetGroup(),
-                                        new SkinparamSnippetGroup(),
-                                        new ColorSnippetGroup(),
-                                        new ThemeSnippetGroup(),
-                                        new CreoleSnippetGroup(),
-                                        new ProcessingSnippetGroup(),
-                                        new BuiltinFunctionsSnippetGroup()
-//                        new CustomSnippetGroup()
-                                )
-                        );
-                    }
-                    else if (nodeData.isMindMap()) {
-                        IconSnippetGroup iconSnippetGroup = new IconSnippetGroup();
-                        snippetView.reload(List.of(iconSnippetGroup));
-                    }
-                    else {
-                        snippetView.reload(null);
-                    }
-                }
-            }
-        });
 
         SceneRestore sceneRestore = SceneRestore.getInstance();
 

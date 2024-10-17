@@ -31,7 +31,7 @@ public class BasePlugin implements Plugin {
     }
 
     @Override
-    public <T extends SnippetViewable> Optional<T> getSnippetView() {
+    public Optional<SnippetHelper> getSnippetHelper() {
         return Optional.empty();
     }
 }

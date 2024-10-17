@@ -4,6 +4,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author mindolph.com@gmail.com
@@ -13,7 +14,7 @@ public class PluginManager {
 
     private static PluginManager ins;
 
-    private final MultiValuedMap<String, Plugin> pluginMap ;
+    private final MultiValuedMap<String, Plugin> pluginMap;
 
     private final MultiValuedMap<Plugin, String> fileTypeMap;
 
@@ -36,8 +37,16 @@ public class PluginManager {
         }
     }
 
-    public Collection<Plugin> findPlugin(String fileType) {
+    public Collection<Plugin> findPlugins(String fileType) {
         return pluginMap.get(fileType);
+    }
+
+    public Optional<Plugin> getFirstPlugin(String fileType) {
+        Collection<Plugin> plugins = pluginMap.get(fileType);
+        if (plugins.isEmpty()) {
+            return Optional.empty();
+        }
+        return plugins.stream().findFirst();
     }
 
     public Collection<Plugin> getPlugins() {

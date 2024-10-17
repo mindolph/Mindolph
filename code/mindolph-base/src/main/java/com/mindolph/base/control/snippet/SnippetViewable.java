@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 /**
  *
  * @param <T>
+ * @since 1.10
  */
 public interface SnippetViewable<T extends Snippet> {
 
