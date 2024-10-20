@@ -1,5 +1,13 @@
 # Change Logs
 
+
+### V1.9.3 Unstable Release
+
+* Improvement: add image quick insert button to the toolbar to Markdown code editor.  
+* Improvement: optimize the outline view to do rendering only when it's active.   
+* update bundled JRE to 22.0.2  
+
+
 ### V1.9.2 Unstable Release
 
 * Improvement: add toast notification for saving and deleting collection.
