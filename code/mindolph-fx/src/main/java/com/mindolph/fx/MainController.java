@@ -339,7 +339,7 @@ public class MainController extends BaseController implements Initializable,
                 workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         else if (fileData.getFile().isDirectory()) {
-            if (autoSelect)
+//            if (autoSelect)
                 workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         if (visibleInWorkspace && autoSelect) {
