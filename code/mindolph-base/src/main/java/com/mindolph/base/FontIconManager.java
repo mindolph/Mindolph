@@ -92,6 +92,7 @@ public class FontIconManager {
 
         icons.put(IconKey.OUTLINE, () -> OctIconFactory.get().createIcon(OctIcon.THREE_BARS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.OUTLINE_ITEM, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.RECORD, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.SNIPPET, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.CODE_BRACES, DEFAULT_ICON_SIZE));
 
         if (SystemUtils.IS_OS_MAC) {
             icons.put(IconKey.SYSTEM, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.APPLE, DEFAULT_ICON_SIZE));

@@ -165,7 +165,7 @@ public class MainController extends BaseController implements Initializable,
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
         tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE));
-        tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
+        tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.SNIPPET));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);

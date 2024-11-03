@@ -125,15 +125,14 @@ public class SnippetView extends BaseView {
                     if (log.isTraceEnabled()) log.trace("Plugin: %s".formatted(plugin));
                     Optional<SnippetHelper> optionalSnippetHelper = plugin.getSnippetHelper();
                     if (optionalSnippetHelper.isPresent()) {
-                        Optional<SnippetViewable> optSnippetView = optionalSnippetHelper.get().createView();
-                        if (optSnippetView.isPresent()) {
-                            SnippetViewable snippetView = optSnippetView.get();
-                            if (log.isTraceEnabled()) log.trace("Load snippet view: %s".formatted(snippetView));
+                        Optional<SnippetViewable> optView = optionalSnippetHelper.get().createView();
+                        if (optView.isPresent()) {
+                            SnippetViewable view = optView.get();
+                            if (log.isTraceEnabled()) log.trace("Load snippet view: %s".formatted(view));
                             // TODO SHOULD have no conversion (Node)
-                            TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) snippetView);
+                            TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) view);
                             accordion.getPanes().add(pane);
-                            ((Node) snippetView).setUserData(snippetGroup.getTitle());
-                            snippetView.setItems(FXCollections.observableList(snippetGroup.snippets));
+                            ((Node) view).setUserData(snippetGroup.getTitle()); // be used to identify the group
                             break; // ONLY FIRST FOUND PLUGIN WILL BE USED TO HANDLE THE SNIPPETS
                         }
                     }
