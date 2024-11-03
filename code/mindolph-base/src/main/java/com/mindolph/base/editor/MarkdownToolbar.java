@@ -17,6 +17,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.UrlUtils;
 
+import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -55,6 +56,8 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     private Button btnHeader6;
     @FXML
     private Button btnSeparator;
+    @FXML
+    private Button btnImage;
 
     private final MarkdownCodeArea markdownCodeArea;
 
@@ -68,6 +71,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnBullet.setGraphic(fim.getIcon(IconKey.BULLET_LIST));
 //        btnNumber.setGraphic(fim.getIcon(IconKey.NUMBER_LIST));
         btnLink.setGraphic(fim.getIcon(IconKey.URI));
+        btnImage.setGraphic(fim.getIcon(IconKey.PREVIEW));
         btnQuote.setGraphic(fim.getIcon(IconKey.QUOTE));
         btnCode.setGraphic(fim.getIcon(IconKey.CODE_TAG));
         btnTable.setGraphic(fim.getIcon(IconKey.TABLE));
@@ -84,6 +88,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnBullet.setOnAction(this);
 //        btnNumber.setOnAction(this);
         btnLink.setOnAction(this);
+        btnImage.setOnAction(this);
         btnQuote.setOnAction(this);
         btnCode.setOnAction(this);
         btnTable.setOnAction(this);
@@ -147,6 +152,16 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
             markdownCodeArea.replaceSelection(link);
             markdownCodeArea.moveTo(selection.getStart() + (isUrl ? 1 : link.length() - 1));
         }
+        else if (node == btnImage) {
+            String text = ClipBoardUtils.textFromClipboard();
+            File file = new File(text);
+            boolean isFilePath = file.exists();
+            IndexRange selection = markdownCodeArea.getSelection();
+            String path = isFilePath ? text : StringUtils.EMPTY;
+            String link = "![%s](%s)".formatted(selection.getLength() > 0 ? markdownCodeArea.getSelectedText() : StringUtils.EMPTY, path);
+            markdownCodeArea.replaceSelection(link);
+            markdownCodeArea.moveTo(selection.getStart() + (isFilePath ? 1 : link.length() - 1));
+        }
         else if (node == btnTable) {
             TableOptions to = new TableOptions();
             to.setRows(3);
@@ -177,7 +192,6 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     }
 
     /**
-     *
      * @param number
      */
     private void addHeader(int number) {

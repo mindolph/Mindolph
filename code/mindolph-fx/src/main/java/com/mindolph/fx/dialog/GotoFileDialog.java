@@ -76,7 +76,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
         tfKeywords = TextFields.createClearableTextField();
         vbKeywords.getChildren().add(tfKeywords);
 
-        dialog.setOnShown(event -> Platform.runLater(() -> tfKeywords.requestFocus()));
+        dialog.setOnShown(event -> Platform.runLater(tfKeywords::requestFocus));
 
         // merge events to trigger the search
         EventStream<Change<String>> textChanged = EventStreams.changesOf(tfKeywords.textProperty());

@@ -68,6 +68,12 @@
             <Tooltip text="Link"/>
         </tooltip>
     </Button>
+    <Button fx:id="btnImage" mnemonicParsing="false" styleClass="icon_button"
+            stylesheets="@../style/icon_button.css">
+        <tooltip>
+            <Tooltip text="Image"/>
+        </tooltip>
+    </Button>
     <Button fx:id="btnQuote" mnemonicParsing="false" styleClass="icon_button"
             stylesheets="@../style/icon_button.css">
         <tooltip>
