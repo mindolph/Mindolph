@@ -134,6 +134,8 @@ public class MainController extends BaseController implements Initializable,
     private MenuItem miFind;
     @FXML
     private MenuItem miReplace;
+    @FXML
+    private MenuItem miRemoveCollection;
 
     private RadioMenuItem rmiCollectionDefault;
 
@@ -203,7 +205,8 @@ public class MainController extends BaseController implements Initializable,
                 .subscribeMenuStateChange(MenuTag.SAVE_ALL, enable -> miSaveAll.setDisable(!enable))
                 .subscribeMenuStateChange(MenuTag.CLOSE_TAB, enable -> miCloseTab.setDisable(!enable))
                 .subscribeMenuStateChange(MenuTag.FIND, enable -> miFind.setDisable(!enable))
-                .subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable));
+                .subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.REMOVE_COLLECTION, enable -> miRemoveCollection.setDisable(!enable));
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.PRINT, enable -> miPrint.setDisable(!enable))
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.NEW_FILE, enable -> miNewFile.setDisable(!enable));
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.OPEN_FILE, enable -> miOpenFile.setDisable(!enable))
@@ -340,7 +343,7 @@ public class MainController extends BaseController implements Initializable,
         }
         else if (fileData.getFile().isDirectory()) {
 //            if (autoSelect)
-                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         if (visibleInWorkspace && autoSelect) {
             splitPane.showAll();
@@ -768,6 +771,8 @@ public class MainController extends BaseController implements Initializable,
             onOpenedFileRestore(files.stream().map(File::new).toList());
         }
         this.cm.saveActiveCollectionName(collectionName);
+
+        EventBus.getIns().notifyMenuStateChange(MenuTag.REMOVE_COLLECTION, !"default".equals(collectionName));
     }
 
 
