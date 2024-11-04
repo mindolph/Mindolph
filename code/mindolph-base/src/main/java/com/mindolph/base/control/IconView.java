@@ -73,10 +73,11 @@ public class IconView extends ScrollPane implements SnippetViewable<ImageSnippet
             }
             log.debug("layout is changed to: %s".formatted(BoundsUtils.boundsInString(newValue)));
             this.doLayout(newValue);
-            // redraw after layout has been measured and bounds of view has been updated.
-            if (BoundsUtils.isInvisible(newValue)) {
+            // should enable this, but it makes icons un-show when loading.
+            // if (!BoundsUtils.isInvisible(newValue)) {
+                // redraw after layout has been measured and bounds of view has been updated.
                 Platform.runLater(this::redraw);
-            }
+            // }
         });
         this.itemsProperty().addListener((observable, oldValue, newValue) -> {
             layer.removeAll();

@@ -157,6 +157,7 @@ public class SnippetView extends BaseView {
                 }
             }
         });
+        // filter snippets by keywords and set to the view in accordion.
         for (TitledPane pane : this.accordion.getPanes()) {
             if (pane.getContent() instanceof SnippetViewable<?> sv) {
                 SnippetViewable<Snippet> sv2 = (SnippetViewable<Snippet>) sv;
@@ -182,6 +183,7 @@ public class SnippetView extends BaseView {
 
     }
 
+    // Utils method
     private BaseSnippetGroup<?> snippetGroupByTitle(String title) {
         Optional<BaseSnippetGroup> optSnippetGroup = snippetGroups.stream()
                 .filter(baseSnippetGroup -> baseSnippetGroup.getTitle().equalsIgnoreCase(title.toLowerCase())).findFirst();
