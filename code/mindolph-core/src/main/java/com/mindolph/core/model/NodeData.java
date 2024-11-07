@@ -4,6 +4,7 @@ import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchParams;
+import org.apache.commons.io.FilenameUtils;
 import org.swiftboot.util.PathUtils;
 
 import java.io.File;
@@ -62,6 +63,16 @@ public class NodeData implements ItemData {
 
     public boolean isParentOf(NodeData nodeData) {
         return PathUtils.isParentFolder(this.getFile(), nodeData.getFile());
+    }
+
+    /**
+     *
+     * @param nodeData
+     * @return
+     * @since 1.10
+     */
+    public boolean isSameFileType(NodeData nodeData) {
+        return FilenameUtils.getExtension(this.getFile().getName()).equals(FilenameUtils.getExtension(nodeData.getName()));
     }
 
     public boolean isMindMap() {

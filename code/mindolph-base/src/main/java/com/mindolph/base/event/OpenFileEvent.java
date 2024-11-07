@@ -5,25 +5,30 @@ import com.mindolph.core.search.SearchParams;
 
 import java.io.File;
 
+/**
+ * The event that open a file either from tree/list or search results.
+ */
 public class OpenFileEvent {
-//    private File file; // TODO could be NodeData with file
+    /**
+     * file to be opened.
+     */
     private NodeData nodeData;
+    /**
+     * can be null, if provided, the editor will locate the first match automatically.
+     */
     private SearchParams searchParams;
     private boolean visibleInWorkspace;
 
     public OpenFileEvent(File file) {
-//        this.file = file;
         this.nodeData = new NodeData(file);
     }
 
     public OpenFileEvent(File file, boolean visibleInWorkspace) {
-//        this.file = file;
         this.nodeData = new NodeData(file);
         this.visibleInWorkspace = visibleInWorkspace;
     }
 
     public OpenFileEvent(File file, boolean visibleInWorkspace, SearchParams searchParams) {
-//        this.file = file;
         this.nodeData = new NodeData(file);
         this.visibleInWorkspace = visibleInWorkspace;
         this.searchParams = searchParams;
@@ -41,15 +46,6 @@ public class OpenFileEvent {
     public void setSearchParams(SearchParams searchParams) {
         this.searchParams = searchParams;
     }
-
-//    public File getFile() {
-//        return file;
-//    }
-//
-//    public void setFile(File file) {
-//        this.file = file;
-//    }
-
 
     public NodeData getNodeData() {
         return nodeData;

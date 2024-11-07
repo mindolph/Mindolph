@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated since 1.10
  */
 public class IconDialog extends BaseDialogController<String> implements EventHandler<ActionEvent> {
 
@@ -56,7 +57,7 @@ public class IconDialog extends BaseDialogController<String> implements EventHan
         dialog = new CustomDialogBuilder<String>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Emoticons")
-                .fxmlUri("dialog/icon_dialog.fxml")
+                .fxmlUri("dialog/emoticon_dialog.fxml")
                 .defaultValue(iconName)
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .controller(IconDialog.this)

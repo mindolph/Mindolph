@@ -8,6 +8,7 @@ import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
@@ -68,6 +69,7 @@ public class FileTabView extends BaseView {
             if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
                 // disabled tab means it is closing, no need to be loaded(for close all or close others from context menu)
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
+                Object oldData = selectedTab == null ? null : selectedTab.getUserData();
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
                 Object tabUserData = selectingTab.getUserData();
@@ -88,6 +90,7 @@ public class FileTabView extends BaseView {
                     this.updateMenuState(editor);
                     editor.outline();
                 }
+                EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, (NodeData) tabUserData));
             }
             else {
                 this.updateMenuState(null);
@@ -108,8 +111,18 @@ public class FileTabView extends BaseView {
                 editor.locate(anchor);
             }
         });
-        // listen file deleted
+        // handle file deleted event
         EventBus.getIns().subscribeDeletedFile(this::closeTabSilently);
+
+        // handle snippet applying event
+        EventBus.getIns().subscribeSnippetApply(snippet -> {
+            log.debug("Apply snippet: %s".formatted(snippet.getTitle()));
+            Editable editor = this.tabEditorMap.get(getCurrentTab());
+            if (editor != null) {
+                editor.onSnippet(snippet);
+            }
+        });
+
     }
 
     /**

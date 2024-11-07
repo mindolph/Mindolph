@@ -1,6 +1,8 @@
 package com.mindolph.plantuml;
 
 import com.mindolph.base.control.snippet.SnippetView;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -34,7 +36,7 @@ public class PumlSnippetDemo extends Application implements Initializable {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/puml_snippet_demo.fxml"));
         Scene scene = new Scene(root, 1000, 800);
-        primaryStage.setTitle("Hello Print");
+        primaryStage.setTitle("Hello Snippet Demo");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -43,7 +45,8 @@ public class PumlSnippetDemo extends Application implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println(Color.YELLOW.getSaturation());
         System.out.println(Color.YELLOW.getBrightness());
-        snippetView.load(Arrays.asList(new GeneralSnippetGroup(),
+        PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
+        snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
                         new SkinparamSnippetGroup(),
                         new ColorSnippetGroup(),
                         new ThemeSnippetGroup(),
@@ -53,7 +56,7 @@ public class PumlSnippetDemo extends Application implements Initializable {
                         new CustomSnippetGroup()
                 )
         );
-        snippetView.setSnippetEventHandler(snippet -> textArea.setText(snippet.getCode()));
+        EventBus.getIns().subscribeSnippetApply(snippet -> textArea.setText(snippet.getCode()));
     }
 
     public static class PrintDemoLauncher {

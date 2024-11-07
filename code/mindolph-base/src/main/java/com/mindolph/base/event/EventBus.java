@@ -1,5 +1,6 @@
 package com.mindolph.base.event;
 
+import com.mindolph.core.model.Snippet;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.Anchor;
@@ -43,9 +44,11 @@ public class EventBus {
     private final EventSource<List<File>> openedFileChange = new EventSource<>();
     private final EventSource<File> newFileToWorkspace = new EventSource<>();
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
+    private final EventSource<FileActivatedEvent> fileActivated = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
     private final EventSource<NodeData> fileDeleted = new EventSource<>();
     private final EventSource<FilePathChangedEvent> filePathChanged = new EventSource<>();
+    private final EventSource<Snippet> snippetApply = new EventSource<>();
 
     // Events for menu
     private final Map<MenuTag, EventStream<Boolean>> menuStateEvens = new HashMap<>(); // events to enable/disable menu items
@@ -90,6 +93,16 @@ public class EventBus {
 
     public EventBus subscribeFilePathChanged(Consumer<FilePathChangedEvent> consumer) {
         filePathChanged.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifySnippetApply(Snippet snippet) {
+        snippetApply.push(snippet);
+        return this;
+    }
+
+    public EventBus subscribeSnippetApply(Consumer<Snippet> consumer) {
+        snippetApply.subscribe(consumer);
         return this;
     }
 
@@ -161,6 +174,16 @@ public class EventBus {
 
     public EventBus unsubscribeFileLoaded(NodeData fileData) {
         this.unsubscribe(fileLoadedEvents, fileData);
+        return this;
+    }
+
+    public EventBus notifyFileActivated(FileActivatedEvent fileChange) {
+        this.fileActivated.push(fileChange);
+        return this;
+    }
+
+    public EventBus subscribeFileActivated(Consumer<FileActivatedEvent> anchor) {
+        this.fileActivated.subscribe(anchor);
         return this;
     }
 
@@ -365,6 +388,5 @@ public class EventBus {
     public enum MenuTag {
         UNDO, REDO, CUT, COPY, PASTE, NEW_FILE, OPEN_FILE, SAVE, SAVE_AS, SAVE_ALL, PRINT, CLOSE_TAB, FIND, REPLACE, REMOVE_COLLECTION
     }
-
 
 }

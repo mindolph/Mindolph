@@ -1,11 +1,9 @@
 package com.mindolph.plantuml.snippet;
 
-import com.mindolph.base.control.snippet.BaseSnippetGroup;
-
 /**
  * @author mindolph.com@gmail.com
  */
-public class CustomSnippetGroup extends BaseSnippetGroup {
+public class CustomSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public void init() {

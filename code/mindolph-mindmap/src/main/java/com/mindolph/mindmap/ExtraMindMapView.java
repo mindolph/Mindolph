@@ -34,6 +34,7 @@ import com.mindolph.mindmap.extension.attribute.ExtraFileExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraJumpExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraNoteExtension;
 import com.mindolph.mindmap.extension.attribute.ExtraURIExtension;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.extension.exporters.*;
 import com.mindolph.mindmap.extension.exporters.branch.AsciiDocBranchExporter;
 import com.mindolph.mindmap.extension.exporters.branch.MarkdownBranchExporter;
@@ -258,7 +259,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         if (elementUnderMouse != null) {
             ctxMenu.getItems().add(new SeparatorMenuItem());
-            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_MIND_MAP);
+            Collection<Plugin> plugins = PluginManager.getIns().findPlugins(SupportFileTypes.TYPE_MIND_MAP);
             if (!plugins.isEmpty()) {
                 for (Plugin plugin : plugins) {
                     Optional<Generator> opt = plugin.getGenerator(this.hashCode(), SupportFileTypes.TYPE_MIND_MAP);
@@ -803,6 +804,26 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             onMindMapModelChanged(true);
         }
         return true;
+    }
+
+    public void setIconForSelectedTopics(String iconName) {
+        log.debug("Selected icon: %s".formatted(iconName));
+        boolean changed;
+        Set<TopicNode> topics = new HashSet<>(super.getSelectedTopics());
+        topics.add(super.getActiveTopic());
+        topics.removeIf(Objects::isNull);
+        if (topics.isEmpty()) {
+            return;
+        }
+        if ("empty".equals(iconName)) {
+            changed = AttributeUtils.setIconAttribute(null, topics);
+        }
+        else {
+            changed = AttributeUtils.setIconAttribute(iconName, topics);
+        }
+        if (changed) {
+            this.doNotifyModelChanged(true);
+        }
     }
 
 }

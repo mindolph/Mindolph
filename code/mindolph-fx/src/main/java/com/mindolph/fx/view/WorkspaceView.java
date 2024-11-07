@@ -80,7 +80,6 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
 
     private ExpandEventHandler expandEventHandler;
     private CollapseEventHandler collapseEventHandler;
-    private WorkspaceClosedEventHandler workspaceClosedEventHandler;
     private FileChangedEventHandler fileChangedEventHandler;
 
     public WorkspaceView() {
@@ -537,11 +536,6 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     public void setCollapseEventHandler(CollapseEventHandler collapseEventHandler) {
         this.collapseEventHandler = collapseEventHandler;
     }
-
-    public void setWorkspaceClosedEventHandler(WorkspaceClosedEventHandler workspaceClosedEventHandler) {
-        this.workspaceClosedEventHandler = workspaceClosedEventHandler;
-    }
-
 
     public void setFileChangedEventHandler(FileChangedEventHandler fileChangedEventHandler) {
         this.fileChangedEventHandler = fileChangedEventHandler;

@@ -37,4 +37,10 @@ public interface Plugin {
      */
     Optional<Generator> getGenerator(Object editorId, String fileType);
 
+    /**
+     * Snippet helper to manage the snippets data and view for supported file types.
+     *
+     * @return
+     */
+    Optional<SnippetHelper> getSnippetHelper();
 }

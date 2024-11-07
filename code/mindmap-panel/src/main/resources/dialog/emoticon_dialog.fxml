@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="480.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/18"
             xmlns:fx="http://javafx.com/fxml/1">
    <VBox layoutX="82.0" layoutY="21.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0"
@@ -17,14 +11,12 @@
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
          </padding>
       </HBox>
-      <HBox spacing="4.0">
+      <HBox spacing="4.0" fx:id="hBox">
          <padding>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
          </padding>
-         <TextField fx:id="tfKeyword" HBox.hgrow="ALWAYS"/>
-         <Button fx:id="btnClear" disable="true" mnemonicParsing="false"/>
       </HBox>
-      <TableView fx:id="tableView">
-      </TableView>
+      <AnchorPane fx:id="iconPane" prefHeight="600" maxHeight="600">
+      </AnchorPane>
    </VBox>
 </AnchorPane>

@@ -2,6 +2,7 @@ package com.mindolph.base.editor;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchBar;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
@@ -73,6 +74,9 @@ public interface Editable {
     void save() throws IOException;
 
     void export();
+
+    // since 1.10
+    void onSnippet(Snippet snippet);
 
     void dispose();
 
