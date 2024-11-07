@@ -7,7 +7,7 @@
     <groupId>com.mindolph</groupId>
     <artifactId>mindolph</artifactId>
     <packaging>pom</packaging>
-    <version>1.9.3</version>
+    <version>1.9.4</version>
     <modules>
         <module>mindolph-fx</module>
         <module>mindolph-core</module>
