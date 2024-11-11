@@ -1,5 +1,14 @@
 # Change Logs
 
+
+### V1.10.0 Unstable Release
+
+* Feature: new snippet panel for all files; move PlantUML snippets to the global snippet panel.
+* Feature: add snippet support for mind map by emoticons.
+* Improvement: refactored the emoticon dialog with new version emoticon view.
+* Fix: locating folder from `go to file` dialog doesn't work if `auto select` option is disabled by user.
+
+
 ### V1.9.4 Release
 
 * Improvement: `remove collection` menu item should be disabled for `default` collection.

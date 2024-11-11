@@ -15,8 +15,10 @@ Mindolph is an open source personal knowledge management software for all deskto
 ### Features
 * Create and manage your own files in separate workspaces with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
 * Organize your files as tree in your workspaces.
+* Save opened files  as a named `Collection` to manage related files even from different workspaces.
 * Multiple tabs for opening files instead of a single file window, making it easy to switch back and forth between files.
 * Supports Mind Map(`*.mmd`), Markdown(`*.md`), PlantUML(`*.puml`), CSV sheet(`*.csv`) and plain text(`*.txt`) file formats, more formats will be supported in the future.
+* Outline view for active opend file.
 * Quickly navigate to file and search text in files under specific folder.
 * Mind Map:
 	* Edit mind map easily and quickly with key shortcuts.
@@ -76,13 +78,13 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|| |[v1.9.x](docs/release-notes/v1.9/v1.9.md)|[v1.9.x](docs/release-notes/v1.9/v1.9.md)| Release notes |
-|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-x64.dmg) |[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3-x64.dmg) | Intel |
-|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-aarch64.dmg) |[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.msi) |[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3.msi) | |
-|Debian|.deb|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.deb)|[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.rpm)|[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3.rpm)| |
-|Java Executable|.jar|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.jar)|[v1.9.3](https://github.com/mindolph/Mindolph/releases/download/v1.9.3/Mindolph-1.9.3.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.9.4.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-22`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-22\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.9.4.jar` |
+|| |[v1.9.x](docs/release-notes/v1.9/v1.9.md)|[v1.10.x](docs/release-notes/v1.10/v1.10.md)| Release notes |
+|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-x64.dmg) |[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0-x64.dmg) | Intel |
+|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-aarch64.dmg) |[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.msi) |[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.msi) | |
+|Debian|.deb|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.deb)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.rpm)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.rpm)| |
+|Java Executable|.jar|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.jar)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.jar)| Java 17 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.9.4.jar`  </br> If not, Download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-22`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-22\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.9.4.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -93,9 +95,8 @@ Mindolph is an open source personal knowledge management software for all deskto
 Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for more details.
 
 Future Plan:
-
-* 1.9: File Collection and Outline.
 * 1.10: Snippet Feature to quickly insert snippet for many file types.
+* 1.11: Improment and bug fixing.
 
 ### Buy me a cup of coffee
 
