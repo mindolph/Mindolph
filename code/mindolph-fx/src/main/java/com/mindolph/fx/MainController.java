@@ -295,6 +295,7 @@ public class MainController extends BaseController implements Initializable,
     private void loadCollections() {
         collectionToggleGroup = new ToggleGroup();
         rmiCollectionDefault = new RadioMenuItem("default");
+        rmiCollectionDefault.setUserData("default");
         rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
         rmiCollectionDefault.setOnAction(event -> {
             // emit event to close all files of current collection and load default collection.
@@ -484,7 +485,7 @@ public class MainController extends BaseController implements Initializable,
             // save recent workspaces
             List<String> recentWorkspacePaths = fxPreferences.getPreference(MINDOLPH_PROJECTS_RECENT, new LinkedList<>());
             recentWorkspacePaths.remove(workspaceDir.getPath()); // remove only if contains.
-            recentWorkspacePaths.add(0, workspaceDir.getPath()); // add to the first.
+            recentWorkspacePaths.addFirst(workspaceDir.getPath()); // add to the first.
             fxPreferences.savePreference(MINDOLPH_PROJECTS_RECENT, recentWorkspacePaths);
             initRecentWorkspacesMenu();
         }
@@ -829,7 +830,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onMenuAbout(ActionEvent event) {
         String appVersion = getClass().getPackage().getImplementationVersion();
-        log.info("app version: " + appVersion);
+        log.info("app version: %s".formatted(appVersion));
         AboutDialog aboutDialog = new AboutDialog();
         aboutDialog.showAndWait();
     }
