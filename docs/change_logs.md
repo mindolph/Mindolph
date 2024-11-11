@@ -1,5 +1,10 @@
 # Change Logs
 
+### V1.9.4 Release
+
+* Improvement: `remove collection` menu item should be disabled for `default` collection.
+* Fix: locating folder from `go to file` dialog doesn't work if `auto select` option is disabled by user.
+* update JavaFx to 23.0.1 and other dependencies.
 
 ### V1.9.3 Unstable Release
 

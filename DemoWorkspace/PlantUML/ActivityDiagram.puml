@@ -1,5 +1,7 @@
 @startuml
 
+title Demo for Activity Diagram
+
 start
 :ClickServlet.handleRequest();
 :new page;
@@ -32,5 +34,10 @@ else
 endif
 
 stop
+
+@enduml
+
+
+@startuml
 
 @enduml
