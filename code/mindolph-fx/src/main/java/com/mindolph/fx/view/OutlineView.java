@@ -97,6 +97,12 @@ public class OutlineView extends BaseView {
         });
     }
 
+    /**
+     * Recursive load tree node.
+     *
+     * @param treeItem
+     * @param parentNode
+     */
     private void loadOutlineTreeNode(TreeItem<OutlineItemData> treeItem, Node parentNode) {
         if (log.isTraceEnabled()) log.trace("Load items of a tree node to tree view node");
         for (Node node : parentNode.getChildren()) {
