@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.attributes.emoticon;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mindmap.I18n;
-import com.mindolph.mindmap.dialog.IconDialog;
+import com.mindolph.mindmap.dialog.EmoticonDialog;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -22,8 +22,8 @@ public class EmoticonPopUpMenuExtension extends BasePopupMenuItemExtension {
         MenuItem menuItem = new MenuItem(I18n.getIns().getString("Emoticons.MenuTitle"), FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
 //        result.setToolTipText(BUNDLE.getString("Emoticons.MenuTooltip"));
         menuItem.setOnAction(e -> {
-            IconDialog iconDialog = new IconDialog(AttributeUtils.getIconAttribute(activeTopic));
-            String selectedName = iconDialog.showAndWait();
+            EmoticonDialog dialog = new EmoticonDialog(AttributeUtils.getIconAttribute(activeTopic));
+            String selectedName = dialog.showAndWait();
             if (selectedName != null) {
                 context.setIconForSelectedTopics(selectedName);
             }

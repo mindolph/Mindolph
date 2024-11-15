@@ -217,7 +217,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 
     // @since 1.7
     private void withPlugins(Consumer<Plugin> consumer) {
-        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(this.getFileType());
+        Collection<Plugin> plugins = PluginManager.getIns().findPlugins(this.getFileType());
         for (Plugin plugin : plugins) {
             consumer.accept(plugin);
         }
@@ -225,7 +225,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 
     // @since 1.7
     private void withGenerators(Consumer<Generator> consumer) {
-        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(this.getFileType());
+        Collection<Plugin> plugins = PluginManager.getIns().findPlugins(this.getFileType());
         for (Plugin plugin : plugins) {
             Optional<Generator> opt = plugin.getGenerator(this.hashCode(), this.getFileType());
             if (opt.isPresent()) {
@@ -268,7 +268,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                 .subscribe(s -> {
                     // non-blocking
                     new Thread(() -> {
-                        Collection<Plugin> plugins = PluginManager.getIns().findPlugin(getFileType());
+                        Collection<Plugin> plugins = PluginManager.getIns().findPlugins(getFileType());
                         for (Plugin plugin : plugins) {
                             Optional<InputHelper> opt = plugin.getInputHelper();
                             opt.ifPresent(inputHelper -> inputHelper.updateContextText(this.hashCode(), s));

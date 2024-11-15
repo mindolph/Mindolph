@@ -38,7 +38,7 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
     private MenuItem miRemove;
 
     public RecentView() {
-        super("/view/recent_view.fxml");
+        super("/view/recent_view.fxml", false);
         listView.setCellFactory(param -> new RecentViewCell());
         listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {

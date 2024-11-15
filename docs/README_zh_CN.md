@@ -16,8 +16,10 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 ### 功能
 * 可以创建多个工作空间来管理您的文件。并且文件保存在您本机的存储上，相较于基于云的方案，您拥有对它们完全的掌控。
 * 工作空间采用树形目录结构来组织文件。
+* 可以把打开的文件保存为一个集合（`Collection`），哪怕文件位于不同的工作空间。
 * 多标签页打开文件而不是单文件窗口，可以方便的在多个文件之间来回切换。
 * 支持思维导图(`*.mmd`), Markdown(`*.md`), PlantUML(`*.puml`), CSV 表格(`*.csv`) 以及纯文本(`*.txt`)等多种文件格式，后续还会支持更多格式。
+* 支持文件大纲视图。
 * 快速导航并打开文件，以及在任意文件夹下搜索包含指定内容的文件。
 * 思维导图:
 	* 支持快捷键可以轻松的编辑思维导图。
@@ -77,13 +79,13 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|| |[v1.8.x](release-notes/v1.8/v1.8_zh_CN.md)|[v1.9.x](release-notes/v1.9/v1.9_zh_CN.md)| 发布记录 |
-|macOS|.dmg|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6-x64.dmg)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2-x64.dmg)| Intel |
-|macOS|.dmg|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6-aarch64.dmg) |[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
-|Windows|.msi|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.msi)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.msi)| |
-|Debian|.deb|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.deb)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.rpm)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.rpm)| |
-|Java Executable|.jar|[v1.8.6](https://github.com/mindolph/Mindolph/releases/download/v1.8.6/Mindolph-1.8.6.jar)|[v1.9.2](https://github.com/mindolph/Mindolph/releases/download/v1.9.2/Mindolph-1.9.2.jar)| Java 17 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.8.6.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-22`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-22\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.8.6.jar` |
+|| |[v1.9.x](release-notes/v1.9/v1.9_zh_CN.md)|[v1.10.x](release-notes/v1.10/v1.10_zh_CN.md)| 发布记录 |
+|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-x64.dmg)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0-x64.dmg)| Intel |
+|macOS|.dmg|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4-aarch64.dmg) |[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
+|Windows|.msi|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.msi)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.msi)| |
+|Debian|.deb|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.deb)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.rpm)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.rpm)| |
+|Java Executable|.jar|[v1.9.4](https://github.com/mindolph/Mindolph/releases/download/v1.9.4/Mindolph-1.9.4.jar)|[v1.10.0](https://github.com/mindolph/Mindolph/releases/download/v1.10.0/Mindolph-1.10.0.jar)| Java 21 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.9.4.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-22`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-22\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.9.4.jar` |
 
 
 
@@ -95,5 +97,9 @@ Mindolph 是基于 JavaFX 开发的, 更多详情请点击[code/README.md](../co
 
 计划:
 
-* 1.9： 文件集合和大纲。
-* 1.10：代码片段功能重新设计并支持更多文件类型。
+* 1.10：全局的代码片段快速插入功能。
+* 1.11：功能改进和bug修复
+
+### 给我买杯咖啡吧
+
+<img src="bmc_qr.png" width="30%"/>

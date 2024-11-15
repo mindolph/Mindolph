@@ -1,5 +1,27 @@
 # Change Logs
 
+
+### V1.10.0 Unstable Release
+
+* Feature: new snippet panel for all files; move PlantUML snippets to the global snippet panel.
+* Feature: add snippet support for mind map by emoticons.
+* Improvement: refactored the emoticon dialog with new version emoticon view.
+* Fix: locating folder from `go to file` dialog doesn't work if `auto select` option is disabled by user.
+
+
+### V1.9.4 Release
+
+* Improvement: `remove collection` menu item should be disabled for `default` collection.
+* Fix: locating folder from `go to file` dialog doesn't work if `auto select` option is disabled by user.
+* update JavaFx to 23.0.1 and other dependencies.
+
+### V1.9.3 Unstable Release
+
+* Improvement: add image quick insert button to the toolbar to Markdown code editor.  
+* Improvement: optimize the outline view to do rendering only when it's active.   
+* update bundled JRE to 22.0.2  
+
+
 ### V1.9.2 Unstable Release
 
 * Improvement: add toast notification for saving and deleting collection.

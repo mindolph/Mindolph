@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.base.BaseView;
 import com.mindolph.base.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.collection.CollectionManager;
@@ -43,9 +44,7 @@ import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.snippet.IconSnippetGroup;
 import com.mindolph.plantuml.PlantUmlEditor;
-import com.mindolph.plantuml.snippet.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -79,6 +78,8 @@ public class MainController extends BaseController implements Initializable,
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
     private final CollectionManager cm = CollectionManager.getIns();
+
+    private final Map<Tab, BaseView> tabViewMap = new HashMap<>();
 
     @FXML
     private FileTabView fileTabView;
@@ -140,6 +141,8 @@ public class MainController extends BaseController implements Initializable,
     private MenuItem miFind;
     @FXML
     private MenuItem miReplace;
+    @FXML
+    private MenuItem miRemoveCollection;
 
     private RadioMenuItem rmiCollectionDefault;
 
@@ -157,46 +160,6 @@ public class MainController extends BaseController implements Initializable,
         // handle the file collections.
         this.loadCollections();
 
-        // for snippet
-        EventBus.getIns().subscribeFileActivated(fileChange -> {
-            NodeData nodeData = fileChange.newData();
-            if (fileChange.oldData() != null && fileChange.newData() != null
-                    && fileChange.oldData().isSameFileType(fileChange.newData())) {
-                return;
-            }
-            if (nodeData == null) {
-                snippetView.reload(null);
-                return;
-            }
-            switch (nodeData.getNodeType()) {
-                case FOLDER -> {
-                    snippetView.reload(null);
-                }
-                case FILE -> {
-                    if (nodeData.isPlantUml()) {
-                        snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
-                                        new DiagramSnippetGroup(),
-                                        new SkinparamSnippetGroup(),
-                                        new ColorSnippetGroup(),
-                                        new ThemeSnippetGroup(),
-                                        new CreoleSnippetGroup(),
-                                        new ProcessingSnippetGroup(),
-                                        new BuiltinFunctionsSnippetGroup()
-//                        new CustomSnippetGroup()
-                                )
-                        );
-                    }
-                    else if (nodeData.isMindMap()) {
-                        IconSnippetGroup iconSnippetGroup = new IconSnippetGroup();
-                        snippetView.reload(List.of(iconSnippetGroup));
-                    }
-                    else {
-                        snippetView.reload(null);
-                    }
-                }
-            }
-        });
-
         SceneRestore sceneRestore = SceneRestore.getInstance();
 
         // register state changes to store.
@@ -204,7 +167,7 @@ public class MainController extends BaseController implements Initializable,
         tabWorkspaces.setGraphic(FontIconManager.getIns().getIcon(IconKey.WORKSPACE));
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
         tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE));
-        tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
+        tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.SNIPPET));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);
@@ -250,7 +213,8 @@ public class MainController extends BaseController implements Initializable,
                 .subscribeMenuStateChange(MenuTag.SAVE_ALL, enable -> miSaveAll.setDisable(!enable))
                 .subscribeMenuStateChange(MenuTag.CLOSE_TAB, enable -> miCloseTab.setDisable(!enable))
                 .subscribeMenuStateChange(MenuTag.FIND, enable -> miFind.setDisable(!enable))
-                .subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable));
+                .subscribeMenuStateChange(MenuTag.REPLACE, enable -> miReplace.setDisable(!enable))
+                .subscribeMenuStateChange(MenuTag.REMOVE_COLLECTION, enable -> miRemoveCollection.setDisable(!enable));
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.PRINT, enable -> miPrint.setDisable(!enable))
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.NEW_FILE, enable -> miNewFile.setDisable(!enable));
 //        EventBus.getIns().subscribeMenuStateChange(MenuTag.OPEN_FILE, enable -> miOpenFile.setDisable(!enable))
@@ -268,12 +232,20 @@ public class MainController extends BaseController implements Initializable,
 
         EventBus.getIns().subscribePreferenceChanged(fileType -> fileTabView.reloadEditorsByType(fileType));
 
-        leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == tabRecentFiles) {
+        tabViewMap.put(tabOutline, outlineView);
+        tabViewMap.put(tabWorkspaces, workspaceView);
+        tabViewMap.put(tabRecentFiles, recentView);
+        tabViewMap.put(tabSnippet, snippetView);
+        leftTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedTab) -> {
+            if (selectedTab == tabRecentFiles) {
                 // load recent files only at the first time
                 if (!recentView.hasData()) {
                     recentView.load();
                 }
+            }
+            // switch the activation of all views with tabs.
+            for (Tab tab : tabViewMap.keySet()) {
+                tabViewMap.get(tab).setActive(tab == selectedTab);
             }
         });
         log.debug("Main controller initialized");
@@ -323,6 +295,7 @@ public class MainController extends BaseController implements Initializable,
     private void loadCollections() {
         collectionToggleGroup = new ToggleGroup();
         rmiCollectionDefault = new RadioMenuItem("default");
+        rmiCollectionDefault.setUserData("default");
         rmiCollectionDefault.setToggleGroup(collectionToggleGroup);
         rmiCollectionDefault.setOnAction(event -> {
             // emit event to close all files of current collection and load default collection.
@@ -379,8 +352,8 @@ public class MainController extends BaseController implements Initializable,
                 workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         else if (fileData.getFile().isDirectory()) {
-            if (autoSelect)
-                workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
+//            if (autoSelect)
+            workspaceView.selectByNodeDataInAppropriateWorkspace(fileData);
         }
         if (visibleInWorkspace && autoSelect) {
             splitPane.showAll();
@@ -512,7 +485,7 @@ public class MainController extends BaseController implements Initializable,
             // save recent workspaces
             List<String> recentWorkspacePaths = fxPreferences.getPreference(MINDOLPH_PROJECTS_RECENT, new LinkedList<>());
             recentWorkspacePaths.remove(workspaceDir.getPath()); // remove only if contains.
-            recentWorkspacePaths.add(0, workspaceDir.getPath()); // add to the first.
+            recentWorkspacePaths.addFirst(workspaceDir.getPath()); // add to the first.
             fxPreferences.savePreference(MINDOLPH_PROJECTS_RECENT, recentWorkspacePaths);
             initRecentWorkspacesMenu();
         }
@@ -807,6 +780,8 @@ public class MainController extends BaseController implements Initializable,
             onOpenedFileRestore(files.stream().map(File::new).toList());
         }
         this.cm.saveActiveCollectionName(collectionName);
+
+        EventBus.getIns().notifyMenuStateChange(MenuTag.REMOVE_COLLECTION, !"default".equals(collectionName));
     }
 
 
@@ -855,7 +830,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onMenuAbout(ActionEvent event) {
         String appVersion = getClass().getPackage().getImplementationVersion();
-        log.info("app version: " + appVersion);
+        log.info("app version: %s".formatted(appVersion));
         AboutDialog aboutDialog = new AboutDialog();
         aboutDialog.showAndWait();
     }

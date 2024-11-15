@@ -259,7 +259,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         if (elementUnderMouse != null) {
             ctxMenu.getItems().add(new SeparatorMenuItem());
-            Collection<Plugin> plugins = PluginManager.getIns().findPlugin(SupportFileTypes.TYPE_MIND_MAP);
+            Collection<Plugin> plugins = PluginManager.getIns().findPlugins(SupportFileTypes.TYPE_MIND_MAP);
             if (!plugins.isEmpty()) {
                 for (Plugin plugin : plugins) {
                     Optional<Generator> opt = plugin.getGenerator(this.hashCode(), SupportFileTypes.TYPE_MIND_MAP);

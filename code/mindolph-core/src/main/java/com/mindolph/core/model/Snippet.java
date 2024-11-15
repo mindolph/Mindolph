@@ -1,5 +1,8 @@
 package com.mindolph.core.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Snippet for quick inserting.
  *
@@ -45,4 +48,19 @@ public class Snippet<T extends Snippet<?>> {
         return (T) this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Snippet<?> snippet = (Snippet<?>) o;
+
+        return new EqualsBuilder().append(code, snippet.code).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(code).toHashCode();
+    }
 }

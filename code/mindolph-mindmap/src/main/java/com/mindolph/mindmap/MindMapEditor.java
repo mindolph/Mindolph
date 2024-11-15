@@ -248,7 +248,8 @@ public class MindMapEditor extends BaseEditor {
             return;
         }
         for (TopicNode childTopic : rootTopic.getChildren()) {
-            String content = StringUtils.abbreviate(childTopic.getText(), 30);
+            String content = StringUtils.isNotBlank(childTopic.getText()) ? StringUtils.abbreviate(childTopic.getText(), 30)
+                    : "[Empty Topic]";
             MindMapAnchor mindMapAnchor = new MindMapAnchor();
             mindMapAnchor.setText(childTopic.getText());
             mindMapAnchor.setParentText(rootTopic.getText());

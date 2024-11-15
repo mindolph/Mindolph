@@ -138,7 +138,7 @@
             <Menu fx:id="menuCollections" text="_Collections">
                 <MenuItem onAction="#onCreateCollection" text="Create Collection..."/>
                 <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
-                <MenuItem onAction="#onRemoveCollection" text="Remove Collection"/>
+                <MenuItem fx:id="miRemoveCollection" onAction="#onRemoveCollection" text="Remove Collection"/>
                 <SeparatorMenuItem/>
             </Menu>
             <Menu mnemonicParsing="true" text="_Help">

@@ -113,7 +113,7 @@ public class InputHelperManager {
         stateMachine = new StateMachine<>(stateBuilder);
         stateMachine.startState(NO_HELP);
 
-        supportedPlugins = PluginManager.getIns().findPlugin(this.fileType);
+        supportedPlugins = PluginManager.getIns().findPlugins(this.fileType);
         if (!CollectionUtils.isEmpty(supportedPlugins)) {
             this.supportedPlugins = supportedPlugins.stream().sorted(Comparator.comparing(Plugin::getOrder)).toList();
         }
