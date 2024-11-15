@@ -27,7 +27,6 @@
         function onload() {
             console.log('onload()');
             console.log('init scroll position');
-            ();
             console.log('register onscroll event handler');
             setTimeout(()=> {
                 window.onscroll = function() {
@@ -46,6 +45,7 @@
                 link.onclick = () => {
                     window.clickListener.onFileLinkClicked(link.href);
                 }
+                link.target='_blank';
             }
         }
     </script>
