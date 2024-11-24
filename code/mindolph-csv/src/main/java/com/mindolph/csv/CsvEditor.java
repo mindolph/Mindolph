@@ -313,6 +313,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
         log.debug("stubRowIdx: %d - stubColIdx: %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
         int colIdx = tableView.getColumns().indexOf(column);
         int dataIdx = colIdx - 1;// -1 because of the index column.
+        if (tableView.getItems().isEmpty()) {
+            return; // avoid exception when undo editing from an empty row.
+        }
         Row row = tableView.getItems().get(rowIdx);
         row.updateValue(dataIdx, newText);
         if (rowIdx == 0) {
