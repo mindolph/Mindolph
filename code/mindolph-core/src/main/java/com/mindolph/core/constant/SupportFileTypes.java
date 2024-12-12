@@ -11,6 +11,7 @@ public interface SupportFileTypes {
     String TYPE_WORKSPACE = "workspace"; // special file type
     String TYPE_FOLDER = "folder"; // special file type
 
+    String TYPE_ALL = "all"; // for all file types
     String TYPE_MIND_MAP = "mmd";
     String TYPE_PLANTUML = "puml";
     String TYPE_MARKDOWN = "md";

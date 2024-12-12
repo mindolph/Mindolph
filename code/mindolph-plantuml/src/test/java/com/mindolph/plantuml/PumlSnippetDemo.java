@@ -1,8 +1,11 @@
 package com.mindolph.plantuml;
 
+import com.mindolph.base.control.snippet.BaseSnippetGroup;
+import com.mindolph.base.control.snippet.CustomSnippetGroup;
 import com.mindolph.base.control.snippet.SnippetView;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.plantuml.snippet.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -18,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -46,16 +50,15 @@ public class PumlSnippetDemo extends Application implements Initializable {
         System.out.println(Color.YELLOW.getSaturation());
         System.out.println(Color.YELLOW.getBrightness());
         PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
-        snippetView.reload(Arrays.asList(new GeneralSnippetGroup(),
-                        new SkinparamSnippetGroup(),
-                        new ColorSnippetGroup(),
-                        new ThemeSnippetGroup(),
-                        new CreoleSnippetGroup(),
-                        new ProcessingSnippetGroup(),
-                        new BuiltinFunctionsSnippetGroup(),
-                        new CustomSnippetGroup()
-                )
-        );
+        List<BaseSnippetGroup> groups = Arrays.asList(new GeneralSnippetGroup(),
+                new SkinparamSnippetGroup(),
+                new ColorSnippetGroup(),
+                new ThemeSnippetGroup(),
+                new CreoleSnippetGroup(),
+                new ProcessingSnippetGroup(),
+                new BuiltinFunctionsSnippetGroup(),
+                new CustomSnippetGroup());
+        snippetView.reload(groups, SupportFileTypes.TYPE_PLANTUML);
         EventBus.getIns().subscribeSnippetApply(snippet -> textArea.setText(snippet.getCode()));
     }
 

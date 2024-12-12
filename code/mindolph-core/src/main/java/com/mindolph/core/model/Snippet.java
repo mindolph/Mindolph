@@ -7,8 +7,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Snippet for quick inserting.
  *
  * @author mindolph.com@gmail.com
+ * @param <T> Type of inheritor
  */
-public class Snippet<T extends Snippet<?>> {
+public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
     protected String title;
     protected String description;
     protected String code;
@@ -62,5 +63,10 @@ public class Snippet<T extends Snippet<?>> {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(code).toHashCode();
+    }
+
+    @Override
+    public int compareTo(Snippet<T> o) {
+        return this.title.compareTo(o.title);
     }
 }

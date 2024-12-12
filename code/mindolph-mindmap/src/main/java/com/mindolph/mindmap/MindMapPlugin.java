@@ -27,7 +27,7 @@ public class MindMapPlugin extends BasePlugin {
     public Optional<SnippetHelper> getSnippetHelper() {
         return Optional.of(new SnippetHelper() {
             @Override
-            public Optional<SnippetViewable> createView() {
+            public Optional<SnippetViewable> createView(BaseSnippetGroup snippetGroup) {
                 IconView iconView = new IconView();
                 iconView.setPrefHeight(9999);
                 return Optional.of(iconView);
