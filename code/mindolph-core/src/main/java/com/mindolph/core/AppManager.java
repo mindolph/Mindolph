@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- *
  * @since 1.10.1
  */
 public class AppManager {
@@ -41,8 +40,7 @@ public class AppManager {
         if (snippetsRecord == null) {
             return new ArrayList<>();
         }
-        return snippetsRecord.items().stream().map((Function<SnippetRecord, Snippet<?>>) sr ->
-                new Snippet<>().title(sr.title()).code(sr.code())).sorted().toList();
+        return snippetsRecord.items().stream().map((Function<SnippetRecord, Snippet<?>>) Snippet::new).sorted().toList();
     }
 
     public boolean doesExistByTitle(String fileType, String title) {
@@ -66,11 +64,11 @@ public class AppManager {
         }
         for (Snippet<?> snippet : snippets) {
             if (!overwrite
-                    && snippetsRecord.items.stream().anyMatch(s -> s.title.equals(snippet.getTitle()))){
+                    && snippetsRecord.items.stream().anyMatch(s -> s.title.equals(snippet.getTitle()))) {
                 continue; // skip for adding existing snippet(by title)
             }
             snippetsRecord.items().removeIf(item -> item.title.equals(snippet.getTitle()));
-            snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType));
+            snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, snippet.getFilePath()));
         }
         this.saveSnippetsRecord(snippetsRecord, fileType);
     }
@@ -88,9 +86,9 @@ public class AppManager {
     }
 
     private SnippetsRecord loadSnippetsRecord(String fileType) {
-        File snippetsFile = new File(baseDir, fileType + ".snippets");
+
         try {
-            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile), SnippetsRecord.class);
+            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
             if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
             return snippetsRecord;
         } catch (FileNotFoundException e) {
@@ -100,22 +98,22 @@ public class AppManager {
 
     private void saveSnippetsRecord(SnippetsRecord snippetsRecord, String fileType) {
         String json = new Gson().toJson(snippetsRecord, SnippetsRecord.class);
-        File saveTo = new File(baseDir, fileType + ".snippets");
         try {
-            IOUtils.write(json, new FileOutputStream(saveTo), StandardCharsets.UTF_8);
+            IOUtils.write(json, new FileOutputStream(snippetsFile(fileType)), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private File snippetsFile(String fileType) {
+        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment?".dev":""));
+        return snippetsFile;
+    }
+
     public record SnippetsRecord(int version, List<SnippetRecord> items) {
-
     }
 
-    public record SnippetRecord(String title, String code, String type, String fileType) {
+    public record SnippetRecord(String title, String code, String type, String fileType, String filePath) {
     }
 
-    public record ImageSnippetRecord(String title, String code, String type, String fileType, String filePath) {
-
-    }
 }

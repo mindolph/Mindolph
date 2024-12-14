@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -19,6 +20,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -61,6 +63,12 @@ public class SnippetCell extends ListCell<Snippet> {
                 tooltip.setText(snippet.getDescription());
                 Tooltip.install(this, tooltip);
             }
+            if (StringUtils.isNotBlank(snippet.getFilePath())) {
+                File file = new File(snippet.getFilePath());
+                Image image = new Image(file.toURI().toString());
+                icon.setImage(image);
+                icon.setFitHeight(48);
+            }
             if (snippet instanceof ColorSnippet) {
                 String colorName = StringUtils.remove(snippet.getTitle(), '#');
                 Color color = Color.valueOf(colorName);
@@ -70,6 +78,9 @@ public class SnippetCell extends ListCell<Snippet> {
                     this.setBackground(b);
                     title.setTextFill(textColor);
                 }
+            }
+            else if (snippet instanceof ImageSnippet imageSnippet) {
+                icon.setImage(imageSnippet.getImage());
             }
         }
     }

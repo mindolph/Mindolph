@@ -2,7 +2,7 @@ package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.BaseView;
-import com.mindolph.base.Env;
+import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.collection.CollectionManager;
 import com.mindolph.base.constant.IconKey;

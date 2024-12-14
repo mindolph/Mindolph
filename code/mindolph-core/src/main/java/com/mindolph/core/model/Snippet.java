@@ -1,5 +1,6 @@
 package com.mindolph.core.model;
 
+import com.mindolph.core.AppManager.SnippetRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -10,15 +11,28 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @param <T> Type of inheritor
  */
 public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
+
+    public static final String TYPE_TEXT = "text";
+    public static final String TYPE_IMAGE = "image";
+
     protected String title;
     protected String description;
     protected String code;
+    protected String type; //'text' 'image'
+    protected String filePath; // for image
 
     public Snippet() {
     }
 
     public Snippet(String title) {
         this.title = title;
+    }
+
+    public Snippet(SnippetRecord sr) {
+        this.title(sr.title())
+                .type(sr.type())
+                .code(sr.code())
+                .filePath(sr.filePath());
     }
 
 
@@ -32,6 +46,14 @@ public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
 
     public String getCode() {
         return code;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public T title(String title) {
@@ -48,6 +70,24 @@ public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
         this.code = code;
         return (T) this;
     }
+
+    public T type(String type) {
+        this.type = type;
+        return (T) this;
+    }
+
+    public T filePath(String filePath) {
+        this.filePath = filePath;
+        return (T) this;
+    }
+
+//    public String getFilePath() {
+//        return filePath;
+//    }
+//
+//    public void setFilePath(String filePath) {
+//        this.filePath = filePath;
+//    }
 
     @Override
     public boolean equals(Object o) {

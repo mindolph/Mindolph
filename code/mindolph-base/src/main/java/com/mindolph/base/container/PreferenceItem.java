@@ -1,10 +1,7 @@
 package com.mindolph.base.container;
 
 import javafx.beans.DefaultProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
@@ -21,6 +18,8 @@ import javafx.scene.control.Skin;
 public class PreferenceItem extends Control {
 
     private final StringProperty name = new SimpleStringProperty("Label");
+
+    private final DoubleProperty labelPrefWidth = new SimpleDoubleProperty(300);
 
     /**
      *
@@ -86,5 +85,17 @@ public class PreferenceItem extends Control {
             orientation = new SimpleObjectProperty<>();
         }
         return orientation;
+    }
+
+    public void setLabelPrefWidth(double value) {
+        labelPrefWidth.set(value);
+    }
+
+    public double getLabelPrefWidth() {
+        return labelPrefWidth.get();
+    }
+
+    public DoubleProperty labelPrefWidthProperty() {
+        return labelPrefWidth;
     }
 }

@@ -4,26 +4,29 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox layoutX="140.0" layoutY="42.0" prefHeight="400.0" prefWidth="400.0" spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <PreferenceItem name="Type: ">
-            <RadioButton fx:id="rdTypeText" selected="true" text="Text" />
-            <RadioButton fx:id="rdTypeIcon" text="icon" />
+<AnchorPane prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox layoutX="140.0" layoutY="42.0" prefHeight="360.0" prefWidth="400.0" spacing="4.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <PreferenceItem name="Type: " labelPrefWidth="150">
+            <RadioButton fx:id="rdTypeText" selected="true" text="Text"/>
+            <RadioButton fx:id="rdTypeImage" text="Image"/>
         </PreferenceItem>
-        <PreferenceItem name="Title: ">
-            <TextField fx:id="tfTitle" promptText="Input title for this snippet" />
+        <PreferenceItem name="Title: " labelPrefWidth="150">
+            <TextField fx:id="tfTitle" promptText="Input title for this snippet" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Code: " prefHeight="100">
-            <TextArea fx:id="taCode" prefHeight="80" prefWidth="140.0" promptText="Input code for this snippet" />
+        <PreferenceItem name="Code: " labelPrefWidth="150" prefHeight="150">
+            <TextArea fx:id="taCode" prefHeight="150" prefWidth="300.0" promptText="Input code for this snippet"/>
         </PreferenceItem>
-        <PreferenceItem name="Icon/Image: " prefHeight="160">
-            <HBox prefWidth="160" maxWidth="160" prefHeight="160" maxHeight="160" spacing="4" style="-fx-border-width: 1; -fx-border-color: darkgray;">
+        <PreferenceItem fx:id="itemImage" name="Icon/Image: " labelPrefWidth="150" prefHeight="160">
+            <HBox prefWidth="160" maxWidth="160" prefHeight="160" maxHeight="160" spacing="4"
+                  style="-fx-border-width: 1; -fx-border-color: lightgray;">
                 <Button fx:id="btnIconImage" prefWidth="160" maxWidth="160" prefHeight="160" maxHeight="160"
-                style="-fx-background-color: lightdark"/>
+                        style="-fx-background-color: lightgray"/>
             </HBox>
         </PreferenceItem>
         <padding>
-            <Insets bottom="4.0" top="4.0" />
+            <Insets bottom="4.0" top="4.0"/>
         </padding>
     </VBox>
 </AnchorPane>

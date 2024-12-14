@@ -51,7 +51,7 @@ public class PreferenceItemSkin extends SkinBase<PreferenceItem> {
         PreferenceItem preferenceItem = getSkinnable();
         label.setAlignment(Pos.TOP_RIGHT);
         label.setMinWidth(100);
-        label.setPrefWidth(300);
+        label.setPrefWidth(preferenceItem.getLabelPrefWidth());
         root.setMinHeight(24);
 //        root.setPrefHeight(36); this should not be set since it causes multiple children vertical layout abnormal.
         root.setSpacing(16);

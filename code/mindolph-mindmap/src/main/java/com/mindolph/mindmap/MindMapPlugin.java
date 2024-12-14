@@ -2,6 +2,8 @@ package com.mindolph.mindmap;
 
 import com.mindolph.base.control.IconView;
 import com.mindolph.base.control.snippet.BaseSnippetGroup;
+import com.mindolph.base.control.snippet.CustomSnippetGroup;
+import com.mindolph.base.control.snippet.ListSnippetView;
 import com.mindolph.base.control.snippet.SnippetViewable;
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.SnippetHelper;
@@ -28,6 +30,11 @@ public class MindMapPlugin extends BasePlugin {
         return Optional.of(new SnippetHelper() {
             @Override
             public Optional<SnippetViewable> createView(BaseSnippetGroup snippetGroup) {
+                if (snippetGroup instanceof CustomSnippetGroup) {
+                    ListSnippetView listSnippetView = new ListSnippetView(SupportFileTypes.TYPE_MIND_MAP);
+                    listSnippetView.setEditable(true);
+                    return Optional.of(listSnippetView);
+                }
                 IconView iconView = new IconView();
                 iconView.setPrefHeight(9999);
                 return Optional.of(iconView);
@@ -36,7 +43,8 @@ public class MindMapPlugin extends BasePlugin {
             @Override
             public List<BaseSnippetGroup> getSnippetGroups(String fileType) {
                 IconSnippetGroup iconSnippetGroup = new IconSnippetGroup();
-                return List.of(iconSnippetGroup);
+                CustomSnippetGroup customSnippetGroup = new CustomSnippetGroup();
+                return List.of(iconSnippetGroup, customSnippetGroup);
             }
         });
     }

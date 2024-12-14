@@ -1,5 +1,7 @@
 package com.mindolph.base.control.snippet;
 
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.dialog.SnippetDialog;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.util.LayoutUtils;
@@ -36,9 +38,9 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final ListView<Snippet> listView;
 
-    private final MenuItem miNew = new MenuItem("New Snippet");
-    private final MenuItem miEdit = new MenuItem("Edit Snippet");
-    private final MenuItem miRemove = new MenuItem("Remove Snippet");
+    private final MenuItem miNew = new MenuItem("New Snippet", FontIconManager.getIns().getIcon(IconKey.PLUS));
+    private final MenuItem miEdit = new MenuItem("Edit Snippet", FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+    private final MenuItem miRemove = new MenuItem("Remove Snippet", FontIconManager.getIns().getIcon(IconKey.DELETE));
 
     // event to SnippetView after snippet changes
     private final EventSource<Snippet> snippetChanged = new EventSource<>();
@@ -74,21 +76,21 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
     @Override
     public void handle(ActionEvent actionEvent) {
         if (actionEvent.getSource() == this.miNew) {
-            SnippetDialog snippetDialog = new SnippetDialog(fileType, null);// TODO
+            SnippetDialog snippetDialog = new SnippetDialog(fileType, null);
             Snippet<?> snippet = snippetDialog.showAndWait();
             if (snippet != null) {
                 log.info("Save new snippet '%s'".formatted(snippet.getTitle()));
-                appManager.saveSnippet(fileType, "text", Collections.singletonList(snippet), false);
+                appManager.saveSnippet(fileType, snippet.getType(), Collections.singletonList(snippet), false);
                 snippetChanged.push(null);
             }
         }
         else if (actionEvent.getSource() == this.miEdit) {
             Snippet selectedItem = listView.getSelectionModel().getSelectedItem();
-            SnippetDialog snippetDialog = new SnippetDialog(fileType, selectedItem);// TODO
+            SnippetDialog snippetDialog = new SnippetDialog(fileType, selectedItem);
             Snippet<?> snippet = snippetDialog.showAndWait();
             if (snippet != null) {
                 log.info("Save edited snippet '%s'".formatted(snippet.getTitle()));
-                appManager.saveSnippet(fileType, "text", Collections.singletonList(snippet), true);
+                appManager.saveSnippet(fileType, snippet.getType(), Collections.singletonList(snippet), true);
                 snippetChanged.push(null);
             }
         }

@@ -1,6 +1,6 @@
 package com.mindolph.desktop;
 
-import com.mindolph.base.Env;
+import com.mindolph.core.Env;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.Main;

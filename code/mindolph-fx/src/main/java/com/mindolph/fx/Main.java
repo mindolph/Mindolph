@@ -1,6 +1,5 @@
 package com.mindolph.fx;
 
-import com.mindolph.base.Env;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.event.WindowEventHandler;
 import com.mindolph.fx.helper.SceneRestore;
@@ -22,7 +21,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
