@@ -7,6 +7,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.AppManager;
 import com.mindolph.core.model.Snippet;
+import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -56,7 +57,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
         this.listView.setPrefHeight(9999); // extend the snippet view as possible
         this.listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                Snippet selectedSnippet = listView.getSelectionModel().getSelectedItem();
+                Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
                 EventBus.getIns().notifySnippetApply(selectedSnippet);
             }
         });
@@ -79,27 +80,29 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             SnippetDialog snippetDialog = new SnippetDialog(fileType, null);
             Snippet<?> snippet = snippetDialog.showAndWait();
             if (snippet != null) {
-                log.info("Save new snippet '%s'".formatted(snippet.getTitle()));
+                log.info("Save new snippet '%s' with type '%s'".formatted(snippet.getTitle(), snippet.getType()));
                 appManager.saveSnippet(fileType, snippet.getType(), Collections.singletonList(snippet), false);
                 snippetChanged.push(null);
             }
         }
         else if (actionEvent.getSource() == this.miEdit) {
-            Snippet selectedItem = listView.getSelectionModel().getSelectedItem();
+            Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             SnippetDialog snippetDialog = new SnippetDialog(fileType, selectedItem);
             Snippet<?> snippet = snippetDialog.showAndWait();
             if (snippet != null) {
-                log.info("Save edited snippet '%s'".formatted(snippet.getTitle()));
+                log.info("Save changed snippet '%s' with type '%s'".formatted(snippet.getTitle(), snippet.getType()));
                 appManager.saveSnippet(fileType, snippet.getType(), Collections.singletonList(snippet), true);
                 snippetChanged.push(null);
             }
         }
         else if (actionEvent.getSource() == this.miRemove) {
-            Snippet selectedItem = listView.getSelectionModel().getSelectedItem();
+            Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 log.info("Remove snippet '%s'".formatted(selectedItem.getTitle()));
-                appManager.deleteSnippets(fileType, Collections.singletonList(selectedItem));
-                snippetChanged.push(null);
+                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove this snippet?")) {
+                    appManager.deleteSnippets(fileType, Collections.singletonList(selectedItem));
+                    snippetChanged.push(null);
+                }
             }
         }
     }

@@ -49,9 +49,9 @@ public class SnippetCell extends ListCell<Snippet> {
         private Label title;
         @FXML
         private ImageView icon;
-        private Snippet snippet;
+        private Snippet<?> snippet;
 
-        public ItemController(Snippet snippet) {
+        public ItemController(Snippet<?> snippet) {
             this.snippet = snippet;
         }
 
@@ -79,9 +79,9 @@ public class SnippetCell extends ListCell<Snippet> {
                     title.setTextFill(textColor);
                 }
             }
-            else if (snippet instanceof ImageSnippet imageSnippet) {
-                icon.setImage(imageSnippet.getImage());
-            }
+//            else if (snippet instanceof ImageSnippet imageSnippet) {
+//                icon.setImage(imageSnippet.getImage());
+//            }
         }
     }
 }

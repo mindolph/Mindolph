@@ -11,10 +11,13 @@ import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -47,6 +50,10 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
     @FXML
     private Button btnIconImage;
     @FXML
+    private VBox vbox;
+    @FXML
+    private PreferenceItem itemCode;
+    @FXML
     private PreferenceItem itemImage;
 
     private final String fileType;
@@ -66,7 +73,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
 
         dialog = new CustomDialogBuilder<Snippet<?>>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Snippet")
+                .title(snippet == null ? "New" : "Edit" + " Snippet")
                 .fxmlUri("dialog/snippet_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))
@@ -81,11 +88,11 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
         group.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
             if (t1 == rdTypeText) {
                 disable(btnIconImage);
-                hide(itemImage);
+                switchCodeImage();
             }
             else if (t1 == rdTypeImage) {
                 enable(btnIconImage);
-                show(itemImage);
+                switchCodeImage();
             }
         });
 
@@ -98,7 +105,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
             File defaultDir = SystemUtils.getUserHome();
             File file = DialogFactory.openFileDialog(DialogFactory.DEFAULT_WINDOW, defaultDir,
                     new FileChooser.ExtensionFilter("Icon/Image", "*.png"));
-            if (file.exists()) {
+            if (file != null && file.exists()) {
                 log.debug(file.getAbsolutePath());
                 updateSnippet(this.loadImage(file));
             }
@@ -125,9 +132,26 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
         this.initUI(fileType);
     }
 
+    private void switchCodeImage() {
+        ObservableList<Node> children = vbox.getChildren();
+        if (children.contains(itemImage)) {
+            children.remove(itemImage);
+            if (!children.contains(itemCode)) {
+                children.add(itemCode);
+            }
+        }
+        else {
+            children.remove(itemCode);
+            if (!children.contains(itemImage)) {
+                children.add(itemImage);
+            }
+        }
+    }
+
     private void initUI(String fileType) {
         try {
-            this.fileTypeSnippetMap = JsonUtils.jsonTo(FILE_TYPE_SNIPPET_MAP_IN_JSON, new TypeReference<Map<String, List<String>>>(){});
+            this.fileTypeSnippetMap = JsonUtils.jsonTo(FILE_TYPE_SNIPPET_MAP_IN_JSON, new TypeReference<Map<String, List<String>>>() {
+            });
             log.trace(StringUtils.join(this.fileTypeSnippetMap.get(SupportFileTypes.TYPE_MARKDOWN), ","));
         } catch (IOException e) {
             log.warn("failed to parse file type and snippet type mapping", e);
@@ -140,6 +164,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
                 hide(itemImage, rdTypeImage);
             }
         }
+        vbox.getChildren().remove(itemImage); // Note: remove for switching between types
     }
 
     private Image loadImage(File file) {
@@ -147,6 +172,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(160);
         imageView.setFitHeight(160);
+        btnIconImage.setText(StringUtils.EMPTY);
         btnIconImage.setGraphic(imageView);
         btnIconImage.setUserData(file.getAbsolutePath());
         return image;

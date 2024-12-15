@@ -96,32 +96,37 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                             .extensionFilters(DialogFileFilters.IMAGE_EXTENSION_FILTER).buildAndShow();
                     // TODO remember the selected for next time popup;
                     if (selected != null) {
-                        try {
-                            image = new Image(new FileInputStream(selected));
-                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
-                            Image scaledImage = scaleImageDialog.showAndWait();
-                            if (scaledImage != null) {
-                                String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
-                                String fileName = FilenameUtils.getBaseName(selected.getName());
-                                String filePath;
-                                if (DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
-                                    filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
-                                }
-                                else {
-                                    filePath = null;
-                                }
-                                AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, fileName);
-                                context.doNotifyModelChanged(true);
-                            }
-                        } catch (Exception ex) {
-                            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                            log.error("Unexpected error during loading image file : " + selected, ex);
-                        }
+                        loadImageFileToSelectedTopics(context, selected);
                     }
                 }
             });
         }
         return result;
+    }
+
+    public static void loadImageFileToSelectedTopics(ExtensionContext context, File selected) {
+        Image image;
+        try {
+            image = new Image(new FileInputStream(selected));
+            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
+            Image scaledImage = scaleImageDialog.showAndWait();
+            if (scaledImage != null) {
+                String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
+                String fileName = FilenameUtils.getBaseName(selected.getName());
+                String filePath;
+                if (DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
+                    filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
+                }
+                else {
+                    filePath = null;
+                }
+                AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, fileName);
+                context.doNotifyModelChanged(true);
+            }
+        } catch (Exception ex) {
+            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+            log.error("Unexpected error during loading image file : " + selected, ex);
+        }
     }
 
     @Override
