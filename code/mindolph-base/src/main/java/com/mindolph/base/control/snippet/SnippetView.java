@@ -65,29 +65,29 @@ public class SnippetView extends BaseView {
 
         // for switching snippets by listening file activation.
         EventBus.getIns().subscribeFileActivated(fileChange -> {
-            NodeData nodeData = fileChange.newData();
-            if (fileChange.oldData() != null && fileChange.newData() != null
-                    && fileChange.oldData().isSameFileType(fileChange.newData())) {
+            NodeData activatedData = fileChange.newData();
+            if (fileChange.oldData() != null && activatedData != null
+                    && fileChange.oldData().isSameFileType(activatedData)) {
                 return;
             }
-            if (nodeData == null) {
+            if (activatedData == null) {
                 this.reload(null, null);
                 return;
             }
-            switch (nodeData.getNodeType()) {
+            switch (activatedData.getNodeType()) {
                 case FOLDER -> {
                     this.reload(null, null);
                 }
                 case FILE -> {
-                    if (nodeData.isPlantUml()) {
+                    if (activatedData.isPlantUml()) {
                         currentFileType = TYPE_PLANTUML;
                         this.reloadForFileType(TYPE_PLANTUML);
                     }
-                    else if (nodeData.isMindMap()) {
+                    else if (activatedData.isMindMap()) {
                         currentFileType = TYPE_MIND_MAP;
                         this.reloadForFileType(TYPE_MIND_MAP);
                     }
-                    else if (nodeData.isMarkdown()) {
+                    else if (activatedData.isMarkdown()) {
                         currentFileType = TYPE_MARKDOWN;
                         this.reloadForFileType(TYPE_MARKDOWN);
                     }

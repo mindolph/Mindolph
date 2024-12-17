@@ -66,10 +66,10 @@ public class FileTabView extends BaseView {
     public FileTabView() {
         super("/view/file_tab_view.fxml");
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTab, selectingTab) -> {
+            Object oldData = selectedTab == null ? null : selectedTab.getUserData();
             if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
                 // disabled tab means it is closing, no need to be loaded(for close all or close others from context menu)
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
-                Object oldData = selectedTab == null ? null : selectedTab.getUserData();
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
                 Object tabUserData = selectingTab.getUserData();
@@ -95,6 +95,7 @@ public class FileTabView extends BaseView {
             else {
                 this.updateMenuState(null);
                 EventBus.getIns().notifyOutline(null); // clear the outline view since there is no tab exists.
+                EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, null));
             }
         });
         tabPane.setOnMouseClicked(mouseEvent -> {

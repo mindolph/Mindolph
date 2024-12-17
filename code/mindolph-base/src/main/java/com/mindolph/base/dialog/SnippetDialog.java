@@ -73,7 +73,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
 
         dialog = new CustomDialogBuilder<Snippet<?>>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(snippet == null ? "New" : "Edit" + " Snippet")
+                .title("%s Snippet".formatted(snippet == null ? "New" : "Edit"))
                 .fxmlUri("dialog/snippet_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

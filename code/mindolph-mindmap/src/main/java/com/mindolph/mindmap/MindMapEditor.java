@@ -377,6 +377,9 @@ public class MindMapEditor extends BaseEditor {
             if (StringUtils.isNotBlank(snippet.getFilePath())) {
                 ImagePopUpMenuExtension.loadImageFileToSelectedTopics((ExtensionContext) mindMapView, new File(snippet.getFilePath()));
             }
+            else {
+                mindMapView.appendTextAsTopicTree(snippet.getCode(), "");
+            }
         }
     }
 
