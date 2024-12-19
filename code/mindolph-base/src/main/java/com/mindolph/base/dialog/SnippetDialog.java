@@ -104,7 +104,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
             log.debug("Load image");
             File defaultDir = SystemUtils.getUserHome();
             File file = DialogFactory.openFileDialog(DialogFactory.DEFAULT_WINDOW, defaultDir,
-                    new FileChooser.ExtensionFilter("Icon/Image", "*.png"));
+                    new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg"));
             if (file != null && file.exists()) {
                 log.debug(file.getAbsolutePath());
                 updateSnippet(this.loadImage(file));
