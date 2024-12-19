@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
@@ -49,6 +50,8 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
     // used for custom snippet to load data for file type.
     private final String fileType;
 
+    private ContextMenu contextMenu = null;
+
     public ListSnippetView(String fileType) {
         this.fileType = fileType;
         this.listView = new ListView<>();
@@ -60,18 +63,26 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
                 Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
                 EventBus.getIns().notifySnippetApply(selectedSnippet);
             }
-        });
-        this.editableProperty.addListener((observableValue, aBoolean, t1) -> {
-            if (t1) {
-                ContextMenu contextMenu = new ContextMenu();
-                miNew.setOnAction(this);
-                miEdit.setOnAction(this);
-                miRemove.setOnAction(this);
-                contextMenu.getItems().addAll(miNew, miEdit, miRemove);
-                this.listView.setContextMenu(contextMenu);
+            if (contextMenu != null && contextMenu.isShowing()) {
+                contextMenu.hide();
+            }
+            if (this.isEditable() && event.getButton() == MouseButton.SECONDARY) {
+                contextMenu = this.createContextMenu();
+                contextMenu.show(this.listView, event.getScreenX(), event.getScreenY());
             }
         });
         this.getChildren().add(listView);
+    }
+
+    private ContextMenu createContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        miNew.setOnAction(this);
+        miEdit.setOnAction(this);
+        miRemove.setOnAction(this);
+        miEdit.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+        miRemove.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+        contextMenu.getItems().addAll(miNew, miEdit, miRemove);
+        return contextMenu;
     }
 
     @Override
@@ -121,7 +132,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
         return listView.getItems();
     }
 
-    public boolean isEditableProperty() {
+    public boolean isEditable() {
         return editableProperty.get();
     }
 
