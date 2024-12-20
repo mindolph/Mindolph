@@ -2,10 +2,13 @@ package com.mindolph.core;
 
 import com.google.gson.Gson;
 import com.mindolph.core.model.Snippet;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.CryptoUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -68,7 +71,20 @@ public class AppManager {
                 continue; // skip for adding existing snippet(by title)
             }
             snippetsRecord.items().removeIf(item -> item.title.equals(snippet.getTitle()));
-            snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, snippet.getFilePath()));
+            if (StringUtils.isNotBlank(snippet.getFilePath())) {
+                File f = new File(snippet.getFilePath());
+                String newFileName = CryptoUtils.md5(f.getName());
+                File targetFile = new File(new File(baseDir, fileType), newFileName);
+                try {
+                    FileUtils.copyFile(f, targetFile);
+                } catch (IOException e) {
+                    continue; // skip failed for now.
+                }
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, targetFile.getPath()));
+            }
+            else {
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, null));
+            }
         }
         this.saveSnippetsRecord(snippetsRecord, fileType);
     }
