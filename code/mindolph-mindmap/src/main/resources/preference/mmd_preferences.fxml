@@ -152,7 +152,7 @@
                     <PreferenceItem name="Add default comment to root node">
                         <CheckBox fx:id="ckbAddDefaultCommentToRoot"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Trim topic text before set:">
+                    <PreferenceItem name="Trim topic text before pasting:">
                         <CheckBox fx:id="ckbTrimTopicText"/>
                     </PreferenceItem>
                     <PreferenceItem name="Show collapsator when mouse hover">
@@ -176,6 +176,9 @@
                     </PreferenceItem>
                     <PreferenceItem name="Smart text paste:">
                         <CheckBox fx:id="ckbSmartTextPaste"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="Open topic attributes by double clicking:">
+                        <CheckBox fx:id="ckbTopicAttrByDblClicking"/>
                     </PreferenceItem>
                     <PreferenceItem name="Max size of undo/redo history(10-50):">
                         <Spinner fx:id="spnUndRedo" editable="true"/>

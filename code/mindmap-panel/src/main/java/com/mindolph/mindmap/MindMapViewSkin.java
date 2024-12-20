@@ -43,9 +43,9 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
     // used to calculate the position of topic editor and limit the topic editor's min bounds after editing stated.
     private Rectangle2D originalEditingBounds;
 
-    private MindMapCanvas mindMapCanvas;
+    private final MindMapCanvas mindMapCanvas;
 
-    private CanvasGraphicsWrapper graphicsWrapper;
+    private final CanvasGraphicsWrapper graphicsWrapper;
 
     /**
      * Constructor for all SkinBase instances.

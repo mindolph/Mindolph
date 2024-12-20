@@ -122,6 +122,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     @FXML
     private CheckBox ckbSmartTextPaste;
     @FXML
+    private CheckBox ckbTopicAttrByDblClicking;
+    @FXML
     private Spinner<Integer> spnUndRedo;
 
     private final Pair<ThemeKey, String> THEME_ITEM_CLASSIC;
@@ -316,6 +318,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         super.bindPreference(ckbUnfoldCollapsedDropTarget.selectedProperty(), PrefConstants.PREF_KEY_MMD_UNFOLD_COLLAPSED_TARGET, false);
         super.bindPreference(ckbCopyParentColorToNewChild.selectedProperty(), PrefConstants.PREF_KEY_MMD_COPY_COLOR_INFO_TO_NEW_CHILD, false);
         this.bindPreference(ckbSmartTextPaste.selectedProperty(), mindMapConfig::setSmartTextPaste);
+//        super.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), PrefConstants.PREF_KEY_MMD_OPEN_TOPIC_ATTR_BY_DBL_CLICKING, true);
+        this.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), mindMapConfig::setTopicAttrByDblClicking);
     }
 
     /**
@@ -396,6 +400,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         spnSelectionWidth.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 4f, theme.getSelectLineWidth()));
         spnSelectionGap.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 8f, theme.getSelectLineGap()));
         ckbSmartTextPaste.setSelected(mindMapConfig.isSmartTextPaste());
+        ckbTopicAttrByDblClicking.setSelected(mindMapConfig.isTopicAttrByDblClicking());
         spnUndRedo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 50, mindMapConfig.getMaxRedoUndo()));
     }
 

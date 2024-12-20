@@ -36,6 +36,7 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private boolean unfoldCollapsedTarget = false;
     private boolean copyColorInfoToNewChild = false;
     private boolean smartTextPaste = false;
+    private boolean topicAttrByDblClicking = true;
     private int maxRedoUndo = 20;
 
     public MindMapConfig(MindMapConfig cfg) {
@@ -153,6 +154,14 @@ public final class MindMapConfig implements EditorConfig, Serializable {
 
     public void setCopyColorInfoToNewChild(boolean copyColorInfoToNewChild) {
         this.copyColorInfoToNewChild = copyColorInfoToNewChild;
+    }
+
+    public boolean isTopicAttrByDblClicking() {
+        return topicAttrByDblClicking;
+    }
+
+    public void setTopicAttrByDblClicking(boolean topicAttrByDblClicking) {
+        this.topicAttrByDblClicking = topicAttrByDblClicking;
     }
 
     public int getMaxRedoUndo() {
