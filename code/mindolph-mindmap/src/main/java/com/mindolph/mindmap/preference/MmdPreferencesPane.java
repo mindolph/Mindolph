@@ -453,11 +453,13 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         }
     }
 
+    // for toggle theme settings
     private Map<String, Node> themeNodes = new HashMap<>() {
         {
             put("spnGridStep", spnGridStep);
             put("cbConnectorStyle", cbConnectorStyle);
             put("ckbShowGrid", ckbShowGrid);
+            put("ckbShowCollapsatorOnMouseHover", ckbShowCollapsatorOnMouseHover);
             put("cpGridColor", cpGridColor);
             put("cpBackgroundFillColor", cpBackgroundFillColor);
             put("spnConnectorWidth", spnConnectorWidth);

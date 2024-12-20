@@ -34,6 +34,9 @@
                             <PreferenceItem name="Show grid:">
                                 <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false"/>
                             </PreferenceItem>
+                            <PreferenceItem name="Show collapsator when mouse hover:">
+                                <CheckBox fx:id="ckbShowCollapsatorOnMouseHover" mnemonicParsing="false"/>
+                            </PreferenceItem>
                             <PreferenceItem name="Drop shadow:">
                                 <CheckBox fx:id="ckbDropShadow"/>
                             </PreferenceItem>
@@ -154,9 +157,6 @@
                     </PreferenceItem>
                     <PreferenceItem name="Trim topic text before pasting:">
                         <CheckBox fx:id="ckbTrimTopicText"/>
-                    </PreferenceItem>
-                    <PreferenceItem name="Show collapsator when mouse hover">
-                        <CheckBox fx:id="ckbShowCollapsatorOnMouseHover" mnemonicParsing="false"/>
                     </PreferenceItem>
                     <!--                               <PreferenceItem name="Prefer internal browser to open URL:">-->
                     <!--                                   <items>-->
