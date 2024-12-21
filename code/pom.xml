@@ -27,29 +27,29 @@
         <maven.compiler.target>21</maven.compiler.target>
         <javafx.version>23.0.1</javafx.version>
         <commons.lang.version>3.17.0</commons.lang.version>
-        <commons.io.version>2.17.0</commons.io.version>
-        <commons.text.version>1.12.0</commons.text.version>
+        <commons.io.version>2.18.0</commons.io.version>
+        <commons.text.version>1.13.0</commons.text.version>
         <commons.collections.version>4.4</commons.collections.version>
         <commons.codec.version>1.17.1</commons.codec.version>
         <commons.validator.version>1.9.0</commons.validator.version>
         <commons.csv.version>1.12.0</commons.csv.version>
         <swstate.version>2.0.1</swstate.version>
-        <plantuml.version>1.2024.7</plantuml.version>
+        <plantuml.version>1.2024.8</plantuml.version>
         <swiftboot.version>2.4.8</swiftboot.version>
         <slf4j.version>2.0.16</slf4j.version>
         <log4j2.version>2.24.1</log4j2.version>
-        <junit.version>5.11.0</junit.version>
+        <junit.version>5.11.4</junit.version>
         <mfx.version>2.0</mfx.version>
         <gson.version>2.11.0</gson.version>
         <controlsfx.version>11.2.1</controlsfx.version>
-        <richtextfx.version>0.11.3</richtextfx.version>
+        <richtextfx.version>0.11.4</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
-        <jsoup.version>1.18.1</jsoup.version>
+        <jsoup.version>1.18.3</jsoup.version>
         <json.version>20240303</json.version>
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>0.35.0</langchain4j.version>
-        <dashscope.version>2.16.9</dashscope.version>
+        <dashscope.version>2.16.10</dashscope.version>
     </properties>
 
     <dependencies>
