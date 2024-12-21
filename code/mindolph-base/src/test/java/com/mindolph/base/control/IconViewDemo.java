@@ -2,8 +2,6 @@ package com.mindolph.base.control;
 
 import com.mindolph.base.control.snippet.ImageSnippet;
 import com.mindolph.mfx.util.FxImageUtils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -35,7 +34,9 @@ public class IconViewDemo implements Initializable {
                 Image img = FxImageUtils.readImageFromResource("/img_small.jpg");
                 images.add(img);
             }
-            iconView.setItems(FXCollections.observableList(images.stream().map(ImageSnippet::new).toList()));
+            List<ImageSnippet> snippets = images.stream().map(ImageSnippet::new).toList();
+            snippets.forEach(snippet -> snippet.title("default title"));
+            iconView.setItems(FXCollections.observableList(snippets));
 //            iconView.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 //                System.out.println(newValue);
 //            });

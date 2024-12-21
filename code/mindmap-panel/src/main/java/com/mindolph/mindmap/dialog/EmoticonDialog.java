@@ -45,7 +45,7 @@ public class EmoticonDialog extends BaseDialogController<String> implements Even
     @FXML
     private HBox hBox;
 
-    private TextField tfKeyword;
+    private final TextField tfKeyword;
 
     @FXML
     private Button btnClear;
@@ -55,7 +55,7 @@ public class EmoticonDialog extends BaseDialogController<String> implements Even
     // for unselect
     private ToggleButton selectedButton;
 
-    private Set<String> recentIconNames;
+    private final Set<String> recentIconNames;
 
     public EmoticonDialog(String iconName) {
         super(iconName);
