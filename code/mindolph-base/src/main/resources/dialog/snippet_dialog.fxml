@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.PreferenceItem?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox fx:id="vbox" layoutX="140.0" layoutY="42.0" prefHeight="360.0" prefWidth="400.0" spacing="4.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <PreferenceItem name="Type: " labelPrefWidth="150">
+            <RadioButton fx:id="rdTypeText" selected="true" text="Text"/>
+            <RadioButton fx:id="rdTypeImage" text="Image"/>
+        </PreferenceItem>
+        <PreferenceItem name="Title: " labelPrefWidth="150">
+            <TextField fx:id="tfTitle" promptText="Input title for this snippet" prefWidth="240.0"/>
+        </PreferenceItem>
+        <PreferenceItem fx:id="itemCode" name="Code Text: " labelPrefWidth="150" prefHeight="240">
+            <TextArea fx:id="taCode" prefHeight="240" prefWidth="280.0" promptText="Input code for this snippet"/>
+        </PreferenceItem>
+        <PreferenceItem fx:id="itemImage" name="Image: " labelPrefWidth="150" prefHeight="240">
+            <HBox prefWidth="240" maxWidth="240" prefHeight="240" maxHeight="240" spacing="4"
+                  style="-fx-border-width: 1; -fx-border-color: lightgray;">
+                <Button fx:id="btnIconImage" prefWidth="240" maxWidth="240" prefHeight="240" maxHeight="240"
+                        style="-fx-background-color: lightgray" text="Click to choose image file"/>
+            </HBox>
+        </PreferenceItem>
+        <padding>
+            <Insets bottom="4.0" top="4.0"/>
+        </padding>
+    </VBox>
+</AnchorPane>

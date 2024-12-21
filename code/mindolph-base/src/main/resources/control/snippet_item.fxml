@@ -5,14 +5,16 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-         AnchorPane.topAnchor="0.0">
+<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <padding>
-         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </padding>
-      <ImageView fx:id="icon" pickOnBounds="true" preserveRatio="true"/>
-      <Label fx:id="title" HBox.hgrow="ALWAYS"/>
+      <ImageView fx:id="icon" pickOnBounds="true" preserveRatio="true" />
+      <VBox alignment="CENTER_LEFT">
+         <Label fx:id="title" text="Label" HBox.hgrow="ALWAYS" />
+      </VBox>
    </HBox>
 </fx:root>

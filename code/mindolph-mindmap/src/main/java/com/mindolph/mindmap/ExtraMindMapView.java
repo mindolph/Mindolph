@@ -395,7 +395,8 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
     @Override
     protected void onClickOnExtra(TopicNode topic, int clicks, Extra<?> extra) {
-        if (clicks == 2) {
+        int clicksWanted = config.isTopicAttrByDblClicking() ? 2 : 1;
+        if (clicks == clicksWanted) {
             switch (extra.getType()) {
                 case FILE -> {
                     MMapURI uri = (MMapURI) extra.getValue();

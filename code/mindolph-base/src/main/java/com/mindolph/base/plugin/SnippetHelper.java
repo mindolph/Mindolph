@@ -14,9 +14,10 @@ public interface SnippetHelper {
     /**
      * Create snippet view by snippet type.
      *
+     * @param snippetGroup
      * @return
      */
-    <T extends SnippetViewable> Optional<T> createView();
+    <T extends SnippetViewable> Optional<T> createView(BaseSnippetGroup snippetGroup);
 
     /**
      * Snippet group that contains snippets definitions.

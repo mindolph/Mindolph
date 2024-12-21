@@ -802,12 +802,12 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
         else {
             this.elementUnderEdit = element;
-            log.info("Start edit with: " + RectangleUtils.rectangleInStr(element.getBounds()));
+            log.info("Start edit with: %s".formatted(RectangleUtils.rectangleInStr(element.getBounds())));
             Font font = element.getTextBlock().getFont();
             Rectangle2D bounds = element.getBounds();
             Point2D p = super.withViewportPadding(bounds.getMinX(), bounds.getMinY());
             Rectangle2D b = new Rectangle2D(p.getX(), p.getY(), bounds.getWidth(), bounds.getHeight());
-            log.debug("topic bounds: " + RectangleUtils.rectangleInStr(b));
+            log.debug("topic bounds: %s".formatted(RectangleUtils.rectangleInStr(b)));
             topicEditEventHandler.startEdit(element.getText(), font, b);
         }
     }

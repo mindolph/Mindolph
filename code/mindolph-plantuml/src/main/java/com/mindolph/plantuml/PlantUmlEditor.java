@@ -4,7 +4,6 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ImageScrollPane;
-import com.mindolph.core.model.Snippet;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.StatusMsg;
@@ -103,19 +102,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         super.enablePageSwipe();
 
         this.refresh();// to set up the font
-    }
-
-    @Override
-    public void onSnippet(Snippet snippet) {
-        // replacing selected text with snippet code
-        String code = snippet.getCode();
-        int caretPos = StringUtils.indexOf(code, "⨁");
-        String codeToInsert = StringUtils.remove(code, "⨁");
-        codeArea.replaceSelection(codeToInsert);
-        if (caretPos > 0) {
-            codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
-        }
-        codeArea.requestFocus();
     }
 
     protected void createContextMenu() {

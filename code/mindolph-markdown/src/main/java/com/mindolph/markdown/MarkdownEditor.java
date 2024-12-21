@@ -2,7 +2,7 @@ package com.mindolph.markdown;
 
 
 import com.mindolph.base.EditorContext;
-import com.mindolph.base.Env;
+import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchableCodeArea;

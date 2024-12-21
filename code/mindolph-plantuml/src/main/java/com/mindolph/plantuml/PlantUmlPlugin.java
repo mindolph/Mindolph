@@ -1,6 +1,7 @@
 package com.mindolph.plantuml;
 
 import com.mindolph.base.control.snippet.BaseSnippetGroup;
+import com.mindolph.base.control.snippet.CustomSnippetGroup;
 import com.mindolph.base.control.snippet.ListSnippetView;
 import com.mindolph.base.control.snippet.SnippetViewable;
 import com.mindolph.base.plugin.BasePlugin;
@@ -42,8 +43,9 @@ public class PlantUmlPlugin extends BasePlugin {
         return Optional.of(new SnippetHelper() {
 
             @Override
-            public Optional<SnippetViewable> createView() {
-                ListSnippetView listSnippetView = new ListSnippetView();
+            public Optional<SnippetViewable> createView(BaseSnippetGroup snippetGroup) {
+                ListSnippetView listSnippetView = new ListSnippetView(SupportFileTypes.TYPE_PLANTUML);
+                listSnippetView.setEditable(snippetGroup instanceof CustomSnippetGroup);
                 return Optional.of(listSnippetView);
             }
 
@@ -56,8 +58,8 @@ public class PlantUmlPlugin extends BasePlugin {
                         new ThemeSnippetGroup(),
                         new CreoleSnippetGroup(),
                         new ProcessingSnippetGroup(),
-                        new BuiltinFunctionsSnippetGroup()
-//                        new CustomSnippetGroup()
+                        new BuiltinFunctionsSnippetGroup(),
+                        new CustomSnippetGroup()
                 );
             }
         });

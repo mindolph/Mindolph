@@ -1,11 +1,19 @@
 package com.mindolph.mindmap.extension.attributes;
 
+import com.igormaznitsa.mindmap.model.MMapURI;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.FxImageUtils;
+import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
+import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.image.Image;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -78,5 +86,34 @@ public class AttributeUtils {
             }
         }
         return changed;
+    }
+
+    /**
+     * @param context
+     * @param selected file to load to topics.
+     * @param withFileLink ank user for attach file link to the image attribute if true.
+     */
+    public static void loadImageFileToSelectedTopics(ExtensionContext context, File selected, boolean withFileLink) {
+        Image image;
+        try {
+            image = new Image(new FileInputStream(selected));
+            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
+            Image scaledImage = scaleImageDialog.showAndWait();
+            if (scaledImage != null) {
+                String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
+                String fileName = FilenameUtils.getBaseName(selected.getName());
+                String filePath;
+                if (withFileLink && DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
+                    filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
+                }
+                else {
+                    filePath = null;
+                }
+                setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, fileName);
+                context.doNotifyModelChanged(true);
+            }
+        } catch (Exception ex) {
+            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+        }
     }
 }

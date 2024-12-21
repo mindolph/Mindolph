@@ -1,10 +1,11 @@
 package com.mindolph.fx;
 
-import com.mindolph.base.Env;
+import com.mindolph.core.Env;
 import com.mindolph.genai.GenAiPlugin;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.fx.data.DataMigrator;
+import com.mindolph.markdown.MarkdownPlugin;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.MindMapPlugin;
 import com.mindolph.plantuml.PlantUmlPlugin;
@@ -40,7 +41,7 @@ public class Launcher {
         PluginManager.getIns().registerPlugin(new ContextHelperPlugin());
         PluginManager.getIns().registerPlugin(new GenAiPlugin());
         PluginManager.getIns().registerPlugin(new MindMapPlugin());
-
+        PluginManager.getIns().registerPlugin(new MarkdownPlugin());
         Application.launch(Main.class, args);
     }
 }

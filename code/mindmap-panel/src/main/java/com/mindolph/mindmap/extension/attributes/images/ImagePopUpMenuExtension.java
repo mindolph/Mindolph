@@ -1,6 +1,5 @@
 package com.mindolph.mindmap.extension.attributes.images;
 
-import com.igormaznitsa.mindmap.model.MMapURI;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.dialog.DialogFileFilters;
@@ -8,7 +7,6 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.FileDialogBuilder;
 import com.mindolph.mfx.util.AwtImageUtils;
-import com.mindolph.mfx.util.FxImageUtils;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.dialog.AddImageChooseDialog;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
@@ -21,13 +19,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 
 public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
@@ -96,27 +92,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                             .extensionFilters(DialogFileFilters.IMAGE_EXTENSION_FILTER).buildAndShow();
                     // TODO remember the selected for next time popup;
                     if (selected != null) {
-                        try {
-                            image = new Image(new FileInputStream(selected));
-                            ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
-                            Image scaledImage = scaleImageDialog.showAndWait();
-                            if (scaledImage != null) {
-                                String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
-                                String fileName = FilenameUtils.getBaseName(selected.getName());
-                                String filePath;
-                                if (DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
-                                    filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
-                                }
-                                else {
-                                    filePath = null;
-                                }
-                                AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, fileName);
-                                context.doNotifyModelChanged(true);
-                            }
-                        } catch (Exception ex) {
-                            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
-                            log.error("Unexpected error during loading image file : " + selected, ex);
-                        }
+                        AttributeUtils.loadImageFileToSelectedTopics(context, selected, true);
                     }
                 }
             });

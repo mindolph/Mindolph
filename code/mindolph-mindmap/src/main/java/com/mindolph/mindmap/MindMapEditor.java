@@ -20,6 +20,8 @@ import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.event.MindmapEvents;
+import com.mindolph.mindmap.extension.api.ExtensionContext;
+import com.mindolph.mindmap.extension.attributes.AttributeUtils;
 import com.mindolph.mindmap.icon.IconID;
 import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
@@ -365,9 +367,19 @@ public class MindMapEditor extends BaseEditor {
     @Override
     public void onSnippet(Snippet snippet) {
         if (snippet instanceof ImageSnippet is) {
-            String selectedName = is.getCode();
-            ((ExtraMindMapView) this.mindMapView).setIconForSelectedTopics(selectedName);
+            String selectedIconCode = is.getCode();
+            ((ExtraMindMapView) this.mindMapView).setIconForSelectedTopics(selectedIconCode);
             this.mindMapView.requestFocus();
+        }
+        else {
+            // since the ImageSnippet only works for JFX, it cant be imported to core module, so the custom
+            // image snippet needs to be handled separately.
+            if (StringUtils.isNotBlank(snippet.getFilePath())) {
+                AttributeUtils.loadImageFileToSelectedTopics((ExtensionContext) mindMapView, new File(snippet.getFilePath()), false);
+            }
+            else {
+                mindMapView.appendTextAsTopicTree(snippet.getCode(), "");
+            }
         }
     }
 

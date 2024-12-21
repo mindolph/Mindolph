@@ -4,6 +4,7 @@ import com.mindolph.base.EditorContext;
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.model.Snippet;
 import com.mindolph.core.search.*;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
@@ -328,6 +329,19 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             codeArea.paste();
         }
         return true;
+    }
+
+    @Override
+    public void onSnippet(Snippet snippet) {
+        // replacing selected text with snippet code
+        String code = snippet.getCode();
+        int caretPos = StringUtils.indexOf(code, "⨁");
+        String codeToInsert = StringUtils.remove(code, "⨁");
+        codeArea.replaceSelection(codeToInsert);
+        if (caretPos > 0) {
+            codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
+        }
+        codeArea.requestFocus();
     }
 
     @Override

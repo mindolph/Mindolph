@@ -1,6 +1,6 @@
 package com.mindolph.fx.dialog;
 
-import com.mindolph.base.Env;
+import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.BaseDialogController;
