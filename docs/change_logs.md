@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.10.1 Unstable Release
+
+* Feature: New custom snippet feature for Mind Map, PlantUML and Markdown. You can define your own text or image snippets, the image type snippet can be applied to Mind Map as image attribute without file link.
+* Improvement: add option `open topic attributes by double clicking` for mind map.
+* Fix: option `show collapsator when mouse hover` for mind map theme.
+* merged bug fixes from stable version 1.9.5.
+* update dependencies
+
+
 ### V1.9.5 Release
 
 * Fix: exception when undo editing from an empty row in CSV editor.
