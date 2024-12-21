@@ -79,7 +79,7 @@ Mindolph 是一个开源的支持多种桌面平台的个人知识库管理软�
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|| |[v1.9.x](release-notes/v1.9/v1.9_zh_CN.md)|[v1.10.x](release-notes/v1.10/v1.10_zh_CN.md)| 发布记录 |
+|| |[v1.9.x](release-notes/v1.9/v1.9_zh_CN.md)|[v1.10.x](release-notes/v1.10/v1.10_zh_CN.md)| 发行说明 |
 |macOS|.dmg|[v1.9.5](https://github.com/mindolph/Mindolph/releases/download/v1.9.5/Mindolph-1.9.5-x64.dmg)|[v1.10.1](https://github.com/mindolph/Mindolph/releases/download/v1.10.1/Mindolph-1.10.1-x64.dmg)| Intel |
 |macOS|.dmg|[v1.9.5](https://github.com/mindolph/Mindolph/releases/download/v1.9.5/Mindolph-1.9.5-aarch64.dmg) |[v1.10.1](https://github.com/mindolph/Mindolph/releases/download/v1.10.1/Mindolph-1.10.1-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
 |Windows|.msi|[v1.9.5](https://github.com/mindolph/Mindolph/releases/download/v1.9.5/Mindolph-1.9.5.msi)|[v1.10.1](https://github.com/mindolph/Mindolph/releases/download/v1.10.1/Mindolph-1.10.1.msi)| |
@@ -97,7 +97,7 @@ Mindolph 是基于 JavaFX 开发的, 更多详情请点击[code/README.md](../co
 
 计划:
 
-* 1.10：全局的代码片段快速插入功能。
+* 1.10：全局的代码片段功能，快速插入预定义或自定义的代码片段，支持思维导图，PlantUML和Markdown文件。
 * 1.11：功能改进和bug修复
 
 ### 给我买杯咖啡吧

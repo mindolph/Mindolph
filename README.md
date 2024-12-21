@@ -95,7 +95,7 @@ Mindolph is an open source personal knowledge management software for all deskto
 Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for more details.
 
 Future Plan:
-* 1.10: Snippet Feature to quickly insert snippet for many file types.
+* 1.10: Snippet Feature to quickly insert pre-defined or user-defined snippet to Mind Map, PlantUML and Markdown files.
 * 1.11: Improment and bug fixing.
 
 ### Buy me a cup of coffee
