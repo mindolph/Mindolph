@@ -106,7 +106,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
             File file = DialogFactory.openFileDialog(DialogFactory.DEFAULT_WINDOW, defaultDir,
                     new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg"));
             if (file != null && file.exists()) {
-                log.debug(file.getAbsolutePath());
+                if (log.isTraceEnabled()) log.trace(file.getAbsolutePath());
                 updateSnippet(this.loadImage(file));
             }
         });
@@ -152,13 +152,14 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
         try {
             this.fileTypeSnippetMap = JsonUtils.jsonTo(FILE_TYPE_SNIPPET_MAP_IN_JSON, new TypeReference<Map<String, List<String>>>() {
             });
-            log.trace(StringUtils.join(this.fileTypeSnippetMap.get(SupportFileTypes.TYPE_MARKDOWN), ","));
+            if (log.isTraceEnabled())
+                log.trace(StringUtils.join(this.fileTypeSnippetMap.get(SupportFileTypes.TYPE_MARKDOWN), ","));
         } catch (IOException e) {
             log.warn("failed to parse file type and snippet type mapping", e);
             this.fileTypeSnippetMap = new HashMap<>();
         }
         List<String> supportedTypes = this.fileTypeSnippetMap.get(fileType);
-        log.debug(StringUtils.join(supportedTypes, ","));
+        if (log.isTraceEnabled()) log.trace(StringUtils.join(supportedTypes, ","));
         if (supportedTypes != null) {
             if (!supportedTypes.contains(Snippet.TYPE_IMAGE)) {
                 hide(itemImage, rdTypeImage);

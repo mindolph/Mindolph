@@ -35,6 +35,9 @@ public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
                 .filePath(sr.filePath());
     }
 
+    public Snippet<?> deepClone() {
+        return new Snippet<>(this.title).code(this.code).type(this.type).filePath(this.filePath).description(this.description);
+    }
 
     public String getTitle() {
         return title;

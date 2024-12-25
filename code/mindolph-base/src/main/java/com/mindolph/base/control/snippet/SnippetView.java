@@ -54,6 +54,7 @@ public class SnippetView extends BaseView {
     public SnippetView() {
         super("/control/snippet_view.fxml", false);
         tfKeyword = TextFields.createClearableTextField();
+        tfKeyword.setPromptText("filter snippets");
         tfKeyword.textProperty().addListener((observableValue, s, newKeyword) -> {
             this.filter(newKeyword);
         });
@@ -153,7 +154,6 @@ public class SnippetView extends BaseView {
                             if (view instanceof ListSnippetView lsv) {
                                 // specific handling for custom snippet group.
                                 lsv.subscribeSnippetChanged(snippet -> {
-                                    log.info("## snippets changed");
                                     if (snippetGroup instanceof CustomSnippetGroup csg) {
                                         csg.reloadSnippets(fileType);
                                         filter(tfKeyword.getText());
