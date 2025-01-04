@@ -126,47 +126,75 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     protected ContextMenu createContextMenu() {
         ContextMenu menu = super.createContextMenu();
         List<MenuItem> pluginMenuItems = new ArrayList<>();
-        withPlugins(plugin -> {
-            Optional<Generator> opt = plugin.getGenerator(this.hashCode(), getFileType());// hash code as editor id.
-            if (opt.isPresent()) {
-                Generator generator = opt.get();
-                generator.setParentPane(parentPane);
+        withPlugins(new Consumer<>() {
+            private int originPos; //be used to select generated text after
 
-                MenuItem menuItem = generator.contextMenuItem(getSelectedText());
-                pluginMenuItems.add(menuItem);
-                menuItem.setOnAction(event -> {
-                    this.onCompleted();
-                    generator.showInputPanel(super.getSelectedText());
-                    IndexRange selection = super.getSelection();
-                    super.moveTo(selection.getEnd());
-                });
+            @Override
+            public void accept(Plugin plugin) {
+                Optional<Generator> opt = plugin.getGenerator(SmartCodeArea.this.hashCode(), SmartCodeArea.this.getFileType());// hash code as editor id.
+                if (opt.isPresent()) {
+                    Generator generator = opt.get();
+                    generator.setParentPane(parentPane);
 
-                generator.setOnPanelShowing(stackPane -> {
-                    relocatedPanelToCaret(stackPane);
-                });
+                    MenuItem menuItem = generator.contextMenuItem(SmartCodeArea.this.getSelectedText());
+                    pluginMenuItems.add(menuItem);
+                    menuItem.setOnAction(event -> {
+                        SmartCodeArea.this.onCompleted();
+                        generator.showInputPanel(SmartCodeArea.super.getSelectedText());
+                        IndexRange selection = SmartCodeArea.super.getSelection();
+                        SmartCodeArea.super.moveTo(selection.getEnd());
+                    });
 
-                generator.setOnGenerated(output -> {
-                    this.onCompleted();
-                    int origin = this.getSelection().getStart();
-                    this.replaceSelection(output.generatedText());
-                    log.debug(" select from %d to %d".formatted(origin, this.getCaretPosition()));
-                    super.selectRange(origin, this.getCaretPosition());
-                    this.onGenerating();
-                });
-                generator.setOnCancel(isNormally -> {
-                    if (isNormally) {
-                        this.onCompleted();
-                    }
-                });
-                generator.setOnComplete(isKeep -> {
-                    if (!isKeep) {
-                        super.replaceSelection(StringUtils.EMPTY);
-                    }
-                    else {
-                        super.selectRange(this.getCaretPosition(), this.getCaretPosition());
-                    }
-                    this.onCompleted();
-                });
+                    generator.setOnPanelShowing(stackPane -> {
+                        SmartCodeArea.this.relocatedPanelToCaret(stackPane);
+                    });
+                    generator.setBeforeGenerate(unused -> {
+                        SmartCodeArea.this.onCompleted();
+                        int origin = SmartCodeArea.this.getSelection().getStart();
+                        this.originPos = origin;
+                    });
+                    generator.setOnStreaming(streamOutput -> {
+                        Platform.runLater(() -> {
+                            SmartCodeArea.this.onCompleted();
+                            if (!streamOutput.streamToken().isStop()) {
+                                if (StringUtils.isNotBlank(SmartCodeArea.this.getSelectedText())) {
+                                    SmartCodeArea.this.replaceSelection(streamOutput.streamToken().text());
+                                }
+                                else {
+                                    SmartCodeArea.this.insertText(streamOutput.streamToken().text());
+                                }
+                                log.debug(String.valueOf(streamOutput.streamToken()));
+                            }
+                            else {
+                                log.debug("select start index: %s".formatted(originPos));
+                                SmartCodeArea.super.selectRange(originPos, SmartCodeArea.this.getCaretPosition());
+                                SmartCodeArea.this.onGenerating();
+                            }
+                        });
+                    });
+                    generator.setOnGenerated(output -> {
+                        SmartCodeArea.this.onCompleted();
+                        int origin = SmartCodeArea.this.getSelection().getStart();
+                        SmartCodeArea.this.replaceSelection(output.generatedText());
+                        log.debug(" select from %d to %d".formatted(origin, SmartCodeArea.this.getCaretPosition()));
+                        SmartCodeArea.super.selectRange(origin, SmartCodeArea.this.getCaretPosition());
+                        SmartCodeArea.this.onGenerating();
+                    });
+                    generator.setOnCancel(isNormally -> {
+                        if (isNormally) {
+                            SmartCodeArea.this.onCompleted();
+                        }
+                    });
+                    generator.setOnComplete(isKeep -> {
+                        if (!isKeep) {
+                            SmartCodeArea.super.replaceSelection(StringUtils.EMPTY);
+                        }
+                        else {
+                            SmartCodeArea.super.selectRange(SmartCodeArea.this.getCaretPosition(), SmartCodeArea.this.getCaretPosition());
+                        }
+                        SmartCodeArea.this.onCompleted();
+                    });
+                }
             }
         });
         if (!pluginMenuItems.isEmpty()) {
@@ -194,7 +222,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
         Platform.runLater(() -> {
             Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputPanel.getWidth(), inputPanel.getHeight());
             Dimension2D targetDimension = new Dimension2D(super.getCaretInLocal().getWidth(), super.getLineHeight());
-            if (log.isTraceEnabled()) log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
+            if (log.isTraceEnabled())
+                log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
             if (log.isTraceEnabled()) log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
             if (log.isTraceEnabled()) log.trace("target dimension: " + DimensionUtils.dimensionInStr(targetDimension));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, targetDimension,

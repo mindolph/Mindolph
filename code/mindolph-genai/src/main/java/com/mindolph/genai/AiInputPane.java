@@ -88,7 +88,7 @@ public class AiInputPane extends StackPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 lbMsg.setText(null);
                 this.toggleButtons(true);
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false));
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, true));
             }
             else {
                 taInput.requestFocus();

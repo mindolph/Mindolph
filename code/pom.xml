@@ -48,7 +48,7 @@
         <jsoup.version>1.18.3</jsoup.version>
         <json.version>20240303</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>0.35.0</langchain4j.version>
+        <langchain4j.version>0.36.2</langchain4j.version>
         <dashscope.version>2.16.10</dashscope.version>
     </properties>
 

@@ -61,7 +61,7 @@ public class AiReframePane extends StackPane {
             this.onWorking();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, null, true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, null, true, true));
             this.onWorking();
         });
         btnAdjust.setOnMouseClicked(event -> {
@@ -80,7 +80,7 @@ public class AiReframePane extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, (OutputAdjust) mi.getUserData(), true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, (OutputAdjust) mi.getUserData(), true, true));
             onWorking();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));

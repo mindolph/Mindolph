@@ -1,14 +1,19 @@
 package com.mindolph.base.genai.llm;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
@@ -47,6 +52,19 @@ public class GeminiProvider extends BaseApiLlmProvider {
             }
             """;
 
+    String streamTemplate = """
+            {
+              "contents": [
+                {
+                  "parts": [
+                    {
+                      "text": "%s"
+                    }
+                  ]
+                }
+              ]
+            }
+            """;
 
     public GeminiProvider(String apiKey, String aiModel, boolean useProxy) {
         super(apiKey, aiModel, useProxy);
@@ -86,4 +104,33 @@ public class GeminiProvider extends BaseApiLlmProvider {
         }
     }
 
+    @Override
+    public void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, temperature, outputParams);
+        Request request = new Request.Builder()
+                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(aiModel, apiKey))
+                .post(requestBody)
+                .build();
+        log.info("Generate stream content...");
+        if (log.isTraceEnabled()) log.trace(request.url().toString());
+
+        OkHttpUtils.sse(client, request,
+                (Consumer<String>) data -> {
+            JsonObject resBody = new Gson().fromJson(data, JsonObject.class);
+            JsonElement candidate = resBody.get("candidates").getAsJsonArray().get(0);
+            String result = candidate.getAsJsonObject()
+                    .get("content").getAsJsonObject()
+                    .get("parts").getAsJsonArray()
+                    .get(0).getAsJsonObject()
+                    .get("text").getAsString();
+            JsonElement finishReason = candidate.getAsJsonObject().get("finishReason");
+            consumer.accept(new StreamToken(result, finishReason != null && "STOP".equals(finishReason.getAsString()), false));
+        }, (msg, throwable) -> {
+            log.error(msg, throwable);
+            String message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+            consumer.accept(new StreamToken(message, true, true));
+        }, () -> {
+            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
+        });
+    }
 }

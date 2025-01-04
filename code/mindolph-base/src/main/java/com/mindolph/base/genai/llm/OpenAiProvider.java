@@ -1,8 +1,11 @@
 package com.mindolph.base.genai.llm;
 
+import com.google.gson.JsonParser;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel.OpenAiChatModelBuilder;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +17,7 @@ import java.time.Duration;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class OpenAiProvider extends BaseLangchainLlmProvider {
+public class OpenAiProvider extends BaseLangChainLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiProvider.class);
 
@@ -40,5 +43,22 @@ public class OpenAiProvider extends BaseLangchainLlmProvider {
         return model;
     }
 
+    @Override
+    protected StreamingChatLanguageModel buildStreamingAI(float temperature) {
+        OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
+                .apiKey(this.apiKey)
+                .modelName(this.aiModel)
+                .timeout(Duration.ofSeconds(timeout))
+                .temperature((double) temperature);
+        if (super.proxyEnabled && super.useProxy) {
+            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
+            builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
+        }
+        return builder.build();
+    }
 
+    @Override
+    protected String extractErrorMessage(Throwable throwable) {
+        return JsonParser.parseString(throwable.getLocalizedMessage()).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+    }
 }

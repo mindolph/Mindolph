@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
+
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7
@@ -119,5 +121,11 @@ public class DummyLlmProvider implements LlmProvider {
         else {
             return generated;
         }
+    }
+
+    @Override
+    public void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        // TODO
+
     }
 }

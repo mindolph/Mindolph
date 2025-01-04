@@ -14,6 +14,8 @@ import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
 
 /**
+ * Manage llm config in java preference.
+ *
  * @author mindolph.com@gmail.com
  * @since 1.7
  */

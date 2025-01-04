@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 
@@ -44,12 +45,12 @@ public class LlmService {
         else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
-            log.info("Using llm provider: " + activeAiProvider);
+            log.info("Using llm provider: %s".formatted(activeAiProvider));
             if (OPEN_AI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(OPEN_AI.getName());
                 llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (GEMINI.getName().equals(activeAiProvider)){
+            else if (GEMINI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(GEMINI.getName());
                 llmProvider = new GeminiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
@@ -61,7 +62,7 @@ public class LlmService {
                 ProviderProps props = map.get(OLLAMA.getName());
                 llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel(), props.useProxy());
             }
-            else if (HUGGING_FACE.getName().equals(activeAiProvider)){
+            else if (HUGGING_FACE.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(HUGGING_FACE.getName());
                 llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel(), props.useProxy());
             }
@@ -98,8 +99,19 @@ public class LlmService {
             generated = generated.substring(input.length());
         }
         generated = generated.trim();
-        log.debug("Generated: " + generated);
+        log.debug("Generated: %s".formatted(generated));
         return generated;
+    }
+
+    public void stream(String input, float temperature, OutputParams outputParams, Consumer<LlmProvider.StreamToken> consumer) {
+        llmProvider.stream(input, temperature, outputParams, streamToken -> {
+            if (isStopped) {
+                isStopped = false;
+                consumer.accept(new LlmProvider.StreamToken("Stopped by exception", true, false));
+                throw new RuntimeException("Streaming is stopped by user"); // this exception stops the streaming from http connection.
+            }
+            consumer.accept(streamToken);
+        });
     }
 
     /**

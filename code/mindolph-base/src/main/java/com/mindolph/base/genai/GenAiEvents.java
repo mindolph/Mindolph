@@ -1,5 +1,6 @@
 package com.mindolph.base.genai;
 
+import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
 import org.reactfx.EventSource;
@@ -49,10 +50,13 @@ public class GenAiEvents {
         });
     }
 
-    public record Input(String text, float temperature, OutputAdjust outputAdjust, boolean isRetry) {
+    public record Input(String text, float temperature, OutputAdjust outputAdjust, boolean isRetry, boolean isStreaming) {
     }
 
     public record Output(String generatedText, boolean isRetry) {
+    }
+
+    public record StreamOutput(StreamToken streamToken, boolean isRetry) {
     }
 
 }

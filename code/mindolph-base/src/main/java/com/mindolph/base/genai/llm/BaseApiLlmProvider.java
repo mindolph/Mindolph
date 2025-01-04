@@ -75,6 +75,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         }
         log.debug(jsonParams);
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);
+        if (log.isTraceEnabled()) log.trace(String.valueOf(requestBody.contentType()));
         return requestBody;
     }
 
