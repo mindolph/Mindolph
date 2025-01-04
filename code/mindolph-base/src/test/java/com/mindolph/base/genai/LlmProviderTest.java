@@ -22,6 +22,8 @@ public class LlmProviderTest {
 
     private JsonObject props;
 
+    private final GenAiEvents.Input testInput = new GenAiEvents.Input("讲个笑话", 0.5f, OutputAdjust.SHORTER, false, false);
+
     @BeforeEach
     public void setup() {
         FxPreferences.getInstance().init(LlmProviderTest.class);
@@ -58,7 +60,7 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(CHAT_GLM.getName());
         ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4", false);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
     }
 
@@ -67,7 +69,7 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(CHAT_GLM.getName());
         ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4", false);
-        provider.stream("讲个笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
             System.out.println("result: " + streamToken.text());
         });
         waitUntilStreamDone(20);
@@ -78,7 +80,7 @@ public class LlmProviderTest {
         enableProxy();
         String apiKey = loadApiKey(HUGGING_FACE.getName());
         HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2", true);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
     }
 
@@ -87,7 +89,7 @@ public class LlmProviderTest {
         enableProxy();
         String apiKey = loadApiKey(HUGGING_FACE.getName());
         HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2", true);
-        provider.stream("讲个黑色笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
             System.out.println(streamToken.text());
         });
         waitUntilStreamDone(20);
@@ -106,9 +108,8 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(ALI_Q_WEN.getName());
         QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo", false);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
-
     }
 
     @Test
@@ -116,7 +117,7 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(ALI_Q_WEN.getName());
         QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo", false);
-        provider.stream("讲个笑话中国的笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT),
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT),
                 streamToken -> System.out.println(streamToken.text()));
         waitUntilStreamDone(20);
     }
@@ -127,7 +128,7 @@ public class LlmProviderTest {
         String apiKey = loadApiKey(GEMINI.getName());
         System.out.println(apiKey);
         GeminiProvider geminiProvider = new GeminiProvider(apiKey, "gemini-pro", true);
-        geminiProvider.stream("讲个笑话", 0.5f, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+        geminiProvider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
             System.out.println(streamToken.text());
         });
         waitUntilStreamDone(30);

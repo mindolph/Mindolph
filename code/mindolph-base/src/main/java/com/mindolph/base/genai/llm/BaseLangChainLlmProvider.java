@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.StreamingResponseHandler;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -26,21 +27,21 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     }
 
     @Override
-    public String predict(String input, float temperature, OutputParams outputParams) {
+    public String predict(Input input, OutputParams outputParams) {
         log.debug("Proxy: " + System.getenv("http.proxyHost"));
         PromptTemplate promptTemplate = PromptTemplate.from(TEMPLATE);
-        Map<String, Object> params = super.formatParams(input, outputParams);
+        Map<String, Object> params = super.formatParams(input.text(), outputParams);
         log.debug(String.valueOf(params));
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: %s".formatted(prompt.text()));
-        ChatLanguageModel llm = buildAI(temperature);
+        ChatLanguageModel llm = buildAI(input);
         return llm.generate(prompt.text());
     }
 
     @Override
-    public void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        Prompt prompt = this.createPrompt(input, outputParams);
-        StreamingChatLanguageModel llm = buildStreamingAI(temperature);
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        Prompt prompt = this.createPrompt(input.text(), outputParams);
+        StreamingChatLanguageModel llm = buildStreamingAI(input);
         llm.generate(prompt.text().trim(), new StreamingResponseHandler<>() {
             @Override
             public void onNext(String s) {
@@ -75,9 +76,9 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         return prompt;
     }
 
-    protected abstract ChatLanguageModel buildAI(float temperature);
+    protected abstract ChatLanguageModel buildAI(Input input);
 
-    protected abstract StreamingChatLanguageModel buildStreamingAI(float temperature);
+    protected abstract StreamingChatLanguageModel buildStreamingAI(Input input);
 
     protected abstract String extractErrorMessage(Throwable throwable);
 }

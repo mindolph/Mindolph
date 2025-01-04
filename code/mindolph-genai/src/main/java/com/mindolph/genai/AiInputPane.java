@@ -3,9 +3,9 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,11 +15,16 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
-import static com.mindolph.core.constant.GenAiConstants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
+import static com.mindolph.core.constant.GenAiConstants.ActionType;
+import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
 /**
  * An input panel for gen-ai.
@@ -29,6 +34,8 @@ import static com.mindolph.base.genai.GenAiEvents.Input;
  */
 public class AiInputPane extends StackPane {
 
+    private static final Logger log = LoggerFactory.getLogger(AiInputPane.class);
+
     @FXML
     private HBox hbReady;
     @FXML
@@ -36,11 +43,15 @@ public class AiInputPane extends StackPane {
     @FXML
     private Button btnStop;
     @FXML
+    private Label lbModel;
+    @FXML
     private Label lbTemperature;
     @FXML
     private Label lbIcon;
     @FXML
     private TextArea taInput;
+    @FXML
+    private ChoiceBox<Pair<String, String>> cbModel;
     @FXML
     private ChoiceBox<Pair<Float, Temperature>> cbTemperature;
     @FXML
@@ -70,6 +81,39 @@ public class AiInputPane extends StackPane {
             }
         }
 
+        log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
+        for (String m : PROVIDER_MODELS.get(activeProvider)) {
+            log.debug("  %s".formatted(m));
+        }
+
+        Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
+        ProviderProps vendorProps = map.get(activeProvider);
+
+        Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+        List<Pair<String, String>> models = PROVIDER_MODELS.get(activeProvider)
+                .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
+        cbModel.getItems().clear();
+        cbModel.getItems().addAll(models);
+        if (!models.contains(targetItem)) {
+            cbModel.getItems().add(targetItem); // exclude same model
+        }
+
+        if (cbModel.getItems().contains(targetItem)) {
+            cbModel.getSelectionModel().select(targetItem);
+        }
+        cbModel.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Pair<String, String> object) {
+                return object == null ? "" : object.getValue();
+            }
+
+            @Override
+            public Pair<String, String> fromString(String string) {
+                return null;
+            }
+        });
+
+//        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
 
@@ -88,7 +132,12 @@ public class AiInputPane extends StackPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 lbMsg.setText(null);
                 this.toggleButtons(true);
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, true));
+                Pair<String, String> selectedItem = cbModel.getSelectionModel().getSelectedItem();
+                String model = null;
+                if (selectedItem != null) {
+                    model = selectedItem.getValue();
+                }
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, true));
             }
             else {
                 taInput.requestFocus();

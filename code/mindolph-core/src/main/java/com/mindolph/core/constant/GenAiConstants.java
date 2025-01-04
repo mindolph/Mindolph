@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface GenAiConstants {
 
-    MultiValuedMap<String, String> providerModels = new HashSetValuedHashMap<>() {
+    MultiValuedMap<String, String> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // https://platform.openai.com/docs/models
             put(GenAiModelProvider.OPEN_AI.getName(), "gpt-3.5");

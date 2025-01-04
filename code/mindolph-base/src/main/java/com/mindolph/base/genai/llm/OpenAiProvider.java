@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonParser;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -26,15 +27,15 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected ChatLanguageModel buildAI(float temperature) {
+    protected ChatLanguageModel buildAI(Input input) {
         log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
                 super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(this.apiKey)
-                .modelName(this.aiModel)
+                .modelName(determineModel(input))
                 .maxRetries(1)
                 .timeout(Duration.ofSeconds(timeout))
-                .temperature((double) temperature);
+                .temperature((double) input.temperature());
         if (super.proxyEnabled && super.useProxy) {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
@@ -44,12 +45,12 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected StreamingChatLanguageModel buildStreamingAI(float temperature) {
+    protected StreamingChatLanguageModel buildStreamingAI(Input input) {
         OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey(this.apiKey)
-                .modelName(this.aiModel)
+                .modelName(determineModel(input))
                 .timeout(Duration.ofSeconds(timeout))
-                .temperature((double) temperature);
+                .temperature((double) input.temperature());
         if (super.proxyEnabled && super.useProxy) {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));

@@ -5,6 +5,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.genai.GenaiUiConstants;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -17,14 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
-import static com.mindolph.core.constant.GenAiConstants.providerModels;
+import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 
 /**
@@ -36,10 +36,6 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
 public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(GenAiPreferencePane.class);
-
-    private static final Pair<String, String> MODEL_CUSTOM_ITEM = new Pair<>("Custom", "Custom");
-
-    private static final Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
 
     @FXML
     private ChoiceBox<Pair<GenAiModelProvider, String>> cbAiProvider;
@@ -113,19 +109,19 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                         Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
 
                         log.debug("Load models for gen-ai provider: %s".formatted(provider.getName()));
-                        for (String m : providerModels.get(provider.getName())) {
+                        for (String m : PROVIDER_MODELS.get(provider.getName())) {
                             log.debug("  %s".formatted(m));
                         }
 
-                        List<Pair<String, String>> models = providerModels.get(provider.getName())
-                                .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
+                        List<Pair<String, String>> models = PROVIDER_MODELS.get(provider.getName())
+                                .stream().map(m -> new Pair<>(m, m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
                         cbModel.getItems().clear();
                         if (models.isEmpty()) {
-                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
+                            cbModel.getItems().add(GenaiUiConstants.MODEL_CUSTOM_ITEM);
                         }
                         else {
                             cbModel.getItems().addAll(models);
-                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
+                            cbModel.getItems().add(GenaiUiConstants.MODEL_CUSTOM_ITEM);
                         }
 
                         if (cbModel.getItems().contains(targetItem)) {
@@ -133,7 +129,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                             tfAiModel.setDisable(true);
                         }
                         else {
-                            cbModel.getSelectionModel().select(MODEL_CUSTOM_ITEM);
+                            cbModel.getSelectionModel().select(GenaiUiConstants.MODEL_CUSTOM_ITEM);
                             tfAiModel.setDisable(false);
                         }
                     }
@@ -166,7 +162,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             if (newValue == null) {
                 return;
             }
-            if (MODEL_CUSTOM_ITEM == newValue) {
+            if (GenaiUiConstants.MODEL_CUSTOM_ITEM == newValue) {
                 tfAiModel.setDisable(false);
             }
             else {

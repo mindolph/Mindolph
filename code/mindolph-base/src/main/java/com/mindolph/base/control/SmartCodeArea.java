@@ -163,10 +163,10 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                                 else {
                                     SmartCodeArea.this.insertText(streamOutput.streamToken().text());
                                 }
-                                log.debug(String.valueOf(streamOutput.streamToken()));
+                                if (log.isTraceEnabled()) log.trace(String.valueOf(streamOutput.streamToken()));
                             }
                             else {
-                                log.debug("select start index: %s".formatted(originPos));
+                                if (log.isTraceEnabled()) log.trace("select start index: %s".formatted(originPos));
                                 SmartCodeArea.super.selectRange(originPos, SmartCodeArea.this.getCaretPosition());
                                 SmartCodeArea.this.onGenerating();
                             }

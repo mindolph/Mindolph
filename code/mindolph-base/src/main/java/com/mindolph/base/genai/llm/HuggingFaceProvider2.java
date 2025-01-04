@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -58,8 +59,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     }
 
     @Override
-    public String predict(String input, float temperature, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, null, input, temperature, outputParams);
+    public String predict(Input input, OutputParams outputParams) {
+        RequestBody requestBody = super.createRequestBody(template, null, input.text(), input.temperature(), outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(aiModel))
                 .header("Authorization", "Bearer %s".formatted(apiKey))
@@ -83,8 +84,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     }
 
     @Override
-    public void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, temperature, outputParams);
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input.text(), input.temperature(), outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(aiModel))
                 .header("Authorization", "Bearer %s".formatted(apiKey))

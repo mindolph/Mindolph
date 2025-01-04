@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,16 @@ public abstract class BaseLlmProvider implements LlmProvider {
             proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), proxyHost, proxyPort).trim();
             proxyUser = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_USERNAME, "");
             proxyPassword = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PASSWORD, "");
+        }
+    }
+
+    //
+    protected String determineModel(Input input) {
+        if (StringUtils.isBlank(input.model())) {
+            return aiModel;
+        }
+        else {
+            return input.model();
         }
     }
 

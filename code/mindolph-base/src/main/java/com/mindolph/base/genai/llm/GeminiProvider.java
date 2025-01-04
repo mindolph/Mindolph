@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -71,8 +72,8 @@ public class GeminiProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public String predict(String input, float temperature, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, null, input, temperature, outputParams);
+    public String predict(Input input, OutputParams outputParams) {
+        RequestBody requestBody = super.createRequestBody(template, null, input.text(), input.temperature(), outputParams);
         Request request = new Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(aiModel, apiKey))
                 .post(requestBody)
@@ -105,13 +106,14 @@ public class GeminiProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, temperature, outputParams);
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        String prompt = input.text();
+        RequestBody requestBody = super.createRequestBody(streamTemplate, null, prompt, input.temperature(), outputParams);
         Request request = new Request.Builder()
-                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(aiModel, apiKey))
+                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(determineModel(input), apiKey))
                 .post(requestBody)
                 .build();
-        log.info("Generate stream content...");
+        log.info("Generate content screamingly by model %s ...".formatted(determineModel(input)));
         if (log.isTraceEnabled()) log.trace(request.url().toString());
 
         OkHttpUtils.sse(client, request,

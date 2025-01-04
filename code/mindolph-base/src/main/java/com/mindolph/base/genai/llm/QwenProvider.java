@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonParser;
+import com.mindolph.base.genai.GenAiEvents;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.dashscope.QwenChatModel;
@@ -17,21 +18,21 @@ public class QwenProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected ChatLanguageModel buildAI(float temperature) {
+    protected ChatLanguageModel buildAI(GenAiEvents.Input input) {
         QwenChatModel.QwenChatModelBuilder chatModelBuilder = new QwenChatModel.QwenChatModelBuilder()
                 .apiKey(this.apiKey)
-                .modelName(this.aiModel)
-                .temperature(temperature);
+                .modelName(determineModel(input))
+                .temperature(input.temperature());
         return chatModelBuilder.build();
     }
 
     @Override
-    protected StreamingChatLanguageModel buildStreamingAI(float temperature) {
+    protected StreamingChatLanguageModel buildStreamingAI(GenAiEvents.Input input) {
         QwenStreamingChatModel.QwenStreamingChatModelBuilder chatModelBuilder = new QwenStreamingChatModel.QwenStreamingChatModelBuilder();
         chatModelBuilder
                 .apiKey(this.apiKey)
-                .modelName(this.aiModel)
-                .temperature(temperature);
+                .modelName(determineModel(input))
+                .temperature(input.temperature());
         return chatModelBuilder.build();
     }
 

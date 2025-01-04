@@ -1,5 +1,7 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.plugin.PluginEventBus;
 import org.slf4j.Logger;
@@ -77,11 +79,11 @@ public class LlmService {
     }
 
 
-    public String predict(String input, float temperature, OutputParams outputParams) {
+    public String predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
         String generated = null;
         try {
-            generated = llmProvider.predict(input, temperature, outputParams);
+            generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
             if (isStopped) {
                 return null;
@@ -95,19 +97,19 @@ public class LlmService {
             return null; // force to return null since it has been stopped by user.
         }
         // strip user input if the generated text contains use input in the head of it.
-        if (generated.startsWith(input)) {
-            generated = generated.substring(input.length());
+        if (generated.startsWith(input.text())) {
+            generated = generated.substring(input.text().length());
         }
         generated = generated.trim();
         log.debug("Generated: %s".formatted(generated));
         return generated;
     }
 
-    public void stream(String input, float temperature, OutputParams outputParams, Consumer<LlmProvider.StreamToken> consumer) {
-        llmProvider.stream(input, temperature, outputParams, streamToken -> {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
                 isStopped = false;
-                consumer.accept(new LlmProvider.StreamToken("Stopped by exception", true, false));
+                consumer.accept(new StreamToken("Stopped by exception", true, false));
                 throw new RuntimeException("Streaming is stopped by user"); // this exception stops the streaming from http connection.
             }
             consumer.accept(streamToken);

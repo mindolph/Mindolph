@@ -1,5 +1,7 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.base.genai.GenAiEvents.Input;
+
 import java.util.function.Consumer;
 
 /**
@@ -10,19 +12,17 @@ public interface LlmProvider {
 
     /**
      * @param input
-     * @param temperature
      * @param outputParams
      * @return
      */
-    String predict(String input, float temperature, OutputParams outputParams);
+    String predict(Input input, OutputParams outputParams);
 
     /**
      * @param input
-     * @param temperature
      * @param outputParams
      * @param consumer
      */
-    void stream(String input, float temperature, OutputParams outputParams, Consumer<StreamToken> consumer);
+    void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer);
 
     /**
      *

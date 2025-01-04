@@ -92,7 +92,7 @@ public class AiGenerator implements Generator {
                 Platform.runLater(() -> {
                     beforeGenerateConsumer.accept(null);
                 });
-                LlmService.getIns().stream(input.text(), input.temperature(), new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
+                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
                         streamToken -> {
                             if (streamToken.isError()) {
                                 log.warn("stream token error: {}", streamToken);
@@ -110,7 +110,7 @@ public class AiGenerator implements Generator {
             else {
                 new Thread(() -> {
                     try {
-                        String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
+                        String generatedText = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
                         if (generatedText == null) {
                             // probably stopped by user.
                             return;
