@@ -60,7 +60,7 @@ public class AiGenerator implements Generator {
 
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
-        this.editorId = editorId;
+        this.editorId = editorId; // the editor seems not useful yet.
         this.fileType = fileType;
         this.listenGenAiEvents();
     }
@@ -90,8 +90,12 @@ public class AiGenerator implements Generator {
 
             if (input.isStreaming()) {
                 Platform.runLater(() -> {
-                    beforeGenerateConsumer.accept(null);
+                    if (beforeGenerateConsumer != null)
+                        beforeGenerateConsumer.accept(null);
                 });
+                if (streamOutputConsumer == null) {
+                    onError.accept("Not support stream generation");
+                }
                 LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
                         streamToken -> {
                             if (streamToken.isError()) {
@@ -174,7 +178,7 @@ public class AiGenerator implements Generator {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        inputPanel = new AiInputPane(editorId, defaultInput);
+        inputPanel = new AiInputPane(editorId, fileType, defaultInput);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;

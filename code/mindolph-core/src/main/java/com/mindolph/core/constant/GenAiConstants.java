@@ -101,7 +101,8 @@ public interface GenAiConstants {
         TEXT("Text"),
         MARKDOWN("Markdown"),
         JSON("JSON"),
-        MINDMAP("indented text");
+        MINDMAP("indented text"),
+        PLANTUML("PLANTUML");
 
         private final String name;
 
@@ -120,6 +121,7 @@ public interface GenAiConstants {
 //            put(SupportFileTypes.TYPE_PLAIN_TEXT, OutputFormat.TEXT);
             put(SupportFileTypes.TYPE_MARKDOWN, OutputFormat.MARKDOWN);
             put(SupportFileTypes.TYPE_MIND_MAP, OutputFormat.MINDMAP);
+            put(SupportFileTypes.TYPE_PLANTUML, OutputFormat.PLANTUML);
         }
     };
 

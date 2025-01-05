@@ -55,6 +55,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
      * @return
      */
     protected RequestBody createRequestBody(String template, String model, String input, float temperature, OutputParams outputParams) {
+        log.debug("Create request body by %s, %s, %s".formatted(model, temperature, outputParams));
         // compose user prompt first
         input = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input));
         Map<String, Object> args = super.formatParams(input, outputParams);

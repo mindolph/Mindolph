@@ -6,6 +6,7 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -63,9 +64,13 @@ public class AiInputPane extends StackPane {
     @FXML
     private Label lbMsg;
 
-    private Object editorId;
+    private final Object editorId;
+    private final String fileType;
 
-    public AiInputPane(Object editorId, String defaultInput) {
+    public AiInputPane(Object editorId, String fileType, String defaultInput) {
+        this.editorId = editorId;
+        this.fileType = fileType;
+
         FxmlUtils.loadUri("/genai/ai_input_pane.fxml", this);
 
         taInput.setText(defaultInput);
@@ -137,7 +142,8 @@ public class AiInputPane extends StackPane {
                 if (selectedItem != null) {
                     model = selectedItem.getValue();
                 }
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, true));
+                boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
+                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, isStreaming));
             }
             else {
                 taInput.requestFocus();
