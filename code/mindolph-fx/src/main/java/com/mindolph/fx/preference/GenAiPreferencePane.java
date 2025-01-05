@@ -14,6 +14,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
 
 /**
  * @author mindolph.com@gmail.com
@@ -52,6 +55,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private CheckBox cbUseProxy;
 
+    private final AtomicBoolean isReady = new AtomicBoolean(false);
 
     public GenAiPreferencePane() {
         super("/preference/gen_ai_preferences_pane.fxml");
@@ -82,6 +86,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
                 selected -> {
+                    isReady.set(false);
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
                     GenAiModelProvider provider = selected.getKey();
                     if (provider != null) {
@@ -100,7 +105,6 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                         }
                         tfApiKey.setText(vendorProps.apiKey());
                         tfBaseUrl.setText(vendorProps.baseUrl());
-                        tfAiModel.setText(vendorProps.aiModel());
                         cbUseProxy.setSelected(vendorProps.useProxy());
 
                         // Specific disable the proxy support for OLLAMA since the LangChain4j is not supported it yet.
@@ -117,33 +121,30 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                                 .stream().map(m -> new Pair<>(m, m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
                         cbModel.getItems().clear();
                         if (models.isEmpty()) {
-                            cbModel.getItems().add(GenaiUiConstants.MODEL_CUSTOM_ITEM);
+                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
                         }
                         else {
                             cbModel.getItems().addAll(models);
-                            cbModel.getItems().add(GenaiUiConstants.MODEL_CUSTOM_ITEM);
+                            cbModel.getItems().add(MODEL_CUSTOM_ITEM);
                         }
-
-                        if (cbModel.getItems().contains(targetItem)) {
-                            cbModel.getSelectionModel().select(targetItem);
-                            tfAiModel.setDisable(true);
-                        }
-                        else {
-                            cbModel.getSelectionModel().select(GenaiUiConstants.MODEL_CUSTOM_ITEM);
-                            tfAiModel.setDisable(false);
-                        }
+                        cbModel.getSelectionModel().select(targetItem);
+                        isReady.set(true);
                     }
                 });
 
         // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(newValue, null, tfAiModel.getText(), cbUseProxy.isSelected());
+            if (!isReady.get()) return;
+            ProviderProps vendorProps = new ProviderProps(newValue, null,
+                    cbModel.getSelectionModel().getSelectedItem().getValue(), cbUseProxy.isSelected(), List.of(tfAiModel.getText()));
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
         // Dynamic preference can't use bindPreference.
         tfBaseUrl.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(null, newValue, tfAiModel.getText(), cbUseProxy.isSelected());
+            if (!isReady.get()) return;
+            ProviderProps vendorProps = new ProviderProps(null, newValue,
+                    cbModel.getSelectionModel().getSelectedItem().getValue(), cbUseProxy.isSelected(), List.of(tfAiModel.getText()));
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
@@ -162,26 +163,40 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             if (newValue == null) {
                 return;
             }
-            if (GenaiUiConstants.MODEL_CUSTOM_ITEM == newValue) {
+            ProviderProps providerProps = LlmConfig.getIns().loadGenAiProviders().get(cbAiProvider.getValue().getKey().getName());
+            if (MODEL_CUSTOM_ITEM == newValue) {
                 tfAiModel.setDisable(false);
+                if (providerProps != null) {
+                    tfAiModel.setText(providerProps.customModels() != null ? providerProps.customModels().getFirst() : StringUtils.EMPTY);
+                }
             }
             else {
                 tfAiModel.setDisable(true);
-                tfAiModel.setText(newValue.getValue());
+                tfAiModel.setText(StringUtils.EMPTY);
             }
+            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(),
+                    newValue.getValue(), cbUseProxy.isSelected(),
+                    List.of(StringUtils.isNotBlank(tfAiModel.getText()) ? tfAiModel.getText() : providerProps.aiModel()));
+            LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
+            this.onSave(true);
         });
         // Dynamic preference can't use bindPreference.
         tfAiModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(), newValue, cbUseProxy.isSelected());
+            if (!isReady.get()) return;
+            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(),
+                    cbModel.getSelectionModel().getSelectedItem().getValue(), cbUseProxy.isSelected(), List.of(newValue));
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
-        super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
         cbUseProxy.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(), tfAiModel.getText(), newValue);
+            if (!isReady.get()) return;
+            ProviderProps vendorProps = new ProviderProps(tfApiKey.getText(), tfBaseUrl.getText(),
+                    cbModel.getSelectionModel().getSelectedItem().getValue(), newValue, List.of(tfAiModel.getText()));
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
+        // time out setting for all.
+        super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
     }
 
     @Override

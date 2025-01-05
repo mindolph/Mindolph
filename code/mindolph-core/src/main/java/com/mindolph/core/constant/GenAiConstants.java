@@ -4,6 +4,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,7 +126,10 @@ public interface GenAiConstants {
         }
     };
 
-    record ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
+    record ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy, List<String> customModels) {
+        public ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
+            this(apiKey, baseUrl, aiModel, useProxy, List.of());
+        }
     }
 
     record ProviderInfo(String name, String model) {

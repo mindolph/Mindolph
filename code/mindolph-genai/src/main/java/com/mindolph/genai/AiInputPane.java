@@ -96,8 +96,14 @@ public class AiInputPane extends StackPane {
 
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps vendorProps = map.get(activeProvider);
-
-        Pair<String, String> targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+        Pair<String, String> targetItem;
+        if ("Custom".equals(vendorProps.aiModel())) {
+            String customModel = vendorProps.customModels().getFirst();
+            targetItem = new Pair<>(customModel, customModel);
+        }
+        else {
+            targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+        }
         List<Pair<String, String>> models = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
         cbModel.getItems().clear();

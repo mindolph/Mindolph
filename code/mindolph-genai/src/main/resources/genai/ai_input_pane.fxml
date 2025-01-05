@@ -48,15 +48,15 @@
             <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
             <Label fx:id="lbTemperature" />
             <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
-            <Pane prefWidth="50.0" />
+            <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
          </HBox>
-         <HBox fx:id="hbGenerating" managed="false" visible="false">
+         <HBox fx:id="hbGenerating" maxWidth="500.0" managed="false" visible="false">
             <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
             <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Generating" />
          </HBox>
-         <Pane maxWidth="500.0">
-            <Label fx:id="lbMsg" wrapText="true" />
+         <Pane maxWidth="500.0" VBox.vgrow="ALWAYS">
+            <Label fx:id="lbMsg" maxWidth="500.0" wrapText="true" />
          </Pane>
       </VBox>
    </AnchorPane>
