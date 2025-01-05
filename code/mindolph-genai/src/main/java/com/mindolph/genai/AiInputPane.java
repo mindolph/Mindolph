@@ -44,6 +44,8 @@ public class AiInputPane extends StackPane {
     @FXML
     private Button btnStop;
     @FXML
+    private Label lbTitle;
+    @FXML
     private Label lbModel;
     @FXML
     private Label lbTemperature;
@@ -90,6 +92,7 @@ public class AiInputPane extends StackPane {
         for (String m : PROVIDER_MODELS.get(activeProvider)) {
             log.debug("  %s".formatted(m));
         }
+        lbTitle.setText("Generate content with %s (Experiment)".formatted(activeProvider));
 
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps vendorProps = map.get(activeProvider);

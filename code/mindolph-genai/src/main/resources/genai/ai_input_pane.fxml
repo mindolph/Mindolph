@@ -20,7 +20,7 @@
          </padding>
          <HBox alignment="CENTER_LEFT" spacing="10.0">
             <Label fx:id="lbIcon" />
-            <Label text="Generate content with AI (Experiment)" />
+            <Label fx:id="lbTitle" text="Generate content with AI (Experiment)" />
             <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../../../../../mindolph-base/src/main/resources/style/icon_button.css">
                <HBox.margin>
