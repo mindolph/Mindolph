@@ -1,9 +1,9 @@
 package com.mindolph.base.genai.llm;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
@@ -46,7 +46,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
                   "Title"
                 ],
                 "temperature": %s,
-                "maxOutputTokens": 800,
+                "maxOutputTokens": %d,
                 "topP": 0.8,
                 "topK": 10
               }
@@ -63,7 +63,16 @@ public class GeminiProvider extends BaseApiLlmProvider {
                     }
                   ]
                 }
-              ]
+              ],
+              "generationConfig": {
+                "stopSequences": [
+                  "Title"
+                ],
+                "temperature": %s,
+                "maxOutputTokens": %d,
+                "topP": 0.8,
+                "topK": 10
+              }
             }
             """;
 
@@ -73,9 +82,9 @@ public class GeminiProvider extends BaseApiLlmProvider {
 
     @Override
     public String predict(Input input, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, null, input.text(), input.temperature(), outputParams);
+        RequestBody requestBody = super.createRequestBody(template, input.model(), input, outputParams);
         Request request = new Request.Builder()
-                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(aiModel, apiKey))
+                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(determineModel(input), apiKey))
                 .post(requestBody)
                 .build();
 
@@ -107,8 +116,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
 
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        String prompt = input.text();
-        RequestBody requestBody = super.createRequestBody(streamTemplate, null, prompt, input.temperature(), outputParams);
+        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, outputParams);
         Request request = new Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(determineModel(input), apiKey))
                 .post(requestBody)
@@ -118,21 +126,35 @@ public class GeminiProvider extends BaseApiLlmProvider {
 
         OkHttpUtils.sse(client, request,
                 (Consumer<String>) data -> {
-            JsonObject resBody = new Gson().fromJson(data, JsonObject.class);
-            JsonElement candidate = resBody.get("candidates").getAsJsonArray().get(0);
-            String result = candidate.getAsJsonObject()
-                    .get("content").getAsJsonObject()
-                    .get("parts").getAsJsonArray()
-                    .get(0).getAsJsonObject()
-                    .get("text").getAsString();
-            JsonElement finishReason = candidate.getAsJsonObject().get("finishReason");
-            consumer.accept(new StreamToken(result, finishReason != null && "STOP".equals(finishReason.getAsString()), false));
-        }, (msg, throwable) -> {
-            log.error(msg, throwable);
-            String message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
-            consumer.accept(new StreamToken(message, true, true));
-        }, () -> {
-            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
-        });
+                    JsonObject resBody = new Gson().fromJson(data, JsonObject.class);
+                    JsonObject candidate = resBody.get("candidates").getAsJsonArray().get(0).getAsJsonObject();
+                    String result = candidate
+                            .get("content").getAsJsonObject()
+                            .get("parts").getAsJsonArray()
+                            .get(0).getAsJsonObject()
+                            .get("text").getAsString();
+                    boolean isStop = candidate.has("finishReason") && "STOP".equals(candidate.get("finishReason").getAsString());
+                    int outputTokens = 0;
+                    if (isStop) {
+                        outputTokens = resBody.get("usageMetadata").getAsJsonObject().get("candidatesTokenCount").getAsInt();
+                        log.debug("outputTokens: {}", outputTokens);
+                    }
+                    consumer.accept(new StreamToken(result, outputTokens, isStop, false));
+                }, (msg, throwable) -> {
+                    String message = "ERROR";
+                    if (StringUtils.isNotBlank(msg)) {
+                        try {
+                            message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+                        } catch (JsonSyntaxException e) {
+                            log.warn("Not exception from Gemini API", e);
+                            // skip exception
+                            message = msg;
+                        }
+                    }
+                    log.error(message, throwable);
+                    consumer.accept(new StreamToken(message, true, true));
+                }, () -> {
+                    // NO NEED
+                });
     }
 }

@@ -19,10 +19,23 @@ public interface Generator {
 
     ProviderInfo getProviderInfo();
 
-    MenuItem contextMenuItem(String selectedText);
+    MenuItem generationMenuItem(String selectedText);
 
+    /**
+     *
+     * @return
+     * @since 1.11
+     */
+    MenuItem summaryMenuItem();
 
     StackPane showInputPanel(String defaultInput);
+
+    /**
+     *
+     * @return
+     * @since 1.11
+     */
+    StackPane showSummarizePanel(String input);
 
     /**
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.

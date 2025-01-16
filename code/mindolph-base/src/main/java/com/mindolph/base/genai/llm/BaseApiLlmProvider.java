@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -50,17 +51,17 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
      * @param template     the template should contain only user input and temperature variables.
      * @param model
      * @param input
-     * @param temperature
+     * @param input
      * @param outputParams
      * @return
      */
-    protected RequestBody createRequestBody(String template, String model, String input, float temperature, OutputParams outputParams) {
-        log.debug("Create request body by %s, %s, %s".formatted(model, temperature, outputParams));
+    protected RequestBody createRequestBody(String template, String model, Input input, OutputParams outputParams) {
+        log.debug("Create request body by model: %s, temperature: %s, %s".formatted(model, input.temperature(), outputParams));
         // compose user prompt first
-        input = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input));
-        Map<String, Object> args = super.formatParams(input, outputParams);
+        String encoded = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input.text()));
+        Map<String, Object> args = super.formatParams(encoded, outputParams);
         String formattedPrompt = args.entrySet().stream().reduce(TEMPLATE,
-                (s, e) -> s.replace("{{" + e.getKey() + "}}", e.getValue().toString()),
+                (s, e) -> s.replace("{{%s}}".formatted(e.getKey()), e.getValue().toString()),
                 (s, s2) -> s);
 
         formattedPrompt = StringEscapeUtils.escapeJson(formattedPrompt);
@@ -69,10 +70,10 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         // format the JSON params
         String jsonParams;
         if (StringUtils.isNotBlank(model)) {
-            jsonParams = template.formatted(model, formattedPrompt.trim(), temperature);
+            jsonParams = template.formatted(model, formattedPrompt.trim(), input.temperature(), input.maxTokens());
         }
         else {
-            jsonParams = template.formatted(formattedPrompt.trim(), temperature);
+            jsonParams = template.formatted(formattedPrompt.trim(), input.temperature(), input.maxTokens());
         }
         log.debug(jsonParams);
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);

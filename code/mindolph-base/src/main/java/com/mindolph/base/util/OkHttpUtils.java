@@ -6,6 +6,7 @@ import okhttp3.Response;
 import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class OkHttpUtils {
      * @param request
      * @param dataConsumer  consuming data until exception occurred.
      * @param errorConsumer
-     * @param onComplete    be call when completed.
+     * @param onComplete    be called when completed (in case there is no specific indication on data event raised)
      * @param <T>
      * @return
      */
@@ -56,13 +57,13 @@ public class OkHttpUtils {
 
             @Override
             public void onEvent(@NotNull EventSource eventSource, @Nullable String id, @Nullable String type, @NotNull String data) {
-                log.debug("onEvent %s %s %s%n".formatted(id, type, data));
+                if (log.isTraceEnabled()) log.trace("onEvent id:%s type:%s payload:%s%n".formatted(id, type, data));
                 if (dataConsumer != null) {
                     try {
                         dataConsumer.accept((T) data);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        eventSource.cancel(); // STOP the event source if exception is captured from callback.
+                        eventSource.cancel(); // STOP the event source if exception is captured from callback. onFailure() will be called.
                     }
                 }
             }
@@ -79,6 +80,9 @@ public class OkHttpUtils {
                 if (response != null) {
                     try {
                         String resMsg = response.body().string();
+                        if (StringUtils.isBlank(resMsg) && t != null) {
+                            resMsg = t.getLocalizedMessage();
+                        }
                         log.error("SSE failure with response: %s".formatted(resMsg));
                         if (errorConsumer != null) errorConsumer.accept(resMsg, null);
                     } catch (IOException e) {

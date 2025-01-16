@@ -14,6 +14,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 
+import static com.mindolph.core.constant.GenAiConstants.MAX_GENERATION_TOKENS;
+
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7
@@ -61,7 +63,7 @@ public class AiReframePane extends StackPane {
             this.onWorking();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, null, true, true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, MAX_GENERATION_TOKENS, null, true, true));
             this.onWorking();
         });
         btnAdjust.setOnMouseClicked(event -> {
@@ -80,7 +82,7 @@ public class AiReframePane extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, (OutputAdjust) mi.getUserData(), true, true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, MAX_GENERATION_TOKENS, (OutputAdjust) mi.getUserData(), true, true));
             onWorking();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));

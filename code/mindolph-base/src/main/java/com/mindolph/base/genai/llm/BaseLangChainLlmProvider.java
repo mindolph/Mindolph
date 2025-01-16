@@ -51,7 +51,8 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
             @Override
             public void onComplete(Response<AiMessage> response) {
                 log.debug("completed: %s%n".formatted(response.content()));
-                consumer.accept(new StreamToken(response.content().text(), true, false));
+                consumer.accept(new StreamToken(response.content().text(), response.tokenUsage().outputTokenCount(),
+                        true, false));
             }
 
             @Override

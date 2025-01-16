@@ -39,6 +39,7 @@ public class OllamaProvider extends BaseLangChainLlmProvider {
                 .modelName(determineModel(input))
                 .timeout(Duration.ofSeconds(super.timeout))
                 .temperature((double) input.temperature());
+        // TODO support maxTokens if Ollama support it.
         return builder.build();
     }
 

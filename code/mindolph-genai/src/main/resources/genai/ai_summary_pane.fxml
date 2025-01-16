@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <AnchorPane style="-fx-background-color: #D3D3D3FF;">
+        <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label fx:id="lbIcon"/>
+                <Label fx:id="lbTitle" text="Summarize selected content:"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button"
+                        stylesheets="@../style/icon_button.css">
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                </Button>
+            </HBox>
+            <VBox>
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <TextArea fx:id="taOutput" editable="false" prefHeight="128.0" prefWidth="480.0" promptText="Wait..." wrapText="true"/>
+                <AnchorPane>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                    <ProgressBar fx:id="pbWaiting" prefHeight="8.0" visible="true" AnchorPane.leftAnchor="0.0"
+                                 AnchorPane.rightAnchor="0.0"/>
+                </AnchorPane>
+            </VBox>
+            <HBox fx:id="hbDone" alignment="CENTER_LEFT" managed="false" spacing="10.0" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets bottom="5.0" top="5.0"/>
+                </padding>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnCopy" mnemonicParsing="false" text="Copy"/>
+                <Button fx:id="btnReSummarize" mnemonicParsing="false" text="Re-summarize"/>
+            </HBox>
+            <HBox fx:id="hbGenerating" maxWidth="500.0" visible="true">
+                <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Summarizing"/>
+            </HBox>
+            <Pane maxWidth="500.0" VBox.vgrow="ALWAYS">
+                <Label fx:id="lbMsg" maxWidth="500.0" wrapText="true"/>
+            </Pane>
+        </VBox>
+    </AnchorPane>
+</fx:root>

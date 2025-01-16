@@ -25,6 +25,7 @@ public class HuggingFaceProvider extends BaseLangChainLlmProvider {
                 .accessToken(apiKey)
                 .modelId(determineModel(input))
                 .temperature((double) input.temperature());
+        if (input.maxTokens() != 0) builder.maxNewTokens(input.maxTokens());
 //        if (super.proxyEnabled) {
 //            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType);
 //            builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));

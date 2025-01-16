@@ -6,6 +6,7 @@ import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -63,5 +64,28 @@ public class LlmConfig {
         Type collectionType = new TypeToken<Map<String, ProviderProps>>() {
         }.getType();
         return new Gson().fromJson(json, collectionType);
+    }
+
+    /**
+     * Get preferred model name for active LLM provider
+     *
+     * @return
+     * @since 1.11
+     */
+    public String preferredModelForActiveLlmProvider() {
+        String activeProvider = LlmConfig.getIns().getActiveAiProvider();
+        if (StringUtils.isNotBlank(activeProvider)) {
+            Map<String, ProviderProps> providers = LlmConfig.getIns().loadGenAiProviders();
+            if (providers.containsKey(activeProvider)) {
+                ProviderProps props = providers.get(activeProvider);
+                if (StringUtils.isNotBlank(props.aiModel())) {
+                    if ("Custom".equals(props.aiModel())) {
+                        return props.customModels().getFirst();
+                    }
+                    return props.aiModel();
+                }
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }

@@ -36,6 +36,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .maxRetries(1)
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) input.temperature());
+        if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
         if (super.proxyEnabled && super.useProxy) {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
@@ -51,6 +52,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .modelName(determineModel(input))
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) input.temperature());
+        if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
         if (super.proxyEnabled && super.useProxy) {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));

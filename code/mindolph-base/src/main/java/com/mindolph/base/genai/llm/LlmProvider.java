@@ -30,6 +30,9 @@ public interface LlmProvider {
      * @param isStop if true, no text data will be included.
      * @param isError
      */
-    record StreamToken(String text, boolean isStop, boolean isError) {
+    record StreamToken(String text, int outputTokens, boolean isStop, boolean isError) {
+        public StreamToken(String text, boolean isStop, boolean isError) {
+            this(text, 0, isStop, isError);
+        }
     }
 }

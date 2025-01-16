@@ -2,8 +2,8 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,14 +110,40 @@ public class LlmService {
             if (isStopped) {
                 isStopped = false;
                 consumer.accept(new StreamToken("Stopped by exception", true, false));
-                throw new RuntimeException("Streaming is stopped by user"); // this exception stops the streaming from http connection.
+                throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
             }
             consumer.accept(streamToken);
         });
     }
 
     /**
-     * Stop the LLM prediction (ignore the generated actually)
+     *
+     * @param input
+     * @param outputParams
+     * @param consumer
+     * @since 1.11
+     */
+    public void summarize(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        String prompt = """
+                summarize following content:
+                ```
+                %s
+                ```
+                """.formatted(input.text());
+        // replace with new prompt
+        Input in = new Input(input.model(), prompt, input.temperature(), input.maxTokens(), input.outputAdjust(), input.isRetry(), input.isStreaming());
+        llmProvider.stream(in, outputParams, streamToken -> {
+            if (isStopped) {
+                isStopped = false;
+                consumer.accept(new StreamToken("Stopped by user/exception", true, false));
+                throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
+            }
+            consumer.accept(streamToken);
+        });
+    }
+
+    /**
+     * Stop the LLM actions (ignore the generated actually)
      */
     public void stop() {
         this.isStopped = true;

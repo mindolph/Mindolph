@@ -56,6 +56,7 @@ public class AiGenerator implements Generator {
 
     private final Map<Object, Input> inputMap = new HashMap<>();
     private AiInputPane inputPanel;
+    private AiSummaryPane summarizePanel;
     private AiReframePane reframePanel;
 
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
@@ -99,7 +100,7 @@ public class AiGenerator implements Generator {
                 LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
                         streamToken -> {
                             if (streamToken.isError()) {
-                                log.warn("stream token error: {}", streamToken);
+                                log.warn("error from streaming: {}", streamToken);
                                 onError.accept(streamToken.text());
                             }
                             else {
@@ -149,6 +150,10 @@ public class AiGenerator implements Generator {
                 case STOP -> {
                     LlmService.getIns().stop();
                 }
+                case ABORT -> {
+                    LlmService.getIns().stop();
+                    removeFromParent(summarizePanel);
+                }
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
         });
@@ -167,9 +172,14 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public MenuItem contextMenuItem(String selectedText) {
+    public MenuItem generationMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem("Generate... (Experiment)", icon);
+        return new MenuItem("Generate...", icon);
+    }
+
+    @Override
+    public MenuItem summaryMenuItem() {
+        return new MenuItem("Summarize...", FontIconManager.getIns().getIcon(IconKey.MAGIC));
     }
 
     @Override
@@ -182,6 +192,18 @@ public class AiGenerator implements Generator {
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
+    }
+
+    @Override
+    public StackPane showSummarizePanel(String input) {
+        if (!checkSettings()) {
+            DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
+            return null;
+        }
+        summarizePanel = new AiSummaryPane(editorId, fileType, input);
+        addToParent(summarizePanel);
+        panelShowingConsumer.accept(summarizePanel);
+        return summarizePanel;
     }
 
     private void addToParent(StackPane panel) {

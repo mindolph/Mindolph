@@ -136,11 +136,19 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     Generator generator = opt.get();
                     generator.setParentPane(parentPane);
 
-                    MenuItem menuItem = generator.contextMenuItem(SmartCodeArea.this.getSelectedText());
-                    pluginMenuItems.add(menuItem);
-                    menuItem.setOnAction(event -> {
+                    MenuItem generationMenuItem = generator.generationMenuItem(SmartCodeArea.this.getSelectedText());
+                    MenuItem summaryMenuItem = generator.summaryMenuItem();
+                    pluginMenuItems.add(generationMenuItem);
+                    pluginMenuItems.add(summaryMenuItem);
+                    generationMenuItem.setOnAction(event -> {
                         SmartCodeArea.this.onCompleted();
                         generator.showInputPanel(SmartCodeArea.super.getSelectedText());
+                        IndexRange selection = SmartCodeArea.super.getSelection();
+                        SmartCodeArea.super.moveTo(selection.getEnd());
+                    });
+                    summaryMenuItem.setOnAction(event -> {
+                        SmartCodeArea.this.onCompleted();
+                        generator.showSummarizePanel(SmartCodeArea.super.getSelectedText());
                         IndexRange selection = SmartCodeArea.super.getSelection();
                         SmartCodeArea.super.moveTo(selection.getEnd());
                     });
@@ -150,8 +158,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     });
                     generator.setBeforeGenerate(unused -> {
                         SmartCodeArea.this.onCompleted();
-                        int origin = SmartCodeArea.this.getSelection().getStart();
-                        this.originPos = origin;
+                        this.originPos = SmartCodeArea.this.getSelection().getStart();
                     });
                     generator.setOnStreaming(streamOutput -> {
                         Platform.runLater(() -> {

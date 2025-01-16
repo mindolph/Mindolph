@@ -33,7 +33,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
                 ],
                 "temperature": %s,
                 "top_p": 0.8,
-                "max_tokens": 1024
+                "max_tokens": %d
             }
             """;
 
@@ -49,7 +49,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
                 "stream": true,
                 "temperature": %s,
                 "top_p": 0.8,
-                "max_tokens": 1024
+                "max_tokens": %d
             }
             """;
 
@@ -59,7 +59,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
 
     @Override
     public String predict(Input input, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, aiModel, input.text(), input.temperature(), outputParams);
+        RequestBody requestBody = super.createRequestBody(template, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL)
                 .header("Authorization", "Bearer %s".formatted(apiKey))
@@ -89,7 +89,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
 
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        RequestBody requestBody = super.createRequestBody(streamTemplate, aiModel, input.text(), input.temperature(), outputParams);
+        RequestBody requestBody = super.createRequestBody(streamTemplate, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL)
                 .header("Authorization", "Bearer %s".formatted(apiKey))
@@ -120,8 +120,8 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
                 log.debug(jsonElement.toString());
             }
         }, () -> {
-            log.info("completed");
-            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
+//            log.info("completed");
+//            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
         });
     }
 }

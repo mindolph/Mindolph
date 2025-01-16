@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mindolph.base.genai.GenAiEvents.Input;
-import static com.mindolph.core.constant.GenAiConstants.ActionType;
-import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.core.constant.GenAiConstants.*;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
 /**
@@ -54,7 +53,7 @@ public class AiInputPane extends StackPane {
     @FXML
     private TextArea taInput;
     @FXML
-    private ChoiceBox<Pair<String, String>> cbModel;
+    private ChoiceBox<Pair<String, ModelMeta>> cbModel;
     @FXML
     private ChoiceBox<Pair<Float, Temperature>> cbTemperature;
     @FXML
@@ -78,34 +77,28 @@ public class AiInputPane extends StackPane {
         taInput.setText(defaultInput);
         taInput.positionCaret(defaultInput.length());
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
-        if (StringUtils.isNotBlank(activeProvider)) {
-            Map<String, ProviderProps> providers = LlmConfig.getIns().loadGenAiProviders();
-            if (providers.containsKey(activeProvider)) {
-                ProviderProps props = providers.get(activeProvider);
-                if (StringUtils.isNotBlank(props.aiModel())) {
-                    taInput.setPromptText("The prompt to generate content by %s %s".formatted(activeProvider, props.aiModel()));
-                }
-            }
+        log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
+
+        String defaultModel = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        taInput.setPromptText("The prompt to generate content by %s".formatted(activeProvider));
+        if (StringUtils.isEmpty(defaultModel)) {
+            log.info("with default model: '%s'".formatted(defaultModel));
         }
 
-        log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
-        for (String m : PROVIDER_MODELS.get(activeProvider)) {
-            log.debug("  %s".formatted(m));
-        }
         lbTitle.setText("Generate content with %s (Experiment)".formatted(activeProvider));
 
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps vendorProps = map.get(activeProvider);
-        Pair<String, String> targetItem;
+        Pair<String, ModelMeta> targetItem;
         if ("Custom".equals(vendorProps.aiModel())) {
             String customModel = vendorProps.customModels().getFirst();
-            targetItem = new Pair<>(customModel, customModel);
+            targetItem = new Pair<>(customModel, new ModelMeta(customModel, 0));
         }
         else {
-            targetItem = new Pair<>(vendorProps.aiModel(), vendorProps.aiModel());
+            targetItem = new Pair<>(vendorProps.aiModel(), new ModelMeta(vendorProps.aiModel(), 0));
         }
-        List<Pair<String, String>> models = PROVIDER_MODELS.get(activeProvider)
-                .stream().map(m -> new Pair<>(m, m)).sorted(MODEL_COMPARATOR).toList();
+        List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(activeProvider)
+                .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
         cbModel.getItems().clear();
         cbModel.getItems().addAll(models);
         if (!models.contains(targetItem)) {
@@ -117,12 +110,12 @@ public class AiInputPane extends StackPane {
         }
         cbModel.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Pair<String, String> object) {
-                return object == null ? "" : object.getValue();
+            public String toString(Pair<String, ModelMeta> object) {
+                return object == null ? "" : object.getValue().name();
             }
 
             @Override
-            public Pair<String, String> fromString(String string) {
+            public Pair<String, ModelMeta> fromString(String string) {
                 return null;
             }
         });
@@ -146,13 +139,15 @@ public class AiInputPane extends StackPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 lbMsg.setText(null);
                 this.toggleButtons(true);
-                Pair<String, String> selectedItem = cbModel.getSelectionModel().getSelectedItem();
+                Pair<String, ModelMeta> selectedItem = cbModel.getSelectionModel().getSelectedItem();
                 String model = null;
                 if (selectedItem != null) {
-                    model = selectedItem.getValue();
+                    model = selectedItem.getValue().name();
                 }
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
-                GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(), null, false, isStreaming));
+                GenAiEvents.getIns().emitGenerateEvent(editorId,
+                        new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(),
+                                selectedItem.getValue().maxTokens(), null, false, isStreaming));
             }
             else {
                 taInput.requestFocus();
