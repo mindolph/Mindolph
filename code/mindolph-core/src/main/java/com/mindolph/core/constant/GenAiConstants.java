@@ -19,73 +19,69 @@ public interface GenAiConstants {
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // https://platform.openai.com/docs/models
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo-instruct", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo-16k", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4-32k", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4-turbo", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o", 1024));
-            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o-mini", 1024));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo", 4096));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4", 8192));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4-turbo", 4096));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o", 16384));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o-mini", 16384));
 
             // https://ai.google.dev/gemini-api/docs/models/gemini
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-2.0-flash-exp", 1024));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro-latest", 1024));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro", 1024));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash", 1024));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash-8b", 1024));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-pro", 1024));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-2.0-flash-exp", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro-latest", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-72b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-32b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-14b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-7b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-3b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-1.5b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-0.5b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-72b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-57b-a14b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-7b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-1.5b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-0.5b-instruct", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-110b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-72b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-32b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-14b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-7b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-1.8b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-0.5b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-72b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-14b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-7b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-longcontext-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-chat", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max-latest", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus-latest", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo-latest", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 1024));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-72b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-32b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-14b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-7b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-3b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-1.5b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-0.5b-instruct", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-72b-instruct", 6144));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-57b-a14b-instruct", 6144));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-7b-instruct", 6144));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-1.5b-instruct", 6144));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2-0.5b-instruct", 6144));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-110b-chat", 8000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-72b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-32b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-14b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-7b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-1.8b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-0.5b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-72b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-14b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-7b-chat", 1500));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-longcontext-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
 
 
             // https://www.bigmodel.cn/console/modelcenter/square
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-zero-preview", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-plus", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-airx", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-air", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-long", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-flashx", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-flash", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-9b", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4", 1024));
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-3-turbo", 1024));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-zero-preview", 16000));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-plus", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-airx", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-air", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-long", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-flashx", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-flash", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-9b", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4", 4095));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-3-turbo", 4095));
         }
     };
 
@@ -136,6 +132,12 @@ public interface GenAiConstants {
         }
     }
 
+    /**
+     * Used for both pre-defined models in memory and user-custom models in preferences.
+     *
+     * @param name
+     * @param maxTokens
+     */
     record ModelMeta(String name, int maxTokens){
 
     }
