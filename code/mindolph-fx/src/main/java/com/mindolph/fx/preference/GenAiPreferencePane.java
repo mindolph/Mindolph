@@ -126,7 +126,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                         PROVIDER_MODELS.get(provider.getName()).stream().map("  %s"::formatted).forEach(log::debug);
                         List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(provider.getName())
                                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
-                        Pair<String, ModelMeta> targetItem;
+                        Pair<String, ModelMeta> targetItem = null;
                         if (!models.isEmpty()) {
                             cbModel.getItems().addAll(models);
                         }
@@ -137,7 +137,9 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                         }
                         else {
                             ModelMeta defaultModel = GenAiConstants.lookupModelMeta(provider.getName(), providerProps.aiModel());
-                            targetItem = new Pair<>(providerProps.aiModel(), defaultModel);
+                            if (defaultModel != null) {
+                                targetItem = new Pair<>(providerProps.aiModel(), defaultModel);
+                            }
                         }
                         cbModel.getSelectionModel().select(targetItem);
                         isReady.set(true);
@@ -223,7 +225,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             String activeProviderName = cbAiProvider.getValue().getKey().getName();
             // check existence before saving.
             ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
-            if (props.customModels().stream().anyMatch(mm -> mm.name().equals(newCustomModel.name()))) {
+            if (props.customModels() != null
+                    && props.customModels().stream().anyMatch(mm -> mm.name().equals(newCustomModel.name()))) {
                 Platform.runLater(() -> {
                     Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.name())).showWarning();
                 });
