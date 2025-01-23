@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.llm;
 
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.mfx.util.TextUtils;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -37,12 +37,13 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
                 .callTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS);
         if (super.proxyEnabled && super.useProxy) {
+            log.debug("use proxy");
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
             builder.proxy(proxy);
         }
         log.info("Build HTTP client to access '%s' %s".formatted(this.aiModel,
-                super.proxyEnabled ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
+                super.proxyEnabled && super.useProxy ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
         builder.retryOnConnectionFailure(false);
         client = builder.build();
     }
@@ -58,12 +59,14 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
     protected RequestBody createRequestBody(String template, String model, Input input, OutputParams outputParams) {
         log.debug("Create request body by model: %s, temperature: %s, %s".formatted(model, input.temperature(), outputParams));
         // compose user prompt first
-        String encoded = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input.text()));
+//        String encoded = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input.text()));
+        String encoded = input.text();
         Map<String, Object> args = super.formatParams(encoded, outputParams);
         String formattedPrompt = args.entrySet().stream().reduce(TEMPLATE,
                 (s, e) -> s.replace("{{%s}}".formatted(e.getKey()), e.getValue().toString()),
                 (s, s2) -> s);
-
+//        formattedPrompt = StringUtils.strip(formattedPrompt);
+        formattedPrompt = TextUtils.replaceLineBreaksWithWhitespace(formattedPrompt);
         formattedPrompt = StringEscapeUtils.escapeJson(formattedPrompt);
         log.debug(formattedPrompt);
 

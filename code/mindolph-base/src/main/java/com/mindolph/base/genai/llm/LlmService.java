@@ -109,8 +109,9 @@ public class LlmService {
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
                 isStopped = false;
-                consumer.accept(new StreamToken("Stopped by exception", true, false));
-                throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
+                consumer.accept(streamToken);
+                // this exception stops the streaming from http connection.
+                throw new RuntimeException("Streaming is stopped by user/exception");
             }
             consumer.accept(streamToken);
         });
@@ -125,7 +126,7 @@ public class LlmService {
      */
     public void summarize(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         String prompt = """
-                summarize following content:
+                summarize following content concisely in same language:
                 ```
                 %s
                 ```
@@ -135,7 +136,7 @@ public class LlmService {
         llmProvider.stream(in, outputParams, streamToken -> {
             if (isStopped) {
                 isStopped = false;
-                consumer.accept(new StreamToken("Stopped by user/exception", true, false));
+                consumer.accept(streamToken);
                 throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
             }
             consumer.accept(streamToken);

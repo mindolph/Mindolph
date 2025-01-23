@@ -3,6 +3,8 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiConstants.ModelMeta;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -34,7 +36,6 @@ public class LlmConfig {
     }
 
     /**
-     *
      * @return
      */
     public String getActiveAiProvider() {
@@ -56,6 +57,21 @@ public class LlmConfig {
     }
 
     /**
+     * Find custom model directly for active provider.
+     *
+     * @param provider
+     * @param modelMeta
+     * @since 1.11
+     */
+    public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
+        ProviderProps providerProps = this.loadGenAiProviderProps(provider.getName());
+        for (ModelMeta customModel : providerProps.customModels()) {
+            customModel.setActive(customModel.name().equals(modelMeta.name()));
+        }
+        saveGenAiProvider(provider, providerProps);
+    }
+
+    /**
      * @return
      */
     public Map<String, ProviderProps> loadGenAiProviders() {
@@ -66,13 +82,18 @@ public class LlmConfig {
         return new Gson().fromJson(json, collectionType);
     }
 
+    public ProviderProps loadGenAiProviderProps(String providerName) {
+        Map<String, ProviderProps> providers = loadGenAiProviders();
+        return providers.get(providerName);
+    }
+
     /**
      * Get preferred model name for active LLM provider
      *
      * @return
      * @since 1.11
      */
-    public String preferredModelForActiveLlmProvider() {
+    public ModelMeta preferredModelForActiveLlmProvider() {
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         if (StringUtils.isNotBlank(activeProvider)) {
             Map<String, ProviderProps> providers = LlmConfig.getIns().loadGenAiProviders();
@@ -80,12 +101,13 @@ public class LlmConfig {
                 ProviderProps props = providers.get(activeProvider);
                 if (StringUtils.isNotBlank(props.aiModel())) {
                     if ("Custom".equals(props.aiModel())) {
-                        return props.customModels().getFirst();
+                        return props.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
                     }
-                    return props.aiModel();
+                    // for pre-defined models
+                    return GenAiConstants.lookupModelMeta(activeProvider, props.aiModel());
                 }
             }
         }
-        return StringUtils.EMPTY;
+        return null;
     }
 }

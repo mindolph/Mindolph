@@ -27,15 +27,14 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 "inputs": "%s",
                 "parameters":{
                     "temperature": %s,
-                    "max_new_tokens": 1024,
+                    "max_new_tokens": %d,
                     "max_time": 60,
                     "top_k": 10,
                     "top_p": 0.8
                 },
                 "options": {
                     "wait_for_model":true
-                },
-                "max_tokens": %d
+                }
             }
             """;
 
@@ -45,15 +44,14 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 "stream": true,
                 "parameters":{
                     "temperature": %s,
-                    "max_new_tokens": 256,
+                    "max_new_tokens": %s,
                     "max_time": 60,
                     "top_k": 10,
                     "top_p": 0.8
                 },
                 "options": {
                     "wait_for_model":true
-                },
-                "max_tokens": %d
+                }
             }
             """;
 
@@ -67,6 +65,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
                 .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("x-wait-for-model", "true")
                 .post(requestBody)
                 .build();
         log.debug(request.toString());
@@ -117,8 +116,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 try {
                     message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsString();
                 } catch (JsonSyntaxException e) {
-                    log.warn("Not exception from Gemini API", e);
-                    // skip exception
+                    log.warn("Not exception from Gemini API" + e.getLocalizedMessage());
+                    // skip parsing exception
                     message = msg;
                 }
             }

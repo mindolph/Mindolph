@@ -13,6 +13,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -248,13 +249,12 @@ public class AiGenerator implements Generator {
                 if (provider == null || props == null) return false;
                 log.debug("Provider: %s".formatted(provider));
                 log.trace(String.valueOf(props));
-                if (provider.getType() == GenAiModelProvider.ProviderType.PUBLIC) {
+                if (provider.getType() == ProviderType.PUBLIC) {
                     return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
                 }
-                else if (provider.getType() == GenAiModelProvider.ProviderType.PRIVATE) {
+                else if (provider.getType() == ProviderType.PRIVATE) {
                     return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
                 }
-
             }
         }
         return false;

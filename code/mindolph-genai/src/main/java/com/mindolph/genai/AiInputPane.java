@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.util.FxmlUtils;
@@ -79,23 +80,23 @@ public class AiInputPane extends StackPane {
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
 
-        String defaultModel = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
         taInput.setPromptText("The prompt to generate content by %s".formatted(activeProvider));
-        if (StringUtils.isEmpty(defaultModel)) {
-            log.info("with default model: '%s'".formatted(defaultModel));
+        if (modelMeta != null && StringUtils.isNotBlank(modelMeta.name())) {
+            log.info("with default model: '%s'".formatted(modelMeta.name()));
         }
 
         lbTitle.setText("Generate content with %s (Experiment)".formatted(activeProvider));
 
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-        ProviderProps vendorProps = map.get(activeProvider);
+        ProviderProps providerProps = map.get(activeProvider);
         Pair<String, ModelMeta> targetItem;
-        if ("Custom".equals(vendorProps.aiModel())) {
-            String customModel = vendorProps.customModels().getFirst();
-            targetItem = new Pair<>(customModel, new ModelMeta(customModel, 0));
+        if ("Custom".equals(providerProps.aiModel())) {
+            ModelMeta customModelMeta = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            targetItem = new Pair<>(customModelMeta.name(), customModelMeta);
         }
         else {
-            targetItem = new Pair<>(vendorProps.aiModel(), new ModelMeta(vendorProps.aiModel(), 0));
+            targetItem = new Pair<>(providerProps.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerProps.aiModel()));
         }
         List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
@@ -145,8 +146,10 @@ public class AiInputPane extends StackPane {
                     model = selectedItem.getValue().name();
                 }
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
+                String prompt = taInput.getText().trim();
+                log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new Input(model, taInput.getText().trim(), cbTemperature.getValue().getKey(),
+                        new Input(model, prompt, cbTemperature.getValue().getKey(),
                                 selectedItem.getValue().maxTokens(), null, false, isStreaming));
             }
             else {

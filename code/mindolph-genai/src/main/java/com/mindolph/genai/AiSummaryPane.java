@@ -9,6 +9,7 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
+import com.mindolph.core.constant.GenAiConstants.ModelMeta;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.application.Platform;
@@ -24,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
-import static com.mindolph.core.constant.GenAiConstants.MAX_SUMMARIZE_TOKENS;
 
 /**
  * @since 1.11
@@ -118,12 +118,12 @@ public class AiSummaryPane extends StackPane {
     }
 
     private void starTotSummarize(String inputText) {
-        String model = LlmConfig.getIns().preferredModelForActiveLlmProvider();
-        log.info("Start to summarize with model: '%s'".formatted(model));
-        lbTitle.setText("Summarize selected content by %s %s".formatted(LlmConfig.getIns().getActiveAiProvider(), model));
+        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
+        lbTitle.setText("Summarize selected content by %s %s".formatted(LlmConfig.getIns().getActiveAiProvider(), modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
-        GenAiEvents.getIns().emitSummarizeEvent(editorId, new Input(model, inputText,
-                0.5f, MAX_SUMMARIZE_TOKENS,null, false, true));
+        GenAiEvents.getIns().emitSummarizeEvent(editorId, new Input(modelMeta.name(), inputText,
+                0.5f, modelMeta.maxTokens(),null, false, true));
     }
 
     public void onStop(String reason) {
