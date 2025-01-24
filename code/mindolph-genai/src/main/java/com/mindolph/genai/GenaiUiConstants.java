@@ -1,6 +1,6 @@
 package com.mindolph.genai;
 
-import com.mindolph.core.constant.GenAiConstants.ModelMeta;
+import com.mindolph.core.llm.ModelMeta;
 import javafx.util.Pair;
 
 import java.util.Comparator;

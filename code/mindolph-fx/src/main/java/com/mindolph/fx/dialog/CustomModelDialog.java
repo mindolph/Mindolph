@@ -2,7 +2,7 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.core.constant.GenAiConstants.ModelMeta;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;

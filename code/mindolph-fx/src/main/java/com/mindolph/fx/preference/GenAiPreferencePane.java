@@ -6,8 +6,8 @@ import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiConstants;
-import com.mindolph.core.constant.GenAiConstants.ModelMeta;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.fx.dialog.CustomModelDialog;
 import com.mindolph.genai.GenaiUiConstants;
@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -226,14 +227,19 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             String activeProviderName = cbAiProvider.getValue().getKey().getName();
             // check existence before saving.
             ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
-            if (props.customModels() != null
-                    && props.customModels().stream().anyMatch(mm -> mm.name().equals(newCustomModel.name()))) {
-                Platform.runLater(() -> {
-                    Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.name())).showWarning();
-                });
-                return; // already exists
-            }
             log.debug("new custom model: %s".formatted(newCustomModel));
+            if (props.customModels() == null) {
+                props.setCustomModels(new ArrayList<>());
+            }
+            else {
+                if (props.customModels().stream().anyMatch(mm -> mm.name().equals(newCustomModel.name()))) {
+                    Platform.runLater(() -> {
+                        Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.name())).showWarning();
+                    });
+                    return; // already exists
+                }
+            }
+
             props.customModels().add(newCustomModel);
             LlmConfig.getIns().saveGenAiProvider(fromName(activeProviderName), props);
             LlmConfig.getIns().activateCustomModel(fromName(activeProviderName), newCustomModel);

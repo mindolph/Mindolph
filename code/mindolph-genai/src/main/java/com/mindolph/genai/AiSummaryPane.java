@@ -9,7 +9,7 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
-import com.mindolph.core.constant.GenAiConstants.ModelMeta;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.application.Platform;

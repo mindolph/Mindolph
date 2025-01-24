@@ -3,7 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.core.llm.ProviderProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

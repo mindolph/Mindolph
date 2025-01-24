@@ -12,7 +12,7 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.mfx.dialog.DialogFactory;
