@@ -92,6 +92,10 @@ public interface GenAiConstants {
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-9b", 4095));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4", 4095));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-3-turbo", 4095));
+
+            // DeepSeek
+            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-chat", 8192));
+            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
         }
     };
 

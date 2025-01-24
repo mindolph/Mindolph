@@ -102,9 +102,10 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
             String result = choices
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
-            boolean isStop = "stop".equals(choices.get("finish_reason").getAsString());
+            boolean isStop = determineStreamStop(choices, "finish_reason");
             if (isStop) {
-                consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
+                // TODO count actual output tokens
+                consumer.accept(new StreamToken(StringUtils.EMPTY, 0, true, false));
             }
             else {
                 consumer.accept(new StreamToken(result, false, false));

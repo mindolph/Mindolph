@@ -140,17 +140,17 @@ public class AiInputPane extends StackPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 lbMsg.setText(null);
                 this.toggleButtons(true);
-                Pair<String, ModelMeta> selectedItem = cbModel.getSelectionModel().getSelectedItem();
+                Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
                 String model = null;
-                if (selectedItem != null) {
-                    model = selectedItem.getValue().name();
+                if (selectedModel != null) {
+                    model = selectedModel.getValue().name();
                 }
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
                         new Input(model, prompt, cbTemperature.getValue().getKey(),
-                                selectedItem.getValue().maxTokens(), null, false, isStreaming));
+                                selectedModel.getValue().maxTokens(), null, false, isStreaming));
             }
             else {
                 taInput.requestFocus();

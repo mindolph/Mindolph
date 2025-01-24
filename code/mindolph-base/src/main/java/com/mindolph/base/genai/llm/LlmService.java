@@ -72,6 +72,10 @@ public class LlmService {
                 ProviderProps props = map.get(activeAiProvider);
                 llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
+            else if (DEEP_SEEK.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(DEEP_SEEK.getName());
+                llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
+            }
             else {
                 throw new RuntimeException("No llm provider setup: " + activeAiProvider);
             }

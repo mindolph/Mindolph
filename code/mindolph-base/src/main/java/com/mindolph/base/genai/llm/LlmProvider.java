@@ -27,6 +27,7 @@ public interface LlmProvider {
     /**
      *
      * @param text
+     * @param outputTokens
      * @param isStop if true, no text data will be included.
      * @param isError
      */

@@ -2,6 +2,7 @@ package com.mindolph.base.genai;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.*;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
 import com.mindolph.core.constant.GenAiConstants.OutputFormat;
@@ -22,7 +23,8 @@ public class LlmProviderTest {
 
     private JsonObject props;
 
-    private final GenAiEvents.Input testInput = new GenAiEvents.Input("讲个笑话", 0.5f, OutputAdjust.SHORTER, false, false);
+    private final Input testInput = new Input("讲个笑话", 0.5f, 512,
+            OutputAdjust.SHORTER, false, false);
 
     @BeforeEach
     public void setup() {
@@ -132,5 +134,14 @@ public class LlmProviderTest {
             System.out.println(streamToken.text());
         });
         waitUntilStreamDone(30);
+    }
+
+    @Test
+    public void deepSeek() {
+        disableProxy();
+        String apiKey = loadApiKey(DEEP_SEEK.getName());
+        DeepSeekProvider provider = new DeepSeekProvider(apiKey, "deepseek-chat", false);
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        System.out.println(result);
     }
 }

@@ -116,7 +116,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 try {
                     message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsString();
                 } catch (JsonSyntaxException e) {
-                    log.warn("Not exception from Gemini API" + e.getLocalizedMessage());
+                    log.warn("Not exception from HuggingFace API: " + e.getLocalizedMessage());
                     // skip parsing exception
                     message = msg;
                 }

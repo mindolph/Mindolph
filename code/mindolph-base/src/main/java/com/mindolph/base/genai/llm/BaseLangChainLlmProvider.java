@@ -64,11 +64,10 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                 }
             }
         });
-
     }
 
     private Prompt createPrompt(String input, OutputParams outputParams) {
-        log.debug("Proxy: %s".formatted(System.getenv("http.proxyHost")));
+        log.debug("System Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(TEMPLATE);
         Map<String, Object> params = super.formatParams(input, outputParams);
         log.debug(String.valueOf(params));

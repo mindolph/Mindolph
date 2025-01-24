@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.llm;
 
+import com.google.gson.JsonObject;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.mfx.util.TextUtils;
 import okhttp3.MediaType;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +52,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
     }
 
     /**
-     * @param template     the template should contain only user input and temperature variables.
+     * @param template     the template should contain only user input, temperature and max output tokens variables.
      * @param model
      * @param input
      * @param input
@@ -82,6 +85,32 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);
         if (log.isTraceEnabled()) log.trace(String.valueOf(requestBody.contentType()));
         return requestBody;
+    }
+
+    /**
+     * Whether streaming stops from the result of LLM.
+     *
+     * @param jsonObject
+     * @param key
+     * @return
+     */
+    protected boolean determineStreamStop(JsonObject jsonObject, String key) {
+        if (jsonObject.has(key)
+                && jsonObject.get(key) != null
+                && !jsonObject.get(key).isJsonNull()) {
+            String finishReason = jsonObject.get(key).getAsString();
+            return getFinishReasons().stream().anyMatch(reason -> reason.equals(finishReason));
+        }
+        return false;
+    }
+
+    /**
+     * Inherit to support other more finish reasons.
+     *
+     * @return
+     */
+    protected List<String> getFinishReasons() {
+        return Collections.singletonList("stop");
     }
 
 }

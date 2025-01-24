@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
@@ -41,8 +42,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
         }
-        OpenAiChatModel model = builder.build();
-        return model;
+        return builder.build();
     }
 
     @Override
@@ -62,6 +62,10 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
 
     @Override
     protected String extractErrorMessage(Throwable throwable) {
-        return JsonParser.parseString(throwable.getLocalizedMessage()).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+        try {
+            return JsonParser.parseString(throwable.getLocalizedMessage()).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+        } catch (JsonSyntaxException e) {
+            return throwable.getLocalizedMessage();
+        }
     }
 }

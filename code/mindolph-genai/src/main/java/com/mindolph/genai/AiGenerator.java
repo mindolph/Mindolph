@@ -6,6 +6,7 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
@@ -82,10 +83,10 @@ public class AiGenerator implements Generator {
                 });
             };
 
-            Runnable showReframePane = () -> {
+            Consumer<StreamToken> showReframePane = (streamToken) -> {
                 AiGenerator.this.removeFromParent(reframePanel);
                 AiGenerator.this.removeFromParent(inputPanel);
-                reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
+                reframePanel = new AiReframePane(editorId, input.text(), input.temperature(), streamToken.outputTokens());
                 AiGenerator.this.addToParent(reframePanel);
                 panelShowingConsumer.accept(reframePanel);
             };
@@ -108,7 +109,7 @@ public class AiGenerator implements Generator {
                                 // accept streaming output (even with `stop` one).
                                 streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()));
                                 if (streamToken.isStop()) {
-                                    Platform.runLater(showReframePane);
+                                    Platform.runLater(() -> showReframePane.accept(streamToken));
                                 }
                             }
                         });
@@ -124,7 +125,7 @@ public class AiGenerator implements Generator {
                         log.debug(generatedText);
                         Platform.runLater(() -> {
                             generateConsumer.accept(new GenAiEvents.Output(generatedText, input.isRetry()));
-                            showReframePane.run();
+                            showReframePane.accept(null); // TODO should not be null but no data now
                         });
                     } catch (Exception e) {
                         log.error(e.getLocalizedMessage(), e);

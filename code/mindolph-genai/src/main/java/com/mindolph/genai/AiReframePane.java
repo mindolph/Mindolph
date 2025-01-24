@@ -45,13 +45,14 @@ public class AiReframePane extends StackPane {
 
     private ContextMenu adjustMenu;
 
-    public AiReframePane(Object editorId, String inputText, float temperature) {
+    public AiReframePane(Object editorId, String inputText, float temperature, int outputTokens) {
         this.editorId = editorId;
         this.inputText = inputText;
         this.temperature = temperature;
         FxmlUtils.loadUri("/genai/ai_reframe_pane.fxml", this);
 
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
+        lbMsg.setText("Done with %d tokens".formatted(outputTokens));
 
         btnKeep.setGraphic(FontIconManager.getIns().getIcon(IconKey.YES));
         btnRetry.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
