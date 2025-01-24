@@ -323,7 +323,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      * Move file(s) to target tree node in either current workspace or other workspace.
      * If any file is moved successfully, the treeview's selection will be cleared and moved files will be selected.
      *
-     * @param nodeDatas selected files in current workspace.
+     * @param nodeDatas      selected files in current workspace.
      * @param targetTreeItem target tree item in current or other workspace.
      * @return moved files.
      */
@@ -964,7 +964,9 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             ClipBoardUtils.textToClipboard(selectedNodes.stream().map(NodeData::getFileRelativePath).collect(Collectors.joining(LINE_SEPARATOR)));
         }
         else if (source == miPasteFile) {
-            this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
+            File file = ClipBoardUtils.filesFromClipboard().get(0);
+            String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
+            this.copyFile(selectedTreeItem, file, cloneFileName);
         }
         else if (source == miRename) {
             this.requestRenameFolderOrFile(selectedData, newNameFile -> {
@@ -1027,9 +1029,21 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
         }
         else if (source == miClone) {
-            if (selectedData.isFile()) {
-                File file = selectedData.getFile();
-                this.copyFile(selectedTreeItem.getParent(), file);
+            String oldFileName = selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName();
+            Dialog<String> dialog = new TextDialogBuilder()
+                    .owner(DialogFactory.DEFAULT_WINDOW)
+                    .title("Clone %s".formatted(selectedData.getName()))
+                    .content("Input a new name")
+                    .text("%s_copy".formatted(oldFileName))
+                    .width(400)
+                    .build();
+            Optional<String> optNewName = dialog.showAndWait();
+            if (optNewName.isPresent()) {
+                if (selectedData.isFile()) {
+                    File file = selectedData.getFile();
+                    String ext = FilenameUtils.getExtension(file.getName());
+                    this.copyFile(selectedTreeItem.getParent(), file, "%s.%s".formatted(optNewName.get(), ext));
+                }
             }
         }
         else if (source == miDelete) {
@@ -1110,13 +1124,14 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      *
      * @param folderTreeItem
      * @param file
+     * @param newFileName
      */
-    private void copyFile(TreeItem<NodeData> folderTreeItem, File file) {
+    private void copyFile(TreeItem<NodeData> folderTreeItem, File file, String newFileName) {
         File targetDir = folderTreeItem.getValue().getFile();
-        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
-        File cloneFile = new File(targetDir, cloneFileName);
+//        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
+        File cloneFile = new File(targetDir, newFileName);
         if (cloneFile.exists()) {
-            DialogFactory.errDialog("File %s already exists".formatted(cloneFileName));
+            DialogFactory.errDialog("File %s already exists".formatted(newFileName));
             return;
         }
         try {
