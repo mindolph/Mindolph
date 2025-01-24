@@ -58,6 +58,8 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     private Button btnSeparator;
     @FXML
     private Button btnImage;
+    @FXML
+    private Button btnComment;
 
     private final MarkdownCodeArea markdownCodeArea;
 
@@ -82,6 +84,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnHeader5.setGraphic(fim.getIcon(IconKey.H5));
         btnHeader6.setGraphic(fim.getIcon(IconKey.H6));
         btnSeparator.setGraphic(fim.getIcon(IconKey.SEPARATOR));
+        btnComment.setGraphic(fim.getIcon(IconKey.COMMENT));
 
         btnBold.setOnAction(this);
         btnItalic.setOnAction(this);
@@ -99,6 +102,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         btnHeader5.setOnAction(this);
         btnHeader6.setOnAction(this);
         btnSeparator.setOnAction(this);
+        btnComment.setOnAction(this);
     }
 
 
@@ -187,6 +191,10 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         }
         else if (node == btnSeparator) {
             markdownCodeArea.insertText("\r---\r");
+        }
+        else if (node == btnComment) {
+            String newHead = "[comment]:";
+            markdownCodeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), true);
         }
         markdownCodeArea.requestFocus();
     }
