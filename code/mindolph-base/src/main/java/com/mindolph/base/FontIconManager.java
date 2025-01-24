@@ -89,6 +89,7 @@ public class FontIconManager {
         icons.put(IconKey.H5, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_5, DEFAULT_ICON_SIZE));
         icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, DEFAULT_ICON_SIZE));
         icons.put(IconKey.SEPARATOR, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.WINDOW_MINIMIZE, DEFAULT_ICON_SIZE));
+        icons.put(IconKey.COMMENT, () -> MaterialDesignIconFactory.get().createIcon(MaterialIcon.CHAT_BUBBLE_OUTLINE, DEFAULT_ICON_SIZE));
 
         icons.put(IconKey.OUTLINE, () -> OctIconFactory.get().createIcon(OctIcon.THREE_BARS, DEFAULT_ICON_SIZE));
         icons.put(IconKey.OUTLINE_ITEM, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.RECORD, DEFAULT_ICON_SIZE));
