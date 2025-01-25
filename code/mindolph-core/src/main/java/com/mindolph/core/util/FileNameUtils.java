@@ -1,12 +1,9 @@
 package com.mindolph.core.util;
 
 import com.mindolph.core.constant.SupportFileTypes;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemProperties;
-import org.apache.commons.lang3.SystemUtils;
-import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 
