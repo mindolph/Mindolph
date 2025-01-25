@@ -87,7 +87,7 @@ public class AiInputPane extends StackPane {
             log.info("with default model: '%s'".formatted(modelMeta.name()));
         }
 
-        lbTitle.setText("Generate content with %s (Experiment)".formatted(activeProvider));
+        lbTitle.setText("Generate content with %s".formatted(activeProvider));
 
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps providerProps = map.get(activeProvider);

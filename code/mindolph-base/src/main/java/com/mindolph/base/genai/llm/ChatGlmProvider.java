@@ -58,7 +58,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public String predict(Input input, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(template, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL)
@@ -80,7 +80,8 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
-            return result;
+            int outputTokens = resObject.get("usage").getAsJsonObject().get("completion_tokens").getAsInt();
+            return new StreamToken(result, outputTokens, true, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

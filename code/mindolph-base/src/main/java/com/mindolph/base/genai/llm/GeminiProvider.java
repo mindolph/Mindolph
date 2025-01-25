@@ -81,8 +81,8 @@ public class GeminiProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public String predict(Input input, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, input.model(), input, outputParams);
+    public StreamToken predict(Input input, OutputParams outputParams) {
+        RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
         Request request = new Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(determineModel(input), apiKey))
                 .post(requestBody)
@@ -108,7 +108,8 @@ public class GeminiProvider extends BaseApiLlmProvider {
                     .get(0).getAsJsonObject()
                     .get("text").getAsString();
 
-            return result;
+            int outputTokens = resBody.get("usageMetadata").getAsJsonObject().get("candidatesTokenCount").getAsInt();
+            return new StreamToken(result, outputTokens, true, false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

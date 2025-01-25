@@ -1,6 +1,6 @@
 package com.mindolph.base.genai;
 
-import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
+import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
 import org.apache.commons.lang3.StringUtils;

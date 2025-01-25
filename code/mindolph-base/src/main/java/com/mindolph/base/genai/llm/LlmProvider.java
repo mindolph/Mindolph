@@ -15,7 +15,7 @@ public interface LlmProvider {
      * @param outputParams
      * @return
      */
-    String predict(Input input, OutputParams outputParams);
+    StreamToken predict(Input input, OutputParams outputParams);
 
     /**
      * @param input
@@ -24,16 +24,4 @@ public interface LlmProvider {
      */
     void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer);
 
-    /**
-     *
-     * @param text
-     * @param outputTokens
-     * @param isStop if true, no text data will be included.
-     * @param isError
-     */
-    record StreamToken(String text, int outputTokens, boolean isStop, boolean isError) {
-        public StreamToken(String text, boolean isStop, boolean isError) {
-            this(text, 0, isStop, isError);
-        }
-    }
 }

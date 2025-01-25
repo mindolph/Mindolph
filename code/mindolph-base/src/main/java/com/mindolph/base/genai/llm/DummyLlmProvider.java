@@ -86,7 +86,7 @@ public class DummyLlmProvider implements LlmProvider {
     };
 
     @Override
-    public String predict(Input input, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         try {
             Thread.sleep(RandomUtils.nextInt(500, 3000));
         } catch (InterruptedException e) {
@@ -106,22 +106,21 @@ public class DummyLlmProvider implements LlmProvider {
 
         String generated = template.formatted(input.text(), input.temperature(), chatId);
         if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER) {
-            return StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
+            generated = StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
         }
         else if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.LONGER) {
             switch (outputParams.outputFormat()) {
                 case TEXT:
-                    return generated + "\nI can do more.";
+                    generated = generated + "\nI can do more.";
                 case MARKDOWN:
-                    return generated + "\n* I can do more.";
+                    generated = generated + "\n* I can do more.";
                 case MINDMAP:
-                    return generated + "\n\t\tI can do more.";
+                    generated = generated + "\n\t\tI can do more.";
+                case PLANTUML:
+                    generated = generated + "I can do more.";
             }
-            return generated;
         }
-        else {
-            return generated;
-        }
+        return new StreamToken(generated, 999, true, false);
     }
 
     @Override

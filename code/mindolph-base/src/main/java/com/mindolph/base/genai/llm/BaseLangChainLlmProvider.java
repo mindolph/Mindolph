@@ -2,6 +2,8 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.StreamingResponseHandler;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
@@ -27,7 +29,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     }
 
     @Override
-    public String predict(Input input, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         log.debug("Proxy: " + System.getenv("http.proxyHost"));
         PromptTemplate promptTemplate = PromptTemplate.from(TEMPLATE);
         Map<String, Object> params = super.formatParams(input.text(), outputParams);
@@ -35,7 +37,9 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: %s".formatted(prompt.text()));
         ChatLanguageModel llm = buildAI(input);
-        return llm.generate(prompt.text());
+        ChatMessage chatMessage = new UserMessage(prompt.text());
+        Response<AiMessage> aiMessage = llm.generate(chatMessage);
+        return new StreamToken(aiMessage.content().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
     }
 
     @Override

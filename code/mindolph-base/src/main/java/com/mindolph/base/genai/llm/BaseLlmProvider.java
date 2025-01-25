@@ -74,10 +74,10 @@ public abstract class BaseLlmProvider implements LlmProvider {
     }
 
 
-    protected Map<String, Object> formatParams(String input, OutputParams outputParams) {
+    protected Map<String, Object> formatParams(String text, OutputParams outputParams) {
         HashMap<String, Object> params = new HashMap<>() {
             {
-                put("input", input);
+                put("input", text);
                 put("format", outputParams.outputFormat() != null && StringUtils.isNotBlank(outputParams.outputFormat().getName())
                         ? "your output must be in format: %s".formatted(outputParams.outputFormat().getName())
                         : StringUtils.EMPTY);

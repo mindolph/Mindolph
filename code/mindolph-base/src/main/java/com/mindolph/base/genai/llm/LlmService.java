@@ -1,7 +1,6 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.ProviderProps;
 import org.slf4j.Logger;
@@ -83,9 +82,9 @@ public class LlmService {
     }
 
 
-    public String predict(Input input, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
-        String generated = null;
+        StreamToken generated = null;
         try {
             generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
@@ -101,10 +100,10 @@ public class LlmService {
             return null; // force to return null since it has been stopped by user.
         }
         // strip user input if the generated text contains use input in the head of it.
-        if (generated.startsWith(input.text())) {
-            generated = generated.substring(input.text().length());
+        if (generated.text().startsWith(input.text())) {
+            generated.setText(generated.text().substring(input.text().length()));
         }
-        generated = generated.trim();
+        generated.setText(generated.text().trim());
         log.debug("Generated: %s".formatted(generated));
         return generated;
     }

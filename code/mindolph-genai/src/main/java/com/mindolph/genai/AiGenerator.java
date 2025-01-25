@@ -6,7 +6,7 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.base.genai.llm.LlmProvider.StreamToken;
+import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
@@ -117,15 +117,15 @@ public class AiGenerator implements Generator {
             else {
                 new Thread(() -> {
                     try {
-                        String generatedText = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
-                        if (generatedText == null) {
+                        StreamToken generated = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
+                        if (generated == null) {
                             // probably stopped by user.
                             return;
                         }
-                        log.debug(generatedText);
+                        log.debug(generated.text());
                         Platform.runLater(() -> {
-                            generateConsumer.accept(new GenAiEvents.Output(generatedText, input.isRetry()));
-                            showReframePane.accept(null); // TODO should not be null but no data now
+                            generateConsumer.accept(new GenAiEvents.Output(generated.text(), input.isRetry()));
+                            showReframePane.accept(generated);
                         });
                     } catch (Exception e) {
                         log.error(e.getLocalizedMessage(), e);

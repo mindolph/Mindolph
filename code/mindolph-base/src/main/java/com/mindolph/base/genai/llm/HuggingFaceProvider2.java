@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
+ * https://huggingface.co/docs/api-inference/en/index
+ *
  * @author mindolph.com@gmail.com
  * @since 1.7.4
  */
@@ -30,7 +32,8 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                     "max_new_tokens": %d,
                     "max_time": 60,
                     "top_k": 10,
-                    "top_p": 0.8
+                    "top_p": 0.8,
+                    "details": true
                 },
                 "options": {
                     "wait_for_model":true
@@ -60,7 +63,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     }
 
     @Override
-    public String predict(Input input, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
@@ -78,7 +81,10 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             }
             String resBodyInJson = response.body().string();
             JsonArray resArray = JsonParser.parseString(resBodyInJson).getAsJsonArray();
-            return resArray.get(0).getAsJsonObject().get("generated_text").getAsString();
+            JsonObject resJson = resArray.get(0).getAsJsonObject();
+            String result = resJson.get("generated_text").getAsString();
+            int outputTokens = resJson.get("details").getAsJsonObject().get("generated_tokens").getAsInt();
+            return new StreamToken(result, outputTokens, true, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
