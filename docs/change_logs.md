@@ -1,5 +1,29 @@
 # Change Logs
 
+
+### V1.11.0 Unstable Release
+* New Features:
+	* Support streaming text generation (Markdown, PlantUML, Text file).
+	* New Gen-AI Summarize feature to summarize selected text(Markdown, Text file).
+	* Add new support for LLM provider DeepSeek.
+* Improvement:
+	* Select model on the fly in the dialog of generating from AI.
+	* Allow user to define multiple custom LLM models.
+	* Add max output tokens parameter to both pre-defined LLM models or custom models to maximize the capabilities of models.
+	* Minor UI improvement.
+* Update plantuml, commons-csv and other dependencies to the latest version.
+
+
+### V1.10.2 Release
+
+* Feature: new toolbar button to quickly insert comment for Markdown editor.
+* Improvement: ask for new file name before cloning a file.
+* Improvement: decrease the size of installation package.
+* Fix: no file is created when creating a new file with path separator.
+* Fix: in emoticon view, click on the border between 2 icons should not activate both icons.
+* update dependencies.
+
+
 ### V1.10.1 Unstable Release
 
 * Feature: New custom snippet feature for Mind Map, PlantUML and Markdown. You can define your own text or image snippets, the image type snippet can be applied to Mind Map as image attribute without file link.
