@@ -137,7 +137,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 log.info("Remove snippet '%s'".formatted(selectedItem.getTitle()));
-                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove this snippet?")) {
+                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove snippet '%s'?".formatted(selectedItem.getTitle()))) {
                     appManager.deleteSnippets(fileType, Collections.singletonList(selectedItem));
                     snippetChanged.push(null);
                 }
