@@ -63,7 +63,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     public PreferencesDialog() {
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Preferences of Mindolph")
+                .title("Preferences")
                 .fxmlUri("dialog/preferences_dialog.fxml")
                 .button(ButtonType.CLOSE, dialog -> {
 //                    fontPreferencesPane.save

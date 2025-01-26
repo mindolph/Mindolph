@@ -3,6 +3,7 @@ package com.mindolph.core.util;
 import com.mindolph.core.constant.SupportFileTypes;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemProperties;
 
 import java.io.File;
 
@@ -55,6 +56,10 @@ public class FileNameUtils {
 
     public static boolean isImagePath(String path) {
         return FilenameUtils.isExtension(path, SupportFileTypes.TYPE_PLAIN_JPG, SupportFileTypes.TYPE_PLAIN_PNG);
+    }
+
+    public static boolean containsSeparator(String fileName) {
+        return fileName.contains(SystemProperties.getFileSeparator());
     }
 
 }

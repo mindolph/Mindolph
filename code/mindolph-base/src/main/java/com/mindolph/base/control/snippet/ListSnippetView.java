@@ -8,12 +8,14 @@ import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.AppManager;
 import com.mindolph.core.model.Snippet;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -23,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -36,12 +39,14 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final AppManager appManager = AppManager.getInstance();
 
+    // Editable view is used for custom snippet group.
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private final ListView<Snippet> listView;
 
     private final MenuItem miNew = new MenuItem("New Snippet", FontIconManager.getIns().getIcon(IconKey.PLUS));
     private final MenuItem miEdit = new MenuItem("Edit Snippet", FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+    private final MenuItem miClone = new MenuItem("Clone Snippet", FontIconManager.getIns().getIcon(IconKey.CLONE));
     private final MenuItem miRemove = new MenuItem("Remove Snippet", FontIconManager.getIns().getIcon(IconKey.DELETE));
 
     // event to SnippetView after snippet changes
@@ -78,10 +83,12 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
         ContextMenu contextMenu = new ContextMenu();
         miNew.setOnAction(this);
         miEdit.setOnAction(this);
+        miClone.setOnAction(this);
         miRemove.setOnAction(this);
         miEdit.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+        miClone.setDisable(listView.getSelectionModel().getSelectedItem() == null);
         miRemove.setDisable(listView.getSelectionModel().getSelectedItem() == null);
-        contextMenu.getItems().addAll(miNew, miEdit, miRemove);
+        contextMenu.getItems().addAll(miNew, miEdit, miClone, miRemove);
         return contextMenu;
     }
 
@@ -106,11 +113,31 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
                 snippetChanged.push(null);
             }
         }
+        else if (actionEvent.getSource() == this.miClone) {
+            Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
+            Dialog<String> dialog = new TextDialogBuilder()
+                    .owner(DialogFactory.DEFAULT_WINDOW)
+                    .title("Clone %s".formatted(selectedItem.getTitle()))
+                    .content("Input a snippet name")
+                    .text(selectedItem.getTitle())
+                    .width(400)
+                    .build();
+            Optional<String> optNewSnippetName = dialog.showAndWait();
+            if (optNewSnippetName.isPresent()) {
+                String newSnippetName = optNewSnippetName.get();
+                Snippet<?> clonedSnippet = selectedItem.deepClone();
+                clonedSnippet.title(newSnippetName);
+                log.debug(clonedSnippet.getTitle());
+                log.info("Save cloned snippet '%s' with type '%s'".formatted(clonedSnippet.getTitle(), clonedSnippet.getType()));
+                appManager.saveSnippet(fileType, clonedSnippet.getType(), Collections.singletonList(clonedSnippet), false);
+                snippetChanged.push(null);
+            }
+        }
         else if (actionEvent.getSource() == this.miRemove) {
             Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 log.info("Remove snippet '%s'".formatted(selectedItem.getTitle()));
-                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove this snippet?")) {
+                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove snippet '%s'?".formatted(selectedItem.getTitle()))) {
                     appManager.deleteSnippets(fileType, Collections.singletonList(selectedItem));
                     snippetChanged.push(null);
                 }

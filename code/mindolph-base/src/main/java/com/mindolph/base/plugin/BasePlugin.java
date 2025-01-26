@@ -1,7 +1,5 @@
 package com.mindolph.base.plugin;
 
-import com.mindolph.base.control.snippet.SnippetViewable;
-
 import java.util.Collection;
 import java.util.Optional;
 

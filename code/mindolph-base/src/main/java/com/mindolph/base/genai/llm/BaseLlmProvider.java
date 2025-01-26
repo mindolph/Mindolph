@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
@@ -62,11 +63,21 @@ public abstract class BaseLlmProvider implements LlmProvider {
         }
     }
 
+    //
+    protected String determineModel(Input input) {
+        if (StringUtils.isBlank(input.model())) {
+            return aiModel;
+        }
+        else {
+            return input.model();
+        }
+    }
 
-    protected Map<String, Object> formatParams(String input, OutputParams outputParams) {
+
+    protected Map<String, Object> formatParams(String text, OutputParams outputParams) {
         HashMap<String, Object> params = new HashMap<>() {
             {
-                put("input", input);
+                put("input", text);
                 put("format", outputParams.outputFormat() != null && StringUtils.isNotBlank(outputParams.outputFormat().getName())
                         ? "your output must be in format: %s".formatted(outputParams.outputFormat().getName())
                         : StringUtils.EMPTY);

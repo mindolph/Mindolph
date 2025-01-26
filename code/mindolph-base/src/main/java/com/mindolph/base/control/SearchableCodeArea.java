@@ -97,6 +97,9 @@ public class SearchableCodeArea extends SmartCodeArea {
         if (this.getParagraph(row).length() == 0) {
             row--; // last empty line is special
         }
+        if (row < 0) {
+            return; // do not search if no text content
+        }
         textNavigator.moveCursor(row, col); // move to row and col to start this search.
         log.debug("Search previous from caret: %d %d".formatted(row, col));
         TextLocation tloc = textNavigator.locatePrev(keyword, options.isCaseSensitive());

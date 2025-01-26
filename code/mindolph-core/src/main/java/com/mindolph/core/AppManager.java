@@ -102,10 +102,9 @@ public class AppManager {
     }
 
     private SnippetsRecord loadSnippetsRecord(String fileType) {
-
         try {
             SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
-            if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
+//            if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
             return snippetsRecord;
         } catch (FileNotFoundException e) {
             return null;

@@ -2,11 +2,10 @@ package com.mindolph.base.genai;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mindolph.base.genai.llm.ChatGlmProvider;
-import com.mindolph.base.genai.llm.HuggingFaceProvider2;
-import com.mindolph.base.genai.llm.OutputParams;
-import com.mindolph.base.genai.llm.QwenProvider;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.llm.*;
+import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.core.constant.GenAiConstants.OutputFormat;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -23,6 +22,9 @@ public class LlmProviderTest {
 
 
     private JsonObject props;
+
+    private final Input testInput = new Input("讲个笑话", 0.5f, 512,
+            OutputAdjust.SHORTER, false, false);
 
     @BeforeEach
     public void setup() {
@@ -60,8 +62,19 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(CHAT_GLM.getName());
         ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4", false);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
+    }
+
+    @Test
+    public void chatglmStream() {
+        disableProxy();
+        String apiKey = loadApiKey(CHAT_GLM.getName());
+        ChatGlmProvider provider = new ChatGlmProvider(apiKey, "glm-4", false);
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+            System.out.println("result: " + streamToken.text());
+        });
+        waitUntilStreamDone(20);
     }
 
     @Test
@@ -69,8 +82,27 @@ public class LlmProviderTest {
         enableProxy();
         String apiKey = loadApiKey(HUGGING_FACE.getName());
         HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2", true);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
+    }
+
+    @Test
+    public void huggingfaceStream() {
+        enableProxy();
+        String apiKey = loadApiKey(HUGGING_FACE.getName());
+        HuggingFaceProvider2 provider = new HuggingFaceProvider2(apiKey, "mistralai/Mistral-7B-Instruct-v0.2", true);
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+            System.out.println(streamToken.text());
+        });
+        waitUntilStreamDone(20);
+    }
+
+    private static void waitUntilStreamDone(int x) {
+        try {
+            Thread.sleep(x * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -78,7 +110,38 @@ public class LlmProviderTest {
         disableProxy();
         String apiKey = loadApiKey(ALI_Q_WEN.getName());
         QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo", false);
-        String result = provider.predict("讲个笑话", 0.5f, new OutputParams(GenAiConstants.OutputAdjust.SHORTER, GenAiConstants.OutputFormat.TEXT));
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        System.out.println(result);
+    }
+
+    @Test
+    public void qwenStream() {
+        disableProxy();
+        String apiKey = loadApiKey(ALI_Q_WEN.getName());
+        QwenProvider provider = new QwenProvider(apiKey, "qwen-turbo", false);
+        provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT),
+                streamToken -> System.out.println(streamToken.text()));
+        waitUntilStreamDone(20);
+    }
+
+    @Test
+    public void geminiStream() {
+        enableProxy();
+        String apiKey = loadApiKey(GEMINI.getName());
+        System.out.println(apiKey);
+        GeminiProvider geminiProvider = new GeminiProvider(apiKey, "gemini-pro", true);
+        geminiProvider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
+            System.out.println(streamToken.text());
+        });
+        waitUntilStreamDone(30);
+    }
+
+    @Test
+    public void deepSeek() {
+        disableProxy();
+        String apiKey = loadApiKey(DEEP_SEEK.getName());
+        DeepSeekProvider provider = new DeepSeekProvider(apiKey, "deepseek-chat", false);
+        String result = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(result);
     }
 }

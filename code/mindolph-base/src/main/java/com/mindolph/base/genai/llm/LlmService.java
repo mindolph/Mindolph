@@ -1,11 +1,13 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.core.llm.ProviderProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 
@@ -44,12 +46,12 @@ public class LlmService {
         else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
-            log.info("Using llm provider: " + activeAiProvider);
+            log.info("Using llm provider: %s".formatted(activeAiProvider));
             if (OPEN_AI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(OPEN_AI.getName());
                 llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (GEMINI.getName().equals(activeAiProvider)){
+            else if (GEMINI.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(GEMINI.getName());
                 llmProvider = new GeminiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
@@ -61,13 +63,17 @@ public class LlmService {
                 ProviderProps props = map.get(OLLAMA.getName());
                 llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel(), props.useProxy());
             }
-            else if (HUGGING_FACE.getName().equals(activeAiProvider)){
+            else if (HUGGING_FACE.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(HUGGING_FACE.getName());
                 llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel(), props.useProxy());
             }
             else if (CHAT_GLM.getName().equals(activeAiProvider)) {
                 ProviderProps props = map.get(activeAiProvider);
                 llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel(), props.useProxy());
+            }
+            else if (DEEP_SEEK.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(DEEP_SEEK.getName());
+                llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
             else {
                 throw new RuntimeException("No llm provider setup: " + activeAiProvider);
@@ -76,11 +82,11 @@ public class LlmService {
     }
 
 
-    public String predict(String input, float temperature, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
-        String generated = null;
+        StreamToken generated = null;
         try {
-            generated = llmProvider.predict(input, temperature, outputParams);
+            generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
             if (isStopped) {
                 return null;
@@ -94,16 +100,54 @@ public class LlmService {
             return null; // force to return null since it has been stopped by user.
         }
         // strip user input if the generated text contains use input in the head of it.
-        if (generated.startsWith(input)) {
-            generated = generated.substring(input.length());
+        if (generated.text().startsWith(input.text())) {
+            generated.setText(generated.text().substring(input.text().length()));
         }
-        generated = generated.trim();
-        log.debug("Generated: " + generated);
+        generated.setText(generated.text().trim());
+        log.debug("Generated: %s".formatted(generated));
         return generated;
     }
 
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        llmProvider.stream(input, outputParams, streamToken -> {
+            if (isStopped) {
+                isStopped = false;
+                consumer.accept(streamToken);
+                // this exception stops the streaming from http connection.
+                throw new RuntimeException("Streaming is stopped by user/exception");
+            }
+            consumer.accept(streamToken);
+        });
+    }
+
     /**
-     * Stop the LLM prediction (ignore the generated actually)
+     *
+     * @param input
+     * @param outputParams
+     * @param consumer
+     * @since 1.11
+     */
+    public void summarize(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        String prompt = """
+                summarize following content concisely in same language:
+                ```
+                %s
+                ```
+                """.formatted(input.text());
+        // replace with new prompt
+        Input in = new Input(input.model(), prompt, input.temperature(), input.maxTokens(), input.outputAdjust(), input.isRetry(), input.isStreaming());
+        llmProvider.stream(in, outputParams, streamToken -> {
+            if (isStopped) {
+                isStopped = false;
+                consumer.accept(streamToken);
+                throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
+            }
+            consumer.accept(streamToken);
+        });
+    }
+
+    /**
+     * Stop the LLM actions (ignore the generated actually)
      */
     public void stop() {
         this.isStopped = true;

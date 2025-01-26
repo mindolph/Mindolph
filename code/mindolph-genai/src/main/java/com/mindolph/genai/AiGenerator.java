@@ -4,14 +4,17 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
+import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
+import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
+import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -41,6 +44,8 @@ public class AiGenerator implements Generator {
     private static final Logger log = LoggerFactory.getLogger(AiGenerator.class);
 
     private Consumer<Boolean> cancelConsumer;
+    private Consumer<Void> beforeGenerateConsumer;
+    private Consumer<StreamOutput> streamOutputConsumer;
     private Consumer<GenAiEvents.Output> generateConsumer;
     private Consumer<Boolean> completeConsumer;
     private Consumer<StackPane> panelShowingConsumer;
@@ -53,11 +58,12 @@ public class AiGenerator implements Generator {
 
     private final Map<Object, Input> inputMap = new HashMap<>();
     private AiInputPane inputPanel;
+    private AiSummaryPane summarizePanel;
     private AiReframePane reframePanel;
 
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
-        this.editorId = editorId;
+        this.editorId = editorId; // the editor seems not useful yet.
         this.fileType = fileType;
         this.listenGenAiEvents();
     }
@@ -65,34 +71,68 @@ public class AiGenerator implements Generator {
     private void listenGenAiEvents() {
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input);
-            new Thread(() -> {
-                try {
-                    String generatedText = LlmService.getIns().predict(input.text(), input.temperature(), new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
-                    if (generatedText == null) {
-                        // probably stopped by user.
-                        return;
-                    }
-                    log.debug(generatedText);
-                    Platform.runLater(() -> {
-                        generateConsumer.accept(new GenAiEvents.Output(generatedText, input.isRetry()));
-                        removeFromParent(reframePanel);
-                        removeFromParent(inputPanel);
-                        reframePanel = new AiReframePane(editorId, input.text(), input.temperature());
-                        addToParent(reframePanel);
-                        panelShowingConsumer.accept(reframePanel);
-                    });
-                } catch (Exception e) {
-                    log.error(e.getLocalizedMessage(), e);
-                    Platform.runLater(() -> {
-                        cancelConsumer.accept(false);
-                        String err = "Failed to generate content by %s.\n%s".formatted(LlmService.getIns().getActiveAiProvider(), e.getLocalizedMessage());
-                        if (inputPanel != null)
-                            inputPanel.onStop(err);
-                        if (reframePanel != null)
-                            reframePanel.onStop(err);
-                    });
+
+            Consumer<String> onError = (msg) -> {
+                Platform.runLater(() -> {
+                    cancelConsumer.accept(false);
+                    String err = "Failed to generate content by %s.\n %s\n".formatted(LlmService.getIns().getActiveAiProvider(), msg);
+                    if (inputPanel != null)
+                        inputPanel.onStop(err);
+                    if (reframePanel != null)
+                        reframePanel.onStop(err);
+                });
+            };
+
+            Consumer<StreamToken> showReframePane = (streamToken) -> {
+                AiGenerator.this.removeFromParent(reframePanel);
+                AiGenerator.this.removeFromParent(inputPanel);
+                reframePanel = new AiReframePane(editorId, input.text(), input.temperature(), streamToken.outputTokens());
+                AiGenerator.this.addToParent(reframePanel);
+                panelShowingConsumer.accept(reframePanel);
+            };
+
+            if (input.isStreaming()) {
+                Platform.runLater(() -> {
+                    if (beforeGenerateConsumer != null)
+                        beforeGenerateConsumer.accept(null);
+                });
+                if (streamOutputConsumer == null) {
+                    onError.accept("Not support stream generation");
                 }
-            }).start();
+                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
+                        streamToken -> {
+                            if (streamToken.isError()) {
+                                log.warn("error from streaming: {}", streamToken);
+                                onError.accept(streamToken.text());
+                            }
+                            else {
+                                // accept streaming output (even with `stop` one).
+                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()));
+                                if (streamToken.isStop()) {
+                                    Platform.runLater(() -> showReframePane.accept(streamToken));
+                                }
+                            }
+                        });
+            }
+            else {
+                new Thread(() -> {
+                    try {
+                        StreamToken generated = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
+                        if (generated == null) {
+                            // probably stopped by user.
+                            return;
+                        }
+                        log.debug(generated.text());
+                        Platform.runLater(() -> {
+                            generateConsumer.accept(new GenAiEvents.Output(generated.text(), input.isRetry()));
+                            showReframePane.accept(generated);
+                        });
+                    } catch (Exception e) {
+                        log.error(e.getLocalizedMessage(), e);
+                        onError.accept(e.getLocalizedMessage());
+                    }
+                }).start();
+            }
         });
         GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {
             log.debug("action type: %s".formatted(actionType));
@@ -112,6 +152,10 @@ public class AiGenerator implements Generator {
                 case STOP -> {
                     LlmService.getIns().stop();
                 }
+                case ABORT -> {
+                    LlmService.getIns().stop();
+                    removeFromParent(summarizePanel);
+                }
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
         });
@@ -130,9 +174,14 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public MenuItem contextMenuItem(String selectedText) {
+    public MenuItem generationMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem("Generate... (Experiment)", icon);
+        return new MenuItem("Generate...", icon);
+    }
+
+    @Override
+    public MenuItem summaryMenuItem() {
+        return new MenuItem("Summarize...", FontIconManager.getIns().getIcon(IconKey.MAGIC));
     }
 
     @Override
@@ -141,10 +190,22 @@ public class AiGenerator implements Generator {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        inputPanel = new AiInputPane(editorId, defaultInput);
+        inputPanel = new AiInputPane(editorId, fileType, defaultInput);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
+    }
+
+    @Override
+    public StackPane showSummarizePanel(String input) {
+        if (!checkSettings()) {
+            DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
+            return null;
+        }
+        summarizePanel = new AiSummaryPane(editorId, fileType, input);
+        addToParent(summarizePanel);
+        panelShowingConsumer.accept(summarizePanel);
+        return summarizePanel;
     }
 
     private void addToParent(StackPane panel) {
@@ -189,13 +250,12 @@ public class AiGenerator implements Generator {
                 if (provider == null || props == null) return false;
                 log.debug("Provider: %s".formatted(provider));
                 log.trace(String.valueOf(props));
-                if (provider.getType() == GenAiModelProvider.ProviderType.PUBLIC) {
+                if (provider.getType() == ProviderType.PUBLIC) {
                     return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
                 }
-                else if (provider.getType() == GenAiModelProvider.ProviderType.PRIVATE) {
+                else if (provider.getType() == ProviderType.PRIVATE) {
                     return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
                 }
-
             }
         }
         return false;
@@ -210,6 +270,16 @@ public class AiGenerator implements Generator {
     @Override
     public void setOnComplete(Consumer<Boolean> consumer) {
         this.completeConsumer = consumer;
+    }
+
+    @Override
+    public void setBeforeGenerate(Consumer<Void> consumer) {
+        this.beforeGenerateConsumer = consumer;
+    }
+
+    @Override
+    public void setOnStreaming(Consumer<StreamOutput> consumer) {
+        this.streamOutputConsumer = consumer;
     }
 
     @Override

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="100.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1">
+   <VBox layoutX="14.0" layoutY="14.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="360.0" spacing="8.0">
+         <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Model:"/>
+         <TextField fx:id="tfModel" promptText="input model name" prefWidth="160.0"/>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="360.0" spacing="8.0">
+         <Label alignment="CENTER_RIGHT" prefWidth="120.0" text="Max Output Tokens:"/>
+         <Spinner fx:id="spMaxOutputTokens" editable="true" HBox.hgrow="ALWAYS"/>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="200.0">
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+         </padding>
+      </HBox>
+   </VBox>
+</AnchorPane>

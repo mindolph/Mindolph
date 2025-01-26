@@ -83,7 +83,7 @@ import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
  * Load folders and files(with filters) for selected workspace to tree view lazily.
  * Open file by double-clicking.
  * Drag and drop single folder/file to another folder.
- * Context menu: rename, clone delete, open in system, find in files, new folder/mmd/plantuml/md/txt.
+ * Context menu: rename, clone, delete, open in system, find in files, new folder/mmd/plantuml/md/txt/csv.
  *
  * @author mindolph.com@gmail.com
  */
@@ -323,7 +323,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      * Move file(s) to target tree node in either current workspace or other workspace.
      * If any file is moved successfully, the treeview's selection will be cleared and moved files will be selected.
      *
-     * @param nodeDatas selected files in current workspace.
+     * @param nodeDatas      selected files in current workspace.
      * @param targetTreeItem target tree item in current or other workspace.
      * @return moved files.
      */
@@ -851,105 +851,22 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         }
         String fileType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
         if (TYPE_FOLDER.equals(fileType)) {
-            Dialog<String> dialog = new TextDialogBuilder()
-                    .owner(DialogFactory.DEFAULT_WINDOW)
-                    .title("New Folder Name")
-                    .width(300)
-                    .build();
-            dialog.setGraphic(FontIconManager.getIns().getIconForFile(TYPE_FOLDER, 32));
-            Optional<String> opt = dialog.showAndWait();
-            if (opt.isPresent()) {
-                String folderName = opt.get();
-                if (selectedData.getFile().isDirectory()) {
-                    File newDir = new File(selectedData.getFile(), folderName);
-                    if (newDir.mkdir()) {
-                        selectedTreeItem.setExpanded(true);
-                        NodeData folderData = new NodeData(NodeType.FOLDER, newDir);
-                        folderData.setWorkspaceData(selectedData.getWorkspaceData());
-                        this.addFolderAndSelect(selectedTreeItem, folderData);
-                        EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
-                    }
-                }
-            }
+            this.requestNewFolder(selectedData, newDir -> {
+                selectedTreeItem.setExpanded(true);
+                NodeData folderData = new NodeData(NodeType.FOLDER, newDir);
+                folderData.setWorkspaceData(selectedData.getWorkspaceData());
+                addFolderAndSelect(selectedTreeItem, folderData);
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
+            });
         }
         else if (StringUtils.equalsAny(fileType, TYPE_MIND_MAP, TYPE_MARKDOWN, TYPE_CSV, TYPE_PLANTUML, TYPE_PLAIN_TEXT)) {
-            log.debug("New %s File".formatted(source.getText()));
-            log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
-            Dialog<String> dialog = new TextDialogBuilder()
-                    .owner(DialogFactory.DEFAULT_WINDOW)
-                    .width(300)
-                    .title("New %s Name".formatted(source.getText())).build();
-            String iconType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
-            dialog.setGraphic(FontIconManager.getIns().getIconForFile(iconType, 32));
-            Optional<String> opt = dialog.showAndWait();
-            if (opt.isPresent()) {
-                String fileName = opt.get();
-
-                if (selectedData.getFile().isDirectory()) {
-                    File newFile = null;
-                    if (TYPE_MIND_MAP.equals(fileType)) {
-                        newFile = createEmptyFile(fileName, selectedData, "mmd");
-                        if (newFile != null) {
-                            final MindMap<TopicNode> mindMap = new MindMap<>();
-                            Boolean addDefaultComment = fxPreferences.getPreference(PrefConstants.PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT, true);
-                            TopicNode rootTopic;
-                            if (addDefaultComment) {
-                                ExtraNote extraNote = new ExtraNote(this.createDefaultNote());
-                                rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()), extraNote);
-                            }
-                            else {
-                                rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()));
-                            }
-                            mindMap.setRoot(rootTopic);
-                            final String text;
-                            try {
-                                text = mindMap.write(new StringWriter()).toString();
-                                FileUtils.writeStringToFile(newFile, text, StandardCharsets.UTF_8);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-                    else if (TYPE_PLAIN_TEXT.equals(fileType)) {
-                        newFile = createEmptyFile(fileName, selectedData, "txt");
-                    }
-                    else if (TYPE_PLANTUML.equals(fileType)) {
-                        log.debug("Handle dynamic menu item: %s".formatted(source.getText()));
-                        newFile = createEmptyFile(fileName, selectedData, "puml");
-                        if (newFile != null) {
-                            this.handlePlantumlCreation(source, newFile);
-                        }
-                    }
-                    else if (TYPE_MARKDOWN.equals(fileType)) {
-                        newFile = createEmptyFile(fileName, selectedData, "md");
-                        if (newFile != null) {
-                            String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), TimeUtils.createTimestamp());
-                            try {
-                                FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-                    else if (TYPE_CSV.equals(fileType)) {
-                        newFile = createEmptyFile(fileName, selectedData, "csv");
-                    }
-                    else {
-                        log.warn("Not supported file type?");
-                        return;
-                    }
-                    // add new file to tree view
-                    if (newFile != null && newFile.exists()) {
-                        selectedTreeItem.setExpanded(true);
-                        NodeData nodeData = new NodeData(newFile);
-                        nodeData.setWorkspaceData(selectedData.getWorkspaceData());
-                        this.addFileAndSelect(selectedTreeItem, nodeData);
-                        EventBus.getIns().notifyOpenFile(new OpenFileEvent(newFile));
-                    }
-                }
-            }
+            this.requestNewFile(source, selectedData, fileType, newFile -> {
+                selectedTreeItem.setExpanded(true);
+                NodeData nodeData = new NodeData(newFile);
+                nodeData.setWorkspaceData(selectedData.getWorkspaceData());
+                this.addFileAndSelect(selectedTreeItem, nodeData);
+                EventBus.getIns().notifyOpenFile(new OpenFileEvent(newFile));
+            });
         }
         else if (source == miOpenFile) {
             this.openSelectedFiles();
@@ -964,7 +881,9 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             ClipBoardUtils.textToClipboard(selectedNodes.stream().map(NodeData::getFileRelativePath).collect(Collectors.joining(LINE_SEPARATOR)));
         }
         else if (source == miPasteFile) {
-            this.copyFile(selectedTreeItem, ClipBoardUtils.filesFromClipboard().get(0));
+            File file = ClipBoardUtils.filesFromClipboard().get(0);
+            String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
+            this.copyFile(selectedTreeItem, file, cloneFileName);
         }
         else if (source == miRename) {
             this.requestRenameFolderOrFile(selectedData, newNameFile -> {
@@ -1027,10 +946,11 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
         }
         else if (source == miClone) {
-            if (selectedData.isFile()) {
+            this.requestCloneFile(selectedData, newFileName -> {
                 File file = selectedData.getFile();
-                this.copyFile(selectedTreeItem.getParent(), file);
-            }
+                String ext = FilenameUtils.getExtension(file.getName());
+                this.copyFile(selectedTreeItem.getParent(), file, "%s.%s".formatted(newFileName, ext));
+            });
         }
         else if (source == miDelete) {
             try {
@@ -1105,18 +1025,158 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         }
     }
 
+    private void requestCloneFile(NodeData selectedData, Consumer<String> consumer) {
+        String oldFileName = selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName();
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Clone %s".formatted(selectedData.getName()))
+                .content("Input a new name")
+                .text("%s_copy".formatted(oldFileName))
+                .width(400)
+                .build();
+        Optional<String> optNewName = dialog.showAndWait();
+        if (optNewName.isPresent()) {
+            String newName = optNewName.get();
+
+            // TODO allow separator if folder is reloaded automatically.
+            if (FileNameUtils.containsSeparator(newName)) {
+                // let user try again
+                DialogFactory.errDialog("Please input valid folder name");
+                this.requestCloneFile(selectedData, consumer);
+                return;
+            }
+
+            if (selectedData.isFile()) {
+                consumer.accept(newName);
+            }
+        }
+    }
+
+    private void requestNewFolder(NodeData selectedData, Consumer<File> consumer) {
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("New Folder Name")
+                .width(300)
+                .build();
+        dialog.setGraphic(FontIconManager.getIns().getIconForFile(TYPE_FOLDER, 32));
+        Optional<String> opt = dialog.showAndWait();
+        if (opt.isPresent()) {
+            String folderName = opt.get();
+
+            // TODO allow separator if folder is reloaded automatically.
+            if (FileNameUtils.containsSeparator(folderName)) {
+                // let user try again
+                DialogFactory.errDialog("Please input valid folder name");
+                this.requestNewFolder(selectedData, consumer);
+                return;
+            }
+
+            if (selectedData.getFile().isDirectory()) {
+                File newDir = new File(selectedData.getFile(), folderName);
+                if (newDir.mkdir()) {
+                    consumer.accept(newDir);
+                }
+            }
+        }
+    }
+
+    private void requestNewFile(MenuItem source, NodeData selectedData, String fileType, Consumer<File> consumer) {
+        log.debug("New %s File".formatted(source.getText()));
+        log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .width(300)
+                .title("New %s Name".formatted(source.getText())).build();
+        String iconType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
+        dialog.setGraphic(FontIconManager.getIns().getIconForFile(iconType, 32));
+        Optional<String> opt = dialog.showAndWait();
+        if (opt.isPresent()) {
+            String fileName = opt.get();
+
+            // TODO allow separator if folder is reloaded automatically.
+            if (FileNameUtils.containsSeparator(fileName)) {
+                // let user try again
+                DialogFactory.errDialog("Please input valid file name");
+                this.requestNewFile(source, selectedData, fileType, consumer);
+                return;
+            }
+
+            if (selectedData.getFile().isDirectory()) {
+                File newFile = null;
+                if (TYPE_MIND_MAP.equals(fileType)) {
+                    newFile = createEmptyFile(fileName, selectedData, "mmd");
+                    if (newFile != null) {
+                        final MindMap<TopicNode> mindMap = new MindMap<>();
+                        Boolean addDefaultComment = fxPreferences.getPreference(PrefConstants.PREF_KEY_MMD_ADD_DEF_COMMENT_TO_ROOT, true);
+                        TopicNode rootTopic;
+                        if (addDefaultComment) {
+                            ExtraNote extraNote = new ExtraNote(this.createDefaultNote());
+                            rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()), extraNote);
+                        }
+                        else {
+                            rootTopic = new TopicNode(mindMap, null, FilenameUtils.getBaseName(newFile.getPath()));
+                        }
+                        mindMap.setRoot(rootTopic);
+                        final String text;
+                        try {
+                            text = mindMap.write(new StringWriter()).toString();
+                            FileUtils.writeStringToFile(newFile, text, StandardCharsets.UTF_8);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                else if (TYPE_PLAIN_TEXT.equals(fileType)) {
+                    newFile = createEmptyFile(fileName, selectedData, "txt");
+                }
+                else if (TYPE_PLANTUML.equals(fileType)) {
+                    log.debug("Handle dynamic menu item: %s".formatted(source.getText()));
+                    newFile = createEmptyFile(fileName, selectedData, "puml");
+                    if (newFile != null) {
+                        this.handlePlantumlCreation(source, newFile);
+                    }
+                }
+                else if (TYPE_MARKDOWN.equals(fileType)) {
+                    newFile = createEmptyFile(fileName, selectedData, "md");
+                    if (newFile != null) {
+                        String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), TimeUtils.createTimestamp());
+                        try {
+                            FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                else if (TYPE_CSV.equals(fileType)) {
+                    newFile = createEmptyFile(fileName, selectedData, "csv");
+                }
+                else {
+                    log.warn("Not supported file type?");
+                    return;
+                }
+                // add new file to tree view
+                if (newFile != null && newFile.exists()) {
+                    consumer.accept(newFile);
+                }
+            }
+        }
+    }
+
     /**
      * Copy file to target folder of tree item with existence check.
      *
      * @param folderTreeItem
      * @param file
+     * @param newFileName
      */
-    private void copyFile(TreeItem<NodeData> folderTreeItem, File file) {
+    private void copyFile(TreeItem<NodeData> folderTreeItem, File file, String newFileName) {
         File targetDir = folderTreeItem.getValue().getFile();
-        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
-        File cloneFile = new File(targetDir, cloneFileName);
+//        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
+        File cloneFile = new File(targetDir, newFileName);
         if (cloneFile.exists()) {
-            DialogFactory.errDialog("File %s already exists".formatted(cloneFileName));
+            DialogFactory.errDialog("File %s already exists".formatted(newFileName));
             return;
         }
         try {
@@ -1151,6 +1211,12 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             File origFile = selectedData.getFile();
             if (selectedData.isFile()) {
                 newName = FileNameUtils.appendFileExtensionIfAbsent(newName, FilenameUtils.getExtension(origFile.getPath()));
+            }
+            if (FileNameUtils.containsSeparator(newName)) {
+                // let user try input again.
+                DialogFactory.errDialog("Please input valid file name");
+                this.requestRenameFolderOrFile(selectedData, consumer);
+                return;
             }
             File newNameFile = new File(origFile.getParentFile(), newName);
             if (newNameFile.exists()) {

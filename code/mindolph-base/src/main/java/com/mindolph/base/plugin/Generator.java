@@ -1,6 +1,7 @@
 package com.mindolph.base.plugin;
 
 import com.mindolph.base.genai.GenAiEvents.Output;
+import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
@@ -18,10 +19,23 @@ public interface Generator {
 
     ProviderInfo getProviderInfo();
 
-    MenuItem contextMenuItem(String selectedText);
+    MenuItem generationMenuItem(String selectedText);
 
+    /**
+     *
+     * @return
+     * @since 1.11
+     */
+    MenuItem summaryMenuItem();
 
     StackPane showInputPanel(String defaultInput);
+
+    /**
+     *
+     * @return
+     * @since 1.11
+     */
+    StackPane showSummarizePanel(String input);
 
     /**
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.
@@ -35,7 +49,25 @@ public interface Generator {
      */
     void setOnComplete(Consumer<Boolean> consumer);
 
-    // should be called in a new thread
+    /**
+     * Callback before generating text.
+     *
+     * @param consumer
+     */
+    void setBeforeGenerate(Consumer<Void> consumer);
+
+    /**
+     * Callback when streaming generated text.
+     *
+     * @param consumer
+     */
+    void setOnStreaming(Consumer<StreamOutput> consumer);
+
+    /**
+     * Callback when text generated.
+     * should be called in a new thread.
+     * @param consumer
+     */
     void setOnGenerated(Consumer<Output> consumer);
 
     /**

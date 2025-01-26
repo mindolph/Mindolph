@@ -40,7 +40,7 @@ public class IconView extends ScrollPane implements SnippetViewable<ImageSnippet
 
     private static final int ICON_SIZE = 32;
     private static final int PADDING = 4;
-    private static final int iconRegionSize = ICON_SIZE + PADDING * 2;
+    private static final int ICON_REGION_SIZE = ICON_SIZE + PADDING * 2;
     private final Canvas canvas;
     private final Graphics g;
     //    private Rectangle2D canvasBounds;
@@ -184,20 +184,21 @@ public class IconView extends ScrollPane implements SnippetViewable<ImageSnippet
         // TBD: using findScrollBar()?
         ScrollBar scrollBar = ScrollBarUtils.findScrollBar(this, Orientation.VERTICAL);
         double scrollWidth = (scrollBar != null && scrollBar.isVisible()) ? scrollBar.getWidth() : 0;
-        columnCount = Math.max(1, (int) ((bounds.getWidth() - scrollWidth) / iconRegionSize));
+        columnCount = Math.max(1, (int) ((bounds.getWidth() - scrollWidth) / ICON_REGION_SIZE));
         if (columnCount > 0) {
             rowCount = getItems().size() / columnCount + (getItems().size() % columnCount == 0 ? 0 : 1);
             log.debug("rows %d and columns %d".formatted(rowCount, columnCount));
-            double newWidth = columnCount * iconRegionSize;
-            int totalHeight = rowCount * iconRegionSize;
+            double newWidth = columnCount * ICON_REGION_SIZE;
+            int totalHeight = rowCount * ICON_REGION_SIZE;
             canvas.setWidth(newWidth);
             canvas.setHeight(totalHeight);
             for (int i = 0; i < rowCount; i++) {
                 for (int j = 0; j < columnCount; j++) {
                     int idx = i * columnCount + j;
                     if (idx < getItems().size()) {
-                        Rectangle2D rectangle2D = new Rectangle2D(j * (iconRegionSize), i * (iconRegionSize),
-                                iconRegionSize, iconRegionSize);
+                        Rectangle2D rectangle2D = new Rectangle2D(
+                                j * (ICON_REGION_SIZE), i * (ICON_REGION_SIZE),
+                                ICON_REGION_SIZE - 1, ICON_REGION_SIZE - 1);
                         Drawable drawable = layer.getDrawable(idx);
                         if (drawable instanceof Component c) {
                             layerCanvas.moveTo(c, rectangle2D);

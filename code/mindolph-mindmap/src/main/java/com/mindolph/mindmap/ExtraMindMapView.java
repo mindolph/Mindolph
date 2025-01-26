@@ -268,7 +268,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 //                    generator.setParentSkin(parentSkin);
                         // the parent panel is the editor itself for mind map.
                         generator.setParentPane(super.getParentPane());
-                        MenuItem menuItem = generator.contextMenuItem(null);
+                        MenuItem menuItem = generator.generationMenuItem(null);
                         ctxMenu.getItems().add(menuItem);
                         menuItem.setOnAction(e -> {
                             generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");

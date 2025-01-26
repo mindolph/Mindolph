@@ -1,11 +1,14 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiConstants.OutputFormat;
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
@@ -83,7 +86,7 @@ public class DummyLlmProvider implements LlmProvider {
     };
 
     @Override
-    public String predict(String input, float temperature, OutputParams outputParams) {
+    public StreamToken predict(Input input, OutputParams outputParams) {
         try {
             Thread.sleep(RandomUtils.nextInt(500, 3000));
         } catch (InterruptedException e) {
@@ -95,29 +98,34 @@ public class DummyLlmProvider implements LlmProvider {
         String chatId = RandomStringUtils.randomAlphabetic(10);
 
         String length = LENGTH_NORMAL;
-        if (input.contains(LENGTH_LONG)) {
+        if (input.text().contains(LENGTH_LONG)) {
             length = LENGTH_LONG;
         }
 
         String template = mkMap.get(outputParams.outputFormat().name(), length);
 
-        String generated = template.formatted(input, temperature, chatId);
+        String generated = template.formatted(input.text(), input.temperature(), chatId);
         if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER) {
-            return StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
+            generated = StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
         }
         else if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.LONGER) {
             switch (outputParams.outputFormat()) {
                 case TEXT:
-                    return generated + "\nI can do more.";
+                    generated = generated + "\nI can do more.";
                 case MARKDOWN:
-                    return generated + "\n* I can do more.";
+                    generated = generated + "\n* I can do more.";
                 case MINDMAP:
-                    return generated + "\n\t\tI can do more.";
+                    generated = generated + "\n\t\tI can do more.";
+                case PLANTUML:
+                    generated = generated + "I can do more.";
             }
-            return generated;
         }
-        else {
-            return generated;
-        }
+        return new StreamToken(generated, 999, true, false);
+    }
+
+    @Override
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        // TODO
+
     }
 }

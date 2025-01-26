@@ -98,4 +98,10 @@
             <Tooltip text="Horizontal Rule"/>
         </tooltip>
     </Button>
+    <Button fx:id="btnComment" mnemonicParsing="false" styleClass="icon_button"
+            stylesheets="@../style/icon_button.css">
+        <tooltip>
+            <Tooltip text="Markdown Comment"/>
+        </tooltip>
+    </Button>
 </fx:root>
