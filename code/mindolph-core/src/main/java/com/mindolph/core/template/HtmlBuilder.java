@@ -281,6 +281,7 @@ public final class HtmlBuilder {
                             link.onclick = () => {
                                 window.clickListener.onFileLinkClicked(link.href);
                             }
+                            link.target='_blank';
                         }
                     }
                     </script>
