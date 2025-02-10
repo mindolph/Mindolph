@@ -100,6 +100,83 @@ public interface GenAiConstants {
         }
     };
 
+    String LANGS_JSON = """
+            [
+                {"code": "en-US", "name": "American English"},
+                {"code": "en-GB", "name": "British English"},
+                {"code": "en-AU", "name": "Australian English"},
+                {"code": "zh-CN", "name": "Simplified Chinese (China)"},
+                {"code": "zh-TW", "name": "Traditional Chinese (Taiwan)"},
+                {"code": "zh-HK", "name": "Traditional Chinese (Hong Kong)"},
+                {
+                    "code": "hi",
+                    "name": "Hindi"
+                },
+                {"code": "es-ES", "name": "European Spanish"},
+                {"code": "es-MX", "name": "Mexican Spanish"},
+                {"code": "es-AR", "name": "Argentinian Spanish"},
+                {"code": "fr-FR", "name": "European French"},
+                {"code": "fr-CA", "name": "Canadian French"},
+                {"code": "fr-BE", "name": "Belgian French"},
+                {"code": "ar-SA", "name": "Saudi Arabic"},
+                {"code": "ar-EG", "name": "Egyptian Arabic"},
+                {"code": "ar-MA", "name": "Moroccan Arabic"},
+                {
+                    "code": "bn",
+                    "name": "Bengali"
+                },
+                {
+                    "code": "ru",
+                    "name": "Russian"
+                },
+                {"code": "pt-PT", "name": "European Portuguese"},
+                {"code": "pt-BR", "name": "Brazilian Portuguese"},
+                {
+                    "code": "id",
+                    "name": "Indonesian"
+                },
+                {
+                    "code": "ur",
+                    "name": "Urdu"
+                },
+                {
+                    "code": "ja",
+                    "name": "Japanese"
+                },
+                {"code": "de-DE", "name": "Standard German"},
+                {"code": "de-AT", "name": "Austrian German"},
+                {"code": "de-CH", "name": "Swiss German"},
+                {
+                    "code": "sw",
+                    "name": "Swahili"
+                },
+                {
+                    "code": "mr",
+                    "name": "Marathi"
+                },
+                {
+                    "code": "te",
+                    "name": "Telugu"
+                },
+                {
+                    "code": "tr",
+                    "name": "Turkish"
+                },
+                {
+                    "code": "ta",
+                    "name": "Tamil"
+                },
+                {
+                    "code": "vi",
+                    "name": "Vietnamese"
+                },
+                {
+                    "code": "ko",
+                    "name": "Korean"
+                }
+            ]
+            """;
+
     enum ActionType {
         CANCEL, // cancel the generation
         KEEP, // keep the generated text
