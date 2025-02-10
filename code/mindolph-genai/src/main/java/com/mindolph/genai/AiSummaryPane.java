@@ -3,7 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
@@ -122,8 +122,9 @@ public class AiSummaryPane extends StackPane {
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
         lbTitle.setText("Summarize selected content by %s %s".formatted(LlmConfig.getIns().getActiveAiProvider(), modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
-        GenAiEvents.getIns().emitSummarizeEvent(editorId, new Input(modelMeta.name(), inputText,
-                0.5f, modelMeta.maxTokens(),null, false, true));
+        GenAiEvents.getIns().emitSummarizeEvent(editorId, new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
+                .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
+                .createInput());
     }
 
     public void onStop(String reason) {

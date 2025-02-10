@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.ProviderProps;
 import org.slf4j.Logger;
@@ -135,7 +136,9 @@ public class LlmService {
                 ```
                 """.formatted(input.text());
         // replace with new prompt
-        Input in = new Input(input.model(), prompt, input.temperature(), input.maxTokens(), input.outputAdjust(), input.isRetry(), input.isStreaming());
+        Input in = new InputBuilder().model(input.model()).text(prompt).temperature(input.temperature()).maxTokens(input.maxTokens())
+                .outputAdjust(input.outputAdjust()).isRetry(input.isRetry()).isStreaming(input.isStreaming())
+                .createInput();
         llmProvider.stream(in, outputParams, streamToken -> {
             if (isStopped) {
                 isStopped = false;

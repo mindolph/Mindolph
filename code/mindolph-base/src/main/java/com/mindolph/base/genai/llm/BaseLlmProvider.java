@@ -1,5 +1,8 @@
 package com.mindolph.base.genai.llm;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.GenAiConstants;
@@ -10,8 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
+import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
 
 /**
  * @author mindolph.com@gmail.com
@@ -32,6 +38,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
             {{input}}.
             {{format}}.
             {{length}}.
+            {{language}}
             """;
 
     /**
@@ -73,6 +80,19 @@ public abstract class BaseLlmProvider implements LlmProvider {
         }
     }
 
+    protected String determineLanguage(OutputParams outParams) {
+        if (StringUtils.isBlank(outParams.outputLanguage())) {
+            String langCode = FxPreferences.getInstance().getPreference(GEN_AI_OUTPUT_LANGUAGE, String.class);
+            log.debug("Language code: {}", langCode);
+            Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
+                    .stream().map(je -> (JsonObject) je).toList()
+                    .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
+            return mapped.getOrDefault(langCode, "as the language that I used.");
+        }
+        else {
+            return outParams.outputLanguage();
+        }
+    }
 
     protected Map<String, Object> formatParams(String text, OutputParams outputParams) {
         HashMap<String, Object> params = new HashMap<>() {
@@ -83,6 +103,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
                         : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? StringUtils.EMPTY :
                         "output : " + (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
+                put("language", "the output language must be: " + determineLanguage(outputParams));
             }
         };
         return params;

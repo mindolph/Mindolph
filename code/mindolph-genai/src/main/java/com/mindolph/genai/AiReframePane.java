@@ -3,7 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.base.util.NodeUtils;
@@ -64,7 +64,9 @@ public class AiReframePane extends StackPane {
             this.onWorking();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, MAX_GENERATION_TOKENS, null, true, true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new InputBuilder().text(inputText).temperature(this.temperature)
+                    .maxTokens(MAX_GENERATION_TOKENS).outputAdjust(null).isRetry(true).isStreaming(true)
+                    .createInput());
             this.onWorking();
         });
         btnAdjust.setOnMouseClicked(event -> {
@@ -83,7 +85,9 @@ public class AiReframePane extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId, new Input(inputText, this.temperature, MAX_GENERATION_TOKENS, (OutputAdjust) mi.getUserData(), true, true));
+            GenAiEvents.getIns().emitGenerateEvent(editorId, new InputBuilder().text(inputText).temperature(this.temperature).maxTokens(MAX_GENERATION_TOKENS)
+                    .outputAdjust((OutputAdjust) mi.getUserData()).isRetry(true).isStreaming(true)
+                    .createInput());
             onWorking();
         };
         MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));

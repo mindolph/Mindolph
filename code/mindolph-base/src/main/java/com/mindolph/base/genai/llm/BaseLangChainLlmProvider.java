@@ -30,7 +30,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
 
     @Override
     public StreamToken predict(Input input, OutputParams outputParams) {
-        log.debug("Proxy: " + System.getenv("http.proxyHost"));
+        log.debug("Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(TEMPLATE);
         Map<String, Object> params = super.formatParams(input.text(), outputParams);
         log.debug(String.valueOf(params));
@@ -74,7 +74,6 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         log.debug("System Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(TEMPLATE);
         Map<String, Object> params = super.formatParams(input, outputParams);
-        log.debug(String.valueOf(params));
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: '%s'".formatted(prompt.text()));
         return prompt;

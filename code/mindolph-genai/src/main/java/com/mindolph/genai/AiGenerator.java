@@ -6,15 +6,15 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
+import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
-import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
+import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -99,7 +99,7 @@ public class AiGenerator implements Generator {
                 if (streamOutputConsumer == null) {
                     onError.accept("Not support stream generation");
                 }
-                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
+                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
                         streamToken -> {
                             if (streamToken.isError()) {
                                 log.warn("error from streaming: {}", streamToken);

@@ -3,6 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-import static com.mindolph.base.genai.GenAiEvents.Input;
 import static com.mindolph.core.constant.GenAiConstants.*;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
@@ -150,8 +150,9 @@ public class AiInputPane extends StackPane {
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new Input(model, prompt, cbTemperature.getValue().getKey(),
-                                selectedModel.getValue().maxTokens(), null, false, isStreaming));
+                        new InputBuilder().model(model).text(prompt).temperature(cbTemperature.getValue().getKey())
+                                .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null).isRetry(false).isStreaming(isStreaming)
+                                .createInput());
             }
             else {
                 taInput.requestFocus();
