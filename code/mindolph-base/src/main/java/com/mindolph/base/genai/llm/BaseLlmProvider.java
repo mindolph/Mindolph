@@ -1,8 +1,5 @@
 package com.mindolph.base.genai.llm;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.GenAiConstants;
@@ -13,11 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
-import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
+import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
 
 /**
  * @author mindolph.com@gmail.com
@@ -84,13 +80,11 @@ public abstract class BaseLlmProvider implements LlmProvider {
         if (StringUtils.isBlank(outParams.outputLanguage())) {
             String langCode = FxPreferences.getInstance().getPreference(GEN_AI_OUTPUT_LANGUAGE, String.class);
             log.debug("Language code: {}", langCode);
-            Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
-                    .stream().map(je -> (JsonObject) je).toList()
-                    .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
-            return mapped.getOrDefault(langCode, "as the language that I used.");
+            return lookupLanguage(langCode);
         }
         else {
-            return outParams.outputLanguage();
+            log.debug("Language: {}", outParams.outputLanguage());
+            return lookupLanguage(outParams.outputLanguage());
         }
     }
 

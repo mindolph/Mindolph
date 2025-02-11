@@ -3,7 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -26,7 +26,7 @@ public class DeepSeekProvider extends BaseApiLlmProvider {
 
     String template = """
             {
-                "model": "deepseek-chat",
+                "model": "%s",
                 "messages": [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "%s"}
@@ -40,7 +40,7 @@ public class DeepSeekProvider extends BaseApiLlmProvider {
 
     String streamTemplate = """
             {
-                "model": "deepseek-chat",
+                "model": "%s",
                 "messages": [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "%s"}
@@ -57,8 +57,8 @@ public class DeepSeekProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public StreamToken predict(GenAiEvents.Input input, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
+    public StreamToken predict(Input input, OutputParams outputParams) {
+        RequestBody requestBody = super.createRequestBody(template, input.model(), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
                 .header("Authorization", "Bearer %s".formatted(apiKey))
@@ -89,8 +89,8 @@ public class DeepSeekProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public void stream(GenAiEvents.Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
-        RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, outputParams);
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        RequestBody requestBody = super.createRequestBody(streamTemplate, input.model(), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
                 .header("Authorization", "Bearer %s".formatted(apiKey))

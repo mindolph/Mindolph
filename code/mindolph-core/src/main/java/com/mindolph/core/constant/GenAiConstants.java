@@ -1,10 +1,17 @@
 package com.mindolph.core.constant;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mindolph.core.llm.ModelMeta;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author mindolph.com@gmail.com
@@ -99,6 +106,14 @@ public interface GenAiConstants {
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
         }
     };
+
+
+    static String lookupLanguage(String langCode) {
+        Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
+                .stream().map(je -> (JsonObject) je).toList()
+                .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
+        return mapped.getOrDefault(langCode, "as the language that I used.");
+    }
 
     String LANGS_JSON = """
             [

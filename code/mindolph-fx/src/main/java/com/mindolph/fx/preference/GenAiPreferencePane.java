@@ -1,18 +1,17 @@
 package com.mindolph.fx.preference;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.fx.dialog.CustomModelDialog;
+import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenaiUiConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
@@ -33,7 +32,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mindolph.base.constant.PrefConstants.*;
-import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
@@ -272,37 +270,14 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
-        StringConverter<Pair<String, String>> langConverter = new StringConverter<>() {
-            @Override
-            public String toString(Pair<String, String> object) {
-                return object == null ? "" : object.getValue();
-            }
-
-            @Override
-            public Pair<String, String> fromString(String string) {
-                return null;
-            }
-        };
-        cbLanguages.setConverter(langConverter);
+        cbLanguages.setConverter(new PairStringStringConverter());
         cbLanguages.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             fxPreferences.savePreference(GEN_AI_OUTPUT_LANGUAGE, newValue.getKey());
         });
-        this.loadLanguages();
+        ChoiceUtils.loadLanguagesTo(cbLanguages);
         // time out setting for all.
         super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
-    }
-
-    private void loadLanguages() {
-        JsonArray langs = new Gson().fromJson(LANGS_JSON, JsonArray.class);
-        List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
-        cbLanguages.getItems().clear();
-        cbLanguages.getItems().addAll(list);
-        Pair<String, String> savedLang = fxPreferences.getPreference(GEN_AI_OUTPUT_LANGUAGE, list.stream().findFirst().get());
-        if (savedLang != null) {
-            log.debug("Saved language: %s".formatted(savedLang.getKey()));
-            cbLanguages.getSelectionModel().select(savedLang);
-        }
     }
 
     private List<ModelMeta> showCustomModels(String providerName) {
