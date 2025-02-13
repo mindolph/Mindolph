@@ -52,6 +52,10 @@ public interface GenAiConstants {
             put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
+
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwq-32b-preview", 16384));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-14b-instruct-1m", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-7b-instruct-1m", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-72b-instruct", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-32b-instruct", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen2.5-14b-instruct", 8192));
@@ -112,7 +116,7 @@ public interface GenAiConstants {
         Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
                 .stream().map(je -> (JsonObject) je).toList()
                 .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
-        return mapped.getOrDefault(langCode, "as the language that I used.");
+        return mapped.getOrDefault(langCode, "as the language that I'm using.");
     }
 
     String LANGS_JSON = """
