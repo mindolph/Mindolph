@@ -46,7 +46,7 @@
                <Insets bottom="5.0" top="5.0" />
             </padding>
             <Label fx:id="lbLanguage" text="Language:" />
-            <ChoiceBox fx:id="cbLanguage" prefWidth="180.0" />
+            <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
             <Label fx:id="lbTemperature" />
             <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
             <Pane HBox.hgrow="ALWAYS" />

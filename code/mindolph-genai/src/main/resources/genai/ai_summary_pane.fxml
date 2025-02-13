@@ -50,7 +50,7 @@
                     <Insets bottom="5.0" top="5.0"/>
                 </padding>
                 <Label fx:id="lbLanguage" text="Language:" />
-                <ChoiceBox fx:id="cbLanguage" prefWidth="180.0" />
+                <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnCopy" mnemonicParsing="false" text="Copy" disable="true"/>
                 <Button fx:id="btnSummarize" mnemonicParsing="false" text="Summarize"/>

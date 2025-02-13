@@ -117,6 +117,7 @@ public interface GenAiConstants {
 
     String LANGS_JSON = """
             [
+                {"code": "as-is", "name": "as the language that I'm using"},
                 {"code": "en-US", "name": "American English"},
                 {"code": "en-GB", "name": "British English"},
                 {"code": "en-AU", "name": "Australian English"},

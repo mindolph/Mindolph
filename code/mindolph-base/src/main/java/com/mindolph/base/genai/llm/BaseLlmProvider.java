@@ -97,7 +97,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
                         : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? StringUtils.EMPTY :
                         "output : " + (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
-                put("language", "the output language must be: " + determineLanguage(outputParams));
+                put("language", "the output language must be " + determineLanguage(outputParams));
             }
         };
         return params;
