@@ -271,11 +271,11 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             this.onSave(true);
         });
         cbLanguages.setConverter(new PairStringStringConverter());
+        ChoiceUtils.loadLanguagesTo(cbLanguages);
         cbLanguages.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             fxPreferences.savePreference(GEN_AI_OUTPUT_LANGUAGE, newValue.getKey());
         });
-        ChoiceUtils.loadLanguagesTo(cbLanguages);
         // time out setting for all.
         super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
     }
