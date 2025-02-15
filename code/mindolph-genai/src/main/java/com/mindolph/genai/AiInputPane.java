@@ -3,10 +3,11 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.core.constant.GenAiConstants.ProviderProps;
 import com.mindolph.mfx.util.FxmlUtils;
+import com.mindolph.mfx.util.PaneUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -18,8 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
-import static com.mindolph.core.constant.GenAiConstants.ActionType;
 import static com.mindolph.base.genai.GenAiEvents.Input;
+import static com.mindolph.core.constant.GenAiConstants.ActionType;
 
 /**
  * An input panel for gen-ai.
@@ -118,6 +119,10 @@ public class AiInputPane extends StackPane {
             }
         });
         cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
+
+        // for escaping
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
+                hbReady, hbGenerating);
     }
 
     private void toggleButtons(boolean isGenerating) {
