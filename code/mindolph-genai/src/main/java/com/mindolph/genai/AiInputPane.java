@@ -8,6 +8,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.mfx.util.PaneUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -134,7 +135,7 @@ public class AiInputPane extends BaseAiPane {
 
         // for escaping
         PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
-                hbReady, hbGenerating);
+                this, hbReady, hbGenerating);
     }
 
     private void toggleButtons(boolean isGenerating) {

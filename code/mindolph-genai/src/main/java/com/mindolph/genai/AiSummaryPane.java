@@ -11,13 +11,14 @@ import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.util.ClipBoardUtils;
+import com.mindolph.mfx.util.ControlUtils;
+import com.mindolph.mfx.util.PaneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -76,17 +77,12 @@ public class AiSummaryPane extends BaseAiPane {
                 lbMsg.setText("%d bytes copied to Clipboard".formatted(taOutput.getText().length()));
             }
         });
-        taOutput.setOnKeyReleased(event -> {
-            if (KeyCode.ESCAPE == event.getCode()) {
-                GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
-            }
-        });
 
-//        this.setOnKeyReleased(event -> {
-//            if (KeyCode.ESCAPE == event.getCode()) {
-//                GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
-//            }
-//        });
+        ControlUtils.escapableControls(()-> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
+
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT),
+                this, hbDone, hbGenerating);
+
         this.requestFocus();
 
         // listeners
