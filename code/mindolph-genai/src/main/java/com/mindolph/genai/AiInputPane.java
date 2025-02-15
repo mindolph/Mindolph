@@ -131,6 +131,10 @@ public class AiInputPane extends BaseAiPane {
             }
         });
         cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
+
+        // for escaping
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
+                hbReady, hbGenerating);
     }
 
     private void toggleButtons(boolean isGenerating) {

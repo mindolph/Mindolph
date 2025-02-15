@@ -7,8 +7,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import org.apache.commons.lang3.CharUtils;
 
-import static com.mindolph.base.util.NodeUtils.getTextBounds;
-
 /**
  * @author mindolph.com@gmail.com
  */
@@ -25,7 +23,7 @@ public class TextUtils {
      * @return
      */
     public static Dimension2D calculateTextBounds(TextArea textArea) {
-        Bounds bounds = getTextBounds(textArea.getText(), textArea.getFont());
+        Bounds bounds = com.mindolph.mfx.util.TextUtils.calculateTextBounds(textArea.getText(), textArea.getFont());
         double width = bounds.getWidth();
         double height = bounds.getHeight();
         Insets padding = textArea.getPadding();
@@ -37,10 +35,10 @@ public class TextUtils {
 
     public static String substringByMaxPixels(String s, double maxPixels, Font font) {
         if (alphabetBounds == null) {
-            alphabetBounds = getTextBounds("a", font);
+            alphabetBounds = com.mindolph.mfx.util.TextUtils.calculateTextBounds("a", font);
         }
         if (chineseBounds == null) {
-            chineseBounds = getTextBounds("中", font);
+            chineseBounds = com.mindolph.mfx.util.TextUtils.calculateTextBounds("中", font);
         }
         double len = 0;
         char[] chars = s.toCharArray();
