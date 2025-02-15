@@ -122,7 +122,7 @@ public class AiInputPane extends StackPane {
 
         // for escaping
         PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
-                hbReady, hbGenerating);
+                this, hbReady, hbGenerating);
     }
 
     private void toggleButtons(boolean isGenerating) {
