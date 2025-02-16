@@ -508,6 +508,7 @@ public class MainController extends BaseController implements Initializable,
         log.debug("file renamed from %s to %s".formatted(nodeData.getFile(), renamedFile));
         if (nodeData.isFile()) {
             fileTabView.updateOpenedTabAndEditor(nodeData, renamedFile);
+            this.cm.updateFilePath(nodeData.getFile().getPath(), renamedFile.getPath());
         }
         else if (nodeData.isFolder() || nodeData.isWorkspace()) {
             // update all opened file under this folder.
