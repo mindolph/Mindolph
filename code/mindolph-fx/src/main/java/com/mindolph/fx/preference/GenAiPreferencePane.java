@@ -219,6 +219,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 return;
             }
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
+            String activeProviderName = cbAiProvider.getValue().getKey().getName();
+            LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
             this.updateModelDescription(selectedModel.getValue());
         });
         btnAdd.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));

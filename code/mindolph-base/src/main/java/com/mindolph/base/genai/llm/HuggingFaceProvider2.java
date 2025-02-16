@@ -116,12 +116,12 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             }
         }, (msg, throwable) -> {
 //            log.error(msg, throwable);
-            log.error("huggingface api response error", throwable);
+            log.error("HuggingFace api response error", throwable);
             String message = "ERROR";
             if (StringUtils.isNotBlank(msg)) {
                 try {
                     message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsString();
-                } catch (JsonSyntaxException e) {
+                } catch (Exception e) {
                     log.warn("Not exception from HuggingFace API: " + e.getLocalizedMessage());
                     // skip parsing exception
                     message = msg;

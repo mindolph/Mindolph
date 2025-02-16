@@ -82,7 +82,12 @@ public class LlmService {
         }
     }
 
-
+    /**
+     *
+     * @param input
+     * @param outputParams
+     * @return
+     */
     public StreamToken predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
         StreamToken generated = null;
@@ -109,6 +114,12 @@ public class LlmService {
         return generated;
     }
 
+    /**
+     *
+     * @param input
+     * @param outputParams
+     * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
+     */
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
@@ -122,10 +133,11 @@ public class LlmService {
     }
 
     /**
+     * Summarize user input text screamingly.
      *
      * @param input
      * @param outputParams
-     * @param consumer
+     * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
      * @since 1.11
      */
     public void summarize(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {

@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,6 @@ import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
 /**
- *
  * @since 1.11.1
  */
 public abstract class BaseAiPane extends StackPane {
@@ -49,23 +49,27 @@ public abstract class BaseAiPane extends StackPane {
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
 
-
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps providerProps = map.get(activeProvider);
         Pair<String, ModelMeta> targetItem;
+        List<Pair<String, ModelMeta>> allModels = new ArrayList<>();
+        List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
+                .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
+        allModels.addAll(preModels);
+        List<Pair<String, ModelMeta>> customModels = providerProps.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
+        allModels.addAll(customModels);
         if ("Custom".equals(providerProps.aiModel())) {
-            ModelMeta customModelMeta = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
-            targetItem = new Pair<>(customModelMeta.name(), customModelMeta);
+            ModelMeta activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            targetItem = new Pair<>(activeModel.name(), activeModel);
         }
         else {
             targetItem = new Pair<>(providerProps.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerProps.aiModel()));
         }
-        List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(activeProvider)
-                .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
+
         cbModel.getItems().clear();
-        cbModel.getItems().addAll(models);
-        if (!models.contains(targetItem)) {
+        cbModel.getItems().addAll(allModels);
+        if (!allModels.contains(targetItem)) {
             cbModel.getItems().add(targetItem); // exclude same model
         }
 
