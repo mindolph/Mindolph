@@ -1,5 +1,28 @@
 # Change Logs
 
+### V1.11.1 Unstable Release
+
+* New features for Gen-AI include:  
+	* Allow user to setup output language for Gen-AI feature, and also provide an option to make the language of generated content consistent with the language of the text entered by the user.
+	* redesign Gen-AI popup panels to let user select model and output language just before starting generating.
+* Improvement: optimize the topic tree dialog escaping in mind map editor and the search bar escaping.   
+* Improvement: optimized the quitting for Gen-AI summary pane by the ESC key press.   
+* Improvement: update Qwen models.  
+* Fix: unable to load all Gen-AI models on Gen-AI dialog.  
+* Fix: some exception cases from HuggingFace API don't be handled.  
+* Fix: changing the custom Gen-AI model doesn't take effect.   
+* Fix: minor issues for PlantUML templates.   
+* Merged improvements and bug fixes from stable version.  
+
+
+### V1.10.3 Release
+* Improvement: automatically remove bullet prefix (if exists) when using the Header button in the Markdown editor's toolbar.   
+* Improvement: optimized the closing by ESC for Gen-AI input dialog  
+* Fix: files in collections can't be opened since their names were changed or were moved to another folder.   
+* Fix: CSV editor doesn't automatically scroll to selected row by searching.   
+* Fix: clicking on web links in markdown preview panel should go to external browser.   
+* Update JavaFX to 23.0.2.  
+
 
 ### V1.11.0 Unstable Release
 * New Features:

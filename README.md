@@ -80,12 +80,12 @@ Mindolph is an open source personal knowledge management software for all deskto
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
 || |[v1.10.x](docs/release-notes/v1.10/v1.10.md)|[v1.10.x](docs/release-notes/v1.11/v1.11.md)| Release notes |
-|macOS|.dmg|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2-x64.dmg) |[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0-x64.dmg) | Intel |
-|macOS|.dmg|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2-aarch64.dmg) |[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2.msi) |[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0.msi) | |
-|Debian|.deb|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2.deb)|[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2.rpm)|[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0.rpm)| |
-|Java Executable|.jar|[v1.10.2](https://github.com/mindolph/Mindolph/releases/download/v1.10.2/Mindolph-1.10.2.jar)|[v1.11.0](https://github.com/mindolph/Mindolph/releases/download/v1.11.0/Mindolph-1.11.0.jar)| Java 21 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.10.2.jar`  </br> If not, download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-23`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-23\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.10.2.jar` |
+|macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-x64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-x64.dmg) | Intel |
+|macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-aarch64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.msi) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.msi) | |
+|Debian|.deb|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.deb)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.rpm)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.rpm)| |
+|Java Executable|.jar|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.jar)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.jar)| Java 21 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.10.3.jar`  </br> If not, download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-23`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-23\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.10.3.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -95,8 +95,9 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for more details.
 
-Future Plan:
-* 1.11: New Gen-AI feature and improvement.
+Future Plan:  
+
+* 1.11: New features and improvements for Gen-AI.
 * 1.12: Improvement and bug fixing.
 
 ### Buy me a cup of coffee
