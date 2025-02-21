@@ -77,9 +77,15 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Releases
 
+#### Release Notes
+
+* Stable Version: [v1.10.x](docs/release-notes/v1.10/v1.10.md)
+* Unstable Version: [v1.11.x](docs/release-notes/v1.11/v1.11.md)
+
+#### Downloads
+
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|| |[v1.10.x](docs/release-notes/v1.10/v1.10.md)|[v1.10.x](docs/release-notes/v1.11/v1.11.md)| Release notes |
 |macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-x64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-x64.dmg) | Intel |
 |macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-aarch64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
 |Windows|.msi|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.msi) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.msi) | |
