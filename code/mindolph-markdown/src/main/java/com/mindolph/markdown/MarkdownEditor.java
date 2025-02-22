@@ -134,8 +134,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // used to force refresh resource in page like images.
     private String timestamp;
 
-    private EventSource<Double> scrollEventCode = new EventSource<>();
-    private EventSource<Double> scrollEventPreview = new EventSource<>();
+    private final EventSource<Double> scrollEventCode = new EventSource<>();
+    private final EventSource<Double> scrollEventPreview = new EventSource<>();
 
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);

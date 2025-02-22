@@ -136,8 +136,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     /**
      * Convert scroll position from one to another by their viewport heights and document heights.
      *
-     * @param srcValue
-     * @param srcViewport
+     * @param srcValue     The value after the scroll bar scrolls from source component
+     * @param srcViewport  Height or width of source component's viewport
      * @param srcTotal
      * @param destViewport
      * @param destTotal
@@ -146,10 +146,24 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     protected double convertScrollPosition(double srcValue, double srcViewport, double srcTotal, double destViewport, double destTotal) {
         double src = srcTotal - srcViewport;
         double dest = destTotal - destViewport;
+        double delta = 0;
+//        double delta = calculateDelta(srcValue, destTotal, destViewport);
+//        double delta = calculateDelta(srcValue, srcTotal);
         if (log.isTraceEnabled())
-            log.trace("convert: position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
-        return (srcValue / src) * dest;
+            log.trace("convert position %s in [%s/%s] to [%s/%s]".formatted(srcValue, srcViewport, srcTotal, destViewport, destTotal));
+        return ((srcValue + delta) / src) * dest;
     }
+
+    // coefficient to adjust the scroll sync.
+//    double COEFFICIENT = 0.25;
+//    // use parabola as delta
+//    private double calculateDelta(double x, double total, double viewport) {
+//        return ((-1 * COEFFICIENT * 4 * viewport) / Math.pow(total, 2)) * (Math.pow((x - 0.5 * total), 2)) + (COEFFICIENT * viewport);
+//    }
+//
+//    private double calculateDelta(double x, double total) {
+//        return 0.005 * (total - x);
+//    }
 
     @Override
     public void export() {
