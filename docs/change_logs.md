@@ -1,5 +1,9 @@
 # Change Logs
 
+### V1.10.4 Release
+* Fix: Snippet View did not correctly save and restore the expanded state after switching between different file types.  
+* Fix: When switching from another tab to a file tab opened from 'find in files', the search keyword in the file will be automatically selected by mistake.  
+
 ### V1.11.1 Unstable Release
 
 * New features for Gen-AI include:  

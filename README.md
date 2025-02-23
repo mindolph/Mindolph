@@ -52,14 +52,14 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 ### Screenshots
 <p float="left">
-	<img src="docs/screenshots/mindmap_light.jpg" width="45%"/>
+	<img src="docs/screenshots/mindmap_light_snippet.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/mindmap_dark.jpg" width="45%"/>
+	<img src="docs/screenshots/mindmap_dark_outline.jpg" width="45%"/>
 </p>
 <p float="left">
 	<img src="docs/screenshots/markdown1.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/puml_activity.jpg" width="45%"/>
+	<img src="docs/screenshots/puml_activity_snippet.jpg" width="45%"/>
 </p>
 <p float="left">
 	<img src="docs/screenshots/puml_sequence.jpg" width="45%"/>
@@ -86,12 +86,12 @@ Mindolph is an open source personal knowledge management software for all deskto
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-x64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-x64.dmg) | Intel |
-|macOS|.dmg|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3-aarch64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.msi) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.msi) | |
-|Debian|.deb|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.deb)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.rpm)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.rpm)| |
-|Java Executable|.jar|[v1.10.3](https://github.com/mindolph/Mindolph/releases/download/v1.10.3/Mindolph-1.10.3.jar)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.jar)| Java 21 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.10.3.jar`  </br> If not, download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-23`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-23\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.10.3.jar` |
+|macOS|.dmg|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4-x64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-x64.dmg) | Intel |
+|macOS|.dmg|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4-aarch64.dmg) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4.msi) |[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.msi) | |
+|Debian|.deb|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4.deb)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4.rpm)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.rpm)| |
+|Java Executable|.jar|[v1.10.4](https://github.com/mindolph/Mindolph/releases/download/v1.10.4/Mindolph-1.10.4.jar)|[v1.11.1](https://github.com/mindolph/Mindolph/releases/download/v1.11.1/Mindolph-1.11.1.jar)| Java 21 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.10.4.jar`  </br> If not, download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-23`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-23\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.10.4.jar` |
 
 
 [Change Logs](docs/change_logs.md)
