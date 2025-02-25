@@ -33,7 +33,7 @@
     git clone https://github.com/mindolph/Mindolph.git
     ```
 
-    Use your favourite IDE to create a new project in folder `Mindolph/code`, after compiling completed, launch the application by executing main method in class `com.mindolph.fx.Launcher`.
+    Use your favorite IDE to create a new project in the folder `Mindolph/code`. after compiling is completed, launch the application by executing main method in class `com.mindolph.fx.Launcher`.
 
 ### How to build an executable fat jar file
 
@@ -45,21 +45,21 @@ or
 mvn package -Dmaven.test.skip=true -Paliyun
 ```
 
-### How to build platform dependent distribution
+### How to build platform-dependent distribution
 
 * Install Packaging Tools:  
     * macOS  
       install Xcode command line tools
-    * Debian  
+    * Debian/Ubuntu  
       install fakeroot package
     * Fedora  
       install rpm-build package
     * Windows  
-      install third party tool WiX 3.0 or later
+      install third-party tool WiX 3.0 or latest
 
 * Install JavaFX jmods:  
 
-    Download latest JavaFX 23 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-23/`
+    Download the latest JavaFX 23 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-23/`
 
     Set environment variable:  
     ```shell
