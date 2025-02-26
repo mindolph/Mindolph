@@ -57,8 +57,10 @@ public abstract class BaseAiPane extends StackPane {
         List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
         allModels.addAll(preModels);
-        List<Pair<String, ModelMeta>> customModels = providerProps.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
-        allModels.addAll(customModels);
+        if (providerProps.customModels() != null) {
+            List<Pair<String, ModelMeta>> customModels = providerProps.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
+            allModels.addAll(customModels);
+        }
         if ("Custom".equals(providerProps.aiModel())) {
             ModelMeta activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
             targetItem = new Pair<>(activeModel.name(), activeModel);

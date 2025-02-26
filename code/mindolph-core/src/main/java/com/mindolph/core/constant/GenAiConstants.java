@@ -111,7 +111,11 @@ public interface GenAiConstants {
         }
     };
 
-
+    /**
+     * Lookup language by language coed, eg: zh-CN returns "Simplified Chinese (China)"
+     * @param langCode
+     * @return
+     */
     static String lookupLanguage(String langCode) {
         Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
                 .stream().map(je -> (JsonObject) je).toList()

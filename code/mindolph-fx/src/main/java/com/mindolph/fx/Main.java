@@ -2,6 +2,7 @@ package com.mindolph.fx;
 
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.event.WindowEventHandler;
+import com.mindolph.core.Env;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.fx.helper.WindowRestoreListener;
 import com.mindolph.fx.preference.Rectangle2DStringConverter;
@@ -167,12 +168,14 @@ public class Main extends Application implements WindowRestoreListener {
 
     @Override
     public void onWindowRestore(Rectangle2D rectangle) {
-        log.info("Restore to : " + rectangle);
-        winRect = rectangle;
-        this.window.setX(rectangle.getMinX());
-        this.window.setY(rectangle.getMinY());
-        this.window.setWidth(rectangle.getWidth());
-        this.window.setHeight(rectangle.getHeight());
+        if (!Env.isDevelopment) {
+            log.debug("Restore to : %s".formatted(rectangle));
+            winRect = rectangle;
+            this.window.setX(rectangle.getMinX());
+            this.window.setY(rectangle.getMinY());
+            this.window.setWidth(rectangle.getWidth());
+            this.window.setHeight(rectangle.getHeight());
+        }
     }
 
     /**
