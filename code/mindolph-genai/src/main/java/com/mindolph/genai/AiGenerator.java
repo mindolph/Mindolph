@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
@@ -45,7 +46,7 @@ public class AiGenerator implements Generator {
 
     private Consumer<Boolean> cancelConsumer;
     private Consumer<Void> beforeGenerateConsumer;
-    private Consumer<StreamOutput> streamOutputConsumer;
+    private BiConsumer<StreamOutput, StackPane> streamOutputConsumer;
     private Consumer<GenAiEvents.Output> generateConsumer;
     private Consumer<Boolean> completeConsumer;
     private Consumer<StackPane> panelShowingConsumer;
@@ -107,7 +108,7 @@ public class AiGenerator implements Generator {
                             }
                             else {
                                 // accept streaming output (even with `stop` one).
-                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()));
+                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()),  inputPanel);
                                 if (streamToken.isStop()) {
                                     Platform.runLater(() -> showReframePane.accept(streamToken));
                                 }
@@ -278,7 +279,7 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public void setOnStreaming(Consumer<StreamOutput> consumer) {
+    public void setOnStreaming(BiConsumer<StreamOutput, StackPane> consumer) {
         this.streamOutputConsumer = consumer;
     }
 

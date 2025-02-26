@@ -8,6 +8,7 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -61,7 +62,7 @@ public interface Generator {
      *
      * @param consumer
      */
-    void setOnStreaming(Consumer<StreamOutput> consumer);
+    void setOnStreaming(BiConsumer<StreamOutput, StackPane> consumer);
 
     /**
      * Callback when text generated.
