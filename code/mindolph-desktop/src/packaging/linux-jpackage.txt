@@ -2,6 +2,7 @@
 --app-version ${app.version}
 --vendor '${app.vendor}'
 --description 'Personal knowledge management tool based on mind map, markdown etc.  website: https://github.com/mindolph/Mindolph  email: mindolph.com@gmail.com'
+--license-file ${project.basedir}/LICENSE
 --icon ${project.build.directory}/classes/icons/app_512.png
 --dest ${project.build.directory}
 --main-jar ${project.build.finalName}.jar
@@ -10,6 +11,7 @@
 --runtime-image ${project.build.directory}/jvm-image
 --temp ${project.build.directory}/installer-work
 --java-options '${log4j.config} -Xms128M -Xmx512M -Djdk.tls.client.protocols=TLSv1.3 -Dhttps.protocols=TLSv1.3,TLSv1.2,TLSv1.1,SSLv3'
+--linux-package-name ${app.name}
 --linux-menu-group 'Office'
 --linux-deb-maintainer 'mindolph.com@gmail.com'
 --linux-app-category 'Office'
