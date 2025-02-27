@@ -1,5 +1,10 @@
 # Change Logs
 
+### V1.11.2 Unstable Release
+* Improvement: input panel follows the generated text during streaming generation by Gen-AI.
+* Fix: exception when launching Gen-AI generating or summarizing panes if no custom models is set up for the provider.  
+* Merged bug fixes from stable version 1.10.4.
+
 ### V1.10.4 Release
 * Fix: Snippet View did not correctly save and restore the expanded state after switching between different file types.  
 * Fix: When switching from another tab to a file tab opened from 'find in files', the search keyword in the file will be automatically selected by mistake.  
