@@ -66,7 +66,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 //        String encoded = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input.text()));
         String encoded = input.text();
         Map<String, Object> args = super.formatParams(encoded, outputParams);
-        String formattedPrompt = args.entrySet().stream().reduce(TEMPLATE,
+        String formattedPrompt = args.entrySet().stream().reduce(PROMPT_FORMAT_TEMPLATE,
                 (s, e) -> s.replace("{{%s}}".formatted(e.getKey()), e.getValue().toString()),
                 (s, s2) -> s);
 //        formattedPrompt = StringUtils.strip(formattedPrompt);
@@ -113,5 +113,11 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
     protected List<String> getFinishReasons() {
         return Collections.singletonList("stop");
     }
+
+    protected abstract String apiUrl();
+
+    protected abstract String predictPromptTemplate();
+
+    protected abstract String streamPromptTemplate();
 
 }

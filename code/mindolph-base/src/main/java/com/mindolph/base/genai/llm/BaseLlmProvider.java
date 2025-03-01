@@ -30,7 +30,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
     protected final String apiKey;
     protected final String aiModel;
     protected final boolean useProxy;
-    protected final String TEMPLATE = """
+    protected final String PROMPT_FORMAT_TEMPLATE = """
             {{input}}.
             {{format}}.
             {{length}}.

@@ -133,7 +133,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             this.codeArea.textProperty().addListener((observable, oldValue, newText) -> {
                 if (!StringUtils.equals(oldValue, newText)) {
                     this.codeArea.doHistory();
-                    log.debug("Refresh editor since text are changed.");
+                    if (log.isTraceEnabled()) log.trace("Refresh editor since text are changed.");
                     refresh(newText);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());

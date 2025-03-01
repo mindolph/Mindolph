@@ -108,6 +108,14 @@ public interface GenAiConstants {
             // DeepSeek
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-chat", 8192));
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
+
+            // Moonshot
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("kimi-latest-8k", 8192));
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("kimi-latest-32k", 32768));
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("kimi-latest-128k", 131072));
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-8k", 8192));
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-32k", 32768));
+            put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-128k", 131072));
         }
     };
 

@@ -11,7 +11,8 @@ public enum GenAiModelProvider {
     OLLAMA("Ollama", ProviderType.PRIVATE),
     HUGGING_FACE("HuggingFace", ProviderType.PUBLIC),
     CHAT_GLM("ChatGLM", ProviderType.PUBLIC),
-    DEEP_SEEK("DeepSeek", ProviderType.PUBLIC);
+    DEEP_SEEK("DeepSeek", ProviderType.PUBLIC),
+    MOONSHOT("Moonshot", ProviderType.PUBLIC);
 
     private final String name;
     private final ProviderType type;

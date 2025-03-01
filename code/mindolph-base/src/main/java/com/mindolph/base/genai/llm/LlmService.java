@@ -76,8 +76,12 @@ public class LlmService {
                 ProviderProps props = map.get(DEEP_SEEK.getName());
                 llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
+            else if (MOONSHOT.getName().equals(activeAiProvider)) {
+                ProviderProps props = map.get(MOONSHOT.getName());
+                llmProvider = new MoonshotProvider(props.apiKey(), props.aiModel(), props.useProxy());
+            }
             else {
-                throw new RuntimeException("No llm provider setup: " + activeAiProvider);
+                throw new RuntimeException("No llm provider setup: %s".formatted(activeAiProvider));
             }
         }
     }
