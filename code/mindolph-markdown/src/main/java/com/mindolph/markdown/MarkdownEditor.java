@@ -276,6 +276,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // this method will be called from javascript inside the webview.
     public void onWebviewScroll(double x, double y) {
 //        System.out.printf("B: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
+        // for remembering the scroll position to keep the webview where it is during editing.
+        super.currentScrollH = x;
+        super.currentScrollV = y;
+
         if (!super.getIsAutoScroll() || viewMode != ViewMode.BOTH) {
             return;
         }
@@ -523,9 +527,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void render(Object renderObject) {
-        log.info("Load markdown html to web view");
+        if (log.isTraceEnabled()) log.trace("Load markdown html to web view");
         html = (String) renderObject;
 
+        if (log.isTraceEnabled()) log.trace("Init the web view position to: %.1f, %.1f".formatted(currentScrollH, currentScrollV));
         String finalScript = RegExUtils.replaceAll(initScrollScript, "\\$\\{xPos\\}", String.valueOf(currentScrollH));
         finalScript = RegExUtils.replaceAll(finalScript, "\\$\\{yPos\\}", String.valueOf(currentScrollV));
 
@@ -548,6 +553,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void afterRender() {
+        // NO NEED TO DO ANYTHING
     }
 
     /**
