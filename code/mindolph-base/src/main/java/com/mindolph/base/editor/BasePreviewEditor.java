@@ -57,14 +57,16 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             throw new RuntimeException("Your should add SplitPane in to FXML with name 'splitPanel'");
         }
         // Not all preview-able editors need this scroll view.
+        // Some component like Webview does not work here.
         if (this.previewPane != null) {
+            if(log.isDebugEnabled())log.debug("listen to remember the preview pane's scroll position");
             this.previewPane.hvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollH = newValue.doubleValue());
             this.previewPane.vvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollV = newValue.doubleValue());
         }
         fixedSplitPane.skinProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("skin is ready: " + newValue);
+            log.debug("skin is ready: %s".formatted(newValue));
             if (editorContext.getOrientation() != null) {
-                log.debug("open editor on orientation: " + editorContext.getOrientation());
+                log.debug("open editor on orientation: %s".formatted(editorContext.getOrientation()));
                 fixedSplitPane.setOrientation(editorContext.getOrientation());
             }
         });
@@ -192,7 +194,6 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             previewPane.setHvalue(currentScrollH);
             previewPane.setVvalue(currentScrollV);
         }
-
     }
 
     public void centerSplitter() {
