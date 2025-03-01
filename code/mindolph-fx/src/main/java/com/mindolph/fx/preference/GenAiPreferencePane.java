@@ -5,11 +5,13 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.fx.dialog.CustomModelDialog;
+import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenaiUiConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
@@ -29,8 +31,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
+import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
@@ -62,9 +63,11 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private Label lbMaxOutputTokens;
     @FXML
-    private Spinner<Integer> spTimeOut;
-    @FXML
     private CheckBox cbUseProxy;
+    @FXML
+    private ChoiceBox<Pair<String, String>> cbLanguages;
+    @FXML
+    private Spinner<Integer> spTimeOut;
 
     private final AtomicBoolean isReady = new AtomicBoolean(false);
 
@@ -216,6 +219,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 return;
             }
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
+            String activeProviderName = cbAiProvider.getValue().getKey().getName();
+            LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
             this.updateModelDescription(selectedModel.getValue());
         });
         btnAdd.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
@@ -267,10 +272,15 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
+        cbLanguages.setConverter(new PairStringStringConverter());
+        ChoiceUtils.loadLanguagesTo(cbLanguages);
+        cbLanguages.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.equals(oldValue)) return;
+            fxPreferences.savePreference(GEN_AI_OUTPUT_LANGUAGE, newValue.getKey());
+        });
         // time out setting for all.
         super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
     }
-
 
     private List<ModelMeta> showCustomModels(String providerName) {
         cbCustomModels.getItems().clear();

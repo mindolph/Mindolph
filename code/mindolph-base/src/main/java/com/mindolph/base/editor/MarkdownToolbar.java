@@ -205,7 +205,7 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     private void addHeader(int number) {
         String newHead = StringUtils.repeat('#', number) + " ";
         markdownCodeArea.addOrTrimHeadToParagraphs(new Replacement(newHead), true, original -> {
-            return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)", StringUtils.EMPTY);
+            return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)|(?<bullet>[\\*-] ?)", StringUtils.EMPTY);
         });
         markdownCodeArea.requestFocus();
     }

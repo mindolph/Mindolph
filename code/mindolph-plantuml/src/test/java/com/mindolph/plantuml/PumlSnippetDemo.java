@@ -14,8 +14,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +47,10 @@ public class PumlSnippetDemo extends Application implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println(Color.YELLOW.getSaturation());
-        System.out.println(Color.YELLOW.getBrightness());
         PluginManager.getIns().registerPlugin(new PlantUmlPlugin());
+        snippetView.setActive(true);
         List<BaseSnippetGroup> groups = Arrays.asList(new GeneralSnippetGroup(),
+                new DiagramSnippetGroup(),
                 new SkinparamSnippetGroup(),
                 new ColorSnippetGroup(),
                 new ThemeSnippetGroup(),
@@ -59,7 +59,17 @@ public class PumlSnippetDemo extends Application implements Initializable {
                 new BuiltinFunctionsSnippetGroup(),
                 new CustomSnippetGroup());
         snippetView.reload(groups, SupportFileTypes.TYPE_PLANTUML);
-        EventBus.getIns().subscribeSnippetApply(snippet -> textArea.setText(snippet.getCode()));
+        EventBus.getIns().subscribeSnippetApply(snippet -> {
+            String code = snippet.getCode();
+            if (StringUtils.contains(code, "⨁")) {
+                String old = textArea.getSelectedText();
+                String replaced = StringUtils.replace(code, "⨁", old);
+                textArea.replaceSelection(replaced);
+            }
+            else {
+                textArea.setText(code);
+            }
+        });
     }
 
     public static class PrintDemoLauncher {

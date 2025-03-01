@@ -6,15 +6,15 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
+import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
-import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
+import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
@@ -45,7 +46,7 @@ public class AiGenerator implements Generator {
 
     private Consumer<Boolean> cancelConsumer;
     private Consumer<Void> beforeGenerateConsumer;
-    private Consumer<StreamOutput> streamOutputConsumer;
+    private BiConsumer<StreamOutput, StackPane> streamOutputConsumer;
     private Consumer<GenAiEvents.Output> generateConsumer;
     private Consumer<Boolean> completeConsumer;
     private Consumer<StackPane> panelShowingConsumer;
@@ -86,7 +87,7 @@ public class AiGenerator implements Generator {
             Consumer<StreamToken> showReframePane = (streamToken) -> {
                 AiGenerator.this.removeFromParent(reframePanel);
                 AiGenerator.this.removeFromParent(inputPanel);
-                reframePanel = new AiReframePane(editorId, input.text(), input.temperature(), streamToken.outputTokens());
+                reframePanel = new AiReframePane(editorId, input, streamToken.outputTokens());
                 AiGenerator.this.addToParent(reframePanel);
                 panelShowingConsumer.accept(reframePanel);
             };
@@ -99,7 +100,7 @@ public class AiGenerator implements Generator {
                 if (streamOutputConsumer == null) {
                     onError.accept("Not support stream generation");
                 }
-                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
+                LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
                         streamToken -> {
                             if (streamToken.isError()) {
                                 log.warn("error from streaming: {}", streamToken);
@@ -107,7 +108,7 @@ public class AiGenerator implements Generator {
                             }
                             else {
                                 // accept streaming output (even with `stop` one).
-                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()));
+                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()),  inputPanel);
                                 if (streamToken.isStop()) {
                                     Platform.runLater(() -> showReframePane.accept(streamToken));
                                 }
@@ -278,7 +279,7 @@ public class AiGenerator implements Generator {
     }
 
     @Override
-    public void setOnStreaming(Consumer<StreamOutput> consumer) {
+    public void setOnStreaming(BiConsumer<StreamOutput, StackPane> consumer) {
         this.streamOutputConsumer = consumer;
     }
 

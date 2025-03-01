@@ -3,7 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
-import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
@@ -11,7 +11,8 @@ import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.util.ClipBoardUtils;
-import com.mindolph.mfx.util.FxmlUtils;
+import com.mindolph.mfx.util.ControlUtils;
+import com.mindolph.mfx.util.PaneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,44 +29,34 @@ import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 /**
  * @since 1.11
  */
-public class AiSummaryPane extends StackPane {
+public class AiSummaryPane extends BaseAiPane {
 
     private static final Logger log = LoggerFactory.getLogger(AiSummaryPane.class);
 
-    @FXML
-    private Label lbTitle;
     @FXML
     private TextArea taOutput;
     @FXML
     private ProgressBar pbWaiting;
     @FXML
-    private Label lbIcon;
-    @FXML
-    private Button btnClose;
-    @FXML
     private Button btnCopy;
     @FXML
-    private Button btnReSummarize;
+    private Button btnSummarize;
     @FXML
     private Button btnStop;
     @FXML
     private HBox hbDone;
     @FXML
     private HBox hbGenerating;
-    @FXML
-    private Label lbMsg;
-
-    private final Object editorId;
-    private final String fileType;
 
     public AiSummaryPane(Object editorId, String fileType, String inputText) {
-        this.editorId = editorId;
-        this.fileType = fileType;
-        FxmlUtils.loadUri("/genai/ai_summary_pane.fxml", this);
-        lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
-        btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
+        super("/genai/ai_summary_pane.fxml", editorId, fileType);
 
-        toggleButtons(true);
+        this.toggleButtons(false);
+        NodeUtils.disable(btnCopy); // disable copy button for the first time.
+
+        lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveAiProvider()));
+        btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
+        btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnClose.setOnAction(event -> {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT);
         });
@@ -74,25 +64,28 @@ public class AiSummaryPane extends StackPane {
             this.toggleButtons(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
-        btnReSummarize.setOnAction(event -> {
+        btnSummarize.setOnAction(event -> {
             this.toggleButtons(true);
             taOutput.clear();
             starTotSummarize(inputText);
         });
         btnCopy.setOnAction(event -> {
-            if (StringUtils.isNotBlank(taOutput.getText())) ClipBoardUtils.textToClipboard(taOutput.getText());
+            if (StringUtils.isNotBlank(taOutput.getText())) {
+                ClipBoardUtils.textToClipboard(taOutput.getText());
+                lbMsg.setText("%d bytes copied to Clipboard".formatted(taOutput.getText().length()));
+            }
         });
 
-//        this.setOnKeyReleased(event -> {
-//            if (KeyCode.ESCAPE == event.getCode()) {
-//                GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
-//            }
-//        });
+        ControlUtils.escapableControls(()-> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
+
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT),
+                this, hbDone, hbGenerating);
+
         this.requestFocus();
 
         // listeners
         GenAiEvents.getIns().subscribeSummarizeEvent(editorId, input -> {
-            LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)),
+            LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
                     streamToken -> {
                         if (streamToken.isError()) {
                             log.warn("error from streaming: {}", streamToken);
@@ -112,21 +105,21 @@ public class AiSummaryPane extends StackPane {
                         }
                     });
         });
-
-        // start to summarize
-        starTotSummarize(inputText);
     }
 
     private void starTotSummarize(String inputText) {
-        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+//        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        ModelMeta modelMeta = cbModel.getValue().getValue();
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
-        lbTitle.setText("Summarize selected content by %s %s".formatted(LlmConfig.getIns().getActiveAiProvider(), modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
-        GenAiEvents.getIns().emitSummarizeEvent(editorId, new Input(modelMeta.name(), inputText,
-                0.5f, modelMeta.maxTokens(),null, false, true));
+        GenAiEvents.getIns().emitSummarizeEvent(editorId, new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
+                .outputLanguage(cbLanguage.getValue().getKey())
+                .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
+                .createInput());
     }
 
     public void onStop(String reason) {
+        btnSummarize.setText("Re-summarize");
         lbMsg.setText(reason);
         toggleButtons(false);
     }
@@ -134,9 +127,10 @@ public class AiSummaryPane extends StackPane {
     private void toggleButtons(boolean isGenerating) {
         pbWaiting.setVisible(isGenerating);
         if (isGenerating)
-            NodeUtils.disable(btnCopy, btnReSummarize);
-        else
-            NodeUtils.enable(btnCopy, btnReSummarize);
+            NodeUtils.disable(btnCopy, btnSummarize);
+        else {
+            NodeUtils.enable(btnCopy, btnSummarize);
+        }
         hbDone.setVisible(!isGenerating);
         hbDone.setManaged(!isGenerating);
         hbGenerating.setVisible(isGenerating);

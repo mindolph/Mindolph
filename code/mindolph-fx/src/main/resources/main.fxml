@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import com.mindolph.fx.view.OutlineView?>
 <?import com.mindolph.base.control.snippet.SnippetView?>
-<AnchorPane prefHeight="551.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="768" prefWidth="1024" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mindolph.fx.MainController">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">

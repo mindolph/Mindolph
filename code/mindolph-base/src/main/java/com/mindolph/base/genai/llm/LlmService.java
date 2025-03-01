@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.ProviderProps;
 import org.slf4j.Logger;
@@ -76,12 +77,17 @@ public class LlmService {
                 llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
             else {
-                throw new RuntimeException("No llm provider setup: " + activeAiProvider);
+                throw new RuntimeException("No llm provider setup: %s".formatted(activeAiProvider));
             }
         }
     }
 
-
+    /**
+     *
+     * @param input
+     * @param outputParams
+     * @return
+     */
     public StreamToken predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
         StreamToken generated = null;
@@ -108,6 +114,12 @@ public class LlmService {
         return generated;
     }
 
+    /**
+     *
+     * @param input
+     * @param outputParams
+     * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
+     */
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
@@ -121,10 +133,11 @@ public class LlmService {
     }
 
     /**
+     * Summarize user input text screamingly.
      *
      * @param input
      * @param outputParams
-     * @param consumer
+     * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
      * @since 1.11
      */
     public void summarize(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
@@ -135,7 +148,9 @@ public class LlmService {
                 ```
                 """.formatted(input.text());
         // replace with new prompt
-        Input in = new Input(input.model(), prompt, input.temperature(), input.maxTokens(), input.outputAdjust(), input.isRetry(), input.isStreaming());
+        Input in = new InputBuilder().model(input.model()).text(prompt).temperature(input.temperature()).maxTokens(input.maxTokens())
+                .outputAdjust(input.outputAdjust()).isRetry(input.isRetry()).isStreaming(input.isStreaming())
+                .createInput();
         llmProvider.stream(in, outputParams, streamToken -> {
             if (isStopped) {
                 isStopped = false;

@@ -2,6 +2,7 @@
 --app-version ${app.version}
 --vendor '${app.vendor}'
 --description 'Personal knowledge management tool based on mind map, markdown etc.  website: https://github.com/mindolph/Mindolph  email: mindolph.com@gmail.com'
+--license-file LICENSE
 --icon ${project.build.directory}/classes/icons/app_512.png
 --dest ${project.build.directory}
 --main-jar ${project.build.finalName}.jar

@@ -3,7 +3,11 @@ package com.mindolph.core.llm;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * General properties for a Gen-AI provider.
+ */
 public class ProviderProps {
+
     private String apiKey;
     private String baseUrl;
     private String aiModel;

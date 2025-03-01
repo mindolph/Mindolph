@@ -563,6 +563,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         if (foundCellPos != null) {
             tableView.getSelectionModel().clearSelection();
             tableView.getSelectionModel().select(foundCellPos.getRowIdx(), tableView.getColumns().get(foundCellPos.getColIdx() + 1));
+            tableView.scrollTo(foundCellPos.getRowIdx());
         }
         else {
             selectedCellPos = null;
