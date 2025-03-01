@@ -139,7 +139,7 @@ public class SnippetView extends BaseView {
         if (!super.getActive()) return;
         accordion.getPanes().clear();
         if (snippetGroups != null && !snippetGroups.isEmpty()) {
-            if (!vBox.getChildren().contains(tfKeyword)) vBox.getChildren().add(0, tfKeyword);
+            if (!vBox.getChildren().contains(tfKeyword)) vBox.getChildren().addFirst(tfKeyword);
             for (BaseSnippetGroup snippetGroup : snippetGroups) {
 //                log.debug("Load snippets for file: %s".formatted(snippetGroup.getFileType()));
                 Collection<Plugin> plugins = PluginManager.getIns().findPlugins(fileType);
