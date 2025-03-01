@@ -7,7 +7,6 @@ import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

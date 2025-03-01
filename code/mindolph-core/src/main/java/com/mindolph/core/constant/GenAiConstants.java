@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
  */
 public interface GenAiConstants {
 
-    int MAX_GENERATION_TOKENS = 2000; // TODO to be configurable
-
     /**
      * Look up information for pre-defined model.
      *

@@ -87,7 +87,7 @@ public class AiGenerator implements Generator {
             Consumer<StreamToken> showReframePane = (streamToken) -> {
                 AiGenerator.this.removeFromParent(reframePanel);
                 AiGenerator.this.removeFromParent(inputPanel);
-                reframePanel = new AiReframePane(editorId, input.text(), input.temperature(), streamToken.outputTokens());
+                reframePanel = new AiReframePane(editorId, input, streamToken.outputTokens());
                 AiGenerator.this.addToParent(reframePanel);
                 panelShowingConsumer.accept(reframePanel);
             };
