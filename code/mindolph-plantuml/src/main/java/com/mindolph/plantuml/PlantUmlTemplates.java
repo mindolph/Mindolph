@@ -284,6 +284,23 @@ public class PlantUmlTemplates extends BaseFileTemplate {
                         content:
                             title: This is a YAML script
                         @endyaml
+                        """),
+                new Template("EBNF", """
+                        @startebnf
+                        'this file is created by Mindolph at %s
+                        title Title
+                        my_enbf = {"a", c , "a" (* Note on a *)}
+                        | ? special ?
+                        | "repetition", 4 * '2';
+                        (* Global End Note *)
+                        @endebnf
+                        """),
+                new Template("Regex", """
+                        @startregex
+                        'this file is created by Mindolph at %s
+                        title minimumRepetition
+                        ab{1}c{1,}
+                        @endregex
                         """)
         );
     }
