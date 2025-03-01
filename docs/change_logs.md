@@ -2,7 +2,7 @@
 
 ### V1.10.5 Release
 * Improvement: optimized the auto scroll during editing for the Markdown editor, now the scroll sync goes smoothly. 😊
-* The .deb installation package is now built on Debian 12 and also works on Ubuntu.
+* The .deb installation package is now built on Debian 12 to fix the error during installation. It also works on Ubuntu.
 
 ### V1.11.2 Unstable Release
 * Improvement: input panel follows the generated text during streaming generation by Gen-AI.
