@@ -11,12 +11,12 @@ public interface PlantUmlConstants extends SyntaxConstants {
 
     String[] DIAGRAM_KEYWORDS_START = new String[]{
             "startsalt", "startgantt", "startlatex", "startmath", "startdot",
-            "startuml", "startmindmap", "startwbs", "startyaml", "startjson"
+            "startuml", "startmindmap", "startwbs", "startyaml", "startjson", "startregex", "startebnf"
     };
 
     String[] DIAGRAM_KEYWORDS_END = new String[]{
             "endsalt",  "endgantt",  "endlatex",  "endmath",  "enddot",
-            "enduml",  "endmindmap",  "endwbs",  "endyaml",  "endjson"
+            "enduml",  "endmindmap",  "endwbs",  "endyaml",  "endjson", "endregex", "endebnf"
     };
 
     String DIAGRAM_PATTERN = "@(" + String.join("|", ArrayUtils.addAll(DIAGRAM_KEYWORDS_START, DIAGRAM_KEYWORDS_END)) + ")";
@@ -44,15 +44,16 @@ public interface PlantUmlConstants extends SyntaxConstants {
             "center", "footer", "return"
     };
     String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    String COMMENT_PATTERN = "(" + BLANK_CHAR + "*'.*)";
+    // include EBNF note
+    String COMMENT_PATTERN = "(%s*'.*)|(\\(\\*[.\\s\\S]+?\\*\\))".formatted(BLANK_CHAR);
     String BLOCK_COMMENT_PATTERN = "\\/'[.\\s\\S]+?'\\/";
 
     String ARROW1 = "[<>ox#\\*\\{\\}\\+\\^]";
     String ARROW2 = "([\\|\\}\\<][\\|o])|([\\|o][\\|\\{\\>])";
     String BAR = "-|\\.|(--)|(\\.\\.)";
     String CONNECTOR = "((%s)|(%s))*(%s)((%s)|(%s))*".formatted(ARROW2, ARROW1, BAR, ARROW2, ARROW1);
-
-    String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])";
+    // include EBNF quote
+    String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])|(\\?[.\\s\\S]+?\\?)";
 
     String ACTIVITY = ":[^;]*?;";
 }

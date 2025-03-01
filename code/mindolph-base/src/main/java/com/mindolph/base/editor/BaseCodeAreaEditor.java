@@ -335,11 +335,28 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     public void onSnippet(Snippet snippet) {
         // replacing selected text with snippet code
         String code = snippet.getCode();
+        String selectedText = codeArea.getSelectedText();
         int caretPos = StringUtils.indexOf(code, "⨁");
-        String codeToInsert = StringUtils.remove(code, "⨁");
-        codeArea.replaceSelection(codeToInsert);
+        String codeToInsert = "";
         if (caretPos > 0) {
-            codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
+            if (StringUtils.isEmpty(selectedText)) {
+                codeToInsert = StringUtils.remove(code, "⨁");
+                codeArea.insertText(codeToInsert);
+                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
+            }
+            else {
+                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
+                codeArea.replaceSelection(codeToInsert);
+                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
+            }
+        }
+        else {
+            if (StringUtils.isEmpty(selectedText)) {
+                codeArea.insertText(code);
+            }
+            else {
+                codeArea.replaceSelection(code);
+            }
         }
         codeArea.requestFocus();
     }
