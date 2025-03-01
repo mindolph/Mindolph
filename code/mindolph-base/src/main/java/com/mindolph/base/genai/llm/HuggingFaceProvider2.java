@@ -1,6 +1,9 @@
 package com.mindolph.base.genai.llm;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
@@ -61,6 +64,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     public HuggingFaceProvider2(String apiKey, String aiModel, boolean useProxy) {
         super(apiKey, aiModel, useProxy);
     }
+
 
     @Override
     public StreamToken predict(Input input, OutputParams outputParams) {

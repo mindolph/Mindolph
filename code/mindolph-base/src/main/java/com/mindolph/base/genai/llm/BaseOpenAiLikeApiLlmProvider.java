@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @since 1.11.3
+ *
  */
 public abstract class BaseOpenAiLikeApiLlmProvider extends BaseApiLlmProvider{
 

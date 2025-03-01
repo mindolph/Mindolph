@@ -97,6 +97,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbAiProvider.getItems().add(new Pair<>(HUGGING_FACE, HUGGING_FACE.getName()));
         cbAiProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getName()));
         cbAiProvider.getItems().add(new Pair<>(DEEP_SEEK, DEEP_SEEK.getName()));
+        cbAiProvider.getItems().add(new Pair<>(MOONSHOT, MOONSHOT.getName()));
         super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
