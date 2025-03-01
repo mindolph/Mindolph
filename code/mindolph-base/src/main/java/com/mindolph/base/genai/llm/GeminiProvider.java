@@ -84,7 +84,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
     public StreamToken predict(Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
         Request request = new Request.Builder()
-                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s".formatted(determineModel(input), apiKey))
+                .url(apiUrl().formatted(determineModel(input), apiKey))
                 .post(requestBody)
                 .build();
 
@@ -157,5 +157,21 @@ public class GeminiProvider extends BaseApiLlmProvider {
                 }, () -> {
                     // NO NEED
                 });
+    }
+
+
+    @Override
+    protected String apiUrl() {
+        return "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s";
+    }
+
+    @Override
+    protected String predictPromptTemplate() {
+        return template;
+    }
+
+    @Override
+    protected String streamPromptTemplate() {
+        return streamTemplate;
     }
 }

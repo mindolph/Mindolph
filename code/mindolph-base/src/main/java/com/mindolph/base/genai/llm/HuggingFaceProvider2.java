@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
- * https://huggingface.co/docs/api-inference/en/index
+ * <a href="https://huggingface.co/docs/api-inference/en/index">...</a>
  *
  * @author mindolph.com@gmail.com
  * @since 1.7.4
@@ -131,6 +131,22 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
         }, () -> {
             consumer.accept(new StreamToken(StringUtils.EMPTY, outputTokens.get(), true, false));
         });
+    }
+
+
+    @Override
+    protected String apiUrl() {
+        return API_URL;
+    }
+
+    @Override
+    protected String predictPromptTemplate() {
+        return template;
+    }
+
+    @Override
+    protected String streamPromptTemplate() {
+        return streamTemplate;
     }
 
 }
