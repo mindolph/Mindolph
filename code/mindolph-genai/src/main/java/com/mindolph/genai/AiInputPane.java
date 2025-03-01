@@ -51,8 +51,6 @@ public class AiInputPane extends BaseAiPane {
     private Button btnGenerate;
     @FXML
     private ProgressBar pbWaiting;
-    @FXML
-    private Label lbMsg;
 
     public AiInputPane(Object editorId, String fileType, String defaultInput) {
         super("/genai/ai_input_pane.fxml", editorId, fileType);

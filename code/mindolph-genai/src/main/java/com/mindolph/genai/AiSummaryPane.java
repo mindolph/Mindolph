@@ -47,8 +47,6 @@ public class AiSummaryPane extends BaseAiPane {
     private HBox hbDone;
     @FXML
     private HBox hbGenerating;
-    @FXML
-    private Label lbMsg;
 
     public AiSummaryPane(Object editorId, String fileType, String inputText) {
         super("/genai/ai_summary_pane.fxml", editorId, fileType);

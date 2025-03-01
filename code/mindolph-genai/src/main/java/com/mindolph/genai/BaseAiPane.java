@@ -37,6 +37,8 @@ public abstract class BaseAiPane extends StackPane {
     protected Label lbIcon;
     @FXML
     protected Label lbTitle;
+    @FXML
+    protected Label lbMsg;
 
     protected final Object editorId;
     protected final String fileType;
@@ -74,7 +76,9 @@ public abstract class BaseAiPane extends StackPane {
         if (!allModels.contains(targetItem)) {
             cbModel.getItems().add(targetItem); // exclude same model
         }
-
+        cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
+            lbMsg.setText("Max output tokens: %d".formatted(newValue.getValue().maxTokens()));
+        });
         if (cbModel.getItems().contains(targetItem)) {
             cbModel.getSelectionModel().select(targetItem);
         }
