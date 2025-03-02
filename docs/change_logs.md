@@ -1,5 +1,16 @@
 # Change Logs
 
+### V1.11.3 Unstable Release
+* Improvement: for applying snippet, automatically wrap up the selected text if the snippet you choose requires that.
+* Improvement: add Regex and EBNF support to PlantUML editor.
+* Improvement: add max token information after selecting a LLM model in Gen-AI panels.
+* Fix: the 'retry' function doesn't work after the Gen-AI generated something; 
+* Refactored LLM provider implementation;
+
+### V1.10.5 Release
+* Improvement: optimized the auto scroll during editing for the Markdown editor, now the scroll sync goes smoothly. 😊
+* The .deb installation package is now built on Debian 12 to fix the error during installation. It also works on Ubuntu.
+
 ### V1.11.2 Unstable Release
 * Improvement: input panel follows the generated text during streaming generation by Gen-AI.
 * Fix: exception when launching Gen-AI generating or summarizing panes if no custom models is set up for the provider.  
