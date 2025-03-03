@@ -36,7 +36,7 @@
                     <Insets/>
                 </VBox.margin>
                 <TextArea fx:id="taOutput" editable="false" prefHeight="128.0" prefWidth="480.0"
-                          promptText="Will be the summarized content." wrapText="true"/>
+                          promptText="Summarized content." wrapText="true"/>
                 <AnchorPane>
                     <VBox.margin>
                         <Insets/>

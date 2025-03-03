@@ -584,6 +584,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     @Override
     public void dispose() {
         super.dispose();
+        webEngine.getLoadWorker().cancel();
         webEngine.load(null);
         webEngine = null;
         webView = null;
