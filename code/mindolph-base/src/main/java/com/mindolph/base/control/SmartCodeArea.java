@@ -149,8 +149,6 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     summaryMenuItem.setOnAction(event -> {
                         SmartCodeArea.this.onCompleted();
                         generator.showSummarizePanel(SmartCodeArea.super.getSelectedText());
-                        IndexRange selection = SmartCodeArea.super.getSelection();
-                        SmartCodeArea.super.moveTo(selection.getEnd());
                     });
 
                     generator.setOnPanelShowing(stackPane -> {
@@ -231,9 +229,9 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputPanel.getWidth(), inputPanel.getHeight());
             Dimension2D targetDimension = new Dimension2D(super.getCaretInLocal().getWidth(), super.getLineHeight());
             if (log.isTraceEnabled())
-                log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
-            if (log.isTraceEnabled()) log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
-            if (log.isTraceEnabled()) log.trace("target dimension: " + DimensionUtils.dimensionInStr(targetDimension));
+                log.trace("bound in parent:%s".formatted(BoundsUtils.boundsInString(this.getBoundsInParent())));
+            if (log.isTraceEnabled()) log.trace("hover bounds:%s".formatted(BoundsUtils.boundsInString(hoverBounds)));
+            if (log.isTraceEnabled()) log.trace("target dimension: %s".formatted(DimensionUtils.dimensionInStr(targetDimension)));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, targetDimension,
                     new Dimension2D(5, 5));
             inputPanel.relocate(p2.getX(), p2.getY());

@@ -204,7 +204,7 @@ public class AiGenerator implements Generator {
             return null;
         }
         summarizePanel = new AiSummaryPane(editorId, fileType, input);
-        addToParent(summarizePanel);
+        this.addToParent(summarizePanel);
         panelShowingConsumer.accept(summarizePanel);
         return summarizePanel;
     }

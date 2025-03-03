@@ -15,7 +15,7 @@
 <!--         <Label text="Font file path for export to PDF" minWidth="100" prefWidth="300" alignment="TOP_RIGHT"/>-->
 <!--         <Separator prefWidth="400.0"/>-->
 <!--      </HBox>-->
-      <PreferenceItem name="Font file path for export to PDF:">
+      <PreferenceItem name="Font file path for exporting to PDF:">
          <VBox spacing="12">
             <VBox spacing="8">
                <Label text="Sans-serif:"/>
