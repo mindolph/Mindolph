@@ -10,13 +10,13 @@ import org.apache.commons.lang3.ArrayUtils;
 public interface PlantUmlConstants extends SyntaxConstants {
 
     String[] DIAGRAM_KEYWORDS_START = new String[]{
-            "startsalt", "startgantt", "startlatex", "startmath", "startdot",
-            "startuml", "startmindmap", "startwbs", "startyaml", "startjson", "startregex", "startebnf"
+            "startuml", "startsalt", "startgantt", "startlatex", "startmath", "startdot",
+            "startmindmap", "startwbs", "startyaml", "startjson", "startregex", "startebnf"
     };
 
     String[] DIAGRAM_KEYWORDS_END = new String[]{
-            "endsalt",  "endgantt",  "endlatex",  "endmath",  "enddot",
-            "enduml",  "endmindmap",  "endwbs",  "endyaml",  "endjson", "endregex", "endebnf"
+            "enduml", "endsalt", "endgantt", "endlatex", "endmath", "enddot",
+            "endmindmap", "endwbs", "endyaml", "endjson", "endregex", "endebnf"
     };
 
     String DIAGRAM_PATTERN = "@(" + String.join("|", ArrayUtils.addAll(DIAGRAM_KEYWORDS_START, DIAGRAM_KEYWORDS_END)) + ")";

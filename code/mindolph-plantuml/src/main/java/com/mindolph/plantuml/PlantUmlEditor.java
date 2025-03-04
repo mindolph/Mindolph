@@ -30,6 +30,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,9 +155,14 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             Image image = previewPane.getImage();
             try {
                 if (snapshotFile != null) {
+                    if (image == null) {
+                        log.error("Image is null");
+                        return;
+                    }
+                    log.debug("Export image: %sx%s".formatted(image.getWidth(), image.getHeight()));
                     ImageIO.write(SwingFXUtils.fromFXImage(image, null), "jpg", snapshotFile);
+                    log.info("Exported image to file: %s".formatted(snapshotFile));
                 }
-                log.info("Export file to: " + snapshotFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -333,12 +339,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             log.debug("Render plantuml image: %s x %s".formatted(image.getWidth(), image.getHeight()));
             previewPane.setImage(image);
         }
-
     }
 
     @Override
     protected String getOutlinePattern() {
-        return "(@)(" + String.join("|", DIAGRAM_KEYWORDS_START) + ")";
+        return "(@|' )(%s|\\*\\*.+\\*\\*)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
     }
 
     @Override
@@ -347,21 +352,31 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    protected int determineOutlineLevel(String heading) {
+        return ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim()) ? 1 : 2;
+    }
+
+    @Override
     protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
-        log.debug("extract outline title for heading:%s".formatted(heading));
+        log.debug("extract outline title for heading: '%s'".formatted(heading));
         // extract title by cutting the diagram code block.
-        int startPos = codeArea.getAbsolutePosition(location.getEndRow(), location.getEndCol());
-        int endPos = nextBlockLocation == null ? codeArea.getText().length() : codeArea.getAbsolutePosition(nextBlockLocation.getStartRow(), nextBlockLocation.getStartCol());
-        String block = StringUtils.substring(codeArea.getText(), startPos, endPos);
-        try {
-            List<String> lines = IoUtils.readToStringList(new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8)));
-            String title =  this.extractDiagramTitle(lines);
+        if (ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim())) {
+            int startPos = codeArea.getAbsolutePosition(location.getEndRow(), location.getEndCol());
+            int endPos = nextBlockLocation == null ? codeArea.getText().length() : codeArea.getAbsolutePosition(nextBlockLocation.getStartRow(), nextBlockLocation.getStartCol());
+            String block = StringUtils.substring(codeArea.getText(), startPos, endPos);
+            try {
+                List<String> lines = IoUtils.readToStringList(new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8)));
+                String title = this.extractDiagramTitle(lines);
 //            if ("[Unnamed]".equals(title)){
 //                return heading;
 //            }
-            return title;
-        } catch (IOException e) {
-            return heading;
+                return title;
+            } catch (IOException e) {
+                return heading;
+            }
+        }
+        else {
+            return StringUtils.substringBetween(heading, "**").trim();
         }
     }
 

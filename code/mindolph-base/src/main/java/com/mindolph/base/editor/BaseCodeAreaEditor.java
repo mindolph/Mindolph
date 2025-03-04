@@ -175,6 +175,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     protected abstract String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation);
 
+    protected int determineOutlineLevel(String heading) {
+        return TextUtils.countInStarting(heading, this.getHeadingLevelTag());
+    }
+
     @Override
     public void outline() {
         if (StringUtils.isBlank(this.getOutlinePattern()) || outlinePattern == null) {
@@ -201,7 +205,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
             while (matcher.find()) {
                 String heading = matcher.group(2);// TODO this 2 should be...
-                int n = TextUtils.countInStarting(heading, this.getHeadingLevelTag());
+                int n = this.determineOutlineLevel(heading);
                 TextLocation textLocation = tn.locateNext(heading, true);
                 textLocation.setStartCol(0);
                 textLocation.setEndRow(textLocation.getStartRow());

@@ -3,6 +3,7 @@ package com.mindolph.plantuml.constant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
@@ -86,5 +87,34 @@ public class PumlRegexTest {
         Assertions.assertTrue(p.matcher(":;").matches());
         Assertions.assertTrue(p.matcher(":hello;").matches());
         Assertions.assertFalse(p.matcher(":hello; world;").matches());
+    }
+
+    @Test
+    public void outline() {
+        String OUTLINE = "(@|(' ))(startsalt|startgantt|startlatex|startmath|startdot|startuml|startmindmap|startwbs|startyaml|startjson|startregex|startebnf|\\*\\*.+?\\*\\*)";
+        Pattern p = Pattern.compile(OUTLINE);
+        Matcher matcher1 = p.matcher("@startuml");
+        Assertions.assertTrue(matcher1.find());
+        System.out.println(matcher1.group(3));
+        Assertions.assertEquals("startuml", matcher1.group(3));
+
+        Matcher matcher2 = p.matcher("' ** title **");
+        Assertions.assertTrue(matcher2.find());
+        System.out.println(matcher2.group(3));
+        Assertions.assertEquals("** title **", matcher2.group(3));
+
+
+        Matcher matcher3 = p.matcher("' ** 中文标题 **");
+        Assertions.assertTrue(matcher3.find());
+        System.out.println(matcher3.group(3));
+        Assertions.assertEquals("** 中文标题 **", matcher3.group(3));
+
+        Matcher matcher = p.matcher("@startuml\n\n\n' **  title  ** \n");
+        Assertions.assertTrue(matcher.find());
+        System.out.println(matcher.group(3));
+        Assertions.assertEquals("startuml", matcher.group(3));
+        Assertions.assertTrue(matcher.find());
+        System.out.println(matcher.group(3));
+        Assertions.assertEquals("**  title  **", matcher.group(3));
     }
 }
