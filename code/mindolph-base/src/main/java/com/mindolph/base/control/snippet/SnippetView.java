@@ -211,9 +211,9 @@ public class SnippetView extends BaseView {
                 if (snippetGroup != null) {
                     if (StringUtils.isNotEmpty(keyword)) {
                         ObservableList<Snippet> filteredSnippets;
-                        List<?> filtered = snippetGroup.snippets.stream().filter(snippet -> snippet.getTitle().contains(keyword)
-                                        || (snippet.getDescription() != null && snippet.getDescription().contains(keyword))
-                                        || (snippet.getCode() != null && snippet.getCode().contains(keyword)))
+                        List<?> filtered = snippetGroup.snippets.stream().filter(snippet -> StringUtils.containsIgnoreCase(snippet.getTitle(), keyword)
+                                        || (snippet.getDescription() != null && StringUtils.containsIgnoreCase(snippet.getDescription(), keyword))
+                                        || (snippet.getCode() != null && StringUtils.containsIgnoreCase(snippet.getCode(), keyword)))
                                 .toList();
                         filteredSnippets = FXCollections.observableList(filtered.stream()
                                 .map((Function<Object, Snippet>) o -> (Snippet) o).toList());
