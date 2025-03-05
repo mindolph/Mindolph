@@ -91,23 +91,23 @@ public class PumlRegexTest {
 
     @Test
     public void outline() {
-        String OUTLINE = "(@|(' ))(startsalt|startgantt|startlatex|startmath|startdot|startuml|startmindmap|startwbs|startyaml|startjson|startregex|startebnf|\\*\\*.+?\\*\\*)";
+        String OUTLINE = "(@|(' ))(startsalt|startgantt|startlatex|startmath|startdot|startuml|startmindmap|startwbs|startyaml|startjson|startregex|startebnf|[\\*]+.+[\\*]+?)";
         Pattern p = Pattern.compile(OUTLINE);
         Matcher matcher1 = p.matcher("@startuml");
         Assertions.assertTrue(matcher1.find());
         System.out.println(matcher1.group(3));
         Assertions.assertEquals("startuml", matcher1.group(3));
 
-        Matcher matcher2 = p.matcher("' ** title **");
+        Matcher matcher2 = p.matcher("' * level 1 *");
         Assertions.assertTrue(matcher2.find());
         System.out.println(matcher2.group(3));
-        Assertions.assertEquals("** title **", matcher2.group(3));
+        Assertions.assertEquals("* level 1 *", matcher2.group(3));
 
 
-        Matcher matcher3 = p.matcher("' ** 中文标题 **");
+        Matcher matcher3 = p.matcher("' ** level 2 **");
         Assertions.assertTrue(matcher3.find());
         System.out.println(matcher3.group(3));
-        Assertions.assertEquals("** 中文标题 **", matcher3.group(3));
+        Assertions.assertEquals("** level 2 **", matcher3.group(3));
 
         Matcher matcher = p.matcher("@startuml\n\n\n' **  title  ** \n");
         Assertions.assertTrue(matcher.find());

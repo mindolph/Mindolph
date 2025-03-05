@@ -76,6 +76,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     private final Indicator indicator = new Indicator();
 
+    private final Pattern extractingPattern = Pattern.compile("[\\*]+(.+?)[\\*]+");
+
     public PlantUmlEditor(EditorContext editorContext) {
         super("/editor/plant_uml_editor.fxml", editorContext, false);
         super.fileType = SupportFileTypes.TYPE_PLANTUML;
@@ -343,7 +345,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected String getOutlinePattern() {
-        return "(@|' )(%s|\\*\\*.+\\*\\*)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
+        return "(@|' )(%s|[\\*]+.+[\\*]+?)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
     }
 
     @Override
@@ -353,7 +355,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected int determineOutlineLevel(String heading) {
-        return ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim()) ? 1 : 2;
+        return ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim()) ? 1
+                : com.mindolph.mfx.util.TextUtils.countInStarting(heading.trim(), "*") + 1;
     }
 
     @Override
@@ -376,7 +379,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             }
         }
         else {
-            return StringUtils.substringBetween(heading, "**").trim();
+            Matcher matcher = extractingPattern.matcher(heading);
+            return matcher.find() ? matcher.group(1) : heading;
         }
     }
 
