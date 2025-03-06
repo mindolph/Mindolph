@@ -53,6 +53,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
@@ -1140,7 +1141,9 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 else if (TYPE_MARKDOWN.equals(fileType)) {
                     newFile = createEmptyFile(fileName, selectedData, "md");
                     if (newFile != null) {
-                        String snippet = Templates.MARKDOWN_TEMPLATE.formatted(FilenameUtils.getBaseName(newFile.toString()), TimeUtils.createTimestamp());
+                        String baseFileName = FilenameUtils.getBaseName(newFile.toString());
+                        String title = RegExUtils.replaceAll(baseFileName, "[+-=_`~&@,\\<\\>\\.\\?\\^#\\$\\(\\)]+", " ");
+                        String snippet = Templates.MARKDOWN_TEMPLATE.formatted(title, TimeUtils.createTimestamp());
                         try {
                             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                         } catch (IOException e) {
