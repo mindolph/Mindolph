@@ -80,10 +80,10 @@ public class AppManager {
                 } catch (IOException e) {
                     continue; // skip failed for now.
                 }
-                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, targetFile.getPath()));
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, targetFile.getPath(), snippet.getDescription()));
             }
             else {
-                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, null));
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, null, snippet.getDescription()));
             }
         }
         this.saveSnippetsRecord(snippetsRecord, fileType);
@@ -121,14 +121,15 @@ public class AppManager {
     }
 
     private File snippetsFile(String fileType) {
-        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment?".dev":""));
+        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment ? ".dev" : ""));
         return snippetsFile;
     }
 
     public record SnippetsRecord(int version, List<SnippetRecord> items) {
     }
 
-    public record SnippetRecord(String title, String code, String type, String fileType, String filePath) {
+    public record SnippetRecord(String title, String code, String type, String fileType, String filePath,
+                                String description) {
     }
 
 }
