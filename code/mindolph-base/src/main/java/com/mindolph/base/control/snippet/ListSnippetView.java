@@ -17,10 +17,12 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.TextUtils;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -61,16 +63,19 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
         LayoutUtils.anchor(this.listView, 0);
         this.listView.setCellFactory(param -> {
             SnippetCell cell = new SnippetCell();
-            Snippet snippet = cell.getItem();
             cell.setOnMouseEntered(event -> {
-                if (snippet != null && StringUtils.isNotBlank(snippet.getDescription())) {
-                    Tooltip tooltip = new Tooltip(snippet.getDescription());
-                    Tooltip.install(this, tooltip);
+                Snippet snippet = cell.getItem();
+                if (snippet != null && !StringUtils.isAllBlank(snippet.getDescription(), snippet.getCode())) {
+                    String tooltipContent = TextUtils.join(new String[]{snippet.getDescription()
+                                    , "```", snippet.getCode(), "```"}
+                            , "\n");
+                    Tooltip tooltip = new Tooltip(tooltipContent);
+                    tooltip.setShowDuration(Duration.seconds(30));
+                    Tooltip.install(cell, tooltip);
                 }
             });
             return cell;
         });
-        this.listView.setPrefHeight(9999); // extend the snippet view as possible
         this.listView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
@@ -86,6 +91,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
                 }
             }
         });
+        this.listView.setPrefHeight(9999); // extend the snippet view as possible
         this.getChildren().add(listView);
     }
 
