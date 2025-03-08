@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtCodeArea.Replacement;
 import com.mindolph.base.dialog.TableDialog;
 import com.mindolph.base.dialog.TableOptions;
+import com.mindolph.core.constant.SyntaxConstants;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
@@ -15,16 +16,23 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.swiftboot.util.UrlUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author mindolph.com@gmail.com
  * @see MarkdownCodeArea
  */
 public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
+
+    private static final Logger log = LoggerFactory.getLogger(MarkdownToolbar.class);
 
     @FXML
     private Button btnBullet;
@@ -167,27 +175,12 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
             markdownCodeArea.moveTo(selection.getStart() + (isFilePath ? 1 : link.length() - 1));
         }
         else if (node == btnTable) {
-            TableOptions to = new TableOptions();
-            to.setRows(3);
-            to.setCols(3);
-            new TableDialog(to).show(tableOptions -> {
-                if (tableOptions != null) {
-                    String[] emptyRow = new String[tableOptions.getCols()];
-                    String[] separatorRow = new String[tableOptions.getCols()];
-                    Arrays.fill(emptyRow, "    ");
-                    Arrays.fill(separatorRow, "----");
-                    String content = String.join("\n",
-                            "|" + StringUtils.join(emptyRow, "|") + "|",
-                            "|" + StringUtils.join(separatorRow, "|") + "|"
-                    );
-                    content = "\n" + content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
-                    content = content + "\n";
-                    IndexRange selection = markdownCodeArea.getSelection();
-                    markdownCodeArea.replaceSelection(content);
-                    markdownCodeArea.moveTo(selection.getStart() + 2);
-                }
-                markdownCodeArea.requestFocus();
-            });
+            if (markdownCodeArea.getSelection().getLength() > 0) {
+                this.wrapSelectedTextByTable();
+            }
+            else {
+                this.showTableDialogAndGenerateTable();
+            }
         }
         else if (node == btnSeparator) {
             markdownCodeArea.insertText("\r---\r");
@@ -208,5 +201,59 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
             return newHead + RegExUtils.replaceFirst(original, "(?<head>#+ ?)|(?<bullet>[\\*-] ?)", StringUtils.EMPTY);
         });
         markdownCodeArea.requestFocus();
+    }
+
+    private void showTableDialogAndGenerateTable() {
+        TableOptions to = new TableOptions();
+        to.setRows(3);
+        to.setCols(3);
+        new TableDialog(to).show(tableOptions -> {
+            if (tableOptions != null) {
+                String content = this.generateTableHeader(tableOptions.getCols());
+                String[] emptyRow = new String[tableOptions.getCols()];
+                Arrays.fill(emptyRow, "    ");
+                content = content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
+                content = content + "\n";
+                IndexRange selection = markdownCodeArea.getSelection();
+                markdownCodeArea.replaceSelection(content);
+                markdownCodeArea.moveTo(selection.getStart() + 2);
+            }
+            markdownCodeArea.requestFocus();
+        });
+    }
+
+    private void wrapSelectedTextByTable() {
+        String selectedText = markdownCodeArea.getSelectedText();
+        String[] lines = StringUtils.split(selectedText, "\n");
+        List<List<String>> ll = new ArrayList<>(lines.length);
+        for (String line : lines) {
+            String[] cells = line.trim().split(SyntaxConstants.BLANK_CHARS);
+            log.debug(Arrays.toString(cells));
+            ll.add(Arrays.asList(cells));
+        }
+        int maxSize = ll.stream().reduce((l1, l2) -> l1.size() > l2.size() ? l1 : l2).get().size();
+        log.debug("maxSize: " + maxSize);
+        StringBuilder buf = new StringBuilder();
+        buf.append(this.generateTableHeader(maxSize));
+        for (List<String> row : ll) {
+            String[] array = new String[maxSize];
+            Arrays.fill(array, "    ");
+            List<String> l = Arrays.asList(array);
+            Collections.copy(l, row);
+            buf.append("|").append(StringUtils.join(l, "|")).append("|\n");
+        }
+        markdownCodeArea.replaceSelection(buf.toString());
+    }
+
+    private String generateTableHeader(int columns) {
+        String[] emptyRow = new String[columns];
+        String[] separatorRow = new String[columns];
+        Arrays.fill(emptyRow, "    ");
+        Arrays.fill(separatorRow, "----");
+        String content = String.join("\n",
+                "|" + StringUtils.join(emptyRow, "|") + "|",
+                "|" + StringUtils.join(separatorRow, "|") + "|"
+        );
+        return content + "\n";
     }
 }
