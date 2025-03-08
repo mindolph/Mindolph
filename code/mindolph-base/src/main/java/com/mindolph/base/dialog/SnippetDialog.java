@@ -125,6 +125,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
                 else {
                     log.warn("Wrong snippet type: {}", snippet.getType());
                 }
+                taCode.requestFocus();
             });
             tfTitle.setText(snippet.getTitle());
             taCode.setText(snippet.getCode());
@@ -132,6 +133,9 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
             if (StringUtils.isNotBlank(snippet.getFilePath())) {
                 this.loadImage(new File(snippet.getFilePath()));
             }
+        }
+        else {
+            Platform.runLater(() -> {tfTitle.requestFocus();});
         }
         this.initUI(fileType);
     }
