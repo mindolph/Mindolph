@@ -1142,7 +1142,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     newFile = createEmptyFile(fileName, selectedData, "md");
                     if (newFile != null) {
                         String baseFileName = FilenameUtils.getBaseName(newFile.toString());
-                        String title = RegExUtils.replaceAll(baseFileName, "[+-=_`~&@,\\<\\>\\.\\?\\^#\\$\\(\\)]+", " ");
+                        String title = RegExUtils.replaceAll(baseFileName, "[+=_`~&@,\\-\\<\\>\\.\\?\\^#\\$\\(\\)]+", " ");
                         String snippet = Templates.MARKDOWN_TEMPLATE.formatted(title, TimeUtils.createTimestamp());
                         try {
                             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
