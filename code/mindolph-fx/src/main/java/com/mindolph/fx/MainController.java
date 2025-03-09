@@ -704,6 +704,10 @@ public class MainController extends BaseController implements Initializable,
             // load all again to resort collections.
             this.loadCollections();
 
+            Platform.runLater(() -> {
+                Notifications.create().title("Create collection")
+                        .text("Collection '%s' is created with %d files successfully.".formatted(newColName, fileTabView.getAllOpenedFiles().size())).showWarning();
+            });
         }
     }
 
@@ -728,7 +732,7 @@ public class MainController extends BaseController implements Initializable,
 
         Platform.runLater(() -> {
             Notifications.create().title("Save collection")
-                    .text("Collection '%s' is saved successfully.".formatted(activeCollectionName)).showWarning();
+                    .text("Collection '%s' is saved with %d files successfully.".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())).showWarning();
         });
     }
 
@@ -749,8 +753,8 @@ public class MainController extends BaseController implements Initializable,
             menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
             this.resetCollectionSelection("default");
             Platform.runLater(() -> {
-                Notifications.create().title("Delete collection")
-                        .text("Collection '%s' is deleted successfully.".formatted(activeCollectionName)).showWarning();
+                Notifications.create().title("Remove collection")
+                        .text("Collection '%s' is removed successfully.".formatted(activeCollectionName)).showWarning();
             });
         }
     }
