@@ -90,6 +90,16 @@ public class PumlRegexTest {
     }
 
     @Test
+    public void containing() {
+        System.out.println(CONTAINING_PATTERN);
+        Pattern p = Pattern.compile(CONTAINING_PATTERN);
+        Assertions.assertTrue(p.matcher("if").matches());
+        Assertions.assertTrue(p.matcher("else").matches());
+        Assertions.assertTrue(p.matcher("<style>").matches());
+        Assertions.assertTrue(p.matcher("</style>").matches());
+    }
+
+    @Test
     public void outline() {
         String OUTLINE = "(@|(' ))(startsalt|startgantt|startlatex|startmath|startdot|startuml|startmindmap|startwbs|startyaml|startjson|startregex|startebnf|[\\*]+.+[\\*]+?)";
         Pattern p = Pattern.compile(OUTLINE);

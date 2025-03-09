@@ -66,8 +66,8 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             cell.setOnMouseEntered(event -> {
                 Snippet snippet = cell.getItem();
                 if (snippet != null && !StringUtils.isAllBlank(snippet.getDescription(), snippet.getCode())) {
-                    String tooltipContent = TextUtils.join(new String[]{snippet.getDescription()
-                                    , "```", snippet.getCode(), "```"}
+                    String tooltipContent = TextUtils.join(new String[]{snippet.getDescription(),
+                                    "Code: ", "```", snippet.getCode(), "```"}
                             , "\n");
                     Tooltip tooltip = new Tooltip(tooltipContent);
                     tooltip.setShowDuration(Duration.seconds(30));

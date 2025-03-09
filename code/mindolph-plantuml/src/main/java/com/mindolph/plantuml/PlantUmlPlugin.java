@@ -8,10 +8,6 @@ import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.InputHelper;
 import com.mindolph.base.plugin.SnippetHelper;
 import com.mindolph.core.constant.SupportFileTypes;
-import com.mindolph.plantuml.snippet.BuiltinFunctionsSnippetGroup;
-import com.mindolph.plantuml.snippet.DiagramSnippetGroup;
-import com.mindolph.plantuml.snippet.GeneralSnippetGroup;
-import com.mindolph.plantuml.snippet.SkinparamSnippetGroup;
 import com.mindolph.plantuml.snippet.*;
 
 import java.util.*;
@@ -53,12 +49,16 @@ public class PlantUmlPlugin extends BasePlugin {
             public List<BaseSnippetGroup> getSnippetGroups(String fileType) {
                 return Arrays.asList(new GeneralSnippetGroup(),
                         new DiagramSnippetGroup(),
-                        new SkinparamSnippetGroup(),
+                        new C4SnippetGroup(),
+                        new Tupadr3SpriteSnippetGroup(),
+                        new Tupadr3SpriteMaterialSnippetGroup(),
+                        new Tupadr3SpriteFontAwesomeSnippetGroup(),
+                        new Tupadr3SpriteFontAwesome5SnippetGroup(),
+                        new Tupadr3SpriteFontAwesome6SnippetGroup(),
                         new ColorSnippetGroup(),
                         new ThemeSnippetGroup(),
                         new CreoleSnippetGroup(),
                         new ProcessingSnippetGroup(),
-                        new BuiltinFunctionsSnippetGroup(),
                         new CustomSnippetGroup()
                 );
             }
