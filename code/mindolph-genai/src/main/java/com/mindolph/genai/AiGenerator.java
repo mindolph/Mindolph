@@ -62,6 +62,9 @@ public class AiGenerator implements Generator {
     private AiSummaryPane summarizePanel;
     private AiReframePane reframePanel;
 
+    // remember the latest prompt
+    private String latestPrompt;
+
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
         this.editorId = editorId; // the editor seems not useful yet.
@@ -191,7 +194,10 @@ public class AiGenerator implements Generator {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        inputPanel = new AiInputPane(editorId, fileType, defaultInput);
+        if (StringUtils.isNotBlank(defaultInput)) {
+            latestPrompt = defaultInput;
+        }
+        inputPanel = new AiInputPane(editorId, fileType, latestPrompt);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
