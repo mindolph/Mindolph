@@ -97,4 +97,9 @@ public abstract class BaseAiPane extends StackPane {
         cbLanguage.setConverter(new PairStringStringConverter());
         ChoiceUtils.loadLanguagesTo(cbLanguage);
     }
+
+    protected void toggleComponents(boolean isGenerating) {
+        cbModel.setDisable(isGenerating);
+        cbLanguage.setDisable(isGenerating);
+    }
 }

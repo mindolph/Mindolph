@@ -88,7 +88,7 @@ public class AiInputPane extends BaseAiPane {
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 lbMsg.setText(null);
-                this.toggleButtons(true);
+                this.toggleComponents(true);
                 Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
                 String model = null;
                 if (selectedModel != null) {
@@ -109,7 +109,7 @@ public class AiInputPane extends BaseAiPane {
             }
         });
         btnStop.setOnAction(event -> {
-            this.toggleButtons(false);
+            this.toggleComponents(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
 
@@ -138,7 +138,9 @@ public class AiInputPane extends BaseAiPane {
                 this, hbReady, hbGenerating);
     }
 
-    private void toggleButtons(boolean isGenerating) {
+    @Override
+    protected void toggleComponents(boolean isGenerating) {
+        super.toggleComponents(isGenerating);
         pbWaiting.setVisible(isGenerating);
         if (isGenerating)
             NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
@@ -155,7 +157,7 @@ public class AiInputPane extends BaseAiPane {
      */
     public void onStop(String reason) {
         lbMsg.setText(reason);
-        toggleButtons(false);
+        this.toggleComponents(false);
     }
 
     @Override

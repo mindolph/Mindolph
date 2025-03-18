@@ -127,7 +127,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
         ContextMenu menu = super.createContextMenu();
         List<MenuItem> pluginMenuItems = new ArrayList<>();
         withPlugins(new Consumer<>() {
-            private int originPos; //be used to select generated text after
+            private int originPos; // be used to select generated text after
 
             @Override
             public void accept(Plugin plugin) {

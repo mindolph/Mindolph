@@ -50,7 +50,7 @@ public class AiSummaryPane extends BaseAiPane {
     public AiSummaryPane(Object editorId, String fileType, String inputText) {
         super("/genai/ai_summary_pane.fxml", editorId, fileType);
 
-        this.toggleButtons(false);
+        this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
         lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveAiProvider()));
@@ -60,11 +60,11 @@ public class AiSummaryPane extends BaseAiPane {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT);
         });
         btnStop.setOnAction(event -> {
-            this.toggleButtons(false);
+            this.toggleComponents(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
         btnSummarize.setOnAction(event -> {
-            this.toggleButtons(true);
+            this.toggleComponents(true);
             taOutput.clear();
             starTotSummarize(inputText);
         });
@@ -120,10 +120,12 @@ public class AiSummaryPane extends BaseAiPane {
     public void onStop(String reason) {
         btnSummarize.setText("Re-summarize");
         lbMsg.setText(reason);
-        toggleButtons(false);
+        toggleComponents(false);
     }
 
-    private void toggleButtons(boolean isGenerating) {
+    @Override
+    protected void toggleComponents(boolean isGenerating) {
+        super.toggleComponents(isGenerating);
         pbWaiting.setVisible(isGenerating);
         if (isGenerating)
             NodeUtils.disable(btnCopy, btnSummarize);
