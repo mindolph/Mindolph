@@ -167,7 +167,7 @@ public class SnippetView extends BaseView {
                             // TODO SHOULD have no conversion (Node)
                             TitledPane pane = new TitledPane(snippetGroup.getTitle(), (Node) view);
                             accordion.getPanes().add(pane);
-                            ((Node) view).setUserData(snippetGroup.getTitle()); // be used to identify the group
+                            ((Node) view).setUserData(snippetGroup); // be used to identify the group
                             if (snippetGroup instanceof CustomSnippetGroup csg) {
                                 csg.reloadSnippets(fileType);
                             }
@@ -206,8 +206,7 @@ public class SnippetView extends BaseView {
         for (TitledPane pane : this.accordion.getPanes()) {
             if (pane.getContent() instanceof SnippetViewable<?> sv) {
                 SnippetViewable<Snippet> sv2 = (SnippetViewable<Snippet>) sv;
-                String title = (String) ((Node) sv).getUserData();
-                BaseSnippetGroup<?> snippetGroup = snippetGroupByTitle(title);
+                BaseSnippetGroup<?> snippetGroup = (BaseSnippetGroup<?>) ((Node) sv).getUserData();
                 if (snippetGroup != null) {
                     if (StringUtils.isNotEmpty(keyword)) {
                         ObservableList<Snippet> filteredSnippets;
@@ -223,17 +222,18 @@ public class SnippetView extends BaseView {
                         sv2.setItems(FXCollections.observableList((List<Snippet>) snippetGroup.snippets));
                     }
                 }
+                pane.setText("%s (%d)".formatted(snippetGroup.getTitle(), sv2.getItems().size()));
             }
         }
 
     }
 
-    // Utils method
-    private BaseSnippetGroup<?> snippetGroupByTitle(String title) {
-        Optional<BaseSnippetGroup> optSnippetGroup = snippetGroups.stream()
-                .filter(baseSnippetGroup -> baseSnippetGroup.getTitle().equalsIgnoreCase(title.toLowerCase())).findFirst();
-        return optSnippetGroup.orElse(null);
-    }
+    // Utils method(to be removed
+//    private BaseSnippetGroup<?> snippetGroupByGid(String gid) {
+//        Optional<BaseSnippetGroup> optSnippetGroup = snippetGroups.stream()
+//                .filter(baseSnippetGroup -> baseSnippetGroup.getGid().equalsIgnoreCase(gid)).findFirst();
+//        return optSnippetGroup.orElse(null);
+//    }
 
 
 }
