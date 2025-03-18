@@ -56,7 +56,9 @@ public class AiInputPane extends BaseAiPane {
         super("/genai/ai_input_pane.fxml", editorId, fileType);
 
         taInput.setText(defaultInput);
-        taInput.positionCaret(defaultInput.length());
+        if (defaultInput != null && !defaultInput.isEmpty()) {
+            taInput.positionCaret(defaultInput.length());
+        }
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
 
