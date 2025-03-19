@@ -1,6 +1,7 @@
 package com.mindolph.fx;
 
 import com.mindolph.base.ShortcutManager;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.event.WindowEventHandler;
 import com.mindolph.core.Env;
 import com.mindolph.fx.helper.SceneRestore;
@@ -125,6 +126,9 @@ public class Main extends Application implements WindowRestoreListener {
             scene.getStylesheets().add(getClass().getResource("/editor/csv_editor.css").toExternalForm());
             //scene.getStylesheets().add(getClass().getResource("/style/dark.css").toExternalForm());
 
+            int globalFontSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, 0);
+            this.updateFontSize(scene, globalFontSize);
+
             primaryStage.setScene(scene);
 
             MainController controller = loader.getController();
@@ -165,6 +169,14 @@ public class Main extends Application implements WindowRestoreListener {
         }
     }
 
+    private void updateFontSize(Scene scene, double fontSize) {
+        String css = """
+                .root {
+                    -fx-font-size: %.0fpx;
+                }
+                """.formatted(fontSize);
+        scene.getStylesheets().add("data:text/css;charset=utf-8," + css.replace("\n", "%0A"));
+    }
 
     @Override
     public void onWindowRestore(Rectangle2D rectangle) {
