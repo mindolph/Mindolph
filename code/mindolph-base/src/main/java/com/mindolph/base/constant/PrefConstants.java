@@ -13,6 +13,7 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
     String GENERAL_AUTO_SELECT_AFTER_FILE_OPENED = "general.autoSelectAfterFileOpened";
+    String GENERAL_GLOBAL_FONT_SIZE = "general.global.font.size";
 
     /**
      * @deprecated delete when 1.8 stable is released
