@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
 
 /**
@@ -309,7 +310,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         }
         else {
             lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("Max output tokens: %d".formatted(model.maxTokens()));
+            lbMaxOutputTokens.setText("Max output tokens: %s".formatted(displayGenAiTokens(model.maxTokens())));
         }
     }
 

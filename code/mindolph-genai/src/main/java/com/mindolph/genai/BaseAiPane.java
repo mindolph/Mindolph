@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
 /**
@@ -77,7 +78,7 @@ public abstract class BaseAiPane extends StackPane {
             cbModel.getItems().add(targetItem); // exclude same model
         }
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
-            lbMsg.setText("Max output tokens: %d".formatted(newValue.getValue().maxTokens()));
+            lbMsg.setText("Max output tokens: %s".formatted(displayGenAiTokens(newValue.getValue().maxTokens())));
         });
         if (cbModel.getItems().contains(targetItem)) {
             cbModel.getSelectionModel().select(targetItem);
