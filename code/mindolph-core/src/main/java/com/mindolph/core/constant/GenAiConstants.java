@@ -41,10 +41,11 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4-turbo", 4096));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o", 16384));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o-mini", 16384));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4.5-preview", 16384));
 
             // https://ai.google.dev/gemini-api/docs/models/gemini
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-2.0-flash-exp", 8192));
-            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro-latest", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-2.0-flash", 8192));
+            put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-2.0-flash-lite", 8192));
             put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-pro", 8192));
             put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash", 8192));
             put(GenAiModelProvider.GEMINI.getName(), new ModelMeta("gemini-1.5-flash-8b", 8192));
@@ -88,6 +89,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
 
 
