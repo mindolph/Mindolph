@@ -1,11 +1,23 @@
 # Change Logs
 
+### V.11.4 Unstable Release
+* Feature: add new option `UI font size` to set the global UI font size. (https://github.com/mindolph/Mindolph/issues/12)   
+* Improvement: update OpenAI and Google Gemini models; display model's max tokens as '%sK' format.   
+* Improvement: remember the latest user input prompt for initializing the prompt of Gen-AI input panel.  
+* Improvement: add notification for creating new collection for opened files.
+* Improvement: add the number of files in the notification message when saving a collection.  
+* Fix: model choice box should be disabled during Gen-AI generating or summarizing.  
+* Fix: exception when launching Gen-AI input panel without selecting any text.  
+* Fix: the selected default collection is not recovered the selection state on application startup.  
+* Fix: Text selection is cleared after Gen-AI summarize panel pops up.   
+* Fix: filtering snippets should be case insensitive.  
+
 ### V1.11.3 Unstable Release
 * Improvement: for applying snippet, automatically wrap up the selected text if the snippet you choose requires that.
 * Improvement: add Regex and EBNF support to PlantUML editor.
 * Improvement: add max token information after selecting a LLM model in Gen-AI panels.
-* Fix: the 'retry' function doesn't work after the Gen-AI generated something; 
-* Refactored LLM provider implementation;
+* Fix: the 'retry' function doesn't work after the Gen-AI generated something.
+* Refactored LLM provider implementation.
 
 ### V1.10.5 Release
 * Improvement: optimized the auto scroll during editing for the Markdown editor, now the scroll sync goes smoothly. 😊

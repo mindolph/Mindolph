@@ -2,6 +2,7 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.DirBreadCrumb;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.control.FileFilterButtonGroup;
@@ -16,11 +17,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
-import org.apache.commons.io.FilenameUtils;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 
@@ -45,6 +44,7 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
     private DirBreadCrumb bcbDirPath;
 
     public FindInFilesDialog(File workspaceDir, File dir) {
+        Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<SearchParams>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Find in Files")
@@ -82,6 +82,7 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
         });
         tfKeywords.setText(String.valueOf(lastKeyword));
 
+        tbCase.setPrefHeight(iconSize + 12);
         tbCase.setGraphic(FontIconManager.getIns().getIcon(IconKey.CASE_SENSITIVITY));
         tbCase.selectedProperty().addListener((observableValue, aBoolean, isSelected) -> {
             result.setCaseSensitive(isSelected);

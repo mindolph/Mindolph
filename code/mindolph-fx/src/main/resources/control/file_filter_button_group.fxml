@@ -4,7 +4,7 @@
 <?import org.controlsfx.control.SegmentedButton?>
 <fx:root type="SegmentedButton" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <buttons>
-        <ToggleButton mnemonicParsing="false" selected="true" text="all" userData="all">
+        <ToggleButton fx:id="tbAll" mnemonicParsing="false" selected="true" text="all" userData="all">
             <tooltip>
                 <Tooltip text="All matched folders and files"/>
             </tooltip>
