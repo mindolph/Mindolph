@@ -218,8 +218,10 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbCustomModels.setConverter(modelConverter);
         cbCustomModels.valueProperty().addListener((observable, oldValue, selectedModel) -> {
             if (selectedModel == null || selectedModel.getValue() == null) {
+                btnRemove.setDisable(true);
                 return;
             }
+            btnRemove.setDisable(false);
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
             String activeProviderName = cbAiProvider.getValue().getKey().getName();
             LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
