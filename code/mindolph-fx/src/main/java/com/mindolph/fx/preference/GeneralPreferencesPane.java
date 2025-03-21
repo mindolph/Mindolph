@@ -47,6 +47,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     @FXML
     private Spinner<Integer> spGlobalFontSize;
     @FXML
+    private Spinner<Integer> spGlobalIconSize;
+    @FXML
     private CheckBox cbEnableProxy;
     @FXML
     private RadioButton rbHttp;
@@ -86,7 +88,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
             fxPreferences.savePreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, newValue);
             this.onSave(true);
         });
-
+        // global icon size
+        super.bindSpinner(spGlobalIconSize, 16, 24, 4, GENERAL_GLOBAL_ICON_SIZE, 16);
 
         TableColumn<OrientationItem, Object> colEditor = new TableColumn<>("Editor");
         TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>("Orientation");
