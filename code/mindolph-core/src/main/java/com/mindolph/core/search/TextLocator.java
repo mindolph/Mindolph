@@ -37,7 +37,7 @@ public class TextLocator {
     public void setText(String text, boolean needReset) {
         if (!StringUtils.equals(this.text, text)) {
             this.text = text;
-            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes())){
+            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))){
                 lines = IOUtils.readLines(byteArrayInputStream, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 e.printStackTrace();
