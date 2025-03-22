@@ -10,6 +10,7 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.ControlUtils;
 import com.mindolph.mfx.util.PaneUtils;
@@ -64,8 +65,7 @@ public class AiSummaryPane extends BaseAiPane {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
         btnSummarize.setOnAction(event -> {
-            this.toggleComponents(true);
-            taOutput.clear();
+
             starTotSummarize(inputText);
         });
         btnCopy.setOnAction(event -> {
@@ -75,7 +75,7 @@ public class AiSummaryPane extends BaseAiPane {
             }
         });
 
-        ControlUtils.escapableControls(()-> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
+        ControlUtils.escapableControls(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
 
         PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT),
                 this, hbDone, hbGenerating);
@@ -108,7 +108,13 @@ public class AiSummaryPane extends BaseAiPane {
 
     private void starTotSummarize(String inputText) {
 //        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        if (cbModel.getValue() == null) {
+            DialogFactory.warnDialog("Please select a model to summarize your selected content.");
+            return;
+        }
         ModelMeta modelMeta = cbModel.getValue().getValue();
+        this.toggleComponents(true);
+        taOutput.clear();
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
         GenAiEvents.getIns().emitSummarizeEvent(editorId, new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)

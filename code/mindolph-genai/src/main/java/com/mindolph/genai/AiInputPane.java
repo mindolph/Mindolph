@@ -8,6 +8,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.PaneUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -87,18 +88,19 @@ public class AiInputPane extends BaseAiPane {
         });
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
+                Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
+                if (selectedModel == null) {
+                    DialogFactory.warnDialog("Please select a model to generate content.");
+                    return;
+                }
                 lbMsg.setText(null);
                 this.toggleComponents(true);
-                Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
-                String model = null;
-                if (selectedModel != null) {
-                    model = selectedModel.getValue().name();
-                }
+                String modelName = selectedModel.getValue().name();
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new InputBuilder().model(model).text(prompt).temperature(cbTemperature.getValue().getKey())
+                        new InputBuilder().model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
                                 .outputLanguage(cbLanguage.getValue().getKey())
                                 .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null)
                                 .isRetry(false).isStreaming(isStreaming)

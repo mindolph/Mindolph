@@ -255,7 +255,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         btnRemove.setOnAction(event -> {
             String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().name();
-            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete model %s".formatted(name));
+            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete the custom model '%s'".formatted(name));
             if (sure) {
                 String activeProviderName = cbAiProvider.getValue().getKey().getName();
                 ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
@@ -292,6 +292,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         if (customModels == null || customModels.isEmpty()) {
             log.info("no custom models found for provider: %s".formatted(providerName));
             this.updateModelDescription(null); // clear description when no custom models
+            btnRemove.setDisable(true); // disable remove button here since the choice box of custom model will never be updated
         }
         else {
             List<Pair<String, ModelMeta>> metaPairs = customModels.stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
@@ -301,6 +302,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             if (activePair != null) {
                 cbCustomModels.getSelectionModel().select(cbCustomModels.getItems().indexOf(activePair));
             }
+            btnRemove.setDisable(false);
         }
         return customModels;
     }
