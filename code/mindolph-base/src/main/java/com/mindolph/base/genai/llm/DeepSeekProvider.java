@@ -66,7 +66,7 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
                 .post(requestBody)
                 .build();
         AtomicInteger outputTokens = new AtomicInteger();
-        OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
+        streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             if (log.isTraceEnabled()) log.trace(data);
             if ("[DONE]".equals(data)) {
                 return;

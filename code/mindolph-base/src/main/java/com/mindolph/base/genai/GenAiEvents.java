@@ -40,16 +40,16 @@ public class GenAiEvents {
         });
     }
 
-    public void subscribeSummarizeEvent(Object editorId, Consumer<Input> consumer) {
-        summarizeEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
-    }
-
-    public void emitSummarizeEvent(Object editorId, Input input) {
-        summarizeEventSource.computeIfPresent(editorId, (o, summarizeEventSource) -> {
-            summarizeEventSource.push(input);
-            return summarizeEventSource;
-        });
-    }
+//    public void subscribeSummarizeEvent(Object editorId, Consumer<Input> consumer) {
+//        summarizeEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
+//    }
+//
+//    public void emitSummarizeEvent(Object editorId, Input input) {
+//        summarizeEventSource.computeIfPresent(editorId, (o, summarizeEventSource) -> {
+//            summarizeEventSource.push(input);
+//            return summarizeEventSource;
+//        });
+//    }
 
     public void subscribeActionEvent(Object editorId, Consumer<ActionType> consumer) {
         actionEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);

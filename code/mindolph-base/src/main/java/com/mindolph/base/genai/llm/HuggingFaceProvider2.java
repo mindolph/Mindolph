@@ -101,7 +101,7 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                 .post(requestBody)
                 .build();
         AtomicInteger outputTokens = new AtomicInteger();
-        OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
+        streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             if (log.isTraceEnabled()) log.trace(data);
             JsonObject resBody = new Gson().fromJson(data, JsonObject.class);
             JsonObject candidate = resBody.get("token").getAsJsonObject();

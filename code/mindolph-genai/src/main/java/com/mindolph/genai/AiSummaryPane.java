@@ -3,6 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
@@ -16,6 +17,7 @@ import com.mindolph.mfx.util.ControlUtils;
 import com.mindolph.mfx.util.PaneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
@@ -48,8 +50,12 @@ public class AiSummaryPane extends BaseAiPane {
     @FXML
     private HBox hbGenerating;
 
-    public AiSummaryPane(Object editorId, String fileType, String inputText) {
+    // workaround bond to the editor to control it's state.
+    private final Node bondEditor;
+
+    public AiSummaryPane(Object editorId, String fileType, String inputText, Node bondEditor) {
         super("/genai/ai_summary_pane.fxml", editorId, fileType);
+        this.bondEditor = bondEditor;
 
         this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
@@ -58,15 +64,14 @@ public class AiSummaryPane extends BaseAiPane {
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnClose.setOnAction(event -> {
-            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT);
+            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
         });
         btnStop.setOnAction(event -> {
             this.toggleComponents(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
         btnSummarize.setOnAction(event -> {
-
-            starTotSummarize(inputText);
+            starToSummarize(inputText);
         });
         btnCopy.setOnAction(event -> {
             if (StringUtils.isNotBlank(taOutput.getText())) {
@@ -75,38 +80,15 @@ public class AiSummaryPane extends BaseAiPane {
             }
         });
 
-        ControlUtils.escapableControls(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
+        ControlUtils.escapableControls(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL), taOutput);
 
-        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT),
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
                 this, hbDone, hbGenerating);
 
         this.requestFocus();
-
-        // listeners
-        GenAiEvents.getIns().subscribeSummarizeEvent(editorId, input -> {
-            LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
-                    streamToken -> {
-                        if (streamToken.isError()) {
-                            log.warn("error from streaming: {}", streamToken);
-                            Platform.runLater(() -> onStop(streamToken.text()));
-                        }
-                        else {
-                            // accept streaming output (even with `stop` one).
-                            if (streamToken.isStop()) {
-                                Platform.runLater(() -> {
-                                    onStop("Done with %d tokens.".formatted(streamToken.outputTokens()));
-                                });
-                            }
-                            else {
-                                if (log.isTraceEnabled()) log.trace("append text: {}", streamToken.text());
-                                Platform.runLater(() -> taOutput.appendText(streamToken.text()));
-                            }
-                        }
-                    });
-        });
     }
 
-    private void starTotSummarize(String inputText) {
+    private void starToSummarize(String inputText) {
 //        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
         if (cbModel.getValue() == null) {
             DialogFactory.warnDialog("Please select a model to summarize your selected content.");
@@ -117,16 +99,38 @@ public class AiSummaryPane extends BaseAiPane {
         taOutput.clear();
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
-        GenAiEvents.getIns().emitSummarizeEvent(editorId, new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
+        bondEditor.setDisable(true);
+        Input input = new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
-                .createInput());
+                .createInput();
+        LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
+                streamToken -> {
+                    if (streamToken.isError()) {
+                        log.warn("error from streaming: {}", streamToken);
+                        Platform.runLater(() -> onStop(streamToken.text()));
+                    }
+                    else {
+                        // accept streaming output (even with `stop` one).
+                        if (streamToken.isStop()) {
+                            Platform.runLater(() -> {
+                                onStop("Done with %d tokens.".formatted(streamToken.outputTokens()));
+                            });
+                        }
+                        else {
+                            if (log.isTraceEnabled()) log.trace("append text: {}", streamToken.text());
+                            Platform.runLater(() -> taOutput.appendText(streamToken.text()));
+                        }
+                    }
+                });
+
     }
 
     public void onStop(String reason) {
         btnSummarize.setText("Re-summarize");
         lbMsg.setText(reason);
         toggleComponents(false);
+        bondEditor.setDisable(false);
     }
 
     @Override

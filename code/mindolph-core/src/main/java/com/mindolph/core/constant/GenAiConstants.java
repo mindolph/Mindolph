@@ -206,7 +206,7 @@ public interface GenAiConstants {
         KEEP, // keep the generated text
         DISCARD, // discard the generated text
         STOP, // Stop the generating
-        ABORT // Abort the summarizing
+//        ABORT // Abort the summarizing
     }
 
     enum OutputAdjust {

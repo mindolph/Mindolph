@@ -70,6 +70,11 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         });
     }
 
+    @Override
+    public void stopStreaming() {
+        // Nothing I can do for now. TODO
+    }
+
     private Prompt createPrompt(String input, OutputParams outputParams) {
         log.debug("System Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(PROMPT_FORMAT_TEMPLATE);
