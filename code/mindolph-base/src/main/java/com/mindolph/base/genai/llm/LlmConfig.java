@@ -103,6 +103,9 @@ public class LlmConfig {
                 ProviderProps props = providers.get(activeProvider);
                 if (StringUtils.isNotBlank(props.aiModel())) {
                     if ("Custom".equals(props.aiModel())) {
+                        if (props.customModels() == null) {
+                            return null;
+                        }
                         return props.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
                     }
                     // for pre-defined models
