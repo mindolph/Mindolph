@@ -65,7 +65,10 @@ public abstract class BaseAiPane extends StackPane {
             allModels.addAll(customModels);
         }
         if ("Custom".equals(providerProps.aiModel())) {
-            ModelMeta activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            ModelMeta activeModel = null;
+            if (providerProps.customModels() != null) {
+                activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            }
             if (activeModel != null) {
                 targetItem = new Pair<>(activeModel.name(), activeModel);
             }
@@ -76,7 +79,7 @@ public abstract class BaseAiPane extends StackPane {
 
         cbModel.getItems().clear();
         cbModel.getItems().addAll(allModels);
-        if (!allModels.contains(targetItem)) {
+        if (targetItem != null && !allModels.contains(targetItem)) {
             cbModel.getItems().add(targetItem); // exclude same model
         }
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
