@@ -1,15 +1,14 @@
 package com.mindolph.base.editor;
 
-import com.mindolph.base.EditorContext;
-import com.mindolph.base.control.SearchableCodeArea;
-import com.mindolph.base.event.EventBus;
-import com.mindolph.core.model.OutlineItemData;
-import com.mindolph.core.model.Snippet;
-import com.mindolph.core.search.*;
-import com.mindolph.mfx.util.TextUtils;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.input.TransferMode;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,16 +20,26 @@ import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
 import org.swiftboot.collections.tree.Tree;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.mindolph.base.EditorContext;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.DOUBLE_QUOTE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINES_MOVE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINE_DELETE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.QUOTE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.TAB_INDENT;
+import com.mindolph.base.control.SearchableCodeArea;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.model.Snippet;
+import com.mindolph.core.search.Anchor;
+import com.mindolph.core.search.TextAnchor;
+import com.mindolph.core.search.TextLocation;
+import com.mindolph.core.search.TextNavigator;
+import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.util.TextUtils;
 
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.input.TransferMode;
 
 /**
  * RichTextFX References:
@@ -65,13 +74,13 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
 
         codeArea.undoAvailableProperty().addListener((observable, oldValue, undoAvailable) -> {
-            if (oldValue != undoAvailable) {
+            if (!oldValue.equals(undoAvailable)) {
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.UNDO, undoAvailable);
             }
         });
 
         codeArea.redoAvailableProperty().addListener((observable, oldValue, redoAvailable) -> {
-            if (oldValue != redoAvailable) {
+            if (!oldValue.equals(redoAvailable)) {
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.REDO, redoAvailable);
             }
         });
