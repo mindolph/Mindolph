@@ -20,7 +20,7 @@ public class LlmService {
     private static final Logger log = LoggerFactory.getLogger(LlmService.class);
     private static LlmService ins;
     private LlmProvider llmProvider;
-    private boolean isStopped;
+    private boolean isStopped; // stopped by user
     private String activeAiProvider;
 
     public static synchronized LlmService getIns() {
@@ -90,6 +90,7 @@ public class LlmService {
      */
     public StreamToken predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
+        isStopped = false;
         StreamToken generated = null;
         try {
             generated = llmProvider.predict(input, outputParams);

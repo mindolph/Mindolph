@@ -91,7 +91,7 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
             String message = "ERROR";
             if (StringUtils.isNotBlank(msg)) {
                 try {
-                    message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsString();
+                    message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
                 } catch (JsonSyntaxException e) {
                     log.warn("Not exception from DeepSeek API: " + e.getLocalizedMessage());
                     // skip parsing exception
