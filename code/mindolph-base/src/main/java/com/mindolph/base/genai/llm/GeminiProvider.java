@@ -125,7 +125,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
         log.info("Generate content screamingly by model %s ...".formatted(determineModel(input)));
         if (log.isTraceEnabled()) log.trace(request.url().toString());
 
-        OkHttpUtils.sse(client, request,
+        streamEventSource = OkHttpUtils.sse(client, request,
                 (Consumer<String>) data -> {
                     JsonObject resBody = new Gson().fromJson(data, JsonObject.class);
                     JsonObject candidate = resBody.get("candidates").getAsJsonArray().get(0).getAsJsonObject();

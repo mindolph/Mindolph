@@ -125,12 +125,16 @@ public class LlmService {
      * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
      */
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+        isStopped = false;
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
-                isStopped = false;
+                // Don't use stopping flag to control the working states, since the stream might return with multiple times even you stop it.
+                llmProvider.stopStreaming();
+                // force to stop
+                streamToken.setStop(true);
+                streamToken.setText("Streaming is stopped by user/exception");
                 consumer.accept(streamToken);
-                // this exception stops the streaming from http connection.
-                throw new RuntimeException("Streaming is stopped by user/exception");
+                // throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
             }
             consumer.accept(streamToken);
         });
@@ -155,11 +159,15 @@ public class LlmService {
         Input in = new InputBuilder().model(input.model()).text(prompt).temperature(input.temperature()).maxTokens(input.maxTokens())
                 .outputAdjust(input.outputAdjust()).isRetry(input.isRetry()).isStreaming(input.isStreaming())
                 .createInput();
+        isStopped = false;
         llmProvider.stream(in, outputParams, streamToken -> {
             if (isStopped) {
-                isStopped = false;
+                // Don't use stopping flag to control the working states, since the stream might return with multiple times even you stop it.
+                llmProvider.stopStreaming();
+                streamToken.setText("Streaming is stopped by user/exception");
+                streamToken.setStop(true);
                 consumer.accept(streamToken);
-                throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
+                // throw new RuntimeException("Streaming is stopped by user/exception"); // this exception stops the streaming from http connection.
             }
             consumer.accept(streamToken);
         });
@@ -170,6 +178,10 @@ public class LlmService {
      */
     public void stop() {
         this.isStopped = true;
+    }
+
+    public boolean isStopped() {
+        return isStopped;
     }
 
     public String getActiveAiProvider() {

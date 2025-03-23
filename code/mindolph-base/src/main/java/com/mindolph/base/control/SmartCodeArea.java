@@ -148,19 +148,18 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     });
                     summaryMenuItem.setOnAction(event -> {
                         SmartCodeArea.this.onCompleted();
-                        generator.showSummarizePanel(SmartCodeArea.super.getSelectedText());
+                        generator.showSummarizePanel(SmartCodeArea.super.getSelectedText(), SmartCodeArea.this);
                     });
 
                     generator.setOnPanelShowing(stackPane -> {
                         SmartCodeArea.this.relocatedPanelToCaret(stackPane);
                     });
                     generator.setBeforeGenerate(unused -> {
-                        SmartCodeArea.this.onCompleted();
+                        SmartCodeArea.this.onGenerating();
                         this.originPos = SmartCodeArea.this.getSelection().getStart();
                     });
                     generator.setOnStreaming((streamOutput, pane) -> {
                         Platform.runLater(() -> {
-                            SmartCodeArea.this.onCompleted();
                             if (!streamOutput.streamToken().isStop()) {
                                 if (StringUtils.isNotBlank(SmartCodeArea.this.getSelectedText())) {
                                     SmartCodeArea.this.replaceSelection(streamOutput.streamToken().text());
@@ -172,9 +171,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                                 SmartCodeArea.this.relocatedPanelToCaret(pane);
                             }
                             else {
-                                if (log.isTraceEnabled()) log.trace("select start index: %s".formatted(originPos));
+                                if (log.isTraceEnabled()) log.trace("select generated text from: %s".formatted(originPos));
                                 SmartCodeArea.super.selectRange(originPos, SmartCodeArea.this.getCaretPosition());
-                                SmartCodeArea.this.onGenerating();
                             }
                         });
                     });
@@ -213,14 +211,13 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     // @since 1.7
     private void onCompleted() {
         super.setEditable(true);
-        super.setDisabled(false);
+        super.setDisable(false);
         super.requestFocus();
     }
 
     // @since 1.7
     private void onGenerating() {
-        super.setEditable(false);
-        super.setDisabled(true);
+        super.setDisable(true);
     }
 
     // @since 1.7

@@ -55,7 +55,7 @@ public abstract class BaseAiPane extends StackPane {
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps providerProps = map.get(activeProvider);
-        Pair<String, ModelMeta> targetItem;
+        Pair<String, ModelMeta> targetItem = null;
         List<Pair<String, ModelMeta>> allModels = new ArrayList<>();
         List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
@@ -66,7 +66,9 @@ public abstract class BaseAiPane extends StackPane {
         }
         if ("Custom".equals(providerProps.aiModel())) {
             ModelMeta activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
-            targetItem = new Pair<>(activeModel.name(), activeModel);
+            if (activeModel != null) {
+                targetItem = new Pair<>(activeModel.name(), activeModel);
+            }
         }
         else {
             targetItem = new Pair<>(providerProps.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerProps.aiModel()));

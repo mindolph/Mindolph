@@ -77,7 +77,7 @@ public class RecentViewCell extends ListCell<NodeData> {
                 globalFontSize = (int) lbFileName.getFont().getSize();// borrow
             }
             lbFileName.setText(fileData.getName());
-            lbFileName.setFont(FontUtils.newFontWithSizeAndWeight(Font.getDefault(), (int) (globalFontSize * 1.2f), FontWeight.BOLD));
+            lbFileName.setFont(FontUtils.newFontWithSize(Font.getDefault(), (int) (globalFontSize * 1.2f)));
             lbFilePath.setText(desc);
 
             int iconSize = (int) (FontIconManager.getIconSize() * 1.5f);

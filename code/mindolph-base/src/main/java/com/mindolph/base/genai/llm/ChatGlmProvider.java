@@ -65,7 +65,7 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 .header("Authorization", "Bearer %s".formatted(apiKey))
                 .post(requestBody)
                 .build();
-        OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
+        streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             log.debug(data);
             JsonObject resObject = JsonParser.parseString(data).getAsJsonObject();
             JsonObject choices = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
