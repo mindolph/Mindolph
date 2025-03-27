@@ -2,10 +2,10 @@ package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import dev.langchain4j.community.model.dashscope.QwenChatModel;
+import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
-import dev.langchain4j.model.dashscope.QwenChatModel;
-import dev.langchain4j.model.dashscope.QwenStreamingChatModel;
 import org.apache.commons.lang3.StringUtils;
 
 /**

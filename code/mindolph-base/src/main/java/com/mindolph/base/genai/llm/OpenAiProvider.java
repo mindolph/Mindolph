@@ -11,7 +11,6 @@ import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.time.Duration;
 
@@ -39,8 +38,9 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .temperature((double) input.temperature());
         if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
         if (super.proxyEnabled && super.useProxy) {
-            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
-            builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
+            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
+            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
+            builder.httpClientBuilder(okHttpClientBuilder);
         }
         return builder.build();
     }
@@ -54,8 +54,9 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .temperature((double) input.temperature());
         if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
         if (super.proxyEnabled && super.useProxy) {
-            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
-            builder.proxy(new Proxy(proxyType, new InetSocketAddress(this.proxyHost, this.proxyPort)));
+            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
+            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
+            builder.httpClientBuilder(okHttpClientBuilder);
         }
         return builder.build();
     }

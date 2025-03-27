@@ -1,15 +1,14 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.StreamingResponseHandler;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.model.output.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,24 +37,25 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         log.info("prompt: %s".formatted(prompt.text()));
         ChatLanguageModel llm = buildAI(input);
         ChatMessage chatMessage = new UserMessage(prompt.text());
-        Response<AiMessage> aiMessage = llm.generate(chatMessage);
-        return new StreamToken(aiMessage.content().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
+        ChatResponse aiMessage = llm.chat(chatMessage);
+        return new StreamToken(aiMessage.aiMessage().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
     }
 
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         Prompt prompt = this.createPrompt(input.text(), outputParams);
         StreamingChatLanguageModel llm = buildStreamingAI(input);
-        llm.generate(prompt.text().trim(), new StreamingResponseHandler<>() {
+
+        llm.chat(prompt.text().trim(), new StreamingChatResponseHandler() {
             @Override
-            public void onNext(String s) {
+            public void onPartialResponse(String s) {
                 consumer.accept(new StreamToken(s, false, false));
             }
 
             @Override
-            public void onComplete(Response<AiMessage> response) {
-                log.debug("completed: %s%n".formatted(response.content()));
-                consumer.accept(new StreamToken(response.content().text(), response.tokenUsage().outputTokenCount(),
+            public void onCompleteResponse(ChatResponse response) {
+                log.debug("completed: %s%n".formatted(response.aiMessage()));
+                consumer.accept(new StreamToken(response.aiMessage().text(), response.tokenUsage().outputTokenCount(),
                         true, false));
             }
 
@@ -76,7 +76,6 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     }
 
     private Prompt createPrompt(String input, OutputParams outputParams) {
-        log.debug("System Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(PROMPT_FORMAT_TEMPLATE);
         Map<String, Object> params = super.formatParams(input, outputParams);
         Prompt prompt = promptTemplate.apply(params);

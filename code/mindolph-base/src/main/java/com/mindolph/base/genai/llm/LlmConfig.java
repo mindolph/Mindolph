@@ -1,17 +1,20 @@
 package com.mindolph.base.genai.llm;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.llm.Agent;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
@@ -114,5 +117,60 @@ public class LlmConfig {
             }
         }
         return null;
+    }
+
+    public Agent loadAgent(String id) {
+        return loadAgents().get(id);
+    }
+
+    public Map<String, Agent> loadAgents() {
+        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_AGENTS, "{}");
+        Type collectionType = new TypeToken<Map<String, Agent>>() {
+        }.getType();
+        return newGson().fromJson(json, collectionType);
+    }
+
+    public boolean saveAgent(Agent agent) {
+        Map<String, Agent> agentMap = loadAgents();
+        if (agentMap.values().stream().anyMatch(a -> a.getName().equals(agent.getName()))) {
+            return false;
+        }
+        agentMap.put(String.valueOf(UUID.randomUUID()), agent);
+        fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, new Gson().toJson(agentMap));
+        return true;
+    }
+
+    public void saveAgent(String agentId, Agent agent) {
+        if (StringUtils.isBlank(agentId) || agent == null) {
+            throw new IllegalStateException("Agent id or agent is null");
+        }
+        Map<String, Agent> agentMap = loadAgents();
+        agent.setId(agentId);
+        agentMap.put(agentId, agent);
+        fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, newGson().toJson(agentMap));
+    }
+
+    public void removeAgent(String agentId) {
+        Map<String, Agent> agentMap = loadAgents();
+        agentMap.remove(agentId);
+        fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, new Gson().toJson(agentMap));
+    }
+
+    private Gson newGson() {
+        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(File.class, new FileSerializer());
+        return builder.create();
+    }
+
+    static class FileSerializer implements JsonSerializer<File>, JsonDeserializer<File> {
+
+        @Override
+        public File deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return json.isJsonNull() ? null : new File(json.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(File json, Type typeOfSrc, JsonSerializationContext context) {
+            return json == null ? JsonNull.INSTANCE : new JsonPrimitive(json.getPath());
+        }
     }
 }

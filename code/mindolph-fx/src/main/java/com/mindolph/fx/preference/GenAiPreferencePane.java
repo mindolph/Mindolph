@@ -4,10 +4,12 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.llm.Agent;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.fx.dialog.CustomModelDialog;
@@ -19,23 +21,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Pair;
-import javafx.util.StringConverter;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
-import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
+import static com.mindolph.genai.GenaiUiConstants.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -70,7 +72,36 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private Spinner<Integer> spTimeOut;
 
+    // For Defining Agents
+    @FXML
+    private ChoiceBox<Pair<String, Agent>> cbAgent;
+    @FXML
+    private ChoiceBox<Pair<GenAiModelProvider, String>> cbModelProvider;
+    @FXML
+    private ChoiceBox<Pair<String, ModelMeta>> cbChatModel;
+    @FXML
+    private Button btnAddAgent;
+    @FXML
+    private Button btnRemoveAgent;
+    @FXML
+    private TextArea taAgentPrompt;
+    @FXML
+    private Button btnModifyKB;
+    @FXML
+    private Label lblKnowledgeBase;
+    @FXML
+    private Button btnEmbedding;
+    @FXML
+    private ProgressBar pbWaiting;
+    @FXML
+    private Label lblEmbedding;
+
+    private Agent currentAgent;
+    private List<File> knowledgeFiles;
+
     private final AtomicBoolean isReady = new AtomicBoolean(false);
+    // pause to saving data during loading an agent.
+    private final AtomicBoolean isLoadingAgent = new AtomicBoolean(false);
 
     public GenAiPreferencePane() {
         super("/preference/gen_ai_preferences_pane.fxml");
@@ -80,17 +111,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     public void initialize(URL location, ResourceBundle resources) {
 
         // Gen AI
-        cbAiProvider.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Pair<GenAiModelProvider, String> object) {
-                return object == null ? "" : object.getValue();
-            }
-
-            @Override
-            public Pair<GenAiModelProvider, String> fromString(String string) {
-                return null;
-            }
-        });
+        cbAiProvider.setConverter(modelProviderConverter);
         cbAiProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getName()));
         cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
         cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
@@ -171,18 +192,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
-        StringConverter<Pair<String, ModelMeta>> modelConverter = new StringConverter<>() {
-            @Override
-            public String toString(Pair<String, ModelMeta> object) {
-                return object == null ? "" : object.getValue().name();
-            }
 
-            @Override
-            public Pair<String, ModelMeta> fromString(String string) {
-                return null;
-            }
-        };
-        cbModel.setConverter(modelConverter);
+        cbModel.setConverter(modelMetaConverter);
         cbModel.valueProperty().addListener((observable, oldValue, selectedModel) -> {
             if (selectedModel == null || selectedModel.getValue() == null) {
                 log.info("No model selected");
@@ -215,7 +226,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), providerProps);
             this.onSave(true);
         });
-        cbCustomModels.setConverter(modelConverter);
+        cbCustomModels.setConverter(modelMetaConverter);
         cbCustomModels.valueProperty().addListener((observable, oldValue, selectedModel) -> {
             if (selectedModel == null || selectedModel.getValue() == null) {
                 btnRemove.setDisable(true);
@@ -284,6 +295,135 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         // time out setting for all.
         super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
+
+        // for Agents
+        cbAgent.setConverter(agentConverter);
+        cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.equals(oldValue)) return;
+            isLoadingAgent.set(true);
+            Agent agent = newValue.getValue();
+            if (agent != null) {
+                currentAgent = agent;
+                if (agent.getProvider() != null) {
+                    cbModelProvider.getSelectionModel().select(new Pair<>(agent.getProvider(), agent.getProvider().getName()));
+                }
+                if (agent.getChatModel() != null) {
+                    cbChatModel.getSelectionModel().select(new Pair<>(agent.getChatModel().name(), agent.getChatModel()));
+                }
+                taAgentPrompt.setText(agent.getPromptTemplate());
+                knowledgeFiles = agent.getFiles();
+                lblKnowledgeBase.setText("Files under: %s".formatted(knowledgeFiles));
+            }
+            isLoadingAgent.set(false);
+        });
+        Map<String, Agent> agentMap = LlmConfig.getIns().loadAgents();
+        cbAgent.getItems().addAll(agentMap.values().stream().map(agent -> new Pair<>(agent.getName(), agent)).toList());
+        cbModelProvider.setConverter(modelProviderConverter);
+        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getName())).toList();
+        cbModelProvider.getItems().addAll(providerPairs);
+        cbModelProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            String activeProviderName = newValue.getKey().getName();
+            ProviderProps providerProps = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
+            Collection<ModelMeta> modelMetas = PROVIDER_MODELS.get(activeProviderName);
+            List<ModelMeta> customModels = providerProps.customModels();
+            LlmConfig.getIns().preferredModelForActiveLlmProvider();
+            cbChatModel.getItems().clear();
+            cbChatModel.getItems().addAll(modelMetas.stream().map(mm -> new Pair<>(mm.name(), mm)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList());
+            if (customModels != null) {
+                cbChatModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.name(), mm)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList());
+            }
+            onSaveAgent();
+        });
+        cbChatModel.setConverter(modelMetaConverter);
+        cbChatModel.valueProperty().addListener((observable, oldValue, newValue) -> {
+            onSaveAgent();
+        });
+        btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
+        btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
+        btnAddAgent.setOnAction(event -> {
+            new TextInputDialog("My Agent").showAndWait().ifPresent(agentName -> {
+                String agtId = UUID.randomUUID().toString();
+                Agent agent = onSaveAgent(agtId, agentName);
+                currentAgent = agent;
+                Pair<String, Agent> newAgentPair = new Pair<>(agtId, agent);
+                cbAgent.getItems().add(newAgentPair);
+                cbAgent.getSelectionModel().select(newAgentPair);
+            });
+        });
+        btnRemoveAgent.setOnAction(event -> {
+            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent %s?".formatted(currentAgent.getName()))) {
+                LlmConfig.getIns().removeAgent(currentAgent.getId());
+                cbAgent.getItems().remove(new Pair<>(currentAgent.getName(), currentAgent));
+            }
+        });
+        taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
+            onSaveAgent();
+        });
+        btnModifyKB.setOnAction(event -> {
+            File file = DialogFactory.openDirDialog(this.getScene().getWindow(), SystemUtils.getUserHome());
+            if (file != null && file.exists() && file.isDirectory()) {
+                knowledgeFiles = Collections.singletonList(file);
+                onSaveAgent();
+                lblKnowledgeBase.setText("Files under: %s".formatted(file.getPath()));
+            }
+        });
+        btnEmbedding.setOnAction(event -> {
+            if (currentAgent == null) {
+                DialogFactory.warnDialog("Please select an agent");
+                return;
+            }
+            if (currentAgent.getFiles() == null) {
+                DialogFactory.warnDialog("Please select files to do embedding");
+                return;
+            }
+            log.info("Start to embedding for files under: " + StringUtils.join(currentAgent.getFiles(), ", "));
+            Platform.runLater(() -> {
+                pbWaiting.setVisible(true);
+            });
+            try {
+                EmbeddingService.getInstance().embed(currentAgent.getId(), currentAgent.getFiles(), payload -> {
+                    if (payload instanceof Exception e) {
+                        Platform.runLater(() -> {
+                            pbWaiting.setVisible(false);
+                            lblEmbedding.setText("Embedding Failed: %s".formatted(payload.toString()));
+                        });
+                    }
+                    Platform.runLater(() -> {
+                        pbWaiting.setVisible(false);
+                        lblEmbedding.setText("Embedding done");
+                    });
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                DialogFactory.errDialog(e.getLocalizedMessage());
+            } finally {
+                pbWaiting.setVisible(false);
+            }
+        });
+    }
+
+    private Agent onSaveAgent() {
+        return onSaveAgent(currentAgent.getId(), currentAgent.getName());
+    }
+
+    private Agent onSaveAgent(String id, String name) {
+        if (isLoadingAgent.get()) {
+            return null;
+        }
+        log.debug("On save agent {}: {}", id, name);
+        Agent agent = new Agent();
+        agent.setName(name);
+        if (!cbModelProvider.getSelectionModel().isEmpty()) {
+            agent.setProvider(cbModelProvider.getSelectionModel().getSelectedItem().getKey());
+        }
+        if (!cbChatModel.getSelectionModel().isEmpty()) {
+            agent.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
+        }
+        agent.setPromptTemplate(taAgentPrompt.getText());
+        agent.setFiles(knowledgeFiles);
+        LlmConfig.getIns().saveAgent(id, agent);
+        currentAgent = agent;
+        return agent;
     }
 
     private List<ModelMeta> showCustomModels(String providerName) {

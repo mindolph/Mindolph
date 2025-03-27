@@ -14,12 +14,14 @@ public enum GenAiModelProvider {
     DEEP_SEEK("DeepSeek", ProviderType.PUBLIC),
     MOONSHOT("Moonshot", ProviderType.PUBLIC);
 
+
     private final String name;
     private final ProviderType type;
 
     GenAiModelProvider(String name, ProviderType type) {
         this.name = name;
         this.type = type;
+
     }
 
     public static GenAiModelProvider fromName(String name) {

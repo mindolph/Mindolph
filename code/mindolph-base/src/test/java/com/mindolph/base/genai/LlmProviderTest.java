@@ -57,6 +57,15 @@ public class LlmProviderTest {
     }
 
     @Test
+    public void openai() {
+        enableProxy();
+        String apiKey = loadApiKey(CHAT_GLM.getName());
+        OpenAiProvider provider = new OpenAiProvider(apiKey, "non-exist", true);
+        StreamToken predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        System.out.println(predict);
+    }
+
+    @Test
     public void chatglm() {
         disableProxy();
         String apiKey = loadApiKey(CHAT_GLM.getName());

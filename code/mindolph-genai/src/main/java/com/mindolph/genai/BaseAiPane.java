@@ -23,6 +23,7 @@ import java.util.Map;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
+import static com.mindolph.genai.GenaiUiConstants.modelMetaConverter;
 
 /**
  * @since 1.11.1
@@ -88,18 +89,7 @@ public abstract class BaseAiPane extends StackPane {
         if (cbModel.getItems().contains(targetItem)) {
             cbModel.getSelectionModel().select(targetItem);
         }
-        cbModel.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Pair<String, ModelMeta> object) {
-                return object == null ? "" : object.getValue().name();
-            }
-
-            @Override
-            public Pair<String, ModelMeta> fromString(String string) {
-                return null;
-            }
-        });
-
+        cbModel.setConverter(modelMetaConverter);
         cbLanguage.setConverter(new PairStringStringConverter());
         ChoiceUtils.loadLanguagesTo(cbLanguage);
     }
