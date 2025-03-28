@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.mindolph</groupId>
         <artifactId>mindolph</artifactId>
-        <version>1.11.0</version>
+        <version>1.11.5</version>
     </parent>
 
     <artifactId>mindolph-csv</artifactId>

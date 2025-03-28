@@ -21,6 +21,7 @@
          <HBox alignment="CENTER_LEFT" spacing="10.0">
             <Label fx:id="lbIcon" />
             <Label fx:id="lbTitle" text="Generate content with AI" />
+            <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
             <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">
                <HBox.margin>
@@ -44,8 +45,8 @@
             <padding>
                <Insets bottom="5.0" top="5.0" />
             </padding>
-            <Label fx:id="lbModel" text="Model:" />
-            <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
+            <Label fx:id="lbLanguage" text="Language:" />
+            <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
             <Label fx:id="lbTemperature" />
             <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
             <Pane HBox.hgrow="ALWAYS" />

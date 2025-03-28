@@ -7,7 +7,7 @@
     <groupId>com.mindolph</groupId>
     <artifactId>mindolph</artifactId>
     <packaging>pom</packaging>
-    <version>1.11.0</version>
+    <version>1.11.5</version>
     <modules>
         <module>mindolph-fx</module>
         <module>mindolph-core</module>
@@ -39,7 +39,7 @@
         <slf4j.version>2.0.16</slf4j.version>
         <log4j2.version>2.24.1</log4j2.version>
         <junit.version>5.11.4</junit.version>
-        <mfx.version>2.0</mfx.version>
+        <mfx.version>2.0.1</mfx.version>
         <gson.version>2.11.0</gson.version>
         <controlsfx.version>11.2.1</controlsfx.version>
         <richtextfx.version>0.11.4</richtextfx.version>

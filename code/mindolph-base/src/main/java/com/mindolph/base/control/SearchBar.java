@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.SearchEventHandler;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.mfx.util.FxmlUtils;
+import com.mindolph.mfx.util.PaneUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -160,6 +161,8 @@ public class SearchBar extends VBox {
                 }
             }
         });
+
+        PaneUtils.escapablePanes(()-> this.exitEvent.push(null), searchPane, replacePane);
     }
 
     @FXML

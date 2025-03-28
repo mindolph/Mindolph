@@ -9,6 +9,7 @@ import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.ControlUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Topic tree dialog to select internal topic for linking.
+ *
  * @author mindolph.com@gmail.com
  */
 public class TopicTreeDialog extends BaseDialogController<TopicNode> {
@@ -93,12 +96,7 @@ public class TopicTreeDialog extends BaseDialogController<TopicNode> {
             log.debug("result changes to %s".formatted(t1 == null ? "null" : t1.getValue()));
         });
 
-//        treeView.setOnKeyPressed(keyEvent -> {
-//            if (keyEvent.getCode() != KeyCode.ESCAPE) {
-//                log.debug("Key ESC pressed");
-//                dialog.close();
-//            }
-//        });
+        ControlUtils.escapableControl(() -> dialog.close(), treeView);
 
         this.initTree();
     }

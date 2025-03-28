@@ -8,10 +8,10 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
-import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;
 import com.mindolph.mfx.util.FxmlUtils;
+import com.mindolph.mfx.util.TextUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -311,7 +311,7 @@ public class InputHelperManager {
                 // Calculate the appropriate width and height of suggestion list.
                 Optional<? extends Suggestion> longest = items.stream().sorted((o1, o2) -> o2.content.length() - o1.content.length()).findFirst();
                 String longestStr = longest.isPresent() ? longest.get().content() : "";
-                Bounds maxTextBounds = NodeUtils.getTextBounds(longestStr, Font.getDefault());
+                Bounds maxTextBounds = TextUtils.calculateTextBounds(longestStr, Font.getDefault());
                 double actualWidth = maxTextBounds.getWidth() + longestStr.length() * 3; // length * 3 is extra
                 this.lvSuggestion.setMaxWidth(Math.min(250, actualWidth));
                 this.lvSuggestion.setPrefWidth(actualWidth);

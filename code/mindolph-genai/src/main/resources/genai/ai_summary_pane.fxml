@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ChoiceBox?>
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <AnchorPane style="-fx-background-color: #D3D3D3FF;">
         <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -21,6 +22,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Label fx:id="lbIcon"/>
                 <Label fx:id="lbTitle" text="Summarize selected content:"/>
+                <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button"
                         stylesheets="@../style/icon_button.css">
@@ -33,7 +35,8 @@
                 <VBox.margin>
                     <Insets/>
                 </VBox.margin>
-                <TextArea fx:id="taOutput" editable="false" prefHeight="128.0" prefWidth="480.0" promptText="Wait..." wrapText="true"/>
+                <TextArea fx:id="taOutput" editable="false" prefHeight="128.0" prefWidth="480.0"
+                          promptText="Summarized content." wrapText="true"/>
                 <AnchorPane>
                     <VBox.margin>
                         <Insets/>
@@ -46,11 +49,13 @@
                 <padding>
                     <Insets bottom="5.0" top="5.0"/>
                 </padding>
+                <Label fx:id="lbLanguage" text="Language:" />
+                <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnCopy" mnemonicParsing="false" text="Copy"/>
-                <Button fx:id="btnReSummarize" mnemonicParsing="false" text="Re-summarize"/>
+                <Button fx:id="btnCopy" mnemonicParsing="false" text="Copy" disable="true"/>
+                <Button fx:id="btnSummarize" mnemonicParsing="false" text="Summarize"/>
             </HBox>
-            <HBox fx:id="hbGenerating" maxWidth="500.0" visible="true">
+            <HBox fx:id="hbGenerating" maxWidth="500.0">
                 <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
                 <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Summarizing"/>
             </HBox>

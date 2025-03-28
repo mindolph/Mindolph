@@ -5,11 +5,13 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.fx.dialog.CustomModelDialog;
+import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenaiUiConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
@@ -29,10 +31,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
+import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
 
 /**
@@ -62,9 +64,11 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private Label lbMaxOutputTokens;
     @FXML
-    private Spinner<Integer> spTimeOut;
-    @FXML
     private CheckBox cbUseProxy;
+    @FXML
+    private ChoiceBox<Pair<String, String>> cbLanguages;
+    @FXML
+    private Spinner<Integer> spTimeOut;
 
     private final AtomicBoolean isReady = new AtomicBoolean(false);
 
@@ -213,9 +217,13 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbCustomModels.setConverter(modelConverter);
         cbCustomModels.valueProperty().addListener((observable, oldValue, selectedModel) -> {
             if (selectedModel == null || selectedModel.getValue() == null) {
+                btnRemove.setDisable(true);
                 return;
             }
+            btnRemove.setDisable(false);
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
+            String activeProviderName = cbAiProvider.getValue().getKey().getName();
+            LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
             this.updateModelDescription(selectedModel.getValue());
         });
         btnAdd.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
@@ -247,7 +255,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         btnRemove.setOnAction(event -> {
             String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().name();
-            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete model %s".formatted(name));
+            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete the custom model '%s'".formatted(name));
             if (sure) {
                 String activeProviderName = cbAiProvider.getValue().getKey().getName();
                 ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
@@ -267,10 +275,15 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             LlmConfig.getIns().saveGenAiProvider(cbAiProvider.getValue().getKey(), vendorProps);
             this.onSave(true);
         });
+        cbLanguages.setConverter(new PairStringStringConverter());
+        ChoiceUtils.loadLanguagesTo(cbLanguages);
+        cbLanguages.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.equals(oldValue)) return;
+            fxPreferences.savePreference(GEN_AI_OUTPUT_LANGUAGE, newValue.getKey());
+        });
         // time out setting for all.
         super.bindSpinner(spTimeOut, 1, 300, 1, GEN_AI_TIMEOUT, 60);
     }
-
 
     private List<ModelMeta> showCustomModels(String providerName) {
         cbCustomModels.getItems().clear();
@@ -279,6 +292,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         if (customModels == null || customModels.isEmpty()) {
             log.info("no custom models found for provider: %s".formatted(providerName));
             this.updateModelDescription(null); // clear description when no custom models
+            btnRemove.setDisable(true); // disable remove button here since the choice box of custom model will never be updated
         }
         else {
             List<Pair<String, ModelMeta>> metaPairs = customModels.stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
@@ -288,6 +302,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             if (activePair != null) {
                 cbCustomModels.getSelectionModel().select(cbCustomModels.getItems().indexOf(activePair));
             }
+            btnRemove.setDisable(false);
         }
         return customModels;
     }
@@ -298,7 +313,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         }
         else {
             lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("Max output tokens: %d".formatted(model.maxTokens()));
+            lbMaxOutputTokens.setText("Max output tokens: %s".formatted(displayGenAiTokens(model.maxTokens())));
         }
     }
 

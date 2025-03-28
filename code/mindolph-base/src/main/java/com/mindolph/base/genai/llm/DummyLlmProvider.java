@@ -130,6 +130,10 @@ public class DummyLlmProvider implements LlmProvider {
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         // TODO
+    }
 
+    @Override
+    public void stopStreaming() {
+        // TODO
     }
 }

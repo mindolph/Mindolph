@@ -7,7 +7,6 @@ import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,8 @@ import java.util.function.Consumer;
 /**
  * @since 1.7.5
  */
-public class ChatGlmProvider extends BaseApiLlmProvider {
+public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
+
     private static final Logger log = LoggerFactory.getLogger(ChatGlmProvider.class);
 
     String API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
@@ -58,37 +58,6 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
     }
 
     @Override
-    public StreamToken predict(Input input, OutputParams outputParams) {
-        RequestBody requestBody = super.createRequestBody(template, determineModel(input), input, outputParams);
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .header("Authorization", "Bearer %s".formatted(apiKey))
-                .post(requestBody)
-                .build();
-        log.debug(request.toString());
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                String strBody = response.body().string();
-                log.debug(strBody);
-                JsonObject respBody = JsonParser.parseString(strBody).getAsJsonObject();
-                throw new RuntimeException("%d %s".formatted(response.code(),
-                        respBody.get("error").getAsJsonObject().get("message").getAsString()));
-            }
-            String resBodyInJson = response.body().string();
-            JsonObject resObject = JsonParser.parseString(resBodyInJson).getAsJsonObject();
-            String result = resObject.get("choices").getAsJsonArray()
-                    .get(0).getAsJsonObject()
-                    .get("message").getAsJsonObject()
-                    .get("content").getAsString();
-            int outputTokens = resObject.get("usage").getAsJsonObject().get("completion_tokens").getAsInt();
-            return new StreamToken(result, outputTokens, true, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         RequestBody requestBody = super.createRequestBody(streamTemplate, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
@@ -96,7 +65,7 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
                 .header("Authorization", "Bearer %s".formatted(apiKey))
                 .post(requestBody)
                 .build();
-        OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
+        streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             log.debug(data);
             JsonObject resObject = JsonParser.parseString(data).getAsJsonObject();
             JsonObject choices = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
@@ -125,5 +94,21 @@ public class ChatGlmProvider extends BaseApiLlmProvider {
 //            log.info("completed");
 //            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
         });
+    }
+
+
+    @Override
+    protected String apiUrl() {
+        return API_URL;
+    }
+
+    @Override
+    protected String predictPromptTemplate() {
+        return template;
+    }
+
+    @Override
+    protected String streamPromptTemplate() {
+        return streamTemplate;
     }
 }

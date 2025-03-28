@@ -18,9 +18,6 @@
             </font>
          </Label>
          <Label fx:id="lbFilePath" text="File Path" textFill="#373737">
-            <font>
-               <Font size="12.0"/>
-            </font>
          </Label>
       </VBox>
    </HBox>

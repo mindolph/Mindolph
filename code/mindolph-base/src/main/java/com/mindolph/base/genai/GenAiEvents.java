@@ -3,7 +3,6 @@ package com.mindolph.base.genai;
 import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
-import org.apache.commons.lang3.StringUtils;
 import org.reactfx.EventSource;
 
 import java.util.HashMap;
@@ -41,16 +40,16 @@ public class GenAiEvents {
         });
     }
 
-    public void subscribeSummarizeEvent(Object editorId, Consumer<Input> consumer) {
-        summarizeEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
-    }
-
-    public void emitSummarizeEvent(Object editorId, Input input) {
-        summarizeEventSource.computeIfPresent(editorId, (o, summarizeEventSource) -> {
-            summarizeEventSource.push(input);
-            return summarizeEventSource;
-        });
-    }
+//    public void subscribeSummarizeEvent(Object editorId, Consumer<Input> consumer) {
+//        summarizeEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
+//    }
+//
+//    public void emitSummarizeEvent(Object editorId, Input input) {
+//        summarizeEventSource.computeIfPresent(editorId, (o, summarizeEventSource) -> {
+//            summarizeEventSource.push(input);
+//            return summarizeEventSource;
+//        });
+//    }
 
     public void subscribeActionEvent(Object editorId, Consumer<ActionType> consumer) {
         actionEventSource.computeIfAbsent(editorId, o -> new EventSource<>()).subscribe(consumer);
@@ -63,45 +62,8 @@ public class GenAiEvents {
         });
     }
 
-    public record Input(String model, String text, float temperature, int maxTokens, OutputAdjust outputAdjust,
+    public record Input(String model, String text, float temperature, int maxTokens, OutputAdjust outputAdjust, String outputLanguage,
                         boolean isRetry, boolean isStreaming) {
-        /**
-         * with default model.
-         *
-         * @param text
-         * @param temperature
-         * @param outputAdjust
-         * @param isRetry
-         * @param isStreaming
-         */
-        public Input(String text, float temperature, int maxTokens, OutputAdjust outputAdjust, boolean isRetry, boolean isStreaming) {
-            this(StringUtils.EMPTY, text, temperature, maxTokens, outputAdjust, isRetry, isStreaming);
-        }
-
-        /**
-         * with no max tokens limit.
-         *
-         * @param text
-         * @param temperature
-         * @param outputAdjust
-         * @param isRetry
-         * @param isStreaming
-         */
-        public Input(String model, String text, float temperature, OutputAdjust outputAdjust, boolean isRetry, boolean isStreaming) {
-            this(model, text, temperature, 0, outputAdjust, isRetry, isStreaming);
-        }
-        /**
-         * with default model and no max tokens limit.
-         *
-         * @param text
-         * @param temperature
-         * @param outputAdjust
-         * @param isRetry
-         * @param isStreaming
-         */
-        public Input(String text, float temperature, OutputAdjust outputAdjust, boolean isRetry, boolean isStreaming) {
-            this(StringUtils.EMPTY, text, temperature, 0, outputAdjust, isRetry, isStreaming);
-        }
     }
 
     public record Output(String generatedText, boolean isRetry) {

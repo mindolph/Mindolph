@@ -35,6 +35,9 @@
             <CheckBox fx:id="cbUseProxy"/>
         </PreferenceItem>
         <Separator/>
+        <PreferenceItem name="Output language:">
+            <ChoiceBox fx:id="cbLanguages" prefWidth="240.0"/>
+        </PreferenceItem>
         <PreferenceItem name="Time out(second):">
             <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
         </PreferenceItem>

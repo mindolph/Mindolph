@@ -68,6 +68,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_MMD_FILE_LINK_IS_OPEN_IN_SYS;
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_MMD_FILE_LINK_LAST_FOLDER;
@@ -268,18 +269,25 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 //                    generator.setParentSkin(parentSkin);
                         // the parent panel is the editor itself for mind map.
                         generator.setParentPane(super.getParentPane());
-                        MenuItem menuItem = generator.generationMenuItem(null);
-                        ctxMenu.getItems().add(menuItem);
-                        menuItem.setOnAction(e -> {
+                        MenuItem generationMenuItem = generator.generationMenuItem(null);
+                        MenuItem summaryMenuItem = generator.summaryMenuItem();
+                        ctxMenu.getItems().add(generationMenuItem);
+                        ctxMenu.getItems().add(summaryMenuItem);
+                        generationMenuItem.setOnAction(e -> {
                             generator.showInputPanel(topicUnderMouse != null ? topicUnderMouse.getText() : "");
                         });
+                        summaryMenuItem.setOnAction(event -> {
+                            super.setDisable(false);
+                            String allSelectedText = getSelectedTopics().stream().map(Topic::getText).collect(Collectors.joining("\n"));
+                            generator.showSummarizePanel(allSelectedText, this);
+                        });
                         generator.setOnPanelShowing(pane -> {
+                            super.setDisable(true);
                             // do calculation on layout bounds changes to make sure that the bounds is calculated.
                             pane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
                                 if (oldValue.equals(newValue) || newValue.getWidth() == 0 || newValue.getHeight() == 0) {
                                     return;
                                 }
-                                super.setDisable(true);
                                 Bounds panelBounds = pane.getBoundsInParent();
                                 // retrieve the element from topic because the original one might have been changed.
                                 BaseElement element = (BaseElement) super.getFirstSelectedTopic().getPayload();

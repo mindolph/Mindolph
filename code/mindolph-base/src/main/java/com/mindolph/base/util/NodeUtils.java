@@ -1,9 +1,6 @@
 package com.mindolph.base.util;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /**
  * Utils for FX Node.
@@ -41,20 +38,6 @@ public class NodeUtils {
         for (Node node : nodes) {
             node.setDisable(true);
         }
-    }
-
-    /**
-     * TODO Move to mfx
-     * @param s
-     * @param font
-     * @return
-     */
-    public static Bounds getTextBounds(String s, Font font) {
-        Text text = new Text(s);
-        text.setFont(font);
-//        StackPane stackPane = new StackPane(text);
-//        stackPane.layout();
-        return text.getLayoutBounds();
     }
 
 }

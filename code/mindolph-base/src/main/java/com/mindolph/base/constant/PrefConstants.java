@@ -13,6 +13,8 @@ public interface PrefConstants {
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";
     String GENERAL_AUTO_SELECT_AFTER_FILE_OPENED = "general.autoSelectAfterFileOpened";
+    String GENERAL_GLOBAL_FONT_SIZE = "general.global.font.size";
+    String GENERAL_GLOBAL_ICON_SIZE = "general.global.icon.size";
 
     /**
      * @deprecated delete when 1.8 stable is released
@@ -30,6 +32,7 @@ public interface PrefConstants {
     String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
     String GEN_AI_PROVIDERS = "genai.providers";
     String GEN_AI_TIMEOUT = "genai.timeout";
+    String GEN_AI_OUTPUT_LANGUAGE = "genai.outputLanguage";
 
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";

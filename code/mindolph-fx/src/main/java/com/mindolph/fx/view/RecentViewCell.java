@@ -1,9 +1,12 @@
 package com.mindolph.fx.view;
 
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +15,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,9 +72,16 @@ public class RecentViewCell extends ListCell<NodeData> {
             else {
                 desc = fileData.getFile().getPath(); // for external files
             }
+            int globalFontSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, 0);
+            if (globalFontSize == 0) {
+                globalFontSize = (int) lbFileName.getFont().getSize();// borrow
+            }
             lbFileName.setText(fileData.getName());
+            lbFileName.setFont(FontUtils.newFontWithSize(Font.getDefault(), (int) (globalFontSize * 1.2f)));
             lbFilePath.setText(desc);
-            lbIcon.setGraphic(FontIconManager.getIns().getIconForFile(fileData, 24));
+
+            int iconSize = (int) (FontIconManager.getIconSize() * 1.5f);
+            lbIcon.setGraphic(FontIconManager.getIns().getIconForFile(fileData, iconSize));
         }
 
         @Override

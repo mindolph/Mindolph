@@ -134,8 +134,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // used to force refresh resource in page like images.
     private String timestamp;
 
-    private EventSource<Double> scrollEventCode = new EventSource<>();
-    private EventSource<Double> scrollEventPreview = new EventSource<>();
+    private final EventSource<Double> scrollEventCode = new EventSource<>();
+    private final EventSource<Double> scrollEventPreview = new EventSource<>();
 
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);
@@ -276,6 +276,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     // this method will be called from javascript inside the webview.
     public void onWebviewScroll(double x, double y) {
 //        System.out.printf("B: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
+        // for remembering the scroll position to keep the webview where it is during editing.
+        super.currentScrollH = x;
+        super.currentScrollV = y;
+
         if (!super.getIsAutoScroll() || viewMode != ViewMode.BOTH) {
             return;
         }
@@ -523,9 +527,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void render(Object renderObject) {
-        log.info("Load markdown html to web view");
+        if (log.isTraceEnabled()) log.trace("Load markdown html to web view");
         html = (String) renderObject;
 
+        if (log.isTraceEnabled()) log.trace("Init the web view position to: %.1f, %.1f".formatted(currentScrollH, currentScrollV));
         String finalScript = RegExUtils.replaceAll(initScrollScript, "\\$\\{xPos\\}", String.valueOf(currentScrollH));
         finalScript = RegExUtils.replaceAll(finalScript, "\\$\\{yPos\\}", String.valueOf(currentScrollV));
 
@@ -548,6 +553,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void afterRender() {
+        // NO NEED TO DO ANYTHING
     }
 
     /**
@@ -578,6 +584,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     @Override
     public void dispose() {
         super.dispose();
+        webEngine.getLoadWorker().cancel();
         webEngine.load(null);
         webEngine = null;
         webView = null;

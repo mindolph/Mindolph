@@ -45,6 +45,10 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     @FXML
     private CheckBox cbAutoSelectAfterFileOpened;
     @FXML
+    private Spinner<Integer> spGlobalFontSize;
+    @FXML
+    private Spinner<Integer> spGlobalIconSize;
+    @FXML
     private CheckBox cbEnableProxy;
     @FXML
     private RadioButton rbHttp;
@@ -72,6 +76,20 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(ckbShowHiddenFiles.selectedProperty(), PrefConstants.GENERAL_SHOW_HIDDEN_FILES, false);
 //        super.bindPreference(ckbAutoBackupLastEdit.selectedProperty(), "general.autoBackupBeforeSaving", true);
         super.bindPreference(cbAutoSelectAfterFileOpened.selectedProperty(), GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true);
+
+        // global font size
+        int globalFontSize = fxPreferences.getPreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, 0);
+        if (globalFontSize == 0) {
+            // if never set, use system default
+            globalFontSize = (int) tfProxyHost.getFont().getSize(); // borrow the font size from any text component
+        }
+        spGlobalFontSize.getValueFactory().setValue(globalFontSize);
+        spGlobalFontSize.valueProperty().addListener((observable, oldValue, newValue) -> {
+            fxPreferences.savePreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, newValue);
+            this.onSave(true);
+        });
+        // global icon size
+        super.bindSpinner(spGlobalIconSize, 16, 24, 4, GENERAL_GLOBAL_ICON_SIZE, 16);
 
         TableColumn<OrientationItem, Object> colEditor = new TableColumn<>("Editor");
         TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>("Orientation");

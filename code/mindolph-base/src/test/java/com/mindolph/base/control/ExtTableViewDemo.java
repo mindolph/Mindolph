@@ -26,6 +26,7 @@ public class ExtTableViewDemo implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         demoTableView = new DemoTableView();
+        demoTableView.setEditable(true);// seems doesn't work
 
         demoTableView.appendColumn("col 1");
         demoTableView.appendColumn("col 2");

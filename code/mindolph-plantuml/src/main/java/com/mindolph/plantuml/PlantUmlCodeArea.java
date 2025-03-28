@@ -40,7 +40,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
 
         // comment or uncomment for plantuml.
         InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_PUML_COMMENT)), keyEvent -> {
-            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("'"));
+            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("' "));
         });
         Nodes.addInputMap(this, comment);
     }

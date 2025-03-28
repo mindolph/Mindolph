@@ -1,5 +1,76 @@
 # Change Logs
 
+### V1.11.5 Unstable Release
+* Feature:
+    * Support Gen-AI summarizing for mind map.
+    * New option `UI icon size` to adjust the size of icons globally with 3 grades: small(16), medium(20), large(24).
+
+* Improvement:
+    * Optimized the handling of user-initiated stop during Gen-AI generation.
+    * Temporarily disable the editor during Gen-AI generation to avoid unexpected situations.
+
+* Bug Fixes:
+    * Error handling doesn't work for streaming DeepSeek provider.
+    * Exception when generate or summarize by LLM if `Custom` model option is selected but no any custom model is defined and selected.
+    * For setting Gen-AI custom model, the `delete` button should be disabled when there is no any custom model exists.
+
+
+
+### V1.11.4 Unstable Release
+* Feature: add new option `UI font size` to set the global UI font size. (https://github.com/mindolph/Mindolph/issues/12)   
+* Improvement: update OpenAI and Google Gemini models; display model's max tokens as '%sK' format.   
+* Improvement: remember the latest user input prompt for initializing the prompt of Gen-AI input panel.  
+* Improvement: add notification for creating new collection for opened files.
+* Improvement: add the number of files in the notification message when saving a collection.  
+* Fix: model choice box should be disabled during Gen-AI generating or summarizing.  
+* Fix: exception when launching Gen-AI input panel without selecting any text.  
+* Fix: the selected default collection is not recovered the selection state on application startup.  
+* Fix: Text selection is cleared after Gen-AI summarize panel pops up.   
+* Fix: filtering snippets should be case insensitive.  
+
+### V1.11.3 Unstable Release
+* Improvement: for applying snippet, automatically wrap up the selected text if the snippet you choose requires that.
+* Improvement: add Regex and EBNF support to PlantUML editor.
+* Improvement: add max token information after selecting a LLM model in Gen-AI panels.
+* Fix: the 'retry' function doesn't work after the Gen-AI generated something.
+* Refactored LLM provider implementation.
+
+### V1.10.5 Release
+* Improvement: optimized the auto scroll during editing for the Markdown editor, now the scroll sync goes smoothly. 😊
+* The .deb installation package is now built on Debian 12 to fix the error during installation. It also works on Ubuntu.
+
+### V1.11.2 Unstable Release
+* Improvement: input panel follows the generated text during streaming generation by Gen-AI.
+* Fix: exception when launching Gen-AI generating or summarizing panes if no custom models is set up for the provider.  
+* Merged bug fixes from stable version 1.10.4.
+
+### V1.10.4 Release
+* Fix: Snippet View did not correctly save and restore the expanded state after switching between different file types.  
+* Fix: When switching from another tab to a file tab opened from 'find in files', the search keyword in the file will be automatically selected by mistake.  
+
+### V1.11.1 Unstable Release
+
+* New features for Gen-AI include:  
+	* Allow user to setup output language for Gen-AI feature, and also provide an option to make the language of generated content consistent with the language of the text entered by the user.
+	* redesign Gen-AI popup panels to let user select model and output language just before starting generating.
+* Improvement: optimize the topic tree dialog escaping in mind map editor and the search bar escaping.   
+* Improvement: optimized the quitting for Gen-AI summary pane by the ESC key press.   
+* Improvement: update Qwen models.  
+* Fix: unable to load all Gen-AI models on Gen-AI dialog.  
+* Fix: some exception cases from HuggingFace API don't be handled.  
+* Fix: changing the custom Gen-AI model doesn't take effect.   
+* Fix: minor issues for PlantUML templates.   
+* Merged improvements and bug fixes from stable version.  
+
+
+### V1.10.3 Release
+* Improvement: automatically remove bullet prefix (if exists) when using the Header button in the Markdown editor's toolbar.   
+* Improvement: optimized the closing by ESC for Gen-AI input dialog  
+* Fix: files in collections can't be opened since their names were changed or were moved to another folder.   
+* Fix: CSV editor doesn't automatically scroll to selected row by searching.   
+* Fix: clicking on web links in markdown preview panel should go to external browser.   
+* Update JavaFX to 23.0.2.  
+
 
 ### V1.11.0 Unstable Release
 * New Features:

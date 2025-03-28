@@ -26,7 +26,7 @@
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
          </padding>
-         <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.11.0"/>
+         <Label style="-fx-font-weight: bold; -fx-font-size: 20;" text="Mindolph v1.11.5"/>
          <Hyperlink onAction="#onLink" text="https://github.com/mindolph/Mindolph"/>
          <Label text="email: mindolph.com@gmail.com">
             <VBox.margin>
