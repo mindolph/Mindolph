@@ -35,6 +35,7 @@ import com.mindolph.fx.print.MindMapPrintable;
 import com.mindolph.fx.print.PrintPreviewDialog;
 import com.mindolph.fx.print.Printable;
 import com.mindolph.fx.view.*;
+import com.mindolph.genai.ChatView;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.BaseController;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
@@ -94,6 +95,8 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     private SnippetView snippetView;
     @FXML
+    private ChatView chatView;
+    @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuRecentWorkspaces;
@@ -111,6 +114,8 @@ public class MainController extends BaseController implements Initializable,
     private Tab tabOutline;
     @FXML
     private Tab tabSnippet;
+    @FXML
+    private Tab tabAgent;
     @FXML
     private CheckMenuItem miToggleWorkspaceView;
     @FXML
@@ -168,6 +173,7 @@ public class MainController extends BaseController implements Initializable,
         tabRecentFiles.setGraphic(FontIconManager.getIns().getIcon(IconKey.RECENT_LIST));
         tabOutline.setGraphic(FontIconManager.getIns().getIcon(IconKey.OUTLINE));
         tabSnippet.setGraphic(FontIconManager.getIns().getIcon(IconKey.SNIPPET));
+        tabAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
 
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);

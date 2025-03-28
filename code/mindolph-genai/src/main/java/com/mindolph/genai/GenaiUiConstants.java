@@ -1,7 +1,7 @@
 package com.mindolph.genai;
 
 import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.llm.Agent;
+import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
@@ -13,21 +13,25 @@ import java.util.Comparator;
  */
 public interface GenaiUiConstants {
 
+    enum MessageType {
+        HUMAN, AI
+    }
+
     //     Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().name().compareTo(o2.getValue().name());
 
     Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>("Custom", new ModelMeta("Custom", 0));
 
-    StringConverter<Pair<String, Agent>> agentConverter = new StringConverter<>() {
+    StringConverter<Pair<String, AgentMeta>> agentConverter = new StringConverter<>() {
 
         @Override
-        public String toString(Pair<String, Agent> object) {
+        public String toString(Pair<String, AgentMeta> object) {
             return object == null ? "" : object.getValue().getName();
         }
 
         @Override
-        public Pair<String, Agent> fromString(String string) {
+        public Pair<String, AgentMeta> fromString(String string) {
             return null;
         }
     };

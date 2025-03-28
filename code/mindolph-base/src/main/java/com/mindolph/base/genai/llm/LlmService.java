@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.mindolph.core.constant.GenAiModelProvider.*;
-
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7
@@ -47,42 +45,9 @@ public class LlmService {
         else {
             Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
             activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
+            ProviderProps props = map.get(activeAiProvider);
+            llmProvider = LlmProviderFactory.create(activeAiProvider, props);
             log.info("Using llm provider: %s".formatted(activeAiProvider));
-            if (OPEN_AI.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(OPEN_AI.getName());
-                llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (GEMINI.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(GEMINI.getName());
-                llmProvider = new GeminiProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (ALI_Q_WEN.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(ALI_Q_WEN.getName());
-                llmProvider = new QwenProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (OLLAMA.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(OLLAMA.getName());
-                llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel(), props.useProxy());
-            }
-            else if (HUGGING_FACE.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(HUGGING_FACE.getName());
-                llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (CHAT_GLM.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(activeAiProvider);
-                llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (DEEP_SEEK.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(DEEP_SEEK.getName());
-                llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else if (MOONSHOT.getName().equals(activeAiProvider)) {
-                ProviderProps props = map.get(MOONSHOT.getName());
-                llmProvider = new MoonshotProvider(props.apiKey(), props.aiModel(), props.useProxy());
-            }
-            else {
-                throw new RuntimeException("No llm provider setup: %s".formatted(activeAiProvider));
-            }
         }
     }
 

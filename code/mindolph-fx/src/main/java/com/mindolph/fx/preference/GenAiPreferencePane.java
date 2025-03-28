@@ -9,7 +9,7 @@ import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.llm.Agent;
+import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.fx.dialog.CustomModelDialog;
@@ -27,6 +27,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.IdUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -74,7 +75,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
 
     // For Defining Agents
     @FXML
-    private ChoiceBox<Pair<String, Agent>> cbAgent;
+    private ChoiceBox<Pair<String, AgentMeta>> cbAgent;
     @FXML
     private ChoiceBox<Pair<GenAiModelProvider, String>> cbModelProvider;
     @FXML
@@ -96,7 +97,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
     @FXML
     private Label lblEmbedding;
 
-    private Agent currentAgent;
+    private AgentMeta currentAgentMeta;
     private List<File> knowledgeFiles;
 
     private final AtomicBoolean isReady = new AtomicBoolean(false);
@@ -301,23 +302,26 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             isLoadingAgent.set(true);
-            Agent agent = newValue.getValue();
-            if (agent != null) {
-                currentAgent = agent;
-                if (agent.getProvider() != null) {
-                    cbModelProvider.getSelectionModel().select(new Pair<>(agent.getProvider(), agent.getProvider().getName()));
+            AgentMeta agentMeta = newValue.getValue();
+            if (agentMeta != null) {
+                currentAgentMeta = agentMeta;
+                if (agentMeta.getProvider() != null) {
+                    cbModelProvider.getSelectionModel().select(new Pair<>(agentMeta.getProvider(), agentMeta.getProvider().getName()));
                 }
-                if (agent.getChatModel() != null) {
-                    cbChatModel.getSelectionModel().select(new Pair<>(agent.getChatModel().name(), agent.getChatModel()));
+                if (agentMeta.getChatModel() != null) {
+                    cbChatModel.getSelectionModel().select(new Pair<>(agentMeta.getChatModel().name(), agentMeta.getChatModel()));
                 }
-                taAgentPrompt.setText(agent.getPromptTemplate());
-                knowledgeFiles = agent.getFiles();
+                taAgentPrompt.setText(agentMeta.getPromptTemplate());
+                knowledgeFiles = agentMeta.getFiles();
                 lblKnowledgeBase.setText("Files under: %s".formatted(knowledgeFiles));
+                if (knowledgeFiles != null && !knowledgeFiles.isEmpty()) {
+                    btnEmbedding.setDisable(false);
+                }
             }
             isLoadingAgent.set(false);
         });
-        Map<String, Agent> agentMap = LlmConfig.getIns().loadAgents();
-        cbAgent.getItems().addAll(agentMap.values().stream().map(agent -> new Pair<>(agent.getName(), agent)).toList());
+        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
+        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getName(), agentMeta)).toList());
         cbModelProvider.setConverter(modelProviderConverter);
         List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getName())).toList();
         cbModelProvider.getItems().addAll(providerPairs);
@@ -342,18 +346,18 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddAgent.setOnAction(event -> {
             new TextInputDialog("My Agent").showAndWait().ifPresent(agentName -> {
-                String agtId = UUID.randomUUID().toString();
-                Agent agent = onSaveAgent(agtId, agentName);
-                currentAgent = agent;
-                Pair<String, Agent> newAgentPair = new Pair<>(agtId, agent);
+                String agtId = IdUtils.makeUUID();
+                AgentMeta agentMeta = onSaveAgent(agtId, agentName);
+                currentAgentMeta = agentMeta;
+                Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, agentMeta);
                 cbAgent.getItems().add(newAgentPair);
                 cbAgent.getSelectionModel().select(newAgentPair);
             });
         });
         btnRemoveAgent.setOnAction(event -> {
-            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent %s?".formatted(currentAgent.getName()))) {
-                LlmConfig.getIns().removeAgent(currentAgent.getId());
-                cbAgent.getItems().remove(new Pair<>(currentAgent.getName(), currentAgent));
+            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent %s?".formatted(currentAgentMeta.getName()))) {
+                LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
+                cbAgent.getItems().remove(new Pair<>(currentAgentMeta.getName(), currentAgentMeta));
             }
         });
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -365,23 +369,26 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 knowledgeFiles = Collections.singletonList(file);
                 onSaveAgent();
                 lblKnowledgeBase.setText("Files under: %s".formatted(file.getPath()));
+                if (!knowledgeFiles.isEmpty()) {
+                    btnEmbedding.setDisable(false);
+                }
             }
         });
         btnEmbedding.setOnAction(event -> {
-            if (currentAgent == null) {
+            if (currentAgentMeta == null) {
                 DialogFactory.warnDialog("Please select an agent");
                 return;
             }
-            if (currentAgent.getFiles() == null) {
+            if (currentAgentMeta.getFiles() == null) {
                 DialogFactory.warnDialog("Please select files to do embedding");
                 return;
             }
-            log.info("Start to embedding for files under: " + StringUtils.join(currentAgent.getFiles(), ", "));
+            log.info("Start to embedding for files under: " + StringUtils.join(currentAgentMeta.getFiles(), ", "));
             Platform.runLater(() -> {
                 pbWaiting.setVisible(true);
             });
             try {
-                EmbeddingService.getInstance().embed(currentAgent.getId(), currentAgent.getFiles(), payload -> {
+                EmbeddingService.getInstance().embed(currentAgentMeta.getId(), currentAgentMeta.getFiles(), payload -> {
                     if (payload instanceof Exception e) {
                         Platform.runLater(() -> {
                             pbWaiting.setVisible(false);
@@ -402,28 +409,28 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
     }
 
-    private Agent onSaveAgent() {
-        return onSaveAgent(currentAgent.getId(), currentAgent.getName());
+    private AgentMeta onSaveAgent() {
+        return onSaveAgent(currentAgentMeta.getId(), currentAgentMeta.getName());
     }
 
-    private Agent onSaveAgent(String id, String name) {
+    private AgentMeta onSaveAgent(String id, String name) {
         if (isLoadingAgent.get()) {
             return null;
         }
         log.debug("On save agent {}: {}", id, name);
-        Agent agent = new Agent();
-        agent.setName(name);
+        AgentMeta agentMeta = new AgentMeta();
+        agentMeta.setName(name);
         if (!cbModelProvider.getSelectionModel().isEmpty()) {
-            agent.setProvider(cbModelProvider.getSelectionModel().getSelectedItem().getKey());
+            agentMeta.setProvider(cbModelProvider.getSelectionModel().getSelectedItem().getKey());
         }
         if (!cbChatModel.getSelectionModel().isEmpty()) {
-            agent.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
+            agentMeta.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
         }
-        agent.setPromptTemplate(taAgentPrompt.getText());
-        agent.setFiles(knowledgeFiles);
-        LlmConfig.getIns().saveAgent(id, agent);
-        currentAgent = agent;
-        return agent;
+        agentMeta.setPromptTemplate(taAgentPrompt.getText());
+        agentMeta.setFiles(knowledgeFiles);
+        LlmConfig.getIns().saveAgent(id, agentMeta);
+        currentAgentMeta = agentMeta;
+        return agentMeta;
     }
 
     private List<ModelMeta> showCustomModels(String providerName) {

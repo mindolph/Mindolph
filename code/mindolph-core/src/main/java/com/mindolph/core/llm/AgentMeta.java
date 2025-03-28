@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @since unknown
  */
-public class Agent implements Serializable {
+public class AgentMeta implements Serializable {
    private String id;
    private String name;
    private GenAiModelProvider provider;

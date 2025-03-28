@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.GenAiConstants;
-import com.mindolph.core.llm.Agent;
+import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -119,39 +119,39 @@ public class LlmConfig {
         return null;
     }
 
-    public Agent loadAgent(String id) {
+    public AgentMeta loadAgent(String id) {
         return loadAgents().get(id);
     }
 
-    public Map<String, Agent> loadAgents() {
+    public Map<String, AgentMeta> loadAgents() {
         String json = fxPreferences.getPreference(PrefConstants.GEN_AI_AGENTS, "{}");
-        Type collectionType = new TypeToken<Map<String, Agent>>() {
+        Type collectionType = new TypeToken<Map<String, AgentMeta>>() {
         }.getType();
         return newGson().fromJson(json, collectionType);
     }
 
-    public boolean saveAgent(Agent agent) {
-        Map<String, Agent> agentMap = loadAgents();
-        if (agentMap.values().stream().anyMatch(a -> a.getName().equals(agent.getName()))) {
+    public boolean saveAgent(AgentMeta agentMeta) {
+        Map<String, AgentMeta> agentMap = loadAgents();
+        if (agentMap.values().stream().anyMatch(a -> a.getName().equals(agentMeta.getName()))) {
             return false;
         }
-        agentMap.put(String.valueOf(UUID.randomUUID()), agent);
+        agentMap.put(String.valueOf(UUID.randomUUID()), agentMeta);
         fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, new Gson().toJson(agentMap));
         return true;
     }
 
-    public void saveAgent(String agentId, Agent agent) {
-        if (StringUtils.isBlank(agentId) || agent == null) {
+    public void saveAgent(String agentId, AgentMeta agentMeta) {
+        if (StringUtils.isBlank(agentId) || agentMeta == null) {
             throw new IllegalStateException("Agent id or agent is null");
         }
-        Map<String, Agent> agentMap = loadAgents();
-        agent.setId(agentId);
-        agentMap.put(agentId, agent);
+        Map<String, AgentMeta> agentMap = loadAgents();
+        agentMeta.setId(agentId);
+        agentMap.put(agentId, agentMeta);
         fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, newGson().toJson(agentMap));
     }
 
     public void removeAgent(String agentId) {
-        Map<String, Agent> agentMap = loadAgents();
+        Map<String, AgentMeta> agentMap = loadAgents();
         agentMap.remove(agentId);
         fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, new Gson().toJson(agentMap));
     }

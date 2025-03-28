@@ -70,7 +70,7 @@
                     <Button fx:id="btnModifyKB" text="Modify"/>
                 </PreferenceItem>
                 <PreferenceItem name="Embedding: ">
-                    <Button fx:id="btnEmbedding" text="Start embedding"/>
+                    <Button fx:id="btnEmbedding" text="Start embedding" disable="true"/>
                     <ProgressBar fx:id="pbWaiting" prefHeight="8.0" visible="false"/>
                     <Label fx:id="lblEmbedding" text=""/>
                 </PreferenceItem>
