@@ -1,7 +1,13 @@
 package com.mindolph.base.editor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.container.FixedSplitPane;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -11,10 +17,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Editor with preview.
@@ -49,7 +51,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     protected ViewMode viewMode = ViewMode.BOTH;
 
     private final AtomicLong scrollStartTime = new AtomicLong(0);
-    private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
+    private final static double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
     public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext, acceptDraggingFiles);

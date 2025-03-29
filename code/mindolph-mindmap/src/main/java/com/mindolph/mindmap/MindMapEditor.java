@@ -1,5 +1,23 @@
 package com.mindolph.mindmap;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
+
 import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.ExtraFile;
 import com.igormaznitsa.mindmap.model.MMapURI;
@@ -19,6 +37,7 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
+import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
@@ -27,24 +46,10 @@ import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapAnchor;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.swiftboot.collections.tree.Node;
-import org.swiftboot.collections.tree.Tree;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
 
 /**
  * @author mindolph.com@gmail.com
@@ -402,7 +407,6 @@ public class MindMapEditor extends BaseEditor {
         if (threadPoolService != null) threadPoolService.close();
         if (mindMapView != null) mindMapView.dispose();
         MindmapEvents.unsubscribeMmdSaveEvent(mindMapView);
-        System.gc();
     }
 
     @Override

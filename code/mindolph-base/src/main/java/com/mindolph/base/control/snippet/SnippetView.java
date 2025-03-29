@@ -1,12 +1,26 @@
 package com.mindolph.base.control.snippet;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.textfield.TextFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mindolph.base.BaseView;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.plugin.SnippetHelper;
+import static com.mindolph.core.constant.SupportFileTypes.TYPE_MARKDOWN;
+import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
+import static com.mindolph.core.constant.SupportFileTypes.TYPE_PLANTUML;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.model.Snippet;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,11 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.function.Function;
-
 import static com.mindolph.core.constant.SupportFileTypes.*;
+
 
 /**
  * @author mindolph.com@gmail.com
@@ -97,6 +110,9 @@ public class SnippetView extends BaseView {
                         this.reload(null, null);
                     }
                 }
+                default -> { 
+                    throw new IllegalArgumentException();
+                }                
             }
         });
 

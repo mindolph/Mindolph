@@ -47,6 +47,6 @@ public class Row {
     }
 
     public void setData(List<String> data) {
-        this.data = data;
+        this.data = new ArrayList<>(data);
     }
 }
