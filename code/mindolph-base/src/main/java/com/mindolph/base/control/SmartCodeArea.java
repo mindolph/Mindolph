@@ -7,6 +7,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;
 import javafx.application.Platform;
@@ -148,7 +149,14 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     });
                     summaryMenuItem.setOnAction(event -> {
                         SmartCodeArea.this.onCompleted();
-                        generator.showSummarizePanel(SmartCodeArea.super.getSelectedText(), SmartCodeArea.this);
+                        String textToBeSummarized = SmartCodeArea.super.getSelectedText();
+                        if (StringUtils.isBlank(textToBeSummarized)) {
+                            if (!DialogFactory.okCancelConfirmDialog("", "No text is selected for summarization, use entire content of the file")) {
+                                return;
+                            }
+                            textToBeSummarized = SmartCodeArea.super.getText();
+                        }
+                        generator.showSummarizePanel(textToBeSummarized, SmartCodeArea.this);
                     });
 
                     generator.setOnPanelShowing(stackPane -> {
@@ -171,7 +179,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                                 SmartCodeArea.this.relocatedPanelToCaret(pane);
                             }
                             else {
-                                if (log.isTraceEnabled()) log.trace("select generated text from: %s".formatted(originPos));
+                                if (log.isTraceEnabled())
+                                    log.trace("select generated text from: %s".formatted(originPos));
                                 SmartCodeArea.super.selectRange(originPos, SmartCodeArea.this.getCaretPosition());
                             }
                         });
@@ -228,7 +237,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             if (log.isTraceEnabled())
                 log.trace("bound in parent:%s".formatted(BoundsUtils.boundsInString(this.getBoundsInParent())));
             if (log.isTraceEnabled()) log.trace("hover bounds:%s".formatted(BoundsUtils.boundsInString(hoverBounds)));
-            if (log.isTraceEnabled()) log.trace("target dimension: %s".formatted(DimensionUtils.dimensionInStr(targetDimension)));
+            if (log.isTraceEnabled())
+                log.trace("target dimension: %s".formatted(DimensionUtils.dimensionInStr(targetDimension)));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, targetDimension,
                     new Dimension2D(5, 5));
             inputPanel.relocate(p2.getX(), p2.getY());
