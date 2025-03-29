@@ -1,6 +1,22 @@
 # Change Logs
 
-### V.11.4 Unstable Release
+### V1.11.5 Unstable Release
+* Feature:
+    * Support Gen-AI summarizing for mind map.
+    * New option `UI icon size` to adjust the size of icons globally with 3 grades: small(16), medium(20), large(24).
+
+* Improvement:
+    * Optimized the handling of user-initiated stop during Gen-AI generation.
+    * Temporarily disable the editor during Gen-AI generation to avoid unexpected situations.
+
+* Bug Fixes:
+    * Error handling doesn't work for streaming DeepSeek provider.
+    * Exception when generate or summarize by LLM if `Custom` model option is selected but no any custom model is defined and selected.
+    * For setting Gen-AI custom model, the `delete` button should be disabled when there is no any custom model exists.
+
+
+
+### V1.11.4 Unstable Release
 * Feature: add new option `UI font size` to set the global UI font size. (https://github.com/mindolph/Mindolph/issues/12)   
 * Improvement: update OpenAI and Google Gemini models; display model's max tokens as '%sK' format.   
 * Improvement: remember the latest user input prompt for initializing the prompt of Gen-AI input panel.  
