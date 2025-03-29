@@ -120,7 +120,7 @@ public class DummyLlmProvider implements LlmProvider {
                 case PLANTUML:
                     generated = generated + "I can do more.";
                 default:
-                    generated = generated + "\nUnknown format.";
+                    generated = generated + "\nI can do more.";
                     break;
             }
         }

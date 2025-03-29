@@ -57,7 +57,8 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     @FXML
     private Tab tabGenAi;
 
-    private int lastActivatedTabIndex = 0;
+    // be used to remember the last activated tab for user convenience until the application exits.
+    private static int lastActivatedTabIndex = 0;
 
     private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
 
