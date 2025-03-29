@@ -97,6 +97,9 @@ public class SnippetView extends BaseView {
                         this.reload(null, null);
                     }
                 }
+                default -> { 
+                    throw new IllegalArgumentException();
+                }                
             }
         });
 

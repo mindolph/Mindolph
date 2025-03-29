@@ -472,6 +472,8 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
     }
 
     /**
+     * Traverse the tree of the whole mind map include the root topic.
+     *
      * @param consumer
      * @since 1.3.4
      */
@@ -479,6 +481,12 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         traverseTopicTree(this.root, consumer);
     }
 
+    /**
+     * Traverse the tree of a topic include the topic itself.
+     *
+     * @param parent
+     * @param consumer
+     */
     public void traverseTopicTree(T parent, Consumer<T> consumer) {
         consumer.accept(parent);
         List<T> children = parent.getChildren();
