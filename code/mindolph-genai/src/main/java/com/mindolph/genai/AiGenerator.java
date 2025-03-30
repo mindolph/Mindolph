@@ -2,6 +2,7 @@ package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
@@ -16,6 +17,7 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.preference.FxPreferences;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -36,7 +38,7 @@ import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.
- * The setParentPane() should be called to setup anchored pane before using this Generator.
+ * The setParentPane() should be called to set up anchored pane before using this Generator.
  *
  * @author mindolph.com@gmail.com
  * @since 1.7
@@ -63,9 +65,6 @@ public class AiGenerator implements Generator {
     private AiInputPane inputPanel;
     private AiSummaryPane summarizePanel;
     private AiReframePane reframePanel;
-
-    // remember the latest prompt
-    private String latestPrompt;
 
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
@@ -201,10 +200,11 @@ public class AiGenerator implements Generator {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        if (StringUtils.isNotBlank(defaultInput)) {
-            latestPrompt = defaultInput;
+        String prompt = defaultInput;
+        if (StringUtils.isBlank(defaultInput)) {
+            prompt = FxPreferences.getInstance().getPreference(PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT, "");
         }
-        inputPanel = new AiInputPane(editorId, fileType, latestPrompt);
+        inputPanel = new AiInputPane(editorId, fileType, prompt);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
