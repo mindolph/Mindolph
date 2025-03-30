@@ -1,0 +1,5 @@
+@startregex
+'this file is created by Mindolph at 2025-03-30 13:37:31
+title minimumRepetition
+ab{1}c{1,}
+@endregex
