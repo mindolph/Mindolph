@@ -9,6 +9,7 @@ import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.PaneUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT;
 import static com.mindolph.core.constant.GenAiConstants.ActionType;
 
 /**
@@ -52,6 +54,9 @@ public class AiInputPane extends BaseAiPane {
     private Button btnGenerate;
     @FXML
     private ProgressBar pbWaiting;
+
+    // be used to remember the latest prompt for user convenience until the application exits.
+    private static String latestPrompt;
 
     public AiInputPane(Object editorId, String fileType, String defaultInput) {
         super("/genai/ai_input_pane.fxml", editorId, fileType);
@@ -105,6 +110,7 @@ public class AiInputPane extends BaseAiPane {
                                 .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null)
                                 .isRetry(false).isStreaming(isStreaming)
                                 .createInput());
+                FxPreferences.getInstance().savePreference(GEN_AI_LATEST_GENERATE_PROMPT, prompt);
             }
             else {
                 taInput.requestFocus();

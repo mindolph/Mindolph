@@ -34,6 +34,8 @@ public interface PrefConstants {
     String GEN_AI_TIMEOUT = "genai.timeout";
     String GEN_AI_OUTPUT_LANGUAGE = "genai.outputLanguage";
 
+    String GEN_AI_LATEST_GENERATE_PROMPT = "genai.generate.latestPrompt";
+
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";
     String GENERAL_PROXY_HOST = "general.proxy.host";
