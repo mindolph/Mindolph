@@ -161,11 +161,15 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         log.error("Image is null");
                         return;
                     }
+                    if (image.isError()) {
+                        log.error("Image contains error: " + image.getException());
+                        return;
+                    }
                     log.debug("Export image: %sx%s".formatted(image.getWidth(), image.getHeight()));
                     ImageIO.write(SwingFXUtils.fromFXImage(image, null), "jpg", snapshotFile);
                     log.info("Exported image to file: %s".formatted(snapshotFile));
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
