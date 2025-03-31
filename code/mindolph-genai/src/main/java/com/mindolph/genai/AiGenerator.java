@@ -219,6 +219,7 @@ public class AiGenerator implements Generator {
         summarizePanel = new AiSummaryPane(editorId, fileType, input, bondEditor);
         this.addToParent(summarizePanel);
         panelShowingConsumer.accept(summarizePanel);
+        summarizePanel.requestFocus();
         return summarizePanel;
     }
 
