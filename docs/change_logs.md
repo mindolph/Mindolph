@@ -2,7 +2,7 @@
 
 ### V1.12.0 Unstable Release
 * Features:
-	* Let user change the prompt for summarization just before starting.
+	* Let user change the prompt for generating summary just before starting.
 	* PlantUML: Support CSS style and C4 Model diagram by code snippets.
 	* Add some new groups of sprites (Tupadr3) snippets to PlantUML, including devicons, font-awesome , material, govicons, weather.
 	* A special multi-level outline annotation format is introduced for the PlantUML editor. By using this format in the comment, the specified content can be displayed in the outline item. The number of `*` indicates the level, for example: `' *foobar*` indicates the first-level title, `' **foobar**` indicates the second-level title.
