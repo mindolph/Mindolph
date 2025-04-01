@@ -16,13 +16,13 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 ### 功能
 * 可以创建多个工作空间来管理您的文件。并且文件保存在您本机的存储上，相较于基于云的方案，您拥有对它们完全的掌控。
 * 工作空间采用树形目录结构来组织文件。
-* 支持生成式AI，你可以通过大模型的 API 来生成或者总结归纳文本内容，支持思维导图, Markdown，PlantUML 和纯文本编辑器。支持的大语言模型:  
-	* OpenAI  
-	* 阿里通义千问  
-	* Ollama  
-	* Google Gemini API  
-	* Hugging Face API  
-	* ChatGLM  
+* 支持生成式AI，你可以通过大模型的 API 来生成或者总结归纳文本内容，支持思维导图, Markdown，PlantUML 和纯文本编辑器。支持的大语言模型:
+	* OpenAI
+	* 阿里通义千问
+	* Ollama
+	* Google Gemini API
+	* Hugging Face API
+	* ChatGLM
 	* DeepSeek
 * 多标签页打开文件而不是单文件窗口，可以方便的在多个文件之间来回切换。
 * 支持思维导图(`*.mmd`), Markdown(`*.md`), PlantUML(`*.puml`), CSV 表格(`*.csv`) 以及纯文本(`*.txt`)等多种文件格式，后续还会支持更多格式。
@@ -51,16 +51,18 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 
 
 ### 界面
+* 思维导图
 <p float="left">
 	<img src="screenshots/mindmap_light_snippet.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<img src="screenshots/mindmap_dark_outline.jpg" width="45%"/>
 </p>
+* Markdown
 <p float="left">
 	<img src="screenshots/markdown1.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="screenshots/puml_activity_snippet.jpg" width="45%"/>
 </p>
+* PlantUML
 <p float="left">
 	<img src="screenshots/puml_sequence.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
@@ -69,7 +71,18 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 <p float="left">
 	<img src="screenshots/puml_state.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="screenshots/puml_activity_snippet.jpg" width="45%"/>
+</p>
+* 生成式AI
+<p float="left">
+	<img src="release-notes/v1.11/v1.11_genai_streaming.gif" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="release-notes/v1.11/v1.11_genai_summarize.gif" width="45%"/>
+</p>
+* 其他
+<p float="left">
 	<img src="screenshots/find_in_files.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
 
 [更多](screenshots.md)
@@ -79,9 +92,9 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 
 #### 发行说明
 
-* 稳定版: [v1.11.x](release-notes/v1.11/v1.11_zh_CN.md)  
+* 稳定版: [v1.11.x](release-notes/v1.11/v1.11_zh_CN.md)
 
-* 试用版: [v1.12.x](release-notes/v1.12/v1.12_zh_CN.md)  
+* 试用版: [v1.12.x](release-notes/v1.12/v1.12_zh_CN.md)
 
 #### 下载
 

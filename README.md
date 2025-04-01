@@ -50,16 +50,18 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 
 
 ### Screenshots
+* Mind Map
 <p float="left">
 	<img src="docs/screenshots/mindmap_light_snippet.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<img src="docs/screenshots/mindmap_dark_outline.jpg" width="45%"/>
 </p>
+* Markdown
 <p float="left">
 	<img src="docs/screenshots/markdown1.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="docs/screenshots/puml_activity_snippet.jpg" width="45%"/>
 </p>
+* PlantUML
 <p float="left">
 	<img src="docs/screenshots/puml_sequence.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
@@ -68,7 +70,18 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 <p float="left">
 	<img src="docs/screenshots/puml_state.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/screenshots/puml_activity_snippet.jpg" width="45%"/>
+</p>
+* Gen-AI
+<p float="left">
+	<img src="docs/release-notes/v1.11/v1.11_genai_streaming.gif" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="docs/release-notes/v1.11/v1.11_genai_summarize.gif" width="45%"/>
+</p>
+* Others
+<p float="left">
 	<img src="docs/screenshots/find_in_files.jpg" width="45%"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
 
 [See More](docs/screenshots.md)
