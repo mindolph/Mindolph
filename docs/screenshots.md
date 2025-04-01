@@ -1,6 +1,7 @@
 # screenshots
 
 * Gen-AI
+
 	![v1.11_genai_streaming.gif](release-notes/v1.11/v1.11_genai_streaming.gif)
 
 	![v1.11_genai_summarize.gif](release-notes/v1.11/v1.11_genai_summarize.gif)
