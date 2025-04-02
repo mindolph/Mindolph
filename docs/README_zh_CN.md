@@ -57,11 +57,14 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<img src="screenshots/mindmap_dark_outline.jpg" width="45%"/>
 </p>
+
 * Markdown
 <p float="left">
 	<img src="screenshots/markdown1.jpg" width="45%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="screenshots/markdown1.jpg" width="45%"/>
 </p>
+
 * PlantUML
 <p float="left">
 	<img src="screenshots/puml_sequence.jpg" width="45%"/>
@@ -73,12 +76,14 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<img src="screenshots/puml_activity_snippet.jpg" width="45%"/>
 </p>
+
 * 生成式AI
 <p float="left">
-	<img src="release-notes/v1.11/v1.11_genai_streaming.gif" width="45%"/>
+	<img src="release-notes/v1.11/v1.11_genai_streaming.gif" width="36%"/>
 	&nbsp;&nbsp;&nbsp;&nbsp;
-	<img src="release-notes/v1.11/v1.11_genai_summarize.gif" width="45%"/>
+	<img src="release-notes/v1.11/v1.11_genai_summarize.gif" width="54%"/>
 </p>
+
 * 其他
 <p float="left">
 	<img src="screenshots/find_in_files.jpg" width="45%"/>
