@@ -37,7 +37,7 @@ public class CustomModelDialog extends BaseDialogController<ModelMeta> {
         dialog.setOnShown(event -> {
             Platform.runLater(() -> tfModel.requestFocus());
         });
-        spMaxOutputTokens.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 512));
+        spMaxOutputTokens.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1024, Integer.MAX_VALUE, 1024, 1024));
         tfModel.textProperty().addListener((observable, oldValue, newValue) -> {
             result = new ModelMeta(tfModel.getText(), spMaxOutputTokens.getValue());
         });
