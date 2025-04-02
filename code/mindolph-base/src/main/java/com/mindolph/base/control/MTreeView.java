@@ -1,16 +1,18 @@
 package com.mindolph.base.control;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mindolph.core.model.ItemData;
+
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.skin.TreeViewSkin;
 import javafx.scene.control.skin.VirtualFlow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @see ItemData
@@ -48,7 +50,7 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
         TreeVisitor.dfsTraverse(treeItem, item -> {
             log.trace("%s node: %s".formatted(expand ? "Expand" : "Collapse", item));
             item.setExpanded(expand);
-            return null;
+            return Boolean.TRUE;
         });
         if (includeParent) treeItem.setExpanded(expand);
         super.refresh();

@@ -24,5 +24,8 @@ public interface LlmProvider {
      */
     void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer);
 
+    /**
+     * Stop the streaming when it's running.
+     */
     void stopStreaming();
 }

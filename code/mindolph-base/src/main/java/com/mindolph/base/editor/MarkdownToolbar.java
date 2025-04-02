@@ -5,13 +5,15 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtCodeArea.Replacement;
 import com.mindolph.base.dialog.TableDialog;
 import com.mindolph.base.dialog.TableOptions;
-import com.mindolph.core.constant.SyntaxConstants;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.dialog.impl.RadioDialogBuilder;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.IndexRange;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.RegExUtils;
@@ -21,10 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.swiftboot.util.UrlUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHARS;
 
 /**
  * @author mindolph.com@gmail.com
@@ -176,7 +177,19 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         }
         else if (node == btnTable) {
             if (markdownCodeArea.getSelection().getLength() > 0) {
-                this.wrapSelectedTextByTable();
+                Dialog<String> dialog = new RadioDialogBuilder<String>().owner(DialogFactory.DEFAULT_WINDOW)
+                        .title("Choose")
+                        .content("Choose separator to split columns: ")
+                        .option(BLANK_CHARS, "Blank characters")
+                        .option("\t+", "Only Tab characters")
+                        .defaultValue(BLANK_CHARS)
+                        .build();
+
+                Optional<String> optSelected = dialog.showAndWait();
+                if (optSelected.isPresent()) {
+                    // the selected value is just the separator to table columns.
+                    this.wrapSelectedTextByTable(optSelected.get());
+                }
             }
             else {
                 this.showTableDialogAndGenerateTable();
@@ -222,17 +235,17 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
         });
     }
 
-    private void wrapSelectedTextByTable() {
+    private void wrapSelectedTextByTable(String separator) {
         String selectedText = markdownCodeArea.getSelectedText();
         String[] lines = StringUtils.split(selectedText, "\n");
         List<List<String>> ll = new ArrayList<>(lines.length);
         for (String line : lines) {
-            String[] cells = line.trim().split(SyntaxConstants.BLANK_CHARS);
+            String[] cells = line.trim().split(separator);
             log.debug(Arrays.toString(cells));
             ll.add(Arrays.asList(cells));
         }
         int maxSize = ll.stream().reduce((l1, l2) -> l1.size() > l2.size() ? l1 : l2).get().size();
-        log.debug("maxSize: " + maxSize);
+        log.debug("maxSize: %d".formatted(maxSize));
         StringBuilder buf = new StringBuilder();
         buf.append(this.generateTableHeader(maxSize));
         for (List<String> row : ll) {

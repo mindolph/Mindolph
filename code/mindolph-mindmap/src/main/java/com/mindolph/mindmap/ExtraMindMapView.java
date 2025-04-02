@@ -278,8 +278,22 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                         });
                         summaryMenuItem.setOnAction(event -> {
                             super.setDisable(false);
-                            String allSelectedText = getSelectedTopics().stream().map(Topic::getText).collect(Collectors.joining("\n"));
-                            generator.showSummarizePanel(allSelectedText, this);
+                            String textToBeSummarized = null;
+                            List<TopicNode> selectedTopics = getSelectedTopics();
+                            boolean hasChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
+                            if (hasChildren && DialogFactory.yesNoConfirmDialog("Do you want all the sub topics of selected topics to be summarized either?")) {
+                                textToBeSummarized = selectedTopics.stream().map(selectedTopic -> {
+                                    StringBuilder buf = new StringBuilder();
+                                    getModel().traverseTopicTree(selectedTopic, t -> {
+                                        buf.append(t.getText()).append(Constants.NEXT_LINE);
+                                    });
+                                    return buf.toString().trim();
+                                }).collect(Collectors.joining("\n"));
+                            }
+                            else {
+                                textToBeSummarized = selectedTopics.stream().map(Topic::getText).collect(Collectors.joining("\n"));
+                            }
+                            generator.showSummarizePanel(textToBeSummarized, this);
                         });
                         generator.setOnPanelShowing(pane -> {
                             super.setDisable(true);

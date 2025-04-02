@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +36,10 @@ public class AiSummaryPane extends BaseAiPane {
 
     private static final Logger log = LoggerFactory.getLogger(AiSummaryPane.class);
 
+    @FXML
+    private TextArea taInput;
+    @FXML
+    private TextField tfToBeSummarized;
     @FXML
     private TextArea taOutput;
     @FXML
@@ -53,7 +58,7 @@ public class AiSummaryPane extends BaseAiPane {
     // workaround bond to the editor to control it's state.
     private final Node bondEditor;
 
-    public AiSummaryPane(Object editorId, String fileType, String inputText, Node bondEditor) {
+    public AiSummaryPane(Object editorId, String fileType, String toBeSummarized, Node bondEditor) {
         super("/genai/ai_summary_pane.fxml", editorId, fileType);
         this.bondEditor = bondEditor;
 
@@ -61,6 +66,7 @@ public class AiSummaryPane extends BaseAiPane {
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
         lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveAiProvider()));
+        tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnClose.setOnAction(event -> {
@@ -71,7 +77,7 @@ public class AiSummaryPane extends BaseAiPane {
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
         btnSummarize.setOnAction(event -> {
-            starToSummarize(inputText);
+            starToSummarize(toBeSummarized);
         });
         btnCopy.setOnAction(event -> {
             if (StringUtils.isNotBlank(taOutput.getText())) {
@@ -85,10 +91,16 @@ public class AiSummaryPane extends BaseAiPane {
         PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
                 this, hbDone, hbGenerating);
 
-        this.requestFocus();
     }
 
-    private void starToSummarize(String inputText) {
+    @Override
+    public void requestFocus() {
+        Platform.runLater(() -> {
+            this.taInput.requestFocus();
+        });
+    }
+
+    private void starToSummarize(String txtToBeSummarized) {
 //        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
         if (cbModel.getValue() == null) {
             DialogFactory.warnDialog("Please select a model to summarize your selected content.");
@@ -100,11 +112,19 @@ public class AiSummaryPane extends BaseAiPane {
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
         bondEditor.setDisable(true);
-        Input input = new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
+        String prompt = """
+                %s:
+                ```
+                %s
+                ```
+                """.formatted(
+                StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
+                txtToBeSummarized);
+        Input input = new InputBuilder().model(modelMeta.name()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
                 .createInput();
-        LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
+        LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
                 streamToken -> {
                     if (streamToken.isError()) {
                         log.warn("error from streaming: {}", streamToken);

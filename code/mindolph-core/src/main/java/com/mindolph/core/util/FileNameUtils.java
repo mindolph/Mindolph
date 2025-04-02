@@ -55,7 +55,11 @@ public class FileNameUtils {
     }
 
     public static boolean isImagePath(String path) {
-        return FilenameUtils.isExtension(path, SupportFileTypes.TYPE_PLAIN_JPG, SupportFileTypes.TYPE_PLAIN_PNG);
+        return FilenameUtils.isExtension(path,
+                SupportFileTypes.TYPE_PLAIN_JPG,
+                SupportFileTypes.TYPE_PLAIN_JPEG,
+                SupportFileTypes.TYPE_PLAIN_PNG,
+                SupportFileTypes.TYPE_PLAIN_GIF);
     }
 
     public static boolean containsSeparator(String fileName) {

@@ -1,6 +1,47 @@
 # Change Logs
 
-### V.11.4 Unstable Release
+### V1.12.0 Unstable Release
+* Features:
+	* Let user change the prompt for generating summary just before starting.
+	* PlantUML: Support CSS style and C4 Model diagram by code snippets.
+	* Add some new groups of sprites (Tupadr3) snippets to PlantUML, including devicons, font-awesome , material, govicons, weather.
+	* A special multi-level outline annotation format is introduced for the PlantUML editor. By using this format in the comment, the specified content can be displayed in the outline item. The number of `*` indicates the level, for example: `' *foobar*` indicates the first-level title, `' **foobar**` indicates the second-level title.
+	* Add support to the Moonshot LLM API. 
+
+* Improvement: 
+	* Display the amount of items in snippet group and update it if filtered by inputting a keyword.
+	* Merged some snippet groups for PlantUML.
+	* When you insert a table using the table button on the Markdown editor toolbar, if text content has been selected at the time, the generated table will automatically split and wrap the selected content.
+	* Allow user to choose separator when using the quick inserting table feature with selected text.
+	* Automatically focus on input field or area while the snippet dialog pops up.
+	* Show a tooltip for snippet with more information and longer time.
+	* Add description to custom snippet.
+	* Optimize the title auto generation for newly created Markdown file. 
+
+
+### V1.11.6 Release
+* Improvement: use entire file content for summary if no text is selected in Markdown, PlantUML and Text editors.
+* Improvement: in the mind map editor, when summarizing any selected topics that contain sub-topics, ask whether to include sub-topics.  
+* Fix: when reducing the width of the left sidebar by mouse, the scroll bar of the snippet view will be obscured.  
+* Some refactors and improvements. thanks Moab Alves(https://github.com/moabalv)
+
+
+### V1.11.5 Unstable Release
+* Feature:
+    * Support Gen-AI summarizing for mind map.
+    * New option `UI icon size` to adjust the size of icons globally with 3 grades: small(16), medium(20), large(24).
+
+* Improvement:
+    * Optimized the handling of user-initiated stop during Gen-AI generation.
+    * Temporarily disable the editor during Gen-AI generation to avoid unexpected situations.
+
+* Bug Fixes:
+    * Error handling doesn't work for streaming DeepSeek provider.
+    * Exception when generate or summarize by LLM if `Custom` model option is selected but no any custom model is defined and selected.
+    * For setting Gen-AI custom model, the `delete` button should be disabled when there is no any custom model exists.
+
+
+### V1.11.4 Unstable Release
 * Feature: add new option `UI font size` to set the global UI font size. (https://github.com/mindolph/Mindolph/issues/12)   
 * Improvement: update OpenAI and Google Gemini models; display model's max tokens as '%sK' format.   
 * Improvement: remember the latest user input prompt for initializing the prompt of Gen-AI input panel.  

@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TextField?>
 <fx:root type="StackPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <AnchorPane style="-fx-background-color: #D3D3D3FF;">
         <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -31,6 +32,18 @@
                     </HBox.margin>
                 </Button>
             </HBox>
+            <VBox>
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <TextArea fx:id="taInput" prefHeight="50.0" prefWidth="480.0" text="summarize following content concisely:" />
+            </VBox>
+            <VBox>
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <TextField fx:id="tfToBeSummarized" prefWidth="480.0" editable="false" />
+            </VBox>
             <VBox>
                 <VBox.margin>
                     <Insets/>

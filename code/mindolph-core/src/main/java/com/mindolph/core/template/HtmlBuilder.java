@@ -1,5 +1,9 @@
 package com.mindolph.core.template;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -11,10 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
 import org.swiftboot.util.PathUtils;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.mindolph.core.template.ResourcePathType.ABSOLUTE;
 import static com.mindolph.core.template.ResourcePathType.RELATIVE;
