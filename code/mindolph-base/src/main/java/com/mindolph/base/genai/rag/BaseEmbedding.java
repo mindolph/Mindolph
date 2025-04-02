@@ -20,11 +20,11 @@ import java.util.function.Function;
  */
 public class BaseEmbedding {
 
-    protected <T> Object withJdbcConnection(Function<Connection, T> handler) {
+    protected <T> T withJdbcConnection(Function<Connection, T> handler) {
         DataSourceConfig dsConfig = new DataSourceConfig(System.getenv("PG_HOST"), 5433);
         dsConfig.setUser(System.getenv("PG_USER"));
         dsConfig.setPassword(System.getenv("PG_PASSWORD"));
-        dsConfig.setDatabase("postgres");
+        dsConfig.setDatabase(System.getenv("PG_DATABASE"));
         String url = "jdbc:postgresql://%s:%d/%s".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase());
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
             return handler.apply(conn);

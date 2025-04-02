@@ -8,13 +8,9 @@ import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.genai.GenaiUiConstants.MessageType;
 import com.mindolph.mfx.dialog.DialogFactory;
-import dev.langchain4j.service.TokenStream;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +29,8 @@ public class ChatView extends BaseView {
     @FXML
     private ChoiceBox<Pair<String, AgentMeta>> cbAgent;
     @FXML
+    private ProgressIndicator piAgent;
+    @FXML
     private Label lblAgent;
     @FXML
     private ChatPane chatPane;
@@ -48,13 +46,36 @@ public class ChatView extends BaseView {
 
         cbAgent.setConverter(GenaiUiConstants.agentConverter);
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
-            RagService.getInstance().useAgent(newValue.getValue());
-            currentAgentMeta = newValue.getValue();
-            String lb = "%s: %s\n %d files".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().name(), currentAgentMeta.getFiles().size());
-            lblAgent.setText(lb);
+            if (newValue == null) {
+                return;
+            }
+            Platform.runLater(() -> {
+                chatPane.clearChatHistory();
+                piAgent.setVisible(true);
+                piAgent.setManaged(true);
+                taInput.setDisable(true);
+            });
+            RagService.getInstance().useAgent(newValue.getValue(), () -> {
+                currentAgentMeta = newValue.getValue();
+                Platform.runLater(() -> {
+                    piAgent.setVisible(false);
+                    piAgent.setManaged(false);
+                    String lb = "%s: %s\n %d files".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().name(), currentAgentMeta.getFiles().size());
+                    lblAgent.setText(lb);
+                    ChatPartial cp = new ChatPartial("Ask me anything", MessageType.AI, true);
+                    chatPane.appendChatPartial(cp);
+                    taInput.setDisable(false);
+                    taInput.requestFocus();
+                    updateNoticeInformation(currentAgentMeta.getName());
+                });
+            });
         });
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getName(), agentMeta)).toList());
+
+        taInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnSend.setDisable(StringUtils.isBlank(newValue));
+        });
 
         btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnSend.setOnAction(event -> {
@@ -65,36 +86,43 @@ public class ChatView extends BaseView {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 ChatPartial chat = new ChatPartial(taInput.getText(), MessageType.HUMAN);
                 chat.setLast(true);
-                Platform.runLater(() -> {
-
-                });
                 chatPane.appendChatPartial(chat);
                 taInput.clear();
                 chatPane.scrollToBottom();
+                chatPane.waitForAnswer();
                 // to do real LLM chatting
-                TokenStream tokenStream = RagService.getInstance().chat(chat.getText());
-                tokenStream.onRetrieved(contents -> {
-                            log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
-                            log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));
-                            chatPane.resumeAutoScroll();
-                        })
-                        .onPartialResponse(s -> {
-                            ChatPartial chatPartial = new ChatPartial(s, MessageType.AI);
-                            chatPane.appendChatPartial(chatPartial);
-                            chatPane.scrollToBottom();
-                        })
-                        .onCompleteResponse(resp -> {
-                            ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
-                            chatPartial.setLast(true);
-                            chatPane.appendChatPartial(chatPartial);
-                            chatPane.scrollToBottom();
-                        })
-                        .onError(e -> DialogFactory.errDialog(e.getMessage()))
-                        .start();
+                RagService.getInstance().chat(chat.getText(), tokenStream -> {
+                    tokenStream.onRetrieved(contents -> {
+                                log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
+                                log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));
+                                chatPane.resumeAutoScroll();
+                            })
+                            .onPartialResponse(s -> {
+                                Platform.runLater(() -> {
+                                    ChatPartial chatPartial = new ChatPartial(s, MessageType.AI);
+                                    chatPane.appendChatPartial(chatPartial);
+                                    chatPane.scrollToBottom();
+                                });
+                            })
+                            .onCompleteResponse(resp -> {
+                                Platform.runLater(() -> {
+                                    ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
+                                    chatPartial.setLast(true);
+                                    chatPane.appendChatPartial(chatPartial);
+                                    chatPane.scrollToBottom();
+                                });
+                            })
+                            .onError(e -> DialogFactory.errDialog(e.getMessage()))
+                            .start();
+                });
             }
             else {
                 taInput.setPromptText("Chat with your agent");
             }
         });
+    }
+
+    public void updateNoticeInformation(String agentName) {
+        taInput.setPromptText("Chat with your agent \"%s\"".formatted(agentName));
     }
 }

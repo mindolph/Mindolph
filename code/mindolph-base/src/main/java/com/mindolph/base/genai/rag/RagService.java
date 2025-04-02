@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @since unknown
@@ -69,7 +70,7 @@ public class RagService extends BaseEmbedding {
     }
 
     private List<String> findDocIdsByAgent(String agentId) {
-        List<String> docIdList = (List<String>) super.withJdbcConnection(connection -> {
+        List<String> docIdList = super.withJdbcConnection(connection -> {
             String sql = "select id, file_name, agent_id from mindolph_doc where agent_id = ?";
             List<String> docIds = new ArrayList<>();
             try {
@@ -87,22 +88,28 @@ public class RagService extends BaseEmbedding {
         return docIdList;
     }
 
-    public void useAgent(AgentMeta agentMeta) {
+    public void useAgent(AgentMeta agentMeta, Runnable ready) {
         log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().name());
-        this.streamingLanguageModelAdapter = new StreamingLanguageModelAdapter(agentMeta);
-        this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
-        agent = AiServices.builder(Agent.class)
-                .streamingChatLanguageModel(streamingLanguageModelAdapter)
-                .contentRetriever(contentRetriever)
-                .chatMemory(chatMemory)
-                .build();
+        new Thread(() -> {
+            this.streamingLanguageModelAdapter = new StreamingLanguageModelAdapter(agentMeta);
+            this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
+            agent = AiServices.builder(Agent.class)
+                    .streamingChatLanguageModel(streamingLanguageModelAdapter)
+                    .contentRetriever(contentRetriever)
+                    .chatMemory(chatMemory)
+                    .build();
+            ready.run();
+        }).start();
     }
 
-    public TokenStream chat(String message) {
+    public void chat(String message, Consumer<TokenStream> consumer) {
         log.info("Human: {}", message);
         if (agent == null) {
             throw new RuntimeException("Use agent before chatting");
         }
-        return agent.chat(message);
+        new Thread(() -> {
+            TokenStream tokenStream = agent.chat(message);
+            consumer.accept(tokenStream);
+        }).start();
     }
 }

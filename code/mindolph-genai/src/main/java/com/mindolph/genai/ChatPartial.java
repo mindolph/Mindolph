@@ -15,6 +15,12 @@ public class ChatPartial {
         this.type = type;
     }
 
+    public ChatPartial(String text, GenaiUiConstants.MessageType type, boolean isLast) {
+        this.text = text;
+        this.type = type;
+        this.isLast = isLast;
+    }
+
     public String getText() {
         return text;
     }

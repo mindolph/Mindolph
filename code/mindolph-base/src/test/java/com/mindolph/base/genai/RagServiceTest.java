@@ -9,7 +9,6 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.mfx.preference.FxPreferences;
-import dev.langchain4j.service.TokenStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,13 +64,15 @@ public class RagServiceTest extends BaseLlmTest {
             Assertions.fail("Setup agents first");
         }
         AgentMeta agentMeta = agentMap.get(agentMap.keySet().stream().findFirst().get());
-        RagService.getInstance().useAgent(agentMeta);
-        TokenStream tokenStream = RagService.getInstance().chat("What can I do?");
-        tokenStream.onRetrieved(contents -> {
-                    System.out.println("onRetrieved: " + contents);
-                })
-                .onPartialResponse(s -> System.out.println("onPartialResponse: " + s))
-                .onError(throwable -> System.out.println("onError: " + throwable)).start();
+        RagService.getInstance().useAgent(agentMeta, () -> {
+            RagService.getInstance().chat("What can I do?", tokenStream -> {
+                tokenStream.onRetrieved(contents -> {
+                            System.out.println("onRetrieved: " + contents);
+                        })
+                        .onPartialResponse(s -> System.out.println("onPartialResponse: " + s))
+                        .onError(throwable -> System.out.println("onError: " + throwable)).start();
+            });
+        });
         try {
             Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
