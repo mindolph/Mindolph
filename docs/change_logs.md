@@ -20,7 +20,7 @@
 
 
 ### V1.11.6 Release
-* Improvement: use entire file content for summary if no text is selected in Markdown, PlantUML and Text editors.
+* Improvement: use entire file content for summarizing if no text is selected in Markdown, PlantUML and Text editors.
 * Improvement: in the mind map editor, when summarizing any selected topics that contain sub-topics, ask whether to include sub-topics.  
 * Fix: when reducing the width of the left sidebar by mouse, the scroll bar of the snippet view will be obscured.  
 * Some refactors and improvements. thanks Moab Alves(https://github.com/moabalv)
