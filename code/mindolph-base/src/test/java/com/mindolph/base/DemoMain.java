@@ -114,4 +114,9 @@ public class DemoMain extends Application {
     private void onSyncScroll() {
         loadUriToStage("/sync_demo.fxml").show();
     }
+
+    @FXML
+    private void onCheckTreeView() {
+        loadUriToStage("/control/check_treeview_demo.fxml").show();
+    }
 }

@@ -21,11 +21,13 @@ import org.swiftboot.collections.tree.Node;
 import org.swiftboot.collections.tree.Tree;
 
 import com.mindolph.base.EditorContext;
+
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.DOUBLE_QUOTE;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINES_MOVE;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINE_DELETE;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.QUOTE;
 import static com.mindolph.base.control.ExtCodeArea.FEATURE.TAB_INDENT;
+
 import com.mindolph.base.control.SearchableCodeArea;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.model.OutlineItemData;
@@ -200,7 +202,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         threadPoolService.execute(() -> {
             Matcher matcher = outlinePattern.matcher(codeArea.getText());
             if (!matcher.hasMatch()) {
-                log.warn("No outline found by: %s".formatted(getOutlinePattern()));
+                if (log.isDebugEnabled()) log.debug("No outline found by: %s".formatted(getOutlinePattern()));
             }
             Tree tree = new Tree();
             Node root = new Node("Stub");

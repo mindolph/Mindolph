@@ -5,7 +5,7 @@ import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.*;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.AgentMeta;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
@@ -38,8 +38,8 @@ public class StreamingLanguageModelAdapter implements StreamingChatLanguageModel
     public StreamingLanguageModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
         String providerName = agentMeta.getProvider().getName();
-        ProviderProps providerProps = LlmConfig.getIns().loadGenAiProviderProps(providerName);
-        ProviderProps propsForAgent = new ProviderProps(providerProps.apiKey(), providerProps.baseUrl(), providerProps.aiModel(), providerProps.useProxy());
+        ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
+        ProviderMeta propsForAgent = new ProviderMeta(providerMeta.apiKey(), providerMeta.baseUrl(), providerMeta.aiModel(), providerMeta.useProxy());
         this.llmProvider = LlmProviderFactory.create(agentMeta.getProvider().getName(), propsForAgent);
     }
 
@@ -67,17 +67,20 @@ public class StreamingLanguageModelAdapter implements StreamingChatLanguageModel
                 .isStreaming(true).temperature(0.5f).createInput();
         OutputParams oparams = new OutputParams(null, GenAiConstants.OutputFormat.TEXT);
         this.llmProvider.stream(input, oparams, streamToken -> {
-            if (streamToken.isStop()) {
-                ChatResponse resp = ChatResponse.builder().aiMessage(new AiMessage(streamToken.text()))
-                        .tokenUsage(new TokenUsage(streamToken.outputTokens()))
-                        .finishReason(FinishReason.STOP).build();
-                handler.onCompleteResponse(resp);
-            }
-            else if (streamToken.isError()) {
+            if (streamToken.isError()) {
+                log.error("Streaming error: {}", streamToken.text());
                 handler.onError(new RuntimeException(streamToken.text()));
             }
             else {
-                handler.onPartialResponse(streamToken.text());
+                if (streamToken.isStop()) {
+                    ChatResponse resp = ChatResponse.builder().aiMessage(new AiMessage(streamToken.text()))
+                            .tokenUsage(new TokenUsage(streamToken.outputTokens()))
+                            .finishReason(FinishReason.STOP).build();
+                    handler.onCompleteResponse(resp);
+                }
+                else {
+                    handler.onPartialResponse(streamToken.text());
+                }
             }
         });
     }

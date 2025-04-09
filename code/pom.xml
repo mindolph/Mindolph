@@ -102,6 +102,107 @@
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-document-parser-apache-tika</artifactId>
                 <version>${langchain4j.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-apple-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-audiovideo-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-cad-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-code-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-crypto-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-digest-commons</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-font-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-html-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-image-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-mail-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-microsoft-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-miscoffice-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-news-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-ocr-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-pdf-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-pkg-module</artifactId>
+                    </exclusion>
+<!-- this module is required -->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.apache.tika</groupId>-->
+<!--                        <artifactId>tika-parser-text-module</artifactId>-->
+<!--                    </exclusion>-->
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-webarchive-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-xml-module</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.tika</groupId>
+                        <artifactId>tika-parser-xmp-commons</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>dev.langchain4j</groupId>
@@ -118,11 +219,11 @@
                 <artifactId>langchain4j-pgvector</artifactId>
                 <version>${langchain4j.version}</version>
             </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-embeddings-bge-small-zh</artifactId>
-                <version>${langchain4j.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>dev.langchain4j</groupId>-->
+<!--                <artifactId>langchain4j-embeddings-bge-small-zh</artifactId>-->
+<!--                <version>${langchain4j.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-community-dashscope</artifactId>

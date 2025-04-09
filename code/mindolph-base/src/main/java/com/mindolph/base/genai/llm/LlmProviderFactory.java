@@ -1,6 +1,6 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
@@ -10,7 +10,7 @@ import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
  */
 public class LlmProviderFactory {
     
-    public static LlmProvider create(String providerName, ProviderProps props) {
+    public static LlmProvider create(String providerName, ProviderMeta props) {
         if (props != null) {
             LlmProvider llmProvider = null;
             if (OPEN_AI.getName().equals(providerName)) {

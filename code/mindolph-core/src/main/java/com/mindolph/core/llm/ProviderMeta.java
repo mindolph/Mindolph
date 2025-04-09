@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * General properties for a Gen-AI provider.
+ * Meta for a Gen-AI provider.
  */
-public class ProviderProps {
+public class ProviderMeta {
 
     private String apiKey;
     private String baseUrl;
@@ -14,8 +14,8 @@ public class ProviderProps {
     private boolean useProxy;
     private List<ModelMeta> customModels;
 
-    public ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy,
-                         List<ModelMeta> customModels) {
+    public ProviderMeta(String apiKey, String baseUrl, String aiModel, boolean useProxy,
+                        List<ModelMeta> customModels) {
         this.apiKey = apiKey;
         this.baseUrl = baseUrl;
         this.aiModel = aiModel;
@@ -23,7 +23,7 @@ public class ProviderProps {
         this.customModels = customModels;
     }
 
-    public ProviderProps(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
+    public ProviderMeta(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
         this(apiKey, baseUrl, aiModel, useProxy, List.of());
     }
 
@@ -71,7 +71,7 @@ public class ProviderProps {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ProviderProps) obj;
+        var that = (ProviderMeta) obj;
         return Objects.equals(this.apiKey, that.apiKey) &&
                 Objects.equals(this.baseUrl, that.baseUrl) &&
                 Objects.equals(this.aiModel, that.aiModel) &&

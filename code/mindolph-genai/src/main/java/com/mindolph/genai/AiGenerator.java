@@ -15,7 +15,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.application.Platform;
@@ -174,10 +174,10 @@ public class AiGenerator implements Generator {
     @Override
     public ProviderInfo getProviderInfo() {
         LlmConfig config = LlmConfig.getIns();
-        String activeAiProvider = config.getActiveAiProvider();
-        Map<String, ProviderProps> providers = config.loadGenAiProviders();
+        String activeAiProvider = config.getActiveProviderMeta();
+        Map<String, ProviderMeta> providers = config.loadAllProviderMetas();
         if (providers.containsKey(activeAiProvider)) {
-            ProviderProps props = providers.get(activeAiProvider);
+            ProviderMeta props = providers.get(activeAiProvider);
             return new ProviderInfo(activeAiProvider, props.aiModel());
         }
         return new ProviderInfo(activeAiProvider, null);
@@ -256,12 +256,12 @@ public class AiGenerator implements Generator {
 
     private boolean checkSettings() {
         LlmConfig config = LlmConfig.getIns();
-        String activeProvider = config.getActiveAiProvider();
+        String activeProvider = config.getActiveProviderMeta();
         if (StringUtils.isNotBlank(activeProvider)) {
-            Map<String, ProviderProps> propsMap = config.loadGenAiProviders();
+            Map<String, ProviderMeta> propsMap = config.loadAllProviderMetas();
             if (propsMap.containsKey(activeProvider)) {
                 GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
-                ProviderProps props = propsMap.get(activeProvider);
+                ProviderMeta props = propsMap.get(activeProvider);
                 if (provider == null || props == null) return false;
                 log.debug("Provider: %s".formatted(provider));
                 log.trace(String.valueOf(props));

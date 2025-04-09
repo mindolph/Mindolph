@@ -12,7 +12,8 @@ public enum GenAiModelProvider {
     HUGGING_FACE("HuggingFace", ProviderType.PUBLIC),
     CHAT_GLM("ChatGLM", ProviderType.PUBLIC),
     DEEP_SEEK("DeepSeek", ProviderType.PUBLIC),
-    MOONSHOT("Moonshot", ProviderType.PUBLIC);
+    MOONSHOT("Moonshot", ProviderType.PUBLIC),
+    INTERNAL("Internal", ProviderType.INTERNAL);
 
 
     private final String name;
@@ -21,7 +22,6 @@ public enum GenAiModelProvider {
     GenAiModelProvider(String name, ProviderType type) {
         this.name = name;
         this.type = type;
-
     }
 
     public static GenAiModelProvider fromName(String name) {
@@ -42,6 +42,6 @@ public enum GenAiModelProvider {
     }
 
     public enum ProviderType {
-        PUBLIC, PRIVATE
+        PUBLIC, PRIVATE, INTERNAL
     }
 }

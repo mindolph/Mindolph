@@ -1,18 +1,25 @@
 package com.mindolph.base.genai.llm;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.GenAiConstants;
-import com.mindolph.core.llm.AgentMeta;
-import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.llm.AgentMeta;
+import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
+import com.mindolph.core.util.AppUtils;
+import com.mindolph.core.util.GsonUtils;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,6 +36,9 @@ public class LlmConfig {
     private static LlmConfig ins;
     private final FxPreferences fxPreferences;
 
+    private final Type collectionType = new TypeToken<Map<String, DatasetMeta>>() {
+    }.getType();
+
     public LlmConfig() {
         fxPreferences = FxPreferences.getInstance();
     }
@@ -41,7 +51,7 @@ public class LlmConfig {
     /**
      * @return
      */
-    public String getActiveAiProvider() {
+    public String getActiveProviderMeta() {
         return fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDER_ACTIVE, PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING,
                 OPEN_AI.getName());
     }
@@ -50,11 +60,11 @@ public class LlmConfig {
      * Save provider props, if the provider already exists, it will be overwritten.
      *
      * @param provider
-     * @param providerProps
+     * @param providerMeta
      */
-    public void saveGenAiProvider(GenAiModelProvider provider, ProviderProps providerProps) {
-        Map<String, ProviderProps> providerPropsMap = this.loadGenAiProviders();
-        providerPropsMap.put(provider.getName(), providerProps);
+    public void saveProviderMeta(GenAiModelProvider provider, ProviderMeta providerMeta) {
+        Map<String, ProviderMeta> providerPropsMap = this.loadAllProviderMetas();
+        providerPropsMap.put(provider.getName(), providerMeta);
         String json = new Gson().toJson(providerPropsMap);
         fxPreferences.savePreference(GEN_AI_PROVIDERS, json);
     }
@@ -67,11 +77,11 @@ public class LlmConfig {
      * @since 1.11
      */
     public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
-        ProviderProps providerProps = this.loadGenAiProviderProps(provider.getName());
-        for (ModelMeta customModel : providerProps.customModels()) {
+        ProviderMeta providerMeta = this.loadProviderMeta(provider.getName());
+        for (ModelMeta customModel : providerMeta.customModels()) {
             customModel.setActive(customModel.name().equals(modelMeta.name()));
         }
-        saveGenAiProvider(provider, providerProps);
+        saveProviderMeta(provider, providerMeta);
     }
 
     /**
@@ -79,16 +89,16 @@ public class LlmConfig {
      *
      * @return Provider name -> Provider properties
      */
-    public Map<String, ProviderProps> loadGenAiProviders() {
+    public Map<String, ProviderMeta> loadAllProviderMetas() {
         String json = fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDERS,
                 PrefConstants.GENERAL_AI_PROVIDERS, "{}");
-        Type collectionType = new TypeToken<Map<String, ProviderProps>>() {
+        Type collectionType = new TypeToken<Map<String, ProviderMeta>>() {
         }.getType();
         return new Gson().fromJson(json, collectionType);
     }
 
-    public ProviderProps loadGenAiProviderProps(String providerName) {
-        Map<String, ProviderProps> providers = loadGenAiProviders();
+    public ProviderMeta loadProviderMeta(String providerName) {
+        Map<String, ProviderMeta> providers = loadAllProviderMetas();
         return providers.get(providerName);
     }
 
@@ -99,11 +109,11 @@ public class LlmConfig {
      * @since 1.11
      */
     public ModelMeta preferredModelForActiveLlmProvider() {
-        String activeProvider = LlmConfig.getIns().getActiveAiProvider();
+        String activeProvider = LlmConfig.getIns().getActiveProviderMeta();
         if (StringUtils.isNotBlank(activeProvider)) {
-            Map<String, ProviderProps> providers = LlmConfig.getIns().loadGenAiProviders();
+            Map<String, ProviderMeta> providers = LlmConfig.getIns().loadAllProviderMetas();
             if (providers.containsKey(activeProvider)) {
-                ProviderProps props = providers.get(activeProvider);
+                ProviderMeta props = providers.get(activeProvider);
                 if (StringUtils.isNotBlank(props.aiModel())) {
                     if ("Custom".equals(props.aiModel())) {
                         if (props.customModels() == null) {
@@ -127,7 +137,7 @@ public class LlmConfig {
         String json = fxPreferences.getPreference(PrefConstants.GEN_AI_AGENTS, "{}");
         Type collectionType = new TypeToken<Map<String, AgentMeta>>() {
         }.getType();
-        return newGson().fromJson(json, collectionType);
+        return GsonUtils.newGson().fromJson(json, collectionType);
     }
 
     public boolean saveAgent(AgentMeta agentMeta) {
@@ -147,7 +157,7 @@ public class LlmConfig {
         Map<String, AgentMeta> agentMap = loadAgents();
         agentMeta.setId(agentId);
         agentMap.put(agentId, agentMeta);
-        fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, newGson().toJson(agentMap));
+        fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, GsonUtils.newGson().toJson(agentMap));
     }
 
     public void removeAgent(String agentId) {
@@ -156,21 +166,106 @@ public class LlmConfig {
         fxPreferences.savePreference(PrefConstants.GEN_AI_AGENTS, new Gson().toJson(agentMap));
     }
 
-    private Gson newGson() {
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapter(File.class, new FileSerializer());
-        return builder.create();
+    public List<DatasetMeta> getDatasetsFromAgentId(String agentId) {
+        AgentMeta agentMeta = this.loadAgent(agentId);
+        return this.getDatasetsFromIds(agentMeta.getDatasetIds());
     }
 
-    static class FileSerializer implements JsonSerializer<File>, JsonDeserializer<File> {
+    public List<DatasetMeta> getDatasetsFromIds(List<String> datasetIds) {
+        Map<String, DatasetMeta> datasetMap = loadAllDatasets();
+        return datasetIds.stream().map(datasetMap::get).toList();
+    }
 
-        @Override
-        public File deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return json.isJsonNull() ? null : new File(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(File json, Type typeOfSrc, JsonSerializationContext context) {
-            return json == null ? JsonNull.INSTANCE : new JsonPrimitive(json.getPath());
+    public Map<String, DatasetMeta> loadAllDatasets() {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(datasetConfigFile()), StandardCharsets.UTF_8))) {
+            Object o = GsonUtils.newGson().fromJson(reader, collectionType);
+            if (o == null) {
+                return new HashMap<>();
+            }
+            return (Map<String, DatasetMeta>) o;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    public void saveDataset(String datasetId, DatasetMeta datasetMeta) {
+        if (StringUtils.isBlank(datasetId) || datasetMeta == null) {
+            throw new IllegalStateException("Agent id or agent is null");
+        }
+        Map<String, DatasetMeta> datasetMap = loadAllDatasets();
+        datasetMeta.setId(datasetId);
+        datasetMap.put(datasetId, datasetMeta);
+        String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
+        try {
+            IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeDataset(String datasetId) {
+        Map<String, DatasetMeta> datasetMap = this.loadAllDatasets();
+        datasetMap.remove(datasetId);
+        String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
+        try {
+            IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private File datasetConfigFile() {
+        String path = "%s/conf/datasets.json".formatted(AppUtils.getAppBaseDir());
+        File f = new File(path);
+        if (!f.exists()) {
+            try {
+                if (f.createNewFile()) {
+                    return f;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return f;
+    }
+
+//    public List<DatasetMeta> getDatasetsFromAgentId(String agentId) {
+//        AgentMeta agentMeta = LlmConfig.getIns().loadAgent(agentId);
+//        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
+//        if (agentMeta.getDatasetIds() == null || agentMeta.getDatasetIds().isEmpty()) {
+//            return null;
+//        }
+//        return agentMeta.getDatasetIds().stream().map(datasetMap::get).toList();
+//    }
+//
+//    public List<DatasetMeta> getDatasetsFromIds(List<String> datasetIds) {
+//        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
+//        return datasetIds.stream().map(datasetMap::get).toList();
+//    }
+//
+//    public Map<String, DatasetMeta> loadAllDatasets() {
+//        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_DATASETS, "{}");
+//        Type collectionType = new TypeToken<Map<String, DatasetMeta>>() {
+//        }.getType();
+//        return GsonUtils.newGson().fromJson(json, collectionType);
+//    }
+//
+//    public void saveDataset(String datasetId, DatasetMeta datasetMeta) {
+//        if (StringUtils.isBlank(datasetId) || datasetMeta == null) {
+//            throw new IllegalStateException("Agent id or agent is null");
+//        }
+//        Map<String, DatasetMeta> datasetMap = loadAllDatasets();
+//        datasetMeta.setId(datasetId);
+//        datasetMap.put(datasetId, datasetMeta);
+//        fxPreferences.savePreference(PrefConstants.GEN_AI_DATASETS, GsonUtils.newGson().toJson(datasetMap));
+//    }
+//
+//    public void removeDataset(String datasetId) {
+//        Map<String, DatasetMeta> datasetMap = this.loadAllDatasets();
+//        datasetMap.remove(datasetId);
+//        fxPreferences.savePreference(PrefConstants.GEN_AI_DATASETS, GsonUtils.newGson().toJson(datasetMap));
+//    }
+
+
 }

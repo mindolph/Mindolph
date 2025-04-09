@@ -2,7 +2,7 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +42,9 @@ public class LlmService {
             llmProvider = new DummyLlmProvider();
         }
         else {
-            Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-            activeAiProvider = LlmConfig.getIns().getActiveAiProvider();
-            ProviderProps props = map.get(activeAiProvider);
+            Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
+            activeAiProvider = LlmConfig.getIns().getActiveProviderMeta();
+            ProviderMeta props = map.get(activeAiProvider);
             llmProvider = LlmProviderFactory.create(activeAiProvider, props);
             log.info("Using llm provider: %s".formatted(activeAiProvider));
         }

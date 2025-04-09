@@ -1,27 +1,20 @@
 package com.mindolph.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
+import com.google.gson.Gson;
+import com.mindolph.core.model.Snippet;
+import com.mindolph.core.util.AppUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.CryptoUtils;
 
-import com.google.gson.Gson;
-import com.mindolph.core.model.Snippet;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * @since 1.10.1
@@ -35,7 +28,7 @@ public class AppManager {
     private final File baseDir;
 
     private AppManager() {
-        baseDir = new File(SystemUtils.getUserHome(), ".mindolph");
+        baseDir = AppUtils.getAppBaseDir();
     }
 
     public static synchronized AppManager getInstance() {
@@ -110,14 +103,14 @@ public class AppManager {
 
     private SnippetsRecord loadSnippetsRecord(String fileType) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-            new FileInputStream(snippetsFile(fileType)), StandardCharsets.UTF_8))) {
-        return new Gson().fromJson(reader, SnippetsRecord.class);
+                new FileInputStream(snippetsFile(fileType)), StandardCharsets.UTF_8))) {
+            return new Gson().fromJson(reader, SnippetsRecord.class);
 //            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
 //            if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
 //            return snippetsRecord;
         } catch (FileNotFoundException e) {
             return null;
-        //Catch dessa exceção é novo também    
+            //Catch dessa exceção é novo também
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -133,8 +126,7 @@ public class AppManager {
     }
 
     private File snippetsFile(String fileType) {
-        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment ? ".dev" : ""));
-        return snippetsFile;
+        return new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment ? ".dev" : ""));
     }
 
     public record SnippetsRecord(int version, List<SnippetRecord> items) {

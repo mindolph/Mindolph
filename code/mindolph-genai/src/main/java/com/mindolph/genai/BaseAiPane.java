@@ -6,7 +6,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,7 +14,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
-import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,29 +52,29 @@ public abstract class BaseAiPane extends StackPane {
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
 
-        String activeProvider = LlmConfig.getIns().getActiveAiProvider();
-        Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
-        ProviderProps providerProps = map.get(activeProvider);
+        String activeProvider = LlmConfig.getIns().getActiveProviderMeta();
+        Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
+        ProviderMeta providerMeta = map.get(activeProvider);
         Pair<String, ModelMeta> targetItem = null;
         List<Pair<String, ModelMeta>> allModels = new ArrayList<>();
         List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
         allModels.addAll(preModels);
-        if (providerProps.customModels() != null) {
-            List<Pair<String, ModelMeta>> customModels = providerProps.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
+        if (providerMeta.customModels() != null) {
+            List<Pair<String, ModelMeta>> customModels = providerMeta.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
             allModels.addAll(customModels);
         }
-        if ("Custom".equals(providerProps.aiModel())) {
+        if ("Custom".equals(providerMeta.aiModel())) {
             ModelMeta activeModel = null;
-            if (providerProps.customModels() != null) {
-                activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            if (providerMeta.customModels() != null) {
+                activeModel = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
             }
             if (activeModel != null) {
                 targetItem = new Pair<>(activeModel.name(), activeModel);
             }
         }
         else {
-            targetItem = new Pair<>(providerProps.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerProps.aiModel()));
+            targetItem = new Pair<>(providerMeta.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerMeta.aiModel()));
         }
 
         cbModel.getItems().clear();

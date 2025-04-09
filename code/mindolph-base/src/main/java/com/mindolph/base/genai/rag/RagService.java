@@ -1,6 +1,8 @@
 package com.mindolph.base.genai.rag;
 
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.llm.AgentMeta;
+import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -25,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * @since unknown
  */
-public class RagService extends BaseEmbedding {
+public class RagService extends BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(RagService.class);
 
@@ -49,15 +51,30 @@ public class RagService extends BaseEmbedding {
     }
 
     private RagService() {
-        embeddingModel = super.createEmbeddingModel();
-        embeddingStore = super.createEmbeddingStore(true, false);
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+    }
+
+    public void switchModel(String agentId, Consumer<Object> completed) {
+        List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromAgentId(agentId);
+        if (datasetMetas == null || datasetMetas.isEmpty()) {
+            log.warn("No datasets found for agent {}", agentId);
+        }
+        DatasetMeta mainDatasetMeta = datasetMetas.getFirst();
+        log.debug("Switch language and embedding model to %s, %s ".formatted(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name()));
+        embeddingModel = super.createEmbeddingModel(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name());
+        embeddingStore = createEmbeddingStore(embeddingModel, true, false);
+        completed.accept("RAG model is ready");
     }
 
     private ContentRetriever buildContentRetriever(String agentId) {
         List<String> docIds = this.findDocIdsByAgent(agentId);
         if (docIds == null || docIds.isEmpty()) {
             log.warn("No docs found for agent {}, the agent might not work.", agentId);
+            throw new RuntimeException("No docs found for agent");
+        }
+        if (embeddingStore == null || embeddingModel == null) {
+            log.warn("No embedding store or embedding model for agent {}", agentId);
+            throw new RuntimeException("No embedding store or embedding model for agent");
         }
         log.debug("Build content retriever with filter on doc ids: {}.", StringUtils.join(docIds, ","));
         return EmbeddingStoreContentRetriever.builder()
@@ -70,12 +87,22 @@ public class RagService extends BaseEmbedding {
     }
 
     private List<String> findDocIdsByAgent(String agentId) {
+        List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromAgentId(agentId);
+        if (datasetMetas == null || datasetMetas.isEmpty()) {
+            log.warn("No datasets are set for agent {}", agentId);
+            return null;
+        }
         List<String> docIdList = super.withJdbcConnection(connection -> {
-            String sql = "select id, file_name, agent_id from mindolph_doc where agent_id = ?";
+            String params = StringUtils.repeat("?", ",", datasetMetas.size());
+            String sql = "select id, file_name, dataset_id from mindolph_doc where dataset_id in (%s)".formatted(params);
+            log.debug("findDocIdsByAgent sql: {}", sql);
             List<String> docIds = new ArrayList<>();
             try {
                 PreparedStatement ps = connection.prepareStatement(sql);
-                ps.setString(1, agentId);
+                List<String> ids = datasetMetas.stream().map(DatasetMeta::getId).toList();
+                for (int i = 0; i < ids.size(); i++) {
+                    ps.setString(i + 1, ids.get(i));
+                }
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     docIds.add(rs.getString(1));
@@ -88,17 +115,34 @@ public class RagService extends BaseEmbedding {
         return docIdList;
     }
 
-    public void useAgent(AgentMeta agentMeta, Runnable ready) {
+    public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
         log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().name());
         new Thread(() -> {
-            this.streamingLanguageModelAdapter = new StreamingLanguageModelAdapter(agentMeta);
-            this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
-            agent = AiServices.builder(Agent.class)
-                    .streamingChatLanguageModel(streamingLanguageModelAdapter)
-                    .contentRetriever(contentRetriever)
-                    .chatMemory(chatMemory)
-                    .build();
-            ready.run();
+            try {
+                this.switchModel(agentMeta.getId(), o -> {
+                    if (o instanceof Exception) {
+                        finished.accept(o);
+                    }
+                    else {
+                        this.streamingLanguageModelAdapter = new StreamingLanguageModelAdapter(agentMeta);
+                        this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
+                        if (this.contentRetriever == null) {
+                            finished.accept(new RuntimeException("Unable to use this agent"));
+                            return;
+                        }
+                        agent = AiServices.builder(Agent.class)
+                                .streamingChatLanguageModel(streamingLanguageModelAdapter)
+                                .contentRetriever(contentRetriever)
+                                .chatMemory(chatMemory)
+                                .build();
+                        log.debug(o.toString());
+                        finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                    }
+                });
+
+            } catch (Exception e) {
+                finished.accept(e);
+            }
         }).start();
     }
 
@@ -108,8 +152,12 @@ public class RagService extends BaseEmbedding {
             throw new RuntimeException("Use agent before chatting");
         }
         new Thread(() -> {
-            TokenStream tokenStream = agent.chat(message);
-            consumer.accept(tokenStream);
+            try {
+                TokenStream tokenStream = agent.chat(message);
+                consumer.accept(tokenStream);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 }

@@ -30,10 +30,14 @@ public interface PrefConstants {
     String GENERAL_AI_TIMEOUT = "general.genai.timeout";
 
     String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
+    String GEN_AI_PROVIDER_LATEST = "genai.provider.latest";
     String GEN_AI_PROVIDERS = "genai.providers";
     String GEN_AI_TIMEOUT = "genai.timeout";
     String GEN_AI_OUTPUT_LANGUAGE = "genai.outputLanguage";
     String GEN_AI_AGENTS = "genai.agents";
+    String GEN_AI_AGENT_LATEST = "genai.agent.latest";
+    String GEN_AI_DATASETS = "genai.datasets";
+    String GEN_AI_DATASET_LATEST = "genai.dataset.latest";
 
     String GEN_AI_LATEST_GENERATE_PROMPT = "genai.generate.latestPrompt";
 

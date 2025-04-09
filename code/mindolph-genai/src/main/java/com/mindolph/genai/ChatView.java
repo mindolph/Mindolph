@@ -27,6 +27,8 @@ public class ChatView extends BaseView {
     private static final Logger log = LoggerFactory.getLogger(ChatView.class);
 
     @FXML
+    private Label lblAgentIcon;
+    @FXML
     private ChoiceBox<Pair<String, AgentMeta>> cbAgent;
     @FXML
     private ProgressIndicator piAgent;
@@ -43,7 +45,7 @@ public class ChatView extends BaseView {
 
     public ChatView() {
         super("/genai/chat_view.fxml", false);
-
+        lblAgentIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
         cbAgent.setConverter(GenaiUiConstants.agentConverter);
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
@@ -55,12 +57,24 @@ public class ChatView extends BaseView {
                 piAgent.setManaged(true);
                 taInput.setDisable(true);
             });
-            RagService.getInstance().useAgent(newValue.getValue(), () -> {
+            RagService.getInstance().listenOnProgressEvent(s -> {
+                log.debug("RagService progress: {}", s);
+            });
+            RagService.getInstance().useAgent(newValue.getValue(), (palyload) -> {
+                if (palyload instanceof Exception e) {
+                    log.error("Failed to use agent: %s".formatted(newValue.getValue().getName()), e);
+                    Platform.runLater(() -> {
+                        piAgent.setVisible(false);
+                        piAgent.setManaged(false);
+                        DialogFactory.errDialog("Failed to use agent: \n%s".formatted(e.getLocalizedMessage()));
+                    });
+                    return;
+                }
                 currentAgentMeta = newValue.getValue();
                 Platform.runLater(() -> {
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
-                    String lb = "%s: %s\n %d files".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().name(), currentAgentMeta.getFiles().size());
+                    String lb = "%s: %s\n".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().name());
                     lblAgent.setText(lb);
                     ChatPartial cp = new ChatPartial("Ask me anything", MessageType.AI, true);
                     chatPane.appendChatPartial(cp);

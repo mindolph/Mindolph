@@ -20,7 +20,8 @@
         <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
         </padding>
-        <HBox spacing="10">
+        <HBox spacing="5">
+            <Label fx:id="lblAgentIcon" prefWidth="32" prefHeight="32"/>
             <ChoiceBox fx:id="cbAgent"/>
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
             <Label fx:id="lblAgent" alignment="BASELINE_LEFT"/>

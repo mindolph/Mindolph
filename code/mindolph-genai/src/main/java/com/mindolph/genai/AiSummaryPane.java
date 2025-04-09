@@ -65,7 +65,7 @@ public class AiSummaryPane extends BaseAiPane {
         this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
-        lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveAiProvider()));
+        lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveProviderMeta()));
         tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));

@@ -1,10 +1,13 @@
 package com.mindolph.genai;
 
 import com.mindolph.base.BaseView;
+import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.IconKey;
 import com.mindolph.genai.GenaiUiConstants.MessageType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -58,7 +61,6 @@ public class ChatPane extends BaseView {
         if (chatDisplay == null) {
             // first partial arrived.
             HBox hBox = new HBox();
-            hBox.setAlignment(Pos.CENTER_RIGHT);
             Text text = new Text(chatPartial.getText());
             chatDisplay = new TextFlow(text);
             chatDisplay.setPadding(new Insets(5, 10, 5, 10));
@@ -71,8 +73,11 @@ public class ChatPane extends BaseView {
                 hBox.setPadding(new Insets(5, 5, 5, 20));
             }
             else if (chatPartial.getType() == MessageType.AI) {
-                hBox.setAlignment(Pos.CENTER_LEFT);
+                hBox.setAlignment(Pos.TOP_LEFT);
                 hBox.setPadding(new Insets(5, 20, 5, 5));
+                Label lblAvatar = new Label();
+                lblAvatar.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
+                hBox.getChildren().add(lblAvatar);
             }
             hBox.getChildren().add(chatDisplay);
             vbChat.getChildren().add(hBox);

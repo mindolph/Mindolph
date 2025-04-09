@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox>
+        <PreferenceItem name="Output language:">
+            <ChoiceBox fx:id="cbLanguages" prefWidth="240.0"/>
+        </PreferenceItem>
+        <PreferenceItem name="Time out(second):">
+            <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
+        </PreferenceItem>
+    </VBox>
+
+
+</fx:root>

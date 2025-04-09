@@ -7,10 +7,7 @@ import com.mindolph.core.llm.ModelMeta;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -91,6 +88,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v3", "zh_CN"));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v2", "zh_CN"));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v1", "zh_CN"));
 
 
             // https://www.bigmodel.cn/console/modelcenter/square
@@ -116,11 +116,28 @@ public interface GenAiConstants {
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-8k", 8192));
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-32k", 32768));
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-128k", 131072));
+
+            // Internal
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMeta("BAAI/bge-small-en-v1.5", "en", "https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main"));
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMeta("BAAI/bge-small-zh-v1.5", "zh_CN", "https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main"));
         }
     };
 
+    String[] SUPPORTED_EMBEDDING_FILE_TYPES = new String[]{"mmd", "md", "txt"};
+    MultiValuedMap<String, ModelMeta> INTERNAL_EMBEDDING_MODELS = new HashSetValuedHashMap<>() {
+        {
+            put("en", new ModelMeta("BAAI/bge-small-en-v1.5", "en", "https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main"));
+            put("zh_CN", new ModelMeta("BAAI/bge-small-zh-v1.5", "zh_CN", "https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main"));
+        }
+    };
+
+    static Collection<ModelMeta> lookupModel(String langCode) {
+        return INTERNAL_EMBEDDING_MODELS.get(langCode);
+    }
+
     /**
      * Lookup language by language coed, eg: zh-CN returns "Simplified Chinese (China)"
+     *
      * @param langCode
      * @return
      */

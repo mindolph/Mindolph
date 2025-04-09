@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.PreferenceItem?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <VBox>
+        <PreferenceItem name="Agent: ">
+            <ChoiceBox fx:id="cbAgent" prefWidth="140.0">
+            </ChoiceBox>
+            <Button fx:id="btnAddAgent"/>
+            <Button fx:id="btnRemoveAgent"/>
+        </PreferenceItem>
+        <PreferenceItem name="Description:">
+            <TextField fx:id="tfDescription" prefWidth="240.0"/>
+        </PreferenceItem>
+        <PreferenceItem name="Language:">
+            <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
+        </PreferenceItem>
+        <PreferenceItem name="Chat Model: ">
+            <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
+            </ChoiceBox>
+            <ChoiceBox fx:id="cbModel" prefWidth="140.0">
+            </ChoiceBox>
+        </PreferenceItem>
+        <PreferenceItem name="Prompt: ">
+            <TextArea fx:id="taAgentPrompt" prefWidth="280.0" prefRowCount="10" prefColumnCount="100">
+            </TextArea>
+        </PreferenceItem>
+        <PreferenceItem name="Datasets: ">
+            <TableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="320.0">
+            </TableView>
+            <Button fx:id="btnSetDataset"/>
+        </PreferenceItem>
+    </VBox>
+
+</fx:root>

@@ -65,7 +65,7 @@ public class AiInputPane extends BaseAiPane {
         if (defaultInput != null && !defaultInput.isEmpty()) {
             taInput.positionCaret(defaultInput.length());
         }
-        String activeProvider = LlmConfig.getIns().getActiveAiProvider();
+        String activeProvider = LlmConfig.getIns().getActiveProviderMeta();
         log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
 
         ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();

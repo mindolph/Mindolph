@@ -23,5 +23,6 @@
       <Button mnemonicParsing="false" onAction="#onFont" text="Font"/>
       <Button mnemonicParsing="false" onAction="#onSyncScroll" text="Sync Scroll"/>
       <Button mnemonicParsing="false" onAction="#onIconView" text="IconView Demo"/>
+      <Button mnemonicParsing="false" onAction="#onCheckTreeView" text="CheckTreeView Demo"/>
    </VBox>
 </AnchorPane>

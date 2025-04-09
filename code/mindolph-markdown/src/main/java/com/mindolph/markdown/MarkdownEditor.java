@@ -530,7 +530,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         if (log.isTraceEnabled()) log.trace("Load markdown html to web view");
         html = (String) renderObject;
 
-        if (log.isTraceEnabled()) log.trace("Init the web view position to: %.1f, %.1f".formatted(currentScrollH, currentScrollV));
+        if (log.isTraceEnabled())
+            log.trace("Init the web view position to: %.1f, %.1f".formatted(currentScrollH, currentScrollV));
         String finalScript = RegExUtils.replaceAll(initScrollScript, "\\$\\{xPos\\}", String.valueOf(currentScrollH));
         finalScript = RegExUtils.replaceAll(finalScript, "\\$\\{yPos\\}", String.valueOf(currentScrollV));
 
@@ -544,11 +545,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
 //        System.out.println(finalHtml);
 
-        log.info("markdown rendered as html done with length: %d".formatted(finalHtml.length()));
+        if (log.isDebugEnabled())
+            log.debug("markdown rendered as html done with length: %d".formatted(finalHtml.length()));
         if (webEngine != null) {
             webEngine.loadContent(finalHtml);
         }
-        log.debug("after calling webengine loading html");
+        if (log.isDebugEnabled()) log.debug("after calling webengine loading html");
     }
 
     @Override
@@ -602,7 +604,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
-        return RegExUtils.replacePattern(heading, "#" , "");
+        return RegExUtils.replacePattern(heading, "#", "");
     }
 
 }

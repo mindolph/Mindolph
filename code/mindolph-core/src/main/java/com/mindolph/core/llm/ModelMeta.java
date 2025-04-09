@@ -11,6 +11,19 @@ public final class ModelMeta {
     private String name;
     private int maxTokens;
     private boolean active;
+    /**
+     * default is 1, 1 is Chat model, 2 is embedding model
+     */
+    private int type = 1;
+    /**
+     * default is false, Internal is running on the local, and the model must be downloaded from downloadUrl.
+     */
+    private boolean isInternal = false;
+    /**
+     * default is en, used for embedding model.
+     */
+    private String langCode = "en";
+    private String downloadUrl;
 
     /**
      * @param name
@@ -24,6 +37,34 @@ public final class ModelMeta {
 
     public ModelMeta(String name, int maxTokens) {
         this(name, maxTokens, false);
+    }
+
+    /**
+     * Construct for internal embedding model.
+     *
+     * @param name
+     * @param langCode
+     * @param downloadUrl
+     */
+    public ModelMeta(String name, String langCode, String downloadUrl) {
+        this.name = name;
+        this.type = 2;
+        this.isInternal = true;
+        this.langCode = langCode;
+        this.downloadUrl = downloadUrl;
+    }
+
+    /**
+     * Construct for external embedding model.
+     *
+     * @param name
+     * @param langCode
+     */
+    public ModelMeta(String name, String langCode) {
+        this.name = name;
+        this.type = 2;
+        this.isInternal = false;
+        this.langCode = langCode;
     }
 
     public String name() {
@@ -48,6 +89,38 @@ public final class ModelMeta {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isInternal() {
+        return isInternal;
+    }
+
+    public void setInternal(boolean internal) {
+        isInternal = internal;
+    }
+
+    public String getLangCode() {
+        return langCode;
+    }
+
+    public void setLangCode(String langCode) {
+        this.langCode = langCode;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     @Override

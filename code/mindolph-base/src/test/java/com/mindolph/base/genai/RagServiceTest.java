@@ -7,7 +7,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +17,7 @@ import org.swiftboot.util.ClasspathResourceUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @since unknown
@@ -48,9 +49,9 @@ public class RagServiceTest extends BaseLlmTest {
 
         if (StringUtils.isNotBlank(json)) {
             super.props = JsonParser.parseString(json).getAsJsonObject();
-            Map<String, ProviderProps> propsMap = new HashMap<>();
+            Map<String, ProviderMeta> propsMap = new HashMap<>();
             String apiKey = loadApiKey(GenAiModelProvider.DEEP_SEEK.getName());
-            ProviderProps pp = new ProviderProps(apiKey, "", "deepseek-chat", false);
+            ProviderMeta pp = new ProviderMeta(apiKey, "", "deepseek-chat", false);
             propsMap.put(GenAiModelProvider.DEEP_SEEK.getName(), pp);
             FxPreferences.getInstance().savePreference(PrefConstants.GEN_AI_PROVIDERS, new Gson().toJson(propsMap));
         }
@@ -63,8 +64,16 @@ public class RagServiceTest extends BaseLlmTest {
         if (agentMap == null || agentMap.isEmpty()) {
             Assertions.fail("Setup agents first");
         }
-        AgentMeta agentMeta = agentMap.get(agentMap.keySet().stream().findFirst().get());
-        RagService.getInstance().useAgent(agentMeta, () -> {
+        Optional<String> optAgent = agentMap.keySet().stream().filter("MindolphAgent"::equals).findFirst();
+        if (optAgent.isEmpty()) {
+            return;
+        }
+        AgentMeta agentMeta = agentMap.get(optAgent.get());
+        RagService.getInstance().useAgent(agentMeta, (payload) -> {
+            if (payload instanceof Exception e) {
+                e.printStackTrace();
+                return;
+            }
             RagService.getInstance().chat("What can I do?", tokenStream -> {
                 tokenStream.onRetrieved(contents -> {
                             System.out.println("onRetrieved: " + contents);

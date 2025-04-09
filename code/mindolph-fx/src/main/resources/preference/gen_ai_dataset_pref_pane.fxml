@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.container.*?>
+<?import com.mindolph.fx.control.WorkspaceSelector?>
+<?import com.mindolph.fx.view.FileSelectView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
+         xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox>
+        <PreferenceItem name="Dataset: ">
+            <ChoiceBox fx:id="cbDataset" prefWidth="140.0">
+            </ChoiceBox>
+            <Button fx:id="btnAddDataset"/>
+            <Button fx:id="btnRemoveDataset"/>
+        </PreferenceItem>
+        <PreferenceItem name="Language:">
+            <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
+        </PreferenceItem>
+        <PreferenceItem name="Embedding Model: ">
+            <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
+            </ChoiceBox>
+            <ChoiceBox fx:id="cbModel" prefWidth="140.0">
+            </ChoiceBox>
+        </PreferenceItem>
+        <PreferenceItem name="Select Files: ">
+            <VBox spacing="5" prefWidth="320" prefHeight="350">
+                <WorkspaceSelector fx:id="workspaceSelector" prefWidth="240.0" HBox.hgrow="ALWAYS"/>
+                <FileSelectView fx:id="fileSelectView" prefWidth="320" prefHeight="350"/>
+                <Label fx:id="lblSelectedFiles">
+                    Selected 12 folder and 138 files.
+                </Label>
+            </VBox>
+        </PreferenceItem>
+        <PreferenceItem name="Embedding: ">
+            <VBox spacing="5">
+                <Label fx:id="lblEmbeddingStatus" text="0%"/>
+                <HBox spacing="5">
+                    <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
+                    <Label fx:id="lblEmbeddingProgress" text="0%"/>
+                </HBox>
+            </VBox>
+
+        </PreferenceItem>
+        <PreferenceItem>
+            <Button fx:id="btnEmbedding" text="Start embedding" disable="false"/>
+        </PreferenceItem>
+    </VBox>
+
+</fx:root>
