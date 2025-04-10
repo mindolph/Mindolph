@@ -82,7 +82,7 @@
             <!--            </plugin>-->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -92,7 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.1</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -117,7 +117,7 @@
                 for the maven-dependency-plugin output. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <outputDirectory>${project.build.directory}/dependency</outputDirectory>
                     <finalName>${project.build.finalName}</finalName>
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.1</version>
                 <executions>
                     <execution>
                         <id>show-dependencies</id>
