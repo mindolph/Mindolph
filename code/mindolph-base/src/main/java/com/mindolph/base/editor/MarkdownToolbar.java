@@ -12,7 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.IndexRange;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ScrollPane;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.UrlUtils;
@@ -24,7 +24,7 @@ import java.util.Arrays;
  * @author mindolph.com@gmail.com
  * @see MarkdownCodeArea
  */
-public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
+public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEvent> {
 
     @FXML
     private Button btnBullet;
@@ -66,6 +66,9 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     public MarkdownToolbar(MarkdownCodeArea markdownCodeArea) {
         this.markdownCodeArea = markdownCodeArea;
         FxmlUtils.loadUri("/editor/markdown_toolbar.fxml", this);
+
+        this.getStyleClass().add("no-scroll-bar");
+        this.getStyleClass().add("no-border");
 
         FontIconManager fim = FontIconManager.getIns();
         btnBold.setGraphic(fim.getIcon(IconKey.BOLD));
