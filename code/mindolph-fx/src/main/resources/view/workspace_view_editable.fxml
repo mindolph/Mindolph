@@ -7,7 +7,7 @@
 <fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <HBox alignment="CENTER">
+        <HBox alignment="CENTER" minHeight="28">
             <WorkspaceSelector fx:id="workspaceSelector" prefWidth="999.0"
                                style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnNew" mnemonicParsing="false" styleClass="icon_button"
