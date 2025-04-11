@@ -1,6 +1,7 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.genai.ChoiceUtils;
@@ -45,6 +46,6 @@ public class GenAiOptionPrefPane extends BasePrefsPane implements Initializable 
     @Override
     protected void onSave(boolean notify) {
         if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges();
+            PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.GLOBAL);
     }
 }

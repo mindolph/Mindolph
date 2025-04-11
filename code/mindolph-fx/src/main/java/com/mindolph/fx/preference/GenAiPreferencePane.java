@@ -55,7 +55,6 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
 
     @Override
     protected void onSave(boolean notify) {
-        if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges();
+        // DO NOTHING
     }
 }

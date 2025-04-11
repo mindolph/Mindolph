@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -296,6 +297,6 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
     @Override
     protected void onSave(boolean notify) {
         if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges();
+            PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.MODEL_PREF_CHANGED);
     }
 }

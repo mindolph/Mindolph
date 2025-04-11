@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ModelMetaBuilder;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
@@ -88,9 +89,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
 //            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v3", "zh_CN"));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v2", "zh_CN"));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("text-embedding-v1", "zh_CN"));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v3").dimension(1024).langCode("zh_CN").build());
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v2").dimension(1536).langCode("zh_CN").build());
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v1").dimension(1536).langCode("zh_CN").build());
 
 
             // https://www.bigmodel.cn/console/modelcenter/square
@@ -118,16 +119,16 @@ public interface GenAiConstants {
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-128k", 131072));
 
             // Internal
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMeta("BAAI/bge-small-en-v1.5", "en", "https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main"));
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMeta("BAAI/bge-small-zh-v1.5", "zh_CN", "https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main"));
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").langCode("en").downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").langCode("zh_CN").downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
         }
     };
 
     String[] SUPPORTED_EMBEDDING_FILE_TYPES = new String[]{"mmd", "md", "txt"};
     MultiValuedMap<String, ModelMeta> INTERNAL_EMBEDDING_MODELS = new HashSetValuedHashMap<>() {
         {
-            put("en", new ModelMeta("BAAI/bge-small-en-v1.5", "en", "https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main"));
-            put("zh_CN", new ModelMeta("BAAI/bge-small-zh-v1.5", "zh_CN", "https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main"));
+            put("en", new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").langCode("en").dimension(384).downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
+            put("zh_CN", new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").langCode("zh_CN").dimension(512).downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
         }
     };
 

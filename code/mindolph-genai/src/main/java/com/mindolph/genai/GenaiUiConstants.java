@@ -4,6 +4,7 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ModelMetaBuilder;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 
@@ -23,7 +24,7 @@ public interface GenaiUiConstants {
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().name().compareTo(o2.getValue().name());
 
-    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>("Custom", new ModelMeta("Custom", 0));
+    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>("Custom", new ModelMetaBuilder().name("Custom").maxTokens(0).build());
 
     Map<String, String> SUPPORTED_EMBEDDING_LANG = Map.of("en", "English", "zh_CN", "Simplified Chinese");
 

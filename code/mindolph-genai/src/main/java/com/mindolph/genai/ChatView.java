@@ -5,24 +5,29 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.RagService;
+import com.mindolph.base.plugin.PluginEvent.EventType;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.genai.GenaiUiConstants.MessageType;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
  * @since unknown
  */
-public class ChatView extends BaseView {
+public class ChatView extends BaseView implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(ChatView.class);
 
@@ -45,6 +50,10 @@ public class ChatView extends BaseView {
 
     public ChatView() {
         super("/genai/chat_view.fxml", false);
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         lblAgentIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
         cbAgent.setConverter(GenaiUiConstants.agentConverter);
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -84,8 +93,13 @@ public class ChatView extends BaseView {
                 });
             });
         });
-        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
-        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getName(), agentMeta)).toList());
+        PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
+            if (pluginEvent.getEventType() == EventType.AGENT_PREF_CHANGED
+                    || pluginEvent.getEventType() == EventType.MODEL_PREF_CHANGED) {
+                this.loadAgents();
+            }
+        });
+        this.loadAgents();
 
         taInput.textProperty().addListener((observable, oldValue, newValue) -> {
             btnSend.setDisable(StringUtils.isBlank(newValue));
@@ -134,6 +148,12 @@ public class ChatView extends BaseView {
                 taInput.setPromptText("Chat with your agent");
             }
         });
+    }
+
+    private void loadAgents() {
+        cbAgent.getItems().clear();
+        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
+        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getName(), agentMeta)).toList());
     }
 
     public void updateNoticeInformation(String agentName) {

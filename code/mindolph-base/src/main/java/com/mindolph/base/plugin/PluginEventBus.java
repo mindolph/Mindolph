@@ -1,5 +1,6 @@
 package com.mindolph.base.plugin;
 
+import com.mindolph.base.plugin.PluginEvent.EventType;
 import org.reactfx.EventSource;
 
 import java.util.function.Consumer;
@@ -22,13 +23,13 @@ public class PluginEventBus {
         return ins;
     }
 
-    private final EventSource<Object> preferenceChangeEvent = new EventSource<>();
+    private final EventSource<PluginEvent<?>> preferenceChangeEvent = new EventSource<>();
 
-    public void subscribePreferenceChanges(Consumer<Object> consumer) {
+    public void subscribePreferenceChanges(Consumer<PluginEvent<?>> consumer) {
         preferenceChangeEvent.subscribe(consumer);
     }
 
-    public void emitPreferenceChanges() {
-        preferenceChangeEvent.push(null);
+    public void emitPreferenceChanges(EventType eventType) {
+        preferenceChangeEvent.push(new PluginEvent<>(eventType));
     }
 }

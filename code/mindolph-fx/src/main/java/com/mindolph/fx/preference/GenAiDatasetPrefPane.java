@@ -199,6 +199,10 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         log.debug("pre-select dataset item %s at index %s".formatted(latestDatasetId, selectIdx));
         cbDataset.getSelectionModel().select(selectIdx);
 
+        // listen for embedding
+        EmbeddingService.getInstance().listenOnProgressEvent(s -> {
+            Platform.runLater(() -> lblEmbeddingStatus.setText(s));
+        });
     }
 
     @Override
@@ -222,6 +226,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         }
         datasetMeta.merge();
         LlmConfig.getIns().saveDataset(datasetMeta.getId(), datasetMeta);
+        super.onSave(true);
         return datasetMeta;
     }
 

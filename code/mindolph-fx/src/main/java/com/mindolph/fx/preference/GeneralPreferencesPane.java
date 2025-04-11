@@ -2,6 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -168,7 +169,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     @Override
     protected void onSave(boolean notify) {
         if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges();
+            PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.GENERAL_PREF_CHANGED);
     }
 
     private record OrientationItem(String editor, Orientation orientation) {

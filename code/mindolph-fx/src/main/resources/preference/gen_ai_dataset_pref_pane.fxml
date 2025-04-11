@@ -21,7 +21,7 @@
         <PreferenceItem name="Embedding Model: ">
             <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
             </ChoiceBox>
-            <ChoiceBox fx:id="cbModel" prefWidth="140.0">
+            <ChoiceBox fx:id="cbModel" prefWidth="160.0">
             </ChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Select Files: ">

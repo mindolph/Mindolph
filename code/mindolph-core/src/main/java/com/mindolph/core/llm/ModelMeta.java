@@ -9,7 +9,12 @@ import java.util.Objects;
  */
 public final class ModelMeta {
     private String name;
-    private int maxTokens;
+    private int maxInputTokens = 0;
+    private int maxTokens = 0;
+    /**
+     * for embedding only.
+     */
+    private int dimension = 0;
     private boolean active;
     /**
      * default is 1, 1 is Chat model, 2 is embedding model
@@ -24,6 +29,9 @@ public final class ModelMeta {
      */
     private String langCode = "en";
     private String downloadUrl;
+
+    public ModelMeta() {
+    }
 
     /**
      * @param name
@@ -83,12 +91,28 @@ public final class ModelMeta {
         this.name = name;
     }
 
+    public int getMaxInputTokens() {
+        return maxInputTokens;
+    }
+
+    public void setMaxInputTokens(int maxInputTokens) {
+        this.maxInputTokens = maxInputTokens;
+    }
+
     public void setMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
     }
 
     public int getType() {
@@ -140,10 +164,20 @@ public final class ModelMeta {
 
     @Override
     public String toString() {
-        return "ModelMeta[" +
-                "name=" + name + ", " +
-                "maxTokens=" + maxTokens + ", " +
-                "active=" + active + ']';
+        return "ModelMeta{" +
+                "name='" + name + '\'' +
+                ", maxInputTokens=" + maxInputTokens +
+                ", maxTokens=" + maxTokens +
+                ", dimension=" + dimension +
+                ", active=" + active +
+                ", type=" + type +
+                ", isInternal=" + isInternal +
+                ", langCode='" + langCode + '\'' +
+                ", downloadUrl='" + downloadUrl + '\'' +
+                '}';
     }
-
+//
+//    public static class ModelMetaBuilder {
+//
+//    }
 }

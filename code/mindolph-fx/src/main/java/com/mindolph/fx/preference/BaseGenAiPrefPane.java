@@ -2,6 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
@@ -48,7 +49,6 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
     }
 
     /**
-     *
      * @param type 1 is chat model, 2 is embedding model.
      */
     protected void initProvidersAndModels(int type) {
@@ -104,7 +104,10 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
 
     @Override
     protected void onSave(boolean notify) {
-        if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges();
+        if (notify) {
+            if (this instanceof GenAiAgentPrefPane) {
+                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.AGENT_PREF_CHANGED);
+            }
+        }
     }
 }

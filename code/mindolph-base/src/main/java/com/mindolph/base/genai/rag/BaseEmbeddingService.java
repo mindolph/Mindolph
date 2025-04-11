@@ -25,7 +25,7 @@ import java.util.function.Function;
  */
 public class BaseEmbeddingService {
 
-    private final EventSource<String> progressEventSource = new EventSource<>();
+    protected final EventSource<String> progressEventSource = new EventSource<>();
 
     protected <T> T withJdbcConnection(Function<Connection, T> handler) {
         DataSourceConfig dsConfig = new DataSourceConfig(System.getenv("PG_HOST"), Integer.parseInt(System.getenv("PG_PORT")));
@@ -69,7 +69,7 @@ public class BaseEmbeddingService {
                 .database("postgres")
                 .user(System.getenv("PG_USER"))
                 .password(System.getenv("PG_PASSWORD"))
-                .table("mindolph_embedding")
+                .table("mindolph_embedding_%d".formatted(embeddingModel.dimension()))
                 .createTable(createTable)
                 .dimension(embeddingModel.dimension())
                 .dropTableFirst(dropTable)

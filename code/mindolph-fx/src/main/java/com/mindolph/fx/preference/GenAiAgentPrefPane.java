@@ -171,6 +171,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getValue());
         am.setDatasetIds(tvDatasets.getItems().stream().map(DatasetMeta::getId).toList());
         LlmConfig.getIns().saveAgent(am.getId(), am);
+        super.onSave(true);
         return am;
     }
 

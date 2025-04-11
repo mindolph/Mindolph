@@ -6,6 +6,7 @@ create table mindolph_doc
     file_name  varchar(256)  not null,
     file_path  varchar(1024) not null,
     dataset_id varchar(32)   not null,
-    block_count integer
+    block_count integer,
+    embedded bool default FALSE
 );
 

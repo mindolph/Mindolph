@@ -3,6 +3,7 @@ package com.mindolph.fx.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ModelMetaBuilder;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -39,10 +40,10 @@ public class CustomModelDialog extends BaseDialogController<ModelMeta> {
         });
         spMaxOutputTokens.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1024, Integer.MAX_VALUE, 1024, 1024));
         tfModel.textProperty().addListener((observable, oldValue, newValue) -> {
-            result = new ModelMeta(tfModel.getText(), spMaxOutputTokens.getValue());
+            result = new ModelMetaBuilder().name(tfModel.getText()).maxTokens(spMaxOutputTokens.getValue()).build();
         });
         spMaxOutputTokens.valueProperty().addListener((observable, oldValue, newValue) -> {
-            result = new ModelMeta(tfModel.getText(), spMaxOutputTokens.getValue());
+            result = new ModelMetaBuilder().name(tfModel.getText()).maxTokens(spMaxOutputTokens.getValue()).build();
         });
 
     }

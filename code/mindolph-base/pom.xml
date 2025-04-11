@@ -85,6 +85,11 @@
             <artifactId>langchain4j-hugging-face</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.mindolph</groupId>
+            <artifactId>mindmap-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.swiftech</groupId>
             <artifactId>swstate</artifactId>
         </dependency>
