@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="ScrollPane" fx:id="buttons" styleClass="no-scroll-bar" minHeight="28"
+         xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox alignment="BASELINE_LEFT">
+        <Button fx:id="btnUml" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="startuml tag"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnEntity" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Entity"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnOutline" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Outline"/>
+            </tooltip>
+        </Button>
+    </HBox>
+
+</fx:root>

@@ -21,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import net.sourceforge.plantuml.BlockUml;
@@ -67,6 +68,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     @FXML
     private ImageScrollPane previewPane;
 
+    @FXML
+    private VBox vbToolbar;
+    private PlantUmlToolbar plantUmlToolbar;
+
     private final ContextMenu contextMenu = new ContextMenu();
 
     private final AtomicLong scrollStartTime = new AtomicLong(0);
@@ -84,6 +89,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         log.info("initialize plantuml editor");
 
         threadPoolService = Executors.newSingleThreadExecutor();
+
+        vbToolbar.getChildren().add(new PlantUmlToolbar((PlantUmlCodeArea) super.codeArea));
 
         this.previewPane.setOnContextMenuRequested(event -> {
             log.debug("context menu requested");
@@ -407,9 +414,9 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
         public void reset() {
             totalPages = 0;
-//            page = 0; // page is for global indication, no reset
             errPages = new ArrayList<>();
             pageTitles = new ArrayList<>();
+            // page = 0; // page is for global indication, DO NOT reset
         }
 
         public void fitPage() {
