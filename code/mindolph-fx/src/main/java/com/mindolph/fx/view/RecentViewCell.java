@@ -11,12 +11,12 @@ import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,10 +77,11 @@ public class RecentViewCell extends ListCell<NodeData> {
                 globalFontSize = (int) lbFileName.getFont().getSize();// borrow
             }
             lbFileName.setText(fileData.getName());
-            lbFileName.setFont(FontUtils.newFontWithSize(Font.getDefault(), (int) (globalFontSize * 1.2f)));
+            lbFileName.setFont(FontUtils.newFontWithSize(Font.getDefault(), (int) (globalFontSize * 1.1f)));
             lbFilePath.setText(desc);
 
-            int iconSize = (int) (FontIconManager.getIconSize() * 1.5f);
+            int iconSize = (int) (FontIconManager.getIconSize() * 1.4f);
+            lbIcon.setAlignment(Pos.BASELINE_CENTER);
             lbIcon.setGraphic(FontIconManager.getIns().getIconForFile(fileData, iconSize));
         }
 

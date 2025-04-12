@@ -141,12 +141,12 @@ public class FontIconManager {
         icons.put(IconKey.PASTE, () -> MaterialIconFactory.get().createIcon(MaterialIcon.CONTENT_PASTE, strIconSize));
         icons.put(IconKey.WRAP, () -> MaterialIconFactory.get().createIcon(MaterialIcon.WRAP_TEXT, strIconSize));
 
-        icons.put(IconKey.SHORT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SHORT_TEXT));
-        icons.put(IconKey.LONG_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.REORDER));
-        icons.put(IconKey.SEND, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SEND));
-        icons.put(IconKey.TEMPERATURE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.OIL_TEMPERATURE));
-        icons.put(IconKey.GEN_AI, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.ROBOT));
-        icons.put(IconKey.MAGIC, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC));
+        icons.put(IconKey.SHORT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SHORT_TEXT, strIconSize));
+        icons.put(IconKey.LONG_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.REORDER, strIconSize));
+        icons.put(IconKey.SEND, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SEND, strIconSize));
+        icons.put(IconKey.TEMPERATURE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.OIL_TEMPERATURE, strIconSize));
+        icons.put(IconKey.GEN_AI, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.ROBOT, strIconSize));
+        icons.put(IconKey.MAGIC, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC, strIconSize));
 
         icons.put(IconKey.EDIT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.EDIT, strIconSize));
 //        icons.put(IconKey.ADD_CHILD, () -> MaterialIconFactory.get().createIcon(MaterialIcon.PLUS, strFontSize));
