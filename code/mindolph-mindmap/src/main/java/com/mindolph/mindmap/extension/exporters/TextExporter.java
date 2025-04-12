@@ -20,7 +20,7 @@ public class TextExporter extends TextBranchExporter {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
-        super.includeAttributes = options.get(0);
+        super.includeAttributes = options.getFirst();
         super.doConvertingAndSave(context.getModel(), Collections.singletonList(context.getModel().getRoot()), exportFileName, out);
     }
 

@@ -23,21 +23,18 @@ import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.constant.VendorConstants;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
-import com.mindolph.mindmap.icon.IconID;
-import com.mindolph.mindmap.icon.ImageIconServiceProvider;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
 import com.mindolph.mindmap.util.TopicUtils;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.swing.*;
 import java.io.*;
@@ -152,7 +149,7 @@ public class FreeMindExporter extends BaseExportExtension {
             htmlTextForNode.append("<p><pre>").append(StringEscapeUtils.escapeHtml3(note.getValue())).append("</pre></p>");
         }
 
-        if (htmlTextForNode.length() > 0) {
+        if (!htmlTextForNode.isEmpty()) {
             state.append(childShift).append("<richcontent TYPE=\"NOTE\">").append("<html><head></head><body>" + htmlTextForNode + "</body></html>").append("</richcontent>").nextLine();
         }
 
@@ -165,7 +162,7 @@ public class FreeMindExporter extends BaseExportExtension {
 
 
     private static String escapeXML(String text) {
-        return StringEscapeUtils.escapeXml(text).replace("\n", "&#10;");
+        return StringEscapeUtils.escapeXml10(text).replace("\n", "&#10;");
     }
 
 
@@ -244,11 +241,6 @@ public class FreeMindExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 1;
-    }
-
-    @Override
-    public boolean needsTopicUnderMouse() {
-        return false;
     }
 
     private static class State {

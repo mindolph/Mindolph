@@ -155,17 +155,11 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
                     for (String key : attributes.keySet()) {
                         JSONObject attrJson = attributes.optJSONObject(key);
                         if (attrJson != null) {
-                            if ("note".equals(key)) {
-                                processAttrNote(attrJson, topicToProcess);
-                            }
-                            else if ("icon".equals(key)) {
-                                processAttrIcon(attrJson, topicToProcess);
-                            }
-                            else if ("style".equals(key)) {
-                                processAttrStyle(attrJson, topicToProcess);
-                            }
-                            else {
-                                LOG.warn("Detected unsupported attribute '" + key + '\'');
+                            switch (key) {
+                                case "note" -> processAttrNote(attrJson, topicToProcess);
+                                case "icon" -> processAttrIcon(attrJson, topicToProcess);
+                                case "style" -> processAttrStyle(attrJson, topicToProcess);
+                                case null, default -> LOG.warn("Detected unsupported attribute '" + key + '\'');
                             }
                         }
                     }
@@ -247,11 +241,6 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
     @Override
     public int getOrder() {
         return 2;
-    }
-
-    @Override
-    public boolean isCompatibleWithFullScreenMode() {
-        return false;
     }
 
     private static final class OrderableIdea implements Comparable<OrderableIdea> {

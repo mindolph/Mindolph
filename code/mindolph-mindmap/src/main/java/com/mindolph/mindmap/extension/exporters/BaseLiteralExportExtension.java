@@ -31,7 +31,7 @@ public abstract class BaseLiteralExportExtension extends BaseExportExtension {
 
     @Override
     public void doExportToClipboard(ExtensionContext context, List<Boolean> options) throws IOException {
-        this.includeAttributes = options.get(0);
+        this.includeAttributes = options.getFirst();
         String text = this.convertTopics(context.getModel(), context.getSelectedTopics());
         ClipboardContent cc = new ClipboardContent();
         cc.putString(text);

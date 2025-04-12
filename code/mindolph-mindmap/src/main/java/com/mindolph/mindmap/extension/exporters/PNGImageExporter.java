@@ -149,8 +149,4 @@ public final class PNGImageExporter extends BaseExportExtension {
         return 4;
     }
 
-    @Override
-    public boolean needsTopicUnderMouse() {
-        return false;
-    }
 }
