@@ -27,6 +27,8 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
     @FXML
     private Button btnActor;
     @FXML
+    private Button btnRectangle;
+    @FXML
     private Button btnOutline1;
     @FXML
     private Button btnOutline2;
@@ -47,6 +49,7 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         btnUml.setGraphic(fim.getIcon(IconKey.AT));
         btnEntity.setGraphic(fim.getIcon(IconKey.ENTITY));
         btnActor.setGraphic(fim.getIcon(IconKey.HUMAN));
+        btnRectangle.setGraphic(fim.getIcon(IconKey.SQUARE));
         btnOutline1.setGraphic(fim.getIcon(IconKey.H1));
         btnOutline2.setGraphic(fim.getIcon(IconKey.H2));
         btnOutline3.setGraphic(fim.getIcon(IconKey.H3));
@@ -54,6 +57,7 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         btnUml.setOnAction(this);
         btnEntity.setOnAction(this);
         btnActor.setOnAction(this);
+        btnRectangle.setOnAction(this);
         btnOutline1.setOnAction(this);
         btnOutline2.setOnAction(this);
         btnOutline3.setOnAction(this);
@@ -71,6 +75,9 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         }
         else if (node == btnActor) {
             this.insertActorTag();
+        }
+        else if (node == btnRectangle) {
+            this.insertRectangleTag();
         }
         else if (node == btnOutline1) {
             this.insertOutlineTag(1);
@@ -102,6 +109,13 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
     private void insertActorTag() {
         pumlCodeArea.insertText("""
                 actor "My Actor" as my_actor {
+                
+                }""");
+    }
+
+    private void insertRectangleTag() {
+        pumlCodeArea.insertText("""
+                rectangle "My Rectangle" as my_rect {
                 
                 }""");
     }

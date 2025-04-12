@@ -169,6 +169,7 @@ public class FontIconManager {
 
         icons.put(IconKey.AT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.AT, strIconSize));
         icons.put(IconKey.ENTITY, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE, strIconSize));
+        icons.put(IconKey.SQUARE, () -> MaterialDesignIconFactory.get().createIcon(MaterialIcon.CROP_SQUARE, strIconSize));
         icons.put(IconKey.HUMAN, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.HUMAN, strIconSize));
     }
 

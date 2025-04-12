@@ -23,6 +23,12 @@
                 <Tooltip text="Actor"/>
             </tooltip>
         </Button>
+        <Button fx:id="btnRectangle" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Rectangle"/>
+            </tooltip>
+        </Button>
         <Button fx:id="btnOutline1" mnemonicParsing="false" styleClass="icon_button"
                 stylesheets="@style/icon_button.css">
             <tooltip>
