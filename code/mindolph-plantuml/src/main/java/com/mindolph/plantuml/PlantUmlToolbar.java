@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,13 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
     @FXML
     private Button btnEntity;
     @FXML
-    private Button btnOutline;
-
+    private Button btnActor;
+    @FXML
+    private Button btnOutline1;
+    @FXML
+    private Button btnOutline2;
+    @FXML
+    private Button btnOutline3;
 
     private final PlantUmlCodeArea pumlCodeArea;
 
@@ -40,11 +46,17 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         FontIconManager fim = FontIconManager.getIns();
         btnUml.setGraphic(fim.getIcon(IconKey.AT));
         btnEntity.setGraphic(fim.getIcon(IconKey.ENTITY));
-        btnOutline.setGraphic(fim.getIcon(IconKey.OUTLINE));
+        btnActor.setGraphic(fim.getIcon(IconKey.HUMAN));
+        btnOutline1.setGraphic(fim.getIcon(IconKey.H1));
+        btnOutline2.setGraphic(fim.getIcon(IconKey.H2));
+        btnOutline3.setGraphic(fim.getIcon(IconKey.H3));
 
         btnUml.setOnAction(this);
         btnEntity.setOnAction(this);
-        btnOutline.setOnAction(this);
+        btnActor.setOnAction(this);
+        btnOutline1.setOnAction(this);
+        btnOutline2.setOnAction(this);
+        btnOutline3.setOnAction(this);
     }
 
 
@@ -57,8 +69,17 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         else if (node == btnEntity) {
             this.insertEntityTag();
         }
-        else if (node == btnOutline) {
-            this.insertOutlineTag();
+        else if (node == btnActor) {
+            this.insertActorTag();
+        }
+        else if (node == btnOutline1) {
+            this.insertOutlineTag(1);
+        }
+        else if (node == btnOutline2) {
+            this.insertOutlineTag(2);
+        }
+        else if (node == btnOutline3) {
+            this.insertOutlineTag(3);
         }
         pumlCodeArea.requestFocus();
     }
@@ -66,20 +87,28 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
     private void insertUmlTag() {
         pumlCodeArea.insertText("""
                 @startuml
-                title 'this is a PlantUML diagram'
+                title 'This is a PlantUML diagram'
                 
                 @enduml""");
     }
 
     private void insertEntityTag() {
         pumlCodeArea.insertText("""
-                entity 'my_entity' as my_entity{
+                entity "My Entity" as my_entity {
                 
                 }""");
     }
 
-    private void insertOutlineTag() {
-        pumlCodeArea.insertText("' * outline title *");
+    private void insertActorTag() {
+        pumlCodeArea.insertText("""
+                actor "My Actor" as my_actor {
+                
+                }""");
+    }
+
+    private void insertOutlineTag(int level) {
+        String levelChars = StringUtils.repeat('*', level);
+        pumlCodeArea.insertText("' %s outline title %s\n".formatted(levelChars, levelChars));
     }
 
 }

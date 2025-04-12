@@ -17,10 +17,28 @@
                 <Tooltip text="Entity"/>
             </tooltip>
         </Button>
-        <Button fx:id="btnOutline" mnemonicParsing="false" styleClass="icon_button"
+        <Button fx:id="btnActor" mnemonicParsing="false" styleClass="icon_button"
                 stylesheets="@style/icon_button.css">
             <tooltip>
-                <Tooltip text="Outline"/>
+                <Tooltip text="Actor"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnOutline1" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Outline 1"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnOutline2" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Outline 2"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnOutline3" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Outline 3"/>
             </tooltip>
         </Button>
     </HBox>

@@ -167,8 +167,9 @@ public class FontIconManager {
         icons.put(IconKey.FOLDER, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_OUTLINE, strIconSize));
         icons.put(IconKey.MOVE_FOLDER, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FOLDER_MOVE, strIconSize));
 
-        icons.put(IconKey.AT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.AT));
-        icons.put(IconKey.ENTITY, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE));
+        icons.put(IconKey.AT, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.AT, strIconSize));
+        icons.put(IconKey.ENTITY, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE, strIconSize));
+        icons.put(IconKey.HUMAN, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.HUMAN, strIconSize));
     }
 
     public Text getIcon(IconKey iconKey) {
