@@ -88,8 +88,8 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
         NodeData selectedNode = listView.getSelectionModel().getSelectedItem();
-        System.out.println(selectedNode.getFile());
-        System.out.println(actionEvent.getSource());
+        log.debug(selectedNode.getFile().getPath());
+        log.debug(actionEvent.getSource().toString());
         if (actionEvent.getSource() == miOpenFile) {
             this.openSelectedFile();
         }
@@ -123,9 +123,9 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
                 return;
             }
             listView.getItems().remove(fileData);
-            listView.getItems().add(0, fileData);
+            listView.getItems().addFirst(fileData);
             if (listView.getItems().size() > RecentManager.MAX_SIZE) {
-                listView.getItems().remove(listView.getItems().size() - 1); // remove last
+                listView.getItems().removeLast(); // remove last
             }
             listView.getSelectionModel().clearSelection();
         });
