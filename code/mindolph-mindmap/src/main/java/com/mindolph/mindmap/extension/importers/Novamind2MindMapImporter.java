@@ -99,7 +99,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                 }
 
                 if (insideLinksToTopics.size() == 1 && !topic.getExtras().containsKey(Extra.ExtraType.TOPIC)) {
-                    topic.setExtra(ExtraTopic.makeLinkTo(map, insideLinksToTopics.get(0)));
+                    topic.setExtra(ExtraTopic.makeLinkTo(map, insideLinksToTopics.getFirst()));
                 }
                 else {
                     for (TopicNode linkTo : insideLinksToTopics) {
@@ -109,7 +109,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                 }
 
                 if (insideLinksToURLs.size() == 1 && !topic.getExtras().containsKey(Extra.ExtraType.LINK)) {
-                    topic.setExtra(new ExtraLink(insideLinksToURLs.get(0)));
+                    topic.setExtra(new ExtraLink(insideLinksToURLs.getFirst()));
                 }
                 else {
                     for (MMapURI uri : insideLinksToURLs) {
@@ -119,7 +119,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                 }
 
                 if (insideLinksToFiles.size() == 1 && !topic.getExtras().containsKey(Extra.ExtraType.FILE)) {
-                    topic.setExtra(new ExtraFile(insideLinksToFiles.get(0)));
+                    topic.setExtra(new ExtraFile(insideLinksToFiles.getFirst()));
                 }
                 else {
                     for (MMapURI file : insideLinksToFiles) {
@@ -238,11 +238,6 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
         return 5;
     }
 
-    @Override
-    public boolean isCompatibleWithFullScreenMode() {
-        return false;
-    }
-
     private static final class Manifest {
 
         private final ZipFile zipFile;
@@ -250,8 +245,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
 
         private Manifest(ZipFile zipFile, String manifestPath) {
             this.zipFile = zipFile;
-            try {
-                InputStream resourceIn = Utils.findInputStreamForResource(zipFile, manifestPath);
+            try (InputStream resourceIn = Utils.findInputStreamForResource(zipFile, manifestPath)) {
                 if (resourceIn != null) {
                     Document document = XmlUtils.loadXmlDocument(resourceIn, null, true);
                     Element main = document.getDocumentElement();
@@ -331,8 +325,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
         ParsedContent(ZipFile file, String path) {
             TopicReference mapRoot = null;
 
-            try {
-                InputStream resourceIn = Utils.findInputStreamForResource(file, path);
+            try (InputStream resourceIn = Utils.findInputStreamForResource(file, path)) {
                 if (resourceIn != null) {
                     Document document = XmlUtils.loadXmlDocument(resourceIn, null, true);
                     Element main = document.getDocumentElement();
@@ -362,14 +355,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                                 }
 
                             }
-                            else {
-                                mapRoot = null;
-                            }
                         }
-                        else {
-                            mapRoot = null;
-                        }
-
                     }
                     else {
                         LOG.warn("Can't find document, looks like that format changed");
@@ -543,7 +529,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                         result.append(rtext);
                     }
                 }
-                return result.length() == 0 ? null : result.toString();
+                return result.isEmpty() ? null : result.toString();
             }
 
             private static String extractRichTextBlock(Element element) {
@@ -551,7 +537,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
                 for (Element rc : XmlUtils.findDirectChildrenForName(element, "rich-text")) {
                     result.append(extractRichText(rc));
                 }
-                return result.length() == 0 ? null : result.toString();
+                return result.isEmpty() ? null : result.toString();
             }
 
             private static List<String> extractLinkUrls(Element node) {
