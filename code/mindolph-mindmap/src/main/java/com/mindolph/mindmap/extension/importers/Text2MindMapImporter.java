@@ -136,7 +136,7 @@ public class Text2MindMapImporter extends BaseImportExtension {
                 result = new TopicNode(map, parentTopic, trimmed);
             }
 
-            topicStack.add(0, new TopicData(currentOffset, result));
+            topicStack.addFirst(new TopicData(currentOffset, result));
         }
 
         return result;

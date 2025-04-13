@@ -21,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import net.sourceforge.plantuml.BlockUml;
@@ -67,6 +68,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     @FXML
     private ImageScrollPane previewPane;
 
+    @FXML
+    private VBox vbToolbar;
+    private PlantUmlToolbar plantUmlToolbar;
+
     private final ContextMenu contextMenu = new ContextMenu();
 
     private final AtomicLong scrollStartTime = new AtomicLong(0);
@@ -84,6 +89,17 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         log.info("initialize plantuml editor");
 
         threadPoolService = Executors.newSingleThreadExecutor();
+
+        vbToolbar.getChildren().add(new PlantUmlToolbar((PlantUmlCodeArea) super.codeArea));
+
+        // auto switch preview page
+        super.codeArea.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
+            int currentRow = newValue;
+            if (indicator.toPageByRow(currentRow)) {
+                log.info("Change page to " + indicator.page);
+                refresh(codeArea.getText());
+            }
+        });
 
         this.previewPane.setOnContextMenuRequested(event -> {
             log.debug("context menu requested");
@@ -112,7 +128,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         log.info("Total pages: " + indicator.totalPages);
         ToggleGroup toggleGroup = new ToggleGroup();
         for (int i = 0; i < indicator.totalPages; i++) {
-            RadioMenuItem miPageX = new RadioMenuItem("Page %d: %s".formatted(i + 1, indicator.pageTitles.get(i)));
+            RadioMenuItem miPageX = new RadioMenuItem("Page %d: %s".formatted(i + 1, indicator.pages.get(i).title));
             miPageX.setToggleGroup(toggleGroup);
             miPageX.setUserData(i);
             miPageX.setGraphic(FontIconManager.getIns().getIcon(IconKey.PAGE));
@@ -248,13 +264,16 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             SourceStringReader reader = new SourceStringReader(codeArea.getText());
 
             // retrieve title info from all pages.
-            indicator.pageTitles.clear();
+            indicator.pages.clear();
             for (BlockUml block : reader.getBlocks()) {
+                int startRow = block.getData().getFirst().getLocation().getPosition();
+                int endRow = block.getData().getLast().getLocation().getPosition();
+                log.debug("Page starts from row %d to row %d".formatted(startRow, endRow));
                 // Show error image if error occurs, but continue next page
                 String errMsg = StringUtils.trim(block.getDiagram().getWarningOrError());
                 if (StringUtils.contains(errMsg, "(Error)")) {
                     log.debug("encounter error in this plantuml");
-                    indicator.addPageTitle(errMsg);
+                    indicator.addPage(new Page(errMsg, startRow, endRow));
                     int curPage = reader.getBlocks().indexOf(block);
                     indicator.errPages.add(curPage);
                     log.debug("Found error for page: %d".formatted(curPage));
@@ -278,7 +297,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     }
                 }
                 else {
-                    indicator.addPageTitle(this.extractDiagramTitle(block.getDefinition(false)));
+                    indicator.addPage(new Page(this.extractDiagramTitle(block.getDefinition(false)), startRow, endRow));
                 }
             }
             indicator.totalPages = reader.getBlocks().size();
@@ -290,7 +309,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
             if (!indicator.isCurrentPageError()) {
                 Platform.runLater(() -> {
-                    String title = indicator.page < indicator.pageTitles.size() ? indicator.pageTitles.get(indicator.page) : StringUtils.EMPTY;
+                    String title = indicator.page < indicator.pages.size() ? indicator.pages.get(indicator.page).title : StringUtils.EMPTY;
                     EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
                             new StatusMsg("Page %d/%d: %s".formatted(indicator.page + 1, indicator.totalPages, title)));
                 });
@@ -403,13 +422,13 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         int totalPages = 0;
         int page = 0;
         List<Integer> errPages;
-        List<String> pageTitles;
+        List<Page> pages;
 
         public void reset() {
             totalPages = 0;
-//            page = 0; // page is for global indication, no reset
             errPages = new ArrayList<>();
-            pageTitles = new ArrayList<>();
+            pages = new ArrayList<>();
+            // page = 0; // page is for global indication, DO NOT reset
         }
 
         public void fitPage() {
@@ -432,9 +451,27 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             return --page >= 0;
         }
 
-        public void addPageTitle(String pageTitle) {
-            if (this.pageTitles == null) this.pageTitles = new ArrayList<>();
-            this.pageTitles.add(pageTitle);
+        public boolean toPageByRow(int row) {
+            if (pages == null) return false;
+            for (Page p : pages) {
+                if (row >= p.startRow && row <= p.endRow) {
+                    int newPage = pages.indexOf(p);
+                    // only different page will return true.
+                    if (newPage != page) {
+                        page = newPage;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
         }
+
+        public void addPage(Page page) {
+            this.pages.add(page);
+        }
+    }
+
+    private record Page(String title, int startRow, int endRow) {
     }
 }

@@ -15,7 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.IndexRange;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ScrollPane;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHARS;
  * @author mindolph.com@gmail.com
  * @see MarkdownCodeArea
  */
-public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
+public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(MarkdownToolbar.class);
 
@@ -75,6 +75,9 @@ public class MarkdownToolbar extends HBox implements EventHandler<ActionEvent> {
     public MarkdownToolbar(MarkdownCodeArea markdownCodeArea) {
         this.markdownCodeArea = markdownCodeArea;
         FxmlUtils.loadUri("/editor/markdown_toolbar.fxml", this);
+
+        this.getStyleClass().add("no-scroll-bar");
+        this.getStyleClass().add("no-border");
 
         FontIconManager fim = FontIconManager.getIns();
         btnBold.setGraphic(fim.getIcon(IconKey.BOLD));

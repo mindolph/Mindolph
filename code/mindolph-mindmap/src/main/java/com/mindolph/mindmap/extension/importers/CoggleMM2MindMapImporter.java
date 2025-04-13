@@ -117,7 +117,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
         if ("map".equals(root.getTagName())) {
             List<Element> nodes = XmlUtils.findDirectChildrenForName(root, "node");
             if (!nodes.isEmpty()) {
-                parseTopic(result, null, result.getRoot(), nodes.get(0));
+                parseTopic(result, null, result.getRoot(), nodes.getFirst());
             }
         } else {
             throw new IllegalArgumentException("File is not Coggle mind map");
@@ -194,7 +194,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
         StringBuilder note = new StringBuilder();
 
         if (!foundLinkURLs.isEmpty() && (succesfullDecodedUrl == null || foundLinkURLs.size() > 1)) {
-            if (note.length() > 0) {
+            if (!note.isEmpty()) {
                 note.append("\n\n");
             }
             note.append("Detected URLs\n---------------");
@@ -204,7 +204,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
         }
 
         if (!foundImageURLs.isEmpty() && (encodedImage == null || foundImageURLs.size() > 1)) {
-            if (note.length() > 0) {
+            if (!note.isEmpty()) {
                 note.append("\n\n");
             }
             note.append("Detected image links\n---------------");
@@ -241,7 +241,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
             topicToProcess.setAttribute(StandardTopicAttribute.ATTR_TEXT_COLOR.getText(), ColorUtils.color2html(ColorUtils.makeContrastColor(edgeColor), false));
         }
 
-        if (note.length() > 0) {
+        if (!note.isEmpty()) {
             topicToProcess.setExtra(new ExtraNote(note.toString()));
         }
 
@@ -270,8 +270,4 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
         return 5;
     }
 
-    @Override
-    public boolean isCompatibleWithFullScreenMode() {
-        return false;
-    }
 }

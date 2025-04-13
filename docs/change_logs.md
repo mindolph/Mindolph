@@ -1,5 +1,15 @@
 # Change Logs
 
+### V1.11.7 Release
+
+* Fix: potential file handles leak when importing from XMind file and Novamind file(https://github.com/mindolph/Mindolph/issues/13). 
+* Fix: some icons don't respect the `UI icon size` setting. 
+* Fix: adjustment of the Markdown editor splitter position blocked by the Markdown toolbar.
+* Fix: the Markdown toolbar limits the position adjustment of the Markdown editor splitter.
+* Fix: OpenAI and Qwen streaming generation won't stop when user stops the generation on purpose.
+* Fix: remembering latest prompt doesn't work in some cases.
+* some minor refactors for Mind Map importers and exporters and some minor UI improvement.
+
 ### V1.12.0 Unstable Release
 * Features:
 	* Let user change the prompt for generating summary just before starting.

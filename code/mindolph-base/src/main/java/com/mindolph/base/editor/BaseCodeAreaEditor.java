@@ -229,6 +229,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 if (log.isTraceEnabled()) log.trace("  %d - %s".formatted(hl.level(), title));
 
                 TextAnchor ta = new TextAnchor(hl.textLocation);
+                // ta.setLevel(hl.level);
                 OutlineItemData outlineItemData = new OutlineItemData(title, ta);
 
                 Node newNode = new Node(outlineItemData);
@@ -246,6 +247,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                     Node ancestor = curNode.findAncestor(node -> node.getLevel() <= newNode.getLevel() - 1);
                     ancestor.addChild(newNode);
                     newNode.setParent(ancestor);
+                    // ta.setLevelIndex(ancestor.getChildren().size());
                 }
                 curNode = newNode;
             }
@@ -402,7 +404,12 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         return codeArea.getSelectedText();
     }
 
-
+    /**
+     *
+     * @param heading
+     * @param level starts from 1
+     * @param textLocation
+     */
     private record HeadingLocation(String heading, int level, TextLocation textLocation) {
     }
 }

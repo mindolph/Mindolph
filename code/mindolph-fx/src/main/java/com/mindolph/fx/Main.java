@@ -118,6 +118,7 @@ public class Main extends Application implements WindowRestoreListener {
             primaryStage.setTitle("Mindolph");
             primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/icons/app_512.png")));
             scene = new Scene(root, 1100, 800);
+            scene.getStylesheets().add(getClass().getResource("/style/app.css").toExternalForm());
             scene.getStylesheets().add(getClass().getResource("/style/syntax.css").toExternalForm());
 //            scene.getStylesheets().add(getClass().getResource("/style/markdown_syntax.css").toExternalForm());
 //            scene.getStylesheets().add(getClass().getResource("/style/plantuml_syntax.css").toExternalForm());

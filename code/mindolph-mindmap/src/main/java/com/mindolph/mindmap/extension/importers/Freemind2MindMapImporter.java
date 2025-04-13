@@ -63,7 +63,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
 
     private static String findArrowlinkDestination(Element element) {
         List<Element> arrows = XmlUtils.findDirectChildrenForName(element, "arrowlink");
-        return arrows.isEmpty() ? "" : findAttribute(arrows.get(0), "destination");
+        return arrows.isEmpty() ? "" : findAttribute(arrows.getFirst(), "destination");
     }
 
     private static void processImageLinkForTopic(File rootFolder, TopicNode topic, String[] imageUrls) {
@@ -197,7 +197,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
             resultedMap.getRoot().setText("Empty");
         }
         else {
-            parseTopic(rootFolder, resultedMap, null, resultedMap.getRoot(), list.get(0), idTopicMap, linksMap);
+            parseTopic(rootFolder, resultedMap, null, resultedMap.getRoot(), list.getFirst(), idTopicMap, linksMap);
         }
 
         for (Map.Entry<String, String> l : linksMap.entrySet()) {
@@ -323,11 +323,6 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
     @Override
     public int getOrder() {
         return 3;
-    }
-
-    @Override
-    public boolean isCompatibleWithFullScreenMode() {
-        return false;
     }
 
     private enum RichContentType {

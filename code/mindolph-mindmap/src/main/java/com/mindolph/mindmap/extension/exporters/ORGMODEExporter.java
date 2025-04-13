@@ -180,14 +180,8 @@ public class ORGMODEExporter extends BaseExportExtension {
 
     private static String ensureNumberFormatting(int desiredLength, int number) {
         String numAsText = Integer.toString(number);
-        StringBuilder result = new StringBuilder();
-
-        for (int i = 0; i < desiredLength - numAsText.length(); i++) {
-            result.append('0');
-        }
-        result.append(numAsText);
-
-        return result.toString();
+        return "0".repeat(Math.max(0, desiredLength - numAsText.length())) +
+                numAsText;
     }
 
 
@@ -333,11 +327,6 @@ public class ORGMODEExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 7;
-    }
-
-    @Override
-    public boolean needsTopicUnderMouse() {
-        return false;
     }
 
     private static class State {

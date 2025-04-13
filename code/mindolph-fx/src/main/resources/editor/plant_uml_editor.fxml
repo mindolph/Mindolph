@@ -15,13 +15,18 @@
             <AnchorPane fx:id="paneCode" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                         AnchorPane.rightAnchor="0.0"
                         AnchorPane.topAnchor="0.0">
-                <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                       AnchorPane.rightAnchor="0.0"
-                                       AnchorPane.topAnchor="0.0">
-                    <content>
-                        <PlantUmlCodeArea fx:id="codeArea"/>
-                    </content>
-                </VirtualizedScrollPane>
+                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                      AnchorPane.topAnchor="0.0">
+                    <VBox fx:id="vbToolbar" prefHeight="24">
+                    </VBox>
+                    <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0"
+                                           AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                        <content>
+                            <PlantUmlCodeArea fx:id="codeArea"/>
+                        </content>
+                    </VirtualizedScrollPane>
+                </VBox>
             </AnchorPane>
         </primary>
         <secondary>

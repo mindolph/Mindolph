@@ -263,11 +263,6 @@ public class MindmupExporter extends BaseExportExtension {
         return 2;
     }
 
-    @Override
-    public boolean needsTopicUnderMouse() {
-        return false;
-    }
-
     private record TopicId(int id, String uuid, TopicNode topic) {
 
     }
