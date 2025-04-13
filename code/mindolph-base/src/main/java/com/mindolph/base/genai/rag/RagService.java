@@ -62,7 +62,12 @@ public class RagService extends BaseEmbeddingService {
         DatasetMeta mainDatasetMeta = datasetMetas.getFirst();
         log.debug("Switch language and embedding model to %s, %s ".formatted(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name()));
         embeddingModel = super.createEmbeddingModel(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name());
-        embeddingStore = createEmbeddingStore(embeddingModel, true, false);
+        try {
+            embeddingStore = createEmbeddingStore(embeddingModel, true, false);
+        } catch (Exception e) {
+            log.error("Failed create embedding store", e);
+            throw new RuntimeException("Failed to prepare embedding store, check vector store setting or network", e);
+        }
         completed.accept("RAG model is ready");
     }
 

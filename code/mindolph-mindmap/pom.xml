@@ -11,9 +11,6 @@
 
     <artifactId>mindolph-mindmap</artifactId>
 
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.mindolph</groupId>
