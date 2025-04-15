@@ -181,10 +181,10 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
         else if (node == btnTable) {
             if (markdownCodeArea.getSelection().getLength() > 0) {
                 Dialog<String> dialog = new RadioDialogBuilder<String>().owner(DialogFactory.DEFAULT_WINDOW)
-                        .title("Choose")
+                        .title("Choose Separator")
                         .content("Choose separator to split columns: ")
                         .option(BLANK_CHARS, "Blank characters")
-                        .option("\t+", "Only Tab characters")
+                        .option("\t+", "Only Tab character")
                         .defaultValue(BLANK_CHARS)
                         .build();
 
@@ -256,6 +256,8 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
             Arrays.fill(array, "    ");
             List<String> l = Arrays.asList(array);
             Collections.copy(l, row);
+            // add `tab` as head and tail for each cell
+            l = l.stream().map(s -> StringUtils.wrap(s, "\t")).toList();
             buf.append("|").append(StringUtils.join(l, "|")).append("|\n");
         }
         markdownCodeArea.replaceSelection(buf.toString());
