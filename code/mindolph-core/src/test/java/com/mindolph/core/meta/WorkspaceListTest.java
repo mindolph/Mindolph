@@ -12,6 +12,16 @@ import java.util.LinkedHashSet;
 class WorkspaceListTest {
 
     @Test
+    void testAdd() {
+        WorkspaceList wl = new WorkspaceList();
+        wl.getProjects().add(new WorkspaceMeta("W1"));
+        wl.getProjects().add(new WorkspaceMeta("W2"));
+        wl.getProjects().add(new WorkspaceMeta("W3"));
+        Assertions.assertEquals(3, wl.getProjects().size());
+        Assertions.assertNotEquals(new WorkspaceMeta("W4"), wl.getProjects().getFirst());
+    }
+
+    @Test
     void isWorkspaceOpened() {
         WorkspaceList wl = new WorkspaceList();
         LinkedHashSet<WorkspaceMeta> workspaceMetas = new LinkedHashSet<>();

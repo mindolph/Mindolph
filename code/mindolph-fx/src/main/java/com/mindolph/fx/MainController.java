@@ -2,7 +2,6 @@ package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.BaseView;
-import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.collection.CollectionManager;
 import com.mindolph.base.constant.IconKey;
@@ -18,6 +17,7 @@ import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.WorkspaceViewResizedEventHandler;
 import com.mindolph.base.print.PrinterManager;
+import com.mindolph.core.Env;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
@@ -443,7 +443,7 @@ public class MainController extends BaseController implements Initializable,
         File saveDir = DialogFactory.openSaveFileDialog(workspaceView.getScene().getWindow(), SystemUtils.getUserHome());
         if (saveDir != null) {
             if (saveDir.exists()) {
-                DialogFactory.warnDialog("Dir is already exist: " + saveDir);
+                DialogFactory.warnDialog("The directory you selected already exists: " + saveDir);
             }
             else {
                 if (!saveDir.mkdirs()) {
@@ -461,8 +461,8 @@ public class MainController extends BaseController implements Initializable,
         File workspaceDir = DialogFactory.openDirDialog(workspaceView.getScene().getWindow(), SystemUtils.getUserHome());
         if (workspaceDir != null && workspaceDir.exists()) {
             this.openWorkspace(workspaceDir, true);
+            SceneRestore.getInstance().saveScene(this.workspaceList);
         }
-        SceneRestore.getInstance().saveScene(this.workspaceList);
     }
 
     @FXML

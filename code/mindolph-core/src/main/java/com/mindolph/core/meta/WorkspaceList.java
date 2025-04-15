@@ -86,7 +86,7 @@ public class WorkspaceList {
     }
 
     public LinkedHashSet<WorkspaceMeta> getProjects() {
-        return new LinkedHashSet<>(projects); 
+        return projects;
     }
 
     public void setProjects(LinkedHashSet<WorkspaceMeta> projects) {
