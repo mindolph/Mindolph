@@ -42,7 +42,7 @@
         <mfx.version>2.0.2</mfx.version>
         <gson.version>2.12.1</gson.version>
         <controlsfx.version>11.2.2</controlsfx.version>
-        <richtextfx.version>0.11.5</richtextfx.version>
+        <richtextfx.version>0.11.4</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
         <jsoup.version>1.19.1</jsoup.version>
