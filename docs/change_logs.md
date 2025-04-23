@@ -1,5 +1,15 @@
 # Change Logs
 
+### V1.12.1 Unstable Release
+* Features:  
+	* automatically switch PlantUML preview page when caret moves to other code blocks.
+	* add new toolbar to PlantUML editor to insert diagram, entity, actor, rectangle, outline comment. 
+* Improvement:  
+	* optimized the quick insert table feature a litter bit for Markdown.   
+	* support GIF in Markdown.  
+* fix: setting the max output token of custom model does not work well.   
+* merged bug fixes from stable version 1.11.8.  
+
 ### V1.11.8 Release
 * Fix: unable to create or open a workspace since the release V1.11.6.
 
