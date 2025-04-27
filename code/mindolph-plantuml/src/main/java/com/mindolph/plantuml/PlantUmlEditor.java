@@ -77,12 +77,14 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private final AtomicLong scrollStartTime = new AtomicLong(0);
     private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
-    private Image image;
-
     private final Indicator indicator = new Indicator();
 
     // used to extract outline title from comment.
     private final Pattern extractingPattern = Pattern.compile("[\\*]+(.+?)[\\*]+");
+
+    private Image image;
+
+    private boolean isAutoSwitch = true;
 
     public PlantUmlEditor(EditorContext editorContext) {
         super("/editor/plant_uml_editor.fxml", editorContext, false);
@@ -96,9 +98,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         // auto switch preview page
         super.codeArea.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
             int currentRow = newValue;
-            if (indicator.toPageByRow(currentRow)) {
-                log.info("Change page to " + indicator.page);
-                refresh(codeArea.getText());
+            if (isAutoSwitch) {
+                if (indicator.toPageByRow(currentRow)) {
+                    log.info("Change page to " + indicator.page);
+                    refresh(codeArea.getText());
+                }
             }
         });
 
@@ -421,6 +425,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     public Image getImage() {
         return image;
+    }
+
+    public void setAutoSwitch(boolean autoSwitch) {
+        this.isAutoSwitch = autoSwitch;
     }
 
     private static class Indicator {

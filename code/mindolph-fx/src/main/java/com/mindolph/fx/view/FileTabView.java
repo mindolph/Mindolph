@@ -20,6 +20,7 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.plantuml.PlantUmlEditor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -328,7 +329,7 @@ public class FileTabView extends BaseView {
         }
         Editable editor = tabEditorMap.get(selectedTab);
         if (editor != null) {
-            if (editor instanceof BasePreviewEditor) {
+            if (editor instanceof BasePreviewEditor previewEditor) {
                 MenuItem miChangeSplitterOrientation = new MenuItem("Change Splitter Orientation");
                 Menu mViewMode = new Menu("View Mode");
                 ToggleGroup toggleGroup = new ToggleGroup();
@@ -343,29 +344,28 @@ public class FileTabView extends BaseView {
 
                 miChangeSplitterOrientation.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).toggleOrientation();
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.toggleOrientation();
                     }
                 });
                 miTextOnly.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.TEXT_ONLY);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.TEXT_ONLY);
                     }
                 });
                 miPreviewOnly.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
                     }
                 });
                 miBoth.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.BOTH);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.BOTH);
                     }
                 });
-                BasePreviewEditor previewEditor = (BasePreviewEditor) editor;
                 previewEditor.orientationObjectProperty().addListener((observable, oldValue, newValue) -> {
                     Orientation orientation = previewEditor.getOrientation();
                     Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
@@ -377,13 +377,21 @@ public class FileTabView extends BaseView {
                 contextMenu.getItems().addAll(new SeparatorMenuItem(), miChangeSplitterOrientation, mViewMode);
             }
 
-            if (editor instanceof MarkdownEditor) {
+            if (editor instanceof MarkdownEditor mde) {
                 CheckMenuItem miAutoScroll = new CheckMenuItem("Auto Scroll");
                 miAutoScroll.setSelected(true);
                 miAutoScroll.setOnAction(actionEvent -> {
-                    ((BasePreviewEditor) editor).setIsAutoScroll(miAutoScroll.isSelected());
+                    mde.setIsAutoScroll(miAutoScroll.isSelected());
                 });
                 contextMenu.getItems().add(miAutoScroll);
+            }
+            else if (editor instanceof PlantUmlEditor pue) {
+                CheckMenuItem miAutoSwitch = new CheckMenuItem("Auto Switch");
+                miAutoSwitch.setSelected(true);
+                miAutoSwitch.setOnAction(actionEvent -> {
+                    pue.setAutoSwitch(miAutoSwitch.isSelected());
+                });
+                contextMenu.getItems().add(miAutoSwitch);
             }
         }
 
