@@ -102,7 +102,7 @@ public class FontIconManager {
         icons.put(IconKey.H5, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_5, strIconSize));
         icons.put(IconKey.H6, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FORMAT_HEADER_6, strIconSize));
         icons.put(IconKey.SEPARATOR, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.WINDOW_MINIMIZE, strIconSize));
-        icons.put(IconKey.COMMENT, () -> MaterialDesignIconFactory.get().createIcon(MaterialIcon.CHAT_BUBBLE_OUTLINE, strIconSize));
+        icons.put(IconKey.COMMENT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.COMMENT_PROCESSING_OUTLINE, strIconSize));
 
         icons.put(IconKey.OUTLINE, () -> OctIconFactory.get().createIcon(OctIcon.THREE_BARS, strIconSize));
         icons.put(IconKey.OUTLINE_ITEM, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.RECORD, strIconSize));
@@ -171,6 +171,7 @@ public class FontIconManager {
         icons.put(IconKey.ENTITY, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.CUBE, strIconSize));
         icons.put(IconKey.SQUARE, () -> MaterialDesignIconFactory.get().createIcon(MaterialIcon.CROP_SQUARE, strIconSize));
         icons.put(IconKey.HUMAN, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.HUMAN, strIconSize));
+        icons.put(IconKey.BLOCK_COMMENT, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.COMMENT_TEXT_OUTLINE, strIconSize));
     }
 
     public Text getIcon(IconKey iconKey) {

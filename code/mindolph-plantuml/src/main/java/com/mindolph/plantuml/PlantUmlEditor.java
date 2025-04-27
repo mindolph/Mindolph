@@ -81,6 +81,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     private final Indicator indicator = new Indicator();
 
+    // used to extract outline title from comment.
     private final Pattern extractingPattern = Pattern.compile("[\\*]+(.+?)[\\*]+");
 
     public PlantUmlEditor(EditorContext editorContext) {
@@ -284,9 +285,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     log.debug("Generate error image for page: %d".formatted(curPage));
                     try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
                         DiagramDescription diagramDescription = reader.outputImage(os, curPage);
-                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
-                        image = new Image(byteArrayInputStream);
-                        byteArrayInputStream.close();
+                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
+                            image = new Image(byteArrayInputStream);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
                                     new StatusMsg("Something wrong with your code in page %d".formatted(curPage + 1),
@@ -318,9 +321,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     DiagramDescription diagramDescription = reader.outputImage(os, indicator.page);
                     if (diagramDescription != null) {
                         log.debug(diagramDescription.getDescription());
-                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
-                        image = new Image(byteArrayInputStream);
-                        byteArrayInputStream.close();
+                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
+                            image = new Image(byteArrayInputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         previewConsumer.call(image);
                     }
                 } catch (IOException e) {
@@ -368,7 +373,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected String getOutlinePattern() {
-        return "(@|' )(%s|[\\*]+.+[\\*]+?)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
+        return "(@|'[\\s]*)(%s|[\\*]+.+[\\*]+?)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
     }
 
     @Override
@@ -390,8 +395,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             int startPos = codeArea.getAbsolutePosition(location.getEndRow(), location.getEndCol());
             int endPos = nextBlockLocation == null ? codeArea.getText().length() : codeArea.getAbsolutePosition(nextBlockLocation.getStartRow(), nextBlockLocation.getStartCol());
             String block = StringUtils.substring(codeArea.getText(), startPos, endPos);
-            try {
-                List<String> lines = IoUtils.readToStringList(new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8)));
+            try (ByteArrayInputStream bains = new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8))) {
+                List<String> lines = IoUtils.readToStringList(bains);
                 String title = this.extractDiagramTitle(lines);
 //            if ("[Unnamed]".equals(title)){
 //                return heading;

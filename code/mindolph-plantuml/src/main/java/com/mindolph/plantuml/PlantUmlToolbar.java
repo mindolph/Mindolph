@@ -2,6 +2,7 @@ package com.mindolph.plantuml;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.control.ExtCodeArea;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,6 +35,10 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
     private Button btnOutline2;
     @FXML
     private Button btnOutline3;
+    @FXML
+    private Button btnLineComment;
+    @FXML
+    private Button btnBlockComment;
 
     private final PlantUmlCodeArea pumlCodeArea;
 
@@ -53,6 +58,8 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         btnOutline1.setGraphic(fim.getIcon(IconKey.H1));
         btnOutline2.setGraphic(fim.getIcon(IconKey.H2));
         btnOutline3.setGraphic(fim.getIcon(IconKey.H3));
+        btnLineComment.setGraphic(fim.getIcon(IconKey.COMMENT));
+        btnBlockComment.setGraphic(fim.getIcon(IconKey.BLOCK_COMMENT));
 
         btnUml.setOnAction(this);
         btnEntity.setOnAction(this);
@@ -61,6 +68,8 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         btnOutline1.setOnAction(this);
         btnOutline2.setOnAction(this);
         btnOutline3.setOnAction(this);
+        btnLineComment.setOnAction(this);
+        btnBlockComment.setOnAction(this);
     }
 
 
@@ -87,6 +96,12 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
         }
         else if (node == btnOutline3) {
             this.insertOutlineTag(3);
+        }
+        else if (node == btnLineComment) {
+            this.insertLineComment();
+        }
+        else if (node == btnBlockComment) {
+            this.insertBlockComment();
         }
         pumlCodeArea.requestFocus();
     }
@@ -123,8 +138,19 @@ public class PlantUmlToolbar extends ScrollPane implements EventHandler<ActionEv
 
     private void insertOutlineTag(int level) {
         String levelChars = StringUtils.repeat('*', level);
-        String snippet = "' %s ⨁ %s\n".formatted(levelChars, levelChars);
+        String snippet = "' %s ⨁ %s".formatted(levelChars, levelChars);
         pumlCodeArea.applyTargetReplacement(snippet);
+    }
+
+    private void insertLineComment() {
+        pumlCodeArea.addOrTrimHeadToParagraphsIfAdded(new ExtCodeArea.Replacement("' "));
+    }
+
+    private void insertBlockComment() {
+        pumlCodeArea.applyTargetReplacement("""
+                /'
+                ⨁
+                '/""");
     }
 
 }
