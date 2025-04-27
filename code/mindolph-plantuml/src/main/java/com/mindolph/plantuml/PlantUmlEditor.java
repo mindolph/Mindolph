@@ -201,9 +201,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     private String convertPageToString(FileFormat fileFormat) {
         String theText = codeArea.getText();
-        SourceStringReader reader = new SourceStringReader(theText, "UTF-8");
-        ByteArrayOutputStream utfBuffer = new ByteArrayOutputStream();
-        try {
+        SourceStringReader reader = new SourceStringReader(theText, StandardCharsets.UTF_8);
+        try (ByteArrayOutputStream utfBuffer = new ByteArrayOutputStream()) {
             if (fileFormat == null) {
                 // return original plantuml code if no target
                 BlockUml blockUml = reader.getBlocks().get(indicator.page);

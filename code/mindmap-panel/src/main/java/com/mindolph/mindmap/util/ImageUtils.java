@@ -1,7 +1,5 @@
 package com.mindolph.mindmap.util;
 
-import org.apache.commons.io.IOUtils;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -14,8 +12,9 @@ import java.io.InputStream;
 
 /**
  * Extracted from Utils
- * @deprecated This can be replaced by mfx ImageConverter.
+ *
  * @author mindolph.com@gmail.com
+ * @deprecated This can be replaced by mfx ImageConverter.
  */
 public class ImageUtils {
     /**
@@ -26,7 +25,6 @@ public class ImageUtils {
      * @return null if it was impossible to load image for its format, loaded
      * prepared image
      * @throws IOException if any error during conversion or loading
-     * 
      */
     public static String rescaleImageAndEncodeAsBase64(InputStream in, int maxSize) throws IOException {
         Image image = ImageIO.read(in);
@@ -44,7 +42,6 @@ public class ImageUtils {
      * @param maxSize max size of image, if less or zero then don't rescale
      * @return image
      * @throws IOException if any error during conversion or loading
-     * 
      */
     public static String rescaleImageAndEncodeAsBase64(File file, int maxSize) throws IOException {
         Image image = ImageIO.read(file);
@@ -61,7 +58,6 @@ public class ImageUtils {
      * @param maxSize max size of image, if less or zero then don't rescale
      * @return scaled and encoded image
      * @throws IOException if it was impossible to encode image
-     * 
      */
     public static String rescaleImageAndEncodeAsBase64(Image image, int maxSize) throws IOException {
         int width = image.getWidth(null);
@@ -99,15 +95,16 @@ public class ImageUtils {
             image = buffer;
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
+
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             if (!ImageIO.write((RenderedImage) image, "png", bos)) {
                 throw new IOException("Can't encode image as PNG");
             }
-        } finally {
-            IOUtils.closeQuietly(bos);
+            return CryptoUtils.base64encode(bos.toByteArray());
         }
-        return CryptoUtils.base64encode(bos.toByteArray());
+        catch (IOException e) {
+            throw new IOException("Can't encode image as PNG", e);
+        }
     }
 
 

@@ -110,14 +110,14 @@ public class AppManager {
 
     private SnippetsRecord loadSnippetsRecord(String fileType) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-            new FileInputStream(snippetsFile(fileType)), StandardCharsets.UTF_8))) {
-        return new Gson().fromJson(reader, SnippetsRecord.class);
+                new FileInputStream(snippetsFile(fileType)), StandardCharsets.UTF_8))) {
+            return new Gson().fromJson(reader, SnippetsRecord.class);
 //            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
 //            if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
 //            return snippetsRecord;
         } catch (FileNotFoundException e) {
             return null;
-        //Catch dessa exceção é novo também    
+            //Catch dessa exceção é novo também
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -125,8 +125,8 @@ public class AppManager {
 
     private void saveSnippetsRecord(SnippetsRecord snippetsRecord, String fileType) {
         String json = new Gson().toJson(snippetsRecord, SnippetsRecord.class);
-        try {
-            IOUtils.write(json, new FileOutputStream(snippetsFile(fileType)), StandardCharsets.UTF_8);
+        try (FileOutputStream fos = new FileOutputStream(snippetsFile(fileType))) {
+            IOUtils.write(json, fos, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
