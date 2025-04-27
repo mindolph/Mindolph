@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -90,13 +91,13 @@ public class AttributeUtils {
 
     /**
      * @param context
-     * @param selected file to load to topics.
+     * @param selected     file to load to topics.
      * @param withFileLink ank user for attach file link to the image attribute if true.
      */
     public static void loadImageFileToSelectedTopics(ExtensionContext context, File selected, boolean withFileLink) {
         Image image;
-        try {
-            image = new Image(new FileInputStream(selected));
+        try (InputStream ins = new FileInputStream(selected)) {
+            image = new Image(ins);
             ImagePreviewDialog scaleImageDialog = new ImagePreviewDialog("Resize&Preview", image);
             Image scaledImage = scaleImageDialog.showAndWait();
             if (scaledImage != null) {

@@ -39,30 +39,32 @@ public class ReleaseUtils {
         try {
             u = new URL(GITHUB_API_LATEST_VERSION);
             HttpURLConnection httpConn = (HttpURLConnection) u.openConnection();
-            InputStream inputStream = httpConn.getInputStream();
+            try (InputStream inputStream = httpConn.getInputStream();) {
+                // TODO replace with BufferedIoUtils.readAllAsString() later
+                StringBuffer buf = new StringBuffer();
+                BufferedIoUtils.readInputStream(inputStream, 1024, bytes -> {
+                    String s = new String(bytes, StandardCharsets.UTF_8);
+                    //log.debug("'%s'".formatted(s));
+                    buf.append(s);
+                });
+                json = buf.toString();
 
-            // TODO replace with BufferedIoUtils.readAllAsString() later
-            StringBuffer buf = new StringBuffer();
-            BufferedIoUtils.readInputStream(inputStream, 1024, bytes -> {
-                 String s = new String(bytes, StandardCharsets.UTF_8);
-                //log.debug("'%s'".formatted(s));
-                buf.append(s);
-            });
-            json = buf.toString();
-
-            JsonObject root = (JsonObject) JsonParser.parseString(json);
-            JsonElement version = root.get("tag_name");
-            JsonElement url = root.get("html_url");
-            ReleaseInfo ri = new ReleaseInfo();
-            if (version != null && url != null
-                    && StringUtils.isNotBlank(version.getAsString())
-                    && StringUtils.isNotBlank(url.getAsString())) {
-                ri.setVersion(version.getAsString());
-                ri.setUrl(url.getAsString());
-                log.info("Got latest release: " + ri);
-                return ri;
+                JsonObject root = (JsonObject) JsonParser.parseString(json);
+                JsonElement version = root.get("tag_name");
+                JsonElement url = root.get("html_url");
+                ReleaseInfo ri = new ReleaseInfo();
+                if (version != null && url != null
+                        && StringUtils.isNotBlank(version.getAsString())
+                        && StringUtils.isNotBlank(url.getAsString())) {
+                    ri.setVersion(version.getAsString());
+                    ri.setUrl(url.getAsString());
+                    log.info("Got latest release: " + ri);
+                    return ri;
+                }
+                return null;
+            } catch (Exception e) {
+                return null;
             }
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             log.info(json);

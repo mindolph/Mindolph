@@ -375,6 +375,38 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
         }
     }
 
+    /**
+     * handle the `⨁` in the snippet code to be inserted.
+     *
+     * @param code
+     */
+    public void applyTargetReplacement(String code) {
+        String selectedText = this.getSelectedText();
+        int caretPos = StringUtils.indexOf(code, "⨁");
+        String codeToInsert = "";
+        if (caretPos > 0) {
+            if (StringUtils.isEmpty(selectedText)) {
+                codeToInsert = StringUtils.remove(code, "⨁");
+                this.insertText(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos));
+            }
+            else {
+                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
+                this.replaceSelection(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
+            }
+        }
+        else {
+            if (StringUtils.isEmpty(selectedText)) {
+                this.insertText(code);
+            }
+            else {
+                this.replaceSelection(code);
+            }
+        }
+        this.requestFocus();
+    }
+
 
     private boolean isUpOrDown(KeyEvent keyEvent) {
         return KeyCode.UP.equals(keyEvent.getCode()) || KeyCode.DOWN.equals(keyEvent.getCode());

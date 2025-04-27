@@ -67,8 +67,8 @@ public class ImageVisualAttributeExtension implements VisualAttributeExtension {
         Image result = null;
         String encoded = topic.getAttribute(AttributeUtils.ATTR_IMAGE_KEY);
         if (encoded != null) {
-            try {
-                result = new Image(new ByteArrayInputStream(CryptoUtils.base64decode(encoded)));
+            try (ByteArrayInputStream bins = new ByteArrayInputStream(CryptoUtils.base64decode(encoded))) {
+                result = new Image(bins);
             } catch (Exception ex) {
                 log.error("Can't extract image", ex);
             }
