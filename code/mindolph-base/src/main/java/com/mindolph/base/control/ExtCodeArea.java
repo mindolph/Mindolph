@@ -60,6 +60,7 @@ public class ExtCodeArea extends CodeArea {
     private final ShortcutManager sm = ShortcutManager.getIns();
 
     // disable 'paste' shortcut in code area control, just a workaround for the shortcut conflict on macOS.
+    // update: those issues are fixed since JavaFX 24, no need anymore.
     private final BooleanProperty disablePaste = new SimpleBooleanProperty(false);
     private final BooleanProperty disableRedo = new SimpleBooleanProperty(false);
     private final BooleanProperty disableUndo = new SimpleBooleanProperty(false);
@@ -220,7 +221,7 @@ public class ExtCodeArea extends CodeArea {
         }
         // somehow on macOS, the shortcut event not only consumed by editor, but also consumed by application,
         // which causes the paste action be performed twice.
-        // so disable PASTE shortcut on macOS to avoid conflict with global.
+        // so disable (by consuming key event)  PASTE shortcut on macOS to avoid conflict with global.
         if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
             inputMaps.add(InputMap.consume(
                     EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
