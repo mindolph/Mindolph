@@ -31,7 +31,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                         new ImageSnippet("group").code("""
                                 group Main Label [Second Label]
                                 ⨁
-                                end
+                                end group
                                 """).generateImage(),
                         new ImageSnippet("loop").code("""
                                 loop 1000 times
