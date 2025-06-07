@@ -18,7 +18,7 @@
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
         <app.version>1.12.1</app.version>
-        <jvm.modules>java.logging,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec</jvm.modules>
+        <jvm.modules>java.logging,javafx.graphics,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>
@@ -185,7 +185,7 @@
                         <configuration>
                             <toolName>jlink</toolName>
                             <removeDirectories>${project.build.directory}/jvm-image/</removeDirectories>
-                            <modulePath>${env.JAVAFX_HOME}</modulePath>
+                            <modulePath>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</modulePath>
                             <addModules>${jvm.modules}</addModules>
                             <output>${project.build.directory}/jvm-image</output>
                             <args>
