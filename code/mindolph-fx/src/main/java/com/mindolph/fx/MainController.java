@@ -714,7 +714,7 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onSaveCollection() {
-        // save current collection with opened files
+        // save the current collection with opened files
         String activeCollectionName = this.cm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName)) {
             log.warn("No active collection found");
@@ -739,7 +739,7 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onRemoveCollection() {
-        // remove current user defined collection.
+        // remove the current user defined collection.
         String activeCollectionName = this.cm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName) || "default".equalsIgnoreCase(activeCollectionName)) {
             DialogFactory.warnDialog("The default collection cannot be removed.");
@@ -747,7 +747,7 @@ public class MainController extends BaseController implements Initializable,
         }
         boolean confirmRemove = DialogFactory.yesNoConfirmDialog("Are you sure to remove collection '%s' \n(NO files will be deleted) ".formatted(activeCollectionName));
         if (confirmRemove) {
-            // switch to default collection first
+            // switch to a default collection first
             this.onSelectCollection("default");
             // delete current user-defined collection
             this.cm.deleteCollection(activeCollectionName);
@@ -761,10 +761,39 @@ public class MainController extends BaseController implements Initializable,
     }
 
     @FXML
+    public void onRenameCollection() {
+        String activeCollectionName = this.cm.getActiveCollectionName();
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Rename Collection %s".formatted(activeCollectionName))
+                .content("Input a new name")
+                .text(activeCollectionName)
+                .width(500)
+                .build();
+        Optional<String> opt = dialog.showAndWait();
+        if (opt.isPresent()) {
+            String newName = opt.get();
+            if (StringUtils.equals(newName, activeCollectionName)) {
+                return;
+            }
+            if (!activeCollectionName.equals(newName) && this.cm.getFileCollectionMap().containsKey(newName)) {
+                DialogFactory.warnDialog("The name '%s' already exists!".formatted(newName));
+                return;
+            }
+            this.cm.renameCollection(activeCollectionName, newName);
+            // remove for resorting first.
+            menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
+
+            // load all again to resort collections.
+            this.loadCollections();
+        }
+    }
+
+    @FXML
     public void onSelectCollection(String collectionName) {
         List<String> files;
         if (StringUtils.isNotBlank(collectionName)) {
-            // get files of selected collection.
+            // get files of a selected collection.
             files = this.cm.getCollectionFilePaths(collectionName);
         }
         else {
