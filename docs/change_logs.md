@@ -1,5 +1,10 @@
 # Change Logs
 
+## V1.11.9 Release
+* Fix: `group` snippet doesn't work for activity diagram.
+* Fix: the streaming Gen-AI output does not work on ChatGLM models.
+* update pre-set models for Qwen, ChatGLM and OpenAI.
+
 ### V1.12.1 Unstable Release
 * Features:  
 	* automatically switch PlantUML preview page when caret moves to other code blocks.
