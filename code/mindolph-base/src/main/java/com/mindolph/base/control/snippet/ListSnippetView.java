@@ -39,7 +39,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final AppManager appManager = AppManager.getInstance();
 
-    // Editable view is used for custom snippet group.
+    // Editable view is used for a custom snippet group.
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private final ListView<Snippet> listView;
@@ -52,7 +52,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
     // event to SnippetView after snippet changes
     private final EventSource<Snippet> snippetChanged = new EventSource<>();
 
-    // used for custom snippet to load data for file type.
+    // used for custom snippet to load data for a file type.
     private final String fileType;
 
     private ContextMenu contextMenu = null;
@@ -77,14 +77,16 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             return cell;
         });
         this.listView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
-                EventBus.getIns().notifySnippetApply(selectedSnippet);
-            }
             if (contextMenu != null && contextMenu.isShowing()) {
                 contextMenu.hide();
             }
-            if (event.getButton() == MouseButton.SECONDARY) {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (event.getClickCount() == 2) {
+                    Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
+                    EventBus.getIns().notifySnippetApply(selectedSnippet);
+                }
+            }
+            else if (event.getButton() == MouseButton.SECONDARY) {
                 contextMenu = this.createContextMenu();
                 if (contextMenu != null) {
                     contextMenu.show(this.listView, event.getScreenX(), event.getScreenY());
