@@ -359,6 +359,7 @@
             </activation>
             <properties>
                 <platform>mac-aarch64</platform>
+                <jfx_module_path>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</jfx_module_path>
             </properties>
         </profile>
         <profile>
@@ -382,6 +383,7 @@
             </activation>
             <properties>
                 <platform>win</platform>
+                <jfx_module_path>${env.JAVA_HOME}/jmods;${env.JAVAFX_HOME}</jfx_module_path>
             </properties>
         </profile>
         <profile>

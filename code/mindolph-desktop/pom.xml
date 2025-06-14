@@ -185,7 +185,7 @@
                         <configuration>
                             <toolName>jlink</toolName>
                             <removeDirectories>${project.build.directory}/jvm-image/</removeDirectories>
-                            <modulePath>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</modulePath>
+                            <modulePath>${jfx_module_path}</modulePath>
                             <addModules>${jvm.modules}</addModules>
                             <output>${project.build.directory}/jvm-image</output>
                             <args>
