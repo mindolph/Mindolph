@@ -1,7 +1,24 @@
 # Change Logs
 
+### V1.12.2 Unstable Release
+* Feature:   
+	* Add "Auto Switch" option to PlantUML editor, users can choose whether to let the preview page switch automatically.
+	* New line comment and block comment quick insert buttons to plantuml toolbar.
+	* New functionality to rename the active collection. 
+* Improvement:  
+	* Optimized the outline annotation recognization for PlantUML.
+	* Improved the quick insert from PlantUML toolbar.
+	* Optimized file handle handling.
+* Fix:  
+	* Right button double-click on the snippet item inserts snippet code.
+	* Redundant blank line when inserting an empty table to markdown.
+* Update JavaFX to 24.0.1
+* Update other dependencies like PlantUML etc.
+* merged bug fixes from v1.11.9
+
+
 ## V1.11.9 Release
-* Fix: `group` snippet doesn't work for activity diagram.
+* Fix: PlantUML `group` snippet doesn't work for activity diagram.
 * Fix: the streaming Gen-AI output does not work on ChatGLM models.
 * update pre-set models for Qwen, ChatGLM and OpenAI.
 
