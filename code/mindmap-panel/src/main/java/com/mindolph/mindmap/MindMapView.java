@@ -1866,9 +1866,9 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     public void save(File file) {
-        try {
+        try (Writer w = new StringWriter(16384)) {
             // TODO check external modification before saving.
-            byte[] content = getModel().write(new StringWriter(16384)).toString()
+            byte[] content = getModel().write(w).toString()
                     .getBytes(StandardCharsets.UTF_8);
             FileUtils.writeByteArrayToFile(file, content);
             this.undoStorage.setFlagThatSomeStateLost();
