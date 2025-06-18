@@ -149,11 +149,11 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
         }
 
         boolean findPluginNote = (extrasToFind != null && !extrasToFind.isEmpty())
-                                 && (topicFinders != null && !topicFinders.isEmpty())
-                                 && extrasToFind.contains(Extra.ExtraType.NOTE);
+                && (topicFinders != null && !topicFinders.isEmpty())
+                && extrasToFind.contains(Extra.ExtraType.NOTE);
         boolean findPluginFile = (extrasToFind != null && !extrasToFind.isEmpty())
-                                 && (topicFinders != null && !topicFinders.isEmpty())
-                                 && extrasToFind.contains(Extra.ExtraType.FILE);
+                && (topicFinders != null && !topicFinders.isEmpty())
+                && extrasToFind.contains(Extra.ExtraType.FILE);
 
         T result = null;
 
@@ -381,19 +381,18 @@ public final class MindMap<T extends Topic<T>> implements Serializable, Constant
 
 
     public String packToString() {
-        StringWriter writer;
         this.lock();
-        try {
-            writer = new StringWriter(16384);
-            try {
-                write(writer);
-            } catch (IOException ex) {
-                throw new Error("Unexpected exception", ex);
-            }
+        String ret;
+        try (Writer writer = new StringWriter(16384)) {
+            write(writer);
+            ret = writer.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new Error("Unexpected exception", ex);
         } finally {
             this.unlock();
         }
-        return writer.toString();
+        return ret;
     }
 
 

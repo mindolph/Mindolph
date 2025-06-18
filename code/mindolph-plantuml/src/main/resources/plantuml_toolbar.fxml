@@ -47,6 +47,18 @@
                 <Tooltip text="Outline 3"/>
             </tooltip>
         </Button>
+        <Button fx:id="btnLineComment" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Line comment"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnBlockComment" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Block Comment"/>
+            </tooltip>
+        </Button>
     </HBox>
 
 </fx:root>

@@ -77,11 +77,14 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private final AtomicLong scrollStartTime = new AtomicLong(0);
     private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
-    private Image image;
-
     private final Indicator indicator = new Indicator();
 
+    // used to extract outline title from comment.
     private final Pattern extractingPattern = Pattern.compile("[\\*]+(.+?)[\\*]+");
+
+    private Image image;
+
+    private boolean isAutoSwitch = true;
 
     public PlantUmlEditor(EditorContext editorContext) {
         super("/editor/plant_uml_editor.fxml", editorContext, false);
@@ -95,9 +98,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         // auto switch preview page
         super.codeArea.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
             int currentRow = newValue;
-            if (indicator.toPageByRow(currentRow)) {
-                log.info("Change page to " + indicator.page);
-                refresh(codeArea.getText());
+            if (isAutoSwitch) {
+                if (indicator.toPageByRow(currentRow)) {
+                    log.info("Change page to " + indicator.page);
+                    refresh(codeArea.getText());
+                }
             }
         });
 
@@ -196,9 +201,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     private String convertPageToString(FileFormat fileFormat) {
         String theText = codeArea.getText();
-        SourceStringReader reader = new SourceStringReader(theText, "UTF-8");
-        ByteArrayOutputStream utfBuffer = new ByteArrayOutputStream();
-        try {
+        SourceStringReader reader = new SourceStringReader(theText, StandardCharsets.UTF_8);
+        try (ByteArrayOutputStream utfBuffer = new ByteArrayOutputStream()) {
             if (fileFormat == null) {
                 // return original plantuml code if no target
                 BlockUml blockUml = reader.getBlocks().get(indicator.page);
@@ -284,9 +288,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     log.debug("Generate error image for page: %d".formatted(curPage));
                     try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
                         DiagramDescription diagramDescription = reader.outputImage(os, curPage);
-                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
-                        image = new Image(byteArrayInputStream);
-                        byteArrayInputStream.close();
+                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
+                            image = new Image(byteArrayInputStream);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
                                     new StatusMsg("Something wrong with your code in page %d".formatted(curPage + 1),
@@ -318,9 +324,11 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     DiagramDescription diagramDescription = reader.outputImage(os, indicator.page);
                     if (diagramDescription != null) {
                         log.debug(diagramDescription.getDescription());
-                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray());
-                        image = new Image(byteArrayInputStream);
-                        byteArrayInputStream.close();
+                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
+                            image = new Image(byteArrayInputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         previewConsumer.call(image);
                     }
                 } catch (IOException e) {
@@ -368,7 +376,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected String getOutlinePattern() {
-        return "(@|' )(%s|[\\*]+.+[\\*]+?)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
+        return "(@|'[\\s]*)(%s|[\\*]+.+[\\*]+?)".formatted(String.join("|", DIAGRAM_KEYWORDS_START));
     }
 
     @Override
@@ -390,8 +398,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             int startPos = codeArea.getAbsolutePosition(location.getEndRow(), location.getEndCol());
             int endPos = nextBlockLocation == null ? codeArea.getText().length() : codeArea.getAbsolutePosition(nextBlockLocation.getStartRow(), nextBlockLocation.getStartCol());
             String block = StringUtils.substring(codeArea.getText(), startPos, endPos);
-            try {
-                List<String> lines = IoUtils.readToStringList(new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8)));
+            try (ByteArrayInputStream bains = new ByteArrayInputStream(block.getBytes(StandardCharsets.UTF_8))) {
+                List<String> lines = IoUtils.readToStringList(bains);
                 String title = this.extractDiagramTitle(lines);
 //            if ("[Unnamed]".equals(title)){
 //                return heading;
@@ -416,6 +424,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     public Image getImage() {
         return image;
+    }
+
+    public void setAutoSwitch(boolean autoSwitch) {
+        this.isAutoSwitch = autoSwitch;
     }
 
     private static class Indicator {

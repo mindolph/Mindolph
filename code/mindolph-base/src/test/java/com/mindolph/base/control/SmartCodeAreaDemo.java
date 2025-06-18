@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
  * @author mindolph.com@gmail.com
  * @since 1.6
  */
-public class ExtCodeAreaDemo implements Initializable {
+public class SmartCodeAreaDemo implements Initializable {
 
     @FXML
     private SmartCodeArea smartCodeArea;

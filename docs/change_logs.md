@@ -1,7 +1,41 @@
 # Change Logs
 
-### V1.11.7 Release
+### V1.12.2 Unstable Release
+* Feature:   
+	* Add "Auto Switch" option to PlantUML editor, users can choose whether to let the preview page switch automatically.
+	* New line comment and block comment quick insert buttons to plantuml toolbar.
+	* New functionality to rename the active collection. 
+* Improvement:  
+	* Optimized the outline annotation recognization for PlantUML.
+	* Improved the quick insert from PlantUML toolbar.
+	* Optimized file handle handling.
+* Fix:  
+	* Right button double-click on the snippet item inserts snippet code.
+	* Redundant blank line when inserting an empty table to markdown.
+* Update JavaFX to 24.0.1
+* Update other dependencies like PlantUML etc.
+* merged bug fixes from v1.11.9
 
+
+## V1.11.9 Release
+* Fix: PlantUML `group` snippet doesn't work for activity diagram.
+* Fix: the streaming Gen-AI output does not work on ChatGLM models.
+* update pre-set models for Qwen, ChatGLM and OpenAI.
+
+### V1.12.1 Unstable Release
+* Features:  
+	* automatically switch PlantUML preview page when caret moves to other code blocks.
+	* add new toolbar to PlantUML editor to insert diagram, entity, actor, rectangle, outline comment. 
+* Improvement:  
+	* optimized the quick insert table feature a litter bit for Markdown.   
+	* support GIF in Markdown.  
+* fix: setting the max output token of custom model does not work well.   
+* merged bug fixes from stable version 1.11.8.  
+
+### V1.11.8 Release
+* Fix: unable to create or open a workspace since the release V1.11.6.
+
+### V1.11.7 Release
 * Fix: potential file handles leak when importing from XMind file and Novamind file(https://github.com/mindolph/Mindolph/issues/13). 
 * Fix: some icons don't respect the `UI icon size` setting. 
 * Fix: the Markdown toolbar limits the position adjustment of the Markdown editor splitter.
@@ -14,7 +48,7 @@
 	* Let user change the prompt for generating summary just before starting.
 	* PlantUML: Support CSS style and C4 Model diagram by code snippets.
 	* Add some new groups of sprites (Tupadr3) snippets to PlantUML, including devicons, font-awesome , material, govicons, weather.
-	* A special multi-level outline annotation format is introduced for the PlantUML editor. By using this format in the comment, the specified content can be displayed in the outline item. The number of `*` indicates the level, for example: `' *foobar*` indicates the first-level title, `' **foobar**` indicates the second-level title.
+	* A special multi-level outline annotation format is introduced to the PlantUML editor. By using this format in the comment, the specified content can be displayed in the outline item. The number of `*` indicates the level, for example: `' *foobar*` indicates the first-level title, `' **foobar**` indicates the second-level title.
 	* Add support to the Moonshot LLM API. 
 
 * Improvement: 

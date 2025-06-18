@@ -118,8 +118,8 @@ public class AppManager {
 
     private void saveSnippetsRecord(SnippetsRecord snippetsRecord, String fileType) {
         String json = new Gson().toJson(snippetsRecord, SnippetsRecord.class);
-        try {
-            IOUtils.write(json, new FileOutputStream(snippetsFile(fileType)), StandardCharsets.UTF_8);
+        try (FileOutputStream fos = new FileOutputStream(snippetsFile(fileType))) {
+            IOUtils.write(json, fos, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

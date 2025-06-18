@@ -68,9 +68,9 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 //        codeArea.setShowCaret(Caret.CaretVisibility.ON);
         codeArea.getUndoManager().preventMerge();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setDisablePaste(true); // only works for macOS
-        codeArea.setDisableUndo(true);
-        codeArea.setDisableRedo(true);
+//        codeArea.setDisablePaste(true); // only works for macOS
+//        codeArea.setDisableUndo(true); // unnecessary on JFX 24
+//        codeArea.setDisableRedo(true); // unnecessary on JFX 24
 //        codeArea.setStyle("-fx-tab-size: 2"); doesn't work
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
@@ -352,30 +352,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     public void onSnippet(Snippet snippet) {
         // replacing selected text with snippet code
         String code = snippet.getCode();
-        String selectedText = codeArea.getSelectedText();
-        int caretPos = StringUtils.indexOf(code, "⨁");
-        String codeToInsert = "";
-        if (caretPos > 0) {
-            if (StringUtils.isEmpty(selectedText)) {
-                codeToInsert = StringUtils.remove(code, "⨁");
-                codeArea.insertText(codeToInsert);
-                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
-            }
-            else {
-                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
-                codeArea.replaceSelection(codeToInsert);
-                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
-            }
-        }
-        else {
-            if (StringUtils.isEmpty(selectedText)) {
-                codeArea.insertText(code);
-            }
-            else {
-                codeArea.replaceSelection(code);
-            }
-        }
-        codeArea.requestFocus();
+        codeArea.applyTargetReplacement(code);
     }
 
     @Override

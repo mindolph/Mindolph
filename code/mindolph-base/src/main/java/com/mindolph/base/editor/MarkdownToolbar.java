@@ -228,8 +228,7 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
                 String content = this.generateTableHeader(tableOptions.getCols());
                 String[] emptyRow = new String[tableOptions.getCols()];
                 Arrays.fill(emptyRow, "    ");
-                content = content + StringUtils.repeat("\n|" + StringUtils.join(emptyRow, "|") + "|", tableOptions.getRows());
-                content = content + "\n";
+                content = content + StringUtils.repeat("|%s|\n".formatted(StringUtils.join(emptyRow, "|")), tableOptions.getRows());
                 IndexRange selection = markdownCodeArea.getSelection();
                 markdownCodeArea.replaceSelection(content);
                 markdownCodeArea.moveTo(selection.getStart() + 2);

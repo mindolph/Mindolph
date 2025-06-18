@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public interface GenAiConstants {
 
     /**
-     * Look up information for pre-defined model.
+     * Look up information for a pre-defined model.
      *
      * @param providerName
      * @param modelName
@@ -36,6 +36,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo", 4096));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4", 8192));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4.1", 32768));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4.1-mini", 32768));
+            put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4.1-nano", 32768));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4-turbo", 4096));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o", 16384));
             put(GenAiModelProvider.OPEN_AI.getName(), new ModelMeta("gpt-4o-mini", 16384));
@@ -72,17 +75,25 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-7b-chat", 2000));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-1.8b-chat", 2000));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen1.5-0.5b-chat", 2000));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-72b-chat", 2000));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-14b-chat", 2000));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-7b-chat", 1500));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-longcontext-chat", 2000));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-chat", 2000));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-72b-chat", 2000));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-14b-chat", 2000));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-7b-chat", 1500));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-longcontext-chat", 2000));
+//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-1.8b-chat", 2000));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-max-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-plus-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-turbo-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo-latest", 2048));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-math-plus", 3072));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-math-plus-latest", 3072));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-math-turbo", 3072));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-math-turbo-latest", 3072));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-mt-plus", 1024));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-mt-turbo", 1024));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 8192));
@@ -95,7 +106,10 @@ public interface GenAiConstants {
 
 
             // https://www.bigmodel.cn/console/modelcenter/square
-            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-zero-preview", 16000));
+//            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-zero-preview", 16000));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-z1-air", 32768));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-z1-airx", 32768));
+            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-z1-flash", 32768));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-plus", 4095));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-airx", 4095));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4-air", 4095));
@@ -106,7 +120,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-4", 4095));
             put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-3-turbo", 4095));
 
-            // DeepSeek
+            // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-chat", 8192));
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
 

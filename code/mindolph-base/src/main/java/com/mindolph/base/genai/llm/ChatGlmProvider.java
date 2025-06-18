@@ -68,11 +68,11 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
         streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             log.debug(data);
             JsonObject resObject = JsonParser.parseString(data).getAsJsonObject();
-            JsonObject choices = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
-            String result = choices
-                    .get("message").getAsJsonObject()
+            JsonObject choice = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
+            String result = choice
+                    .get("delta").getAsJsonObject()
                     .get("content").getAsString();
-            boolean isStop = determineStreamStop(choices, "finish_reason");
+            boolean isStop = determineStreamStop(choice, "finish_reason");
             if (isStop) {
                 // TODO count actual output tokens
                 consumer.accept(new StreamToken(StringUtils.EMPTY, 0, true, false));

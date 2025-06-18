@@ -23,10 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +47,7 @@ public class MindMapBranchExporter extends BaseExportExtension {
 
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Text of the root node in new mind map").text("").width(320)
+                .title("Text of the root node in new mind map").text("").width(400)
                 .build();
         dialog.setGraphic(FontIconManager.getIns().getIconForFile(SupportFileTypes.TYPE_MIND_MAP, 32));
         Optional<String> input = dialog.showAndWait();
@@ -74,10 +71,14 @@ public class MindMapBranchExporter extends BaseExportExtension {
                     "Mind Map files (*.mmd)",
                     exportFileName);
 
-
-            String newFileData = newModel.write(new StringWriter()).toString();
-            FileUtils.writeStringToFile(fileToSave, newFileData, StandardCharsets.UTF_8);
-            EventBus.getIns().notifyNewFileToWorkspace(fileToSave);
+            try (Writer w = new StringWriter()) {
+                String newFileData = newModel.write(w).toString();
+                FileUtils.writeStringToFile(fileToSave, newFileData, StandardCharsets.UTF_8);
+                EventBus.getIns().notifyNewFileToWorkspace(fileToSave);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

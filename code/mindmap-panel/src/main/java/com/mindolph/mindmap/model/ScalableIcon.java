@@ -2,6 +2,7 @@ package com.mindolph.mindmap.model;
 
 import javafx.scene.image.Image;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -25,11 +26,14 @@ public final class ScalableIcon {
     }
 
     public static Image loadStandardImage(String name) {
-        InputStream in = ScalableIcon.class.getResourceAsStream("/icon/" + name);
-        if (in == null) {
-            throw new RuntimeException(name + " is not found");
+        try (InputStream in = ScalableIcon.class.getResourceAsStream("/icon/" + name)) {
+            if (in == null) {
+                throw new RuntimeException("%s is not found".formatted(name));
+            }
+            return new Image(in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return new Image(in);
     }
 
     public synchronized Image getImage() {

@@ -94,6 +94,7 @@ import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
+ * @see MarkdownCodeArea
  * @author mindolph.com@gmail.com
  */
 public class MarkdownEditor extends BasePreviewEditor implements Initializable {
@@ -352,8 +353,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     private String getCss() {
         URL cssUri = getCssResourceURI();
         String css = null;
-        try {
-            InputStream inputStream = cssUri.openStream();
+        try (InputStream inputStream = cssUri.openStream()) {
             css = IoUtils.readAllToString(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

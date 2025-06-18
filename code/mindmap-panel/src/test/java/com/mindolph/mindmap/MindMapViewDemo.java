@@ -158,8 +158,7 @@ public class MindMapViewDemo extends Application implements Initializable, Event
 
     @FXML
     public void onBig(ActionEvent event) {
-        try {
-            InputStream inputStream = ClasspathResourceUtils.openResourceStream("big.mmd");
+        try (InputStream inputStream = ClasspathResourceUtils.openResourceStream("big.mmd")) {
             StringReader reader = new StringReader(new String(inputStream.readAllBytes()));
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
         } catch (IOException e) {
@@ -178,8 +177,7 @@ public class MindMapViewDemo extends Application implements Initializable, Event
 
     @FXML
     public void onSmall(ActionEvent event) {
-        try {
-            InputStream inputStream = ClasspathResourceUtils.openResourceStream("small.mmd");
+        try (InputStream inputStream = ClasspathResourceUtils.openResourceStream("small.mmd")) {
             StringReader reader = new StringReader(new String(inputStream.readAllBytes()));
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
         } catch (IOException e) {

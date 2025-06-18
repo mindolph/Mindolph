@@ -63,6 +63,7 @@ import org.swiftboot.util.PathUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -1119,8 +1120,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         }
                         mindMap.setRoot(rootTopic);
                         final String text;
-                        try {
-                            text = mindMap.write(new StringWriter()).toString();
+                        try (Writer w = new StringWriter()){
+                            text = mindMap.write(w).toString();
                             FileUtils.writeStringToFile(newFile, text, StandardCharsets.UTF_8);
                         } catch (IOException e) {
                             e.printStackTrace();

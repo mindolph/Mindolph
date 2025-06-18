@@ -105,12 +105,12 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7-x64.dmg)|[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0-x64.dmg)| Intel |
-|macOS|.dmg|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7-aarch64.dmg) |[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
-|Windows|.msi|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7.msi)|[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0.msi)| |
-|Debian/Ubuntu|.deb|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7.deb)|[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7.rpm)|[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0.rpm)| |
-|Java Executable|.jar|[v1.11.7](https://github.com/mindolph/Mindolph/releases/download/v1.11.7/Mindolph-1.11.7.jar)|[v1.12.0](https://github.com/mindolph/Mindolph/releases/download/v1.12.0/Mindolph-1.12.0.jar)| Java 21 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.11.7.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-23`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-23\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.11.7.jar` |
+|macOS|.dmg|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9-x64.dmg)|[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2-x64.dmg)| Intel |
+|macOS|.dmg|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9-aarch64.dmg) |[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
+|Windows|.msi|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.msi)|[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2.msi)| |
+|Debian/Ubuntu|.deb|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.deb)|[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.rpm)|[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2.rpm)| |
+|Java Executable|.jar|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.jar)|[v1.12.2](https://github.com/mindolph/Mindolph/releases/download/v1.12.2/Mindolph-1.12.2.jar)| Java 21 是运行 Mindolph 的最低版本要求.   	</br> 如果您在 Linux 上运行:   </br> `java -jar Mindolph-1.11.9.jar`  </br> 如果是其他系统, 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-23`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-23\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.11.9.jar` |
 
 
 

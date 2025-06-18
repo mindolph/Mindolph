@@ -249,12 +249,13 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     // @since 1.7
     private Point2D getPanelTargetPoint() {
         // calculate target point with x of left side border and y of caret bottom.
-        // NOTE: the getCharacterBoundsOnScreen(0, 0) throw exception, so disable it and use the X of caret bounds for workaround.
-//        Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
-//        Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
+        // NOTE: since the v0.11.5 the getCharacterBoundsOnScreen(0, 0) throw exception,
+        // so if upgrade, it has to disable following and use the X of caret bounds for workaround.
+        Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
+        Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
         // NOTE: getCaretBounds() is not working(return null sometime), so use getCaretBoundsOnScreen() instead.
         Bounds caretBoundsInScreen = this.getCaretBoundsOnScreen(this.getCaretSelectionBind().getUnderlyingCaret()).orElse(BoundsUtils.newZero());
-        Point2D targetPointInScreen = new Point2D(caretBoundsInScreen.getMinX(), caretBoundsInScreen.getMaxY());
+        Point2D targetPointInScreen = new Point2D(leftSideBoundsInScreen.getMinX(), caretBoundsInScreen.getMaxY());
         return parentPane.screenToLocal(targetPointInScreen);
     }
 
@@ -372,6 +373,38 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             log.debug("not in input method with: %s".formatted(event.getCommitted()));
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
         }
+    }
+
+    /**
+     * handle the `⨁` in the snippet code to be inserted.
+     *
+     * @param code
+     */
+    public void applyTargetReplacement(String code) {
+        String selectedText = this.getSelectedText();
+        int caretPos = StringUtils.indexOf(code, "⨁");
+        String codeToInsert = "";
+        if (caretPos > 0) {
+            if (StringUtils.isEmpty(selectedText)) {
+                codeToInsert = StringUtils.remove(code, "⨁");
+                this.insertText(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos));
+            }
+            else {
+                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
+                this.replaceSelection(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
+            }
+        }
+        else {
+            if (StringUtils.isEmpty(selectedText)) {
+                this.insertText(code);
+            }
+            else {
+                this.replaceSelection(code);
+            }
+        }
+        this.requestFocus();
     }
 
 
