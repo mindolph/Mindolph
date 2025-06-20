@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,6 +182,7 @@ public class AiInputPane extends BaseAiPane {
         public static final Temperature UNCHARTED = new Temperature(0.75f, "Uncharted");
         public static final Temperature CHAOS = new Temperature(1.0f, "Chaos");
 
+        @NotNull
         @Override
         public String toString() {
             return display;

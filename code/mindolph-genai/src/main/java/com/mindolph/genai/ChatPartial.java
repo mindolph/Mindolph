@@ -1,6 +1,9 @@
 package com.mindolph.genai;
 
+import com.mindolph.genai.GenaiUiConstants.MessageType;
+
 /**
+ * Represent the partial of one chat message for streaming output.
  *
  * @since unknown
  */
@@ -8,14 +11,14 @@ public class ChatPartial {
 
     private String text;
     private boolean isLast = false;
-    private GenaiUiConstants.MessageType type;
+    private MessageType type;
 
-    public ChatPartial(String text, GenaiUiConstants.MessageType type) {
+    public ChatPartial(String text, MessageType type) {
         this.text = text;
         this.type = type;
     }
 
-    public ChatPartial(String text, GenaiUiConstants.MessageType type, boolean isLast) {
+    public ChatPartial(String text, MessageType type, boolean isLast) {
         this.text = text;
         this.type = type;
         this.isLast = isLast;
@@ -37,11 +40,11 @@ public class ChatPartial {
         isLast = last;
     }
 
-    public GenaiUiConstants.MessageType getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(GenaiUiConstants.MessageType type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 }
