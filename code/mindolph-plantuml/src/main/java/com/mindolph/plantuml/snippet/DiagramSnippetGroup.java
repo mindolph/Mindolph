@@ -80,7 +80,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                         new ImageSnippet().title("repeat").code("""
                                 repeat
                                 
-                                backward: this is backward
+                                backward: this is backward;
                                 repeat while (⨁) is (Y)
                                 """).generateImage(),
                         new ImageSnippet("switch").code("""
