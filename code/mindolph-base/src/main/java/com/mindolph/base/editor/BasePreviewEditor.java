@@ -2,6 +2,7 @@ package com.mindolph.base.editor;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.mindolph.base.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +60,9 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             throw new RuntimeException("Your should add SplitPane in to FXML with name 'splitPanel'");
         }
         // Not all preview-able editors need this scroll view.
-        // Some component like Webview does not work here.
+        // Some components like Webview do not work here.
         if (this.previewPane != null) {
-            if(log.isDebugEnabled())log.debug("listen to remember the preview pane's scroll position");
+            if (log.isDebugEnabled()) log.debug("listen to remember the preview pane's scroll position");
             this.previewPane.hvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollH = newValue.doubleValue());
             this.previewPane.vvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollV = newValue.doubleValue());
         }
@@ -77,11 +78,11 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
     protected void enablePageSwipe() {
         this.previewPane.setOnSwipeLeft(swipeEvent -> {
-            log.trace("Swipe left");
+            if (log.isTraceEnabled()) log.trace("Swipe left");
             nextPage();
         });
         this.previewPane.setOnSwipeRight(swipeEvent -> {
-            log.trace("Swipe right");
+            if (log.isTraceEnabled()) log.trace("Swipe right");
             prevPage();
         });
         // TODO Consider moving to base component
@@ -89,16 +90,18 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
         this.previewPane.setOnScrollFinished(scrollEvent -> {
             long intervalInMillis = System.currentTimeMillis() - scrollStartTime.get();
             double textDeltaX = scrollEvent.getTotalDeltaX();
-            log.trace("Touchpad swipe " + textDeltaX);
-            log.trace("Interval in millis: " + intervalInMillis);
+            if (log.isTraceEnabled()) {
+                log.trace("Touchpad swipe %s".formatted(textDeltaX));
+                log.trace("Interval in millis: %d".formatted(intervalInMillis));
+            }
             double speed = textDeltaX / intervalInMillis;
-            log.trace("Speed: " + speed);
+            if (log.isTraceEnabled()) log.trace("Speed: " + speed);
             if (speed > SCROLL_SPEED_THRESHOLD) {
-                log.trace("Swipe right");
+                if (log.isTraceEnabled()) log.trace("Swipe right");
                 prevPage();
             }
             else if (speed < -SCROLL_SPEED_THRESHOLD) {
-                log.trace("Swipe left");
+                if (log.isTraceEnabled()) log.trace("Swipe left");
                 nextPage();
             }
         });
@@ -119,16 +122,27 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             switch (viewMode) {
                 case TEXT_ONLY -> {
                     fixedSplitPane.hideSecondary();
+                    this.toggleEditableMenuItems(true);
                 }
                 case PREVIEW_ONLY -> {
                     fixedSplitPane.hidePrimary();
+                    this.toggleEditableMenuItems(false);
                 }
                 case BOTH -> {
                     fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
                     this.refresh(codeArea.getText()); // refresh preview from possible updated text
+                    this.toggleEditableMenuItems(true);
                 }
             }
         }
+    }
+
+    protected void toggleEditableMenuItems(boolean enable) {
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.CUT, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.PASTE, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.FIND, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.REPLACE, enable);
     }
 
     public void toggleOrientation() {
@@ -220,5 +234,9 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
     public void setIsAutoScroll(boolean isAutoScroll) {
         this.isAutoScroll.set(isAutoScroll);
+    }
+
+    public ViewMode getViewMode() {
+        return viewMode;
     }
 }

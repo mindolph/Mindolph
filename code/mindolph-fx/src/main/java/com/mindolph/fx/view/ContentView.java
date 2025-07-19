@@ -4,7 +4,10 @@ import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.control.SearchBar;
+import com.mindolph.base.editor.BaseCodeAreaEditor;
 import com.mindolph.base.editor.BaseEditor;
+import com.mindolph.base.editor.BasePreviewEditor;
+import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.StatusMsg;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.TextSearchOptions;
@@ -163,6 +166,13 @@ public class ContentView extends BaseView {
         if (!editor.isSearchable()) {
             return;
         }
+        if (editor instanceof BaseCodeAreaEditor bcae) {
+            if (editor instanceof BasePreviewEditor bpe) {
+                if (Editable.ViewMode.PREVIEW_ONLY.equals(bpe.getViewMode())) {
+                    return;
+                }
+            }
+        }
         if (searchReplaceBar == null) {
             initSearchReplaceBar(editor);
         }
@@ -173,7 +183,7 @@ public class ContentView extends BaseView {
         TextSearchOptions options = new TextSearchOptions();
         options.setCaseSensitive(searchParams.isCaseSensitive());
         if (this.editor instanceof MindMapEditor) {
-            options.setInTopic(searchParams.getOption(ICON_FIND_IN_TOPIC.name())); // use icon name as option key
+            options.setInTopic(searchParams.getOption(ICON_FIND_IN_TOPIC.name())); // use icon name as the option key
             options.setInNote(searchParams.getOption(ICON_FIND_IN_NOTE.name()));
             options.setInUrl(searchParams.getOption(ICON_FIND_IN_URI.name()));
             options.setInFileLink(searchParams.getOption(ICON_FIND_IN_LINK.name()));
@@ -213,7 +223,7 @@ public class ContentView extends BaseView {
                 event.consume();
             }
         });
-        searchReplacePane.getChildren().add(0, searchReplaceBar);
+        searchReplacePane.getChildren().addFirst(searchReplaceBar);
         StateBuilder<String, String> searchBarStateBuilder = new StateBuilder<String, String>()
                 .state(STATE_HIDDEN).in(payload -> {
                     // searchBar.setVisible(false); // comment this for it will cause MindMapView scroll to the end.

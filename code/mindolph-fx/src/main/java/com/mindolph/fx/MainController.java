@@ -53,6 +53,7 @@ import javafx.print.Printer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
@@ -225,7 +226,7 @@ public class MainController extends BaseController implements Initializable,
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
                 workspaceView.selectByNodeDataInAppropriateWorkspace(nodeData);
-                // force to scroll and focus if current workspace is target workspace.
+                // force to scroll and focus if the current workspace is target workspace.
                 workspaceView.requestFocus();
             });
         });
@@ -305,7 +306,7 @@ public class MainController extends BaseController implements Initializable,
 
         Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
         if (fileCollectionMap.isEmpty()) {
-            // init the default collection from opened file list for the first time.
+            // init the default collection from the opened file list for the first time.
             List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
             this.cm.saveCollectionFilePaths("default", openedFileList);
             this.cm.saveActiveCollectionName("default");
@@ -400,7 +401,7 @@ public class MainController extends BaseController implements Initializable,
             return;
         }
         WorkspaceMeta workspaceMeta = this.workspaceList.matchByFilePath(fileData.getFile().getPath());
-        NodeData workspaceData = null; // for external file like attached image link, there is no related workspace.
+        NodeData workspaceData = null; // for external file like an attached image link, there is no related workspace.
         if (workspaceMeta != null) {
             File workspaceDir = new File(workspaceMeta.getBaseDirPath());
             workspaceData = new NodeData(NodeType.WORKSPACE, workspaceDir);
@@ -589,7 +590,7 @@ public class MainController extends BaseController implements Initializable,
             }
         }
         log.debug("exit Mindolph");
-        event.consume(); // this probably avoid the default quitting action, but actually doesn't work.
+        event.consume(); // this probably avoids the default quitting action, but actually doesn't work.
         SceneRestore.getInstance().stop(); // stop store state to avoid clean all the opened files state.
         if (fileTabView.closeAllTabsWithOpenedFiles()) {
             this.dispose();
@@ -726,7 +727,7 @@ public class MainController extends BaseController implements Initializable,
         }
         this.cm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
 
-        // reset the file counter in the text of menu item.
+        // reset the file counter in the text of the menu item.
         Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
                 menuItem.getUserData() != null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
@@ -773,7 +774,8 @@ public class MainController extends BaseController implements Initializable,
         Optional<String> opt = dialog.showAndWait();
         if (opt.isPresent()) {
             String newName = opt.get();
-            if (StringUtils.equals(newName, activeCollectionName)) {
+
+            if (Strings.CS.equals(newName, activeCollectionName)) {
                 return;
             }
             if (!activeCollectionName.equals(newName) && this.cm.getFileCollectionMap().containsKey(newName)) {
