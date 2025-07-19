@@ -55,6 +55,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,7 +326,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      * Move file(s) to target tree node in either current workspace or other workspace.
      * If any file is moved successfully, the treeview's selection will be cleared and moved files will be selected.
      *
-     * @param nodeDatas      selected files in current workspace.
+     * @param nodeDatas      selected files in the current workspace.
      * @param targetTreeItem target tree item in current or other workspace.
      * @return moved files.
      */
@@ -344,7 +345,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 break;
             }
             if (workspaceSelector.getSelectedWorkspace().contains(fileToBeMoved)) {
-                // in same workspace
+                // in the same workspace
                 TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
                 if (treeItemToBeMoved == null || treeItemToBeMoved == targetTreeItem || treeItemToBeMoved.getParent() == targetTreeItem) {
                     log.debug("Not move this item: %s".formatted(treeItemToBeMoved));
@@ -357,7 +358,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                         needReload = true;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getLocalizedMessage(), e);
                         failedFiles.add(nodeData.getFile());
                     }
                 }
@@ -369,7 +370,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                     needReload = true;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage(), e);
                     failedFiles.add(nodeData.getFile());
                 }
             }
@@ -434,7 +435,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Load a workspace sub-tree.
+     * Load a workspace subtree.
      *
      * @param workspaceMeta
      */
@@ -463,7 +464,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Reload folder and it's sub-tree to specified position of tree.
+     * Reload folder and it's subtree to specified position of the tree.
      *
      * @param treeItem   tree item to load data to
      * @param folderData
@@ -501,13 +502,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * @param parent       The tree node populate children to
+     * @param parent       The tree node populates children to
      * @param childrenData
      */
     private void populateTreeNode(TreeItem<NodeData> parent, List<NodeData> childrenData) {
         // note: use name other than file path to match tree item and node data, because the file path changes when folder name changes.
         log.trace("load folder item: %s/".formatted(parent));
-        // remove not exists tree items for theirs file might be deleted.
+        // remove doesn't exist tree items for theirs file might be deleted.
         boolean isRemoved = parent.getChildren().removeIf(nodeDataTreeItem -> {
             return childrenData.stream().noneMatch(nodeData -> {
                 return nodeDataTreeItem.getValue().getName().equals(nodeData.getName());
@@ -533,7 +534,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 TreeItem<NodeData> folderItem = this.addFolder(parent, childNodeData);
                 log.trace("add folder: %s/".formatted(folderItem.getValue().getName()));
                 if (parent.isExpanded()) {
-                    // this implements the case that re-load a folder whose parent is expanded and new sub-files created externally.
+                    // this implements the case that re-load a folder whose parent is expanded and new subfiles created externally.
                     // without this implementation, the folder will be empty.
                     populateTreeNode(folderItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
                 }
@@ -861,7 +862,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 EventBus.getIns().notifyOpenFile(new OpenFileEvent(newDir, true));
             });
         }
-        else if (StringUtils.equalsAny(fileType, TYPE_MIND_MAP, TYPE_MARKDOWN, TYPE_CSV, TYPE_PLANTUML, TYPE_PLAIN_TEXT)) {
+        else if (Strings.CS.equalsAny(fileType, TYPE_MIND_MAP, TYPE_MARKDOWN, TYPE_CSV, TYPE_PLANTUML, TYPE_PLAIN_TEXT)) {
             this.requestNewFile(source, selectedData, fileType, newFile -> {
                 selectedTreeItem.setExpanded(true);
                 NodeData nodeData = new NodeData(newFile);
@@ -883,7 +884,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             ClipBoardUtils.textToClipboard(selectedNodes.stream().map(NodeData::getFileRelativePath).collect(Collectors.joining(LINE_SEPARATOR)));
         }
         else if (source == miPasteFile) {
-            File file = ClipBoardUtils.filesFromClipboard().get(0);
+            File file = ClipBoardUtils.filesFromClipboard().getFirst();
             String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
             this.copyFile(selectedTreeItem, file, cloneFileName);
         }
@@ -963,7 +964,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
                 return;
             }
             String summary = "Are you sure to delete %s".formatted(
@@ -984,12 +985,12 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     try {
                         FileUtils.delete(sn.getFile());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getLocalizedMessage(), e);
                         DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
                         return;
                     }
                     curItem.getParent().getChildren().remove(curItem);
-                    // close opened file tab(if exists) and remove from recent list if exists
+                    // close opened file tab(if exists) and remove from the recent list if exists
                     EventBus.getIns().notifyDeletedFile(sn);
                 }
                 treeView.refresh();
@@ -1124,7 +1125,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                             text = mindMap.write(w).toString();
                             FileUtils.writeStringToFile(newFile, text, StandardCharsets.UTF_8);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                             throw new RuntimeException(e);
                         }
                     }
@@ -1148,7 +1149,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         try {
                             FileUtils.writeStringToFile(newFile, snippet, StandardCharsets.UTF_8);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                             throw new RuntimeException(e);
                         }
                     }
@@ -1160,7 +1161,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     log.warn("Not supported file type?");
                     return;
                 }
-                // add new file to tree view
+                // add the new file to tree view
                 if (newFile != null && newFile.exists()) {
                     consumer.accept(newFile);
                 }
@@ -1186,7 +1187,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         try {
             FileUtils.copyFile(file, cloneFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
             DialogFactory.errDialog("Clone file failed: " + e.getLocalizedMessage());
             return;
         }

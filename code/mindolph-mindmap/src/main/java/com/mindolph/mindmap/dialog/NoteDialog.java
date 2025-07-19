@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +105,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                             String text = FileUtils.readFileToString(selectedFile, StandardCharsets.UTF_8);
                             textArea.setText(text);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                         }
                     }
                 })
@@ -115,7 +116,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                         try {
                             FileUtils.writeStringToFile(file, textArea.getText(), StandardCharsets.UTF_8);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                             DialogFactory.errDialog("Failed to export note to a txt file");
                         }
                     }
@@ -149,7 +150,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             MindmapEvents.notifyNoteSave(topic, result);
             btnSave.setDisable(true);
             origin = result; // reset the origin for closing dialog negatively.
-            builder.defaultValue(result); // reset the default value for builder to convert dialog result when any button (or ESC) clicks.
+            builder.defaultValue(result); // reset the default value for builder to convert the dialog result when any button (or ESC) clicks.
             textArea.getUndoManager().forgetHistory();
         });
         btnUndo.setOnAction(event -> textArea.undo());
@@ -233,7 +234,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
                     result.setText(newValue);
                     btnSave.setDisable(oldValue.equals(newValue));
-                    if (!StringUtils.equals(oldValue, newValue)) {
+                    if (!Strings.CS.equals(oldValue, newValue)) {
                         this.textArea.doHistory();
                     }
                     textArea.refresh();

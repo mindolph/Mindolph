@@ -41,6 +41,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.text.StringEscapeUtils;
 import org.reactfx.EventSource;
@@ -98,7 +99,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             this.prepareSearchingEvent.push(null);
             fileChangedEventHandler.onFileChanged(editorContext.getFileData());
         }, s -> "%s[%d]".formatted(StringUtils.abbreviateMiddle(s, ".", 5), s.length()));
-        csvFormat = CSVFormat.DEFAULT.builder().build();
+        csvFormat = CSVFormat.DEFAULT.builder().get();
 
         this.refresh();
     }
@@ -194,10 +195,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
             boolean isNeedStubCol = CollectionUtils.isEmpty(records)
                     || records.stream().anyMatch(r -> StringUtils.isNotBlank(r.get(r.size() - 1)));
             if (!records.isEmpty()) {
-                // how many columns depends on the max size row.
+                // calculate how many columns depend on the max size row.
                 Optional<CSVRecord> opt = records.stream().reduce((r1, r2) -> r1.size() > r2.size() ? r1 : r2);
                 int columns = opt.get().size();
-                CSVRecord headers = records.get(0);
+                CSVRecord headers = records.getFirst();
                 for (int i = 0; i < columns; i++) {
                     String header = EMPTY;
                     if (i < headers.size()) {
@@ -214,7 +215,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
             this.loadData(records);
 
-            // text content loaded from file might be not the same with generated,
+            // text content loaded from the file might be not the same with generated,
             // so it's necessary to reset the cached text to avoid redundant undo history.
             this.text = rowsToCsv(tableView.getItems());
             log.trace("cache: \n%s".formatted(this.text));
@@ -226,7 +227,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 textCell.setEditable(true);
                 textCell.textProperty().addListener((observable, oldText, newText) -> {
                     // log.debug("%s - Text changed from '%s' to '%s'".formatted(textCell.getIndex(), oldText, newText));
-                    if (oldText != null && !StringUtils.equals(oldText, newText) && textCell.getIndex() >= 0) {
+                    if (oldText != null && !Strings.CS.equals(oldText, newText) && textCell.getIndex() >= 0) {
                         log.trace("Text from '%s' to '%s' in %d, %s".formatted(oldText, newText, textCell.getIndex(), tableView.getColumns().indexOf(textCell.getTableColumn())));
                     }
                 });
@@ -358,7 +359,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private void doReload() {
         log.debug("Reload data");
         tableView.getItems().clear();
-        // reload all data from cached text;
+        // reload all data from the cached text;
         StringReader stringReader = new StringReader(this.text);
         try {
             CSVParser parsed = csvFormat.parse(stringReader);
@@ -391,7 +392,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
         // init data content
         List<Row> rows = new LinkedList<>();
         for (CSVRecord record : records) {
-            log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
+            if (log.isTraceEnabled())
+                log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
             Row newRow = ExtTableView.createRow(tableView.getColumnSize());
             newRow.setIndex(records.indexOf(record));
             for (int i = 0; i < record.size(); i++) {
@@ -572,11 +574,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
-        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? Strings.CS::contains : Strings.CI::contains;
         String firstSelectedText = tableView.getFirstSelectedText();
         if (contains.apply(firstSelectedText, keywords)) {
             replacement = replacement == null ? EMPTY : replacement;
-            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
+            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? Strings.CS::replace : Strings.CI::replace;
             String applied = replace.apply(firstSelectedText, keywords, replacement);
             TablePosition<Row, String> pos = tableView.setFirstSelectedCell(applied);
             this.onCellDataChanged(pos.getRow(), pos.getTableColumn(), applied);
@@ -587,10 +589,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void replaceAll(String keywords, TextSearchOptions searchOptions, String replacement) {
-        // replace in cache
-        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        // replace it in cache
+        BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? Strings.CS::contains : Strings.CI::contains;
         if (contains.apply(this.text, keywords)) {
-            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? StringUtils::replace : StringUtils::replaceIgnoreCase;
+            TriFunction<String, String, String, String> replace = searchOptions.isCaseSensitive() ? Strings.CS::replace : Strings.CI::replace;
             this.text = replace.apply(this.text, keywords, replacement);
             this.emmitEventsSinceCacheChanged();
             this.doReload();
@@ -641,7 +643,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private boolean saveToCache() {
         String csv = rowsToCsv(tableView.getItems());
-        if (!StringUtils.equals(csv, this.text)) {
+        if (!Strings.CS.equals(csv, this.text)) {
             log.debug("Save to cache:");
             log.trace(csv);
             this.text = csv;

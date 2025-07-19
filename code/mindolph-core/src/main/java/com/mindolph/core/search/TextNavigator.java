@@ -1,15 +1,16 @@
 package com.mindolph.core.search;
 
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.function.TriFunction;
+import org.apache.commons.lang3.tuple.Pair;
+import org.swiftboot.util.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.function.TriFunction;
-import org.apache.commons.lang3.tuple.Pair;
-import org.swiftboot.util.TextUtils;
 
 /**
  * Navigation in text forward and backward.
@@ -23,13 +24,13 @@ public class TextNavigator {
     private Integer cursor;
 
     /**
-     * Set text for navigating, if totally new text, set resetCursor to be true
+     * Set text for navigating, if a totally new text, set resetCursor to be true
      *
      * @param text
      * @param resetCursor false if not reset cursor for some cases like text replacement.
      */
     public void setText(String text, boolean resetCursor) {
-        if (!StringUtils.equals(this.text, text)) {
+        if (!Strings.CS.equals(this.text, text)) {
             this.text = text;
             Pattern linePattern = Pattern.compile("\n");
             Matcher matcher = linePattern.matcher(text);
@@ -54,7 +55,7 @@ public class TextNavigator {
     }
 
     /**
-     * move cursor to a new position.
+     * move the cursor to a new position.
      *
      * @param pos
      */
@@ -63,7 +64,7 @@ public class TextNavigator {
     }
 
     /**
-     * move cursor to a new position by row and column indices.
+     * move the cursor to a new position by row and column indices.
      *
      * @param row
      * @param col
@@ -82,7 +83,7 @@ public class TextNavigator {
     }
 
     /**
-     * locate next matching keyword in text from current position.
+     * locate the next matching keyword in text from the current position.
      *
      * @param keyword
      * @param caseSensitive
@@ -97,7 +98,7 @@ public class TextNavigator {
     }
 
     /**
-     * locate previous matching keyword in text from current position.
+     * locate the previous matching keyword in text from the current position.
      *
      * @param keyword
      * @param caseSensitive
@@ -137,7 +138,7 @@ public class TextNavigator {
     }
 
     /**
-     * Convert position in text to row-column pair for text lines.
+     * Convert position in text to a row-column pair for text lines.
      *
      * @param position
      * @return

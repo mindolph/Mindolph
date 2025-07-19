@@ -2,6 +2,7 @@ package com.mindolph.core.search;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.TextUtils;
@@ -35,7 +36,7 @@ public class TextLocator {
      * @param needReset false if in the case that replacement in text happened.
      */
     public void setText(String text, boolean needReset) {
-        if (!StringUtils.equals(this.text, text)) {
+        if (!Strings.CS.equals(this.text, text)) {
             this.text = text;
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))){
                 lines = IOUtils.readLines(byteArrayInputStream, StandardCharsets.UTF_8);

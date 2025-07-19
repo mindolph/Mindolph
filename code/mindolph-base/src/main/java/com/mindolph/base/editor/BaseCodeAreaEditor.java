@@ -1,5 +1,27 @@
 package com.mindolph.base.editor;
 
+import com.mindolph.base.EditorContext;
+import com.mindolph.base.control.SearchableCodeArea;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.model.Snippet;
+import com.mindolph.core.search.*;
+import com.mindolph.mfx.util.TextUtils;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.input.TransferMode;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.fxmisc.richtext.CharacterHit;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.Paragraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -9,37 +31,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.fxmisc.richtext.CharacterHit;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.Paragraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.swiftboot.collections.tree.Node;
-import org.swiftboot.collections.tree.Tree;
-
-import com.mindolph.base.EditorContext;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.DOUBLE_QUOTE;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINES_MOVE;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINE_DELETE;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.QUOTE;
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.TAB_INDENT;
-import com.mindolph.base.control.SearchableCodeArea;
-import com.mindolph.base.event.EventBus;
-import com.mindolph.core.model.OutlineItemData;
-import com.mindolph.core.model.Snippet;
-import com.mindolph.core.search.Anchor;
-import com.mindolph.core.search.TextAnchor;
-import com.mindolph.core.search.TextLocation;
-import com.mindolph.core.search.TextNavigator;
-import com.mindolph.core.search.TextSearchOptions;
-import com.mindolph.mfx.util.TextUtils;
-
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.input.TransferMode;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 
 /**
  * RichTextFX References:
@@ -135,12 +127,12 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             this.codeArea.getUndoManager().forgetHistory();
             this.codeArea.getUndoManager().mark();
 
-            // refresh before listening the text change event.
+            // refresh before listening to the text change event.
             this.refresh(text);
 
             // add text change listener should after CodeArea init content.
             this.codeArea.textProperty().addListener((observable, oldValue, newText) -> {
-                if (!StringUtils.equals(oldValue, newText)) {
+                if (!Strings.CS.equals(oldValue, newText)) {
                     this.codeArea.doHistory();
                     if (log.isTraceEnabled()) log.trace("Refresh editor since text are changed.");
                     refresh(newText);
@@ -172,7 +164,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
 
     /**
-     * Refresh anything from text if needed.
+     * Refresh anything from the text if needed.
      *
      * @param text
      */
@@ -234,13 +226,13 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 newNode.setLevel(hl.level);
 
                 if (hl.level > curNode.getLevel()) {
-                    // as child
+                    // as a child
                     log.trace("    as child");
                     curNode.addChild(newNode);
                     newNode.setParent(curNode);
                 }
                 else {
-                    // as sibling
+                    // as a sibling
                     log.trace("    as sibling");
                     Node ancestor = curNode.findAncestor(node -> node.getLevel() <= newNode.getLevel() - 1);
                     ancestor.addChild(newNode);

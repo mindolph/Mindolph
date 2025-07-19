@@ -173,9 +173,9 @@ public class MainController extends BaseController implements Initializable,
         EventBus.getIns().subscribeOpenFile(openFileEvent -> onOpenFile(openFileEvent.getNodeData(), openFileEvent.getSearchParams(), openFileEvent.isVisibleInWorkspace()));
         workspaceView.subscribeSearchEvent(this::onSearchStart);
         EventBus.getIns().subscribeWorkspaceRenamed(event -> {
-            onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
+            this.onFileRenamed(new NodeData(NodeType.WORKSPACE, new File(event.getOriginal().getBaseDirPath())), new File(event.getTarget().getBaseDirPath()));
         }).subscribeFilePathChanged(filePathChangedEvent -> {
-            onFileRenamed(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile());
+            this.onFileRenamed(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile());
         });
         // listen restore events
         sceneRestore.setWorkspacesRestoreListener(this);

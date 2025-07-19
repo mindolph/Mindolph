@@ -154,7 +154,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     /**
      * Convert scroll position from one to another by their viewport heights and document heights.
      *
-     * @param srcValue     The value after the scroll bar scrolls from source component
+     * @param srcValue     The value after the scroll bar scrolls from the source component
      * @param srcViewport  Height or width of source component's viewport
      * @param srcTotal
      * @param destViewport

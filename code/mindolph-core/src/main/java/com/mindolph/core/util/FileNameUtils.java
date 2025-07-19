@@ -3,6 +3,7 @@ package com.mindolph.core.util;
 import com.mindolph.core.constant.SupportFileTypes;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemProperties;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class FileNameUtils {
      * @return
      */
     public static String appendFileExtensionIfAbsent(String fileName, String extension) {
-        if (!StringUtils.equals(extension, FilenameUtils.getExtension(fileName))) {
+        if (!Strings.CS.equals(extension, FilenameUtils.getExtension(fileName))) {
             return fileName + "." + extension;
         }
         return fileName;

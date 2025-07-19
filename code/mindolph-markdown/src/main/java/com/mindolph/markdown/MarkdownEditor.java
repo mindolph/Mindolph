@@ -274,7 +274,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         }
     }
 
-    // this method will be called from javascript inside the webview.
+    // this method will be called from JavaScript inside the webview.
     public void onWebviewScroll(double x, double y) {
 //        System.out.printf("B: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
         // for remembering the scroll position to keep the webview where it is during editing.
@@ -306,13 +306,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         codeArea.insertText(hit.getInsertionIndex(), StringUtils.join(paths, LINE_SEPARATOR));
     }
 
-    // NOTE: this method will be called from javascript inside the webview.
+    // NOTE: this method will be called from JavaScript inside the webview.
     public void onHover(String content) {
         log.debug("Hover content: %s".formatted(content));
         EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
     }
 
-    // NOTE: this method will be called from javascript inside the webview.
+    // NOTE: this method will be called from JavaScript inside the webview.
     public void onFileLinkClicked(String url) {
         if (!UrlUtils.isValid(url)) {
             String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
@@ -566,7 +566,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         Bounds boundsInLocal = webView.getBoundsInLocal();
         log.debug(BoundsUtils.boundsInString(boundsInLocal));
         params.setViewport(GeometryConvertUtils.boundsToRectangle2D(boundsInLocal));
-        // this only export what's in viewport
+        // this only exports what's in viewport
         return webView.snapshot(params, null);
     }
 

@@ -16,6 +16,7 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
@@ -226,7 +227,7 @@ public class WorkspaceManager {
         Collection<File> dirs = List.of();
         Collection<File> files = List.of();
 
-        if (fileExt == null || StringUtils.equalsAny(fileExt, SupportFileTypes.TYPE_FOLDER)) {
+        if (fileExt == null || Strings.CS.equalsAny(fileExt, SupportFileTypes.TYPE_FOLDER)) {
             dirs = DirUtils.findDirsByKeyword(workspaceDir, keyword);
             dirs.remove(workspaceDir);
         }

@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         this.stackPane.getChildren().addAll(textArea);
         this.getChildren().add(stackPane);
         this.textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!StringUtils.equals(oldValue, newValue)) {
+            if (!Strings.CS.equals(oldValue, newValue)) {
                 log.trace(String.format("Text changed from %d to %d (size)", oldValue.length(), newValue.length()));
                 Platform.runLater(() -> { // if not run in this, the display will different, why?
                     Dimension2D textDim = calTextDimensionWithPaddingAndLimitation(textArea);
@@ -221,7 +222,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         BaseElement destinationElement = this.control.getDestinationElement();
         DraggedElement draggedElement = this.control.getDraggedElement();
         if (destinationElement != null && draggedElement != null) {
-            if (log.isTraceEnabled()) log.trace("Draw destination element: " + destinationElement.getText());
+            if (log.isTraceEnabled()) log.trace("Draw destination element: %s".formatted(destinationElement.getText()));
             Color color = ColorUtils.colorWithOpacity(Color.ORANGE, 0.5);
             gc.setFill(color);
             gc.setStroke(color);
@@ -295,14 +296,14 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             textArea.setPrefSize(textDim.getWidth(), textDim.getHeight());
             log.debug("Text area dimension: %s".formatted(DimensionUtils.dimensionInStr(textDim)));
             this.relocateTextArea(textDim);
-            textArea.requestFocus(); // to obtain input focus after creating new topic by clicking key TAB at an editing topic.
+            textArea.requestFocus(); // to obtain input focus after creating a new topic by clicking key TAB at an editing topic.
             log.info("text editor focused: (%s, %s), (%.1f x %.1f)".formatted(topicBounds.getMinX(), topicBounds.getMinY(), textArea.getPrefWidth(), textArea.getPrefHeight()));
         });
     }
 
     /**
      * Relocate text area by new text dimension which is calculated.
-     * NOTE: calculation in this method only works for component that added to skin directly, not for any component in parent containers.
+     * NOTE: calculation in this method only works for a component that added to skin directly, not for any component in parent containers.
      *
      * @param textDim
      */
@@ -347,7 +348,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         Rectangle2D bounds = element.getBounds();
         log.trace("node bounds: %s".formatted(RectangleUtils.rectangleInStr(bounds)));
         log.trace("viewport bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
-        // subtract the offset only when width/height is exceeds the viewport
+        // subtract the offset only when width/height exceeds the viewport
         double x = bounds.getMinX() - vr.getMinX();
         double y = bounds.getMinY() - vr.getMinY();
 //        log.trace("x, y = %s, %s".formatted(x, y));
@@ -367,7 +368,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         Rectangle2D bounds = element.getBounds();
         log.trace("node bounds: %s".formatted(RectangleUtils.rectangleInStr(bounds)));
         log.trace("viewport bounds: %s".formatted(RectangleUtils.rectangleInStr(vr)));
-        // subtract the offset only when width/height is exceeds the viewport
+        // subtract the offset only when width/height exceeds the viewport
         double x = bounds.getMinX() - (getSkinnable().isWidthOverViewport() ? 0 : vr.getMinX());
         double y = bounds.getMinY() - (getSkinnable().isHeightOverViewport() ? 0 : vr.getMinY());
         log.trace("x,y = %s,%s".formatted(x, y));

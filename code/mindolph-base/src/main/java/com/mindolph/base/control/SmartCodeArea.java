@@ -24,6 +24,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
@@ -326,7 +327,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             if (!isInputHelperEnabled()) {
                 return;
             }
-            if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
+            if (!Strings.CS.equals(oldValue, newValue)) inputHelpSource.push(newValue);
         });
 
         // stop helping when paragraph is changed by like mouse click.
