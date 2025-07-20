@@ -21,6 +21,7 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.plantuml.PlantUmlEditor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -141,12 +142,12 @@ public class FileTabView extends BaseView {
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
-            boolean isCodeEditor = editor instanceof BaseCodeAreaEditor;
-            EventBus.getIns().notifyMenuStateChange(CUT, isCodeEditor && editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(COPY, isCodeEditor && editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(PASTE, isCodeEditor);
-            EventBus.getIns().notifyMenuStateChange(FIND, isCodeEditor && editor.isSearchable());
-            EventBus.getIns().notifyMenuStateChange(REPLACE, isCodeEditor && editor.isSearchable());
+            boolean isEditable = editor instanceof BaseCodeAreaEditor || editor instanceof MindMapEditor;
+            EventBus.getIns().notifyMenuStateChange(CUT, isEditable && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(COPY, isEditable && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(PASTE, isEditable);
+            EventBus.getIns().notifyMenuStateChange(FIND, isEditable && editor.isSearchable());
+            EventBus.getIns().notifyMenuStateChange(REPLACE, isEditable && editor.isSearchable());
 //            EventBus.getIns().enableMenuItems(PRINT);
         }
     }

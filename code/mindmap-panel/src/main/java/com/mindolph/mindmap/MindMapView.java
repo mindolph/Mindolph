@@ -50,6 +50,7 @@ import javafx.scene.text.Font;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1078,7 +1079,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     /**
-     * Unfold topic's ancestors to let the topic be visible.
+     * Unfold the topic's ancestors to let the topic be visible.
      *
      * @param topic
      * @return
@@ -1596,13 +1597,13 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     public void replaceSelection(String keywords, TextSearchOptions options, String replacement) {
         TopicNode found = getLastSelectedTopic();
         if (found != null) {
-            log.debug("found and replace '%s' with '%s'".formatted(found.getText(), replacement));
+            log.debug("found and replace '%s' with '%s' on case sensitive is %s".formatted(found.getText(), replacement, options.isCaseSensitive()));
             String newText;
             if (options.isCaseSensitive()) {
-                newText = StringUtils.replaceIgnoreCase(found.getText(), keywords, replacement);
+                newText = Strings.CS.replace(found.getText(), keywords, replacement);
             }
             else {
-                newText = StringUtils.replace(found.getText(), keywords, replacement);
+                newText = Strings.CI.replace(found.getText(), keywords, replacement);
             }
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
@@ -1618,10 +1619,10 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             log.debug("found and replace '%s' with '%s'".formatted(found.getText(), replacement));
             String newText;
             if (options.isCaseSensitive()) {
-                newText = StringUtils.replaceIgnoreCase(found.getText(), keywords, replacement);
+                newText = Strings.CS.replace(found.getText(), keywords, replacement);
             }
             else {
-                newText = StringUtils.replace(found.getText(), keywords, replacement);
+                newText = Strings.CI.replace(found.getText(), keywords, replacement);
             }
             BaseElement element = (BaseElement) found.getPayload();
             element.setText(newText);
@@ -1698,12 +1699,12 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     /**
-     * Create transferable topic list in system clipboard.
+     * Create a transferable topic list in system clipboard.
      *
      * @param topics topics to be placed into clipboard, if there are successors
      *               and ancestors then successors will be removed
      * @param cut    true shows that remove topics after placing into clipboard
-     * @return true if topic array is not empty and operation completed
+     * @return true if the topic list is not empty and operation completed
      * successfully, false otherwise
      */
     public boolean copyTopicsToClipboard(List<TopicNode> topics, boolean cut) {
@@ -1734,7 +1735,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     /**
      * Paste from clipboard to currently selected topics.
      *
-     * @return true if there detected topic list in clipboard and these topics
+     * @return true if there detected the topic list in clipboard and these topics
      * added to selected ones, false otherwise
      */
     public boolean pasteTopicsFromClipboard() {
@@ -1873,7 +1874,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             FileUtils.writeByteArrayToFile(file, content);
             this.undoStorage.setFlagThatSomeStateLost();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
