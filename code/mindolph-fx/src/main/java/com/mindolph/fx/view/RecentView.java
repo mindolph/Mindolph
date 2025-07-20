@@ -47,7 +47,7 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
         });
         itemContextMenu = createItemContextMenu();
         listView.setContextMenu(itemContextMenu);
-        // listen and update path changed file
+        // listen and update the path changed file
         EventBus.getIns().subscribeFilePathChanged(filePathChangedEvent -> updateRecentFile(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile()));
     }
 
@@ -66,9 +66,9 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
                     nodeData.setWorkspaceData(new NodeData(new File(workspaceMeta.getBaseDirPath())));
                 }
             });
-            // listen file opening and fresh list with new opened file
+            // listen to file opening and fresh list with the new opened file
             EventBus.getIns().subscribeOpenFile(openedFile -> refresh(openedFile.getNodeData()));
-            // listen file deletion and remove from recent list if file is deleted
+            // listen to file deletion and remove from the recent list if the file is deleted
             EventBus.getIns().subscribeDeletedFile(nodeData -> this.removeRecentFile(nodeData.getFile()));
         });
     }
@@ -146,7 +146,7 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
     }
 
     /**
-     * Update record in recent file list with new file path.
+     * Update record in the recent file list with the new file path.
      *
      * @param nodeData
      * @param newFile

@@ -108,7 +108,7 @@ public class FileTabView extends BaseView {
                 }
             }
         });
-        // listen locate in file for outline
+        // listen locating in file for outline
         EventBus.getIns().subscribeLocateInFile(anchor -> {
             Editable editor = this.tabEditorMap.get(getCurrentTab());
             if (editor != null) {
@@ -256,7 +256,7 @@ public class FileTabView extends BaseView {
                 });
                 editor.loadFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
 
             // call to remember opened files.
@@ -455,12 +455,12 @@ public class FileTabView extends BaseView {
                     FileUtils.copyFile(origFile, saveAsFileWithExt);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
                 DialogFactory.errDialog("Failed to save file: " + e.getLocalizedMessage());
                 return;
             }
             // Add new file tree item to the parent tree item by file path.
-            EventBus.getIns().notifyNewFileToWorkspace(saveAsFileWithExt);
+//            EventBus.getIns().notifyNewFileToWorkspace(saveAsFileWithExt);
 
             openFile(fileData.getWorkspaceData(), new NodeData(saveAsFileWithExt), false);
             closeFileTab(openedFileMap.get(fileData), fileData);
@@ -540,7 +540,7 @@ public class FileTabView extends BaseView {
         try {
             tabEditorMap.get(tab).save();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
             DialogFactory.errDialog("Saving file %s failed.".formatted(fileData.getFile()));
         }
     }
@@ -554,7 +554,7 @@ public class FileTabView extends BaseView {
                     try {
                         tabEditorMap.get(tab).save();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getLocalizedMessage(), e);
                         DialogFactory.errDialog("Saving file %s failed.".formatted(nodeData.getFile()));
                     }
                     tab.setText(nodeData.getName());
@@ -725,7 +725,7 @@ public class FileTabView extends BaseView {
                 try {
                     editor.save();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage(), e);
                     DialogFactory.errDialog("File save failed");
                     return false;
                 }

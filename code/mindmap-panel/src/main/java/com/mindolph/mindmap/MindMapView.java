@@ -97,7 +97,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     // Search in Mind Map
     private static Set<TopicFinder<TopicNode>> TOPIC_FINDERS;
 
-    // Handle loading model
+    // Handle model loading
     private DiagramEventHandler diagramEventHandler;
     private ModelChangedEventHandler modelChangedEventHandler;
 
@@ -119,7 +119,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     private StateMachine<String, Serializable> stateMachine;
 
-    // This workspace dir is from outsider to handle the link to other files in project.
+    // This workspace dir is from outsider to handle the link to other files in the workspace.
     protected File workspaceDir;
     // the mind map file, if not provided, status message update won't work.
     protected File file;
@@ -609,7 +609,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     private void processEditingTopic(KeyEvent e) {
-        // TAB to create new child topic.
+        // TAB to create a new child topic.
         TopicNode firstSelected = getFirstSelectedTopic();
         if (sm.isKeyEventMatch(e, KEY_MMD_ADD_CHILD_AND_START_EDIT)) {
             if (hasSelectedTopics()) {
@@ -617,7 +617,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 makeNewChildAndStartEdit(firstSelected, null);
             }
         }
-        // ENTER to create sibling topic.
+        // ENTER to create a sibling topic.
         else if (sm.isKeyEventMatch(e, KEY_MMD_ADD_SIBLING_AND_START_EDIT, KEY_MMD_ADD_PREV_SIBLING_AND_START_EDIT)) {
             if (this.elementUnderEdit == null && hasOnlyTopicSelected()) {
                 e.consume();
@@ -744,7 +744,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             boolean changed = false;
             if (sm.isKeyEventMatch(event, KEY_MMD_TOPIC_MOVE_UP)) {
                 event.consume();
-                // move last selected topic go up to its sibling.
+                // move last selected topic goes up to its sibling.
                 log.debug("Move topic %s up".formatted(lastSelectedTopic.getText()));
                 TopicNode prevSibling = lastSelectedTopic.prevSibling();
                 if (prevSibling != null) {
@@ -754,7 +754,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             }
             else if (sm.isKeyEventMatch(event, KEY_MMD_TOPIC_MOVE_DOWN)) {
                 event.consume();
-                // move last selected topic go down to its sibling.
+                // move last selected topic goes down to its sibling.
                 TopicNode nextSibling = lastSelectedTopic.nextSibling();
                 if (nextSibling != null) {
                     lastSelectedTopic.moveAfter(nextSibling);
@@ -831,7 +831,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     /**
      * @param parent
      * @param baseTopic if not null, the new topic will be created as sibling above or below.
-     * @param isBefore  force creating new topic before the base topic
+     * @param isBefore  force creating a new topic before the base topic
      */
     public void makeNewChildAndStartEdit(TopicNode parent, TopicNode baseTopic, boolean isBefore) {
         removeAllSelection();
@@ -860,7 +860,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             }
             newTopic.makeTopicLeftSided(Utils.LTR_LANGUAGE ? numLeft < numRight : numLeft > numRight);
         }
-        else if (baseTopic != null && baseTopic.getPayload() != null) { // make new sibling left or right by the base topic.
+        else if (baseTopic != null && baseTopic.getPayload() != null) { // make the new sibling left or right by the base topic.
             BaseElement element = (BaseElement) baseTopic.getPayload();
             newTopic.makeTopicLeftSided(element.isLeftDirection());
         }
@@ -965,7 +965,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     public void deleteTopics(boolean notifyModelChanged, TopicNode topic) {
-        deleteTopics(notifyModelChanged, Arrays.asList(topic)); // can't be immutable list
+        deleteTopics(notifyModelChanged, Collections.singletonList(topic)); // can't be immutable list
     }
 
     /**
@@ -979,7 +979,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
         topics.removeIf(t -> t.getPayload() instanceof ElementRoot);
         if (topics.isEmpty()) {
-            return; // quit if there isn't any non-root topics.
+            return; // quit if there aren't any non-root topics.
         }
         for (TopicNode t : topics) {
             this.model.removeTopic(t);
@@ -1098,7 +1098,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     /**
-     * Fold or unfold topics (with or without children) no matter theirs parents are visible,
+     * Fold or unfold topics (with or without children) no matter theirs parents are visible.
      *
      * @param elements
      * @param fold
@@ -1177,9 +1177,9 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 if (selecting && targetEl.isLeftDirection() == t.isLeftSidedTopic()) {
                     selectAndUpdate(t, false);
                 }
-                // determine which one is start and which is end.
+                // determine which one is the start and which is the end.
                 if (t == targetEl.getModel() || t == selectedSibling) {
-                    // remove and re-add again will let the selection being resorted(since the already selected topic might be the latest one)
+                    // remove and re-add again will let the selection being resorted (since the already selected topic might be the latest one)
                     this.selection.remove(t);
                     this.selection.add(t);
                     selecting = !selecting;
@@ -1479,7 +1479,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                     if (element.getParent() == destination) {
                         // the same parent
                         if (destination.getClass() == ElementRoot.class) {
-                            // process only for the root, just update direction
+                            // process only for the root, just update the direction
                             if (element instanceof BaseCollapsableElement) {
                                 ((BaseCollapsableElement) element).setLeftDirection(pos == MindMapConstants.DRAG_POSITION_LEFT);
                             }
@@ -1566,7 +1566,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
         TopicNode found;
         if (reverse) {
-            // first param projectDir is for searching in file link path.
+            // the first param projectDir is for searching in the file link path.
             found = this.getModel().findPrev(workspaceDir, startTopic, pattern, inTopicText, extras, TOPIC_FINDERS);
             if (found == null && startTopic != null) {
                 found = this.getModel().findPrev(workspaceDir, null, pattern, inTopicText, extras, TOPIC_FINDERS);

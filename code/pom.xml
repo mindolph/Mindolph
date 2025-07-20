@@ -27,7 +27,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <javafx.version>24.0.1</javafx.version>
         <commons.lang.version>3.18.0</commons.lang.version>
-        <commons.io.version>2.18.0</commons.io.version>
+        <commons.io.version>2.19.0</commons.io.version>
         <commons.text.version>1.13.1</commons.text.version>
         <commons.collections.version>4.5.0</commons.collections.version>
         <commons.codec.version>1.18.0</commons.codec.version>
@@ -50,6 +50,7 @@
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>0.36.2</langchain4j.version>
         <dashscope.version>2.16.10</dashscope.version>
+        <directory-watcher.version>0.19.1</directory-watcher.version>
     </properties>
 
     <dependencies>
@@ -325,6 +326,11 @@
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
                 <version>${json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.methvin</groupId>
+                <artifactId>directory-watcher</artifactId>
+                <version>${directory-watcher.version}</version>
             </dependency>
 
             <dependency>

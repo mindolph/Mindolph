@@ -6,7 +6,7 @@ import com.mindolph.core.search.SearchParams;
 import java.io.File;
 
 /**
- * The event that open a file either from tree/list or search results.
+ * The event that opens a file either from tree/list or search results.
  */
 public class OpenFileEvent {
     /**

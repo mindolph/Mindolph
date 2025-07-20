@@ -86,12 +86,12 @@ public class WorkspaceViewSimple extends BaseView {
             cell.setOnMouseEntered(event -> {
                 TreeItem<NodeData> treeItem = cell.getTreeItem();
                 if (treeItem != null) {
-                    log.trace("Install tooltip for " + treeItem);
+                    if (log.isTraceEnabled()) log.trace("Install tooltip for %s".formatted(treeItem));
                     NodeData data = treeItem.getValue();
                     cell.setTooltip(new Tooltip(data.getFile().getPath()));
                 }
                 else {
-                    log.trace("Not tree item");
+                    if (log.isTraceEnabled()) log.trace("Not tree item");
                     cell.setTooltip(null);
                 }
             });
@@ -103,7 +103,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Load a workspace sub-tree to the end of tree.
+     * Load a workspace subtree to the end of tree.
      *
      * @param workspaceMeta
      * @param expandAllAsDefault whether all folders are expended by default.
@@ -123,7 +123,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Reload project sub-tree to specified position of tree.
+     * Reload project subtree to specified position of tree.
      *
      * @param workspaceMeta
      * @param index         original index in siblings.
@@ -140,7 +140,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Reload folder and it's sub-tree to specified position of tree.
+     * Reload folder and it's subtree to specified position of tree.
      *
      * @param folderData
      * @param index

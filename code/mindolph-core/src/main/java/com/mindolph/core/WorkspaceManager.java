@@ -83,7 +83,7 @@ public class WorkspaceManager {
     }
 
     /**
-     * Load files and sub-folders under root node of workspace (no recursively).
+     * Load files and subfolders under root node of workspace (no recursively).
      *
      * @param workspaceData
      * @param workspaceConfig
@@ -94,7 +94,7 @@ public class WorkspaceManager {
     }
 
     /**
-     * Load files and sub-folders under specified node (no recursively).
+     * Load files and subfolders under specified node (no recursively).
      *
      * @param parentData
      * @param workspaceConfig
@@ -237,7 +237,7 @@ public class WorkspaceManager {
             AbstractFileFilter fileNameFilter = new AbstractFileFilter() {
                 @Override
                 public boolean accept(File file) {
-                    return StringUtils.containsIgnoreCase(FilenameUtils.getBaseName(file.getPath()), keyword);
+                    return Strings.CI.contains(FilenameUtils.getBaseName(file.getPath()), keyword);
                 }
             };
 
@@ -261,7 +261,7 @@ public class WorkspaceManager {
             AbstractFileFilter dirFilter = new AbstractFileFilter() {
                 @Override
                 public boolean accept(File file) {
-                    // this can't be used for filter dirs, this will filter out not only specified dirs but also it's sub-folders.
+                    // this can't be used for filter dirs, this will filter out not only specified dirs, but also it's subfolders.
                     return !FolderConstants.EXCLUDE_DIRS.contains(file.getName());
                 }
             };

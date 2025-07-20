@@ -133,7 +133,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
         // bind input selection text to control.
         this.control.selectedInputTextProperty().bind(textArea.selectedTextProperty());
 
-        // listen the topic edit event
+        // listen to the topic edit event
         this.control.setTopicEditEventHandler(this);
         log.info("MindMapViewSkin constructed.");
     }
@@ -314,7 +314,7 @@ public class MindMapViewSkin<T extends MindMapView> extends BaseScalableViewSkin
             return;
         }
         log.trace("originalEditingBounds: %s".formatted(RectangleUtils.rectangleInStr(originalEditingBounds)));
-        // subtract the offset only when width/height is exceeds the viewport
+        // subtract the offset only when width/height exceeds the viewport
         double originLeftInViewport = originalEditingBounds.getMinX() - (getSkinnable().isWidthOverViewport() ? vr.getMinX() : 0);
         double originTopInViewport = originalEditingBounds.getMinY() - (getSkinnable().isHeightOverViewport() ? vr.getMinY() : 0);
         // right/bottom edge of text input area
