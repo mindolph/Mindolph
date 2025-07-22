@@ -52,7 +52,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.util.Duration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -60,7 +59,6 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.controlsfx.control.Notifications;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +69,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -297,7 +295,6 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         btnFindInFiles.setOnMouseClicked(btnEventHandler);
 
 
-
         EventBus.getIns()
                 // for "save as"
 //                .subscribeNewFileToWorkspace(file -> {
@@ -385,7 +382,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     log.debug("Move tree item '%s' to '%s'".formatted(treeItemToBeMoved.getValue(), targetTreeItem.getValue()));
                     try {
                         newFiles.add(this.moveFile(nodeData, targetTreeItem.getValue().getFile()));
-                        treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
+                        // moving files trigger the monitor to update tree items, so no need to do it here anymore.
+                        // treeItemToBeMoved.getParent().getChildren().remove(treeItemToBeMoved); // detach self from parent
                         FXCollections.sort(targetTreeItem.getChildren(), SORTING_TREE_ITEMS);
                         needReload = true;
                     } catch (Exception e) {
@@ -413,7 +411,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 onTreeItemExpandOrCollapsed(true, targetTreeItem);
             }
             else {
-                // collapse and expand to activate the loading of sub-folders for the expanded target folder.
+                // collapse and expand to activate the loading of subfolders for the expanded target folder.
                 targetTreeItem.setExpanded(false);
                 targetTreeItem.setExpanded(true);
             }
@@ -458,7 +456,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      */
     public void loadWorkspaces(WorkspaceList workspaceList) {
         String activeWorkspacePath = fxPreferences.getPreference(MINDOLPH_ACTIVE_WORKSPACE, String.class);
-        log.debug("Last active workspace: " + activeWorkspacePath);
+        log.debug("Last active workspace: %s".formatted(activeWorkspacePath));
 
         workspaceSelector.loadWorkspaces(workspaceList, new WorkspaceMeta(activeWorkspacePath));
 
@@ -551,10 +549,10 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                                 break;
                             case MODIFY:
                                 log.debug("File modified：%s".formatted(filePath));
-                                String msg = "File has been modified externally: %s".formatted(filePath);
-                                Platform.runLater(() -> {
-                                    Notifications.create().title("Notice").text(msg).hideAfter(Duration.seconds(60)).showInformation();
-                                });
+//                                String msg = "File has been modified externally: %s".formatted(filePath);
+//                                Platform.runLater(() -> {
+//                                    Notifications.create().title("Notice").text(msg).hideAfter(Duration.seconds(60)).showInformation();
+//                                });
                                 break;
                             case DELETE:
                                 log.debug("File deleted：%s".formatted(filePath));
@@ -591,19 +589,20 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             // already exists
             Optional<TreeItem<NodeData>> existing = parent.getChildren().stream().filter(nodeDataTreeItem -> childNodeData.getName().equals(nodeDataTreeItem.getValue().getName())).findFirst();
             if (existing.isPresent()) {
-                log.trace("already exists, ignore: %s".formatted(childNodeData));
+                if (log.isTraceEnabled()) log.trace("already exists, ignore: %s".formatted(childNodeData));
                 TreeItem<NodeData> existingItem = existing.get();
-                log.trace("existing tree item: %s, expanded: %s".formatted(existingItem.getValue().getFile(), existingItem.isExpanded()));
+                if (log.isTraceEnabled())
+                    log.trace("existing tree item: %s, expanded: %s".formatted(existingItem.getValue().getFile(), existingItem.isExpanded()));
                 existingItem.setValue(childNodeData);
                 if (childNodeData.isFolder() && existingItem.isExpanded()) {
                     populateTreeNode(existingItem, WorkspaceManager.getIns().loadFolder(childNodeData, workspaceConfig));
                 }
                 continue;
             }
-            log.trace("%s does not existed, try to create it.".formatted(childNodeData));
+            if (log.isTraceEnabled()) log.trace("%s does not existed, try to create it.".formatted(childNodeData));
             if (childNodeData.isFolder()) {
                 TreeItem<NodeData> folderItem = this.addFolder(parent, childNodeData);
-                log.trace("add folder: %s/".formatted(folderItem.getValue().getName()));
+                if (log.isTraceEnabled()) log.trace("add folder: %s/".formatted(folderItem.getValue().getName()));
                 if (parent.isExpanded()) {
                     // this implements the case that re-load a folder whose parent is expanded and new subfiles created externally.
                     // without this implementation, the folder will be empty.
@@ -612,7 +611,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
             else if (childNodeData.isFile()) {
                 TreeItem<NodeData> fileItem = this.addFile(parent, childNodeData);
-                log.trace("add file: %s".formatted(fileItem.getValue().getName()));
+                if (log.isTraceEnabled()) log.trace("add file: %s".formatted(fileItem.getValue().getName()));
             }
         }
     }
@@ -1393,7 +1392,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Find a tree item by searching exactly the path of file,
+     * Find a tree item by searching exactly the path of the file
      * because it's faster than traversing the whole tree.
      *
      * @param file
