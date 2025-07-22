@@ -5,22 +5,12 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.11.2</version>
+        <version>1.12.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mindolph-fx</artifactId>
     <packaging>jar</packaging>
-
-    <properties>
-<!--        <main-class>com.mindolph.fx.Launcher</main-class>-->
-<!--        <app.name>Mindolph</app.name>-->
-<!--        <app.version>1.0</app.version>-->
-<!--        <jvm.modules>java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web</jvm.modules>-->
-<!--        <app.vendor>Mindolph Team</app.vendor>-->
-<!--        <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>-->
-<!--        <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>-->
-    </properties>
 
     <dependencies>
         <dependency>
@@ -31,7 +21,6 @@
             <groupId>com.mindolph</groupId>
             <artifactId>mindolph-core</artifactId>
             <version>${project.version}</version>
-<!--            <scope>compile</scope>-->
         </dependency>
         <dependency>
             <groupId>com.mindolph</groupId>
@@ -41,6 +30,11 @@
         <dependency>
             <groupId>com.mindolph</groupId>
             <artifactId>mindolph-mindmap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mindolph</groupId>
+            <artifactId>mindmap-panel</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -88,21 +82,11 @@
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.mindolph</groupId>
-            <artifactId>mindmap-panel</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.vladsch.flexmark</groupId>-->
-<!--            <artifactId>flexmark-all</artifactId>-->
-<!--            <version>${flexmark.version}</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>

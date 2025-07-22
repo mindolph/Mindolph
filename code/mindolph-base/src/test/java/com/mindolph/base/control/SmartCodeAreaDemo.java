@@ -4,6 +4,7 @@ import com.mindolph.base.plugin.*;
 import com.mindolph.core.constant.SupportFileTypes;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 
 import java.net.URL;
 import java.util.Collection;
@@ -15,10 +16,25 @@ import java.util.ResourceBundle;
  * @author mindolph.com@gmail.com
  * @since 1.6
  */
-public class ExtCodeAreaDemo implements Initializable {
+public class SmartCodeAreaDemo implements Initializable {
 
     @FXML
-    private SmartCodeArea extCodeArea;
+    private SmartCodeArea smartCodeArea;
+
+    @FXML
+    private Button btnEnable;
+
+    @FXML
+    public void onEnabled() {
+        if (smartCodeArea.isDisabled()) {
+            smartCodeArea.setDisable(false);
+            btnEnable.setText("Disable");
+        }
+        else {
+            smartCodeArea.setDisable(true);
+            btnEnable.setText("Enable");
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

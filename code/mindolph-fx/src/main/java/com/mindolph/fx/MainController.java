@@ -2,7 +2,6 @@ package com.mindolph.fx;
 
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.BaseView;
-import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.collection.CollectionManager;
 import com.mindolph.base.constant.IconKey;
@@ -18,6 +17,7 @@ import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.event.WorkspaceViewResizedEventHandler;
 import com.mindolph.base.print.PrinterManager;
+import com.mindolph.core.Env;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
@@ -53,6 +53,7 @@ import javafx.print.Printer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
@@ -225,7 +226,7 @@ public class MainController extends BaseController implements Initializable,
             Platform.runLater(() -> {
                 tabWorkspaces.getTabPane().getSelectionModel().select(tabWorkspaces);
                 workspaceView.selectByNodeDataInAppropriateWorkspace(nodeData);
-                // force to scroll and focus if current workspace is target workspace.
+                // force to scroll and focus if the current workspace is target workspace.
                 workspaceView.requestFocus();
             });
         });
@@ -305,7 +306,7 @@ public class MainController extends BaseController implements Initializable,
 
         Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
         if (fileCollectionMap.isEmpty()) {
-            // init the default collection from opened file list for the first time.
+            // init the default collection from the opened file list for the first time.
             List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
             this.cm.saveCollectionFilePaths("default", openedFileList);
             this.cm.saveActiveCollectionName("default");
@@ -323,7 +324,8 @@ public class MainController extends BaseController implements Initializable,
             }
 
             String activeCollName = this.cm.getActiveCollectionName();
-            // load sorted collection names to menu
+            rmiCollectionDefault.setSelected("default".equals(activeCollName));
+            // load sorted collection names to menu except the default one.
             fileCollectionMap.keySet().stream()
                     .sorted(Comparator.comparing(String::toString))
                     .filter(collName -> !"default".equals(collName)).forEach(collName -> {
@@ -399,7 +401,7 @@ public class MainController extends BaseController implements Initializable,
             return;
         }
         WorkspaceMeta workspaceMeta = this.workspaceList.matchByFilePath(fileData.getFile().getPath());
-        NodeData workspaceData = null; // for external file like attached image link, there is no related workspace.
+        NodeData workspaceData = null; // for external file like an attached image link, there is no related workspace.
         if (workspaceMeta != null) {
             File workspaceDir = new File(workspaceMeta.getBaseDirPath());
             workspaceData = new NodeData(NodeType.WORKSPACE, workspaceDir);
@@ -442,7 +444,7 @@ public class MainController extends BaseController implements Initializable,
         File saveDir = DialogFactory.openSaveFileDialog(workspaceView.getScene().getWindow(), SystemUtils.getUserHome());
         if (saveDir != null) {
             if (saveDir.exists()) {
-                DialogFactory.warnDialog("Dir is already exist: " + saveDir);
+                DialogFactory.warnDialog("The directory you selected already exists: " + saveDir);
             }
             else {
                 if (!saveDir.mkdirs()) {
@@ -460,8 +462,8 @@ public class MainController extends BaseController implements Initializable,
         File workspaceDir = DialogFactory.openDirDialog(workspaceView.getScene().getWindow(), SystemUtils.getUserHome());
         if (workspaceDir != null && workspaceDir.exists()) {
             this.openWorkspace(workspaceDir, true);
+            SceneRestore.getInstance().saveScene(this.workspaceList);
         }
-        SceneRestore.getInstance().saveScene(this.workspaceList);
     }
 
     @FXML
@@ -588,7 +590,7 @@ public class MainController extends BaseController implements Initializable,
             }
         }
         log.debug("exit Mindolph");
-        event.consume(); // this probably avoid the default quitting action, but actually doesn't work.
+        event.consume(); // this probably avoids the default quitting action, but actually doesn't work.
         SceneRestore.getInstance().stop(); // stop store state to avoid clean all the opened files state.
         if (fileTabView.closeAllTabsWithOpenedFiles()) {
             this.dispose();
@@ -704,12 +706,16 @@ public class MainController extends BaseController implements Initializable,
             // load all again to resort collections.
             this.loadCollections();
 
+            Platform.runLater(() -> {
+                Notifications.create().title("Create collection")
+                        .text("Collection '%s' is created with %d files successfully.".formatted(newColName, fileTabView.getAllOpenedFiles().size())).showWarning();
+            });
         }
     }
 
     @FXML
     public void onSaveCollection() {
-        // save current collection with opened files
+        // save the current collection with opened files
         String activeCollectionName = this.cm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName)) {
             log.warn("No active collection found");
@@ -721,20 +727,20 @@ public class MainController extends BaseController implements Initializable,
         }
         this.cm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
 
-        // reset the file counter in the text of menu item.
+        // reset the file counter in the text of the menu item.
         Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
                 menuItem.getUserData() != null && menuItem.getUserData().equals(activeCollectionName)).findFirst();
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
 
         Platform.runLater(() -> {
             Notifications.create().title("Save collection")
-                    .text("Collection '%s' is saved successfully.".formatted(activeCollectionName)).showWarning();
+                    .text("Collection '%s' is saved with %d files successfully.".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())).showWarning();
         });
     }
 
     @FXML
     public void onRemoveCollection() {
-        // remove current user defined collection.
+        // remove the current user defined collection.
         String activeCollectionName = this.cm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName) || "default".equalsIgnoreCase(activeCollectionName)) {
             DialogFactory.warnDialog("The default collection cannot be removed.");
@@ -742,16 +748,46 @@ public class MainController extends BaseController implements Initializable,
         }
         boolean confirmRemove = DialogFactory.yesNoConfirmDialog("Are you sure to remove collection '%s' \n(NO files will be deleted) ".formatted(activeCollectionName));
         if (confirmRemove) {
-            // switch to default collection first
+            // switch to a default collection first
             this.onSelectCollection("default");
             // delete current user-defined collection
             this.cm.deleteCollection(activeCollectionName);
             menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
             this.resetCollectionSelection("default");
             Platform.runLater(() -> {
-                Notifications.create().title("Delete collection")
-                        .text("Collection '%s' is deleted successfully.".formatted(activeCollectionName)).showWarning();
+                Notifications.create().title("Remove collection")
+                        .text("Collection '%s' is removed successfully.".formatted(activeCollectionName)).showWarning();
             });
+        }
+    }
+
+    @FXML
+    public void onRenameCollection() {
+        String activeCollectionName = this.cm.getActiveCollectionName();
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Rename Collection %s".formatted(activeCollectionName))
+                .content("Input a new name")
+                .text(activeCollectionName)
+                .width(500)
+                .build();
+        Optional<String> opt = dialog.showAndWait();
+        if (opt.isPresent()) {
+            String newName = opt.get();
+
+            if (Strings.CS.equals(newName, activeCollectionName)) {
+                return;
+            }
+            if (!activeCollectionName.equals(newName) && this.cm.getFileCollectionMap().containsKey(newName)) {
+                DialogFactory.warnDialog("The name '%s' already exists!".formatted(newName));
+                return;
+            }
+            this.cm.renameCollection(activeCollectionName, newName);
+            // remove for resorting first.
+            menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
+
+            // load all again to resort collections.
+            this.loadCollections();
         }
     }
 
@@ -759,7 +795,7 @@ public class MainController extends BaseController implements Initializable,
     public void onSelectCollection(String collectionName) {
         List<String> files;
         if (StringUtils.isNotBlank(collectionName)) {
-            // get files of selected collection.
+            // get files of a selected collection.
             files = this.cm.getCollectionFilePaths(collectionName);
         }
         else {

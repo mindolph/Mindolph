@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 /**
  * @author mindolph.com@gmail.com
+ * @deprecated since 1.12
  */
 public class SkinparamSnippetGroup extends BasePlantUmlSnippetGroup {
 

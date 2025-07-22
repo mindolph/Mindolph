@@ -2,106 +2,108 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
-<fx:root type="HBox" fx:id="buttons" alignment="BASELINE_LEFT"
+<fx:root type="ScrollPane" fx:id="buttons" styleClass="no-scroll-bar" minHeight="28"
          xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
-    <Button fx:id="btnHeader1" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 1"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnHeader2" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 2"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnHeader3" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 3"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnHeader4" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 4"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnHeader5" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 5"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnHeader6" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Header 6"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnBold" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Bold text"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnItalic" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Italic text"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnBullet" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Bullet List"/>
-        </tooltip>
-    </Button>
-    <!--                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">-->
-    <!--                           <tooltip>-->
-    <!--                              <Tooltip text="Number List" />-->
-    <!--                           </tooltip></Button>-->
-    <Button fx:id="btnLink" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Link"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnImage" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Image"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnQuote" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Quote"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnCode" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Code"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnTable" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Table"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnSeparator" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Horizontal Rule"/>
-        </tooltip>
-    </Button>
-    <Button fx:id="btnComment" mnemonicParsing="false" styleClass="icon_button"
-            stylesheets="@../style/icon_button.css">
-        <tooltip>
-            <Tooltip text="Markdown Comment"/>
-        </tooltip>
-    </Button>
+    <HBox alignment="BASELINE_LEFT">
+        <Button fx:id="btnHeader1" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 1"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnHeader2" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 2"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnHeader3" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 3"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnHeader4" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 4"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnHeader5" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 5"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnHeader6" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Header 6"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnBold" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Bold text"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnItalic" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Italic text"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnBullet" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Bullet List"/>
+            </tooltip>
+        </Button>
+        <!--                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button" stylesheets="@../style/icon_button.css">-->
+        <!--                           <tooltip>-->
+        <!--                              <Tooltip text="Number List" />-->
+        <!--                           </tooltip></Button>-->
+        <Button fx:id="btnLink" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Link"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnImage" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Image"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnQuote" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Quote"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnCode" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Code"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnTable" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Table"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnSeparator" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Horizontal Rule"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnComment" mnemonicParsing="false" styleClass="icon_button"
+                stylesheets="@../style/icon_button.css">
+            <tooltip>
+                <Tooltip text="Markdown Comment"/>
+            </tooltip>
+        </Button>
+    </HBox>
 </fx:root>

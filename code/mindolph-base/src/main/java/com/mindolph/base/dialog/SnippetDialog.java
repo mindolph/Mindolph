@@ -48,6 +48,8 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
     @FXML
     private TextArea taCode;
     @FXML
+    private TextArea taDesc;
+    @FXML
     private Button btnIconImage;
     @FXML
     private VBox vbox;
@@ -100,6 +102,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
         rdTypeImage.setToggleGroup(group);
         tfTitle.textProperty().addListener((observableValue, s, t1) -> updateSnippet(null));
         taCode.textProperty().addListener((observableValue, s, t1) -> updateSnippet(null));
+        taDesc.textProperty().addListener((observableValue, s, t1) -> updateSnippet(null));
         btnIconImage.setOnAction(actionEvent -> {
             log.debug("Load image");
             File defaultDir = SystemUtils.getUserHome();
@@ -122,12 +125,17 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
                 else {
                     log.warn("Wrong snippet type: {}", snippet.getType());
                 }
+                taCode.requestFocus();
             });
             tfTitle.setText(snippet.getTitle());
             taCode.setText(snippet.getCode());
+            taDesc.setText(snippet.getDescription());
             if (StringUtils.isNotBlank(snippet.getFilePath())) {
                 this.loadImage(new File(snippet.getFilePath()));
             }
+        }
+        else {
+            Platform.runLater(() -> {tfTitle.requestFocus();});
         }
         this.initUI(fileType);
     }
@@ -150,7 +158,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
 
     private void initUI(String fileType) {
         try {
-            this.fileTypeSnippetMap = JsonUtils.jsonTo(FILE_TYPE_SNIPPET_MAP_IN_JSON, new TypeReference<Map<String, List<String>>>() {
+            this.fileTypeSnippetMap = JsonUtils.jsonTo(FILE_TYPE_SNIPPET_MAP_IN_JSON, new TypeReference<>() {
             });
             if (log.isTraceEnabled())
                 log.trace(StringUtils.join(this.fileTypeSnippetMap.get(SupportFileTypes.TYPE_MARKDOWN), ","));
@@ -182,12 +190,12 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
     private void updateSnippet(Image image) {
         if (image == null) {
             Snippet<?> snippet = new Snippet<>();
-            snippet.title(tfTitle.getText()).code(taCode.getText()).type(Snippet.TYPE_TEXT);
+            snippet.title(tfTitle.getText()).code(taCode.getText()).type(Snippet.TYPE_TEXT).description(taDesc.getText());
             result = snippet;
         }
         else {
             ImageSnippet imageSnippet = new ImageSnippet(image);
-            imageSnippet.title(tfTitle.getText()).code(taCode.getText()).type(Snippet.TYPE_IMAGE)
+            imageSnippet.title(tfTitle.getText()).code(taCode.getText()).type(Snippet.TYPE_IMAGE).description(taDesc.getText())
                     .filePath(String.valueOf(btnIconImage.getUserData()));
             result = imageSnippet;
         }

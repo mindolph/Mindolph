@@ -3,6 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
@@ -10,15 +11,17 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.ControlUtils;
 import com.mindolph.mfx.util.PaneUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +37,10 @@ public class AiSummaryPane extends BaseAiPane {
     private static final Logger log = LoggerFactory.getLogger(AiSummaryPane.class);
 
     @FXML
+    private TextArea taInput;
+    @FXML
+    private TextField tfToBeSummarized;
+    @FXML
     private TextArea taOutput;
     @FXML
     private ProgressBar pbWaiting;
@@ -48,26 +55,29 @@ public class AiSummaryPane extends BaseAiPane {
     @FXML
     private HBox hbGenerating;
 
-    public AiSummaryPane(Object editorId, String fileType, String inputText) {
-        super("/genai/ai_summary_pane.fxml", editorId, fileType);
+    // workaround bond to the editor to control it's state.
+    private final Node bondEditor;
 
-        this.toggleButtons(false);
+    public AiSummaryPane(Object editorId, String fileType, String toBeSummarized, Node bondEditor) {
+        super("/genai/ai_summary_pane.fxml", editorId, fileType);
+        this.bondEditor = bondEditor;
+
+        this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
         lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveAiProvider()));
+        tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnClose.setOnAction(event -> {
-            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT);
+            GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL);
         });
         btnStop.setOnAction(event -> {
-            this.toggleButtons(false);
+            this.toggleComponents(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
         btnSummarize.setOnAction(event -> {
-            this.toggleButtons(true);
-            taOutput.clear();
-            starTotSummarize(inputText);
+            starToSummarize(toBeSummarized);
         });
         btnCopy.setOnAction(event -> {
             if (StringUtils.isNotBlank(taOutput.getText())) {
@@ -76,55 +86,76 @@ public class AiSummaryPane extends BaseAiPane {
             }
         });
 
-        ControlUtils.escapableControls(()-> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT), taOutput);
+        ControlUtils.escapableControls(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL), taOutput);
 
-        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.ABORT),
+        PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
                 this, hbDone, hbGenerating);
 
-        this.requestFocus();
+    }
 
-        // listeners
-        GenAiEvents.getIns().subscribeSummarizeEvent(editorId, input -> {
-            LlmService.getIns().summarize(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
-                    streamToken -> {
-                        if (streamToken.isError()) {
-                            log.warn("error from streaming: {}", streamToken);
-                            Platform.runLater(() -> onStop(streamToken.text()));
-                        }
-                        else {
-                            // accept streaming output (even with `stop` one).
-                            if (streamToken.isStop()) {
-                                Platform.runLater(() -> {
-                                    onStop("Done with %d tokens.".formatted(streamToken.outputTokens()));
-                                });
-                            }
-                            else {
-                                if (log.isTraceEnabled()) log.trace("append text: {}", streamToken.text());
-                                Platform.runLater(() -> taOutput.appendText(streamToken.text()));
-                            }
-                        }
-                    });
+    @Override
+    public void requestFocus() {
+        Platform.runLater(() -> {
+            this.taInput.requestFocus();
         });
     }
 
-    private void starTotSummarize(String inputText) {
+    private void starToSummarize(String txtToBeSummarized) {
 //        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
+        if (cbModel.getValue() == null) {
+            DialogFactory.warnDialog("Please select a model to summarize your selected content.");
+            return;
+        }
         ModelMeta modelMeta = cbModel.getValue().getValue();
+        this.toggleComponents(true);
+        taOutput.clear();
         log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
         lbMsg.setText(StringUtils.EMPTY);
-        GenAiEvents.getIns().emitSummarizeEvent(editorId, new InputBuilder().model(modelMeta.name()).text(inputText).temperature(0.5f)
+        bondEditor.setDisable(true);
+        String prompt = """
+                %s:
+                ```
+                %s
+                ```
+                """.formatted(
+                StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
+                txtToBeSummarized);
+        Input input = new InputBuilder().model(modelMeta.name()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
-                .createInput());
+                .createInput();
+        LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
+                streamToken -> {
+                    if (streamToken.isError()) {
+                        log.warn("error from streaming: {}", streamToken);
+                        Platform.runLater(() -> onStop(streamToken.text()));
+                    }
+                    else {
+                        // accept streaming output (even with `stop` one).
+                        if (streamToken.isStop()) {
+                            Platform.runLater(() -> {
+                                onStop("Done with %d tokens.".formatted(streamToken.outputTokens()));
+                            });
+                        }
+                        else {
+                            if (log.isTraceEnabled()) log.trace("append text: {}", streamToken.text());
+                            Platform.runLater(() -> taOutput.appendText(streamToken.text()));
+                        }
+                    }
+                });
+
     }
 
     public void onStop(String reason) {
         btnSummarize.setText("Re-summarize");
         lbMsg.setText(reason);
-        toggleButtons(false);
+        toggleComponents(false);
+        bondEditor.setDisable(false);
     }
 
-    private void toggleButtons(boolean isGenerating) {
+    @Override
+    protected void toggleComponents(boolean isGenerating) {
+        super.toggleComponents(isGenerating);
         pbWaiting.setVisible(isGenerating);
         if (isGenerating)
             NodeUtils.disable(btnCopy, btnSummarize);

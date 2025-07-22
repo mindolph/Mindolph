@@ -14,15 +14,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Duration;
+import org.apache.commons.lang3.StringUtils;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.TextUtils;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final AppManager appManager = AppManager.getInstance();
 
-    // Editable view is used for custom snippet group.
+    // Editable view is used for a custom snippet group.
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private final ListView<Snippet> listView;
@@ -52,7 +52,7 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
     // event to SnippetView after snippet changes
     private final EventSource<Snippet> snippetChanged = new EventSource<>();
 
-    // used for custom snippet to load data for file type.
+    // used for custom snippet to load data for a file type.
     private final String fileType;
 
     private ContextMenu contextMenu = null;
@@ -61,35 +61,56 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
         this.fileType = fileType;
         this.listView = new ListView<>();
         LayoutUtils.anchor(this.listView, 0);
-        this.listView.setCellFactory(param -> new SnippetCell());
-        this.listView.setPrefHeight(9999); // extend the snippet view as possible
+        this.listView.setCellFactory(param -> {
+            SnippetCell cell = new SnippetCell();
+            cell.setOnMouseEntered(event -> {
+                Snippet snippet = cell.getItem();
+                if (snippet != null && !StringUtils.isAllBlank(snippet.getDescription(), snippet.getCode())) {
+                    String tooltipContent = TextUtils.join(new String[]{snippet.getDescription(),
+                                    "Code: ", "```", snippet.getCode(), "```"}
+                            , "\n");
+                    Tooltip tooltip = new Tooltip(tooltipContent);
+                    tooltip.setShowDuration(Duration.seconds(30));
+                    Tooltip.install(cell, tooltip);
+                }
+            });
+            return cell;
+        });
         this.listView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
-                EventBus.getIns().notifySnippetApply(selectedSnippet);
-            }
             if (contextMenu != null && contextMenu.isShowing()) {
                 contextMenu.hide();
             }
-            if (this.isEditable() && event.getButton() == MouseButton.SECONDARY) {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (event.getClickCount() == 2) {
+                    Snippet<?> selectedSnippet = listView.getSelectionModel().getSelectedItem();
+                    EventBus.getIns().notifySnippetApply(selectedSnippet);
+                }
+            }
+            else if (event.getButton() == MouseButton.SECONDARY) {
                 contextMenu = this.createContextMenu();
-                contextMenu.show(this.listView, event.getScreenX(), event.getScreenY());
+                if (contextMenu != null) {
+                    contextMenu.show(this.listView, event.getScreenX(), event.getScreenY());
+                }
             }
         });
+        this.listView.setPrefHeight(9999); // extend the snippet view as possible
         this.getChildren().add(listView);
     }
 
     private ContextMenu createContextMenu() {
-        ContextMenu contextMenu = new ContextMenu();
-        miNew.setOnAction(this);
-        miEdit.setOnAction(this);
-        miClone.setOnAction(this);
-        miRemove.setOnAction(this);
-        miEdit.setDisable(listView.getSelectionModel().getSelectedItem() == null);
-        miClone.setDisable(listView.getSelectionModel().getSelectedItem() == null);
-        miRemove.setDisable(listView.getSelectionModel().getSelectedItem() == null);
-        contextMenu.getItems().addAll(miNew, miEdit, miClone, miRemove);
-        return contextMenu;
+        if (this.isEditable()) {
+            ContextMenu contextMenu = new ContextMenu();
+            miNew.setOnAction(this);
+            miEdit.setOnAction(this);
+            miClone.setOnAction(this);
+            miRemove.setOnAction(this);
+            miEdit.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+            miClone.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+            miRemove.setDisable(listView.getSelectionModel().getSelectedItem() == null);
+            contextMenu.getItems().addAll(miNew, miEdit, miClone, miRemove);
+            return contextMenu;
+        }
+        return null;
     }
 
     @Override

@@ -19,6 +19,7 @@ public interface SupportFileTypes {
     String TYPE_PLAIN_JPG = "jpg";
     String TYPE_PLAIN_JPEG = "jpeg";
     String TYPE_PLAIN_PNG = "png";
+    String TYPE_PLAIN_GIF = "gif";
     String TYPE_CSV = "csv";
 
     Set<String> EDITABLE_TYPES = new HashSet<>() {

@@ -1,5 +1,112 @@
 # Change Logs
 
+### V1.12.2 Unstable Release
+* Feature:   
+	* Add "Auto Switch" option to PlantUML editor, users can choose whether to let the preview page switch automatically.
+	* New line comment and block comment quick insert buttons to plantuml toolbar.
+	* New functionality to rename the active collection. 
+* Improvement:  
+	* Optimized the outline annotation recognization for PlantUML.
+	* Improved the quick insert from PlantUML toolbar.
+	* Optimized file handle handling.
+* Fix:  
+	* Right button double-click on the snippet item inserts snippet code.
+	* Redundant blank line when inserting an empty table to markdown.
+* Update JavaFX to 24.0.1
+* Update other dependencies like PlantUML etc.
+* merged bug fixes from v1.11.9
+
+
+## V1.11.9 Release
+* Fix: PlantUML `group` snippet doesn't work for activity diagram.
+* Fix: the streaming Gen-AI output does not work on ChatGLM models.
+* update pre-set models for Qwen, ChatGLM and OpenAI.
+
+### V1.12.1 Unstable Release
+* Features:  
+	* automatically switch PlantUML preview page when caret moves to other code blocks.
+	* add new toolbar to PlantUML editor to insert diagram, entity, actor, rectangle, outline comment. 
+* Improvement:  
+	* optimized the quick insert table feature a litter bit for Markdown.   
+	* support GIF in Markdown.  
+* fix: setting the max output token of custom model does not work well.   
+* merged bug fixes from stable version 1.11.8.  
+
+### V1.11.8 Release
+* Fix: unable to create or open a workspace since the release V1.11.6.
+
+### V1.11.7 Release
+* Fix: potential file handles leak when importing from XMind file and Novamind file(https://github.com/mindolph/Mindolph/issues/13). 
+* Fix: some icons don't respect the `UI icon size` setting. 
+* Fix: the Markdown toolbar limits the position adjustment of the Markdown editor splitter.
+* Fix: OpenAI and Qwen streaming generation won't stop when user stops the generation on purpose.
+* Fix: remembering latest prompt doesn't work in some cases.
+* some minor refactors for Mind Map importers and exporters and some minor UI improvement.
+
+### V1.12.0 Unstable Release
+* Features:
+	* Let user change the prompt for generating summary just before starting.
+	* PlantUML: Support CSS style and C4 Model diagram by code snippets.
+	* Add some new groups of sprites (Tupadr3) snippets to PlantUML, including devicons, font-awesome , material, govicons, weather.
+	* A special multi-level outline annotation format is introduced to the PlantUML editor. By using this format in the comment, the specified content can be displayed in the outline item. The number of `*` indicates the level, for example: `' *foobar*` indicates the first-level title, `' **foobar**` indicates the second-level title.
+	* Add support to the Moonshot LLM API. 
+
+* Improvement: 
+	* Display the amount of items in snippet group and update it if filtered by inputting a keyword.
+	* Merged some snippet groups for PlantUML.
+	* When you insert a table using the table button on the Markdown editor toolbar, if text content has been selected at the time, the generated table will automatically split and wrap the selected content.
+	* Allow user to choose separator when using the quick inserting table feature with selected text.
+	* Automatically focus on input field or area while the snippet dialog pops up.
+	* Show a tooltip for snippet with more information and longer time.
+	* Add description to custom snippet.
+	* Optimize the title auto generation for newly created Markdown file. 
+
+
+### V1.11.6 Release
+* Improvement: use entire file content for summarizing if no text is selected in Markdown, PlantUML and Text editors.
+* Improvement: in the mind map editor, when summarizing any selected topics that contain sub-topics, ask whether to include sub-topics.  
+* Fix: when reducing the width of the left sidebar by mouse, the scroll bar of the snippet view will be obscured.  
+* Some refactors and improvements. thanks Moab Alves(https://github.com/moabalv)
+
+
+### V1.11.5 Unstable Release
+* Feature:
+    * Support Gen-AI summarizing for mind map.
+    * New option `UI icon size` to adjust the size of icons globally with 3 grades: small(16), medium(20), large(24).
+
+* Improvement:
+    * Optimized the handling of user-initiated stop during Gen-AI generation.
+    * Temporarily disable the editor during Gen-AI generation to avoid unexpected situations.
+
+* Bug Fixes:
+    * Error handling doesn't work for streaming DeepSeek provider.
+    * Exception when generate or summarize by LLM if `Custom` model option is selected but no any custom model is defined and selected.
+    * For setting Gen-AI custom model, the `delete` button should be disabled when there is no any custom model exists.
+
+
+### V1.11.4 Unstable Release
+* Feature: add new option `UI font size` to set the global UI font size. (https://github.com/mindolph/Mindolph/issues/12)   
+* Improvement: update OpenAI and Google Gemini models; display model's max tokens as '%sK' format.   
+* Improvement: remember the latest user input prompt for initializing the prompt of Gen-AI input panel.  
+* Improvement: add notification for creating new collection for opened files.
+* Improvement: add the number of files in the notification message when saving a collection.  
+* Fix: model choice box should be disabled during Gen-AI generating or summarizing.  
+* Fix: exception when launching Gen-AI input panel without selecting any text.  
+* Fix: the selected default collection is not recovered the selection state on application startup.  
+* Fix: Text selection is cleared after Gen-AI summarize panel pops up.   
+* Fix: filtering snippets should be case insensitive.  
+
+### V1.11.3 Unstable Release
+* Improvement: for applying snippet, automatically wrap up the selected text if the snippet you choose requires that.
+* Improvement: add Regex and EBNF support to PlantUML editor.
+* Improvement: add max token information after selecting a LLM model in Gen-AI panels.
+* Fix: the 'retry' function doesn't work after the Gen-AI generated something.
+* Refactored LLM provider implementation.
+
+### V1.10.5 Release
+* Improvement: optimized the auto scroll during editing for the Markdown editor, now the scroll sync goes smoothly. 😊
+* The .deb installation package is now built on Debian 12 to fix the error during installation. It also works on Ubuntu.
+
 ### V1.11.2 Unstable Release
 * Improvement: input panel follows the generated text during streaming generation by Gen-AI.
 * Fix: exception when launching Gen-AI generating or summarizing panes if no custom models is set up for the provider.  

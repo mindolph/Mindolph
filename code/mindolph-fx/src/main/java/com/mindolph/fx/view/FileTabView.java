@@ -4,6 +4,7 @@ import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.dialog.DialogFileFilters;
+import com.mindolph.base.editor.BaseCodeAreaEditor;
 import com.mindolph.base.editor.BaseEditor;
 import com.mindolph.base.editor.BasePreviewEditor;
 import com.mindolph.base.editor.Editable;
@@ -20,6 +21,7 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.plantuml.PlantUmlEditor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -31,6 +33,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.event.EventBus.MenuTag.*;
-import static org.apache.commons.lang3.StringUtils.replaceOnce;
 
 /**
  * @author mindolph.com@gmail.com
@@ -139,12 +141,13 @@ public class FileTabView extends BaseView {
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
-            EventBus.getIns().notifyMenuStateChange(CUT, editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(COPY, editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(FIND, editor.isSearchable());
-            EventBus.getIns().notifyMenuStateChange(REPLACE, editor.isSearchable());
+            boolean isCodeEditor = editor instanceof BaseCodeAreaEditor;
+            EventBus.getIns().notifyMenuStateChange(CUT, isCodeEditor && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(COPY, isCodeEditor && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(PASTE, isCodeEditor);
+            EventBus.getIns().notifyMenuStateChange(FIND, isCodeEditor && editor.isSearchable());
+            EventBus.getIns().notifyMenuStateChange(REPLACE, isCodeEditor && editor.isSearchable());
 //            EventBus.getIns().enableMenuItems(PRINT);
-            EventBus.getIns().enableMenuItems(PASTE);
         }
     }
 
@@ -212,7 +215,7 @@ public class FileTabView extends BaseView {
         this.tabEditorMap.put(tab, editor);
         this.createContextMenuForTab(tab);
 
-        // do something to init the editor when file is loaded and update menu states.
+        // do something to init the editor when the file is loaded and update menu states.
         EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
             Platform.runLater(() -> {
                 editor.locate(fileData.getAnchor());
@@ -256,7 +259,7 @@ public class FileTabView extends BaseView {
                 e.printStackTrace();
             }
 
-            // call to remember opened file.
+            // call to remember opened files.
             EventBus.getIns().notifyOpenedFileChange(tabPane.getTabs().stream()
                     .filter(tb -> tb.getUserData() instanceof NodeData && ((NodeData) tb.getUserData()).isFile())
                     .map(tb -> ((NodeData) tb.getUserData()).getFile()).collect(Collectors.toList()));
@@ -328,7 +331,7 @@ public class FileTabView extends BaseView {
         }
         Editable editor = tabEditorMap.get(selectedTab);
         if (editor != null) {
-            if (editor instanceof BasePreviewEditor) {
+            if (editor instanceof BasePreviewEditor previewEditor) {
                 MenuItem miChangeSplitterOrientation = new MenuItem("Change Splitter Orientation");
                 Menu mViewMode = new Menu("View Mode");
                 ToggleGroup toggleGroup = new ToggleGroup();
@@ -343,29 +346,28 @@ public class FileTabView extends BaseView {
 
                 miChangeSplitterOrientation.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).toggleOrientation();
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.toggleOrientation();
                     }
                 });
                 miTextOnly.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.TEXT_ONLY);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.TEXT_ONLY);
                     }
                 });
                 miPreviewOnly.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
                     }
                 });
                 miBoth.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor) {
-                        ((BasePreviewEditor) selectedEditor).changeViewMode(Editable.ViewMode.BOTH);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.changeViewMode(Editable.ViewMode.BOTH);
                     }
                 });
-                BasePreviewEditor previewEditor = (BasePreviewEditor) editor;
                 previewEditor.orientationObjectProperty().addListener((observable, oldValue, newValue) -> {
                     Orientation orientation = previewEditor.getOrientation();
                     Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
@@ -377,13 +379,21 @@ public class FileTabView extends BaseView {
                 contextMenu.getItems().addAll(new SeparatorMenuItem(), miChangeSplitterOrientation, mViewMode);
             }
 
-            if (editor instanceof MarkdownEditor) {
+            if (editor instanceof MarkdownEditor mde) {
                 CheckMenuItem miAutoScroll = new CheckMenuItem("Auto Scroll");
                 miAutoScroll.setSelected(true);
                 miAutoScroll.setOnAction(actionEvent -> {
-                    ((BasePreviewEditor) editor).setIsAutoScroll(miAutoScroll.isSelected());
+                    mde.setIsAutoScroll(miAutoScroll.isSelected());
                 });
                 contextMenu.getItems().add(miAutoScroll);
+            }
+            else if (editor instanceof PlantUmlEditor pue) {
+                CheckMenuItem miAutoSwitch = new CheckMenuItem("Auto Switch");
+                miAutoSwitch.setSelected(true);
+                miAutoSwitch.setOnAction(actionEvent -> {
+                    pue.setAutoSwitch(miAutoSwitch.isSelected());
+                });
+                contextMenu.getItems().add(miAutoSwitch);
             }
         }
 
@@ -461,7 +471,7 @@ public class FileTabView extends BaseView {
         for (NodeData fileData : new HashSet<>(openedFileMap.keySet())) {
             String origFilePath = fileData.getFile().getAbsolutePath();
             if (origFilePath.startsWith(origDirPath)) {
-                File newFile = new File(replaceOnce(origFilePath, origDirPath, newDirPath));
+                File newFile = new File(Strings.CS.replaceOnce(origFilePath, origDirPath, newDirPath));
                 this.updateOpenedTabAndEditor(fileData, newFile);
             }
         }
@@ -481,7 +491,7 @@ public class FileTabView extends BaseView {
             openedFileMap.remove(origNodeData);
             origNodeData.setFile(newFile);
             // the userData of tab has already been referred by tab context menu, so replace the file instead of calling setUserData().
-            // otherwise the context menu cant manipulate the appropriate nodeData. In other word, the nodeData in tab might be equal but not same to the one in TreeView.
+            // otherwise the context menu can't manipulate the appropriate nodeData. In other words, the nodeData in tab might be equal but different to the one in TreeView.
             ((NodeData) tab.getUserData()).setFile(newFile);
             // re-add to mapping since the hash is already changed.
             openedFileMap.put(origNodeData, tab);
@@ -604,7 +614,7 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     * Close file tab without saving (for cases like deleting a file)
+     * Close the file tab without saving (for cases like deleting a file)
      *
      * @param fileData
      */
@@ -626,7 +636,7 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     * Close tab and notify.
+     * Close the tab and notify.
      *
      * @param tab
      * @param fileData
@@ -646,7 +656,7 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     * Close all tabs no matter what the lading status is except specified one.
+     * Close all tabs no matter what the lading status is except the specified one.
      *
      * @param ignoredTab
      * @since 1.9

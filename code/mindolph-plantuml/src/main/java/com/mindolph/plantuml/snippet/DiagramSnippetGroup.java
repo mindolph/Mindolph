@@ -13,7 +13,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Diagram";
+        return "UML Diagram";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                         new ImageSnippet("group").code("""
                                 group Main Label [Second Label]
                                 ⨁
-                                end
+                                end group
                                 """).generateImage(),
                         new ImageSnippet("loop").code("""
                                 loop 1000 times
@@ -80,7 +80,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                         new ImageSnippet().title("repeat").code("""
                                 repeat
                                 
-                                backward: this is backward
+                                backward: this is backward;
                                 repeat while (⨁) is (Y)
                                 """).generateImage(),
                         new ImageSnippet("switch").code("""
@@ -106,7 +106,23 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                                 split again
                                 
                                 end split
-                                """).generateImage()
+                                """).generateImage(),
+                        // https://plantuml.com/class-diagram
+                        new ImageSnippet().title("Relation: Extension").code(" <|-- ").description("Specialization of a class in a hierarchy").generateImage(),
+                        new ImageSnippet().title("Relation: Implementation").code(" <|.. ").description("Realization of an interface by a class").generateImage(),
+                        new ImageSnippet().title("Relation: Composition").code(" -- ").description("The part cannot exist without the whole").generateImage(),
+                        new ImageSnippet().title("Relation: Aggregation").code(" o-- ").description("The part can exist independently of the whole").generateImage(),
+                        new ImageSnippet().title("Relation: Dependency").code(" --> ").description("The object uses another object").generateImage(),
+                        new ImageSnippet().title("Relation: Dependency (Weak)").code(" ..> ").description("A weaker form of dependency ").generateImage(),
+                        // https://plantuml.com/ie-diagram
+                        new ImageSnippet().title("Relation: One to One").code(" ||--|| ").generateImage(),
+                        new ImageSnippet().title("Relation: One to Many").code(" ||--|{ ").generateImage(),
+                        new ImageSnippet().title("Relation: Many to One").code(" }|--|| ").generateImage(),
+                        new ImageSnippet().title("Relation: Many to Many").code(" }|--|{ ").generateImage(),
+                        new ImageSnippet().title("Relation: One to One (Weak)").code(" ||..|| ").generateImage(),
+                        new ImageSnippet().title("Relation: One to Many (Weak)").code(" ||..|{ ").generateImage(),
+                        new ImageSnippet().title("Relation: Many to One (Weak)").code(" }|..|| ").generateImage(),
+                        new ImageSnippet().title("Relation: Many to Many (Weak)").code(" }|..|{ ").generateImage()
                 )
         );
     }

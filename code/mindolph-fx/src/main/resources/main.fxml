@@ -138,6 +138,7 @@
             <Menu fx:id="menuCollections" text="_Collections">
                 <MenuItem onAction="#onCreateCollection" text="Create Collection..."/>
                 <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
+                <MenuItem onAction="#onRenameCollection" text="Rename Collection..."/>
                 <MenuItem fx:id="miRemoveCollection" onAction="#onRemoveCollection" text="Remove Collection"/>
                 <SeparatorMenuItem/>
             </Menu>
@@ -207,7 +208,7 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
                                 <SnippetView fx:id="snippetView" layoutX="24.0" layoutY="44.0"
-                                             prefHeight="200.0" prefWidth="200.0"
+                                             prefHeight="200.0" prefWidth="200.0" minWidth="0"
                                              AnchorPane.bottomAnchor="0.0"
                                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                              AnchorPane.topAnchor="0.0"/>

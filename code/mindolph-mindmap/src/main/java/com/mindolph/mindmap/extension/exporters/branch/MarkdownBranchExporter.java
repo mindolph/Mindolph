@@ -41,7 +41,7 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
-        super.includeAttributes = options.get(0);
+        super.includeAttributes = options.getFirst();
         this.doConvertingAndSave(context.getModel(), context.getSelectedTopics(), exportFileName, out);
     }
 

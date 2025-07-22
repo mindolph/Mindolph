@@ -2,6 +2,7 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
 import com.mindolph.core.WorkspaceManager;
@@ -63,6 +64,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
     public GotoFileDialog() {
+        Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Go to file")
@@ -93,6 +95,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
         String fileTypeOption = fxPreferences.getPreference(MINDOLPH_NAVIGATE_OPTIONS, String.class, FILE_OPTION_ALL);
         fileFilterButtonGroup.setSelectedFileType(fileTypeOption);
 
+        tbSort.setPrefHeight(iconSize + 12);
         tbSort.setGraphic(FontIconManager.getIns().getIcon(IconKey.SORT));
         tbSort.setOnAction(event -> {
             searchFiles(StringUtils.trim(tfKeywords.getText()), fileFilterButtonGroup.getSelectedFileType());

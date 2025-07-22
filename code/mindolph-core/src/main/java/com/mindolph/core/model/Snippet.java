@@ -7,8 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Snippet for quick inserting.
  *
- * @author mindolph.com@gmail.com
  * @param <T> Type of inheritor
+ * @author mindolph.com@gmail.com
  */
 public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
 
@@ -32,7 +32,8 @@ public class Snippet<T extends Snippet<?>> implements Comparable<Snippet<T>> {
         this.title(sr.title())
                 .type(sr.type())
                 .code(sr.code())
-                .filePath(sr.filePath());
+                .filePath(sr.filePath())
+                .description(sr.description());
     }
 
     public Snippet<?> deepClone() {

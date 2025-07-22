@@ -57,6 +57,7 @@ public class PumlSnippetDemo extends Application implements Initializable {
                 new CreoleSnippetGroup(),
                 new ProcessingSnippetGroup(),
                 new BuiltinFunctionsSnippetGroup(),
+                new C4SnippetGroup(),
                 new CustomSnippetGroup());
         snippetView.reload(groups, SupportFileTypes.TYPE_PLANTUML);
         EventBus.getIns().subscribeSnippetApply(snippet -> {

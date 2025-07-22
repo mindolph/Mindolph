@@ -1,7 +1,14 @@
 package com.mindolph.base.editor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.mindolph.base.event.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.container.FixedSplitPane;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -11,10 +18,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Editor with preview.
@@ -49,7 +52,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     protected ViewMode viewMode = ViewMode.BOTH;
 
     private final AtomicLong scrollStartTime = new AtomicLong(0);
-    private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
+    private final static double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
     public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext, acceptDraggingFiles);
@@ -57,14 +60,16 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             throw new RuntimeException("Your should add SplitPane in to FXML with name 'splitPanel'");
         }
         // Not all preview-able editors need this scroll view.
+        // Some components like Webview do not work here.
         if (this.previewPane != null) {
+            if (log.isDebugEnabled()) log.debug("listen to remember the preview pane's scroll position");
             this.previewPane.hvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollH = newValue.doubleValue());
             this.previewPane.vvalueProperty().addListener((observable, oldValue, newValue) -> currentScrollV = newValue.doubleValue());
         }
         fixedSplitPane.skinProperty().addListener((observable, oldValue, newValue) -> {
-            log.debug("skin is ready: " + newValue);
+            log.debug("skin is ready: %s".formatted(newValue));
             if (editorContext.getOrientation() != null) {
-                log.debug("open editor on orientation: " + editorContext.getOrientation());
+                log.debug("open editor on orientation: %s".formatted(editorContext.getOrientation()));
                 fixedSplitPane.setOrientation(editorContext.getOrientation());
             }
         });
@@ -73,11 +78,11 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
     protected void enablePageSwipe() {
         this.previewPane.setOnSwipeLeft(swipeEvent -> {
-            log.trace("Swipe left");
+            if (log.isTraceEnabled()) log.trace("Swipe left");
             nextPage();
         });
         this.previewPane.setOnSwipeRight(swipeEvent -> {
-            log.trace("Swipe right");
+            if (log.isTraceEnabled()) log.trace("Swipe right");
             prevPage();
         });
         // TODO Consider moving to base component
@@ -85,16 +90,18 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
         this.previewPane.setOnScrollFinished(scrollEvent -> {
             long intervalInMillis = System.currentTimeMillis() - scrollStartTime.get();
             double textDeltaX = scrollEvent.getTotalDeltaX();
-            log.trace("Touchpad swipe " + textDeltaX);
-            log.trace("Interval in millis: " + intervalInMillis);
+            if (log.isTraceEnabled()) {
+                log.trace("Touchpad swipe %s".formatted(textDeltaX));
+                log.trace("Interval in millis: %d".formatted(intervalInMillis));
+            }
             double speed = textDeltaX / intervalInMillis;
-            log.trace("Speed: " + speed);
+            if (log.isTraceEnabled()) log.trace("Speed: " + speed);
             if (speed > SCROLL_SPEED_THRESHOLD) {
-                log.trace("Swipe right");
+                if (log.isTraceEnabled()) log.trace("Swipe right");
                 prevPage();
             }
             else if (speed < -SCROLL_SPEED_THRESHOLD) {
-                log.trace("Swipe left");
+                if (log.isTraceEnabled()) log.trace("Swipe left");
                 nextPage();
             }
         });
@@ -115,16 +122,27 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             switch (viewMode) {
                 case TEXT_ONLY -> {
                     fixedSplitPane.hideSecondary();
+                    this.toggleEditableMenuItems(true);
                 }
                 case PREVIEW_ONLY -> {
                     fixedSplitPane.hidePrimary();
+                    this.toggleEditableMenuItems(false);
                 }
                 case BOTH -> {
                     fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
                     this.refresh(codeArea.getText()); // refresh preview from possible updated text
+                    this.toggleEditableMenuItems(true);
                 }
             }
         }
+    }
+
+    protected void toggleEditableMenuItems(boolean enable) {
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.CUT, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.PASTE, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.FIND, enable);
+        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.REPLACE, enable);
     }
 
     public void toggleOrientation() {
@@ -192,7 +210,6 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             previewPane.setHvalue(currentScrollH);
             previewPane.setVvalue(currentScrollV);
         }
-
     }
 
     public void centerSplitter() {
@@ -217,5 +234,9 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
     public void setIsAutoScroll(boolean isAutoScroll) {
         this.isAutoScroll.set(isAutoScroll);
+    }
+
+    public ViewMode getViewMode() {
+        return viewMode;
     }
 }

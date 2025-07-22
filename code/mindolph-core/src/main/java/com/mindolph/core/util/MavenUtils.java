@@ -29,17 +29,20 @@ public class MavenUtils {
     public static String getVersionInPomProperties(String group, String artifact) {
         ClassLoader cl = MavenUtils.class.getClassLoader();
         String path = "META-INF/maven/%s/%s/pom.properties".formatted(group, artifact);
-        InputStream resourceAsStream = cl.getResourceAsStream(path);
-        if (resourceAsStream != null) {
-            Properties propKeys = new Properties();
-            try {
-                propKeys.load(resourceAsStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+        try (InputStream resourceAsStream = cl.getResourceAsStream(path);) {
+            if (resourceAsStream != null) {
+                Properties propKeys = new Properties();
+                try {
+                    propKeys.load(resourceAsStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                return String.valueOf(propKeys.get("version"));
             }
-            return String.valueOf(propKeys.get("version"));
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 }

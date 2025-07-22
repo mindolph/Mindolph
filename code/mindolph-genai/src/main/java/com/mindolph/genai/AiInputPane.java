@@ -8,6 +8,8 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.PaneUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -19,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT;
 import static com.mindolph.core.constant.GenAiConstants.ActionType;
 
 /**
@@ -52,11 +55,16 @@ public class AiInputPane extends BaseAiPane {
     @FXML
     private ProgressBar pbWaiting;
 
+    // be used to remember the latest prompt for user convenience until the application exits.
+    private static String latestPrompt;
+
     public AiInputPane(Object editorId, String fileType, String defaultInput) {
         super("/genai/ai_input_pane.fxml", editorId, fileType);
 
         taInput.setText(defaultInput);
-        taInput.positionCaret(defaultInput.length());
+        if (defaultInput != null && !defaultInput.isEmpty()) {
+            taInput.positionCaret(defaultInput.length());
+        }
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
 
@@ -85,29 +93,31 @@ public class AiInputPane extends BaseAiPane {
         });
         btnGenerate.setOnAction(event -> {
             if (StringUtils.isNotBlank(taInput.getText())) {
-                lbMsg.setText(null);
-                this.toggleButtons(true);
                 Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
-                String model = null;
-                if (selectedModel != null) {
-                    model = selectedModel.getValue().name();
+                if (selectedModel == null) {
+                    DialogFactory.warnDialog("Please select a model to generate content.");
+                    return;
                 }
+                lbMsg.setText(null);
+                this.toggleComponents(true);
+                String modelName = selectedModel.getValue().name();
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new InputBuilder().model(model).text(prompt).temperature(cbTemperature.getValue().getKey())
+                        new InputBuilder().model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
                                 .outputLanguage(cbLanguage.getValue().getKey())
                                 .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null)
                                 .isRetry(false).isStreaming(isStreaming)
                                 .createInput());
+                FxPreferences.getInstance().savePreference(GEN_AI_LATEST_GENERATE_PROMPT, prompt);
             }
             else {
                 taInput.requestFocus();
             }
         });
         btnStop.setOnAction(event -> {
-            this.toggleButtons(false);
+            this.toggleComponents(false);
             GenAiEvents.getIns().emitActionEvent(editorId, ActionType.STOP);
         });
 
@@ -136,7 +146,9 @@ public class AiInputPane extends BaseAiPane {
                 this, hbReady, hbGenerating);
     }
 
-    private void toggleButtons(boolean isGenerating) {
+    @Override
+    protected void toggleComponents(boolean isGenerating) {
+        super.toggleComponents(isGenerating);
         pbWaiting.setVisible(isGenerating);
         if (isGenerating)
             NodeUtils.disable(btnClose, btnGenerate, cbTemperature, taInput);
@@ -153,7 +165,7 @@ public class AiInputPane extends BaseAiPane {
      */
     public void onStop(String reason) {
         lbMsg.setText(reason);
-        toggleButtons(false);
+        this.toggleComponents(false);
     }
 
     @Override

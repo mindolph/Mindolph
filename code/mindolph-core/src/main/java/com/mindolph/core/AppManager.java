@@ -1,7 +1,17 @@
 package com.mindolph.core;
 
-import com.google.gson.Gson;
-import com.mindolph.core.model.Snippet;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,11 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.CryptoUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
+import com.google.gson.Gson;
+import com.mindolph.core.model.Snippet;
 
 /**
  * @since 1.10.1
@@ -80,10 +87,10 @@ public class AppManager {
                 } catch (IOException e) {
                     continue; // skip failed for now.
                 }
-                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, targetFile.getPath()));
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, targetFile.getPath(), snippet.getDescription()));
             }
             else {
-                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, null));
+                snippetsRecord.items().add(new SnippetRecord(snippet.getTitle(), snippet.getCode(), type, fileType, null, snippet.getDescription()));
             }
         }
         this.saveSnippetsRecord(snippetsRecord, fileType);
@@ -102,33 +109,39 @@ public class AppManager {
     }
 
     private SnippetsRecord loadSnippetsRecord(String fileType) {
-        try {
-            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(snippetsFile(fileType)), StandardCharsets.UTF_8))) {
+            return new Gson().fromJson(reader, SnippetsRecord.class);
+//            SnippetsRecord snippetsRecord = new Gson().fromJson(new FileReader(snippetsFile(fileType)), SnippetsRecord.class);
 //            if (snippetsRecord != null) log.debug(String.valueOf(snippetsRecord.version()));
-            return snippetsRecord;
+//            return snippetsRecord;
         } catch (FileNotFoundException e) {
             return null;
+            //Catch dessa exceção é novo também
+        } catch (IOException e) {
+            throw new RuntimeException();
         }
     }
 
     private void saveSnippetsRecord(SnippetsRecord snippetsRecord, String fileType) {
         String json = new Gson().toJson(snippetsRecord, SnippetsRecord.class);
-        try {
-            IOUtils.write(json, new FileOutputStream(snippetsFile(fileType)), StandardCharsets.UTF_8);
+        try (FileOutputStream fos = new FileOutputStream(snippetsFile(fileType))) {
+            IOUtils.write(json, fos, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private File snippetsFile(String fileType) {
-        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment?".dev":""));
+        File snippetsFile = new File(baseDir, "%s.snippets%s".formatted(fileType, Env.isDevelopment ? ".dev" : ""));
         return snippetsFile;
     }
 
     public record SnippetsRecord(int version, List<SnippetRecord> items) {
     }
 
-    public record SnippetRecord(String title, String code, String type, String fileType, String filePath) {
+    public record SnippetRecord(String title, String code, String type, String fileType, String filePath,
+                                String description) {
     }
 
 }

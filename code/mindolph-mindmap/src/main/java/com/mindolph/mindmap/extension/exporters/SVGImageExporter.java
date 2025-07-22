@@ -49,8 +49,8 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -454,21 +454,15 @@ public class SVGImageExporter extends BaseExportExtension {
                     this.strokeType = type;
                     this.strokeWidth = width;
 
-                    Stroke stroke;
+                    Stroke stroke = switch (type) {
+                        case SOLID -> new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
+                        case DASHES ->
+                                new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f, new float[]{width * 2.0f, width}, 0.0f);
+                        case DOTS ->
+                                new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{width, width * 2.0f}, 0.0f);
+                        default -> throw new Error("Unexpected stroke type : " + type);
+                    };
 
-                    switch (type) {
-                        case SOLID:
-                            stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
-                            break;
-                        case DASHES:
-                            stroke = new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f, new float[]{width * 2.0f, width}, 0.0f);
-                            break;
-                        case DOTS:
-                            stroke = new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{width, width * 2.0f}, 0.0f);
-                            break;
-                        default:
-                            throw new Error("Unexpected stroke type : " + type);
-                    }
                     this.context.setStroke(stroke);
                 }
             }
@@ -501,7 +495,7 @@ public class SVGImageExporter extends BaseExportExtension {
             }
             this.buffer.append(' ');
             this.buffer.append("class=\"").append(FONT_CLASS_NAME).append('\"');
-            this.buffer.append('>').append(StringEscapeUtils.escapeXml(text)).append("</text>").append(NEXT_LINE);
+            this.buffer.append('>').append(StringEscapeUtils.escapeXml10(text)).append("</text>").append(NEXT_LINE);
         }
 
         @Override
@@ -566,30 +560,24 @@ public class SVGImageExporter extends BaseExportExtension {
                     if (nofirst) {
                         this.buffer.append(' ');
                     }
-                    if (e instanceof MoveTo) {
-                        this.buffer.append("M ").append(dbl2str(this.translateX + ((MoveTo) e).getX())).append(' ').append(dbl2str(this.translateY + ((MoveTo) e).getY()));
-                    }
-                    else if (e instanceof LineTo) {
-                        this.buffer.append("L ").append(dbl2str(this.translateX + ((LineTo) e).getX())).append(' ').append(dbl2str(this.translateY + ((LineTo) e).getY()));
-                    }
-                    else if (e instanceof CubicCurveTo) {
-                        // todo the order of the control points should be tested.
-                        this.buffer.append("C ")
-                                .append(dbl2str(this.translateX + ((CubicCurveTo) e).getX())).append(' ').append(dbl2str(this.translateY + ((CubicCurveTo) e).getY())).append(',')
-                                .append(dbl2str(this.translateX + ((CubicCurveTo) e).getControlX1())).append(' ').append(dbl2str(this.translateY + ((CubicCurveTo) e).getControlY1())).append(',')
-                                .append(dbl2str(this.translateX + ((CubicCurveTo) e).getControlX2())).append(' ').append(dbl2str(this.translateY + ((CubicCurveTo) e).getControlY2()));
-                    }
-                    else if (e instanceof QuadCurveTo) {
-                        // todo the order of the control points should be tested.
-                        this.buffer.append("Q ")
-                                .append(dbl2str(this.translateX + ((QuadCurveTo) e).getX())).append(' ').append(dbl2str(this.translateY + ((QuadCurveTo) e).getY())).append(',')
-                                .append(dbl2str(this.translateX + ((QuadCurveTo) e).getControlX())).append(' ').append(dbl2str(this.translateY + ((QuadCurveTo) e).getControlY()));
-                    }
-                    else if (e instanceof ClosePath) {
-                        this.buffer.append("Z");
-                    }
-                    else {
-                        LOGGER.warn("Unexpected path segment type");
+                    switch (e) {
+                        case MoveTo moveTo ->
+                                this.buffer.append("M ").append(dbl2str(this.translateX + moveTo.getX())).append(' ').append(dbl2str(this.translateY + moveTo.getY()));
+                        case LineTo lineTo ->
+                                this.buffer.append("L ").append(dbl2str(this.translateX + lineTo.getX())).append(' ').append(dbl2str(this.translateY + lineTo.getY()));
+                        case CubicCurveTo cubicCurveTo ->
+                            // todo the order of the control points should be tested.
+                                this.buffer.append("C ")
+                                        .append(dbl2str(this.translateX + cubicCurveTo.getX())).append(' ').append(dbl2str(this.translateY + cubicCurveTo.getY())).append(',')
+                                        .append(dbl2str(this.translateX + cubicCurveTo.getControlX1())).append(' ').append(dbl2str(this.translateY + cubicCurveTo.getControlY1())).append(',')
+                                        .append(dbl2str(this.translateX + cubicCurveTo.getControlX2())).append(' ').append(dbl2str(this.translateY + cubicCurveTo.getControlY2()));
+                        case QuadCurveTo quadCurveTo ->
+                            // todo the order of the control points should be tested.
+                                this.buffer.append("Q ")
+                                        .append(dbl2str(this.translateX + quadCurveTo.getX())).append(' ').append(dbl2str(this.translateY + quadCurveTo.getY())).append(',')
+                                        .append(dbl2str(this.translateX + quadCurveTo.getControlX())).append(' ').append(dbl2str(this.translateY + quadCurveTo.getControlY()));
+                        case ClosePath closePath -> this.buffer.append("Z");
+                        case null, default -> LOGGER.warn("Unexpected path segment type");
                     }
                     nofirst = true;
                 }

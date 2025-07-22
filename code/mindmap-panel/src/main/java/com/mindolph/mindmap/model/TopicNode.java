@@ -220,28 +220,32 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
      */
     public List<TopicNode> fromText(String text) {
         List<TopicNode> result = null;
-        List<String> lines = IOUtils.readLines(new ByteArrayInputStream(text.getBytes()), "UTF-8");
-        if (CollectionUtils.isNotEmpty(lines)) {
-            result = new ArrayList<>();
-            TopicNode parentNode = this;
-            int lastIndentCount = -1;
-            for (String line : lines) {
-                if (StringUtils.isBlank(line)) {
-                    continue;
-                }
-                int indentCount = TextUtils.countIndent(line, 1);
-                log.trace("[%d] '%s'".formatted(indentCount, line));
-                if (indentCount <= lastIndentCount) {
-                    parentNode = parentNode.getParent(); // might be sibling or parents sibling.
-                    if (indentCount < lastIndentCount) {
-                        parentNode = parentNode.getParent(); // is parents sibling.
+        try (ByteArrayInputStream bains = new ByteArrayInputStream(text.getBytes())) {
+            List<String> lines = IOUtils.readLines(bains, "UTF-8");
+            if (CollectionUtils.isNotEmpty(lines)) {
+                result = new ArrayList<>();
+                TopicNode parentNode = this;
+                int lastIndentCount = -1;
+                for (String line : lines) {
+                    if (StringUtils.isBlank(line)) {
+                        continue;
                     }
+                    int indentCount = TextUtils.countIndent(line, 1);
+                    log.trace("[%d] '%s'".formatted(indentCount, line));
+                    if (indentCount <= lastIndentCount) {
+                        parentNode = parentNode.getParent(); // might be sibling or parents sibling.
+                        if (indentCount < lastIndentCount) {
+                            parentNode = parentNode.getParent(); // is parents sibling.
+                        }
+                    }
+                    TopicNode newTopicNode = parentNode.makeChild(line.trim(), null);
+                    parentNode = newTopicNode;
+                    result.add(newTopicNode);
+                    lastIndentCount = indentCount;
                 }
-                TopicNode newTopicNode = parentNode.makeChild(line.trim(), null);
-                parentNode = newTopicNode;
-                result.add(newTopicNode);
-                lastIndentCount = indentCount;
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return result;
     }

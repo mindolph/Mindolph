@@ -2,7 +2,9 @@ package com.mindolph.fx.control;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -37,6 +39,8 @@ public class FileFilterButtonGroup extends SegmentedButton {
     };
 
     @FXML
+    private ToggleButton tbAll;
+    @FXML
     private ToggleButton tbFolder;
 
     public FileFilterButtonGroup() {
@@ -45,8 +49,13 @@ public class FileFilterButtonGroup extends SegmentedButton {
 
     private void init() {
         FxmlUtils.loadUri("/control/file_filter_button_group.fxml", this);
+        Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
+        tbAll.setPrefHeight(iconSize + 12);
+        tbAll.setMinWidth(iconSize + 12);
         for (ToggleButton button : this.getButtons()) {
+            // by ID from user data
             Text icon = FontIconManager.getIns().getIcon(fileIconMap.get(button.getUserData()));
+            button.setPrefHeight(iconSize + 12);
             button.setGraphic(icon);
             button.setToggleGroup(null);
             button.selectedProperty().addListener((observableValue, aBoolean, selected) -> {

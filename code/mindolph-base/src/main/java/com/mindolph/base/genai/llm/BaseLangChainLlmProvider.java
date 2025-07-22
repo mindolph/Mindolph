@@ -24,6 +24,8 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseLangChainLlmProvider.class);
 
+    private boolean stopStreaming = false;
+
     public BaseLangChainLlmProvider(String apiKey, String aiModel, boolean useProxy) {
         super(apiKey, aiModel, useProxy);
     }
@@ -46,9 +48,13 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         Prompt prompt = this.createPrompt(input.text(), outputParams);
         StreamingChatLanguageModel llm = buildStreamingAI(input);
+        this.stopStreaming = false;
         llm.generate(prompt.text().trim(), new StreamingResponseHandler<>() {
             @Override
             public void onNext(String s) {
+                if (stopStreaming){
+                    throw new RuntimeException("user stop streaming");
+                }
                 consumer.accept(new StreamToken(s, false, false));
             }
 
@@ -68,6 +74,11 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                 }
             }
         });
+    }
+
+    @Override
+    public void stopStreaming() {
+        this.stopStreaming = true;
     }
 
     private Prompt createPrompt(String input, OutputParams outputParams) {

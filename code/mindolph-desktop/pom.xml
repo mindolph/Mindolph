@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.11.2</version>
+        <version>1.12.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,8 +17,8 @@
     <properties>
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
-        <app.version>1.11.2</app.version>
-        <jvm.modules>java.logging,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec</jvm.modules>
+        <app.version>1.12.2</app.version>
+        <jvm.modules>java.logging,javafx.graphics,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>
@@ -82,7 +82,7 @@
             <!--            </plugin>-->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -92,7 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.1</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -117,7 +117,7 @@
                 for the maven-dependency-plugin output. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <outputDirectory>${project.build.directory}/dependency</outputDirectory>
                     <finalName>${project.build.finalName}</finalName>
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.1</version>
                 <executions>
                     <execution>
                         <id>show-dependencies</id>
@@ -185,7 +185,7 @@
                         <configuration>
                             <toolName>jlink</toolName>
                             <removeDirectories>${project.build.directory}/jvm-image/</removeDirectories>
-                            <modulePath>${env.JAVAFX_HOME}</modulePath>
+                            <modulePath>${jfx_module_path}</modulePath>
                             <addModules>${jvm.modules}</addModules>
                             <output>${project.build.directory}/jvm-image</output>
                             <args>

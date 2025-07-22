@@ -3,6 +3,7 @@ package com.mindolph.base.collection;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_COLLECTION_MAP
  * Manage file collections.
  * <p>
  * TODO move to module core once the FxPreferences is replaced with abstract one.
+ *
  * @since 1.9
  */
 public class CollectionManager {
@@ -64,6 +66,20 @@ public class CollectionManager {
     public List<String> getCollectionFilePaths(String collectionName) {
         Map<String, List<String>> collectionMap = this.getFileCollectionMap();
         return collectionMap.get(collectionName);
+    }
+
+    /**
+     * Rename a collection by new name (which does not equal old name)
+     *
+     * @param oldName
+     * @param newName
+     */
+    public void renameCollection(String oldName, String newName) {
+        if (StringUtils.equals(oldName, newName)) return;
+        Map<String, List<String>> collectionMap = this.getFileCollectionMap();
+        collectionMap.put(newName, collectionMap.get(oldName));
+        collectionMap.remove(oldName);
+        fxPreferences.savePreference(MINDOLPH_COLLECTION_MAP, new Gson().toJson(collectionMap));
     }
 
     /**

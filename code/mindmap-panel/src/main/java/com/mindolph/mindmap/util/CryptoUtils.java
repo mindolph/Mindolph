@@ -34,11 +34,10 @@ public final class CryptoUtils {
         if (pass == null || pass.isEmpty()) {
             return text;
         }
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
             byte[] textHash = sha256(textBytes);
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(textHash);
             outputStream.write(textBytes);
 

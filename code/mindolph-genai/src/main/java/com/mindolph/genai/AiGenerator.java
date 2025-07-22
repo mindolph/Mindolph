@@ -2,6 +2,7 @@ package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
@@ -16,7 +17,9 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.core.llm.ProviderProps;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.preference.FxPreferences;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
@@ -35,7 +38,7 @@ import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.
- * The setParentPane() should be called to setup anchored pane before using this Generator.
+ * The setParentPane() should be called to set up anchored pane before using this Generator.
  *
  * @author mindolph.com@gmail.com
  * @since 1.7
@@ -45,6 +48,7 @@ public class AiGenerator implements Generator {
     private static final Logger log = LoggerFactory.getLogger(AiGenerator.class);
 
     private Consumer<Boolean> cancelConsumer;
+    // consumer before streaming.
     private Consumer<Void> beforeGenerateConsumer;
     private BiConsumer<StreamOutput, StackPane> streamOutputConsumer;
     private Consumer<GenAiEvents.Output> generateConsumer;
@@ -70,19 +74,18 @@ public class AiGenerator implements Generator {
     }
 
     private void listenGenAiEvents() {
+        Consumer<String> onError = (msg) -> {
+            Platform.runLater(() -> {
+                cancelConsumer.accept(false);
+                String err = "Failed to generate content by %s.\n %s\n".formatted(LlmService.getIns().getActiveAiProvider(), msg);
+                if (inputPanel != null)
+                    inputPanel.onStop(err);
+                if (reframePanel != null)
+                    reframePanel.onStop(err);
+            });
+        };
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input);
-
-            Consumer<String> onError = (msg) -> {
-                Platform.runLater(() -> {
-                    cancelConsumer.accept(false);
-                    String err = "Failed to generate content by %s.\n %s\n".formatted(LlmService.getIns().getActiveAiProvider(), msg);
-                    if (inputPanel != null)
-                        inputPanel.onStop(err);
-                    if (reframePanel != null)
-                        reframePanel.onStop(err);
-                });
-            };
 
             Consumer<StreamToken> showReframePane = (streamToken) -> {
                 AiGenerator.this.removeFromParent(reframePanel);
@@ -99,6 +102,7 @@ public class AiGenerator implements Generator {
                 });
                 if (streamOutputConsumer == null) {
                     onError.accept("Not support stream generation");
+                    return;
                 }
                 LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
                         streamToken -> {
@@ -107,10 +111,13 @@ public class AiGenerator implements Generator {
                                 onError.accept(streamToken.text());
                             }
                             else {
-                                // accept streaming output (even with `stop` one).
-                                streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()),  inputPanel);
-                                if (streamToken.isStop()) {
-                                    Platform.runLater(() -> showReframePane.accept(streamToken));
+                                // make sure no output will be handled if user choose to stop, even it is still streaming.
+                                if (!LlmService.getIns().isStopped()) {
+                                    // accept streaming output (even with `stop` one).
+                                    streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()), inputPanel);
+                                    if (streamToken.isStop()) {
+                                        Platform.runLater(() -> showReframePane.accept(streamToken));
+                                    }
                                 }
                             }
                         });
@@ -148,15 +155,17 @@ public class AiGenerator implements Generator {
                 }
                 case CANCEL -> {
                     cancelConsumer.accept(true);
+                    LlmService.getIns().stop();
                     removeFromParent(inputPanel);
+                    removeFromParent(summarizePanel);
                 }
                 case STOP -> {
                     LlmService.getIns().stop();
                 }
-                case ABORT -> {
-                    LlmService.getIns().stop();
-                    removeFromParent(summarizePanel);
-                }
+//                case ABORT -> {
+//                    LlmService.getIns().stop();
+//                    removeFromParent(summarizePanel);
+//                }
                 default -> log.warn("unknown action type: %s".formatted(actionType));
             }
         });
@@ -191,21 +200,26 @@ public class AiGenerator implements Generator {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        inputPanel = new AiInputPane(editorId, fileType, defaultInput);
+        String prompt = defaultInput;
+        if (StringUtils.isBlank(defaultInput)) {
+            prompt = FxPreferences.getInstance().getPreference(PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT, "");
+        }
+        inputPanel = new AiInputPane(editorId, fileType, prompt);
         addToParent(inputPanel);
         panelShowingConsumer.accept(inputPanel);
         return inputPanel;
     }
 
     @Override
-    public StackPane showSummarizePanel(String input) {
+    public StackPane showSummarizePanel(String input, Node bondEditor) {
         if (!checkSettings()) {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
-        summarizePanel = new AiSummaryPane(editorId, fileType, input);
-        addToParent(summarizePanel);
+        summarizePanel = new AiSummaryPane(editorId, fileType, input, bondEditor);
+        this.addToParent(summarizePanel);
         panelShowingConsumer.accept(summarizePanel);
+        summarizePanel.requestFocus();
         return summarizePanel;
     }
 

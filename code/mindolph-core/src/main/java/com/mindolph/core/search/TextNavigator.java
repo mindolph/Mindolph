@@ -1,15 +1,15 @@
 package com.mindolph.core.search;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Pair;
 import org.swiftboot.util.TextUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Navigation in text forward and backward.
@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 public class TextNavigator {
 
     private String text;
-    protected List<String> lines;
     protected final List<Range<Integer>> ranges = new ArrayList<>();
     private Integer cursor;
 

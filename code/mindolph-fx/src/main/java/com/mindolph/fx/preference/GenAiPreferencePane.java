@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_CUSTOM_ITEM;
 
 /**
@@ -217,8 +218,10 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbCustomModels.setConverter(modelConverter);
         cbCustomModels.valueProperty().addListener((observable, oldValue, selectedModel) -> {
             if (selectedModel == null || selectedModel.getValue() == null) {
+                btnRemove.setDisable(true);
                 return;
             }
+            btnRemove.setDisable(false);
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
             String activeProviderName = cbAiProvider.getValue().getKey().getName();
             LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
@@ -253,7 +256,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         btnRemove.setOnAction(event -> {
             String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().name();
-            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete model %s".formatted(name));
+            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete the custom model '%s'".formatted(name));
             if (sure) {
                 String activeProviderName = cbAiProvider.getValue().getKey().getName();
                 ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
@@ -290,6 +293,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         if (customModels == null || customModels.isEmpty()) {
             log.info("no custom models found for provider: %s".formatted(providerName));
             this.updateModelDescription(null); // clear description when no custom models
+            btnRemove.setDisable(true); // disable remove button here since the choice box of custom model will never be updated
         }
         else {
             List<Pair<String, ModelMeta>> metaPairs = customModels.stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
@@ -299,6 +303,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             if (activePair != null) {
                 cbCustomModels.getSelectionModel().select(cbCustomModels.getItems().indexOf(activePair));
             }
+            btnRemove.setDisable(false);
         }
         return customModels;
     }
@@ -309,7 +314,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         }
         else {
             lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("Max output tokens: %d".formatted(model.maxTokens()));
+            lbMaxOutputTokens.setText("Max output tokens: %s".formatted(displayGenAiTokens(model.maxTokens())));
         }
     }
 

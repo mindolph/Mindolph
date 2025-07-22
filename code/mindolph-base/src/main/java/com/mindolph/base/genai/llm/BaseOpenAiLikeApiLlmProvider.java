@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public abstract class BaseOpenAiLikeApiLlmProvider extends BaseApiLlmProvider{
+public abstract class BaseOpenAiLikeApiLlmProvider extends BaseApiLlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseOpenAiLikeApiLlmProvider.class);
 

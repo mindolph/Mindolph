@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
 
 /**
@@ -54,7 +55,7 @@ public abstract class BaseAiPane extends StackPane {
         String activeProvider = LlmConfig.getIns().getActiveAiProvider();
         Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
         ProviderProps providerProps = map.get(activeProvider);
-        Pair<String, ModelMeta> targetItem;
+        Pair<String, ModelMeta> targetItem = null;
         List<Pair<String, ModelMeta>> allModels = new ArrayList<>();
         List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
@@ -64,8 +65,13 @@ public abstract class BaseAiPane extends StackPane {
             allModels.addAll(customModels);
         }
         if ("Custom".equals(providerProps.aiModel())) {
-            ModelMeta activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
-            targetItem = new Pair<>(activeModel.name(), activeModel);
+            ModelMeta activeModel = null;
+            if (providerProps.customModels() != null) {
+                activeModel = providerProps.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
+            }
+            if (activeModel != null) {
+                targetItem = new Pair<>(activeModel.name(), activeModel);
+            }
         }
         else {
             targetItem = new Pair<>(providerProps.aiModel(), GenAiConstants.lookupModelMeta(activeProvider, providerProps.aiModel()));
@@ -73,11 +79,11 @@ public abstract class BaseAiPane extends StackPane {
 
         cbModel.getItems().clear();
         cbModel.getItems().addAll(allModels);
-        if (!allModels.contains(targetItem)) {
+        if (targetItem != null && !allModels.contains(targetItem)) {
             cbModel.getItems().add(targetItem); // exclude same model
         }
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
-            lbMsg.setText("Max output tokens: %d".formatted(newValue.getValue().maxTokens()));
+            lbMsg.setText("Max output tokens: %s".formatted(displayGenAiTokens(newValue.getValue().maxTokens())));
         });
         if (cbModel.getItems().contains(targetItem)) {
             cbModel.getSelectionModel().select(targetItem);
@@ -96,5 +102,10 @@ public abstract class BaseAiPane extends StackPane {
 
         cbLanguage.setConverter(new PairStringStringConverter());
         ChoiceUtils.loadLanguagesTo(cbLanguage);
+    }
+
+    protected void toggleComponents(boolean isGenerating) {
+        cbModel.setDisable(isGenerating);
+        cbLanguage.setDisable(isGenerating);
     }
 }

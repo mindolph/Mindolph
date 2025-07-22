@@ -1,15 +1,14 @@
 package com.mindolph.base.editor;
 
-import com.mindolph.base.EditorContext;
-import com.mindolph.base.control.SearchableCodeArea;
-import com.mindolph.base.event.EventBus;
-import com.mindolph.core.model.OutlineItemData;
-import com.mindolph.core.model.Snippet;
-import com.mindolph.core.search.*;
-import com.mindolph.mfx.util.TextUtils;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.input.TransferMode;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,16 +20,26 @@ import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
 import org.swiftboot.collections.tree.Tree;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.mindolph.base.EditorContext;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.DOUBLE_QUOTE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINES_MOVE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.LINE_DELETE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.QUOTE;
+import static com.mindolph.base.control.ExtCodeArea.FEATURE.TAB_INDENT;
+import com.mindolph.base.control.SearchableCodeArea;
+import com.mindolph.base.event.EventBus;
+import com.mindolph.core.model.OutlineItemData;
+import com.mindolph.core.model.Snippet;
+import com.mindolph.core.search.Anchor;
+import com.mindolph.core.search.TextAnchor;
+import com.mindolph.core.search.TextLocation;
+import com.mindolph.core.search.TextNavigator;
+import com.mindolph.core.search.TextSearchOptions;
+import com.mindolph.mfx.util.TextUtils;
 
-import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.input.TransferMode;
 
 /**
  * RichTextFX References:
@@ -57,21 +66,21 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 //        codeArea.setShowCaret(Caret.CaretVisibility.ON);
         codeArea.getUndoManager().preventMerge();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.setDisablePaste(true); // only works for macOS
-        codeArea.setDisableUndo(true);
-        codeArea.setDisableRedo(true);
+//        codeArea.setDisablePaste(true); // only works for macOS
+//        codeArea.setDisableUndo(true); // unnecessary on JFX 24
+//        codeArea.setDisableRedo(true); // unnecessary on JFX 24
 //        codeArea.setStyle("-fx-tab-size: 2"); doesn't work
 
         codeArea.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, LINE_DELETE, LINES_MOVE);
 
         codeArea.undoAvailableProperty().addListener((observable, oldValue, undoAvailable) -> {
-            if (oldValue != undoAvailable) {
+            if (!oldValue.equals(undoAvailable)) {
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.UNDO, undoAvailable);
             }
         });
 
         codeArea.redoAvailableProperty().addListener((observable, oldValue, redoAvailable) -> {
-            if (oldValue != redoAvailable) {
+            if (!oldValue.equals(redoAvailable)) {
                 EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.REDO, redoAvailable);
             }
         });
@@ -175,6 +184,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
     protected abstract String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation);
 
+    protected int determineOutlineLevel(String heading) {
+        return TextUtils.countInStarting(heading, this.getHeadingLevelTag());
+    }
+
     @Override
     public void outline() {
         if (StringUtils.isBlank(this.getOutlinePattern()) || outlinePattern == null) {
@@ -201,7 +214,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
 
             while (matcher.find()) {
                 String heading = matcher.group(2);// TODO this 2 should be...
-                int n = TextUtils.countInStarting(heading, this.getHeadingLevelTag());
+                int n = this.determineOutlineLevel(heading);
                 TextLocation textLocation = tn.locateNext(heading, true);
                 textLocation.setStartCol(0);
                 textLocation.setEndRow(textLocation.getStartRow());
@@ -214,6 +227,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 if (log.isTraceEnabled()) log.trace("  %d - %s".formatted(hl.level(), title));
 
                 TextAnchor ta = new TextAnchor(hl.textLocation);
+                // ta.setLevel(hl.level);
                 OutlineItemData outlineItemData = new OutlineItemData(title, ta);
 
                 Node newNode = new Node(outlineItemData);
@@ -231,6 +245,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                     Node ancestor = curNode.findAncestor(node -> node.getLevel() <= newNode.getLevel() - 1);
                     ancestor.addChild(newNode);
                     newNode.setParent(ancestor);
+                    // ta.setLevelIndex(ancestor.getChildren().size());
                 }
                 curNode = newNode;
             }
@@ -335,30 +350,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     public void onSnippet(Snippet snippet) {
         // replacing selected text with snippet code
         String code = snippet.getCode();
-        String selectedText = codeArea.getSelectedText();
-        int caretPos = StringUtils.indexOf(code, "⨁");
-        String codeToInsert = "";
-        if (caretPos > 0) {
-            if (StringUtils.isEmpty(selectedText)) {
-                codeToInsert = StringUtils.remove(code, "⨁");
-                codeArea.insertText(codeToInsert);
-                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos));
-            }
-            else {
-                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
-                codeArea.replaceSelection(codeToInsert);
-                codeArea.moveTo(codeArea.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
-            }
-        }
-        else {
-            if (StringUtils.isEmpty(selectedText)) {
-                codeArea.insertText(code);
-            }
-            else {
-                codeArea.replaceSelection(code);
-            }
-        }
-        codeArea.requestFocus();
+        codeArea.applyTargetReplacement(code);
     }
 
     @Override
@@ -387,7 +379,12 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         return codeArea.getSelectedText();
     }
 
-
+    /**
+     *
+     * @param heading
+     * @param level starts from 1
+     * @param textLocation
+     */
     private record HeadingLocation(String heading, int level, TextLocation textLocation) {
     }
 }

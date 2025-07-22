@@ -57,11 +57,11 @@ public class MindmupExporter extends BaseExportExtension {
 
         if (file != null) {
             String uri = file.getValue().asString(true, false);
-            result.append("FILE: <a href=\"").append(uri).append("\">").append(uri).append("</a><br>"); 
+            result.append("FILE: <a href=\"").append(uri).append("\">").append(uri).append("</a><br>");
         }
         if (link != null) {
             String uri = link.getValue().asString(true, true);
-            result.append("LINK: <a href=\"").append(uri).append("\">").append(uri).append("</a><br>"); 
+            result.append("LINK: <a href=\"").append(uri).append("\">").append(uri).append("</a><br>");
         }
         return result.toString();
     }
@@ -72,7 +72,7 @@ public class MindmupExporter extends BaseExportExtension {
             AtomicInteger idCounter,
             TopicNode topic,
             Map<String, String> linkMap,
-            Map<String, TopicId> uuidMap    ) {
+            Map<String, TopicId> uuidMap) {
         stringer.key("title").value(GetUtils.ensureNonNull(topic.getText(), ""));
         int topicId = idCounter.getAndIncrement();
         stringer.key("id").value(topicId);
@@ -107,8 +107,8 @@ public class MindmupExporter extends BaseExportExtension {
 
         if (encodedImage != null) {
             BufferedImage renderedImage;
-            try {
-                renderedImage = ImageIO.read(new ByteArrayInputStream(CryptoUtils.base64decode(encodedImage)));
+            try (ByteArrayInputStream bains = new ByteArrayInputStream(CryptoUtils.base64decode(encodedImage))) {
+                renderedImage = ImageIO.read(bains);
             } catch (IOException ex) {
                 LOGGER.error("Can't render image for topic:" + topic);
                 renderedImage = null;
@@ -261,11 +261,6 @@ public class MindmupExporter extends BaseExportExtension {
     @Override
     public int getOrder() {
         return 2;
-    }
-
-    @Override
-    public boolean needsTopicUnderMouse() {
-        return false;
     }
 
     private record TopicId(int id, String uuid, TopicNode topic) {

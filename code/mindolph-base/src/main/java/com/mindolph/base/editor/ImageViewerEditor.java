@@ -26,16 +26,20 @@ public class ImageViewerEditor extends BaseViewerEditor {
 
     @Override
     public void loadFile() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(editorContext.getFileData().getFile());
-        Image image = new Image(fileInputStream);
-        Platform.runLater(() -> {
-            scrollableImageView.setImage(image);
-            showImageInfo(1.0f);
-        });
-        this.scrollableImageView.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
-            showImageInfo(newValue.doubleValue());
-        });
-        this.outline();
+        try (FileInputStream fileInputStream = new FileInputStream(editorContext.getFileData().getFile())) {
+            Image image = new Image(fileInputStream);
+            Platform.runLater(() -> {
+                scrollableImageView.setImage(image);
+                showImageInfo(1.0f);
+            });
+            this.scrollableImageView.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
+                showImageInfo(newValue.doubleValue());
+            });
+            EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
+            this.outline();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     private void showImageInfo(double scale) {

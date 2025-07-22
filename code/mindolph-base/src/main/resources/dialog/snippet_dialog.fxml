@@ -18,6 +18,9 @@
         <PreferenceItem fx:id="itemCode" name="Code Text: " labelPrefWidth="150" prefHeight="240">
             <TextArea fx:id="taCode" prefHeight="240" prefWidth="280.0" promptText="Input code for this snippet"/>
         </PreferenceItem>
+        <PreferenceItem fx:id="itemDesc" name="Description: " labelPrefWidth="150" prefHeight="180">
+            <TextArea fx:id="taDesc" prefHeight="180" prefWidth="280.0" promptText="Input description for this snippet"/>
+        </PreferenceItem>
         <PreferenceItem fx:id="itemImage" name="Image: " labelPrefWidth="150" prefHeight="240">
             <HBox prefWidth="240" maxWidth="240" prefHeight="240" maxHeight="240" spacing="4"
                   style="-fx-border-width: 1; -fx-border-color: lightgray;">

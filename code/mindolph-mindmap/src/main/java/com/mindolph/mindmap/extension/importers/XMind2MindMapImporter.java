@@ -59,7 +59,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
     private static String extractTopicTitle(Element topic) {
         List<Element> title = XmlUtils.findDirectChildrenForName(topic, "title");
-        return title.isEmpty() ? "" : title.get(0).getTextContent();
+        return title.isEmpty() ? "" : title.getFirst().getTextContent();
     }
 
 
@@ -150,7 +150,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
                         inStream = Utils.findInputStreamForResource(file, link.substring(4));
                         if (inStream != null) {
                             byte[] bytes = inStream.readAllBytes();
-                            if (bytes == null || bytes.length == 0) {
+                            if (bytes.length == 0) {
                                 break;
                             }
                             result = CryptoUtils.base64encode(bytes);
@@ -177,7 +177,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
                 try {
                     inStream = Utils.findInputStreamForResource(file, link.substring(4));
                     byte[] bytes = inStream.readAllBytes();
-                    if (bytes == null || bytes.length == 0) {
+                    if (bytes.length == 0) {
                         return result;
                     }
                     result = CryptoUtils.base64encode(bytes);
@@ -199,7 +199,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
             String plain = extractTextContentFrom(note, "plain");
             String html = extractTextContentFrom(note, "html");
 
-            if (result.length() > 0) {
+            if (!result.isEmpty()) {
                 result.append('\n');
             }
 
@@ -222,7 +222,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
         if (notes != null) {
             String plain = extractTextContentFrom(notes, "plain");
 
-            if (result.length() > 0) {
+            if (!result.isEmpty()) {
                 result.append('\n');
             }
 
@@ -280,20 +280,26 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
 
     MindMap<TopicNode> parseZipFile(ZipFile zipFile) throws Exception {
-        InputStream contentStream = Utils.findInputStreamForResource(zipFile, "content.json");
-        MindMap<TopicNode> result;
-        if (contentStream == null) {
-            XMindStyles styles = new XMindStyles(zipFile);
-            contentStream = Utils.findInputStreamForResource(zipFile, "content.xml");
-            if (contentStream == null) {
-                throw makeWrongFormatException();
+        MindMap<TopicNode> result = null;
+        try (InputStream insJson = Utils.findInputStreamForResource(zipFile, "content.json")) {
+            if (insJson == null) {
+                XMindStyles styles = new XMindStyles(zipFile);
+                try (InputStream insXml = Utils.findInputStreamForResource(zipFile, "content.xml")) {
+                    if (insXml == null) {
+                        throw makeWrongFormatException();
+                    }
+                    else {
+                        result = convertXmlContent(styles, zipFile, insXml);
+                    }
+                } catch (Exception ex2) {
+                    throw ex2;
+                }
             }
             else {
-                result = convertXmlContent(styles, zipFile, contentStream);
+                result = convertJsonContent(zipFile, insJson);
             }
-        }
-        else {
-            result = convertJsonContent(zipFile, contentStream);
+        } catch (Exception ex) {
+            throw ex;
         }
         return result;
     }
@@ -304,7 +310,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         List<JSONObject> sheets = new ArrayList<>();
 
-        if (parsed.length() > 0) {
+        if (!parsed.isEmpty()) {
             for (int i = 0; i < parsed.length(); i++) {
                 JSONObject object = parsed.getJSONObject(i);
                 if ("sheet".equals(object.getString("class"))) {
@@ -320,7 +326,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
             result.getRoot().setText("Empty");
         }
         else {
-            result = convertJsonSheet(zipFile, sheets.get(0));
+            result = convertJsonSheet(zipFile, sheets.getFirst());
         }
 
         return result;
@@ -355,18 +361,11 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         idTopicMap.put(theTopicId, topicToProcess);
 
-        String themeName;
-        switch (topicToProcess.getPath().size()) {
-            case 1:
-                themeName = "centralTopic";
-                break;
-            case 2:
-                themeName = "mainTopic";
-                break;
-            default:
-                themeName = "subTopic";
-                break;
-        }
+        String themeName = switch (topicToProcess.getPath().size()) {
+            case 1 -> "centralTopic";
+            case 2 -> "mainTopic";
+            default -> "subTopic";
+        };
 
         XMindStyle themeStyle = theme.get(themeName);
         if (themeStyle == null) {
@@ -561,7 +560,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
             result.getRoot().setText("Empty");
         }
         else {
-            result = convertXmlSheet(style, zipFile, xmlSheets.get(0));
+            result = convertXmlSheet(style, zipFile, xmlSheets.getFirst());
         }
 
         return result;
@@ -580,7 +579,7 @@ public class XMind2MindMapImporter extends BaseImportExtension {
 
         List<Element> rootTopics = XmlUtils.findDirectChildrenForName(sheet, "topic");
         if (!rootTopics.isEmpty()) {
-            convertTopic(file, styles, resultedMap, null, rootTopic, rootTopics.get(0), topicIdMap,
+            convertTopic(file, styles, resultedMap, null, rootTopic, rootTopics.getFirst(), topicIdMap,
                     linksBetweenTopics);
         }
 

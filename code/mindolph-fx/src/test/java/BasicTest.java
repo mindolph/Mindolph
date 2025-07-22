@@ -1,4 +1,5 @@
 import javafx.scene.input.KeyCode;
+import org.apache.commons.lang3.RegExUtils;
 
 import java.awt.event.KeyEvent;
 
@@ -14,5 +15,8 @@ public class BasicTest {
 
         System.out.println("awt");
         System.out.println(KeyEvent.VK_ENTER);
+
+        System.out.println(RegExUtils.replaceAll("file.name.test.it", "[+=_`~&@,\\-\\<\\>\\.\\?\\^\\#\\$\\(\\)]+?", " "));
+        System.out.println(RegExUtils.replaceAll("file.name.12.23.34", "[+=_`~&@,\\-\\<\\>\\.\\?\\^\\#\\$\\(\\)]+?", " "));
     }
 }

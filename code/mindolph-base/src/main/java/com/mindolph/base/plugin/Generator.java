@@ -3,6 +3,7 @@ package com.mindolph.base.plugin;
 import com.mindolph.base.genai.GenAiEvents.Output;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
+import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Pane;
@@ -33,10 +34,12 @@ public interface Generator {
 
     /**
      *
+     * @param input
+     * @param bondEditor workaround for binding editor to control it's state during streaming generation.
      * @return
      * @since 1.11
      */
-    StackPane showSummarizePanel(String input);
+    StackPane showSummarizePanel(String input, Node bondEditor);
 
     /**
      * @param consumer with true if cancel normally(by user), false if cancel by exceptions.

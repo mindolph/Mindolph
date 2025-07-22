@@ -7,6 +7,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;
 import javafx.application.Platform;
@@ -127,7 +128,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
         ContextMenu menu = super.createContextMenu();
         List<MenuItem> pluginMenuItems = new ArrayList<>();
         withPlugins(new Consumer<>() {
-            private int originPos; //be used to select generated text after
+            private int originPos; // be used to select generated text after
 
             @Override
             public void accept(Plugin plugin) {
@@ -148,21 +149,25 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     });
                     summaryMenuItem.setOnAction(event -> {
                         SmartCodeArea.this.onCompleted();
-                        generator.showSummarizePanel(SmartCodeArea.super.getSelectedText());
-                        IndexRange selection = SmartCodeArea.super.getSelection();
-                        SmartCodeArea.super.moveTo(selection.getEnd());
+                        String textToBeSummarized = SmartCodeArea.super.getSelectedText();
+                        if (StringUtils.isBlank(textToBeSummarized)) {
+                            if (!DialogFactory.okCancelConfirmDialog("", "No text is selected for summarization, use entire content of the file")) {
+                                return;
+                            }
+                            textToBeSummarized = SmartCodeArea.super.getText();
+                        }
+                        generator.showSummarizePanel(textToBeSummarized, SmartCodeArea.this);
                     });
 
                     generator.setOnPanelShowing(stackPane -> {
                         SmartCodeArea.this.relocatedPanelToCaret(stackPane);
                     });
                     generator.setBeforeGenerate(unused -> {
-                        SmartCodeArea.this.onCompleted();
+                        SmartCodeArea.this.onGenerating();
                         this.originPos = SmartCodeArea.this.getSelection().getStart();
                     });
                     generator.setOnStreaming((streamOutput, pane) -> {
                         Platform.runLater(() -> {
-                            SmartCodeArea.this.onCompleted();
                             if (!streamOutput.streamToken().isStop()) {
                                 if (StringUtils.isNotBlank(SmartCodeArea.this.getSelectedText())) {
                                     SmartCodeArea.this.replaceSelection(streamOutput.streamToken().text());
@@ -174,9 +179,9 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                                 SmartCodeArea.this.relocatedPanelToCaret(pane);
                             }
                             else {
-                                if (log.isTraceEnabled()) log.trace("select start index: %s".formatted(originPos));
+                                if (log.isTraceEnabled())
+                                    log.trace("select generated text from: %s".formatted(originPos));
                                 SmartCodeArea.super.selectRange(originPos, SmartCodeArea.this.getCaretPosition());
-                                SmartCodeArea.this.onGenerating();
                             }
                         });
                     });
@@ -215,14 +220,13 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     // @since 1.7
     private void onCompleted() {
         super.setEditable(true);
-        super.setDisabled(false);
+        super.setDisable(false);
         super.requestFocus();
     }
 
     // @since 1.7
     private void onGenerating() {
-        super.setEditable(false);
-        super.setDisabled(true);
+        super.setDisable(true);
     }
 
     // @since 1.7
@@ -231,9 +235,10 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             Bounds hoverBounds = BoundsUtils.fromPoint(getPanelTargetPoint(), inputPanel.getWidth(), inputPanel.getHeight());
             Dimension2D targetDimension = new Dimension2D(super.getCaretInLocal().getWidth(), super.getLineHeight());
             if (log.isTraceEnabled())
-                log.trace("bound in parent:" + BoundsUtils.boundsInString(this.getBoundsInParent()));
-            if (log.isTraceEnabled()) log.trace("hover bounds:" + BoundsUtils.boundsInString(hoverBounds));
-            if (log.isTraceEnabled()) log.trace("target dimension: " + DimensionUtils.dimensionInStr(targetDimension));
+                log.trace("bound in parent:%s".formatted(BoundsUtils.boundsInString(this.getBoundsInParent())));
+            if (log.isTraceEnabled()) log.trace("hover bounds:%s".formatted(BoundsUtils.boundsInString(hoverBounds)));
+            if (log.isTraceEnabled())
+                log.trace("target dimension: %s".formatted(DimensionUtils.dimensionInStr(targetDimension)));
             Point2D p2 = LayoutUtils.bestLocation(parentPane.getBoundsInParent(), hoverBounds, targetDimension,
                     new Dimension2D(5, 5));
             inputPanel.relocate(p2.getX(), p2.getY());
@@ -244,6 +249,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     // @since 1.7
     private Point2D getPanelTargetPoint() {
         // calculate target point with x of left side border and y of caret bottom.
+        // NOTE: since the v0.11.5 the getCharacterBoundsOnScreen(0, 0) throw exception,
+        // so if upgrade, it has to disable following and use the X of caret bounds for workaround.
         Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
         Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
         // NOTE: getCaretBounds() is not working(return null sometime), so use getCaretBoundsOnScreen() instead.
@@ -366,6 +373,38 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             log.debug("not in input method with: %s".formatted(event.getCommitted()));
             inputHelperManager.consume(InputHelperManager.UNKNOWN_INPUT, extractLastWordFromCaret());
         }
+    }
+
+    /**
+     * handle the `⨁` in the snippet code to be inserted.
+     *
+     * @param code
+     */
+    public void applyTargetReplacement(String code) {
+        String selectedText = this.getSelectedText();
+        int caretPos = StringUtils.indexOf(code, "⨁");
+        String codeToInsert = "";
+        if (caretPos > 0) {
+            if (StringUtils.isEmpty(selectedText)) {
+                codeToInsert = StringUtils.remove(code, "⨁");
+                this.insertText(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos));
+            }
+            else {
+                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
+                this.replaceSelection(codeToInsert);
+                this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
+            }
+        }
+        else {
+            if (StringUtils.isEmpty(selectedText)) {
+                this.insertText(code);
+            }
+            else {
+                this.replaceSelection(code);
+            }
+        }
+        this.requestFocus();
     }
 
 

@@ -21,7 +21,7 @@
          <CheckBox fx:id="cbItalic" mnemonicParsing="false" prefWidth="80.0" text="Italic"/>
          <ChoiceBox fx:id="cbFontSize" prefWidth="150.0"/>
       </HBox>
-      <TextArea fx:id="textArea" text="The quick brown fox jumps over the lazy dog" wrapText="true"
+      <TextArea fx:id="textArea" text="The quick brown fox jumps over the lazy dog" wrapText="true" editable="false"
                 VBox.vgrow="ALWAYS"/>
    </VBox>
 </AnchorPane>
