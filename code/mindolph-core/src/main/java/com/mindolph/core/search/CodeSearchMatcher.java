@@ -49,7 +49,7 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
             }
             return contains;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

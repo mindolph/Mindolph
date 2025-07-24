@@ -66,9 +66,9 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
     }
 
     /**
-     * Constructor to build topic on base of another topic for another mind map.
+     * Constructor to build a topic on the base of another topic for another mind map.
      *
-     * @param mindMap      mind map to be owner for new topic
+     * @param mindMap      mind map to be the owner for new topic
      * @param base         base source topic
      * @param copyChildren flag to make copy of children, true if to make copy,
      *                     false otherwise
@@ -917,9 +917,9 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
     }
 
     /**
-     * Find max length of children chain. It doesn't count the root topic.
+     * Find max length of the children chain. It doesn't count the root topic.
      *
-     * @return max length of child chain, 0 if no children.
+     * @return max length of the child chain, 0 if no children.
      * @since 1.4.11
      */
     public int findMaxChildPathLength() {
@@ -981,7 +981,7 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
     }
 
     /**
-     * copy current topic with extras and attributes and attach to parent.
+     * copy the current topic with extras and attributes and attach to parent.
      * may be deprecated!
      */
     T makeCopy(MindMap<T> newMindMap, T parent, RootCreate<T> creator) {
@@ -1143,7 +1143,7 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
     }
 
     /**
-     * Check that the topic contains any code snippet for language from array (case sensitive).
+     * Check that the topic contains any code snippet for language from an array (case-sensitive).
      *
      * @param languageNames names of language
      * @return true if code snippet is detected for any language, false otherwise

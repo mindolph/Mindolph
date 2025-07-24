@@ -33,7 +33,7 @@ public class EmoticonService {
             }
             ICON_NAMES = IOUtils.readLines(isIconNames, "UTF-8");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -48,7 +48,7 @@ public class EmoticonService {
             }
             return new Image(in);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return null;
         }
     }

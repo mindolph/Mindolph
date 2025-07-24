@@ -165,7 +165,7 @@ public class Main extends Application implements WindowRestoreListener {
             // begin to restore scene.
             SceneRestore.getInstance().restoreScene();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
             DialogFactory.errDialog("Failed to startup Mindolph for unexpected exception: \n" + e.getLocalizedMessage());
         }
     }

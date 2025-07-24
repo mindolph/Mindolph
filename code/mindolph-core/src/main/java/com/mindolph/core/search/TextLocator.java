@@ -41,7 +41,7 @@ public class TextLocator {
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))){
                 lines = IOUtils.readLines(byteArrayInputStream, StandardCharsets.UTF_8);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             if (needReset) this.reset(0, 0);
             // log.debug("loaded %d lines.".formatted(lines.size()));

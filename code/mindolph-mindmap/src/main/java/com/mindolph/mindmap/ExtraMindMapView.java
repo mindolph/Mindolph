@@ -155,7 +155,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         super.onKeyPressed(event);
         if (!event.isConsumed()) {
             if (ShortcutManager.getIns().isKeyEventMatch(event, ShortcutConstants.KEY_SHOW_POPUP)) {
-                log.debug("key com: " + ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_SHOW_POPUP));
+                log.debug("key combination: " + ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_SHOW_POPUP));
                 TopicNode topic = getFirstSelectedTopic();
                 Point2D posElement = new Point2D(0, 0);
                 BaseElement element = null;
@@ -432,7 +432,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                                 try {
                                     DesktopUtils.openInSystem(theFile, false);
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    log.error(e.getMessage(), e);
                                     DialogFactory.warnDialog("Unable to open file in system");
                                 }
                             }
@@ -446,7 +446,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             Platform.runLater(() -> DialogFactory.warnDialog("File not found: " + canonicalFile));
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                 }
                 case LINK -> {
@@ -589,7 +589,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     try {
                         topic.setExtra(new ExtraLink(resultURL));
                     } catch (URISyntaxException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                 }
                 onMindMapModelChanged(true);
@@ -615,7 +615,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                 fileLink = new FileLink(mUri.asFile(null) + (line < 0 ? "" : ":" + line), isOpenInSystem);
             }
             Consumer<FileLink> callback = result -> {
-                log.debug("result: " + result);
+                log.debug("result: %s".formatted(result));
                 if (result == null) {
                     return;
                 }
@@ -660,7 +660,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             valueChanged = false;
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         log.error("Failed to save file link", e);
                         valueChanged = false;
                     }

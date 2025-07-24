@@ -214,7 +214,7 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
     }
 
     /**
-     * Generate sub tree for whitespace offsets in text lines.
+     * Generate subtree for whitespace offsets in text lines.
      *
      * @param text
      * @return all created topics.

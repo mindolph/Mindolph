@@ -362,7 +362,7 @@ public class ExtCodeArea extends CodeArea {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

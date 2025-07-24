@@ -34,7 +34,7 @@ public class FileLinkSearchMatcher implements SearchMatcher {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }
