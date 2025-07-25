@@ -7,7 +7,7 @@
     <groupId>com.mindolph</groupId>
     <artifactId>mindolph</artifactId>
     <packaging>pom</packaging>
-    <version>1.12.2</version>
+    <version>1.12.3</version>
     <modules>
         <module>mindolph-fx</module>
         <module>mindolph-core</module>
@@ -25,7 +25,7 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <javafx.version>24.0.1</javafx.version>
+        <javafx.version>24.0.2</javafx.version>
         <commons.lang.version>3.18.0</commons.lang.version>
         <commons.io.version>2.19.0</commons.io.version>
         <commons.text.version>1.13.1</commons.text.version>
