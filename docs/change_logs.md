@@ -8,7 +8,7 @@
 	* Optimize closable resource handling. 
 * Fix
 	* Case sensitive option is not working correctly when search&replace text in mind map. 
-	* The Copy/Cut/Paste and the find/replace funtionalities should not be enabled for the image view editor and the PREVIEW mode of editors with code area. 
+	* The Copy/Cut/Paste and the find/replace functionalities should not be enabled for the image view editor and the PREVIEW mode of editors with code area. 
 	* Flawed PlantUML code snippet.
 	* Remove deprecated models of Qwen.
 * Update JavaFX to 24.0.2
