@@ -1,5 +1,21 @@
 # Change Logs
 
+### V1.12.3 Unstable Release
+* Feature
+	* Monitoring directories in workspace and update workspace when changes occur externally.
+* Improvement
+	* PlantUML templates for creating new files. 
+	* Optimize closable resource handling. 
+* Fix
+	* Case sensitive option is not working correctly when search&replace text in mind map. 
+	* The Copy/Cut/Paste and the find/replace funtionalities should not be enabled for the image view editor and the PREVIEW mode of editors with code area. 
+	* Flawed PlantUML code snippet.
+	* Remove deprecated models of Qwen.
+* Update JavaFX to 24.0.2
+* Update bundled JDK to 24.0.4
+* Update dependencies.
+
+
 ### V1.12.2 Unstable Release
 * Feature:   
 	* Add "Auto Switch" option to PlantUML editor, users can choose whether to let the preview page switch automatically.
