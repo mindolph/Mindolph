@@ -30,7 +30,7 @@
         <commons.io.version>2.19.0</commons.io.version>
         <commons.text.version>1.13.1</commons.text.version>
         <commons.collections.version>4.5.0</commons.collections.version>
-        <commons.codec.version>1.18.0</commons.codec.version>
+        <commons.codec.version>1.19.0</commons.codec.version>
         <commons.validator.version>1.9.0</commons.validator.version>
         <commons.csv.version>1.14.0</commons.csv.version>
         <swstate.version>2.0.1</swstate.version>
