@@ -50,10 +50,16 @@
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>0.36.2</langchain4j.version>
         <dashscope.version>2.16.10</dashscope.version>
+        <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
+        <lombok.version>1.18.38</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -114,6 +120,11 @@
                         <artifactId>slf4j-simple</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
             <dependency>
                 <groupId>dev.langchain4j</groupId>

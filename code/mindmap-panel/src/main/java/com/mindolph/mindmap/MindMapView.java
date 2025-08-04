@@ -966,7 +966,9 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     public void deleteTopics(boolean notifyModelChanged, TopicNode topic) {
-        deleteTopics(notifyModelChanged, Collections.singletonList(topic)); // can't be immutable list
+        List<TopicNode> l = new  ArrayList<>();
+        l.add(topic);
+        deleteTopics(notifyModelChanged, l); // can't be immutable list
     }
 
     /**

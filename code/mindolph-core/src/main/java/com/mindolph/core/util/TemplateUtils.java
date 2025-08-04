@@ -1,6 +1,6 @@
 package com.mindolph.core.util;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Handle template with variable like '${name}'.
@@ -18,7 +18,7 @@ public class TemplateUtils {
      * @return
      */
     public static String format(String template, String argName, Object argValue) {
-        return StringUtils.replace(template, "${%s}".formatted(argName), argValue.toString());
+        return Strings.CS.replace(template, "${%s}".formatted(argName), argValue.toString());
     }
 
     /**
@@ -31,7 +31,7 @@ public class TemplateUtils {
     public static String format(String template, String[] argNames, String[] argValues) {
         String formatted = template;
         for (int i = 0; i < argNames.length; i++) {
-            formatted = StringUtils.replace(formatted, "${%s}".formatted(argNames[i]), argValues[i]);
+            formatted = Strings.CS.replace(formatted, "${%s}".formatted(argNames[i]), argValues[i]);
         }
         return formatted;
     }
