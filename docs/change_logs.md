@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.12.4 Unstable Release
+* Improvement
+	* Optimized the handling of moving files from folder to folder.
+	* Improved performance for many features (markdown editor auto scroll, code area input helper, load workspace and load file to editor, etc.)
+* Fix
+	* Exceptions caused by improper refactoring.
+	* Minor plantuml code snippet issue.
+* Update dependency.
+
 ### V1.12.3 Unstable Release
 * Feature
 	* Monitoring directories in workspace and update workspace when changes occur externally.
