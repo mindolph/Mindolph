@@ -1,5 +1,7 @@
 package com.mindolph.base.editor;
 
+import com.mindolph.core.async.GlobalExecutor;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -14,14 +16,14 @@ public class ScrollSwitch {
         if (!secondScrolling.get()) {
             firstScrolling.set(true);
             runnable.run();
-            new Thread(() -> {
+            GlobalExecutor.submit(()-> {
                 try {
                     Thread.sleep(150); // avoid the event loop
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 firstScrolling.set(false);
-            }).start();
+            });
         }
     }
 
@@ -29,14 +31,14 @@ public class ScrollSwitch {
         if (!firstScrolling.get()) {
             secondScrolling.set(true);
             runnable.run();
-            new Thread(() -> {
+            GlobalExecutor.submit(()-> {
                 try {
                     Thread.sleep(150); // avoid the event loop
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 secondScrolling.set(false);
-            }).start();
+            });
         }
     }
 }

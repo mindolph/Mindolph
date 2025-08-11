@@ -5,6 +5,7 @@ import com.mindolph.base.control.MTreeView;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.meta.WorkspaceMeta;
@@ -158,7 +159,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta) {
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             log.debug("start a new thread to load workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
             Tree tree = WorkspaceManager.getIns().loadWorkspaceRecursively(workspaceConfig, workspaceMeta);
             Node workspaceNode = tree.getRootNode();
@@ -170,7 +171,7 @@ public class WorkspaceViewSimple extends BaseView {
                 log.debug("workspace loaded: " + workspaceMeta.getBaseDirPath());
                 EventBus.getIns().notifyWorkspaceLoaded(rootItem);
             });
-        }, "Workspace Load Thread").start();
+        });
     }
 
     /**

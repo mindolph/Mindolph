@@ -12,6 +12,7 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
@@ -111,7 +112,7 @@ public class AiGenerator implements Generator {
                                 onError.accept(streamToken.text());
                             }
                             else {
-                                // make sure no output will be handled if user choose to stop, even it is still streaming.
+                                // make sure no output will be handled if the user chooses to stop, even it is still streaming.
                                 if (!LlmService.getIns().isStopped()) {
                                     // accept streaming output (even with `stop` one).
                                     streamOutputConsumer.accept(new StreamOutput(streamToken, input.isRetry()), inputPanel);
@@ -123,7 +124,7 @@ public class AiGenerator implements Generator {
                         });
             }
             else {
-                new Thread(() -> {
+                GlobalExecutor.submit(() -> {
                     try {
                         StreamToken generated = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
                         if (generated == null) {
@@ -139,7 +140,7 @@ public class AiGenerator implements Generator {
                         log.error(e.getLocalizedMessage(), e);
                         onError.accept(e.getLocalizedMessage());
                     }
-                }).start();
+                });
             }
         });
         GenAiEvents.getIns().subscribeActionEvent(editorId, actionType -> {

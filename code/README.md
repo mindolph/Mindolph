@@ -1,8 +1,8 @@
 # Mindolph Development
 
 ### Prerequisites
-* JDK 21+
-* JavaFX 23+
+* JDK 22+
+* JavaFX 24+
 * Maven 3.x
 
 ### How to setup develop environment
@@ -14,7 +14,7 @@
     cd mfx
     mvn install -Dmaven.test.skip=true
     ```
-  > If there is something wrong with the accessing Maven central repository, just use the `aliyun` profile:  
+  > If there is something wrong with the accessing Maven central repository, use the `aliyun` profile:  
   > `mvn install -Dmaven.test.skip=true -Paliyun`
 
 * Install FontawesomeFX
@@ -33,7 +33,7 @@
     git clone https://github.com/mindolph/Mindolph.git
     ```
 
-    Use your favorite IDE to create a new project in the folder `Mindolph/code`. after compiling is completed, launch the application by executing main method in class `com.mindolph.fx.Launcher`.
+    Use your favorite IDE to create a new project in the folder `Mindolph/code`. after compiling is completed, launch the application by executing the main method in class `com.mindolph.fx.Launcher`.
 
 ### How to build an executable fat jar file
 
@@ -59,11 +59,11 @@ mvn package -Dmaven.test.skip=true -Paliyun
 
 * Install JavaFX jmods:  
 
-    Download the latest JavaFX 23 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-23/`
+    Download the latest JavaFX 24 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-24/`
 
     Set environment variable:  
     ```shell
-    export JAVAFX_HOME=/mnt/javafx-jmods-23/
+    export JAVAFX_HOME=/mnt/javafx-jmods-24/
     ```
 
 * Build Mindolph distribution for your operating system:  

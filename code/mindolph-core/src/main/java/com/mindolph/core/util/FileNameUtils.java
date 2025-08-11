@@ -14,7 +14,7 @@ import java.io.File;
 public class FileNameUtils {
 
     /**
-     * Extract all dir names in file path.
+     * Extract all dir names in a file path.
      *
      * @param path absolute or relative path
      * @return
@@ -32,7 +32,7 @@ public class FileNameUtils {
      */
     public static String appendFileExtensionIfAbsent(String fileName, String extension) {
         if (!Strings.CS.equals(extension, FilenameUtils.getExtension(fileName))) {
-            return fileName + "." + extension;
+            return "%s.%s".formatted(fileName, extension);
         }
         return fileName;
     }

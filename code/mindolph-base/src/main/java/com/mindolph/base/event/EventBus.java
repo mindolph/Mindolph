@@ -44,6 +44,7 @@ public class EventBus {
     private final EventSource<List<File>> openedFileChange = new EventSource<>();
     // private final EventSource<File> newFileToWorkspace = new EventSource<>();
     private final EventSource<FileChangeEvent> fileChangeInWorkspace = new EventSource<>();
+    private final EventSource<FolderReloadEvent> folderRefreshInWorkspace = new EventSource<>();
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
     private final EventSource<FileActivatedEvent> fileActivated = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
@@ -291,6 +292,16 @@ public class EventBus {
 
     public EventBus subscribeFileChangeInWorkspace(Consumer<FileChangeEvent> consumer) {
         fileChangeInWorkspace.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus notifyFolderRefreshInWorkspace(FolderReloadEvent event) {
+        folderRefreshInWorkspace.push(event);
+        return this;
+    }
+
+    public EventBus subscribeFolderRefreshInWorkspace(Consumer<FolderReloadEvent> consumer) {
+        folderRefreshInWorkspace.subscribe((consumer));
         return this;
     }
 

@@ -11,6 +11,7 @@ import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.util.FileNameUtils;
@@ -71,7 +72,7 @@ public class FileTabView extends BaseView {
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTab, selectingTab) -> {
             Object oldData = selectedTab == null ? null : selectedTab.getUserData();
             if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
-                // disabled tab means it is closing, no need to be loaded(for close all or close others from context menu)
+                // disabled tab means it is closing, no need to be loaded (for close all or close others from the context menu)
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
@@ -247,7 +248,7 @@ public class FileTabView extends BaseView {
             });
         });
 
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             try {
                 // listen: update the status bar from status msg event
                 EventBus.getIns().subscribeStatusMsgEvent(fileData.getFile(), statusMsg -> {
@@ -268,7 +269,7 @@ public class FileTabView extends BaseView {
             RecentManager.getInstance().addToRecent(fileData.getFile());
 
             Platform.runLater(editor::requestFocus);
-        }, "File Load Thread").start();
+        });
     }
 
 //    private void locateInEditor(BaseEditor editor, NodeData fileData) {

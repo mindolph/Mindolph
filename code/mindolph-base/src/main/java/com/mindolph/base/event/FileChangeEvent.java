@@ -9,6 +9,7 @@ import java.io.File;
  */
 public class FileChangeEvent {
     private FileChangeType type;
+    // The changed file
     private File file;
 
     public FileChangeEvent(FileChangeType type, File file) {
@@ -32,6 +33,9 @@ public class FileChangeEvent {
         this.file = file;
     }
 
+    /**
+     *
+     */
     public enum FileChangeType {
         CREATE, DELETE
     }

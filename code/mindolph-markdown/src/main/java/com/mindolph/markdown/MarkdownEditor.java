@@ -2,7 +2,6 @@ package com.mindolph.markdown;
 
 
 import com.mindolph.base.EditorContext;
-import com.mindolph.core.Env;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.SearchableCodeArea;
@@ -16,6 +15,8 @@ import com.mindolph.base.print.PrinterManager;
 import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
+import com.mindolph.core.Env;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.template.HtmlBuilder;
@@ -356,7 +357,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         try (InputStream inputStream = cssUri.openStream()) {
             css = IoUtils.readAllToString(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
         }
         return css;
     }
@@ -448,7 +449,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     }
                     EventBus.getIns().notifyStatusMsg(htmlFile, new StatusMsg("HTML file exported to: %s".formatted(htmlFile.getPath())));
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    log.error(ex.getLocalizedMessage(), ex);
                 }
             }
         });
@@ -471,7 +472,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     new FileChooser.ExtensionFilter("PDF file", "*.pdf"));
             if (pdfFile != null && pdfFile.getParentFile().exists()) {
                 log.info("Export to pdf file: %s".formatted(pdfFile));
-                new Thread(() -> {
+                GlobalExecutor.submit(() -> {
                     try {
                         String sansFontFilePath = fxPreferences.getPreferenceAlias(PREF_KEY_MD_SANS_FONT_FILE, PREF_KEY_MD_FONT_FILE_PDF, String.class);
                         String monoFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_MONO_FONT_FILE, String.class);
@@ -507,12 +508,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         }
                     } catch (Throwable e) {
                         log.error("Failed to export to PDF", e);
-                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: " + e.getLocalizedMessage()));
+                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: %s".formatted(e.getLocalizedMessage())));
                     }
                     String success = "PDF file exported to: %s".formatted(pdfFile.getPath());
                     log.info(success);
                     EventBus.getIns().notifyStatusMsg(file, new StatusMsg(success));
-                }, "Markdown Export Thread").start();
+                });
             }
         });
         if (Env.isDevelopment) {

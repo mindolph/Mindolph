@@ -6,6 +6,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -54,19 +55,19 @@ public class ShortcutsDialog extends BaseDialogController<Void> {
         editorContext.setFileData(new NodeData(shortcutsFile));
         MarkdownEditor markdownEditor = new MarkdownEditor(editorContext);
 
-        // dummy node data object for temporary shortcut file.
+        // fake node data object for the temporary shortcut file.
         NodeData nodeData = new NodeData(shortcutsFile);
         // change view mode here since it requires everything is ready.
         EventBus.getIns().subscribeFileLoaded(nodeData, nodeData1 -> {
             markdownEditor.changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
         });
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             try {
                 markdownEditor.loadFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        });
         dialog.getDialogPane().setContent(markdownEditor);
     }
 }

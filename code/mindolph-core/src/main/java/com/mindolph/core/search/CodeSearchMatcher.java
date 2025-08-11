@@ -22,7 +22,7 @@ public class CodeSearchMatcher extends BaseSearchMatcher {
     @Override
     public boolean matches(File file, SearchParams searchParams) {
         super.matches(file, searchParams);
-        log.debug("try match in file: " + file);
+        log.debug("try match in file: %s".formatted(file));
         try {
             String text = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 //            String normalText = SearchUtils.normalizeSpace(text);
