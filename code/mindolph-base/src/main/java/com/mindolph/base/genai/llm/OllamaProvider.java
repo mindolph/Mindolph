@@ -1,8 +1,8 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
 
@@ -22,7 +22,7 @@ public class OllamaProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected ChatLanguageModel buildAI(Input input) {
+    protected ChatModel buildAI(Input input) {
         OllamaChatModel.OllamaChatModelBuilder builder = new OllamaChatModel.OllamaChatModelBuilder()
                 .baseUrl(this.baseUrl)
                 .modelName(determineModel(input))
@@ -33,7 +33,7 @@ public class OllamaProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected StreamingChatLanguageModel buildStreamingAI(Input input) {
+    protected StreamingChatModel buildStreamingAI(Input input) {
         OllamaStreamingChatModel.OllamaStreamingChatModelBuilder builder = new OllamaStreamingChatModel.OllamaStreamingChatModelBuilder()
                 .baseUrl(this.baseUrl)
                 .modelName(determineModel(input))

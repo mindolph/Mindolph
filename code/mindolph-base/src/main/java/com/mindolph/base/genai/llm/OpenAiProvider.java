@@ -3,8 +3,8 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel.OpenAiChatModelBuilder;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
@@ -27,7 +27,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected ChatLanguageModel buildAI(Input input) {
+    protected ChatModel buildAI(Input input) {
         log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
                 super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
@@ -46,7 +46,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected StreamingChatLanguageModel buildStreamingAI(Input input) {
+    protected StreamingChatModel buildStreamingAI(Input input) {
         OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey(this.apiKey)
                 .modelName(determineModel(input))

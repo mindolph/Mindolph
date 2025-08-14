@@ -33,7 +33,7 @@ public class RagService extends BaseEmbeddingService {
 
     private static RagService instance;
 
-    private StreamingLanguageModelAdapter streamingLanguageModelAdapter;
+    private StreamingChatModelAdapter streamingChatModelAdapter;
 
     private Agent agent;
 
@@ -129,14 +129,14 @@ public class RagService extends BaseEmbeddingService {
                         finished.accept(o);
                     }
                     else {
-                        this.streamingLanguageModelAdapter = new StreamingLanguageModelAdapter(agentMeta);
+                        this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
                         this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
                         if (this.contentRetriever == null) {
                             finished.accept(new RuntimeException("Unable to use this agent"));
                             return;
                         }
                         agent = AiServices.builder(Agent.class)
-                                .streamingChatLanguageModel(streamingLanguageModelAdapter)
+                                .streamingChatModel(streamingChatModelAdapter)
                                 .contentRetriever(contentRetriever)
                                 .chatMemory(chatMemory)
                                 .build();

@@ -1,8 +1,8 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.huggingface.HuggingFaceChatModel;
 
 import java.time.Duration;
@@ -17,7 +17,7 @@ public class HuggingFaceProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected ChatLanguageModel buildAI(Input input) {
+    protected ChatModel buildAI(Input input) {
         System.setProperty("http.proxyHost", proxyHost);
         System.setProperty("http.proxyPort", String.valueOf(proxyPort));
         HuggingFaceChatModel.Builder builder = HuggingFaceChatModel.builder()
@@ -34,7 +34,7 @@ public class HuggingFaceProvider extends BaseLangChainLlmProvider {
     }
 
     @Override
-    protected StreamingChatLanguageModel buildStreamingAI(Input input) {
+    protected StreamingChatModel buildStreamingAI(Input input) {
         return null;
     }
 

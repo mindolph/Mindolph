@@ -4,7 +4,7 @@ import com.igormaznitsa.mindmap.model.*;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByLineSplitter;
 import dev.langchain4j.data.document.splitter.HierarchicalDocumentSplitter;
-import dev.langchain4j.model.Tokenizer;
+import dev.langchain4j.model.TokenCountEstimator;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -21,12 +21,12 @@ public class MindMapDocumentSplitter extends HierarchicalDocumentSplitter {
         super(maxSegmentSizeInChars, maxOverlapSizeInChars, subSplitter);
     }
 
-    protected MindMapDocumentSplitter(int maxSegmentSizeInTokens, int maxOverlapSizeInTokens, Tokenizer tokenizer) {
-        super(maxSegmentSizeInTokens, maxOverlapSizeInTokens, tokenizer);
+    protected MindMapDocumentSplitter(int maxSegmentSizeInTokens, int maxOverlapSizeInTokens, TokenCountEstimator tokenCountEstimator) {
+        super(maxSegmentSizeInTokens, maxOverlapSizeInTokens, tokenCountEstimator);
     }
 
-    protected MindMapDocumentSplitter(int maxSegmentSizeInTokens, int maxOverlapSizeInTokens, Tokenizer tokenizer, DocumentSplitter subSplitter) {
-        super(maxSegmentSizeInTokens, maxOverlapSizeInTokens, tokenizer, subSplitter);
+    protected MindMapDocumentSplitter(int maxSegmentSizeInTokens, int maxOverlapSizeInTokens, TokenCountEstimator tokenCountEstimator, DocumentSplitter subSplitter) {
+        super(maxSegmentSizeInTokens, maxOverlapSizeInTokens, tokenCountEstimator, subSplitter);
     }
 
     @Override
@@ -66,6 +66,6 @@ public class MindMapDocumentSplitter extends HierarchicalDocumentSplitter {
 
     @Override
     protected DocumentSplitter defaultSubSplitter() {
-        return new DocumentByLineSplitter(maxSegmentSize, maxOverlapSize, tokenizer);
+        return new DocumentByLineSplitter(maxSegmentSize, maxOverlapSize, tokenCountEstimator);
     }
 }

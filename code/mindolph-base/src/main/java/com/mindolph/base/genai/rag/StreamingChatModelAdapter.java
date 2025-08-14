@@ -2,7 +2,10 @@ package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.InputBuilder;
-import com.mindolph.base.genai.llm.*;
+import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.llm.LlmProvider;
+import com.mindolph.base.genai.llm.LlmProviderFactory;
+import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -10,7 +13,7 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
@@ -28,14 +31,14 @@ import java.util.List;
  *
  * @since unknown
  */
-public class StreamingLanguageModelAdapter implements StreamingChatLanguageModel {
+public class StreamingChatModelAdapter implements StreamingChatModel {
 
-    private static final Logger log = LoggerFactory.getLogger(StreamingLanguageModelAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(StreamingChatModelAdapter.class);
 
     private final LlmProvider llmProvider;
     private final AgentMeta agentMeta;
 
-    public StreamingLanguageModelAdapter(AgentMeta agentMeta) {
+    public StreamingChatModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
         String providerName = agentMeta.getProvider().getName();
         ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);

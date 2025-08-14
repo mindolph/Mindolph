@@ -3,8 +3,8 @@ package com.mindolph.base.genai.llm;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.input.Prompt;
@@ -37,7 +37,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         log.debug(String.valueOf(params));
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: %s".formatted(prompt.text()));
-        ChatLanguageModel llm = buildAI(input);
+        ChatModel llm = buildAI(input);
         ChatMessage chatMessage = new UserMessage(prompt.text());
         ChatResponse aiMessage = llm.chat(chatMessage);
         return new StreamToken(aiMessage.aiMessage().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
@@ -46,7 +46,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         Prompt prompt = this.createPrompt(input.text(), outputParams);
-        StreamingChatLanguageModel llm = buildStreamingAI(input);
+        StreamingChatModel llm = buildStreamingAI(input);
         this.stopStreaming = false;
         llm.chat(prompt.text().trim(), new StreamingChatResponseHandler() {
             @Override
@@ -88,9 +88,9 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         return prompt;
     }
 
-    protected abstract ChatLanguageModel buildAI(Input input);
+    protected abstract ChatModel buildAI(Input input);
 
-    protected abstract StreamingChatLanguageModel buildStreamingAI(Input input);
+    protected abstract StreamingChatModel buildStreamingAI(Input input);
 
     protected abstract String extractErrorMessage(Throwable throwable);
 }
