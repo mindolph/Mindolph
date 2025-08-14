@@ -11,6 +11,7 @@ import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.util.FileNameUtils;
@@ -21,6 +22,7 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.plantuml.PlantUmlEditor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -70,7 +72,7 @@ public class FileTabView extends BaseView {
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTab, selectingTab) -> {
             Object oldData = selectedTab == null ? null : selectedTab.getUserData();
             if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
-                // disabled tab means it is closing, no need to be loaded(for close all or close others from context menu)
+                // disabled tab means it is closing, no need to be loaded (for close all or close others from the context menu)
                 log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
                 TabManager.getIns().activeTab(selectingTab);
                 BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
@@ -108,7 +110,7 @@ public class FileTabView extends BaseView {
                 }
             }
         });
-        // listen locate in file for outline
+        // listen locating in file for outline
         EventBus.getIns().subscribeLocateInFile(anchor -> {
             Editable editor = this.tabEditorMap.get(getCurrentTab());
             if (editor != null) {
@@ -141,12 +143,12 @@ public class FileTabView extends BaseView {
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
-            boolean isCodeEditor = editor instanceof BaseCodeAreaEditor;
-            EventBus.getIns().notifyMenuStateChange(CUT, isCodeEditor && editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(COPY, isCodeEditor && editor.isSelected());
-            EventBus.getIns().notifyMenuStateChange(PASTE, isCodeEditor);
-            EventBus.getIns().notifyMenuStateChange(FIND, isCodeEditor && editor.isSearchable());
-            EventBus.getIns().notifyMenuStateChange(REPLACE, isCodeEditor && editor.isSearchable());
+            boolean isEditable = editor instanceof BaseCodeAreaEditor || editor instanceof MindMapEditor;
+            EventBus.getIns().notifyMenuStateChange(CUT, isEditable && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(COPY, isEditable && editor.isSelected());
+            EventBus.getIns().notifyMenuStateChange(PASTE, isEditable);
+            EventBus.getIns().notifyMenuStateChange(FIND, isEditable && editor.isSearchable());
+            EventBus.getIns().notifyMenuStateChange(REPLACE, isEditable && editor.isSearchable());
 //            EventBus.getIns().enableMenuItems(PRINT);
         }
     }
@@ -246,7 +248,7 @@ public class FileTabView extends BaseView {
             });
         });
 
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             try {
                 // listen: update the status bar from status msg event
                 EventBus.getIns().subscribeStatusMsgEvent(fileData.getFile(), statusMsg -> {
@@ -256,7 +258,7 @@ public class FileTabView extends BaseView {
                 });
                 editor.loadFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
 
             // call to remember opened files.
@@ -267,7 +269,7 @@ public class FileTabView extends BaseView {
             RecentManager.getInstance().addToRecent(fileData.getFile());
 
             Platform.runLater(editor::requestFocus);
-        }, "File Load Thread").start();
+        });
     }
 
 //    private void locateInEditor(BaseEditor editor, NodeData fileData) {
@@ -455,12 +457,12 @@ public class FileTabView extends BaseView {
                     FileUtils.copyFile(origFile, saveAsFileWithExt);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
                 DialogFactory.errDialog("Failed to save file: " + e.getLocalizedMessage());
                 return;
             }
             // Add new file tree item to the parent tree item by file path.
-            EventBus.getIns().notifyNewFileToWorkspace(saveAsFileWithExt);
+//            EventBus.getIns().notifyNewFileToWorkspace(saveAsFileWithExt);
 
             openFile(fileData.getWorkspaceData(), new NodeData(saveAsFileWithExt), false);
             closeFileTab(openedFileMap.get(fileData), fileData);
@@ -540,7 +542,7 @@ public class FileTabView extends BaseView {
         try {
             tabEditorMap.get(tab).save();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
             DialogFactory.errDialog("Saving file %s failed.".formatted(fileData.getFile()));
         }
     }
@@ -554,7 +556,7 @@ public class FileTabView extends BaseView {
                     try {
                         tabEditorMap.get(tab).save();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getLocalizedMessage(), e);
                         DialogFactory.errDialog("Saving file %s failed.".formatted(nodeData.getFile()));
                     }
                     tab.setText(nodeData.getName());
@@ -725,7 +727,7 @@ public class FileTabView extends BaseView {
                 try {
                     editor.save();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage(), e);
                     DialogFactory.errDialog("File save failed");
                     return false;
                 }

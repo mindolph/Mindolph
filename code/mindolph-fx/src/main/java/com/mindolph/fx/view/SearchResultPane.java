@@ -109,9 +109,8 @@ public class SearchResultPane extends AnchorPane {
         btnSearch.setOnAction(event -> {
             this.reSearch();
         });
-        Platform.runLater(() -> {
-            tfKeywords.requestFocus();
-        });
+
+        Platform.runLater(tfKeywords::requestFocus);
     }
 
     public void init(SearchParams searchParams) {

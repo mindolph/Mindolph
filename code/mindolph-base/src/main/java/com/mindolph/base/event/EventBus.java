@@ -42,7 +42,9 @@ public class EventBus {
 
     // Events for files
     private final EventSource<List<File>> openedFileChange = new EventSource<>();
-    private final EventSource<File> newFileToWorkspace = new EventSource<>();
+    // private final EventSource<File> newFileToWorkspace = new EventSource<>();
+    private final EventSource<FileChangeEvent> fileChangeInWorkspace = new EventSource<>();
+    private final EventSource<FolderReloadEvent> folderRefreshInWorkspace = new EventSource<>();
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
     private final EventSource<FileActivatedEvent> fileActivated = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
@@ -283,15 +285,35 @@ public class EventBus {
         return this;
     }
 
-    public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
-        newFileToWorkspace.subscribe(consumer);
+    public EventBus notifyFileChangeInWorkspace(FileChangeEvent fileChange) {
+        fileChangeInWorkspace.push(fileChange);
         return this;
     }
 
-    public EventBus notifyNewFileToWorkspace(File file) {
-        newFileToWorkspace.push(file);
+    public EventBus subscribeFileChangeInWorkspace(Consumer<FileChangeEvent> consumer) {
+        fileChangeInWorkspace.subscribe(consumer);
         return this;
     }
+
+    public EventBus notifyFolderRefreshInWorkspace(FolderReloadEvent event) {
+        folderRefreshInWorkspace.push(event);
+        return this;
+    }
+
+    public EventBus subscribeFolderRefreshInWorkspace(Consumer<FolderReloadEvent> consumer) {
+        folderRefreshInWorkspace.subscribe((consumer));
+        return this;
+    }
+
+//    public EventBus subscribeNewFileToWorkspace(Consumer<File> consumer) {
+//        newFileToWorkspace.subscribe(consumer);
+//        return this;
+//    }
+//
+//    public EventBus notifyNewFileToWorkspace(File file) {
+//        newFileToWorkspace.push(file);
+//        return this;
+//    }
 
     public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
         openFile.subscribe(consumer);
@@ -314,6 +336,12 @@ public class EventBus {
         return this;
     }
 
+    /**
+     * Used for relative handling, not for workspace.
+     *
+     * @param fileData
+     * @return
+     */
     public EventBus notifyDeletedFile(NodeData fileData) {
         fileDeleted.push(fileData);
         return this;

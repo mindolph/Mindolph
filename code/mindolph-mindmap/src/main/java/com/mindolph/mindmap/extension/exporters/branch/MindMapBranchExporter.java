@@ -4,7 +4,6 @@ import com.igormaznitsa.mindmap.model.ExtraNote;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.event.EventBus;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -74,10 +73,10 @@ public class MindMapBranchExporter extends BaseExportExtension {
             try (Writer w = new StringWriter()) {
                 String newFileData = newModel.write(w).toString();
                 FileUtils.writeStringToFile(fileToSave, newFileData, StandardCharsets.UTF_8);
-                EventBus.getIns().notifyNewFileToWorkspace(fileToSave);
+//                EventBus.getIns().notifyNewFileToWorkspace(fileToSave);
             }
             catch (Exception ex) {
-                ex.printStackTrace();
+                log.error(ex.getLocalizedMessage(), ex);
             }
         }
     }

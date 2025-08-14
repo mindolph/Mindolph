@@ -6,6 +6,7 @@ import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.*;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SceneStatePrefs;
@@ -187,12 +188,12 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
             }
             Platform.runLater(() -> treeView.requestFocus());
         });
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             log.debug("start a new thread to load workspaces: %d".formatted(workspaceList.getSize()));
             for (WorkspaceMeta workspaceMeta : workspaceList.getProjects().stream().filter(workspaceMeta -> new File(workspaceMeta.getBaseDirPath()).exists()).toList()) {
                 createWorkspaceSubTree(workspaceMeta);
             }
-        }, "Workspaces load thread").start();
+        });
     }
 
     /**
@@ -242,9 +243,9 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta) {
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             createWorkspaceSubTree(workspaceMeta);
-        }, "Workspace Load Thread").start();
+        });
     }
 
     private void createWorkspaceSubTree(WorkspaceMeta workspaceMeta) {

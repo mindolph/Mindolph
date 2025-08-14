@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_LAYOUT_MAIN_TREE_SIZE;
 
 /**
- * A class used to save and restore scene, including opening files, layout etc.
+ * A class used to save and restore the scene, including opening files, layout, etc.
  * Includes:
  * Main windows status(maximum, size of window).
  * Expanded folders in the workspace tree.
@@ -29,8 +29,8 @@ import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_LAYOUT_MAIN_TR
  * Opened files.
  * Status of editor for each single file.
  * <p>
- * This class listens some evens to collect data and save to preferences,
- * and also call listeners, which was registered outside, to restore scene.
+ * This class listens to some evens to collect data and save to preferences,
+ * and also call listeners, which was registered outside, to restore the scene.
  *
  * @author mindolph.com@gmail.com
  * @see FxPreferences
@@ -145,7 +145,7 @@ public class SceneRestore implements WindowEventHandler,
     }
 
     /**
-     * Remove file path from expanded list (if exists)
+     * Remove the file path from the expanded list (if exists)
      *
      * @param filePath
      */

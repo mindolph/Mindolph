@@ -7,6 +7,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;
@@ -24,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
@@ -159,9 +161,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                         generator.showSummarizePanel(textToBeSummarized, SmartCodeArea.this);
                     });
 
-                    generator.setOnPanelShowing(stackPane -> {
-                        SmartCodeArea.this.relocatedPanelToCaret(stackPane);
-                    });
+                    generator.setOnPanelShowing(SmartCodeArea.this::relocatedPanelToCaret);
+
                     generator.setBeforeGenerate(unused -> {
                         SmartCodeArea.this.onGenerating();
                         this.originPos = SmartCodeArea.this.getSelection().getStart();
@@ -248,9 +249,9 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 
     // @since 1.7
     private Point2D getPanelTargetPoint() {
-        // calculate target point with x of left side border and y of caret bottom.
+        // calculate target point with x of the left side border and y of caret bottom.
         // NOTE: since the v0.11.5 the getCharacterBoundsOnScreen(0, 0) throw exception,
-        // so if upgrade, it has to disable following and use the X of caret bounds for workaround.
+        // so if upgrade, it has to disable the following and use the X of caret bounds for workaround.
         Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
         Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
         // NOTE: getCaretBounds() is not working(return null sometime), so use getCaretBoundsOnScreen() instead.
@@ -311,14 +312,14 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
         inputHelpSource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(INPUT_HELP_DELAY_IN_MILLIS))
                 .subscribe(s -> {
                     // non-blocking
-                    new Thread(() -> {
-                        Collection<Plugin> plugins = PluginManager.getIns().findPlugins(getFileType());
-                        for (Plugin plugin : plugins) {
-                            Optional<InputHelper> opt = plugin.getInputHelper();
-                            opt.ifPresent(inputHelper -> inputHelper.updateContextText(this.hashCode(), s));
-                        }
-                    }
-                    ).start();
+                    GlobalExecutor.submit(() -> {
+                                Collection<Plugin> plugins = PluginManager.getIns().findPlugins(getFileType());
+                                for (Plugin plugin : plugins) {
+                                    Optional<InputHelper> opt = plugin.getInputHelper();
+                                    opt.ifPresent(inputHelper -> inputHelper.updateContextText(this.hashCode(), s));
+                                }
+                            }
+                    );
                 });
 
         // prepare the context words
@@ -326,10 +327,10 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
             if (!isInputHelperEnabled()) {
                 return;
             }
-            if (!StringUtils.equals(oldValue, newValue)) inputHelpSource.push(newValue);
+            if (!Strings.CS.equals(oldValue, newValue)) inputHelpSource.push(newValue);
         });
 
-        // stop helping when paragraph is changed by like mouse click.
+        // stop helping when paragraph is changed by like mouse clicks.
         this.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
             if (!isInputHelperEnabled()) {
                 return;
@@ -339,7 +340,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 
         // Insert selected text from input helper.
         inputHelperManager.onSelected((selection) -> {
-            if (StringUtils.startsWithIgnoreCase(selection.selected(), selection.input())) {
+            if (Strings.CI.startsWith(selection.selected(), selection.input())) {
                 int start = selection.input().length();
                 this.deleteText(this.getCaretPosition() - start, this.getCaretPosition());
                 this.insertText(this.getCaretPosition(), selection.selected());
@@ -382,16 +383,16 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
      */
     public void applyTargetReplacement(String code) {
         String selectedText = this.getSelectedText();
-        int caretPos = StringUtils.indexOf(code, "⨁");
+        int caretPos = Strings.CS.indexOf(code, "⨁");
         String codeToInsert = "";
         if (caretPos > 0) {
             if (StringUtils.isEmpty(selectedText)) {
-                codeToInsert = StringUtils.remove(code, "⨁");
+                codeToInsert = Strings.CS.remove(code, "⨁");
                 this.insertText(codeToInsert);
                 this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos));
             }
             else {
-                codeToInsert = StringUtils.replace(code, "⨁", selectedText);
+                codeToInsert = Strings.CS.replace(code, "⨁", selectedText);
                 this.replaceSelection(codeToInsert);
                 this.moveTo(this.getCaretPosition() - (codeToInsert.length() - caretPos - selectedText.length()));
             }

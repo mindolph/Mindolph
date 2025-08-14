@@ -3,6 +3,7 @@ package com.mindolph.core.util;
 import com.mindolph.core.constant.SupportFileTypes;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemProperties;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.io.File;
 public class FileNameUtils {
 
     /**
-     * Extract all dir names in file path.
+     * Extract all dir names in a file path.
      *
      * @param path absolute or relative path
      * @return
@@ -30,8 +31,8 @@ public class FileNameUtils {
      * @return
      */
     public static String appendFileExtensionIfAbsent(String fileName, String extension) {
-        if (!StringUtils.equals(extension, FilenameUtils.getExtension(fileName))) {
-            return fileName + "." + extension;
+        if (!Strings.CS.equals(extension, FilenameUtils.getExtension(fileName))) {
+            return "%s.%s".formatted(fileName, extension);
         }
         return fileName;
     }

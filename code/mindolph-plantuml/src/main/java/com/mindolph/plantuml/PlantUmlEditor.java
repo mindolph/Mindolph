@@ -191,7 +191,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     log.info("Exported image to file: %s".formatted(snapshotFile));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
         });
         contextMenu.getItems().addAll(new SeparatorMenuItem(), miExport, new SeparatorMenuItem(), miCopyImage, miCopyAscii, miCopyScript);
@@ -291,7 +291,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
                             image = new Image(byteArrayInputStream);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                         }
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
@@ -299,7 +299,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                                             "See the description", image));
                         });
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getLocalizedMessage(), e);
                     }
                 }
                 else {
@@ -327,12 +327,12 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(os.toByteArray())) {
                             image = new Image(byteArrayInputStream);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            log.error(e.getLocalizedMessage(), e);
                         }
                         previewConsumer.call(image);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
             else {

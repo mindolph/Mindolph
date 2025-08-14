@@ -5,7 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -40,7 +40,7 @@ public class DirUtils {
             @Override
             public boolean accept(File file) {
                 return file.isDirectory()
-                        && StringUtils.containsIgnoreCase(FilenameUtils.getBaseName(file.getPath()), keyword);
+                        && Strings.CI.contains(FilenameUtils.getBaseName(file.getPath()), keyword);
             }
         };
         findRecursively(dirFile, dirFilter, dirNameFilter, result);

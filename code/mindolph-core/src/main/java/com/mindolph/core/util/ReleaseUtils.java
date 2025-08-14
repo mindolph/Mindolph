@@ -1,19 +1,19 @@
 package com.mindolph.core.util;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.function.Consumer;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mindolph.core.async.GlobalExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.BufferedIoUtils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 
 /**
  * @author mindolph.com@gmail.com
@@ -26,10 +26,10 @@ public class ReleaseUtils {
 
 
     public static void getLatestReleaseVersion(Consumer<ReleaseInfo> consumer) {
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             ReleaseInfo latestVersion = getLatestReleaseVersion();
             consumer.accept(latestVersion);
-        }).start();
+        });
     }
 
     public static ReleaseInfo getLatestReleaseVersion() {

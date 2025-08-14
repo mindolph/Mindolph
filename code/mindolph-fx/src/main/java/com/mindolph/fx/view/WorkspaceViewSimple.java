@@ -5,6 +5,7 @@ import com.mindolph.base.control.MTreeView;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.meta.WorkspaceMeta;
@@ -86,12 +87,12 @@ public class WorkspaceViewSimple extends BaseView {
             cell.setOnMouseEntered(event -> {
                 TreeItem<NodeData> treeItem = cell.getTreeItem();
                 if (treeItem != null) {
-                    log.trace("Install tooltip for " + treeItem);
+                    if (log.isTraceEnabled()) log.trace("Install tooltip for %s".formatted(treeItem));
                     NodeData data = treeItem.getValue();
                     cell.setTooltip(new Tooltip(data.getFile().getPath()));
                 }
                 else {
-                    log.trace("Not tree item");
+                    if (log.isTraceEnabled()) log.trace("Not tree item");
                     cell.setTooltip(null);
                 }
             });
@@ -103,7 +104,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Load a workspace sub-tree to the end of tree.
+     * Load a workspace subtree to the end of tree.
      *
      * @param workspaceMeta
      * @param expandAllAsDefault whether all folders are expended by default.
@@ -123,7 +124,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Reload project sub-tree to specified position of tree.
+     * Reload project subtree to specified position of tree.
      *
      * @param workspaceMeta
      * @param index         original index in siblings.
@@ -140,7 +141,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     /**
-     * Reload folder and it's sub-tree to specified position of tree.
+     * Reload folder and it's subtree to specified position of tree.
      *
      * @param folderData
      * @param index
@@ -158,7 +159,7 @@ public class WorkspaceViewSimple extends BaseView {
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta) {
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             log.debug("start a new thread to load workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
             Tree tree = WorkspaceManager.getIns().loadWorkspaceRecursively(workspaceConfig, workspaceMeta);
             Node workspaceNode = tree.getRootNode();
@@ -170,7 +171,7 @@ public class WorkspaceViewSimple extends BaseView {
                 log.debug("workspace loaded: " + workspaceMeta.getBaseDirPath());
                 EventBus.getIns().notifyWorkspaceLoaded(rootItem);
             });
-        }, "Workspace Load Thread").start();
+        });
     }
 
     /**

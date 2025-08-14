@@ -56,7 +56,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
                         new ImageSnippet("if else").code("""
                                 if (⨁) then (Y)
 
-                                else (n)
+                                else (N)
                                 
                                 endif
                                 """).generateImage(),
@@ -65,7 +65,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
 
                                 elseif (⨁) then (Y)
                                 
-                                else (n)
+                                else (N)
                                 
                                 endif
                                 """).generateImage(),

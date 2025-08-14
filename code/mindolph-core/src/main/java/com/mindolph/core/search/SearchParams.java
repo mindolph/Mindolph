@@ -2,6 +2,7 @@ package com.mindolph.core.search;
 
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.swiftboot.util.PathUtils;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public class SearchParams {
     private String fileTypeName = "all"; // filter files by extension
     private String replacement;
     private boolean replaceAll;
-    private Map<String, Boolean> extraOptions; // extra search options for more precise search like search note in mind map.
+    private Map<String, Boolean> extraOptions; // extra search options for more precise search like search note in the mind map.
 
     private File workspaceDir;
     private File searchInDir;
@@ -62,7 +63,7 @@ public class SearchParams {
     }
 
     public void setKeywords(String keywords) {
-        if (!StringUtils.equals(this.keywords, keywords)) {
+        if (!Strings.CS.equals(this.keywords, keywords)) {
             normalizedKeywords = SearchUtils.normalizeSpace(keywords);
             this.pattern = SearchUtils.string2pattern(normalizedKeywords, this.caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
         }

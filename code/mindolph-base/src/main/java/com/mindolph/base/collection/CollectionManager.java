@@ -3,7 +3,7 @@ package com.mindolph.base.collection;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.mfx.preference.FxPreferences;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class CollectionManager {
     }
 
     /**
-     * Switch active collection.
+     * Switch the active collection.
      *
      * @param activeCollectionName
      */
@@ -75,7 +75,7 @@ public class CollectionManager {
      * @param newName
      */
     public void renameCollection(String oldName, String newName) {
-        if (StringUtils.equals(oldName, newName)) return;
+        if (Strings.CS.equals(oldName, newName)) return;
         Map<String, List<String>> collectionMap = this.getFileCollectionMap();
         collectionMap.put(newName, collectionMap.get(oldName));
         collectionMap.remove(oldName);

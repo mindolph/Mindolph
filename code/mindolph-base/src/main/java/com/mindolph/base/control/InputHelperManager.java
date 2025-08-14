@@ -276,7 +276,7 @@ public class InputHelperManager {
                 // get rid of blank, duplicates and the one equals what user input.
                 List<String> helpWords = allHelpWords.stream()
                         .filter(StringUtils::isNotBlank)
-//                    .filter(s -> !StringUtils.equals(s, input)) // no need to prompt if it equals what you just inputted.
+//                    .filter(s -> !Strings.CS.equals(s, input)) // no need to prompt if it equals what you just inputted.
                         .filter(s -> !duplicateKiller.containsKey(s)) // excludes those provided in previous plugin.
                         .distinct().toList();
 

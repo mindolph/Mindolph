@@ -2,7 +2,7 @@ package com.mindolph.core.search;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.PathUtils;
@@ -26,15 +26,15 @@ public class FileLinkSearchMatcher implements SearchMatcher {
             String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             String filePathInWorkspace = PathUtils.getRelativePath(file, searchParams.getWorkspaceDir());
             String fileParentPathInWorkspace = FilenameUtils.getPath(filePathInWorkspace);
-            log.debug("file: " + filePathInWorkspace);
+            log.debug("file: %s".formatted(filePathInWorkspace));
             String relativePath = PathUtils.getRelativePath(searchParams.getKeywords(), fileParentPathInWorkspace);
-            log.debug("search for: " + relativePath);
-            if (StringUtils.contains(s, relativePath)) {
+            log.debug("search for: %s".formatted(relativePath));
+            if (Strings.CS.contains(s, relativePath)) {
                 log.debug("Found");
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

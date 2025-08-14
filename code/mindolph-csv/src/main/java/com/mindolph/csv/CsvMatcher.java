@@ -9,6 +9,8 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,9 @@ import java.util.List;
  * @since 1.3.4
  */
 public class CsvMatcher extends BaseSearchMatcher {
+
+    private static final Logger log = LoggerFactory.getLogger(CsvMatcher.class);
+
     private final CSVFormat csvFormat;
 
     public CsvMatcher(boolean returnContextEnabled) {
@@ -59,7 +64,7 @@ public class CsvMatcher extends BaseSearchMatcher {
             }
             return contains;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         return false;

@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,7 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
     }
 
     public boolean isSameDirection(TopicNode t2) {
-        return StringUtils.equals(this.getAttribute(ATTR_LEFTSIDE.getText()), t2.getAttribute(ATTR_LEFTSIDE.getText()));
+        return Strings.CS.equals(this.getAttribute(ATTR_LEFTSIDE.getText()), t2.getAttribute(ATTR_LEFTSIDE.getText()));
     }
 
     public boolean isLeftSidedTopic() {
@@ -213,7 +214,7 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
     }
 
     /**
-     * Generate sub tree for whitespace offsets in text lines.
+     * Generate subtree for whitespace offsets in text lines.
      *
      * @param text
      * @return all created topics.
@@ -251,7 +252,7 @@ public class TopicNode extends Topic<TopicNode> implements ItemData {
     }
 
     /**
-     * Generate sub tree for whitespace offsets in text lines.
+     * Generate subtree for whitespace offsets in text lines.
      *
      * @param text text source to make topics
      * @return created topics

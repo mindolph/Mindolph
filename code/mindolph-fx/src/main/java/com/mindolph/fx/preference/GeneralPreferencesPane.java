@@ -14,7 +14,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -151,10 +151,10 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
         super.bindPreference(rbHttp.selectedProperty(), GENERAL_PROXY_TYPE, "HTTP",
                 aBoolean -> aBoolean ? "HTTP" : null, // null indicate that no event emits since it will cause exception.
-                str -> StringUtils.equals(str, "HTTP"));
+                str -> Strings.CS.equals(str, "HTTP"));
         super.bindPreference(rbSocks.selectedProperty(), GENERAL_PROXY_TYPE, "SOCKS",
                 aBoolean -> aBoolean ? "SOCKS" : null, // null indicate that no event emits since it will cause exception.
-                str -> StringUtils.equals(str, "SOCKS"));
+                str -> Strings.CS.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
         super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
