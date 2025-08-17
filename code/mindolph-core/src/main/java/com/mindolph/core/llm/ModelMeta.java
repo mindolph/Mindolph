@@ -63,7 +63,7 @@ public final class ModelMeta {
     }
 
     /**
-     * Construct for external embedding model.
+     * Construct for an external embedding model.
      *
      * @param name
      * @param langCode
@@ -75,7 +75,7 @@ public final class ModelMeta {
         this.langCode = langCode;
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 

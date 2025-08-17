@@ -60,8 +60,8 @@ public class RagService extends BaseEmbeddingService {
             log.warn("No datasets found for agent {}", agentId);
         }
         DatasetMeta mainDatasetMeta = datasetMetas.getFirst();
-        log.debug("Switch language and embedding model to %s, %s ".formatted(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name()));
-        embeddingModel = super.createEmbeddingModel(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().name());
+        log.debug("Switch language and embedding model to %s, %s ".formatted(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().getName()));
+        embeddingModel = super.createEmbeddingModel(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().getName());
         try {
             embeddingStore = createEmbeddingStore(embeddingModel, true, false);
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class RagService extends BaseEmbeddingService {
     }
 
     public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
-        log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().name());
+        log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().getName());
         new Thread(() -> {
             try {
                 this.switchModel(agentMeta.getId(), o -> {

@@ -80,7 +80,7 @@ public class EmbeddingService extends BaseEmbeddingService {
             }
             try {
                 EmbeddingModel embeddingModel = super.createEmbeddingModel(
-                        datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().name());
+                        datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
                 EmbeddingStore<TextSegment> embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
 
 

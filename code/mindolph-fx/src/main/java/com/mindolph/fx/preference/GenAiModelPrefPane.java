@@ -104,8 +104,8 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                         }
                         ProviderMeta providerMeta = map.get(provider.getName());
                         if (providerMeta == null) {
-                            // init for a vendor who was never been setup.
-                            providerMeta = new ProviderMeta("", "", MODEL_CUSTOM_ITEM.getValue().name(), false);
+                            // init for a vendor who had never been set up.
+                            providerMeta = new ProviderMeta("", "", MODEL_CUSTOM_ITEM.getValue().getName(), false);
                         }
                         tfApiKey.setText(providerMeta.apiKey());
                         tfBaseUrl.setText(providerMeta.baseUrl());
@@ -118,13 +118,13 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                         // init all pre-defined models first
                         PROVIDER_MODELS.get(provider.getName()).stream().map("  %s"::formatted).forEach(log::debug);
                         List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(provider.getName())
-                                .stream().map(m -> new Pair<>(m.name(), m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
+                                .stream().map(m -> new Pair<>(m.getName(), m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
                         Pair<String, ModelMeta> targetItem = null;
                         if (!models.isEmpty()) {
                             cbModel.getItems().addAll(models);
                         }
                         cbModel.getItems().add(MODEL_CUSTOM_ITEM);
-                        // select prefer model
+                        // select the preferred model
                         if ("Custom".equals(providerMeta.aiModel())) {
                             targetItem = MODEL_CUSTOM_ITEM;
                         }
@@ -145,7 +145,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
             if (!isReady.get()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(newValue, null,
-                    cbModel.getSelectionModel().getSelectedItem().getValue().name(), cbUseProxy.isSelected(), customs);
+                    cbModel.getSelectionModel().getSelectedItem().getValue().getName(), cbUseProxy.isSelected(), customs);
             LlmConfig.getIns().saveProviderMeta(cbModelProvider.getValue().getKey(), providerMeta);
             this.onSave(true);
         });
@@ -154,7 +154,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
             if (!isReady.get()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(null, newValue,
-                    cbModel.getSelectionModel().getSelectedItem().getValue().name(), cbUseProxy.isSelected(), customs);
+                    cbModel.getSelectionModel().getSelectedItem().getValue().getName(), cbUseProxy.isSelected(), customs);
             LlmConfig.getIns().saveProviderMeta(cbModelProvider.getValue().getKey(), providerMeta);
             this.onSave(true);
         });
@@ -188,7 +188,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                 }
             }
             providerMeta = new ProviderMeta(tfApiKey.getText(), tfBaseUrl.getText(),
-                    selectedModel.getValue().name(), cbUseProxy.isSelected(), customModels);
+                    selectedModel.getValue().getName(), cbUseProxy.isSelected(), customModels);
             LlmConfig.getIns().saveProviderMeta(cbModelProvider.getValue().getKey(), providerMeta);
             this.onSave(true);
         });
@@ -218,9 +218,9 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                 providerMeta.setCustomModels(new ArrayList<>());
             }
             else {
-                if (providerMeta.customModels().stream().anyMatch(mm -> mm.name().equals(newCustomModel.name()))) {
+                if (providerMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
                     Platform.runLater(() -> {
-                        Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.name())).showWarning();
+                        Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.getName())).showWarning();
                     });
                     return; // already exists
                 }
@@ -232,12 +232,12 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
             this.showCustomModels(activeProviderName);
         });
         btnRemove.setOnAction(event -> {
-            String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().name();
+            String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().getName();
             boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete the custom model '%s'".formatted(name));
             if (sure) {
                 String activeProviderName = cbModelProvider.getValue().getKey().getName();
                 ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(activeProviderName);
-                providerMeta.customModels().removeIf(mm -> mm.name().equals(name));
+                providerMeta.customModels().removeIf(mm -> mm.getName().equals(name));
                 providerMeta.customModels().stream().findFirst().ifPresent(mm -> {
                     mm.setActive(true);
                 });
@@ -249,7 +249,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
             if (!isReady.get()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(tfApiKey.getText(), tfBaseUrl.getText(),
-                    cbModel.getSelectionModel().getSelectedItem().getValue().name(), newValue, customs);
+                    cbModel.getSelectionModel().getSelectedItem().getValue().getName(), newValue, customs);
             LlmConfig.getIns().saveProviderMeta(cbModelProvider.getValue().getKey(), providerMeta);
             this.onSave(true);
         });
@@ -269,10 +269,10 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
         if (customModels == null || customModels.isEmpty()) {
             log.info("no custom models found for provider: %s".formatted(providerName));
             this.updateModelDescription(null); // clear description when no custom models
-            btnRemove.setDisable(true); // disable remove button here since the choice box of custom model will never be updated
+            btnRemove.setDisable(true); // disable the remove button here since the choice box of a custom model will never be updated
         }
         else {
-            List<Pair<String, ModelMeta>> metaPairs = customModels.stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
+            List<Pair<String, ModelMeta>> metaPairs = customModels.stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList();
             cbCustomModels.getItems().addAll(metaPairs);
             Pair<String, ModelMeta> activePair = cbCustomModels.getItems().stream()
                     .filter(pair -> pair.getValue().active()).findFirst().orElse(null);

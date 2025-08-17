@@ -12,14 +12,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.reactfx.EventSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenaiUiConstants.*;
@@ -28,6 +32,9 @@ import static com.mindolph.genai.GenaiUiConstants.*;
  * @since unknown
  */
 public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initializable {
+
+    private static final Logger log = LoggerFactory.getLogger(BaseGenAiPrefPane.class);
+
     @FXML
     protected ChoiceBox<Pair<GenAiModelProvider, String>> cbModelProvider;
     @FXML
@@ -38,6 +45,8 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
     // pause to saving data during loading data.
     protected AtomicBoolean isLoading;
 
+    private EventSource<Void> changeEventSource;
+
     public BaseGenAiPrefPane(String fxmlResourceUri) {
         super(fxmlResourceUri);
     }
@@ -46,6 +55,10 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
     public void initialize(URL location, ResourceBundle resources) {
         fxPreferences = FxPreferences.getInstance();
         isLoading = new AtomicBoolean(false);
+        changeEventSource = new EventSource<>();
+        changeEventSource.reduceSuccessions((a, b) -> null, Duration.ofMillis(500)).subscribe(unused -> {
+            this.onModelChange();
+        });
     }
 
     /**
@@ -58,28 +71,38 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
         cbModelProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
             String providerName = newValue.getKey().getName();
+            log.debug("selected provider: %s".formatted(providerName));
 //            LlmConfig.getIns().preferredModelForActiveLlmProvider();
             Collection<ModelMeta> preDefinedModels = PROVIDER_MODELS.get(providerName)
                     .stream().filter(mm -> mm.getType() == type).toList();
             cbModel.getItems().clear();
-            cbModel.getItems().addAll(preDefinedModels.stream().map(mm -> new Pair<>(mm.name(), mm)).sorted(MODEL_COMPARATOR).toList());
+            if (CollectionUtils.isNotEmpty(preDefinedModels)) {
+                log.debug("Found %d predefined models for provider %s and type %s".formatted(preDefinedModels.size(), providerName, type));
+                cbModel.getItems().addAll(preDefinedModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
+            }
             ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
             if (providerMeta != null) {
                 List<ModelMeta> customModels = providerMeta.customModels();
-                if (customModels != null) {
+                if (customModels != null && !customModels.isEmpty()) {
                     customModels = customModels.stream().filter(mm -> mm.getType() == type).toList();
-                    if (!customModels.isEmpty()) {
-                        cbModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.name(), mm)).sorted(MODEL_COMPARATOR).toList());
+                    if (CollectionUtils.isNotEmpty(customModels)) {
+                        log.debug("Found %d custom models for provider %s and type %s".formatted(customModels.size(), providerName, type));
+                        cbModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
                     }
                 }
             }
-            onModelChange();
+            saveChanges();
         });
         cbModel.setConverter(modelMetaConverter);
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) return;
-            onModelChange();
+//            if (newValue == null) return;
+            saveChanges();
         });
+    }
+
+    protected void saveChanges() {
+        // reducing saving changes request
+        changeEventSource.push(null);
     }
 
     /**
@@ -95,7 +118,7 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
             cbModelProvider.getSelectionModel().clearSelection();
         }
         if (modelMeta != null) {
-            cbModel.getSelectionModel().select(new Pair<>(modelMeta.name(), modelMeta));
+            cbModel.getSelectionModel().select(new Pair<>(modelMeta.getName(), modelMeta));
         }
         else {
             cbModel.getSelectionModel().clearSelection();
@@ -107,6 +130,9 @@ public abstract class BaseGenAiPrefPane extends BasePrefsPane implements Initial
         if (notify) {
             if (this instanceof GenAiAgentPrefPane) {
                 PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.AGENT_PREF_CHANGED);
+            }
+            else if (this instanceof GenAiDatasetPrefPane) {
+                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.DATASET_PREF_CHANGED);
             }
         }
     }

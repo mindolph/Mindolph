@@ -7,6 +7,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceList;
@@ -26,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IdUtils;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +65,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     private Label lblEmbeddingStatus;
     @FXML
     private Label lblEmbeddingProgress;
+    @FXML
+    private Label lblSelectedFiles;
 
     private DatasetMeta currentDatasetMeta;
 
@@ -79,18 +81,27 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         cbDataset.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             isLoading.set(true);
+            // init all components from dataset choosing.
             DatasetMeta datasetMeta = newValue.getValue();
             if (datasetMeta != null) {
                 currentDatasetMeta = datasetMeta;
+                // save current active dataset ID.
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_DATASET_LATEST, datasetMeta.getId());
+                // init model provider and model.
                 super.selectModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
+                // init language.
                 if (StringUtils.isNotBlank(currentDatasetMeta.getLanguageCode())) {
                     cbLanguage.getSelectionModel().select(new Pair<>(currentDatasetMeta.getLanguageCode(), SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode())));
                 }
                 else {
                     cbLanguage.getSelectionModel().clearSelection();
                 }
+                lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles().size()));
             }
+            else {
+                log.warn("unknow dataset");
+            }
+            // init workspace selector and load selected files through workspace selection change event.
             String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
             WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
             workspaceSelector.loadWorkspaces(workspaceList, workspaceList.getProjects().getFirst());
@@ -138,7 +149,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         });
 
         // only embedding models are applied
-        super.initProvidersAndModels(2);
+        super.initProvidersAndModels(GenAiConstants.MODEL_TYPE_EMBEDDING);
 
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -148,18 +159,19 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             });
         });
 
-        fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) c -> {
-            while (c.next()) {
-                log.debug("added %d, removed %d".formatted(c.getAddedSize(), c.getRemovedSize()));
-                List<File> selectedFilesList = c.getList().stream().map(TreeItem::getValue).map(NodeData::getFile).toList();
-                if (c.wasAdded()) {
-                    currentDatasetMeta.getAddedFiles().addAll(selectedFilesList);
+        fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) changed -> {
+            while (changed.next()) {
+                log.debug("Selection changed: added %d, removed %d".formatted(changed.getAddedSize(), changed.getRemovedSize()));
+                List<NodeData> addedNodes = changed.getAddedSubList().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
+                List<NodeData> removedNodes = changed.getRemoved().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
+                if (log.isTraceEnabled()) {
+                    addedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
+                    removedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
                 }
-                if (c.wasRemoved()) {
-                    currentDatasetMeta.getRemovedFiles().addAll(selectedFilesList);
-                }
-                onModelChange();
+                currentDatasetMeta.getAddedFiles().addAll(addedNodes.stream().map(NodeData::getFile).toList());
+                currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
             }
+            super.saveChanges();
         });
 
         btnEmbedding.setOnAction(event -> {
@@ -186,7 +198,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     });
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
                 DialogFactory.errDialog(e.getLocalizedMessage());
             } finally {
                 pbProgress.setVisible(false);
@@ -207,7 +219,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
     @Override
     protected void onModelChange() {
-        saveCurrentDataset();
+        this.saveCurrentDataset();
+        // update label after calculated.
+        lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
     }
 
     private DatasetMeta saveCurrentDataset() {
@@ -223,6 +237,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         }
         if (!super.cbModel.getSelectionModel().isEmpty()) {
             datasetMeta.setEmbeddingModel(super.cbModel.getSelectionModel().getSelectedItem().getValue());
+        }
+        else {
+            datasetMeta.setEmbeddingModel(null);
         }
         datasetMeta.merge();
         LlmConfig.getIns().saveDataset(datasetMeta.getId(), datasetMeta);

@@ -109,7 +109,7 @@ public class AiSummaryPane extends BaseAiPane {
         ModelMeta modelMeta = cbModel.getValue().getValue();
         this.toggleComponents(true);
         taOutput.clear();
-        log.info("Start to summarize with model: '%s'".formatted(modelMeta.name()));
+        log.info("Start to summarize with model: '%s'".formatted(modelMeta.getName()));
         lbMsg.setText(StringUtils.EMPTY);
         bondEditor.setDisable(true);
         String prompt = """
@@ -120,7 +120,7 @@ public class AiSummaryPane extends BaseAiPane {
                 """.formatted(
                 StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
                 txtToBeSummarized);
-        Input input = new InputBuilder().model(modelMeta.name()).text(prompt).temperature(0.5f)
+        Input input = new InputBuilder().model(modelMeta.getName()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
                 .createInput();

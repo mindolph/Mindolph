@@ -1,11 +1,14 @@
 package com.mindolph.core.llm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mindolph.core.constant.GenAiModelProvider;
+import org.swiftboot.util.PathUtils;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @since unknown
@@ -18,7 +21,9 @@ public class DatasetMeta implements Serializable {
     private ModelMeta embeddingModel;
     private String languageCode;
     private List<File> files;
+    @JsonIgnore
     private final transient List<File> addedFiles = new ArrayList<>();
+    @JsonIgnore
     private final transient List<File> removedFiles = new ArrayList<>();
     /**
      * Status of embedding, 0-100 means the percentage of files embedded.
@@ -26,18 +31,37 @@ public class DatasetMeta implements Serializable {
     private int status;
 
     /**
-     *
+     * merge
      */
     public void merge() {
         if (files == null) {
             files = new ArrayList<>();
         }
-        for (File file : addedFiles) {
-            if (!files.contains(file)) {
-                files.add(file);
-            }
-        }
+        files.removeIf(Objects::isNull);
         files.removeAll(removedFiles);
+        files.addAll(addedFiles);
+        files = new ArrayList<>(files.stream().distinct().toList());
+//        for (File file : addedFiles) {
+//            this.addFileIfNecessary(file);
+//        }
+        removedFiles.clear();
+        addedFiles.clear();
+    }
+
+    /**
+     * Add a file only if the file's parent folder is not already included;
+     *
+     * @param file
+     */
+    public void addFileIfNecessary(File file) {
+        // allow adding the new file if it's parent is not already added.
+        if (file != null && !files.contains(file) && files.stream().noneMatch(f -> PathUtils.isParentFolder(f, file))) {
+            if (file.isDirectory()) {
+                // remove all added files that belong to the new file (dir)
+                files.removeIf(file1 -> PathUtils.isParentFolder(file1, file));
+            }
+            files.add(file);
+        }
     }
 
     public String getId() {

@@ -14,6 +14,9 @@ import com.mindolph.core.util.GsonUtils;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.swiftboot.util.JsonUtils;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -33,6 +36,9 @@ import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
  * @since 1.7
  */
 public class LlmConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(LlmConfig.class);
+
     private static LlmConfig ins;
     private final FxPreferences fxPreferences;
 
@@ -79,7 +85,7 @@ public class LlmConfig {
     public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
         ProviderMeta providerMeta = this.loadProviderMeta(provider.getName());
         for (ModelMeta customModel : providerMeta.customModels()) {
-            customModel.setActive(customModel.name().equals(modelMeta.name()));
+            customModel.setActive(customModel.getName().equals(modelMeta.getName()));
         }
         saveProviderMeta(provider, providerMeta);
     }
@@ -191,12 +197,14 @@ public class LlmConfig {
 
     public void saveDataset(String datasetId, DatasetMeta datasetMeta) {
         if (StringUtils.isBlank(datasetId) || datasetMeta == null) {
-            throw new IllegalStateException("Agent id or agent is null");
+            throw new IllegalStateException("Dataset id or dataset is null");
         }
-        Map<String, DatasetMeta> datasetMap = loadAllDatasets();
+        log.debug("save dataset {}", JsonUtils.object2PrettyJson(datasetMeta));
+        Map<String, DatasetMeta> datasetMap = this.loadAllDatasets();
         datasetMeta.setId(datasetId);
         datasetMap.put(datasetId, datasetMeta);
-        String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
+        String json = JsonUtils.object2PrettyJson(datasetMap);
+//        String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
         try {
             IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);
         } catch (IOException e) {

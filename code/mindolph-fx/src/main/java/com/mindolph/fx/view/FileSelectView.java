@@ -2,6 +2,7 @@ package com.mindolph.fx.view;
 
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
@@ -28,7 +29,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     private static final Logger log = LoggerFactory.getLogger(FileSelectView.class);
     private final WorkspaceConfig workspaceConfig = new WorkspaceConfig();
 
-    private CheckBoxTreeItem<NodeData> rootItem;
+    private final CheckBoxTreeItem<NodeData> rootItem;
 
     private boolean excludeFiles = false;
     private boolean expandAllAsDefault = false;
@@ -41,10 +42,28 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         super.setShowRoot(false);
     }
 
+    /**
+     * Load all files in the workspace to the tree view.
+     *
+     * @param workspaceMeta
+     * @param checkedFiles
+     * @param expandAllAsDefault
+     * @param excludeFiles
+     * @param filter
+     */
     public void loadWorkspace(WorkspaceMeta workspaceMeta, List<File> checkedFiles, boolean expandAllAsDefault, boolean excludeFiles, FileFilter filter) {
         this.expandAllAsDefault = expandAllAsDefault;
         this.excludeFiles = excludeFiles;
         this.fileFilter = filter;
+        if (log.isDebugEnabled()) {
+            log.debug("Load Workspace {}", workspaceMeta);
+            log.debug("Checked files: %d".formatted(checkedFiles.size()));
+            checkedFiles.forEach(file -> {
+                log.debug("Checked file: {}", file);
+            });
+            log.debug("Option expandAllAsDefault: {}", expandAllAsDefault);
+            log.debug("Option ExcludeFiles: {}", excludeFiles);
+        }
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
             log.debug("Workspace node '%s' is loaded".formatted(workspaceDataTreeItem.getValue()));
             Platform.runLater(() -> {
@@ -53,12 +72,12 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             });
         });
         rootItem.getChildren().clear();
-        asyncCreateWorkspaceSubTree(workspaceMeta, checkedFiles);
+        this.asyncCreateWorkspaceSubTree(workspaceMeta, checkedFiles);
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta, List<File> checkedFiles) {
-        new Thread(() -> {
-            log.debug("start a new thread to load workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
+        GlobalExecutor.submit(() -> {
+            log.debug("Start a new virtual thread to load workspace: %s".formatted(workspaceMeta.getBaseDirPath()));
             Tree tree = WorkspaceManager.getIns().loadWorkspaceRecursively(workspaceConfig, workspaceMeta);
             Node workspaceNode = tree.getRootNode();
 
@@ -69,7 +88,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                 log.debug("workspace loaded: %s".formatted(workspaceMeta.getBaseDirPath()));
                 EventBus.getIns().notifyWorkspaceLoaded(rootItem);
             });
-        }, "Workspace Load Thread").start();
+        });
     }
 
     /**
@@ -82,7 +101,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         for (Node childNode : parentNode.getChildren()) {
             NodeData nodeData = (NodeData) childNode.getData();
             if (nodeData.isFolder()) {
-                CheckBoxTreeItem<NodeData> folderItem = this.addFolder(parent, nodeData);
+                CheckBoxTreeItem<NodeData> folderItem = this.addFolder(parent, nodeData, checkedFiles);
                 folderItem.setExpanded(this.expandAllAsDefault);
                 this.loadTreeNode(childNode, folderItem, checkedFiles); // recursive
                 this.removeFromParentIfEmpty(parent, folderItem); // empty folders are excluded
@@ -96,15 +115,30 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                         if (this.fileFilter.accept(nodeData.getFile())) {
                             this.addFile(parent, nodeData, checkedFiles);
                         }
+                        else {
+                            if (log.isTraceEnabled()) log.trace("Filtered file: %s".formatted(nodeData.getFile()));
+                        }
                     }
                 }
+                else {
+                    if (log.isTraceEnabled()) log.trace("Ignore excluded file: %s".formatted(nodeData.getFile()));
+                }
+            }
+            else {
+                log.warn("Unknown file type: %s".formatted(nodeData.getFile()));
             }
         }
     }
 
-    public CheckBoxTreeItem<NodeData> addFolder(CheckBoxTreeItem<NodeData> parent, NodeData folderData) {
+    public CheckBoxTreeItem<NodeData> addFolder(CheckBoxTreeItem<NodeData> parent, NodeData folderData, List<File> checkedFiles) {
         CheckBoxTreeItem<NodeData> folderItem = new CheckBoxTreeItem<>(folderData);
         parent.getChildren().add(folderItem);
+        if (log.isTraceEnabled()) log.trace("  add folder: %s".formatted(folderData.getFile()));
+        if (checkedFiles != null && checkedFiles.contains(folderData.getFile())) {
+            folderItem.setSelected(true);
+            folderItem.setIndeterminate(true);
+            super.getCheckModel().check(folderItem);
+        }
         FXCollections.sort(parent.getChildren(), SORTING_TREE_ITEMS);
         return folderItem;
     }
@@ -118,6 +152,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     public CheckBoxTreeItem<NodeData> addFile(CheckBoxTreeItem<NodeData> parent, NodeData fileData, List<File> checkedFiles) {
         CheckBoxTreeItem<NodeData> fileItem = new CheckBoxTreeItem<>(fileData);
         fileItem.setExpanded(this.expandAllAsDefault);
+        if (log.isTraceEnabled()) log.trace("  add file: %s".formatted(fileData.getFile()));
         if (checkedFiles != null && checkedFiles.contains(fileData.getFile())) {
             fileItem.setSelected(true);
             super.getCheckModel().check(fileItem); // TODO TBD

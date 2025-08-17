@@ -58,10 +58,10 @@ public abstract class BaseAiPane extends StackPane {
         Pair<String, ModelMeta> targetItem = null;
         List<Pair<String, ModelMeta>> allModels = new ArrayList<>();
         List<Pair<String, ModelMeta>> preModels = PROVIDER_MODELS.get(activeProvider)
-                .stream().map(m -> new Pair<>(m.name(), m)).sorted(MODEL_COMPARATOR).toList();
+                .stream().map(m -> new Pair<>(m.getName(), m)).sorted(MODEL_COMPARATOR).toList();
         allModels.addAll(preModels);
         if (providerMeta.customModels() != null) {
-            List<Pair<String, ModelMeta>> customModels = providerMeta.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.name(), modelMeta)).toList();
+            List<Pair<String, ModelMeta>> customModels = providerMeta.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList();
             allModels.addAll(customModels);
         }
         if ("Custom".equals(providerMeta.aiModel())) {
@@ -70,7 +70,7 @@ public abstract class BaseAiPane extends StackPane {
                 activeModel = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
             }
             if (activeModel != null) {
-                targetItem = new Pair<>(activeModel.name(), activeModel);
+                targetItem = new Pair<>(activeModel.getName(), activeModel);
             }
         }
         else {

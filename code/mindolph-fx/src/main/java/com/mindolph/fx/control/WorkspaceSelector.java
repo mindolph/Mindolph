@@ -50,9 +50,9 @@ public class WorkspaceSelector extends ComboBox<Pair<String, WorkspaceMeta>> {
         super.getItems().clear();
         super.getItems().addAll(workspaceList.getProjects().stream().map(meta -> new Pair<>(meta.getBaseDirPath(), meta)).toList());
 
-        // init the active workspace if the workspace exist
+        // init the active workspace if the workspace exists
         String activeWorkspacePath = currentWorkspace.getBaseDirPath();
-        log.debug("Last active workspace: " + currentWorkspace.getBaseDirPath());
+        log.debug("Last active workspace: %s".formatted(currentWorkspace.getBaseDirPath()));
         if (StringUtils.isNotBlank(activeWorkspacePath)
                 && super.getItems().stream().anyMatch(p -> p.getKey().equals(activeWorkspacePath))) {
             // if the workspace dir is sub-dir of existing workspace, must exactly match the path.

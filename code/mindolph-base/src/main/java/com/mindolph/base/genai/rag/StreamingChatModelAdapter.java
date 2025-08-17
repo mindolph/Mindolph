@@ -66,7 +66,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
         }).toList();
         String collectedMsg = String.join("\n", msgs);
         Input input = new InputBuilder().text(collectedMsg)
-                .model(agentMeta.getChatModel().name()).maxTokens(agentMeta.getChatModel().maxTokens())
+                .model(agentMeta.getChatModel().getName()).maxTokens(agentMeta.getChatModel().maxTokens())
                 .isStreaming(true).temperature(0.5f).createInput();
         OutputParams oparams = new OutputParams(null, GenAiConstants.OutputFormat.TEXT);
         this.llmProvider.stream(input, oparams, streamToken -> {

@@ -22,7 +22,7 @@ public interface GenaiUiConstants {
 
     //     Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
-            (o1, o2) -> o1.getValue().name().compareTo(o2.getValue().name());
+            (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
 
     Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>("Custom", new ModelMetaBuilder().name("Custom").maxTokens(0).build());
 
@@ -58,7 +58,7 @@ public interface GenaiUiConstants {
     StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new StringConverter<>() {
         @Override
         public String toString(Pair<String, ModelMeta> object) {
-            return object == null ? "" : object.getValue().name();
+            return object == null ? "" : object.getValue().getName();
         }
 
         @Override

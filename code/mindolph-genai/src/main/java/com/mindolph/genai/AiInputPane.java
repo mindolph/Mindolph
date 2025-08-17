@@ -71,8 +71,8 @@ public class AiInputPane extends BaseAiPane {
 
         ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
         taInput.setPromptText("The prompt to generate content by %s".formatted(activeProvider));
-        if (modelMeta != null && StringUtils.isNotBlank(modelMeta.name())) {
-            log.info("with default model: '%s'".formatted(modelMeta.name()));
+        if (modelMeta != null && StringUtils.isNotBlank(modelMeta.getName())) {
+            log.info("with default model: '%s'".formatted(modelMeta.getName()));
         }
 
         lbTitle.setText("Generate content with %s".formatted(activeProvider));
@@ -101,7 +101,7 @@ public class AiInputPane extends BaseAiPane {
                 }
                 lbMsg.setText(null);
                 this.toggleComponents(true);
-                String modelName = selectedModel.getValue().name();
+                String modelName = selectedModel.getValue().getName();
                 boolean isStreaming = !SupportFileTypes.TYPE_MIND_MAP.equals(fileType);// && !SupportFileTypes.TYPE_PLANTUML.equals(fileType);
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);

@@ -83,7 +83,7 @@ public class ChatView extends BaseView implements Initializable {
                 Platform.runLater(() -> {
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
-                    String lb = "%s: %s\n".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().name());
+                    String lb = "%s: %s\n".formatted(currentAgentMeta.getProvider().getName(), currentAgentMeta.getChatModel().getName());
                     lblAgent.setText(lb);
                     ChatPartial cp = new ChatPartial("Ask me anything", MessageType.AI, true);
                     chatPane.appendChatPartial(cp);

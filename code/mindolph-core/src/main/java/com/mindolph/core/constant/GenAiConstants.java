@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
  */
 public interface GenAiConstants {
 
+    int MODEL_TYPE_CHAT = 1;
+    int MODEL_TYPE_EMBEDDING = 2;
+
     /**
      * Look up information for a pre-defined model.
      *
@@ -26,7 +29,7 @@ public interface GenAiConstants {
      */
     static ModelMeta lookupModelMeta(String providerName, String modelName) {
         Collection<ModelMeta> modelMetas = PROVIDER_MODELS.get(providerName);
-        Optional<ModelMeta> first = modelMetas.stream().filter(m -> m.name().equals(modelName)).findFirst();
+        Optional<ModelMeta> first = modelMetas.stream().filter(m -> m.getName().equals(modelName)).findFirst();
         return first.orElse(null);
     }
 
@@ -133,8 +136,8 @@ public interface GenAiConstants {
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-128k", 131072));
 
             // Internal
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").langCode("en").downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").langCode("zh_CN").downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("en").downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("zh_CN").downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
         }
     };
 
