@@ -1,8 +1,8 @@
 package com.mindolph.mindmap.utils;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.igormaznitsa.mindmap.model.TopicUtils;
 import com.mindolph.mindmap.model.TopicNode;
-import com.mindolph.mindmap.util.MindMapUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class MindMapUtilsTest {
         TopicNode son = new TopicNode(map, map.getRoot(), "son");
         TopicNode grandson = new TopicNode(map, son, "grandson");
 
-        List<TopicNode> topicNodes = MindMapUtils.removeDuplicatedAndDescendants(Arrays.asList(map.getRoot(), son, grandson));
+        List<TopicNode> topicNodes = TopicUtils.removeDuplicatedAndDescendants(Arrays.asList(map.getRoot(), son, grandson));
         Assert.assertEquals(1, topicNodes.size());
     }
 }

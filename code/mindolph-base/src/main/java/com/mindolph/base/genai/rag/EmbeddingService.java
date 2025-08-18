@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.rag;
 
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentParser;
@@ -19,10 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
 import org.swiftboot.util.IdUtils;
-import org.swiftboot.util.NumberFormatUtils;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -72,42 +76,62 @@ public class EmbeddingService extends BaseEmbeddingService {
         });
     }
 
-    public void embed(DatasetMeta datasetMeta, Consumer<Object> completed) {
-        new Thread(() -> {
+    /**
+     * Embed all files in the dataset.
+     *
+     * @param datasetMeta
+     * @param completed
+     */
+    public void embedDataset(DatasetMeta datasetMeta, Consumer<Object> completed) {
+        GlobalExecutor.submit(() -> {
             if (datasetMeta.getFiles() == null || datasetMeta.getFiles().isEmpty()) {
                 log.warn("No files to be embedded");
                 return;
             }
+            List<File> files = datasetMeta.getFiles();
+            int total = files.size();
+            int successCount = 0;
             try {
                 EmbeddingModel embeddingModel = super.createEmbeddingModel(
                         datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
                 EmbeddingStore<TextSegment> embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
-
-
-                List<File> files = datasetMeta.getFiles();
-                int total = files.size();
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
                     if (file.isDirectory()) {
-                        FileUtils.listFiles(file, SUPPORTED_EMBEDDING_FILE_TYPES, true).forEach(f -> {
-                            embedFile(f, datasetMeta.getId(), embeddingModel, embeddingStore);
-                        });
+                        // NOTE: the directory is not included in the dataset yet, so the handling doesn't affect for now.
+                        for (File f : FileUtils.listFiles(file, SUPPORTED_EMBEDDING_FILE_TYPES, true)) {
+                            if (this.embedFile(f, datasetMeta.getId(), embeddingModel, embeddingStore)) {
+                                successCount++;
+                            }
+                        }
                     }
                     else if (file.isFile()) {
-                        embedFile(file, datasetMeta.getId(), embeddingModel, embeddingStore);
+                        if (this.embedFile(file, datasetMeta.getId(), embeddingModel, embeddingStore)) {
+                            successCount++;
+                        }
                     }
-                    super.progressEventSource.emit("%f".formatted(NumberFormatUtils.toPercent((i / total), 1)));
+                    BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 1, RoundingMode.HALF_UP);
+                    super.emitProgressEvent("Embedding...", ratio.floatValue());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                completed.accept(e);
+                log.error(e.getMessage(), e);
+                completed.accept("Failed: %s".formatted(e.getMessage()));
                 return;
             }
-            completed.accept("Embedding done successfully");
-        }).start();
+            completed.accept("Embedding done with %d successes of %d".formatted(successCount, total));
+        });
     }
 
-    private void embedFile(File f, String datasetId, EmbeddingModel embeddingModel, EmbeddingStore<TextSegment> embeddingStore) {
+    /**
+     * Embed a file with specified embedding model and save to target embedding store,
+     *
+     * @param f
+     * @param datasetId
+     * @param embeddingModel
+     * @param embeddingStore
+     * @return success or not
+     */
+    private boolean embedFile(File f, String datasetId, EmbeddingModel embeddingModel, EmbeddingStore<TextSegment> embeddingStore) {
         log.info("embed file {}", f);
         String extension = FilenameUtils.getExtension(f.getName());
         DocumentParser documentParser;
@@ -115,38 +139,49 @@ public class EmbeddingService extends BaseEmbeddingService {
         switch (extension) {
             case TYPE_MIND_MAP:
                 documentParser = new MindMapDocumentParser();
-                splitter = new MindMapDocumentSplitter(1024, 1024);
+                // use common doc splitter since the mind map has been converted to Markdown by MindMapDocumentParser;
+                splitter = DocumentSplitters.recursive(512, 0);
+//                splitter = new MindMapDocumentSplitter(1024, 1024);
                 break;
             default:
                 documentParser = new TextDocumentParser();
-                splitter = DocumentSplitters.recursive(300, 0);
+                splitter = DocumentSplitters.recursive(512, 0);
         }
 
         log.debug("embed file with parser %s and splitter %s".formatted(documentParser.getClass().getSimpleName(), splitter.getClass().getSimpleName()));
 
-        Document document = FileSystemDocumentLoader.loadDocument(f.getPath(), documentParser);
         String docId = this.persistDocumentMetaIfNotExist(datasetId, f.getPath());
         if (StringUtils.isBlank(docId)) {
             log.error("Failed to persist document meta: {}", f.getPath());
-            return;
+            return false;
         }
-
-        // remove existing embedding first
-        embeddingStore.removeAll(new MetadataFilterBuilder("doc_id").isEqualTo(docId));
-
-        // do split and embed.
-        List<TextSegment> segments = splitter.split(document);
-        segments.forEach(segment -> {
-            segment.metadata().put("doc_id", docId);
-        });
-        List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
         try {
+            Document document = null;
+
+            document = FileSystemDocumentLoader.loadDocument(f.getPath(), documentParser);
+
+            log.debug("Doc meta: %s".formatted(document.metadata()));
+            if (log.isTraceEnabled()) log.trace(StringUtils.abbreviate(document.text(), 256));
+
+            // remove existing embedding first
+            embeddingStore.removeAll(new MetadataFilterBuilder("doc_id").isEqualTo(docId));
+
+            // do split and embed.
+            List<TextSegment> segments = splitter.split(document);
+            segments.forEach(segment -> {
+                segment.metadata().put("doc_id", docId);
+            });
+            List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
+
             embeddingStore.addAll(embeddings, segments);
+            this.updateDocument(docId, segments.size(), true, "");
+            return true;
         } catch (Exception e) {
-            this.updateDocument(docId, segments.size(), false);
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            log.debug(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+            this.updateDocument(docId, 0, false, e.getMessage());
+            return false;
         }
-        this.updateDocument(docId, segments.size(), true);
     }
 
 
@@ -180,14 +215,15 @@ public class EmbeddingService extends BaseEmbeddingService {
         });
     }
 
-    private void updateDocument(String docId, int blockCount, boolean embedded) {
+    private void updateDocument(String docId, int blockCount, boolean embedded, String comment) {
         super.withJdbcConnection((Function<Connection, Void>) connection -> {
             try {
                 PreparedStatement ps = connection.prepareStatement(
-                        "update mindolph_doc set block_count = ?, embedded = ? where id = ?");
+                        "update mindolph_doc set block_count = ?, embedded = ?, comment = ? where id = ?");
                 ps.setInt(1, blockCount);
                 ps.setBoolean(2, embedded);
-                ps.setString(3, docId);
+                ps.setString(3, comment);
+                ps.setString(4, docId);
                 if (ps.executeUpdate() == 0) {
                     throw new RuntimeException("Failed to update document meta");
                 }

@@ -29,13 +29,13 @@
                 <WorkspaceSelector fx:id="workspaceSelector" prefWidth="240.0" HBox.hgrow="ALWAYS"/>
                 <FileSelectView fx:id="fileSelectView" prefWidth="320" prefHeight="350"/>
                 <Label fx:id="lblSelectedFiles">
-                    Selected 12 folder and 138 files.
+
                 </Label>
             </VBox>
         </PreferenceItem>
         <PreferenceItem name="Embedding: ">
             <VBox spacing="5">
-                <Label fx:id="lblEmbeddingStatus" text="0%"/>
+                <Label fx:id="lblEmbeddingStatus"/>
                 <HBox spacing="5">
                     <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
                     <Label fx:id="lblEmbeddingProgress" text="0%"/>

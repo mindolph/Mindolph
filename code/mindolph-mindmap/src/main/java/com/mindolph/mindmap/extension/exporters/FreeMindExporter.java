@@ -20,13 +20,13 @@ package com.mindolph.mindmap.extension.exporters;
 import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
-import com.mindolph.mindmap.constant.VendorConstants;
+import com.igormaznitsa.mindmap.model.VendorConstants;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.TopicNodeUtils;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
@@ -41,7 +41,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mindolph.core.constant.TextConstants.DATE_TIME_FORMAT;
+import static com.igormaznitsa.mindmap.model.Constants.MMD_DATE_TIME_FORMAT;
 
 /**
  * TBD
@@ -72,10 +72,10 @@ public class FreeMindExporter extends BaseExportExtension {
                 .append("\" MODIFIED=\"")
                 .append(System.currentTimeMillis())
                 .append("\" COLOR=\"")
-                .append(StringUtils.replace(TopicUtils.getTextColor(cfg, topic).toString(), "0x", "#")) // workaround
+                .append(StringUtils.replace(TopicNodeUtils.getTextColor(cfg, topic).toString(), "0x", "#")) // workaround
                 .append("\" BACKGROUND_COLOR=\"")
                 .append(StringUtils.replace(
-                        TopicUtils.getBackgroundColor(cfg, topic).toString(), "0x", "#"))
+                        TopicNodeUtils.getBackgroundColor(cfg, topic).toString(), "0x", "#"))
                 .append("\" ")
                 .append(position.isEmpty() ? " " : String.format("POSITION=\"%s\"", position))
                 .append(" ID=\"")
@@ -85,9 +85,9 @@ public class FreeMindExporter extends BaseExportExtension {
                 .append(escapeXML(topic.getText()))
                 .append("\" ");
 
-        ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
-        ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
-        ExtraTopic transition = (ExtraTopic) this.findExtra(topic, Extra.ExtraType.TOPIC);
+        ExtraFile file = (ExtraFile) TopicUtils.findExtra(topic, Extra.ExtraType.FILE);
+        ExtraLink link = (ExtraLink) TopicUtils.findExtra(topic, Extra.ExtraType.LINK);
+        ExtraTopic transition = (ExtraTopic) TopicUtils.findExtra(topic, Extra.ExtraType.TOPIC);
 
         String thelink;
 
@@ -171,7 +171,7 @@ public class FreeMindExporter extends BaseExportExtension {
         state.append("<map version=\"1.0.1\">").nextLine();
 
         state.append("<!--").nextLine().append(VendorConstants.GENERATE_BY).nextLine();
-        state.append(DateFormatUtils.format(System.currentTimeMillis(), DATE_TIME_FORMAT)).nextLine().append("-->").nextLine();
+        state.append(DateFormatUtils.format(System.currentTimeMillis(), MMD_DATE_TIME_FORMAT)).nextLine().append("-->").nextLine();
 
         TopicNode root = context.getModel().getRoot();
         if (root != null) {

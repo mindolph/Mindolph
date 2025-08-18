@@ -7,6 +7,7 @@ create table mindolph_doc
     file_path  varchar(1024) not null,
     dataset_id varchar(32)   not null,
     block_count integer,
-    embedded bool default FALSE
+    embedded bool default FALSE,
+    comment  varchar(1024)
 );
 

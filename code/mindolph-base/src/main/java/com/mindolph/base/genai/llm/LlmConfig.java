@@ -76,7 +76,7 @@ public class LlmConfig {
     }
 
     /**
-     * Activate custom model directly for active provider.
+     * Activate a custom model directly for active provider.
      *
      * @param provider
      * @param modelMeta

@@ -1,4 +1,4 @@
-package com.mindolph.mindmap.constant;
+package com.igormaznitsa.mindmap.model;
 
 /**
  * @author mindolph.com@gmail.com

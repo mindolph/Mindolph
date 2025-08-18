@@ -25,7 +25,6 @@ import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.TextUtils;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
@@ -73,17 +72,17 @@ public class ORGMODEExporter extends BaseExportExtension {
                     .append(escapeStr(topic.getText(), true)).nextLine();
         }
 
-        String topicUid = getTopicUid(topic);
+        String topicUid = TopicUtils.getTopicUid(topic);
         if (topicUid != null) {
             state.append(":PROPERTIES:").nextLine();
             state.append(":CUSTOM_ID: sec:").append(topicUid).nextLine();
             state.append(":END:").nextLine();
         }
 
-        ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
-        ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
-        ExtraNote note = (ExtraNote) this.findExtra(topic, Extra.ExtraType.NOTE);
-        ExtraTopic jump = (ExtraTopic) this.findExtra(topic, Extra.ExtraType.TOPIC);
+        ExtraFile file = (ExtraFile) TopicUtils.findExtra(topic, Extra.ExtraType.FILE);
+        ExtraLink link = (ExtraLink) TopicUtils.findExtra(topic, Extra.ExtraType.LINK);
+        ExtraNote note = (ExtraNote) TopicUtils.findExtra(topic, Extra.ExtraType.NOTE);
+        ExtraTopic jump = (ExtraTopic) TopicUtils.findExtra(topic, Extra.ExtraType.TOPIC);
 
         boolean extrasPrinted = false;
 
@@ -92,7 +91,7 @@ public class ORGMODEExporter extends BaseExportExtension {
             if (linkedTopic != null) {
                 state.append(prefix).append("RELATED TO: ")
                         .append("[[#sec:")
-                        .append(getTopicUid(linkedTopic))
+                        .append(TopicUtils.getTopicUid(linkedTopic))
                         .append("][")
                         .append(escapeStr(makeLineFromString(linkedTopic.getText()), true))
                         .append("]]")
@@ -139,7 +138,7 @@ public class ORGMODEExporter extends BaseExportExtension {
 
                 String body = e.getValue();
                 for (String s : StringUtils.split(body, '\n')) {
-                    state.append(prefix).append(TextUtils.removeAllISOControlsButTabs(s)).nextLine();
+                    state.append(prefix).append(ModelUtils.removeAllISOControlsButTabs(s)).nextLine();
                 }
 
                 state.append(prefix).append("#+END_SRC").nextLine();

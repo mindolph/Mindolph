@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.segment.TextSegment;
@@ -122,7 +123,7 @@ public class RagService extends BaseEmbeddingService {
 
     public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
         log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().getName());
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             try {
                 this.switchModel(agentMeta.getId(), o -> {
                     if (o instanceof Exception) {
@@ -148,7 +149,7 @@ public class RagService extends BaseEmbeddingService {
             } catch (Exception e) {
                 finished.accept(e);
             }
-        }).start();
+        });
     }
 
     public void chat(String message, Consumer<TokenStream> consumer) {
@@ -156,13 +157,13 @@ public class RagService extends BaseEmbeddingService {
         if (agent == null) {
             throw new RuntimeException("Use agent before chatting");
         }
-        new Thread(() -> {
+        GlobalExecutor.submit(() -> {
             try {
                 TokenStream tokenStream = agent.chat(message);
                 consumer.accept(tokenStream);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 }

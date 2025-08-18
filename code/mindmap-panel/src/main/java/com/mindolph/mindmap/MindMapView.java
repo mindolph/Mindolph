@@ -29,7 +29,7 @@ import com.mindolph.mindmap.extension.attributes.images.ImageVisualAttributeExte
 import com.mindolph.mindmap.model.*;
 import com.mindolph.mindmap.util.ElementUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.TopicNodeUtils;
 import com.mindolph.mindmap.util.Utils;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -1450,7 +1450,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
 
         int pos = ElementUtils.calcDropPosition(destination, dropPoint);
-        List<TopicNode> toBeDropped = TopicUtils.convertSelectedTopicsToDroppedTopics(selection.get());
+        List<TopicNode> toBeDropped = TopicNodeUtils.convertSelectedTopicsToDroppedTopics(selection.get());
         switch (pos) {
             case MindMapConstants.DRAG_POSITION_TOP:
             case MindMapConstants.DRAG_POSITION_BOTTOM: {
@@ -1686,18 +1686,18 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
 
     public void copy() {
-        boolean result = copyTopicsToClipboard(MindMapUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), false);
-        log.debug("topics copied: " + result);
+        boolean result = copyTopicsToClipboard(com.igormaznitsa.mindmap.model.TopicUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), false);
+        log.debug("topics copied: %s".formatted(result));
     }
 
     public void paste() {
         boolean result = pasteTopicsFromClipboard();
-        log.debug("topics pasted: " + result);
+        log.debug("topics pasted: %s".formatted(result));
     }
 
     public void cut() {
-        boolean result = this.copyTopicsToClipboard(MindMapUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), true);
-        log.debug("topics cut: " + result);
+        boolean result = this.copyTopicsToClipboard(com.igormaznitsa.mindmap.model.TopicUtils.removeDuplicatedAndDescendants(this.getSelectedTopics()), true);
+        log.debug("topics cut: %s".formatted(result));
     }
 
     /**
@@ -1717,7 +1717,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             ClipboardContent clipboardContent = new ClipboardContent();
             ClipboardTopicsContainer container = new ClipboardTopicsContainer(topics.toArray(new TopicNode[]{}));
             try {
-                String text = TopicUtils.convertTopicsToText(topics, true);
+                String text = TopicNodeUtils.convertTopicsToText(topics, true);
                 if (log.isTraceEnabled()) log.trace("Text to clipboard: '%s'".formatted(text));
                 clipboardContent.putString(text);
                 clipboardContent.put(MMD_DATA_FORMAT, container);

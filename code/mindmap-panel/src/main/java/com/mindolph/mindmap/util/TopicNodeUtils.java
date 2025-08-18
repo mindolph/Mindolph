@@ -19,7 +19,7 @@ import static com.mindolph.mindmap.constant.StandardTopicAttribute.*;
 /**
  * @author mindolph.com@gmail.com
  */
-public class TopicUtils {
+public class TopicNodeUtils {
 
     /**
      * @param topics

@@ -26,7 +26,7 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.CryptoUtils;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.TopicNodeUtils;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
@@ -81,10 +81,10 @@ public class MindmupExporter extends BaseExportExtension {
                 GetUtils.ensureNonNull(topic.getAttribute(ExtraTopic.TOPIC_UID_ATTR), "genlink_" + topicId);
         uuidMap.put(uuid, new TopicId(topicId, uuid, topic));
 
-        ExtraNote note = (ExtraNote) this.findExtra(topic, Extra.ExtraType.NOTE);
-        ExtraTopic jump = (ExtraTopic) this.findExtra(topic, Extra.ExtraType.TOPIC);
-        ExtraLink link = (ExtraLink) this.findExtra(topic, Extra.ExtraType.LINK);
-        ExtraFile file = (ExtraFile) this.findExtra(topic, Extra.ExtraType.FILE);
+        ExtraNote note = (ExtraNote) TopicUtils.findExtra(topic, Extra.ExtraType.NOTE);
+        ExtraTopic jump = (ExtraTopic) TopicUtils.findExtra(topic, Extra.ExtraType.TOPIC);
+        ExtraLink link = (ExtraLink) TopicUtils.findExtra(topic, Extra.ExtraType.LINK);
+        ExtraFile file = (ExtraFile) TopicUtils.findExtra(topic, Extra.ExtraType.FILE);
 
         String encodedImage = topic.getAttribute(ATTR_IMAGE_KEY);
 
@@ -95,7 +95,7 @@ public class MindmupExporter extends BaseExportExtension {
         stringer.key("attr").object();
 
         stringer.key("style").object();
-        stringer.key("background").value(TopicUtils.getBackgroundColor(cfg, topic).toString());
+        stringer.key("background").value(TopicNodeUtils.getBackgroundColor(cfg, topic).toString());
         stringer.endObject();
 
         if (note != null) {

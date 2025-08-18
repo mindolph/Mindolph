@@ -11,6 +11,9 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * TBD
+ */
 public class MindMapDocumentSplitter extends HierarchicalDocumentSplitter {
 
     protected MindMapDocumentSplitter(int maxSegmentSizeInChars, int maxOverlapSizeInChars) {

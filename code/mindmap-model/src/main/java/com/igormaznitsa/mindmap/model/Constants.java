@@ -18,5 +18,6 @@ package com.igormaznitsa.mindmap.model;
 
 public interface Constants {
   String NEXT_LINE = "\n"; 
-  String NEXT_PARAGRAPH = "   \n"; 
+  String NEXT_PARAGRAPH = "   \n";
+  String MMD_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 }

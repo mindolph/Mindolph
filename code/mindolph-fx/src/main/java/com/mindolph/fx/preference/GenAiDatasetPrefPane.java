@@ -1,6 +1,7 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IdUtils;
+import org.swiftboot.util.NumberFormatUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -190,13 +192,14 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             });
             try {
                 EmbeddingService.getInstance().initDatabaseIfNotExist();
-                EmbeddingService.getInstance().embed(currentDatasetMeta, payload -> {
+                EmbeddingService.getInstance().embedDataset(currentDatasetMeta, payload -> {
                     Platform.runLater(() -> {
-                        pbProgress.setVisible(false);
+                        // pbProgress.setVisible(false);
                         lblEmbeddingStatus.setText(payload.toString());
                         lblEmbeddingProgress.setText("100%");
                     });
                 });
+                // NOTE: the progress events are listened by the EmbeddingService::listenOnProgressEvent.
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e);
                 DialogFactory.errDialog(e.getLocalizedMessage());
@@ -212,8 +215,16 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         cbDataset.getSelectionModel().select(selectIdx);
 
         // listen for embedding
-        EmbeddingService.getInstance().listenOnProgressEvent(s -> {
-            Platform.runLater(() -> lblEmbeddingStatus.setText(s));
+        EmbeddingService.getInstance().listenOnProgressEvent(progress -> {
+            Platform.runLater(() -> {
+                lblEmbeddingStatus.setText(progress.msg());
+                if (EmbeddingStage.EMBEDDING.equals(progress.stage())) {
+                    log.debug("progress: %.1f".formatted(progress.ratio()));
+                    pbProgress.setProgress(progress.ratio());
+                    Double percent = NumberFormatUtils.toPercent(progress.ratio(), 1);
+                    lblEmbeddingProgress.setText("%.1f%%".formatted(percent));
+                }
+            });
         });
     }
 

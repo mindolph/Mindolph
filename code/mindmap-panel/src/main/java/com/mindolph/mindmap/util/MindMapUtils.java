@@ -96,23 +96,6 @@ public final class MindMapUtils {
         return file;
     }
 
-    /**
-     * Remove duplicated and descendant.
-     *
-     * @param topics array to be processed
-     * @return
-     */
-    public static List<TopicNode> removeDuplicatedAndDescendants(List<TopicNode> topics) {
-        List<TopicNode> result = new ArrayList<>();
-        for (TopicNode t : topics) {
-            if (result.contains(t) || topics.stream().anyMatch(t::isAncestor)) {
-                continue; // exclude if has ancestor
-            }
-            result.add(t);
-        }
-        return result;
-    }
-
     public static String makeTooltipForExtra(MindMap<TopicNode> model, Extra<?> extra) {
         StringBuilder builder = new StringBuilder();
         switch (extra.getType()) {

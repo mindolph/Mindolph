@@ -10,7 +10,7 @@ import com.mindolph.mindmap.extension.exporters.BaseLiteralExportExtension;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
 import com.mindolph.mindmap.util.MindMapUtils;
-import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.TopicNodeUtils;
 import javafx.scene.text.Text;
 import org.apache.commons.io.IOUtils;
 
@@ -56,8 +56,8 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     protected String convertTopics(MindMap<TopicNode> model, List<TopicNode> topics) {
-        topics = MindMapUtils.removeDuplicatedAndDescendants(topics);
-        return TopicUtils.convertTopicsToText(topics, this.includeAttributes);
+        topics = com.igormaznitsa.mindmap.model.TopicUtils.removeDuplicatedAndDescendants(topics);
+        return TopicNodeUtils.convertTopicsToText(topics, this.includeAttributes);
     }
 
     @Override

@@ -197,7 +197,7 @@ public final class ModelUtils {
                 String encodedKey = URLEncoder.encode(k, "UTF-8");
                 String encodedValue = URLEncoder.encode(properties.getProperty(k), "UTF-8");
 
-                if (buffer.length() > 0) {
+                if (!buffer.isEmpty()) {
                     buffer.append('&');
                 }
                 buffer.append(encodedKey).append('=').append(encodedValue);
@@ -340,7 +340,7 @@ public final class ModelUtils {
             }
 
             for (Path p : path) {
-                if (buffer.length() > 0 && buffer.charAt(buffer.length() - 1) != '/') {
+                if (!buffer.isEmpty() && buffer.charAt(buffer.length() - 1) != '/') {
                     buffer.append('/');
                 }
                 buffer.append(encodeForURI(p.toFile().getName()));
@@ -389,6 +389,28 @@ public final class ModelUtils {
         String[] fullArray = pathItems.toArray(new String[0]);
         String[] next = Arrays.copyOfRange(fullArray, 1, fullArray.length);
         return Paths.get(fullArray[0], next).toFile();
+    }
+
+    public static String removeAllISOControls(String str) {
+        StringBuilder result = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            if (Character.isISOControl(c)) {
+                continue;
+            }
+            result.append(c);
+        }
+        return result.toString();
+    }
+
+    public static String removeAllISOControlsButTabs(String str) {
+        StringBuilder result = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            if (c != '\t' && Character.isISOControl(c)) {
+                continue;
+            }
+            result.append(c);
+        }
+        return result.toString();
     }
 
     private static final class StringComparator implements Comparator<String>, Serializable {

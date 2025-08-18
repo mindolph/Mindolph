@@ -2,6 +2,7 @@ package com.mindolph.mindmap.extension.exporters.branch;
 
 import com.igormaznitsa.mindmap.model.ExtraNote;
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.igormaznitsa.mindmap.model.TopicUtils;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
@@ -13,7 +14,6 @@ import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
-import com.mindolph.mindmap.util.MindMapUtils;
 import javafx.scene.control.Dialog;
 import javafx.scene.text.Text;
 import org.apache.commons.io.FileUtils;
@@ -56,7 +56,7 @@ public class MindMapBranchExporter extends BaseExportExtension {
             ExtraNote extraNote = new ExtraNote("This file is exported from %s at %s".formatted(exportFileName, TimeUtils.createTimestamp()));
             TopicNode rootNode = new TopicNode(newModel, null, input.get(), extraNote);
             newModel.setRoot(rootNode);
-            List<TopicNode> topics = MindMapUtils.removeDuplicatedAndDescendants(context.getSelectedTopics());
+            List<TopicNode> topics = TopicUtils.removeDuplicatedAndDescendants(context.getSelectedTopics());
             if (topics.isEmpty()) {
                 DialogFactory.infoDialog("Select topic(s) to export");
                 return;

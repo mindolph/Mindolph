@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.rag;
 
+import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.core.llm.DataSourceConfig;
 import com.mindolph.core.util.AppUtils;
 import dev.langchain4j.data.segment.TextSegment;
@@ -11,21 +12,26 @@ import dev.langchain4j.store.embedding.pgvector.DefaultMetadataStorageConfig;
 import dev.langchain4j.store.embedding.pgvector.MetadataStorageMode;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.reactfx.EventSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @since unknown
  */
-public class BaseEmbeddingService {
+public abstract class BaseEmbeddingService {
 
-    protected final EventSource<String> progressEventSource = new EventSource<>();
+
+    private static final Logger log = LoggerFactory.getLogger(BaseEmbeddingService.class);
+
+    protected final EventSource<EmbeddingProgress> progressEventSource = new EventSource<>();
 
     protected <T> T withJdbcConnection(Function<Connection, T> handler) {
         DataSourceConfig dsConfig = new DataSourceConfig(System.getenv("PG_HOST"), Integer.parseInt(System.getenv("PG_PORT")));
@@ -36,7 +42,7 @@ public class BaseEmbeddingService {
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
             return handler.apply(conn);
         } catch (SQLException e) {
-            System.err.printf("Error connecting to the database: %s%n", e.getMessage());
+            log.error("Error connecting to the database", e);
             e.printStackTrace(); // Print the full stack trace for debugging
             throw new RuntimeException(e);
         }
@@ -50,14 +56,14 @@ public class BaseEmbeddingService {
         File tokenizerFile = new File(baseDir, pathToTokenizer);
         if (!modelFile.exists()) {
             // download
-            emitProgressEvent("Downloading onnx model...");
+            this.emitProgressEvent("Downloading onnx model...");
         }
         if (!tokenizerFile.exists()) {
             // download
-            emitProgressEvent("Downloading onnx tokenizer...");
+            this.emitProgressEvent("Downloading onnx tokenizer...");
         }
         PoolingMode poolingMode = PoolingMode.MEAN;
-        emitProgressEvent("Loading onnx model tokenizer...");
+        this.emitProgressEvent("Loading onnx model tokenizer...");
         return new OnnxEmbeddingModel(modelFile.getPath(), tokenizerFile.getPath(), poolingMode);
     }
 
@@ -74,16 +80,29 @@ public class BaseEmbeddingService {
                 .dimension(embeddingModel.dimension())
                 .dropTableFirst(dropTable)
                 .metadataStorageConfig(DefaultMetadataStorageConfig.builder().storageMode(MetadataStorageMode.COLUMN_PER_KEY)
-                        .columnDefinitions(Arrays.asList("doc_id varchar(32) not null")).build())
+                        .columnDefinitions(List.of("doc_id varchar(32) not null")).build())
                 .build();
         return embeddingStore;
     }
 
-    public void listenOnProgressEvent(Consumer<String> callback) {
+    public void listenOnProgressEvent(Consumer<EmbeddingProgress> callback) {
         progressEventSource.subscribe(callback);
     }
 
     public void emitProgressEvent(String message) {
-        progressEventSource.push(message);
+        progressEventSource.push(new EmbeddingProgress(message, EmbeddingStage.PREPARE, 0));
+    }
+
+    public void emitProgressEvent(String message, float ratio) {
+        progressEventSource.push(new EmbeddingProgress(message, EmbeddingStage.EMBEDDING, ratio));
+    }
+
+    /**
+     *
+     * @param msg
+     * @param stage 进行到的阶段
+     * @param ratio 0-1 完成比例
+     */
+    public record EmbeddingProgress(String msg, EmbeddingStage stage, float ratio) {
     }
 }

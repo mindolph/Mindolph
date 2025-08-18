@@ -1,7 +1,5 @@
 package com.mindolph.mindmap.extension.api;
 
-import com.igormaznitsa.mindmap.model.Extra;
-import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.OptionsDialogBuilder;
 import com.mindolph.mindmap.I18n;
@@ -69,7 +67,7 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
 
                 log.debug(String.valueOf(e.getClass()));
 
-                // this modifier can not be got, ignore for now.
+                // this modifier cannot be got, ignore for now.
 //                    if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
 //                        LOGGER.info("Export map into file: " + AbstractExporter.this);
 //                        doExport(context, options, null);
@@ -93,14 +91,6 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
         return ContextMenuSection.EXPORT;
     }
 
-    protected static String getTopicUid(TopicNode topic) {
-        return topic.getAttribute(ExtraTopic.TOPIC_UID_ATTR);
-    }
-
-    protected Extra<?> findExtra(TopicNode topic, Extra.ExtraType type) {
-        Extra<?> result = topic.getExtras().get(type);
-        return result == null ? null : (result.isExportable() ? result : null);
-    }
 
     @Override
     public boolean needsTopicUnderMouse() {
@@ -126,7 +116,7 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
     /**
      * Export data into clipboard.
      *
-     * @param context extension context, must not be null
+     * @param context extension context must not be null
      * @param options List<Boolean> containing extra options, can be null
      * @throws IOException it will be thrown if any error
      */

@@ -44,7 +44,7 @@ import com.mindolph.mindmap.extension.importers.*;
 import com.mindolph.mindmap.extension.manipulate.TopicColorExtension;
 import com.mindolph.mindmap.model.*;
 import com.mindolph.mindmap.util.CryptoUtils;
-import com.mindolph.mindmap.util.TopicUtils;
+import com.mindolph.mindmap.util.TopicNodeUtils;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
@@ -728,9 +728,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
 
     private void processColorDialogForTopics(List<TopicNode> topics) {
-        Color borderColor = TopicUtils.extractCommonColorFromTopics(ATTR_BORDER_COLOR.getText(), topics.toArray(new TopicNode[0]));
-        Color fillColor = TopicUtils.extractCommonColorFromTopics(ATTR_FILL_COLOR.getText(), topics.toArray(new TopicNode[0]));
-        Color textColor = TopicUtils.extractCommonColorFromTopics(ATTR_TEXT_COLOR.getText(), topics.toArray(new TopicNode[0]));
+        Color borderColor = TopicNodeUtils.extractCommonColorFromTopics(ATTR_BORDER_COLOR.getText(), topics.toArray(new TopicNode[0]));
+        Color fillColor = TopicNodeUtils.extractCommonColorFromTopics(ATTR_FILL_COLOR.getText(), topics.toArray(new TopicNode[0]));
+        Color textColor = TopicNodeUtils.extractCommonColorFromTopics(ATTR_TEXT_COLOR.getText(), topics.toArray(new TopicNode[0]));
 
         ColorDialog.ColorSet colorSet = new ColorDialog.ColorSet(borderColor, fillColor, textColor);
 
