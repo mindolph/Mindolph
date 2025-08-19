@@ -21,7 +21,12 @@ public class FileTreeHelper {
     public static void findAndUpdateName(TreeItem<NodeData> rootItem, File file,
                                                        Function<NodeData, String> namer) {
         TreeItem<NodeData> foundItem = FileTreeHelper.findTreeItemByFile(rootItem, file);
-        foundItem.getValue().setFormatted(namer.apply(foundItem.getValue()));
+        if (foundItem != null) {
+            foundItem.getValue().setFormatted(namer.apply(foundItem.getValue()));
+        }
+        else {
+            throw new RuntimeException("No tree item found for %s".formatted(file.getAbsolutePath()));
+        }
     }
 
     /**

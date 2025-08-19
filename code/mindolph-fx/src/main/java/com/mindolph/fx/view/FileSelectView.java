@@ -21,6 +21,7 @@ import org.swiftboot.collections.tree.Tree;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +43,9 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     private boolean excludeFiles = false;
     private boolean expandAllAsDefault = false;
     private FileFilter fileFilter;
+
+    // all files in the tree view (for retrieving embedding status)
+    private final List<File> allFiles = new ArrayList<>();
 
     public FileSelectView() {
         rootItem = new CheckBoxTreeItem<>(new NodeData("Workspace Stub"));
@@ -77,7 +81,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             Platform.runLater(() -> {
                 super.refresh();
                 super.requestFocus();
-                this.labelTheCheckedFileWithEmbeddingStatus(checkedFiles);
+                this.labelTheCheckedFileWithEmbeddingStatus(allFiles);
             });
         });
         rootItem.getChildren().clear();
@@ -87,14 +91,14 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     /**
      * Find embedding status from vector data store for all checked files and label the checked tree view items.
      *
-     * @param checkedFiles
+     * @param files
      */
-    private void labelTheCheckedFileWithEmbeddingStatus(List<File> checkedFiles) {
+    private void labelTheCheckedFileWithEmbeddingStatus(List<File> files) {
         GlobalExecutor.submit(() -> {
-            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findEmbeddingStatues(checkedFiles);
+            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findEmbeddingStatues(files);
             Map<String, EmbeddingDocEntity> fileEntityMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
             Platform.runLater(() -> {
-                for (File file : checkedFiles) {
+                for (File file : files) {
                     if (fileEntityMap.containsKey(file.getPath())) {
                         this.findAndUpdateName(file, fileEntityMap.get(file.getPath()).embedded() ? "embedded" : "fail");
                     }
@@ -127,6 +131,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             Node workspaceNode = tree.getRootNode();
 
             Platform.runLater(() -> {
+                allFiles.clear();
 //                rootItem = new CheckBoxTreeItem<>((NodeData) workspaceNode.getData());
                 this.loadTreeNode(workspaceNode, rootItem, checkedFiles);
 //                super.setRoot(rootItem);
@@ -155,10 +160,12 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                 if (!this.excludeFiles) {
                     if (this.fileFilter == null) {
                         this.addFile(parent, nodeData, checkedFiles);
+                        allFiles.add(nodeData.getFile());
                     }
                     else {
                         if (this.fileFilter.accept(nodeData.getFile())) {
                             this.addFile(parent, nodeData, checkedFiles);
+                            allFiles.add(nodeData.getFile());
                         }
                         else {
                             if (log.isTraceEnabled()) log.trace("Filtered file: %s".formatted(nodeData.getFile()));
