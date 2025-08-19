@@ -4,6 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.converter.PairStringStringConverter;
@@ -156,24 +157,31 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
+            log.debug("Workspace selected {}", newValue);
             fileSelectView.loadWorkspace(newValue.getValue(), currentDatasetMeta.getFiles(), true, false, pathname -> {
                 return FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES);
             });
         });
 
-        fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) changed -> {
-            while (changed.next()) {
-                log.debug("Selection changed: added %d, removed %d".formatted(changed.getAddedSize(), changed.getRemovedSize()));
-                List<NodeData> addedNodes = changed.getAddedSubList().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
-                List<NodeData> removedNodes = changed.getRemoved().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
-                if (log.isTraceEnabled()) {
-                    addedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
-                    removedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
+        EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
+            // start to listen to checked files changes only after the workspace is loaded (to avoid redundant event handling)
+            fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) changed -> {
+                if (isLoading.get()) {
+                    return; // won't dont anything while loading.
                 }
-                currentDatasetMeta.getAddedFiles().addAll(addedNodes.stream().map(NodeData::getFile).toList());
-                currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
-            }
-            super.saveChanges();
+                while (changed.next()) {
+                    log.debug("Selection changed: added %d, removed %d".formatted(changed.getAddedSize(), changed.getRemovedSize()));
+                    List<NodeData> addedNodes = changed.getAddedSubList().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
+                    List<NodeData> removedNodes = changed.getRemoved().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
+                    if (log.isTraceEnabled()) {
+                        addedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
+                        removedNodes.forEach(nd -> log.trace("%s %s".formatted(nd.getName(), String.valueOf(nd.getFile()))));
+                    }
+                    currentDatasetMeta.getAddedFiles().addAll(addedNodes.stream().map(NodeData::getFile).toList());
+                    currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
+                }
+                super.saveChanges();
+            });
         });
 
         btnEmbedding.setOnAction(event -> {
@@ -189,6 +197,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             Platform.runLater(() -> {
                 lblEmbeddingStatus.setText(StringUtils.EMPTY);
                 pbProgress.setVisible(true);
+                pbProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                fileSelectView.clearEmbeddingStatusLabels();
             });
             try {
                 EmbeddingService.getInstance().initDatabaseIfNotExist();
@@ -219,10 +229,12 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             Platform.runLater(() -> {
                 lblEmbeddingStatus.setText(progress.msg());
                 if (EmbeddingStage.EMBEDDING.equals(progress.stage())) {
-                    log.debug("progress: %.1f".formatted(progress.ratio()));
+                    log.debug("progress: %.1f at file %s".formatted(progress.ratio(), progress.file()));
                     pbProgress.setProgress(progress.ratio());
                     Double percent = NumberFormatUtils.toPercent(progress.ratio(), 1);
                     lblEmbeddingProgress.setText("%.1f%%".formatted(percent));
+                    fileSelectView.findAndUpdateName(progress.file(), progress.success() ? "embedded" : "fail");
+                    fileSelectView.refresh();
                 }
             });
         });

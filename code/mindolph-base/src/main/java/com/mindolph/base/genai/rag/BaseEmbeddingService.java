@@ -68,7 +68,7 @@ public abstract class BaseEmbeddingService {
     }
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
-        emitProgressEvent("Preparing embedding store...");
+        this.emitProgressEvent("Preparing embedding store...");
         EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
                 .host(System.getenv("PG_HOST"))
                 .port(Integer.parseInt(System.getenv("PG_PORT")))
@@ -90,19 +90,20 @@ public abstract class BaseEmbeddingService {
     }
 
     public void emitProgressEvent(String message) {
-        progressEventSource.push(new EmbeddingProgress(message, EmbeddingStage.PREPARE, 0));
+        progressEventSource.push(new EmbeddingProgress(null, true, message, EmbeddingStage.PREPARE, 0));
     }
 
-    public void emitProgressEvent(String message, float ratio) {
-        progressEventSource.push(new EmbeddingProgress(message, EmbeddingStage.EMBEDDING, ratio));
+    public void emitProgressEvent(File file, boolean success, String message, float ratio) {
+        progressEventSource.push(new EmbeddingProgress(file, success, message, EmbeddingStage.EMBEDDING, ratio));
     }
 
     /**
-     *
+     * @param file
+     * @param success
      * @param msg
      * @param stage 进行到的阶段
      * @param ratio 0-1 完成比例
      */
-    public record EmbeddingProgress(String msg, EmbeddingStage stage, float ratio) {
+    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio) {
     }
 }

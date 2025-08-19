@@ -36,6 +36,7 @@ public class TreeFinder {
     /**
      * Find one tree item by the {@code pathPredicate} and {@code targetPredicate} in the sub-tree of parent tree item.
      * Not only the target item but also the items in the tree path must be predicated.
+     * It's meant to be faster than traversing the whole tree.
      *
      * @param parent
      * @param pathPredicate   predicate the items in the tree path.

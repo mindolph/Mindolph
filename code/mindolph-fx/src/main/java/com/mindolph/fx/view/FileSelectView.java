@@ -1,6 +1,10 @@
 package com.mindolph.fx.view;
 
+import com.mindolph.base.control.FileTreeHelper;
+import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.base.genai.rag.EmbeddingDocEntity;
+import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
@@ -18,10 +22,14 @@ import org.swiftboot.collections.tree.Tree;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.Comparators.SORTING_TREE_ITEMS;
 
 /**
+ * File select view for selecting files to do embedding.
+ *
  * @since unknown
  */
 public class FileSelectView extends CheckTreeView<NodeData> {
@@ -43,7 +51,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     }
 
     /**
-     * Load all files in the workspace to the tree view.
+     * Load all files in the workspace to the tree view asynchronously.
      *
      * @param workspaceMeta
      * @param checkedFiles
@@ -69,10 +77,47 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             Platform.runLater(() -> {
                 super.refresh();
                 super.requestFocus();
+                this.labelTheCheckedFileWithEmbeddingStatus(checkedFiles);
             });
         });
         rootItem.getChildren().clear();
         this.asyncCreateWorkspaceSubTree(workspaceMeta, checkedFiles);
+    }
+
+    /**
+     * Find embedding status from vector data store for all checked files and label the checked tree view items.
+     *
+     * @param checkedFiles
+     */
+    private void labelTheCheckedFileWithEmbeddingStatus(List<File> checkedFiles) {
+        GlobalExecutor.submit(() -> {
+            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findEmbeddingStatues(checkedFiles);
+            Map<String, EmbeddingDocEntity> fileEntityMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
+            Platform.runLater(() -> {
+                for (File file : checkedFiles) {
+                    if (fileEntityMap.containsKey(file.getPath())) {
+                        this.findAndUpdateName(file, fileEntityMap.get(file.getPath()).embedded() ? "embedded" : "fail");
+                    }
+                    else {
+                        this.findAndUpdateName(file, "never");
+                    }
+                }
+                super.refresh();
+                super.requestFocus();
+            });
+        });
+    }
+
+    /**
+     *
+     */
+    public void clearEmbeddingStatusLabels() {
+        TreeVisitor.dfsTraverse(rootItem, treeItem -> {
+            treeItem.getValue().setFormatted(null);
+            return true;
+        });
+        super.refresh();
+        super.requestFocus();
     }
 
     private void asyncCreateWorkspaceSubTree(WorkspaceMeta workspaceMeta, List<File> checkedFiles) {
@@ -162,10 +207,14 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         return fileItem;
     }
 
-    public void removeFromParentIfEmpty(CheckBoxTreeItem<NodeData> parent, CheckBoxTreeItem<NodeData> item) {
+    private void removeFromParentIfEmpty(CheckBoxTreeItem<NodeData> parent, CheckBoxTreeItem<NodeData> item) {
         if (item.getChildren().isEmpty()) {
             parent.getChildren().remove(item);
         }
+    }
+
+    public void findAndUpdateName(File file, String label) {
+        FileTreeHelper.findAndUpdateName(rootItem, file, nodeData -> "%s (%s)".formatted(nodeData.getName(), label));
     }
 
     public CheckBoxTreeItem<NodeData> getRootItem() {

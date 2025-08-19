@@ -6,8 +6,8 @@ import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.control.FileTreeHelper;
 import com.mindolph.base.control.MTreeView;
-import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileChangeEvent;
@@ -244,7 +244,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     return;
                 }
                 log.debug("Drop %d files to %s".formatted(nodeDatas.size(), toDir.getPath()));
-                TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
+                TreeItem<NodeData> treeItemFolder = FileTreeHelper.findTreeItemByFile(rootItem, toDir);
                 moveToTreeItem(nodeDatas, treeItemFolder);
             });
             return cell;
@@ -307,7 +307,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
 //                        this.addFileAndSelect(rootItem, newFileData);
 //                    }
 //                    else {
-//                        TreeItem<NodeData> parentTreeItem = this.findTreeItemByFile(file.getParentFile());
+//                        TreeItem<NodeData> parentTreeItem = FileTreeHelper.findTreeItemByFile(rootItem, file.getParentFile());
 //                        this.addFileAndSelect(parentTreeItem, newFileData);
 //                    }
 //                })
@@ -315,7 +315,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     for (File dir : folderReloadEvent.getDirs()) {
                         NodeData fileData = new NodeData(dir);
                         fileData.setWorkspaceData(activeWorkspaceData);
-                        TreeItem<NodeData> treeItem = this.findTreeItemByFile(dir);
+                        TreeItem<NodeData> treeItem = FileTreeHelper.findTreeItemByFile(rootItem, dir);
                         if (treeItem != null) {
                             this.reloadFolder(treeItem, treeItem.getValue(), false);
                             treeView.getSelectionModel().clearSelection();
@@ -400,7 +400,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
             if (workspaceSelector.getSelectedWorkspace().contains(fileToBeMoved)) {
                 // in the same workspace
-                TreeItem<NodeData> treeItemToBeMoved = findTreeItemByFile(fileToBeMoved);
+                TreeItem<NodeData> treeItemToBeMoved = FileTreeHelper.findTreeItemByFile(rootItem, fileToBeMoved);
                 if (treeItemToBeMoved == null || treeItemToBeMoved == targetTreeItem || treeItemToBeMoved.getParent() == targetTreeItem) {
                     log.debug("Not move this item: %s".formatted(treeItemToBeMoved));
                 }
@@ -1032,7 +1032,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     List<NodeData> toBeMoved = treeView.getSelectedItemsData();
                     EventBus.getIns().subscribeWorkspaceLoaded(1, rootTreeItem -> {
                         log.debug("Move %d files to %s".formatted(toBeMoved.size(), targetFolder));
-                        TreeItem<NodeData> targetTreeItem = this.findTreeItemByFile(targetFolder);
+                        TreeItem<NodeData> targetTreeItem = FileTreeHelper.findTreeItemByFile(rootItem, targetFolder);
                         if (targetTreeItem == null) {
                             // no target tree item found means workspace root has been selected.
                             targetTreeItem = rootTreeItem;
@@ -1431,27 +1431,6 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         else {
             return findParentNodeWithDataType(treeItem.getParent(), nodeType);
         }
-    }
-
-    /**
-     * Find a tree item by searching exactly the path of the file
-     * because it's faster than traversing the whole tree.
-     *
-     * @param file
-     * @return tree item that matches the file, root tree item is always excluded.
-     */
-    public TreeItem<NodeData> findTreeItemByFile(File file) {
-        return TreeFinder.findTreeItemPathMatch(rootItem, treeItem -> {
-            File nodeFile = treeItem.getValue().getFile();
-            return rootItem == treeItem ||
-                    file.getPath().startsWith(nodeFile.getPath());
-        }, treeItem -> {
-            if (treeItem == rootItem) {
-                return false;
-            }
-            File nodeFile = treeItem.getValue().getFile();
-            return nodeFile.equals(file);
-        });
     }
 
     public void removeTreeNode(NodeData nodeData, boolean safely) {

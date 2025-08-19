@@ -27,6 +27,8 @@ import java.math.RoundingMode;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -97,21 +99,25 @@ public class EmbeddingService extends BaseEmbeddingService {
                 EmbeddingStore<TextSegment> embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
+                    BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 1, RoundingMode.HALF_UP);
+                    boolean success = false;
                     if (file.isDirectory()) {
                         // NOTE: the directory is not included in the dataset yet, so the handling doesn't affect for now.
                         for (File f : FileUtils.listFiles(file, SUPPORTED_EMBEDDING_FILE_TYPES, true)) {
                             if (this.embedFile(f, datasetMeta.getId(), embeddingModel, embeddingStore)) {
                                 successCount++;
+                                success = true;
                             }
                         }
                     }
                     else if (file.isFile()) {
                         if (this.embedFile(file, datasetMeta.getId(), embeddingModel, embeddingStore)) {
                             successCount++;
+                            success = true;
                         }
                     }
-                    BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 1, RoundingMode.HALF_UP);
-                    super.emitProgressEvent("Embedding...", ratio.floatValue());
+
+                    super.emitProgressEvent(file, success, "Embedding...", ratio.floatValue());
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -233,6 +239,37 @@ public class EmbeddingService extends BaseEmbeddingService {
             return null;
         });
     }
+
+
+    public List<EmbeddingDocEntity> findEmbeddingStatues(List<File> files) {
+        return super.withJdbcConnection(connection -> {
+            try {
+                List<EmbeddingDocEntity> results = new ArrayList<>();
+                String params = StringUtils.join(Collections.nCopies(files.size(), "?"), ",");
+                String sql = "select * from mindolph_doc where file_path in (%s)".formatted(params);
+                log.debug("Executing query: {}", sql);
+                PreparedStatement ps = connection.prepareStatement(sql);
+                for (int i = 0; i < files.size(); i++) {
+                    File file = files.get(i);
+                    ps.setString(i + 1, file.getPath());
+                }
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    results.add(new EmbeddingDocEntity(rs.getString("id"),
+                            rs.getString("file_name"),
+                            rs.getString("file_path"),
+                            rs.getInt("block_count"),
+                            rs.getBoolean("embedded"),
+                            rs.getString("comment")));
+                }
+                log.debug("Found {} embeddings for files {}", results.size(), files.size());
+                return results;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
 
 //    private void deleteEmbeddingForDocument(String docId) {
 //        super.withJdbcConnection((Function<Connection, Void>) connection -> {

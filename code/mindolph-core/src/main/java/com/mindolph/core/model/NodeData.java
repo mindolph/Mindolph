@@ -5,6 +5,7 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchParams;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.PathUtils;
 
 import java.io.File;
@@ -26,11 +27,14 @@ public class NodeData implements ItemData {
 
     private File file;
 
+    // the name is replaced by formatted content if exists.
+    private String formatted;
+
     private NodeData workspaceData; // just a reference for workaround
 
-    private transient SearchParams searchParams; // just a reference for workaround that be used to locate keyword in opened file.
+    private transient SearchParams searchParams; // just a reference for workaround that be used to locate keyword in the opened file.
 
-    private transient Anchor anchor;// just a reference be used to locate matched object precisely in opened file .
+    private transient Anchor anchor;// just a reference be used to locate the matched object precisely in the opened file.
 
     public NodeData(File file) {
         this.file = file;
@@ -131,6 +135,14 @@ public class NodeData implements ItemData {
         this.name = file.getName();
     }
 
+    public String getFormatted() {
+        return formatted;
+    }
+
+    public void setFormatted(String formatted) {
+        this.formatted = formatted;
+    }
+
     public NodeType getNodeType() {
         return nodeType;
     }
@@ -179,6 +191,6 @@ public class NodeData implements ItemData {
 
     @Override
     public String toString() {
-        return name;
+        return StringUtils.isBlank(formatted)? name: formatted;
     }
 }

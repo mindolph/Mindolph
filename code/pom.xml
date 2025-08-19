@@ -50,7 +50,7 @@
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>1.3.0</langchain4j.version>
         <langchain4j.community.version>1.3.0-beta9</langchain4j.community.version>
-        <dashscope.version>2.20.9</dashscope.version>
+        <dashscope.version>2.21.1</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.38</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
