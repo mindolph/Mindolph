@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * To utilize the RAG from LangChain4j, an adapter for language model is needed , although it seems redundant,
+ * To utilize the RAG from LangChain4j, an adapter for LangChain's chat model is needed, although it seems redundant,
  * since the LLM provider implementations didn't follow the LangChain4j practices.
  *
  * @since unknown

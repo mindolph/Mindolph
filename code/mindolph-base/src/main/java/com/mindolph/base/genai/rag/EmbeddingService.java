@@ -13,6 +13,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
+import dev.langchain4j.store.embedding.filter.comparison.IsEqualTo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
 import org.swiftboot.util.IdUtils;
+import org.swiftboot.util.NumberFormatUtils;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -45,6 +47,10 @@ public class EmbeddingService extends BaseEmbeddingService {
 
     private static final EmbeddingService ins = new EmbeddingService();
 
+    private EmbeddingModel embeddingModel;
+
+    private EmbeddingStore<TextSegment> embeddingStore;
+
     public static EmbeddingService getInstance() {
         return ins;
     }
@@ -52,7 +58,7 @@ public class EmbeddingService extends BaseEmbeddingService {
     private EmbeddingService() {
     }
 
-    public void initDatabaseIfNotExist() {
+    private void initDatabaseIfNotExist() {
         super.withJdbcConnection((Function<Connection, Void>) connection -> {
             try {
                 DatabaseMetaData metaData = connection.getMetaData();
@@ -84,22 +90,40 @@ public class EmbeddingService extends BaseEmbeddingService {
      * @param datasetMeta
      * @param completed
      */
-    public void embedDataset(DatasetMeta datasetMeta, Consumer<Object> completed) {
+    public void embedDataset(DatasetMeta datasetMeta, Consumer<EmbeddingProgress> completed) {
         GlobalExecutor.submit(() -> {
             if (datasetMeta.getFiles() == null || datasetMeta.getFiles().isEmpty()) {
                 log.warn("No files to be embedded");
                 return;
             }
-            List<File> files = datasetMeta.getFiles();
-            int total = files.size();
+            this.initDatabaseIfNotExist(); // check the database before starting embedding.
+            List<File> selectedFiles = datasetMeta.getFiles();
+            int total = selectedFiles.size();
             int successCount = 0;
             try {
-                EmbeddingModel embeddingModel = super.createEmbeddingModel(
-                        datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
-                EmbeddingStore<TextSegment> embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
-                for (int i = 0; i < files.size(); i++) {
-                    File file = files.get(i);
-                    BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 1, RoundingMode.HALF_UP);
+                if (embeddingModel == null) {
+                    embeddingModel = super.createEmbeddingModel(
+                            datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
+                }
+                if (embeddingStore == null) {
+                    embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
+                }
+                // find out embedded docs that need to be removed.
+                List<String> selectedFilePaths = selectedFiles.stream().map(File::getPath).toList();
+                List<EmbeddingDocEntity> allEmbeddings = findDocuments(datasetMeta.getId());
+                List<EmbeddingDocEntity> toBeUnembedded = allEmbeddings.stream().filter(embeddingDocEntity -> !selectedFilePaths.contains(embeddingDocEntity.file_path())).toList();
+
+                Integer removedCount = this.unembedFiles(toBeUnembedded, embeddingStore);
+                log.info("%d embeddings docs has been removed".formatted(removedCount));
+
+                for (int i = 0; i < selectedFiles.size(); i++) {
+                    File file = selectedFiles.get(i);
+                    if (datasetMeta.isStop()) {
+                        log.info("Embedding is stopped by user");
+                        completed.accept(new EmbeddingProgress("Embedding is stopped"));
+                        break;
+                    }
+                    BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 3, RoundingMode.HALF_UP);
                     boolean success = false;
                     if (file.isDirectory()) {
                         // NOTE: the directory is not included in the dataset yet, so the handling doesn't affect for now.
@@ -116,16 +140,30 @@ public class EmbeddingService extends BaseEmbeddingService {
                             success = true;
                         }
                     }
-
-                    super.emitProgressEvent(file, success, "Embedding...", ratio.floatValue());
+                    Double percent = NumberFormatUtils.toPercent(ratio.doubleValue(), 1);
+                    super.emitProgressEvent(file, success, "Embedding...%.1f%%".formatted(percent), ratio.floatValue());
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                completed.accept("Failed: %s".formatted(e.getMessage()));
+                completed.accept(new EmbeddingProgress("Failed: %s".formatted(e.getMessage())));
                 return;
             }
-            completed.accept("Embedding done with %d successes of %d".formatted(successCount, total));
+            if (!datasetMeta.isStop()) {
+                completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total)));
+            }
         });
+    }
+
+    //
+    private Integer unembedFiles(List<EmbeddingDocEntity> toBeEmbedded, EmbeddingStore<TextSegment> embeddingStore) {
+        int deletedCount = 0;
+        if (!toBeEmbedded.isEmpty()) {
+            for (EmbeddingDocEntity docEntity : toBeEmbedded) {
+                embeddingStore.removeAll(new IsEqualTo("doc_id", docEntity.id()));
+                deletedCount += this.deleteDocument(docEntity.id());
+            }
+        }
+        return deletedCount;
     }
 
     /**
@@ -156,6 +194,7 @@ public class EmbeddingService extends BaseEmbeddingService {
 
         log.debug("embed file with parser %s and splitter %s".formatted(documentParser.getClass().getSimpleName(), splitter.getClass().getSimpleName()));
 
+        // a docId is a unique identity for an embedded file.
         String docId = this.persistDocumentMetaIfNotExist(datasetId, f.getPath());
         if (StringUtils.isBlank(docId)) {
             log.error("Failed to persist document meta: {}", f.getPath());
@@ -240,8 +279,31 @@ public class EmbeddingService extends BaseEmbeddingService {
         });
     }
 
+    public List<EmbeddingDocEntity> findDocuments(String datasetId) {
+        return super.withJdbcConnection(connection -> {
+            try {
+                List<EmbeddingDocEntity> results = new ArrayList<>();
+                String sql = "select * from mindolph_doc where dataset_id = ?";
+                log.debug("Executing query: {}", sql);
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, datasetId);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    results.add(new EmbeddingDocEntity(rs.getString("id"),
+                            rs.getString("file_name"),
+                            rs.getString("file_path"),
+                            rs.getInt("block_count"),
+                            rs.getBoolean("embedded"),
+                            rs.getString("comment")));
+                }
+                return results;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-    public List<EmbeddingDocEntity> findEmbeddingStatues(List<File> files) {
+    public List<EmbeddingDocEntity> findDocuments(List<File> files) {
         return super.withJdbcConnection(connection -> {
             try {
                 List<EmbeddingDocEntity> results = new ArrayList<>();
@@ -271,22 +333,17 @@ public class EmbeddingService extends BaseEmbeddingService {
     }
 
 
-//    private void deleteEmbeddingForDocument(String docId) {
-//        super.withJdbcConnection((Function<Connection, Void>) connection -> {
-//            try {
-//                PreparedStatement ps = connection.prepareStatement(
-//                        "delete from mindolph_doc where id = ?");
-//                ps.setInt(1, blockCount);
-//                ps.setBoolean(2, embedded);
-//                ps.setString(3, docId);
-//                if (ps.executeUpdate() == 0) {
-//                    throw new RuntimeException("Failed to update document meta");
-//                }
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            return null;
-//        });
-//    }
+    private Integer deleteDocument(String docId) {
+        return super.withJdbcConnection(connection -> {
+            try {
+                PreparedStatement ps = connection.prepareStatement(
+                        "delete from mindolph_doc where id = ?");
+                ps.setString(1, docId);
+                return ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
 }

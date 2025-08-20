@@ -140,7 +140,12 @@ public class ChatView extends BaseView implements Initializable {
                                     chatPane.scrollToBottom();
                                 });
                             })
-                            .onError(e -> DialogFactory.errDialog(e.getMessage()))
+                            .onError(e -> {
+                                Platform.runLater(() -> {
+                                    DialogFactory.errDialog(e.getMessage());
+                                    // TODO reset the UI
+                                });
+                            })
                             .start();
                 });
             }

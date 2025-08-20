@@ -38,7 +38,6 @@
                 <Label fx:id="lblEmbeddingStatus"/>
                 <HBox spacing="5">
                     <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
-                    <Label fx:id="lblEmbeddingProgress" text="0%"/>
                 </HBox>
             </VBox>
 

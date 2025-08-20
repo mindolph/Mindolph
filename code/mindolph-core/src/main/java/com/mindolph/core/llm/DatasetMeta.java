@@ -21,14 +21,19 @@ public class DatasetMeta implements Serializable {
     private ModelMeta embeddingModel;
     private String languageCode;
     private List<File> files;
+    /**
+     * Status of embedding, 0-100 means the percentage of files embedded.
+     */
+    private int status;
     @JsonIgnore
     private final transient List<File> addedFiles = new ArrayList<>();
     @JsonIgnore
     private final transient List<File> removedFiles = new ArrayList<>();
     /**
-     * Status of embedding, 0-100 means the percentage of files embedded.
+     * NOTE: flag to stop the embedding processing, as embedding context.
      */
-    private int status;
+    @JsonIgnore
+    private transient boolean stop = false;
 
     /**
      * merge
@@ -131,5 +136,13 @@ public class DatasetMeta implements Serializable {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 }

@@ -162,7 +162,7 @@ public class RagService extends BaseEmbeddingService {
                 TokenStream tokenStream = agent.chat(message);
                 consumer.accept(tokenStream);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }

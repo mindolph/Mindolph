@@ -1,11 +1,14 @@
 package com.mindolph.fx.preference;
 
+import com.github.swiftech.swstate.StateBuilder;
+import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.WorkspaceManager;
@@ -28,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IdUtils;
-import org.swiftboot.util.NumberFormatUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -67,14 +69,73 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     @FXML
     private Label lblEmbeddingStatus;
     @FXML
-    private Label lblEmbeddingProgress;
-    @FXML
     private Label lblSelectedFiles;
 
     private DatasetMeta currentDatasetMeta;
 
+    private enum EmbeddingState {
+        READY, EMBEDDING, DONE
+    }
+
+    private final StateMachine<EmbeddingState, EmbeddingProgress> embeddingStateMachine;
+
     public GenAiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");
+
+        StateBuilder<EmbeddingState, EmbeddingProgress> builder = new StateBuilder<>();
+        builder.state(EmbeddingState.READY)
+                .in(p -> {
+                    Platform.runLater(() -> {
+                        btnEmbedding.setText("Start embedding");
+                        lblEmbeddingStatus.setText("Ready to do embedding");
+                        pbProgress.setVisible(true);
+                        pbProgress.setProgress(0);
+                    });
+                })
+                .state(EmbeddingState.EMBEDDING)
+                .in(progress -> {
+                    Platform.runLater(() -> {
+                        if (progress.stage() == null) {
+                            // start embedding
+                            btnEmbedding.setText("Stop embedding");
+                            btnEmbedding.setDisable(false);
+                            lblEmbeddingStatus.setText(progress.msg());
+                            pbProgress.setVisible(true);
+                            pbProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                            fileSelectView.clearEmbeddingStatusLabels();
+                        }
+                        else {
+                            // embedding in progress
+                            lblEmbeddingStatus.setText(progress.msg());
+                            if (EmbeddingStage.EMBEDDING.equals(progress.stage())) {
+                                log.debug("progress: %.1f at file %s".formatted(progress.ratio(), progress.file()));
+                                pbProgress.setProgress(progress.ratio());
+                                fileSelectView.findAndUpdateName(progress.file(), progress.success() ? "embedded" : "fail");
+                                fileSelectView.refresh();
+                            }
+                        }
+                    });
+                })
+                .state(EmbeddingState.DONE)
+                .in(progress -> {
+                    Platform.runLater(() -> {
+                        btnEmbedding.setText("Start embedding");
+                        btnEmbedding.setDisable(false);
+                        lblEmbeddingStatus.setText(progress.msg());
+                    });
+                })
+                .initialize(EmbeddingState.READY)
+                .action("Ready", EmbeddingState.READY, EmbeddingState.READY)
+                .action("Start to embed", EmbeddingState.READY, EmbeddingState.EMBEDDING)
+                .action("Embedding", EmbeddingState.EMBEDDING, EmbeddingState.EMBEDDING)
+                .action("Embedding is done", EmbeddingState.EMBEDDING, EmbeddingState.DONE)
+                .action("Reset", EmbeddingState.DONE, EmbeddingState.READY)
+                .action("Restart embedding", EmbeddingState.DONE, EmbeddingState.EMBEDDING);
+
+        embeddingStateMachine = new StateMachine<>(builder);
+        // embeddingStateMachine.setNoOutProcessForSelfCirculation(true);
+        embeddingStateMachine.start();
+
     }
 
     @Override
@@ -148,7 +209,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         cbLanguage.setConverter(new PairStringStringConverter());
         cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
         cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
-            saveCurrentDataset();
+            this.saveCurrentDataset();
         });
 
         // only embedding models are applied
@@ -185,36 +246,34 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         });
 
         btnEmbedding.setOnAction(event -> {
-            if (currentDatasetMeta == null) {
-                DialogFactory.warnDialog("Please select a dataset first!");
-                return;
+            btnEmbedding.setDisable(true); // MUST disable it.
+            if (embeddingStateMachine.isState(EmbeddingState.EMBEDDING)) {
+                // try to stop the embedding.
+                currentDatasetMeta.setStop(true);
             }
-            if (currentDatasetMeta.getFiles() == null) {
-                DialogFactory.warnDialog("Please select files to do embedding");
-                return;
-            }
-            log.info("Start to embedding for files under: %s".formatted(StringUtils.join(currentDatasetMeta.getFiles(), ", ")));
-            Platform.runLater(() -> {
-                lblEmbeddingStatus.setText(StringUtils.EMPTY);
-                pbProgress.setVisible(true);
-                pbProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-                fileSelectView.clearEmbeddingStatusLabels();
-            });
-            try {
-                EmbeddingService.getInstance().initDatabaseIfNotExist();
-                EmbeddingService.getInstance().embedDataset(currentDatasetMeta, payload -> {
-                    Platform.runLater(() -> {
-                        // pbProgress.setVisible(false);
-                        lblEmbeddingStatus.setText(payload.toString());
-                        lblEmbeddingProgress.setText("100%");
+            else {
+                if (currentDatasetMeta == null) {
+                    DialogFactory.warnDialog("Please select a dataset first!");
+                    return;
+                }
+                currentDatasetMeta.setStop(false);
+                if (currentDatasetMeta.getFiles() == null) {
+                    DialogFactory.warnDialog("Please select files to do embedding");
+                    return;
+                }
+                log.info("Start to embed files: %s".formatted(StringUtils.join(currentDatasetMeta.getFiles(), ", ")));
+                try {
+                    embeddingStateMachine.postWithPayload(EmbeddingState.EMBEDDING, new EmbeddingProgress("Start to embed selected files..."));
+                    EmbeddingService.getInstance().embedDataset(currentDatasetMeta, progress -> {
+                        embeddingStateMachine.postWithPayload(EmbeddingState.DONE, progress);
                     });
-                });
-                // NOTE: the progress events are listened by the EmbeddingService::listenOnProgressEvent.
-            } catch (Exception e) {
-                log.error(e.getLocalizedMessage(), e);
-                DialogFactory.errDialog(e.getLocalizedMessage());
-            } finally {
-                pbProgress.setVisible(false);
+                    // NOTE: the progress events are listened by the EmbeddingService::listenOnProgressEvent.
+                } catch (Exception e) {
+                    log.error(e.getLocalizedMessage(), e);
+                    DialogFactory.errDialog(e.getLocalizedMessage());
+                    currentDatasetMeta.setStop(true); // force to stop if any exception occurs.
+                    embeddingStateMachine.postWithPayload(EmbeddingState.DONE, new EmbeddingProgress("ERROR: " + e.getLocalizedMessage()));
+                }
             }
         });
 
@@ -224,20 +283,11 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         log.debug("pre-select dataset item %s at index %s".formatted(latestDatasetId, selectIdx));
         cbDataset.getSelectionModel().select(selectIdx);
 
-        // listen for embedding
+        // listen to the progress of embedding
         EmbeddingService.getInstance().listenOnProgressEvent(progress -> {
-            Platform.runLater(() -> {
-                lblEmbeddingStatus.setText(progress.msg());
-                if (EmbeddingStage.EMBEDDING.equals(progress.stage())) {
-                    log.debug("progress: %.1f at file %s".formatted(progress.ratio(), progress.file()));
-                    pbProgress.setProgress(progress.ratio());
-                    Double percent = NumberFormatUtils.toPercent(progress.ratio(), 1);
-                    lblEmbeddingProgress.setText("%.1f%%".formatted(percent));
-                    fileSelectView.findAndUpdateName(progress.file(), progress.success() ? "embedded" : "fail");
-                    fileSelectView.refresh();
-                }
-            });
+            embeddingStateMachine.postWithPayload(EmbeddingState.EMBEDDING, progress);
         });
+
     }
 
     @Override
@@ -245,6 +295,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         this.saveCurrentDataset();
         // update label after calculated.
         lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
+        embeddingStateMachine.post(EmbeddingState.READY);
     }
 
     private DatasetMeta saveCurrentDataset() {
@@ -277,7 +328,6 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 //        workspaceSelector.getItems().clear();
         workspaceSelector.getSelectionModel().clearSelection();
         fileSelectView.getRootItem().getChildren().clear();
-        lblEmbeddingProgress.setText("");
         lblEmbeddingStatus.setText("");
         currentDatasetMeta = null;
     }

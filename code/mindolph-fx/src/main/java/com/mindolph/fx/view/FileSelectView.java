@@ -95,7 +95,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
      */
     private void labelTheCheckedFileWithEmbeddingStatus(List<File> files) {
         GlobalExecutor.submit(() -> {
-            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findEmbeddingStatues(files);
+            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(files);
             Map<String, EmbeddingDocEntity> fileEntityMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
             Platform.runLater(() -> {
                 for (File file : files) {

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -101,9 +102,20 @@ public abstract class BaseEmbeddingService {
      * @param file
      * @param success
      * @param msg
-     * @param stage 进行到的阶段
-     * @param ratio 0-1 完成比例
+     * @param stage the stage of whole embedding.
+     * @param ratio 0-1 the percent to complete
      */
-    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio) {
+    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio)  implements Serializable {
+        public EmbeddingProgress(String msg) {
+            this(null, false, msg, null, 0);
+        }
+
+        public EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio) {
+            this.file = file;
+            this.success = success;
+            this.msg = msg;
+            this.stage = stage;
+            this.ratio = ratio;
+        }
     }
 }
