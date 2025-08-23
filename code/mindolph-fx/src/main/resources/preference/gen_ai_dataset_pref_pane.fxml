@@ -19,9 +19,9 @@
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
         <PreferenceItem name="Embedding Model: ">
-            <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
+            <ChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
             </ChoiceBox>
-            <ChoiceBox fx:id="cbModel" prefWidth="160.0">
+            <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="160.0">
             </ChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Select Files: ">

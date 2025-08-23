@@ -38,17 +38,18 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
     private final LlmProvider llmProvider;
     private final AgentMeta agentMeta;
 
+    private boolean stop;
+
     public StreamingChatModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
-        String providerName = agentMeta.getProvider().getName();
+        String providerName = agentMeta.getChatProvider().getName();
         ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
-        ProviderMeta propsForAgent = new ProviderMeta(providerMeta.apiKey(), providerMeta.baseUrl(), providerMeta.aiModel(), providerMeta.useProxy());
-        this.llmProvider = LlmProviderFactory.create(agentMeta.getProvider().getName(), propsForAgent);
+        this.llmProvider = LlmProviderFactory.create(providerName, providerMeta);
     }
 
     @Override
     public void doChat(ChatRequest chatRequest, StreamingChatResponseHandler handler) {
-        log.debug("Do chat with LLM");
+        log.debug("Do chatting with LLM");
         List<ChatMessage> messages = chatRequest.messages();
         List<String> msgs = messages.stream().map(chatMessage -> {
             if (chatMessage instanceof AiMessage am) {
@@ -75,6 +76,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
                 handler.onError(new RuntimeException(streamToken.text()));
             }
             else {
+                // not matter user stops or provider stops.
                 if (streamToken.isStop()) {
                     ChatResponse resp = ChatResponse.builder().aiMessage(new AiMessage(streamToken.text()))
                             .tokenUsage(new TokenUsage(streamToken.outputTokens()))
@@ -82,9 +84,18 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
                     handler.onCompleteResponse(resp);
                 }
                 else {
-                    handler.onPartialResponse(streamToken.text());
+                    if (this.stop) {
+                        this.llmProvider.stopStreaming();
+                    }
+                    else {
+                        handler.onPartialResponse(streamToken.text());
+                    }
                 }
             }
         });
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 }

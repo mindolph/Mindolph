@@ -144,6 +144,7 @@ public class FontIconManager {
         icons.put(IconKey.SHORT_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SHORT_TEXT, strIconSize));
         icons.put(IconKey.LONG_TEXT, () -> MaterialIconFactory.get().createIcon(MaterialIcon.REORDER, strIconSize));
         icons.put(IconKey.SEND, () -> MaterialIconFactory.get().createIcon(MaterialIcon.SEND, strIconSize));
+        icons.put(IconKey.STOP, () -> MaterialDesignIconFactory.get().createIcon(MaterialIcon.STOP, strIconSize));
         icons.put(IconKey.TEMPERATURE, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.OIL_TEMPERATURE, strIconSize));
         icons.put(IconKey.GEN_AI, () -> MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.ROBOT, strIconSize));
         icons.put(IconKey.MAGIC, () -> FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.MAGIC, strIconSize));

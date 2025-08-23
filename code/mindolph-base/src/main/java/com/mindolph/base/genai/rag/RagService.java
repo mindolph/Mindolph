@@ -55,14 +55,9 @@ public class RagService extends BaseEmbeddingService {
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
     }
 
-    public void switchModel(String agentId, Consumer<Object> completed) {
-        List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromAgentId(agentId);
-        if (datasetMetas == null || datasetMetas.isEmpty()) {
-            log.warn("No datasets found for agent {}", agentId);
-        }
-        DatasetMeta mainDatasetMeta = datasetMetas.getFirst();
-        log.debug("Switch language and embedding model to %s, %s ".formatted(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().getName()));
-        embeddingModel = super.createEmbeddingModel(mainDatasetMeta.getLanguageCode(), mainDatasetMeta.getEmbeddingModel().getName());
+    public void switchModel(AgentMeta agentMeta, Consumer<Object> completed) {
+        log.debug("Switch language and embedding model to %s, %s ".formatted(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName()));
+        embeddingModel = super.createEmbeddingModel(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName());
         try {
             embeddingStore = createEmbeddingStore(embeddingModel, true, false);
         } catch (Exception e) {
@@ -121,11 +116,20 @@ public class RagService extends BaseEmbeddingService {
         return docIdList;
     }
 
+    /**
+     * @param agentMeta
+     * @param finished
+     */
     public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
-        log.info("use agent: {}, with LLM {}-{}", agentMeta.getName(), agentMeta.getProvider().getName(), agentMeta.getChatModel().getName());
+        if (!agentMeta.isAllSetup()) {
+            finished.accept(new RuntimeException("Agent is not all setup"));
+            return;
+        }
+        log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
+                agentMeta.getName(), agentMeta.getChatProvider().getName(), agentMeta.getChatModel().getName(), agentMeta.getEmbeddingProvider().getName(), agentMeta.getEmbeddingModel().getName());
         GlobalExecutor.submit(() -> {
             try {
-                this.switchModel(agentMeta.getId(), o -> {
+                this.switchModel(agentMeta, o -> {
                     if (o instanceof Exception) {
                         finished.accept(o);
                     }
@@ -165,5 +169,9 @@ public class RagService extends BaseEmbeddingService {
                 log.error(e.getMessage(), e);
             }
         });
+    }
+
+    public void stop() {
+        this.streamingChatModelAdapter.setStop(true);
     }
 }

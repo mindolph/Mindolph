@@ -5,11 +5,11 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.InputBuilder;
-import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.ClipBoardUtils;
@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
 import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
@@ -59,13 +60,13 @@ public class AiSummaryPane extends BaseAiPane {
     private final Node bondEditor;
 
     public AiSummaryPane(Object editorId, String fileType, String toBeSummarized, Node bondEditor) {
-        super("/genai/ai_summary_pane.fxml", editorId, fileType);
+        super("/genai/ai_summary_pane.fxml", editorId, fileType, GEN_AI_SUMMARIZE_MODEL);
         this.bondEditor = bondEditor;
 
         this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
-        lbTitle.setText("Summarize selected content by %s".formatted(LlmConfig.getIns().getActiveProviderMeta()));
+        lbTitle.setText("Summarize selected content by %s".formatted(super.providerName));
         tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
@@ -101,7 +102,6 @@ public class AiSummaryPane extends BaseAiPane {
     }
 
     private void starToSummarize(String txtToBeSummarized) {
-//        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
         if (cbModel.getValue() == null) {
             DialogFactory.warnDialog("Please select a model to summarize your selected content.");
             return;
@@ -120,7 +120,7 @@ public class AiSummaryPane extends BaseAiPane {
                 """.formatted(
                 StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
                 txtToBeSummarized);
-        Input input = new InputBuilder().model(modelMeta.getName()).text(prompt).temperature(0.5f)
+        Input input = new InputBuilder().provider(GenAiModelProvider.fromName(super.providerName)).model(modelMeta.getName()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
                 .createInput();

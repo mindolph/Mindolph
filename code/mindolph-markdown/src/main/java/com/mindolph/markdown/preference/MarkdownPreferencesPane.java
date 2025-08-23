@@ -34,7 +34,7 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        String sansFontFilePath = fxPreferences.getPreferenceAlias(PREF_KEY_MD_SANS_FONT_FILE, PREF_KEY_MD_FONT_FILE_PDF, String.class);
+        String sansFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_SANS_FONT_FILE, String.class);
         String monoFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_MONO_FONT_FILE, String.class);
         File sansFontFile = new File(sansFontFilePath);
         File monoFontFile = new File(monoFontFilePath);

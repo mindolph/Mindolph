@@ -19,10 +19,16 @@
         <PreferenceItem name="Language:">
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Chat Model: ">
-            <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
+        <PreferenceItem name="Embedding Model: ">
+            <ChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
             </ChoiceBox>
-            <ChoiceBox fx:id="cbModel" prefWidth="140.0">
+            <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="140.0">
+            </ChoiceBox>
+        </PreferenceItem>
+        <PreferenceItem name="Chat Model: ">
+            <ChoiceBox fx:id="cbChatProvider" prefWidth="140.0">
+            </ChoiceBox>
+            <ChoiceBox fx:id="cbChatModel" prefWidth="140.0">
             </ChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Prompt: ">

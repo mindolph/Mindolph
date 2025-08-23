@@ -474,7 +474,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                 log.info("Export to pdf file: %s".formatted(pdfFile));
                 GlobalExecutor.submit(() -> {
                     try {
-                        String sansFontFilePath = fxPreferences.getPreferenceAlias(PREF_KEY_MD_SANS_FONT_FILE, PREF_KEY_MD_FONT_FILE_PDF, String.class);
+                        String sansFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_SANS_FONT_FILE, String.class);
                         String monoFontFilePath = fxPreferences.getPreference(PREF_KEY_MD_MONO_FONT_FILE, String.class);
                         String finalHtml = new HtmlBuilder(html)
                                 .title(editorContext.getFileData().getName())

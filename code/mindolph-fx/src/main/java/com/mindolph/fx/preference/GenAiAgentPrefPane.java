@@ -5,8 +5,11 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.converter.PairStringStringConverter;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -22,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
 import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.agentConverter;
 
@@ -48,6 +53,11 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     @FXML
     private Button btnSetDataset;
 
+    @FXML
+    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
+    @FXML
+    protected ChoiceBox<Pair<String, ModelMeta>> cbChatModel;
+
     private AgentMeta currentAgentMeta;
 
     public GenAiAgentPrefPane() {
@@ -66,26 +76,34 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 currentAgentMeta = agentMeta;
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_AGENT_LATEST, agentMeta.getId());
                 tfDescription.setText(agentMeta.getDescription());
-                super.selectModel(currentAgentMeta.getProvider(), currentAgentMeta.getChatModel());
-                cbLanguage.getSelectionModel().select(new Pair<>(currentAgentMeta.getLanguageCode(), currentAgentMeta.getLanguageCode()));
+                cbLanguage.getSelectionModel().select(new Pair<>(currentAgentMeta.getLanguageCode(), SUPPORTED_EMBEDDING_LANG.get(currentAgentMeta.getLanguageCode())));
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
                 tvDatasets.getItems().clear();
                 if (currentAgentMeta.getDatasetIds() != null) {
                     List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
-                    if (datasetMetas != null && !datasetMetas.isEmpty()) {
-                        tvDatasets.getItems().addAll(datasetMetas);
-                    }
+                    this.initDatasetsTableView(datasetMetas);
                 }
+                // embedding provider and model
+                ChoiceUtils.selectOrUnselectProvider(this.cbEmbeddingProvider, currentAgentMeta.getEmbeddingProvider());
+                ChoiceUtils.selectOrUnselectModel(this.cbEmbeddingModel, currentAgentMeta.getEmbeddingModel());
+                // chat provider and model
+                ChoiceUtils.selectOrUnselectProvider(this.cbChatProvider, currentAgentMeta.getChatProvider());
+                ChoiceUtils.selectOrUnselectModel(this.cbChatModel, currentAgentMeta.getChatModel());
             }
             isLoading.set(false);
         });
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
-        super.initProvidersAndModels(1);
+        super.initProviderAndModelComponents(this.cbEmbeddingProvider, this.cbEmbeddingModel, MODEL_TYPE_EMBEDDING);
+        super.initProviderAndModelComponents(this.cbChatProvider, this.cbChatModel, MODEL_TYPE_CHAT);
+
         btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddAgent.setOnAction(event -> {
-            new TextInputDialog("My Agent").showAndWait().ifPresent(agentName -> {
+            TextInputDialog dialog = new TextInputDialog("My Agent");
+            dialog.setTitle("Create new agent");
+            dialog.setContentText("Enter agent name:");
+            dialog.showAndWait().ifPresent(agentName -> {
                 String agtId = IdUtils.makeUUID();
                 currentAgentMeta = new AgentMeta();
                 currentAgentMeta.setId(agtId);
@@ -134,10 +152,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             List<DatasetMeta> selectedDatasets = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
             DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets);
             List<DatasetMeta> datasetMetas = dialog.showAndWait();
-            if (datasetMetas != null && !datasetMetas.isEmpty()) {
-                log.debug("Select datasets: {}", datasetMetas);
-                tvDatasets.getItems().clear();
-                tvDatasets.getItems().addAll(datasetMetas);
+            if (this.initDatasetsTableView(datasetMetas)) {
                 saveCurrentAgent();
             }
         });
@@ -149,9 +164,24 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         cbAgent.getSelectionModel().select(selectIdx);
     }
 
+    private boolean initDatasetsTableView(List<DatasetMeta> datasetMetas) {
+        if (datasetMetas != null && !datasetMetas.isEmpty()) {
+            log.debug("Select datasets: {}", datasetMetas);
+            // force to convert lang code to language.
+            datasetMetas.forEach(datasetMeta -> {
+                datasetMeta.setLanguageCode(SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode()));
+            });
+            tvDatasets.getItems().clear();
+            tvDatasets.getItems().addAll(datasetMetas);
+            return true;
+        }
+        return false;
+    }
+
     @Override
-    protected void onModelChange() {
+    protected void onSave(boolean notify) {
         this.saveCurrentAgent();
+        super.onSave(notify);
     }
 
     private AgentMeta saveCurrentAgent() {
@@ -161,17 +191,22 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         AgentMeta am = currentAgentMeta;
         log.debug("On save agent {}: {}", am.getId(), am.getName());
         am.setDescription(tfDescription.getText());
-        if (!cbModelProvider.getSelectionModel().isEmpty()) {
-            am.setProvider(cbModelProvider.getSelectionModel().getSelectedItem().getKey());
+        if (!cbEmbeddingProvider.getSelectionModel().isEmpty()) {
+            am.setEmbeddingProvider(cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!cbModel.getSelectionModel().isEmpty()) {
-            am.setChatModel(cbModel.getSelectionModel().getSelectedItem().getValue());
+        if (!cbChatProvider.getSelectionModel().isEmpty()) {
+            am.setChatProvider(cbChatProvider.getSelectionModel().getSelectedItem().getKey());
+        }
+        if (!cbEmbeddingModel.getSelectionModel().isEmpty()) {
+            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getValue());
+        }
+        if (!cbChatModel.getSelectionModel().isEmpty()) {
+            am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
         }
         am.setPromptTemplate(taAgentPrompt.getText());
-        am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getValue());
+        am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
         am.setDatasetIds(tvDatasets.getItems().stream().map(DatasetMeta::getId).toList());
         LlmConfig.getIns().saveAgent(am.getId(), am);
-        super.onSave(true);
         return am;
     }
 
@@ -180,7 +215,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         tfDescription.setText("");
         taAgentPrompt.setText("");
         cbLanguage.getSelectionModel().clearSelection();
-        selectModel(null, null);
+        selectEmbeddingProviderAndModel(null, null);
         tvDatasets.getItems().clear();
         currentAgentMeta = null;
     }

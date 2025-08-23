@@ -16,19 +16,6 @@ public interface PrefConstants {
     String GENERAL_GLOBAL_FONT_SIZE = "general.global.font.size";
     String GENERAL_GLOBAL_ICON_SIZE = "general.global.icon.size";
 
-    /**
-     * @deprecated delete when 1.8 stable is released
-     */
-    String GENERAL_AI_PROVIDER_ACTIVE = "general.genai.provider.active";
-    /**
-     * @deprecated delete when 1.8 stable is released
-     */
-    String GENERAL_AI_PROVIDERS = "general.genai.providers";
-    /**
-     * @deprecated delete when 1.8 stable is released
-     */
-    String GENERAL_AI_TIMEOUT = "general.genai.timeout";
-
     String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
     String GEN_AI_PROVIDER_LATEST = "genai.provider.latest";
     String GEN_AI_PROVIDERS = "genai.providers";
@@ -38,8 +25,11 @@ public interface PrefConstants {
     String GEN_AI_AGENT_LATEST = "genai.agent.latest";
     String GEN_AI_DATASETS = "genai.datasets";
     String GEN_AI_DATASET_LATEST = "genai.dataset.latest";
-
     String GEN_AI_LATEST_GENERATE_PROMPT = "genai.generate.latestPrompt";
+
+    // format: <provider>:<model>
+    String GEN_AI_GENERATE_MODEL = "genai.generate.model";
+    String GEN_AI_SUMMARIZE_MODEL = "genai.summarize.model";
 
     String GENERAL_PROXY_ENABLE = "general.proxy.enable";
     String GENERAL_PROXY_TYPE = "general.proxy.type";
@@ -56,10 +46,6 @@ public interface PrefConstants {
     String PREF_KEY_MMD_COPY_COLOR_INFO_TO_NEW_CHILD = "mmd.copyColorInfoToNewChild";
     String PREF_KEY_MMD_RECENT_ICONS = "mmd.recentIcons";
 
-    /**
-     * @deprecated since 1.8
-     */
-    String PREF_KEY_MD_FONT_FILE_PDF = "mmd.fontFile4Pdf";
     String PREF_KEY_MD_SANS_FONT_FILE = "md.fontFilePath.sans";
     String PREF_KEY_MD_MONO_FONT_FILE = "md.fontFilePath.mono";
 

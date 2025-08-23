@@ -2,7 +2,7 @@ package com.mindolph.base.plugin;
 
 /**
  *
- * @param <T> Type of payload.
+ * @param <T> Type of event payload.
  *
  * @since unknown
  */

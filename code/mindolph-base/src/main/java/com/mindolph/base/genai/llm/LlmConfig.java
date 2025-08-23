@@ -56,6 +56,7 @@ public class LlmConfig {
 
     /**
      * @return
+     * @deprecated
      */
     public String getActiveProviderMeta() {
         return fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDER_ACTIVE, PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING,
@@ -96,8 +97,7 @@ public class LlmConfig {
      * @return Provider name -> Provider properties
      */
     public Map<String, ProviderMeta> loadAllProviderMetas() {
-        String json = fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDERS,
-                PrefConstants.GENERAL_AI_PROVIDERS, "{}");
+        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDERS, "{}");
         Type collectionType = new TypeToken<Map<String, ProviderMeta>>() {
         }.getType();
         return new Gson().fromJson(json, collectionType);
@@ -113,6 +113,7 @@ public class LlmConfig {
      *
      * @return
      * @since 1.11
+     * @deprecated
      */
     public ModelMeta preferredModelForActiveLlmProvider() {
         String activeProvider = LlmConfig.getIns().getActiveProviderMeta();

@@ -12,7 +12,6 @@ import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceList;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
 import static com.mindolph.core.constant.GenAiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
 import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.datasetConverter;
@@ -152,7 +152,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 // save current active dataset ID.
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_DATASET_LATEST, datasetMeta.getId());
                 // init model provider and model.
-                super.selectModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
+                super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
                 // init language.
                 if (StringUtils.isNotBlank(currentDatasetMeta.getLanguageCode())) {
                     cbLanguage.getSelectionModel().select(new Pair<>(currentDatasetMeta.getLanguageCode(), SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode())));
@@ -178,7 +178,10 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         btnAddDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddDataset.setOnAction(event -> {
-            new TextInputDialog("My Dataset").showAndWait().ifPresent(datasetName -> {
+            TextInputDialog dialog = new TextInputDialog("My Dataset");
+            dialog.setTitle("Create new dataset");
+            dialog.setContentText("Enter dataset name:");
+            dialog.showAndWait().ifPresent(datasetName -> {
                 String dsId = IdUtils.makeUUID();
                 currentDatasetMeta = new DatasetMeta();
                 currentDatasetMeta.setId(dsId);
@@ -213,7 +216,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         });
 
         // only embedding models are applied
-        super.initProvidersAndModels(GenAiConstants.MODEL_TYPE_EMBEDDING);
+        super.initProviderAndModelComponents(this.cbEmbeddingProvider, this.cbEmbeddingModel, MODEL_TYPE_EMBEDDING);
 
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -291,7 +294,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     }
 
     @Override
-    protected void onModelChange() {
+    protected void onSave(boolean notify) {
+        super.onSave(notify);
         this.saveCurrentDataset();
         // update label after calculated.
         lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
@@ -306,25 +310,24 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         if (!cbLanguage.getSelectionModel().isEmpty()) {
             datasetMeta.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!super.cbModelProvider.getSelectionModel().isEmpty()) {
-            datasetMeta.setProvider(super.cbModelProvider.getSelectionModel().getSelectedItem().getKey());
+        if (!super.cbEmbeddingProvider.getSelectionModel().isEmpty()) {
+            datasetMeta.setProvider(super.cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!super.cbModel.getSelectionModel().isEmpty()) {
-            datasetMeta.setEmbeddingModel(super.cbModel.getSelectionModel().getSelectedItem().getValue());
+        if (!super.cbEmbeddingModel.getSelectionModel().isEmpty()) {
+            datasetMeta.setEmbeddingModel(super.cbEmbeddingModel.getSelectionModel().getSelectedItem().getValue());
         }
         else {
             datasetMeta.setEmbeddingModel(null);
         }
         datasetMeta.merge();
         LlmConfig.getIns().saveDataset(datasetMeta.getId(), datasetMeta);
-        super.onSave(true);
         return datasetMeta;
     }
 
     private void clearAll() {
         cbDataset.getSelectionModel().clearSelection();
         cbLanguage.getSelectionModel().clearSelection();
-        super.selectModel(null, null);
+        super.selectEmbeddingProviderAndModel(null, null);
 //        workspaceSelector.getItems().clear();
         workspaceSelector.getSelectionModel().clearSelection();
         fileSelectView.getRootItem().getChildren().clear();

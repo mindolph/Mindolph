@@ -285,6 +285,6 @@ public interface GenAiConstants {
         }
     };
 
-    record ProviderInfo(String name, String model) {
-    }
+//    record ProviderInfo(String name, String model) {
+//    }
 }

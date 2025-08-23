@@ -31,13 +31,19 @@ public class RagServiceTest extends BaseLlmTest {
                   "4c1ce115-2215-41c6-b612-0c423471983e": {
                     "id": "4c1ce115-2215-41c6-b612-0c423471983e",
                     "name": "My Agent",
-                    "provider": "DEEP_SEEK",
+                    "provider": "INTERNAL",
+                    "Model": {
+                      "name": "BAAI/bge-small-zh-v1.5",
+                      "maxTokens": 8192,
+                      "active": false
+                    },
+                    "chatProvider": "DEEP_SEEK",
                     "chatModel": {
                       "name": "deepseek-chat",
                       "maxTokens": 8192,
                       "active": false
                     },
-                    "promptTemplate": ""
+                    "promptTemplate": "You are an IT export"
                   }
                 }
                 """;

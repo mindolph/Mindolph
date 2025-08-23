@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import okhttp3.Request;
@@ -67,7 +68,13 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 .build();
         streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
             log.debug(data);
-            JsonObject resObject = JsonParser.parseString(data).getAsJsonObject();
+            JsonObject resObject = null;
+            try {
+                resObject = JsonParser.parseString(data).getAsJsonObject();
+            } catch (JsonSyntaxException e) {
+                log.debug(e.getMessage());
+                log.warn("Ignore data: %s".formatted(data));
+            }
             JsonObject choice = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
             String result = choice
                     .get("delta").getAsJsonObject()

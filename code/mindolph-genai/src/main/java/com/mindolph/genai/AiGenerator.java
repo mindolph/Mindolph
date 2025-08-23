@@ -13,10 +13,11 @@ import com.mindolph.base.genai.llm.StreamToken;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.async.GlobalExecutor;
-import com.mindolph.core.constant.GenAiConstants.ProviderInfo;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
+import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.application.Platform;
@@ -35,6 +36,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
 import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
@@ -78,7 +81,7 @@ public class AiGenerator implements Generator {
         Consumer<String> onError = (msg) -> {
             Platform.runLater(() -> {
                 cancelConsumer.accept(false);
-                String err = "Failed to generate content by %s.\n %s\n".formatted(LlmService.getIns().getActiveAiProvider(), msg);
+                String err = "Failed to generate content: \n %s\n".formatted(msg);
                 if (inputPanel != null)
                     inputPanel.onStop(err);
                 if (reframePanel != null)
@@ -133,7 +136,7 @@ public class AiGenerator implements Generator {
                         }
                         log.debug(generated.text());
                         Platform.runLater(() -> {
-                            generateConsumer.accept(new GenAiEvents.Output(generated.text(), input.isRetry()));
+                            generateConsumer.accept(new GenAiEvents.Output(input.provider(), input.model(), generated.text(), input.isRetry()));
                             showReframePane.accept(generated);
                         });
                     } catch (Exception e) {
@@ -172,17 +175,17 @@ public class AiGenerator implements Generator {
         });
     }
 
-    @Override
-    public ProviderInfo getProviderInfo() {
-        LlmConfig config = LlmConfig.getIns();
-        String activeAiProvider = config.getActiveProviderMeta();
-        Map<String, ProviderMeta> providers = config.loadAllProviderMetas();
-        if (providers.containsKey(activeAiProvider)) {
-            ProviderMeta props = providers.get(activeAiProvider);
-            return new ProviderInfo(activeAiProvider, props.aiModel());
-        }
-        return new ProviderInfo(activeAiProvider, null);
-    }
+//    @Override
+//    public ProviderInfo getProviderInfo() {
+//        LlmConfig config = LlmConfig.getIns();
+//        String activeAiProvider = config.getActiveProviderMeta();
+//        Map<String, ProviderMeta> providers = config.loadAllProviderMetas();
+//        if (providers.containsKey(activeAiProvider)) {
+//            ProviderMeta props = providers.get(activeAiProvider);
+//            return new ProviderInfo(activeAiProvider, props.aiModel());
+//        }
+//        return new ProviderInfo(activeAiProvider, null);
+//    }
 
     @Override
     public MenuItem generationMenuItem(String selectedText) {
@@ -197,7 +200,7 @@ public class AiGenerator implements Generator {
 
     @Override
     public StackPane showInputPanel(String defaultInput) {
-        if (!checkSettings()) {
+        if (!checkSettings(GEN_AI_GENERATE_MODEL)) {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
@@ -213,7 +216,7 @@ public class AiGenerator implements Generator {
 
     @Override
     public StackPane showSummarizePanel(String input, Node bondEditor) {
-        if (!checkSettings()) {
+        if (!checkSettings(GEN_AI_SUMMARIZE_MODEL)) {
             DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
             return null;
         }
@@ -255,23 +258,23 @@ public class AiGenerator implements Generator {
         }
     }
 
-    private boolean checkSettings() {
-        LlmConfig config = LlmConfig.getIns();
-        String activeProvider = config.getActiveProviderMeta();
-        if (StringUtils.isNotBlank(activeProvider)) {
-            Map<String, ProviderMeta> propsMap = config.loadAllProviderMetas();
-            if (propsMap.containsKey(activeProvider)) {
-                GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
-                ProviderMeta props = propsMap.get(activeProvider);
-                if (provider == null || props == null) return false;
-                log.debug("Provider: %s".formatted(provider));
-                log.trace(String.valueOf(props));
-                if (provider.getType() == ProviderType.PUBLIC) {
-                    return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
-                }
-                else if (provider.getType() == ProviderType.PRIVATE) {
-                    return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
-                }
+    private boolean checkSettings(String modelPrefKey) {
+        Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
+        if (providerModel == null) {
+            return false;
+        }
+        GenAiModelProvider provider = providerModel.a();
+        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
+        if (propsMap.containsKey(provider.getName())) {
+            ProviderMeta props = propsMap.get(provider.getName());
+            if (provider == null || props == null) return false;
+            log.debug("Provider: %s".formatted(provider));
+            log.trace(String.valueOf(props));
+            if (provider.getType() == ProviderType.PUBLIC) {
+                return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
+            }
+            else if (provider.getType() == ProviderType.PRIVATE) {
+                return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
             }
         }
         return false;

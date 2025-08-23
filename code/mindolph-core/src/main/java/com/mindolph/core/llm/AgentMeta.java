@@ -1,6 +1,7 @@
 package com.mindolph.core.llm;
 
 import com.mindolph.core.constant.GenAiModelProvider;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,10 +14,17 @@ public class AgentMeta implements Serializable {
     private String name;
     private String description;
     private String languageCode;
-    private GenAiModelProvider provider;
+    private GenAiModelProvider embeddingProvider;
+    private GenAiModelProvider chatProvider;
+    private ModelMeta embeddingModel;
     private ModelMeta chatModel;
     private String promptTemplate;
     private List<String> datasetIds;
+
+    public boolean isAllSetup() {
+        return !(embeddingProvider == null || chatProvider == null || embeddingModel == null || chatModel == null
+                || StringUtils.isBlank(languageCode) || datasetIds == null || datasetIds.isEmpty());
+    }
 
     public String getId() {
         return id;
@@ -50,12 +58,28 @@ public class AgentMeta implements Serializable {
         this.languageCode = languageCode;
     }
 
-    public GenAiModelProvider getProvider() {
-        return provider;
+    public GenAiModelProvider getEmbeddingProvider() {
+        return embeddingProvider;
     }
 
-    public void setProvider(GenAiModelProvider provider) {
-        this.provider = provider;
+    public void setEmbeddingProvider(GenAiModelProvider embeddingProvider) {
+        this.embeddingProvider = embeddingProvider;
+    }
+
+    public GenAiModelProvider getChatProvider() {
+        return chatProvider;
+    }
+
+    public void setChatProvider(GenAiModelProvider chatProvider) {
+        this.chatProvider = chatProvider;
+    }
+
+    public ModelMeta getEmbeddingModel() {
+        return embeddingModel;
+    }
+
+    public void setEmbeddingModel(ModelMeta embeddingModel) {
+        this.embeddingModel = embeddingModel;
     }
 
     public ModelMeta getChatModel() {

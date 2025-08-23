@@ -3,6 +3,8 @@ package com.mindolph.genai;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
@@ -33,6 +35,56 @@ public class ChoiceUtils {
 //            log.debug("Saved language: %s".formatted(savedLang.getKey()));
             String language = lookupLanguage(savedLangCode);
             choiceBox.getSelectionModel().select(new Pair<>(savedLangCode, language));
+        }
+    }
+
+    public static void selectOrUnselectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, GenAiModelProvider provider) {
+        if (provider != null) {
+            ChoiceUtils.selectProvider(cbProvider, provider);
+        }
+        else {
+            cbProvider.getSelectionModel().clearSelection();
+        }
+    }
+
+    public static void selectOrUnselectModel(ChoiceBox<Pair<String, ModelMeta>> cbModel, ModelMeta modelMeta) {
+        if (modelMeta != null) {
+            ChoiceUtils.selectModel(cbModel, modelMeta);
+        }
+        else {
+            cbModel.getSelectionModel().clearSelection();
+        }
+    }
+
+    /**
+     * Select the target provider in the choice box.
+     *
+     * @param choiceBox The provider choice box
+     * @param provider
+     * @since unknown
+     */
+    public static void selectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> choiceBox, GenAiModelProvider provider) {
+        for (Pair<GenAiModelProvider, String> item : choiceBox.getItems()) {
+            if (item.getKey() == provider) {
+                choiceBox.getSelectionModel().select(item);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Select the target model in the choice box.
+     *
+     * @param choiceBox The model choice box
+     * @param modelMeta
+     * @since unknown
+     */
+    public static void selectModel(ChoiceBox<Pair<String, ModelMeta>> choiceBox, ModelMeta modelMeta) {
+        for (Pair<String, ModelMeta> item : choiceBox.getItems()) {
+            if (item.getValue().getName().equals(modelMeta.getName())) {
+                choiceBox.getSelectionModel().select(item);
+                break;
+            }
         }
     }
 }

@@ -4,8 +4,8 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.InputBuilder;
-import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT;
 import static com.mindolph.core.constant.GenAiConstants.ActionType;
 
@@ -60,22 +61,15 @@ public class AiInputPane extends BaseAiPane {
     private static String latestPrompt;
 
     public AiInputPane(Object editorId, String fileType, String defaultInput) {
-        super("/genai/ai_input_pane.fxml", editorId, fileType);
+        super("/genai/ai_input_pane.fxml", editorId, fileType, GEN_AI_GENERATE_MODEL);
 
         taInput.setText(defaultInput);
         if (defaultInput != null && !defaultInput.isEmpty()) {
             taInput.positionCaret(defaultInput.length());
         }
-        String activeProvider = LlmConfig.getIns().getActiveProviderMeta();
-        log.debug("Load models for gen-ai provider: %s".formatted(activeProvider));
 
-        ModelMeta modelMeta = LlmConfig.getIns().preferredModelForActiveLlmProvider();
-        taInput.setPromptText("The prompt to generate content by %s".formatted(activeProvider));
-        if (modelMeta != null && StringUtils.isNotBlank(modelMeta.getName())) {
-            log.info("with default model: '%s'".formatted(modelMeta.getName()));
-        }
-
-        lbTitle.setText("Generate content with %s".formatted(activeProvider));
+        taInput.setPromptText("The prompt to generate content by %s".formatted(super.providerName));
+        lbTitle.setText("Generate content with %s".formatted(super.providerName));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
@@ -106,7 +100,7 @@ public class AiInputPane extends BaseAiPane {
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new InputBuilder().model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
+                        new InputBuilder().provider(GenAiModelProvider.fromName(providerName)).model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
                                 .outputLanguage(cbLanguage.getValue().getKey())
                                 .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null)
                                 .isRetry(false).isStreaming(isStreaming)

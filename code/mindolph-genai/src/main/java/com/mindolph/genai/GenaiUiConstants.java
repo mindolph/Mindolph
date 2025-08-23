@@ -55,19 +55,11 @@ public interface GenaiUiConstants {
         }
     };
 
-    StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new StringConverter<>() {
-        @Override
-        public String toString(Pair<String, ModelMeta> object) {
-            return object == null ? "" : object.getValue().getName();
-        }
+    StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new ModelMetaConverter();
 
-        @Override
-        public Pair<String, ModelMeta> fromString(String string) {
-            return null;
-        }
-    };
+    StringConverter<Pair<GenAiModelProvider, String>> modelProviderConverter = new ProviderConverter();
 
-    StringConverter<Pair<GenAiModelProvider, String>> modelProviderConverter = new StringConverter<>() {
+    class ProviderConverter extends StringConverter<Pair<GenAiModelProvider, String>> {
         @Override
         public String toString(Pair<GenAiModelProvider, String> object) {
             return object == null ? "" : object.getValue();
@@ -77,5 +69,17 @@ public interface GenaiUiConstants {
         public Pair<GenAiModelProvider, String> fromString(String string) {
             return null;
         }
-    };
+    }
+
+    class ModelMetaConverter extends StringConverter<Pair<String, ModelMeta>> {
+        @Override
+        public String toString(Pair<String, ModelMeta> object) {
+            return object == null ? "" : object.getValue().getName();
+        }
+
+        @Override
+        public Pair<String, ModelMeta> fromString(String string) {
+            return null;
+        }
+    }
 }

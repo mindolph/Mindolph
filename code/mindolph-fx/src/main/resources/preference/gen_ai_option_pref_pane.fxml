@@ -13,6 +13,18 @@
         <PreferenceItem name="Time out(second):">
             <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
         </PreferenceItem>
+        <PreferenceItem name="Default Model for generate:">
+            <ChoiceBox fx:id="cbProviderGenerate" prefWidth="140.0">
+            </ChoiceBox>
+            <ChoiceBox fx:id="cbModelGenerate" prefWidth="160.0">
+            </ChoiceBox>
+        </PreferenceItem>
+        <PreferenceItem name="Default Model for summarize:">
+            <ChoiceBox fx:id="cbProviderSummarize" prefWidth="140.0">
+            </ChoiceBox>
+            <ChoiceBox fx:id="cbModelSummarize" prefWidth="160.0">
+            </ChoiceBox>
+        </PreferenceItem>
     </VBox>
 
 

@@ -2,10 +2,12 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ProviderMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -16,9 +18,9 @@ import java.util.function.Consumer;
 public class LlmService {
     private static final Logger log = LoggerFactory.getLogger(LlmService.class);
     private static LlmService ins;
-    private LlmProvider llmProvider;
     private boolean isStopped; // stopped by user
-    private String activeAiProvider;
+
+    private final Map<GenAiModelProvider, LlmProvider> llmProviderMap = new HashMap<>();
 
     public static synchronized LlmService getIns() {
         if (ins == null) {
@@ -28,30 +30,34 @@ public class LlmService {
     }
 
     private LlmService() {
-        this.loadActiveLlm();
         // reload active LLM provider if preferences changed
         PluginEventBus.getIns().subscribePreferenceChanges(o -> {
             log.info("On preferences changed, reload LLM");
-            this.loadActiveLlm();
+//            this.loadActiveLlm();
         });
     }
 
-    private void loadActiveLlm() {
+    private LlmProvider getLlmProvider(GenAiModelProvider provider) {
+        LlmProvider llmProvider;
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
             log.warn("Using mock LLM provider");
             llmProvider = new DummyLlmProvider();
+            llmProviderMap.put(provider, llmProvider);
         }
         else {
-            Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
-            activeAiProvider = LlmConfig.getIns().getActiveProviderMeta();
-            ProviderMeta props = map.get(activeAiProvider);
-            llmProvider = LlmProviderFactory.create(activeAiProvider, props);
-            log.info("Using llm provider: %s".formatted(activeAiProvider));
+            llmProvider = llmProviderMap.get(provider);
+            if (llmProvider == null) {
+                Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
+                ProviderMeta props = map.get(provider.getName());
+                llmProvider = LlmProviderFactory.create(provider.getName(), props);
+                log.info("Using llm provider: %s".formatted(provider.getName()));
+                llmProviderMap.put(provider, llmProvider);
+            }
         }
+        return llmProvider;
     }
 
     /**
-     *
      * @param input
      * @param outputParams
      * @return
@@ -61,6 +67,7 @@ public class LlmService {
         isStopped = false;
         StreamToken generated = null;
         try {
+            LlmProvider llmProvider = getLlmProvider(input.provider());
             generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
             if (isStopped) {
@@ -84,13 +91,13 @@ public class LlmService {
     }
 
     /**
-     *
      * @param input
      * @param outputParams
-     * @param consumer to handle streaming result, like streaming output, error handling or stopping handling.
+     * @param consumer     to handle streaming result, like streaming output, error handling or stopping handling.
      */
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         isStopped = false;
+        LlmProvider llmProvider = getLlmProvider(input.provider());
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
                 // Don't use stopping flag to control the working states, since the stream might return with multiple times even you stop it.
@@ -116,7 +123,4 @@ public class LlmService {
         return isStopped;
     }
 
-    public String getActiveAiProvider() {
-        return activeAiProvider;
-    }
 }
