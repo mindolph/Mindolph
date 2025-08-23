@@ -120,8 +120,8 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 
 Future Plan:  
 
-* 1.12: Few new features and more usability improvement.
-* 1.13: AI Agent.
+* 1.12: Few new features and more usability improvements.
+* 1.13: AI Agent preview.
 
 ### Buy me a cup of coffee
 
