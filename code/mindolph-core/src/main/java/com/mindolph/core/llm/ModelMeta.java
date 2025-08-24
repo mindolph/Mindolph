@@ -48,7 +48,7 @@ public final class ModelMeta {
     }
 
     /**
-     * Construct for internal embedding model.
+     * Construct for an internal embedding model.
      *
      * @param name
      * @param langCode

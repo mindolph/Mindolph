@@ -38,10 +38,9 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 
 
     /**
-     *
      * @param cbProvider
      * @param cbModel
-     * @param type 1 is chat model, 2 is embedding model, see {@link GenAiConstants}
+     * @param type       1 is chat model, 2 is embedding model, see {@link GenAiConstants}
      */
     protected void initProviderAndModelComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, int type) {
         cbProvider.setConverter(new ProviderConverter());
@@ -51,29 +50,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             if (newValue == null) return;
             String providerName = newValue.getKey().getName();
             log.debug("selected provider: %s".formatted(providerName));
-            Collection<ModelMeta> preDefinedModels = PROVIDER_MODELS.get(providerName)
-                    .stream().filter(mm -> mm.getType() == type).toList();
-
-
-            cbModel.getItems().clear();
-            cbModel.getSelectionModel().selectFirst();
-
-
-            if (CollectionUtils.isNotEmpty(preDefinedModels)) {
-                log.debug("Found %d predefined models for provider %s and type %s".formatted(preDefinedModels.size(), providerName, type));
-                cbModel.getItems().addAll(preDefinedModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
-            }
-            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
-            if (providerMeta != null) {
-                List<ModelMeta> customModels = providerMeta.customModels();
-                if (customModels != null && !customModels.isEmpty()) {
-                    customModels = customModels.stream().filter(mm -> mm.getType() == type).toList();
-                    if (CollectionUtils.isNotEmpty(customModels)) {
-                        log.debug("Found %d custom models for provider %s and type %s".formatted(customModels.size(), providerName, type));
-                        cbModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
-                    }
-                }
-            }
+            this.updateModelComponent(cbModel, providerName, type, null);
             super.saveChanges();
         });
         cbModel.setConverter(new ModelMetaConverter());
@@ -81,6 +58,36 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 //            if (newValue == null) return;
             super.saveChanges();
         });
+    }
+
+    protected void updateModelComponent(ChoiceBox<Pair<String, ModelMeta>> cbModel, String providerName, int modelType, String langCode) {
+        Collection<ModelMeta> preDefinedModels = PROVIDER_MODELS.get(providerName)
+                .stream().filter(mm -> mm.getType() == modelType).toList();
+
+        if (StringUtils.isNotBlank(langCode)) {
+            preDefinedModels = preDefinedModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
+        }
+
+        cbModel.getItems().clear();
+
+        if (CollectionUtils.isNotEmpty(preDefinedModels)) {
+            log.debug("Found %d predefined models for provider %s and type %s".formatted(preDefinedModels.size(), providerName, modelType));
+            cbModel.getItems().addAll(preDefinedModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
+        }
+        ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
+        if (providerMeta != null) {
+            List<ModelMeta> customModels = providerMeta.customModels();
+            if (customModels != null && !customModels.isEmpty()) {
+                customModels = customModels.stream().filter(mm -> mm.getType() == modelType).toList();
+                if (StringUtils.isNotBlank(langCode)) {
+                    customModels = customModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
+                }
+                if (CollectionUtils.isNotEmpty(customModels)) {
+                    log.debug("Found %d custom models for provider %s and type %s".formatted(customModels.size(), providerName, modelType));
+                    cbModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
+                }
+            }
+        }
     }
 
     protected void selectProviderAndModel(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
@@ -92,7 +99,6 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             }
         }
     }
-
 
     protected void saveProviderAndModelSelection(String prefKey, ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel) {
         if (cbProvider.getSelectionModel().getSelectedItem() == null || cbModel.getSelectionModel().getSelectedItem() == null) {

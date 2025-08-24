@@ -18,6 +18,7 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.control.WorkspaceSelector;
 import com.mindolph.fx.view.FileSelectView;
+import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -153,13 +154,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_DATASET_LATEST, datasetMeta.getId());
                 // init model provider and model.
                 super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-                // init language.
-                if (StringUtils.isNotBlank(currentDatasetMeta.getLanguageCode())) {
-                    cbLanguage.getSelectionModel().select(new Pair<>(currentDatasetMeta.getLanguageCode(), SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode())));
-                }
-                else {
-                    cbLanguage.getSelectionModel().clearSelection();
-                }
+                // init language selection
+                ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles().size()));
             }
             else {
@@ -212,6 +208,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         cbLanguage.setConverter(new PairStringStringConverter());
         cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
         cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
+            super.updateModelComponent(cbEmbeddingModel, currentDatasetMeta.getProvider().getName(), MODEL_TYPE_EMBEDDING, newValue.getKey());
             this.saveCurrentDataset();
         });
 

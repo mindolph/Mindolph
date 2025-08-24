@@ -109,7 +109,7 @@ public abstract class BaseAiPane extends StackPane {
         ChoiceUtils.selectModel(cbModel, targetModel);
         cbModel.setConverter(modelMetaConverter);
         cbLanguage.setConverter(new PairStringStringConverter());
-        ChoiceUtils.loadLanguagesTo(cbLanguage);
+        ChoiceUtils.loadLanguagesToAndSelectDefault(cbLanguage);
     }
 
     protected void toggleComponents(boolean isGenerating) {

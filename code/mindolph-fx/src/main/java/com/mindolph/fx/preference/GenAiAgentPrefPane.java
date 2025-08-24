@@ -76,7 +76,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 currentAgentMeta = agentMeta;
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_AGENT_LATEST, agentMeta.getId());
                 tfDescription.setText(agentMeta.getDescription());
-                cbLanguage.getSelectionModel().select(new Pair<>(currentAgentMeta.getLanguageCode(), SUPPORTED_EMBEDDING_LANG.get(currentAgentMeta.getLanguageCode())));
+                ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentAgentMeta.getLanguageCode());
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
                 tvDatasets.getItems().clear();
                 if (currentAgentMeta.getDatasetIds() != null) {
@@ -136,6 +136,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
         cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
+            super.updateModelComponent(cbEmbeddingModel, currentAgentMeta.getEmbeddingProvider().getName(), MODEL_TYPE_EMBEDDING, newValue.getKey());
             saveCurrentAgent();
         });
         TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");

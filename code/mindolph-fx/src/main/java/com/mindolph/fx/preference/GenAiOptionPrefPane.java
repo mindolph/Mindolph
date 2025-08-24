@@ -46,7 +46,7 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         cbLanguages.setConverter(new PairStringStringConverter());
-        ChoiceUtils.loadLanguagesTo(cbLanguages);
+        ChoiceUtils.loadLanguagesToAndSelectDefault(cbLanguages);
         cbLanguages.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             fxPreferences.savePreference(GEN_AI_OUTPUT_LANGUAGE, newValue.getKey());

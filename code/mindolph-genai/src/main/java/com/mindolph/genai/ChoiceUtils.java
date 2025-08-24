@@ -8,12 +8,14 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
 import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
+import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 
 /**
  * @since 1.11.1
@@ -21,11 +23,11 @@ import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
 public class ChoiceUtils {
 
     /**
-     * Load pre-defined languages to a ChoiceBox.
+     * Load pre-defined languages to a ChoiceBox and select the default one.
      *
      * @param choiceBox
      */
-    public static void loadLanguagesTo(ChoiceBox<Pair<String, String>> choiceBox) {
+    public static void loadLanguagesToAndSelectDefault(ChoiceBox<Pair<String, String>> choiceBox) {
         JsonArray langs = new Gson().fromJson(LANGS_JSON, JsonArray.class);
         List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
         choiceBox.getItems().clear();
@@ -35,6 +37,21 @@ public class ChoiceUtils {
 //            log.debug("Saved language: %s".formatted(savedLang.getKey()));
             String language = lookupLanguage(savedLangCode);
             choiceBox.getSelectionModel().select(new Pair<>(savedLangCode, language));
+        }
+    }
+
+    public static void selectOrUnselectLanguage(ChoiceBox<Pair<String, String>> choiceBox, String languageCode) {
+        if (StringUtils.isNotBlank(languageCode)) {
+            String language = SUPPORTED_EMBEDDING_LANG.get(languageCode);
+            if (StringUtils.isNotBlank(language)) {
+                choiceBox.getSelectionModel().select(new Pair<>(languageCode, SUPPORTED_EMBEDDING_LANG.get(languageCode)));
+            }
+            else {
+                choiceBox.getSelectionModel().clearSelection();
+            }
+        }
+        else {
+            choiceBox.getSelectionModel().clearSelection();
         }
     }
 
