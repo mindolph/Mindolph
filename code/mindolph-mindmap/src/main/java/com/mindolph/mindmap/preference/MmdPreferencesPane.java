@@ -179,7 +179,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
             if (!this.isPredefinedTheme(selectedKey.name)) {
                 mindMapConfig.getTheme().loadFromPreferences();
             }
-            this.initControlsFromPreferences();
+            this.initComponentsFromPreferences();
             this.onSave(true);
             // bind
             this.bindTheme();
@@ -365,7 +365,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     }
 
     @Override
-    protected void initControlsFromPreferences() {
+    protected void initComponentsFromPreferences() {
         //
         MindMapTheme theme = mindMapConfig.getTheme();
         spnGridStep.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 256, theme.getGridStep()));

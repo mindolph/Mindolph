@@ -5,10 +5,8 @@ import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.llm.AgentMeta;
-import com.mindolph.core.llm.DatasetMeta;
-import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ProviderMeta;
+import com.mindolph.core.constant.VectorStoreProvider;
+import com.mindolph.core.llm.*;
 import com.mindolph.core.util.AppUtils;
 import com.mindolph.core.util.GsonUtils;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -27,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE;
 import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
 
 /**
@@ -43,6 +42,9 @@ public class LlmConfig {
     private final FxPreferences fxPreferences;
 
     private final Type collectionType = new TypeToken<Map<String, DatasetMeta>>() {
+    }.getType();
+
+    private final Type vectorStoreMetaType = new TypeToken<Map<String, VectorStoreMeta>>() {
     }.getType();
 
     public LlmConfig() {
@@ -222,6 +224,29 @@ public class LlmConfig {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public VectorStoreMeta loadActiveVectorStorePrefs() {
+        String activeVectorStoreProvider = fxPreferences.getPreference(GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE, String.class);
+        if (StringUtils.isBlank(activeVectorStoreProvider)) {
+            return null;
+        }
+        return loadVectorStorePrefs(VectorStoreProvider.valueOf(activeVectorStoreProvider));
+    }
+
+    public VectorStoreMeta loadVectorStorePrefs(VectorStoreProvider provider) {
+        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, "{}");
+        Map<String, VectorStoreMeta> map = GsonUtils.newGson().fromJson(json, vectorStoreMetaType);
+        VectorStoreMeta vectorStoreMeta = map.get(provider.name());
+        vectorStoreMeta.setProvider(provider);
+        return vectorStoreMeta;
+    }
+
+    public void saveVectorStorePrefs(VectorStoreProvider provider, VectorStoreMeta vectorStoreMeta) {
+        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, "{}");
+        Map<String, VectorStoreMeta> map = GsonUtils.newGson().fromJson(json, vectorStoreMetaType);
+        map.put(provider.name(), vectorStoreMeta);
+        fxPreferences.savePreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, GsonUtils.newGson().toJson(map));
     }
 
     private File datasetConfigFile() {

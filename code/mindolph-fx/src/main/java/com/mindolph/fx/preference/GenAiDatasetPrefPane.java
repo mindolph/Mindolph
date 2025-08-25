@@ -123,6 +123,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                         btnEmbedding.setText("Start embedding");
                         btnEmbedding.setDisable(false);
                         lblEmbeddingStatus.setText(progress.msg());
+                        pbProgress.setProgress(0);
                     });
                 })
                 .initialize(EmbeddingState.READY)

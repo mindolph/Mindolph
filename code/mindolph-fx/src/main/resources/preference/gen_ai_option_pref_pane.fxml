@@ -13,6 +13,23 @@
         <PreferenceItem name="Time out(second):">
             <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
         </PreferenceItem>
+        <PreferenceItem name="Vector store:">
+            <VBox spacing="8">
+                <ChoiceBox fx:id="cbVectorStoreProvider" prefWidth="240.0">
+                </ChoiceBox>
+                <HBox spacing="8">
+                    <TextField fx:id="tfHost" promptText="host" prefWidth="200" disable="true"/>
+                    <Spinner fx:id="spPort" editable="true" prefWidth="80" disable="true"/>
+                </HBox>
+                <HBox spacing="8">
+                    <TextField fx:id="tfDatabase" promptText="database" prefWidth="250" disable="true"/>
+                </HBox>
+                <HBox spacing="8">
+                    <TextField fx:id="tfUsername" promptText="user name" prefWidth="140" disable="true"/>
+                    <PasswordField fx:id="tfPassword" promptText="password" prefWidth="140" disable="true"/>
+                </HBox>
+            </VBox>
+        </PreferenceItem>
         <PreferenceItem name="Default Model for generate:">
             <ChoiceBox fx:id="cbProviderGenerate" prefWidth="140.0">
             </ChoiceBox>

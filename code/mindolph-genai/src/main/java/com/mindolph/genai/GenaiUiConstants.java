@@ -1,10 +1,8 @@
 package com.mindolph.genai;
 
 import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.llm.AgentMeta;
-import com.mindolph.core.llm.DatasetMeta;
-import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ModelMetaBuilder;
+import com.mindolph.core.constant.VectorStoreProvider;
+import com.mindolph.core.llm.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 
@@ -28,6 +26,18 @@ public interface GenaiUiConstants {
 
     Map<String, String> SUPPORTED_EMBEDDING_LANG = Map.of("en", "English", "zh_CN", "Simplified Chinese");
 
+    StringConverter<Pair<VectorStoreProvider, String>> vectorStoreConverter = new StringConverter<>() {
+
+        @Override
+        public String toString(Pair<VectorStoreProvider, String> object) {
+            return object == null ? "" : object.getKey().getDisplayName();
+        }
+
+        @Override
+        public Pair<VectorStoreProvider, String> fromString(String s) {
+            return null;
+        }
+    };
 
     StringConverter<Pair<String, DatasetMeta>> datasetConverter = new StringConverter<>() {
 

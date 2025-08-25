@@ -2,6 +2,7 @@ package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.core.llm.DataSourceConfig;
+import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.core.util.AppUtils;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -32,19 +33,20 @@ public abstract class BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEmbeddingService.class);
 
+    protected VectorStoreMeta vectorStoreMeta;
+
     protected final EventSource<EmbeddingProgress> progressEventSource = new EventSource<>();
 
     protected <T> T withJdbcConnection(Function<Connection, T> handler) {
-        DataSourceConfig dsConfig = new DataSourceConfig(System.getenv("PG_HOST"), Integer.parseInt(System.getenv("PG_PORT")));
-        dsConfig.setUser(System.getenv("PG_USER"));
-        dsConfig.setPassword(System.getenv("PG_PASSWORD"));
-        dsConfig.setDatabase(System.getenv("PG_DATABASE"));
+        DataSourceConfig dsConfig = new DataSourceConfig(vectorStoreMeta.getHost(), vectorStoreMeta.getPort());
+        dsConfig.setUser(vectorStoreMeta.getUsername());
+        dsConfig.setPassword(vectorStoreMeta.getPassword());
+        dsConfig.setDatabase(vectorStoreMeta.getDatabase());
         String url = "jdbc:postgresql://%s:%d/%s".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase());
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
             return handler.apply(conn);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("Error connecting to the database", e);
-            e.printStackTrace(); // Print the full stack trace for debugging
             throw new RuntimeException(e);
         }
     }
@@ -70,12 +72,12 @@ public abstract class BaseEmbeddingService {
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
         this.emitProgressEvent("Preparing embedding store...");
-        EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
-                .host(System.getenv("PG_HOST"))
-                .port(Integer.parseInt(System.getenv("PG_PORT")))
-                .database("postgres")
-                .user(System.getenv("PG_USER"))
-                .password(System.getenv("PG_PASSWORD"))
+        return PgVectorEmbeddingStore.builder()
+                .host(vectorStoreMeta.getHost())
+                .port(vectorStoreMeta.getPort())
+                .database(vectorStoreMeta.getDatabase())
+                .user(vectorStoreMeta.getUsername())
+                .password(vectorStoreMeta.getPassword())
                 .table("mindolph_embedding_%d".formatted(embeddingModel.dimension()))
                 .createTable(createTable)
                 .dimension(embeddingModel.dimension())
@@ -83,7 +85,6 @@ public abstract class BaseEmbeddingService {
                 .metadataStorageConfig(DefaultMetadataStorageConfig.builder().storageMode(MetadataStorageMode.COLUMN_PER_KEY)
                         .columnDefinitions(List.of("doc_id varchar(32) not null")).build())
                 .build();
-        return embeddingStore;
     }
 
     public void listenOnProgressEvent(Consumer<EmbeddingProgress> callback) {
@@ -98,14 +99,19 @@ public abstract class BaseEmbeddingService {
         progressEventSource.push(new EmbeddingProgress(file, success, message, EmbeddingStage.EMBEDDING, ratio));
     }
 
+    public void setVectorStoreMeta(VectorStoreMeta vectorStoreMeta) {
+        this.vectorStoreMeta = vectorStoreMeta;
+    }
+
     /**
      * @param file
      * @param success
      * @param msg
-     * @param stage the stage of whole embedding.
-     * @param ratio 0-1 the percent to complete
+     * @param stage   the stage of whole embedding.
+     * @param ratio   0-1 the percent to complete
      */
-    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio)  implements Serializable {
+    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage,
+                                    float ratio) implements Serializable {
         public EmbeddingProgress(String msg) {
             this(null, false, msg, null, 0);
         }

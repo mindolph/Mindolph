@@ -2,6 +2,7 @@ package com.mindolph.core.llm;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mindolph.core.constant.GenAiModelProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.PathUtils;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ *
  * @since unknown
  */
 public class DatasetMeta implements Serializable {
@@ -34,6 +36,10 @@ public class DatasetMeta implements Serializable {
      */
     @JsonIgnore
     private transient boolean stop = false;
+
+    public boolean isAllSetup() {
+        return StringUtils.isNoneBlank(name, languageCode) && !(embeddingModel == null || files == null);
+    }
 
     /**
      * merge

@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.rag;
 
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.document.Document;
@@ -58,32 +59,6 @@ public class EmbeddingService extends BaseEmbeddingService {
     private EmbeddingService() {
     }
 
-    private void initDatabaseIfNotExist() {
-        super.withJdbcConnection((Function<Connection, Void>) connection -> {
-            try {
-                DatabaseMetaData metaData = connection.getMetaData();
-                ResultSet tableMeta = metaData.getTables(null, null, "mindolph_doc", new String[]{"TABLE"});
-                if (!tableMeta.next()) {
-                    String sql = ClasspathResourceUtils.readResourceToString("genai/rag/init.sql");
-                    if (StringUtils.isNotBlank(sql)) {
-                        Statement statement = connection.createStatement();
-                        statement.executeUpdate(sql);
-                        log.info("init database successfully");
-                    }
-                    else {
-                        throw new RuntimeException("init sql error");
-                    }
-                }
-                else {
-                    log.info("tables already exist, skip init");
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            return null;
-        });
-    }
-
     /**
      * Embed all files in the dataset.
      *
@@ -91,21 +66,33 @@ public class EmbeddingService extends BaseEmbeddingService {
      * @param completed
      */
     public void embedDataset(DatasetMeta datasetMeta, Consumer<EmbeddingProgress> completed) {
+        if (datasetMeta.getFiles() == null || datasetMeta.getFiles().isEmpty()) {
+            log.warn("No files to be embedded");
+            completed.accept(new EmbeddingProgress("No files to be embedded"));
+            return;
+        }
+        // load here for the config might be changed on the fly.
+        super.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
+        if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
+            log.warn("Vector store: " + vectorStoreMeta);
+            throw new RuntimeException("Vector store is not well setup");
+        }
+        if (!datasetMeta.isAllSetup()) {
+            throw new RuntimeException("Dataset is not well setup for embedding");
+        }
         GlobalExecutor.submit(() -> {
-            if (datasetMeta.getFiles() == null || datasetMeta.getFiles().isEmpty()) {
-                log.warn("No files to be embedded");
-                return;
-            }
-            this.initDatabaseIfNotExist(); // check the database before starting embedding.
             List<File> selectedFiles = datasetMeta.getFiles();
             int total = selectedFiles.size();
             int successCount = 0;
             try {
+                this.initDatabaseIfNotExist(); // check the database before starting embedding.
                 if (embeddingModel == null) {
+                    log.debug("Create embedding model instance");
                     embeddingModel = super.createEmbeddingModel(
                             datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
                 }
                 if (embeddingStore == null) {
+                    log.debug("Create embedding store instance");
                     embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
                 }
                 // find out embedded docs that need to be removed.
@@ -151,6 +138,33 @@ public class EmbeddingService extends BaseEmbeddingService {
             if (!datasetMeta.isStop()) {
                 completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total)));
             }
+        });
+    }
+
+
+    private void initDatabaseIfNotExist() {
+        super.withJdbcConnection((Function<Connection, Void>) connection -> {
+            try {
+                DatabaseMetaData metaData = connection.getMetaData();
+                ResultSet tableMeta = metaData.getTables(null, null, "mindolph_doc", new String[]{"TABLE"});
+                if (!tableMeta.next()) {
+                    String sql = ClasspathResourceUtils.readResourceToString("genai/rag/init.sql");
+                    if (StringUtils.isNotBlank(sql)) {
+                        Statement statement = connection.createStatement();
+                        statement.executeUpdate(sql);
+                        log.info("init database successfully");
+                    }
+                    else {
+                        throw new RuntimeException("init sql error");
+                    }
+                }
+                else {
+                    log.info("tables already exist, skip init");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
         });
     }
 

@@ -148,18 +148,15 @@ public final class ModelMeta {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ModelMeta) obj;
-        return Objects.equals(this.name, that.name) &&
-                this.maxTokens == that.maxTokens &&
-                this.active == that.active;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ModelMeta modelMeta = (ModelMeta) o;
+        return Objects.equals(name, modelMeta.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, maxTokens, active);
+        return Objects.hashCode(name);
     }
 
     @Override

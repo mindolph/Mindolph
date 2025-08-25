@@ -68,6 +68,8 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             preDefinedModels = preDefinedModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
         }
 
+        // TBD to keep the selection after update(filtered) model choices.
+        Pair<String, ModelMeta> selected = cbModel.getSelectionModel().getSelectedItem();
         cbModel.getItems().clear();
 
         if (CollectionUtils.isNotEmpty(preDefinedModels)) {
@@ -87,6 +89,16 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
                     cbModel.getItems().addAll(customModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
                 }
             }
+        }
+        // TBD
+        if (selected != null) {
+            log.debug("Reselect the item: " + selected.getKey());
+            cbModel.getItems().forEach(item -> {
+                if (item.getValue().getName().equals(selected.getValue().getName())) {
+                    cbModel.getSelectionModel().select(item);
+                    return;
+                }
+            });
         }
     }
 

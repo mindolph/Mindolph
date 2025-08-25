@@ -77,14 +77,6 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
         cbModelProvider.setConverter(modelProviderConverter);
         List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getName())).toList();
         cbModelProvider.getItems().addAll(providerPairs);
-//        cbModelProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(HUGGING_FACE, HUGGING_FACE.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(DEEP_SEEK, DEEP_SEEK.getName()));
-//        cbModelProvider.getItems().add(new Pair<>(MOONSHOT, MOONSHOT.getName()));
         super.bindPreference(cbModelProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
                 providerName -> new Pair<>(fromName(providerName), providerName),
@@ -111,7 +103,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                         tfBaseUrl.setText(providerMeta.baseUrl());
                         cbUseProxy.setSelected(providerMeta.useProxy());
 
-                        // Specific disable the proxy support for OLLAMA since the LangChain4j is not supported it yet.
+                        // Specific to disable the proxy support for OLLAMA since the LangChain4j is not supported it yet.
                         cbUseProxy.setDisable(provider == OLLAMA || provider == ALI_Q_WEN);
 
                         cbModel.getItems().clear();

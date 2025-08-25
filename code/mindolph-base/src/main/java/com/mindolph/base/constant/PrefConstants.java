@@ -27,6 +27,9 @@ public interface PrefConstants {
     String GEN_AI_DATASET_LATEST = "genai.dataset.latest";
     String GEN_AI_LATEST_GENERATE_PROMPT = "genai.generate.latestPrompt";
 
+    String GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE = "genai.vector.store.provider.active";
+    String GEN_AI_VECTOR_STORE_PROVIDERS = "genai.vector.store.providers";
+
     // format: <provider>:<model>
     String GEN_AI_GENERATE_MODEL = "genai.generate.model";
     String GEN_AI_SUMMARIZE_MODEL = "genai.summarize.model";

@@ -29,6 +29,9 @@ public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
         });
     }
 
+    /**
+     * Save changes lately, this will cause onSave() method be called.
+     */
     protected void saveChanges() {
         // reducing saving changes request
         changeEventSource.push(null);

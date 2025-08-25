@@ -55,11 +55,57 @@ public class RagService extends BaseEmbeddingService {
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
     }
 
+    /**
+     * @param agentMeta
+     * @param finished
+     */
+    public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
+        if (!agentMeta.isAllSetup()) {
+            finished.accept(new RuntimeException("Agent is not well setup"));
+            return;
+        }
+        // load here for the config might be changed on the fly.
+        super.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
+        if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
+            finished.accept(new RuntimeException("Vector store is not well setup"));
+//            throw new RuntimeException("Vector store is not well setup");
+        }
+        log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
+                agentMeta.getName(), agentMeta.getChatProvider().getName(), agentMeta.getChatModel().getName(), agentMeta.getEmbeddingProvider().getName(), agentMeta.getEmbeddingModel().getName());
+        GlobalExecutor.submit(() -> {
+            try {
+                this.switchModel(agentMeta, o -> {
+                    if (o instanceof Exception) {
+                        finished.accept(o);
+                    }
+                    else {
+                        this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
+                        this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
+                        if (this.contentRetriever == null) {
+                            finished.accept(new RuntimeException("Unable to use this agent"));
+                            return;
+                        }
+                        agent = AiServices.builder(Agent.class)
+                                .streamingChatModel(streamingChatModelAdapter)
+                                .contentRetriever(contentRetriever)
+                                .chatMemory(chatMemory)
+                                .build();
+                        log.debug(o.toString());
+                        finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                    }
+                });
+
+            } catch (Exception e) {
+                finished.accept(e);
+            }
+        });
+    }
+
     public void switchModel(AgentMeta agentMeta, Consumer<Object> completed) {
         log.debug("Switch language and embedding model to %s, %s ".formatted(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName()));
         embeddingModel = super.createEmbeddingModel(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName());
         try {
-            embeddingStore = createEmbeddingStore(embeddingModel, true, false);
+            embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
         } catch (Exception e) {
             log.error("Failed create embedding store", e);
             throw new RuntimeException("Failed to prepare embedding store, check vector store setting or network", e);
@@ -116,45 +162,6 @@ public class RagService extends BaseEmbeddingService {
         return docIdList;
     }
 
-    /**
-     * @param agentMeta
-     * @param finished
-     */
-    public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
-        if (!agentMeta.isAllSetup()) {
-            finished.accept(new RuntimeException("Agent is not all setup"));
-            return;
-        }
-        log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
-                agentMeta.getName(), agentMeta.getChatProvider().getName(), agentMeta.getChatModel().getName(), agentMeta.getEmbeddingProvider().getName(), agentMeta.getEmbeddingModel().getName());
-        GlobalExecutor.submit(() -> {
-            try {
-                this.switchModel(agentMeta, o -> {
-                    if (o instanceof Exception) {
-                        finished.accept(o);
-                    }
-                    else {
-                        this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
-                        this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
-                        if (this.contentRetriever == null) {
-                            finished.accept(new RuntimeException("Unable to use this agent"));
-                            return;
-                        }
-                        agent = AiServices.builder(Agent.class)
-                                .streamingChatModel(streamingChatModelAdapter)
-                                .contentRetriever(contentRetriever)
-                                .chatMemory(chatMemory)
-                                .build();
-                        log.debug(o.toString());
-                        finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
-                    }
-                });
-
-            } catch (Exception e) {
-                finished.accept(e);
-            }
-        });
-    }
 
     public void chat(String message, Consumer<TokenStream> consumer) {
         log.info("Human: {}", message);

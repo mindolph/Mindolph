@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ *
  * @since unknown
  */
 public class AgentMeta implements Serializable {
