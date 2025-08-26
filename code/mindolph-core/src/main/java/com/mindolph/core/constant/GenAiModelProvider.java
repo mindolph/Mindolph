@@ -22,6 +22,12 @@ public enum GenAiModelProvider {
         this.type = type;
     }
 
+    /**
+     * @deprecated
+     * @param name
+     * @return
+     */
+    @Deprecated
     public static GenAiModelProvider fromName(String name) {
         for (GenAiModelProvider vendor : GenAiModelProvider.values()) {
             if (vendor.name.equals(name)) {
@@ -31,7 +37,17 @@ public enum GenAiModelProvider {
         return null;
     }
 
+    /**
+     * The workaround for get the KEY instead of the display name.
+     * This method should be deprecated later.
+     * @return
+     * @deprecated use name()
+     */
     public String getName() {
+        return name();
+    }
+
+    public String getDisplayName() {
         return name;
     }
 

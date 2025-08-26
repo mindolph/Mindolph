@@ -261,7 +261,7 @@ public class AiGenerator implements Generator {
         if (StringUtils.isNotBlank(activeProvider)) {
             Map<String, ProviderProps> propsMap = config.loadGenAiProviders();
             if (propsMap.containsKey(activeProvider)) {
-                GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
+                GenAiModelProvider provider = GenAiModelProvider.valueOf(activeProvider);
                 ProviderProps props = propsMap.get(activeProvider);
                 if (provider == null || props == null) return false;
                 log.debug("Provider: %s".formatted(provider));

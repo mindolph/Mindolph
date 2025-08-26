@@ -20,6 +20,7 @@ public class DataMigrator {
             {
                 add(new MigrationV1());
                 add(new MigrationV2());
+                add(new MigrationV3());
             }
         };
     }
@@ -30,7 +31,7 @@ public class DataMigrator {
             // only un-migrated will be executed.
             if (mig.getVersion() > migratedVersion) {
                 log.info("Do migration: %s".formatted(mig.getClass().getName()));
-                mig.doFixing();
+                mig.doMigration();
                 FxPreferences.getInstance().savePreference("migration.version", mig.getVersion());
             }
         }

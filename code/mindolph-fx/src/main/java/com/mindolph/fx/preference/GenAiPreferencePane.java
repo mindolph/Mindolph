@@ -91,17 +91,17 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 return null;
             }
         });
-        cbAiProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getName()));
-        cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getName()));
-        cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getName()));
-        cbAiProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getName()));
-        cbAiProvider.getItems().add(new Pair<>(HUGGING_FACE, HUGGING_FACE.getName()));
-        cbAiProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getName()));
-        cbAiProvider.getItems().add(new Pair<>(DEEP_SEEK, DEEP_SEEK.getName()));
-        cbAiProvider.getItems().add(new Pair<>(MOONSHOT, MOONSHOT.getName()));
+        cbAiProvider.getItems().add(new Pair<>(OPEN_AI, OPEN_AI.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(GEMINI, GEMINI.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(ALI_Q_WEN, ALI_Q_WEN.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(OLLAMA, OLLAMA.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(HUGGING_FACE, HUGGING_FACE.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(DEEP_SEEK, DEEP_SEEK.getDisplayName()));
+        cbAiProvider.getItems().add(new Pair<>(MOONSHOT, MOONSHOT.getDisplayName()));
         super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
                 pair -> pair.getKey().getName(),
-                providerName -> new Pair<>(fromName(providerName), providerName),
+                providerName -> new Pair<>(valueOf(providerName), valueOf(providerName).getDisplayName()),
                 selected -> {
                     isReady.set(false);
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
@@ -224,7 +224,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             btnRemove.setDisable(false);
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
             String activeProviderName = cbAiProvider.getValue().getKey().getName();
-            LlmConfig.getIns().activateCustomModel(GenAiModelProvider.fromName(activeProviderName), selectedModel.getValue());
+            LlmConfig.getIns().activateCustomModel(GenAiModelProvider.valueOf(activeProviderName), selectedModel.getValue());
             this.updateModelDescription(selectedModel.getValue());
         });
         btnAdd.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
@@ -250,8 +250,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             }
 
             props.customModels().add(newCustomModel);
-            LlmConfig.getIns().saveGenAiProvider(fromName(activeProviderName), props);
-            LlmConfig.getIns().activateCustomModel(fromName(activeProviderName), newCustomModel);
+            LlmConfig.getIns().saveGenAiProvider(valueOf(activeProviderName), props);
+            LlmConfig.getIns().activateCustomModel(valueOf(activeProviderName), newCustomModel);
             this.showCustomModels(activeProviderName);
         });
         btnRemove.setOnAction(event -> {
@@ -264,7 +264,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 props.customModels().stream().findFirst().ifPresent(mm -> {
                     mm.setActive(true);
                 });
-                LlmConfig.getIns().saveGenAiProvider(fromName(activeProviderName), props);
+                LlmConfig.getIns().saveGenAiProvider(valueOf(activeProviderName), props);
                 this.showCustomModels(activeProviderName);
             }
         });

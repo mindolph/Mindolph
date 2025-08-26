@@ -17,7 +17,7 @@ public class MigrationV2 implements Migration {
     }
 
     @Override
-    public void doFixing() {
+    public void doMigration() {
         // migrate user's preference for mono font.
         Object value = FxPreferences.getInstance().getPreference(KEY_PUML_EDITOR);
         FxPreferences.getInstance().savePreference(KEY_PUML_EDITOR_MONO, value);

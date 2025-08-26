@@ -6,6 +6,7 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -74,7 +75,7 @@ public class AiInputPane extends BaseAiPane {
             log.info("with default model: '%s'".formatted(modelMeta.name()));
         }
 
-        lbTitle.setText("Generate content with %s".formatted(activeProvider));
+        lbTitle.setText("Generate content with %s".formatted(GenAiModelProvider.valueOf(activeProvider).getDisplayName()));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
