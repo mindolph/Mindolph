@@ -68,8 +68,9 @@ public class AiInputPane extends BaseAiPane {
             taInput.positionCaret(defaultInput.length());
         }
 
-        taInput.setPromptText("The prompt to generate content by %s".formatted(super.providerName));
-        lbTitle.setText("Generate content with %s".formatted(super.providerName));
+        String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
+        taInput.setPromptText("The prompt to generate content by %s".formatted(providerDisplayName));
+        lbTitle.setText("Generate content with %s".formatted(providerDisplayName));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
@@ -100,7 +101,7 @@ public class AiInputPane extends BaseAiPane {
                 String prompt = taInput.getText().trim();
                 log.debug(prompt);
                 GenAiEvents.getIns().emitGenerateEvent(editorId,
-                        new InputBuilder().provider(GenAiModelProvider.fromName(providerName)).model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
+                        new InputBuilder().provider(GenAiModelProvider.valueOf(this.providerName)).model(modelName).text(prompt).temperature(cbTemperature.getValue().getKey())
                                 .outputLanguage(cbLanguage.getValue().getKey())
                                 .maxTokens(selectedModel.getValue().maxTokens()).outputAdjust(null)
                                 .isRetry(false).isStreaming(isStreaming)

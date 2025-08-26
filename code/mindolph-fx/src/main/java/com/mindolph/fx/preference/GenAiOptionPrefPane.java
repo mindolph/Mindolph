@@ -5,7 +5,6 @@ import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
@@ -15,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import org.slf4j.Logger;
@@ -91,7 +90,7 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
                     VectorStoreMeta vectorStoreMeta = LlmConfig.getIns().loadVectorStorePrefs(provider);
                     if (vectorStoreMeta != null) {
                         tfHost.setText(vectorStoreMeta.getHost());
-                        spPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 65535, vectorStoreMeta.getPort() == null ? 0 : vectorStoreMeta.getPort()));
+                        spPort.setValueFactory(new IntegerSpinnerValueFactory(1, 65535, vectorStoreMeta.getPort() == null ? 0 : vectorStoreMeta.getPort()));
                         tfDatabase.setText(vectorStoreMeta.getDatabase());
                         tfUsername.setText(vectorStoreMeta.getUsername());
                         tfPassword.setText(vectorStoreMeta.getPassword());

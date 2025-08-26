@@ -7,7 +7,6 @@ import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
@@ -16,13 +15,15 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
@@ -74,30 +75,29 @@ public abstract class BaseAiPane extends StackPane {
             }
         }
         else {
-            providerName = generateModel.a().getName();
+            providerName = generateModel.a().name();
             modelName = generateModel.b().getName();
         }
 
         log.debug("choose model %s from gen-ai provider %s".formatted(modelName, providerName));
 
         // collect pre-defined models for the provider.
-        List<Pair<String, ModelMeta>> preModelPairs = PROVIDER_MODELS.get(providerName)
+        List<Pair<String, ModelMeta>> preModelPairs = GenAiConstants.getFilteredPreDefinedModels(providerName, MODEL_TYPE_CHAT)
                 .stream().map(m -> new Pair<>(m.getName(), m)).sorted(MODEL_COMPARATOR).toList();
         List<Pair<String, ModelMeta>> allModelPairs = new ArrayList<>(preModelPairs);
 
         // collect custom models(if exists)
-        Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
-        ProviderMeta providerMeta = map.get(providerName);
-        if (providerMeta.customModels() != null) {
-            List<Pair<String, ModelMeta>> customModelPairs = providerMeta.customModels().stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList();
-            allModelPairs.addAll(customModelPairs);
+        Collection<ModelMeta> filteredCustomModels = LlmConfig.getIns().getFilteredCustomModels(providerName, MODEL_TYPE_CHAT);
+        if (CollectionUtils.isNotEmpty(filteredCustomModels)) {
+            allModelPairs.addAll(filteredCustomModels.stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList());
         }
+
         cbModel.getItems().clear();
         cbModel.getItems().addAll(allModelPairs);
 
         ModelMeta targetModel = GenAiConstants.lookupModelMeta(providerName, modelName);
         if (targetModel == null) {
-            targetModel = providerMeta.customModels().stream().filter(modelMeta -> modelMeta.getName().equals(modelName))
+            targetModel = filteredCustomModels.stream().filter(modelMeta -> modelMeta.getName().equals(modelName))
                     .findFirst().orElse(null);
         }
 

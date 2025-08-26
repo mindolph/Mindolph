@@ -3,7 +3,6 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
@@ -19,14 +18,10 @@ import org.swiftboot.util.JsonUtils;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE;
-import static com.mindolph.core.constant.GenAiModelProvider.OPEN_AI;
 
 /**
  * Manage llm config in java preference.
@@ -57,24 +52,35 @@ public class LlmConfig {
     }
 
     /**
-     * @return
-     * @deprecated
-     */
-    public String getActiveProviderMeta() {
-        return fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName());
-    }
-
-    /**
-     * Save provider props, if the provider already exists, it will be overwritten.
+     * Save provider meta, if the provider already exists, it will be overwritten.
      *
      * @param provider
      * @param providerMeta
      */
     public void saveProviderMeta(GenAiModelProvider provider, ProviderMeta providerMeta) {
         Map<String, ProviderMeta> providerPropsMap = this.loadAllProviderMetas();
-        providerPropsMap.put(provider.getName(), providerMeta);
+        providerPropsMap.put(provider.name(), providerMeta);
         String json = new Gson().toJson(providerPropsMap);
         fxPreferences.savePreference(GEN_AI_PROVIDERS, json);
+    }
+
+    /**
+     * Get filtered custom models of the provider for the type.
+     *
+     * @param providerName
+     * @param modelType
+     * @return
+     */
+    public Collection<ModelMeta> getFilteredCustomModels(String providerName, int modelType) {
+        ProviderMeta providerMeta = this.loadProviderMeta(providerName);
+        if (providerMeta != null) {
+            List<ModelMeta> customModels = providerMeta.customModels();
+            if (customModels != null && !customModels.isEmpty()) {
+                customModels = customModels.stream().filter(mm -> mm.getType() == modelType).toList();
+                return customModels;
+            }
+        }
+        return null;
     }
 
     /**
@@ -83,9 +89,10 @@ public class LlmConfig {
      * @param provider
      * @param modelMeta
      * @since 1.11
+     * @deprecated
      */
     public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
-        ProviderMeta providerMeta = this.loadProviderMeta(provider.getName());
+        ProviderMeta providerMeta = this.loadProviderMeta(provider.name());
         for (ModelMeta customModel : providerMeta.customModels()) {
             customModel.setActive(customModel.getName().equals(modelMeta.getName()));
         }
@@ -109,33 +116,6 @@ public class LlmConfig {
         return providers.get(providerName);
     }
 
-    /**
-     * Get preferred model name for active LLM provider
-     *
-     * @return
-     * @since 1.11
-     * @deprecated
-     */
-    public ModelMeta preferredModelForActiveLlmProvider() {
-        String activeProvider = LlmConfig.getIns().getActiveProviderMeta();
-        if (StringUtils.isNotBlank(activeProvider)) {
-            Map<String, ProviderMeta> providers = LlmConfig.getIns().loadAllProviderMetas();
-            if (providers.containsKey(activeProvider)) {
-                ProviderMeta props = providers.get(activeProvider);
-                if (StringUtils.isNotBlank(props.aiModel())) {
-                    if ("Custom".equals(props.aiModel())) {
-                        if (props.customModels() == null) {
-                            return null;
-                        }
-                        return props.customModels().stream().filter(ModelMeta::active).findFirst().orElse(null);
-                    }
-                    // for pre-defined models
-                    return GenAiConstants.lookupModelMeta(activeProvider, props.aiModel());
-                }
-            }
-        }
-        return null;
-    }
 
     public AgentMeta loadAgent(String id) {
         return loadAgents().get(id);

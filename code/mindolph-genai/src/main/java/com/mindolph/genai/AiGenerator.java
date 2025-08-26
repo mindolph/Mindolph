@@ -265,8 +265,8 @@ public class AiGenerator implements Generator {
         }
         GenAiModelProvider provider = providerModel.a();
         Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
-        if (propsMap.containsKey(provider.getName())) {
-            ProviderMeta props = propsMap.get(provider.getName());
+        if (propsMap.containsKey(provider.name())) {
+            ProviderMeta props = propsMap.get(provider.name());
             if (provider == null || props == null) return false;
             log.debug("Provider: %s".formatted(provider));
             log.trace(String.valueOf(props));

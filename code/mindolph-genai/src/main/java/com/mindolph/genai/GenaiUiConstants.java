@@ -29,8 +29,8 @@ public interface GenaiUiConstants {
     StringConverter<Pair<VectorStoreProvider, String>> vectorStoreConverter = new StringConverter<>() {
 
         @Override
-        public String toString(Pair<VectorStoreProvider, String> object) {
-            return object == null ? "" : object.getKey().getDisplayName();
+        public String toString(Pair<VectorStoreProvider, String> pair) {
+            return pair == null ? "" : pair.getKey().getDisplayName();
         }
 
         @Override
@@ -42,8 +42,8 @@ public interface GenaiUiConstants {
     StringConverter<Pair<String, DatasetMeta>> datasetConverter = new StringConverter<>() {
 
         @Override
-        public String toString(Pair<String, DatasetMeta> object) {
-            return object == null ? "" : object.getValue().getName();
+        public String toString(Pair<String, DatasetMeta> pair) {
+            return pair == null ? "" : pair.getValue().getName();
         }
 
         @Override
@@ -55,8 +55,8 @@ public interface GenaiUiConstants {
     StringConverter<Pair<String, AgentMeta>> agentConverter = new StringConverter<>() {
 
         @Override
-        public String toString(Pair<String, AgentMeta> object) {
-            return object == null ? "" : object.getValue().getName();
+        public String toString(Pair<String, AgentMeta> paire) {
+            return paire == null ? "" : paire.getValue().getName();
         }
 
         @Override
@@ -71,8 +71,8 @@ public interface GenaiUiConstants {
 
     class ProviderConverter extends StringConverter<Pair<GenAiModelProvider, String>> {
         @Override
-        public String toString(Pair<GenAiModelProvider, String> object) {
-            return object == null ? "" : object.getValue();
+        public String toString(Pair<GenAiModelProvider, String> pair) {
+            return pair == null ? "" : pair.getValue();
         }
 
         @Override
@@ -83,8 +83,8 @@ public interface GenaiUiConstants {
 
     class ModelMetaConverter extends StringConverter<Pair<String, ModelMeta>> {
         @Override
-        public String toString(Pair<String, ModelMeta> object) {
-            return object == null ? "" : object.getValue().getName();
+        public String toString(Pair<String, ModelMeta> pair) {
+            return pair == null ? "" : pair.getValue().getName();
         }
 
         @Override

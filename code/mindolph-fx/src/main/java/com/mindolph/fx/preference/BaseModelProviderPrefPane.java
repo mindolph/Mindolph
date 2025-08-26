@@ -6,7 +6,6 @@ import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenAiUtils;
@@ -63,11 +62,11 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 
         List<GenAiModelProvider> filteredProviders = EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.getName(), type)).toList();
 
-        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(p -> new Pair<>(p, p.getName())).toList();
+        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
-            String providerName = newValue.getKey().getName();
+            String providerName = newValue.getKey().name();
             log.debug("selected provider: %s".formatted(providerName));
             Pair<String, String> lang = cbLanguage == null ? null : cbLanguage.getSelectionModel().getSelectedItem();
             this.updateModelComponent(cbModel, providerName, type, lang == null ? null : lang.getKey());
@@ -92,7 +91,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 
     // update the model component by provider and language choices.
     protected void updateModelComponent(ChoiceBox<Pair<String, ModelMeta>> cbModel, String providerName, int modelType, String langCode) {
-        Collection<ModelMeta> preDefinedModels = this.filterPreDefinedModels(providerName, modelType);
+        Collection<ModelMeta> preDefinedModels = GenAiConstants.getFilteredPreDefinedModels(providerName, modelType);
 
         if (StringUtils.isNotBlank(langCode)) {
             preDefinedModels = preDefinedModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
@@ -105,7 +104,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             cbModel.getItems().addAll(preDefinedModels.stream().map(mm -> new Pair<>(mm.getName(), mm)).sorted(MODEL_COMPARATOR).toList());
         }
 
-        Collection<ModelMeta> customModels = this.filterCustomModels(providerName, modelType);
+        Collection<ModelMeta> customModels = LlmConfig.getIns().getFilteredCustomModels(providerName, modelType);
         if (CollectionUtils.isNotEmpty(customModels)) {
             if (StringUtils.isNotBlank(langCode)) {
                 customModels = customModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
@@ -119,27 +118,8 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 
     // Whether there are any specific type of models for the provider
     private boolean hasModelsForType(String providerName, int modelType) {
-        return CollectionUtils.isNotEmpty(filterPreDefinedModels(providerName, modelType))
-                || CollectionUtils.isNotEmpty(filterCustomModels(providerName, modelType));
-    }
-
-    // get filtered predefined models of the provider for the type.
-    private Collection<ModelMeta> filterPreDefinedModels(String providerName, int modelType) {
-        return PROVIDER_MODELS.get(providerName)
-                .stream().filter(mm -> mm.getType() == modelType).toList();
-    }
-
-    // get filtered custom models of the provider for the type.
-    private Collection<ModelMeta> filterCustomModels(String providerName, int modelType) {
-        ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
-        if (providerMeta != null) {
-            List<ModelMeta> customModels = providerMeta.customModels();
-            if (customModels != null && !customModels.isEmpty()) {
-                customModels = customModels.stream().filter(mm -> mm.getType() == modelType).toList();
-                return customModels;
-            }
-        }
-        return null;
+        return CollectionUtils.isNotEmpty(GenAiConstants.getFilteredPreDefinedModels(providerName, modelType))
+                || CollectionUtils.isNotEmpty(LlmConfig.getIns().getFilteredCustomModels(providerName, modelType));
     }
 
     protected void selectProviderAndModel(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
@@ -157,7 +137,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             return;
         }
         super.fxPreferences.savePreference(prefKey,
-                "%s:%s".formatted(cbProvider.getSelectionModel().getSelectedItem().getValue(), cbModel.getSelectionModel().getSelectedItem().getValue().getName()));
+                "%s:%s".formatted(cbProvider.getSelectionModel().getSelectedItem().getKey().name(), cbModel.getSelectionModel().getSelectedItem().getValue().getName()));
     }
 
 

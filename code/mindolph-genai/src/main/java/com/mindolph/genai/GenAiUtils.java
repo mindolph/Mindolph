@@ -4,6 +4,7 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -26,7 +27,10 @@ public class GenAiUtils {
         String preferenceValue = FxPreferences.getInstance().getPreference(prefKey, String.class);
         if (StringUtils.isNotBlank(preferenceValue)) {
             String[] split = StringUtils.split(preferenceValue, ":");
-            return new Tuple2<>(GenAiModelProvider.fromName(split[0]), new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
+            if (ArrayUtils.isEmpty(split) || split.length != 2) {
+                return null;
+            }
+            return new Tuple2<>(GenAiModelProvider.valueOf(split[0]), new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
         }
         return null;
     }

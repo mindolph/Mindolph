@@ -33,6 +33,18 @@ public interface GenAiConstants {
         return first.orElse(null);
     }
 
+    /**
+     * get filtered predefined models of the provider for the type.
+     *
+     * @param providerName
+     * @param modelType
+     * @return
+     */
+    static Collection<ModelMeta> getFilteredPreDefinedModels(String providerName, int modelType) {
+        return PROVIDER_MODELS.get(providerName)
+                .stream().filter(mm -> mm.getType() == modelType).toList();
+    }
+
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // https://platform.openai.com/docs/models
