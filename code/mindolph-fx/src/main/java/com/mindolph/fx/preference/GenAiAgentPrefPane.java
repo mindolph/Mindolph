@@ -4,7 +4,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
@@ -25,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
 import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.agentConverter;
 
@@ -94,8 +91,8 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         });
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
-        super.initProviderAndModelComponents(this.cbEmbeddingProvider, this.cbEmbeddingModel, MODEL_TYPE_EMBEDDING);
-        super.initProviderAndModelComponents(this.cbChatProvider, this.cbChatModel, MODEL_TYPE_CHAT);
+        super.initEmbeddingModelComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
+        super.initChatModelComponents(this.cbChatProvider, this.cbChatModel);
 
         btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
@@ -130,13 +127,6 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             saveCurrentAgent();
         });
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
-            saveCurrentAgent();
-        });
-        cbLanguage.setConverter(new PairStringStringConverter());
-        cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
-        cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.equals(oldValue)) return;
-            super.updateModelComponent(cbEmbeddingModel, currentAgentMeta.getEmbeddingProvider().getName(), MODEL_TYPE_EMBEDDING, newValue.getKey());
             saveCurrentAgent();
         });
         TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");

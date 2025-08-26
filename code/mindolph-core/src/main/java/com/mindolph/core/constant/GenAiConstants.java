@@ -101,11 +101,11 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
-//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
-//            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v3").dimension(1024).langCode("zh_CN").build());
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v2").dimension(1536).langCode("zh_CN").build());
-            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v1").dimension(1536).langCode("zh_CN").build());
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v3").type(MODEL_TYPE_EMBEDDING).dimension(1024).langCode("zh_CN").build());
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v2").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh_CN").build());
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMetaBuilder().name("text-embedding-v1").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh_CN").build());
 
 
             // https://www.bigmodel.cn/console/modelcenter/square

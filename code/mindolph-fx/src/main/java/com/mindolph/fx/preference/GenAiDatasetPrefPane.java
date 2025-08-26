@@ -10,7 +10,6 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
 import com.mindolph.base.genai.rag.EmbeddingService;
-import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
@@ -37,9 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
 import static com.mindolph.core.constant.GenAiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
-import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.datasetConverter;
 
 /**
@@ -153,10 +150,10 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 currentDatasetMeta = datasetMeta;
                 // save current active dataset ID.
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_DATASET_LATEST, datasetMeta.getId());
-                // init model provider and model.
-                super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
                 // init language selection
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
+                // init model provider and model.
+                super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
                 lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles().size()));
             }
             else {
@@ -206,15 +203,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             }
         });
 
-        cbLanguage.setConverter(new PairStringStringConverter());
-        cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
-        cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
-            super.updateModelComponent(cbEmbeddingModel, currentDatasetMeta.getProvider().getName(), MODEL_TYPE_EMBEDDING, newValue.getKey());
-            this.saveCurrentDataset();
-        });
-
         // only embedding models are applied
-        super.initProviderAndModelComponents(this.cbEmbeddingProvider, this.cbEmbeddingModel, MODEL_TYPE_EMBEDDING);
+        super.initEmbeddingModelComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
 
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -273,7 +263,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     log.error(e.getLocalizedMessage(), e);
                     DialogFactory.errDialog(e.getLocalizedMessage());
                     currentDatasetMeta.setStop(true); // force to stop if any exception occurs.
-                    embeddingStateMachine.postWithPayload(EmbeddingState.DONE, new EmbeddingProgress("ERROR: " + e.getLocalizedMessage()));
+                    embeddingStateMachine.postWithPayload(EmbeddingState.DONE, new EmbeddingProgress("ERROR: %s".formatted(e.getLocalizedMessage())));
                 }
             }
         });

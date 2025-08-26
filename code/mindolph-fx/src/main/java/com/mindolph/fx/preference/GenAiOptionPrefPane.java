@@ -113,8 +113,8 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
             this.saveChanges();
         });
 
-        super.initProviderAndModelComponents(this.cbProviderGenerate, this.cbModelGenerate, GenAiConstants.MODEL_TYPE_CHAT);
-        super.initProviderAndModelComponents(this.cbProviderSummarize, this.cbModelSummarize, GenAiConstants.MODEL_TYPE_CHAT);
+        super.initChatModelComponents(this.cbProviderGenerate, this.cbModelGenerate);
+        super.initChatModelComponents(this.cbProviderSummarize, this.cbModelSummarize);
 
         super.selectProviderAndModel(this.cbProviderGenerate, this.cbModelGenerate, GEN_AI_GENERATE_MODEL);
         super.selectProviderAndModel(this.cbProviderSummarize, this.cbModelSummarize, GEN_AI_SUMMARIZE_MODEL);
