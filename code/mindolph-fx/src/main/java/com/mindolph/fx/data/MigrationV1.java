@@ -28,7 +28,7 @@ public class MigrationV1 implements Migration {
     }
 
     @Override
-    public void doFixing() {
+    public void doMigration() {
         log.debug("Try to do fixing(v1)");
 
         // use pref 'mmd.drawBackground' to determine the fixing

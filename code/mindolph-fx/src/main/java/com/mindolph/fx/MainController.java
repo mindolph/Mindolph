@@ -331,7 +331,7 @@ public class MainController extends BaseController implements Initializable,
 
             String activeCollName = this.cm.getActiveCollectionName();
             rmiCollectionDefault.setSelected("default".equals(activeCollName));
-            // load sorted collection names to menu except the default one.
+            // load sorted collection names to the menu except the default one.
             fileCollectionMap.keySet().stream()
                     .sorted(Comparator.comparing(String::toString))
                     .filter(collName -> !"default".equals(collName)).forEach(collName -> {

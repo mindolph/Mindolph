@@ -61,8 +61,7 @@ public class LlmConfig {
      * @deprecated
      */
     public String getActiveProviderMeta() {
-        return fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDER_ACTIVE, PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING,
-                OPEN_AI.getName());
+        return fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName());
     }
 
     /**
