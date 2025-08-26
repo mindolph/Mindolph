@@ -3,7 +3,7 @@ package com.mindolph.fx.data;
 import com.google.gson.Gson;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.llm.ProviderProps;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,22 +30,22 @@ public class MigrationV3 implements Migration {
 
     @Override
     public void doMigration() {
-        Map<String, ProviderProps> providerProps = LlmConfig.getIns().loadGenAiProviders();
-        Map<String, ProviderProps> newProviderProps = new HashMap<>();
-        for (String k : providerProps.keySet()) {
-            ProviderProps p = providerProps.get(k);
+        Map<String, ProviderMeta> ProviderMeta = LlmConfig.getIns().loadAllProviderMetas();
+        Map<String, ProviderMeta> newProviderMeta = new HashMap<>();
+        for (String k : ProviderMeta.keySet()) {
+            ProviderMeta p = ProviderMeta.get(k);
             GenAiModelProvider provider = GenAiModelProvider.fromName(k);
             if (provider != null) {
                 log.info("Convert provider from %s to %s".formatted(k, provider.name()));
-                newProviderProps.put(provider.name(), p);
+                newProviderMeta.put(provider.name(), p);
             }
             else {
                 // keep the correct ones just for re-run the migration.
                 log.info("Keep the provider: %s".formatted(k));
-                newProviderProps.put(k, p);
+                newProviderMeta.put(k, p);
             }
         }
-        String json = new Gson().toJson(newProviderProps);
+        String json = new Gson().toJson(newProviderMeta);
         FxPreferences.getInstance().savePreference(GEN_AI_PROVIDERS, json);
 
         // it's the display name

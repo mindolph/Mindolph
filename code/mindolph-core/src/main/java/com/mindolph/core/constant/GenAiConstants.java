@@ -125,7 +125,7 @@ public interface GenAiConstants {
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-chat", 8192));
-            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
+            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 65536));
 
             // Moonshot
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("kimi-latest-8k", 8192));
