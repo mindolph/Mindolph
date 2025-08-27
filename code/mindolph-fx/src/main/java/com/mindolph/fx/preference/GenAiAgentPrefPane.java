@@ -65,10 +65,11 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         cbAgent.setConverter(agentConverter);
+        super.beforeLoading();
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
-            isLoading.set(true);
             AgentMeta agentMeta = newValue.getValue();
+            log.debug("Agent changed: %s".formatted(agentMeta));
             if (agentMeta != null) {
                 currentAgentMeta = agentMeta;
                 super.fxPreferences.savePreference(PrefConstants.GEN_AI_AGENT_LATEST, agentMeta.getId());
@@ -87,7 +88,8 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 ChoiceUtils.selectOrUnselectProvider(this.cbChatProvider, currentAgentMeta.getChatProvider());
                 ChoiceUtils.selectOrUnselectModel(this.cbChatModel, currentAgentMeta.getChatModel());
             }
-            isLoading.set(false);
+            log.debug("Loading completed.");
+            super.afterLoading();
         });
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
@@ -108,7 +110,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, currentAgentMeta);
                 cbAgent.getItems().add(newAgentPair);
                 cbAgent.getSelectionModel().select(newAgentPair);
-                this.saveCurrentAgent();
+                super.saveChanges();
             });
         });
         btnRemoveAgent.setOnAction(event -> {
@@ -116,18 +118,18 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 return;
             }
             if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
-                isLoading.set(true);
+                beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
                 cbAgent.getItems().remove(new Pair<>(currentAgentMeta.getId(), currentAgentMeta));
                 clearAll();
-                isLoading.set(false);
+                afterLoading();
             }
         });
         tfDescription.textProperty().addListener((observable, oldValue, newValue) -> {
-            saveCurrentAgent();
+            super.saveChanges();
         });
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
-            saveCurrentAgent();
+            super.saveChanges();
         });
         TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");
         TableColumn<DatasetMeta, String> colFiles = new TableColumn<>("Files");
@@ -144,7 +146,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets);
             List<DatasetMeta> datasetMetas = dialog.showAndWait();
             if (this.initDatasetsTableView(datasetMetas)) {
-                saveCurrentAgent();
+                super.saveChanges();
             }
         });
 
@@ -171,14 +173,16 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
 
     @Override
     protected void onSave(boolean notify) {
+        log.debug("onSave");
         this.saveCurrentAgent();
         super.onSave(notify);
     }
 
     private AgentMeta saveCurrentAgent() {
-        if (isLoading.get()) {
-            return null;
-        }
+//        if (isLoading()) {
+//            log.debug("Loading... ignore saving");
+//            return null;
+//        }
         AgentMeta am = currentAgentMeta;
         log.debug("On save agent {}: {}", am.getId(), am.getName());
         am.setDescription(tfDescription.getText());
@@ -195,7 +199,9 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
         }
         am.setPromptTemplate(taAgentPrompt.getText());
-        am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
+        if (!cbLanguage.getSelectionModel().isEmpty()) {
+            am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
+        }
         am.setDatasetIds(tvDatasets.getItems().stream().map(DatasetMeta::getId).toList());
         LlmConfig.getIns().saveAgent(am.getId(), am);
         return am;

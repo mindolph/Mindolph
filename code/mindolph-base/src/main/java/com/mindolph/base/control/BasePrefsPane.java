@@ -33,7 +33,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     protected FxPreferences fxPreferences = FxPreferences.getInstance();
 
     // Binding of a preference key and Pref object.
-    private final MultiValuedMap<String, Pref> prefMap = new HashSetValuedHashMap<>();
+    private final MultiValuedMap<String, Pref> bondPrefMap = new HashSetValuedHashMap<>();
 
     /**
      * Whether preferences are loaded, all listeners or handlers are available only this is true.
@@ -82,7 +82,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * @param <T>
      */
     protected <T> void bindPreference(Property<T> property, String prefName, T defaultValue) {
-        prefMap.put(prefName, new Pref<T, T>(property, defaultValue, t -> t)); // the converter just return what it is for there is no need to convert.
+        bondPrefMap.put(prefName, new Pref<T, T>(property, defaultValue, t -> t)); // the converter just return what it is for there is no need to convert.
         // save to preference when value changes.
         property.addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> {
             if (isLoaded) {
@@ -146,7 +146,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      */
     protected <T, R> void bindPreference(Property<T> property, String prefName, R defaultValue,
                                          Function<T, R> saveConverter, Function<R, T> loadConverter, Consumer<T> onPropertyChange) {
-        prefMap.put(prefName, new Pref<>(property, defaultValue, loadConverter));
+        bondPrefMap.put(prefName, new Pref<>(property, defaultValue, loadConverter));
         ChangeListener<T> changeListener = (observable, oldValue, newValue) -> {
             if (onPropertyChange != null) {
                 onPropertyChange.accept(newValue);
@@ -183,15 +183,16 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     }
 
     public void loadPreferences() {
-        for (String prefName : prefMap.keySet()) {
-            Collection<Pref> prefs = prefMap.get(prefName);
+        for (String prefName : bondPrefMap.keySet()) {
+            Collection<Pref> prefs = bondPrefMap.get(prefName);
             for (Pref pref : prefs) {
-                log.debug("Load preference: %s=%s".formatted(prefName, pref));
+                if (log.isTraceEnabled()) log.trace("Load preference: %s=%s".formatted(prefName, pref));
                 Property property = pref.getProperty();
                 Object defaultValue = pref.getDefaultValue();
                 Object prefValue = this.loadPreferenceValueByDefault(prefName, property, defaultValue);
                 if (prefValue != null) {
-                    log.debug("Apply preference value to property of component: %s".formatted(prefValue));
+                    if (log.isTraceEnabled())
+                        log.trace("Apply preference value to property of component: %s".formatted(prefValue));
                     Object v = pref.getConverter().apply(prefValue);
                     property.setValue(v);
                 }
@@ -206,8 +207,8 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * Reset all preferences to default and save, UI of this panel also will be refreshed.
      */
     public void resetToDefault() {
-        for (String prefName : prefMap.keySet()) {
-            Collection<Pref> prefs = prefMap.get(prefName);
+        for (String prefName : bondPrefMap.keySet()) {
+            Collection<Pref> prefs = bondPrefMap.get(prefName);
             for (Pref<?, ?> pref : prefs) {
                 Property property = pref.getProperty();
                 Object defaultValue = pref.getDefaultValue();

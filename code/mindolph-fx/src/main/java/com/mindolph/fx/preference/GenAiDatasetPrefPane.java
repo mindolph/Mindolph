@@ -143,7 +143,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         cbDataset.setConverter(datasetConverter);
         cbDataset.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
-            isLoading.set(true);
+            beforeLoading();
             // init all components from dataset choosing.
             DatasetMeta datasetMeta = newValue.getValue();
             if (datasetMeta != null) {
@@ -154,7 +154,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 // init model provider and model.
                 super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-                lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles().size()));
+                lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles() == null ? 0 : datasetMeta.getFiles().size()));
             }
             else {
                 log.warn("unknow dataset");
@@ -163,7 +163,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
             WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
             workspaceSelector.loadWorkspaces(workspaceList, workspaceList.getProjects().getFirst());
-            isLoading.set(false);
+            afterLoading();
         });
         Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
         if (datasetMap != null && !datasetMap.isEmpty()) {
@@ -183,7 +183,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 Pair<String, DatasetMeta> newAgentPair = new Pair<>(dsId, currentDatasetMeta);
                 cbDataset.getItems().add(newAgentPair);
                 cbDataset.getSelectionModel().select(newAgentPair);
-                this.saveCurrentDataset();
+                super.saveChanges();
             });
         });
         btnRemoveDataset.setOnAction(event -> {
@@ -191,7 +191,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 return;
             }
             if (DialogFactory.yesNoConfirmDialog("Removing Dataset", "Are you sure you want to remove the dataset '%s'?".formatted(currentDatasetMeta.getName()))) {
-                isLoading.set(true);
+                beforeLoading();
                 LlmConfig.getIns().removeDataset(currentDatasetMeta.getId());
                 if (cbDataset.getItems().remove(new Pair<>(currentDatasetMeta.getId(), currentDatasetMeta))) {
                     clearAll();
@@ -199,7 +199,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 else {
                     log.warn("Failed to remove dataset '{}'", currentDatasetMeta.getId());
                 }
-                isLoading.set(false);
+                afterLoading();
             }
         });
 
@@ -218,9 +218,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
             // start to listen to checked files changes only after the workspace is loaded (to avoid redundant event handling)
             fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) changed -> {
-                if (isLoading.get()) {
-                    return; // won't dont anything while loading.
-                }
+//                if (isLoading.get()) {
+//                    return;
+//                }
                 while (changed.next()) {
                     log.debug("Selection changed: added %d, removed %d".formatted(changed.getAddedSize(), changed.getRemovedSize()));
                     List<NodeData> addedNodes = changed.getAddedSubList().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
@@ -291,9 +291,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     }
 
     private DatasetMeta saveCurrentDataset() {
-        if (isLoading.get()) {
-            return null;
-        }
+//        if (isLoading.get()) {
+//            return null;
+//        }
         DatasetMeta datasetMeta = currentDatasetMeta;
         if (!cbLanguage.getSelectionModel().isEmpty()) {
             datasetMeta.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());

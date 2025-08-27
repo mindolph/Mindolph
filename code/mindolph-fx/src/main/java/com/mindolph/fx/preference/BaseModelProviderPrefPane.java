@@ -2,13 +2,17 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BaseOrganizedPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.rag.LocalModelManager;
 import com.mindolph.base.util.converter.PairStringStringConverter;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenAiUtils;
+import com.mindolph.mfx.dialog.DialogFactory;
+import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,15 +63,13 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
                                             ChoiceBox<Pair<String, ModelMeta>> cbModel,
                                             int type) {
         cbProvider.setConverter(new ProviderConverter());
-
-        List<GenAiModelProvider> filteredProviders = EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.getName(), type)).toList();
-
+        List<GenAiModelProvider> filteredProviders = EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
         List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
             String providerName = newValue.getKey().name();
-            log.debug("selected provider: %s".formatted(providerName));
+            log.debug("Provider changed: %s".formatted(providerName));
             Pair<String, String> lang = cbLanguage == null ? null : cbLanguage.getSelectionModel().getSelectedItem();
             this.updateModelComponent(cbModel, providerName, type, lang == null ? null : lang.getKey());
             super.saveChanges();
@@ -76,15 +78,44 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             cbLanguage.setConverter(new PairStringStringConverter());
             cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
             cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null) return;
+                log.debug("Language changed: %s".formatted(newValue));
                 if (cbProvider.getSelectionModel().getSelectedItem() != null) {
-                    this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getValue(), MODEL_TYPE_EMBEDDING, newValue.getKey());
+                    this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getKey().name(), MODEL_TYPE_EMBEDDING, newValue.getKey());
                 }
                 super.saveChanges();
             });
         }
         cbModel.setConverter(new ModelMetaConverter());
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            if (newValue == null) return;
+            if (newValue == null || super.isLoading()) return;
+            ModelMeta selectedModel = newValue.getValue();
+            if (selectedModel.isInternal() && selectedModel.getType() == MODEL_TYPE_EMBEDDING && StringUtils.isNotBlank(selectedModel.getDownloadUrl())) {
+                log.debug("selected model is local embedding model: %s".formatted(selectedModel.getName()));
+                String langCode = cbLanguage.getSelectionModel().getSelectedItem().getKey();
+                // require download
+                if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel.getName())) {
+                    if (DialogFactory.yesNoConfirmDialog("Download model",
+                            "Model files need required for selected model %s, do you want to download this embedding model?".formatted(selectedModel.getName()))) {
+                        GlobalExecutor.submit(() -> {
+                            try {
+                                boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);
+                                Platform.runLater(() -> {
+                                    if (success) {
+                                        DialogFactory.infoDialog("Download success");
+                                    }
+                                    else {
+                                        DialogFactory.errDialog("Download fail");
+                                    }
+                                });
+                            } catch (Exception e) {
+                                log.error(e.getMessage(), e);
+                            }
+
+                        });
+                    }
+                }
+            }
             super.saveChanges();
         });
     }

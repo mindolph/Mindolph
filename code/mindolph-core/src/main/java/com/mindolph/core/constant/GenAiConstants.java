@@ -148,18 +148,20 @@ public interface GenAiConstants {
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("moonshot-v1-128k", 131072));
 
             // Internal
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("en").downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
-            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("zh_CN").downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("en").internal(true).downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/resolve/main").build());
+            put(GenAiModelProvider.INTERNAL.getName(), new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("zh_CN").internal(true).downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/resolve/main").build());
         }
     };
 
-    String[] SUPPORTED_EMBEDDING_FILE_TYPES = new String[]{"mmd", "md", "txt"};
+    // TBD
     MultiValuedMap<String, ModelMeta> INTERNAL_EMBEDDING_MODELS = new HashSetValuedHashMap<>() {
         {
             put("en", new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").langCode("en").dimension(384).downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/tree/main").build());
             put("zh_CN", new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").langCode("zh_CN").dimension(512).downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/tree/main").build());
         }
     };
+
+    String[] SUPPORTED_EMBEDDING_FILE_TYPES = new String[]{"mmd", "md", "txt"};
 
     static Collection<ModelMeta> lookupModel(String langCode) {
         return INTERNAL_EMBEDDING_MODELS.get(langCode);

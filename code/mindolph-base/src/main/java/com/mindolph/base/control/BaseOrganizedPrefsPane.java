@@ -1,20 +1,22 @@
 package com.mindolph.base.control;
 
 import org.reactfx.EventSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.Duration;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @since unknown
  */
 public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
-    // Flag to pause saving data during loading data.
-    protected AtomicBoolean isLoading;
 
-    private EventSource<Void> changeEventSource;
+    private static final Logger log = LoggerFactory.getLogger(BaseOrganizedPrefsPane.class);
+
+    // event source with the 'loading' status.
+    private EventSource<Boolean> changeEventSource;
 
     public BaseOrganizedPrefsPane(String fxmlResourceUri) {
         super(fxmlResourceUri);
@@ -22,10 +24,10 @@ public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        isLoading = new AtomicBoolean(false);
         changeEventSource = new EventSource<>();
-        changeEventSource.reduceSuccessions((a, b) -> null, Duration.ofMillis(500)).subscribe(unused -> {
-            this.onSave(true);
+        changeEventSource.reduceSuccessions((a, b) -> b, Duration.ofMillis(500)).subscribe(isLoading -> {
+            // use event payload to avoid redundant savings.
+            if (!isLoading) this.onSave(true);
         });
     }
 
@@ -34,7 +36,20 @@ public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
      */
     protected void saveChanges() {
         // reducing saving changes request
-        changeEventSource.push(null);
+        log.debug("Fire event to Save changes lazily");
+        changeEventSource.push(!isLoaded);
+    }
+
+    protected void beforeLoading() {
+        isLoaded = false;
+    }
+
+    protected void afterLoading() {
+        isLoaded = true;
+    }
+
+    protected boolean isLoading() {
+        return !isLoaded;
     }
 
 }

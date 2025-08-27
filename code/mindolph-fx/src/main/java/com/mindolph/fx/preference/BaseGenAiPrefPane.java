@@ -37,6 +37,11 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
         super.initialize(location, resources);
     }
 
+    /**
+     *
+     * @param providerType
+     * @param modelMeta
+     */
     protected void selectEmbeddingProviderAndModel(GenAiModelProvider providerType, ModelMeta modelMeta) {
         ChoiceUtils.selectOrUnselectProvider(this.cbEmbeddingProvider, providerType);
         ChoiceUtils.selectOrUnselectModel(this.cbEmbeddingModel, modelMeta);

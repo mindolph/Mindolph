@@ -35,11 +35,11 @@
         <commons.csv.version>1.14.0</commons.csv.version>
         <swstate.version>2.2</swstate.version>
         <plantuml.version>1.2025.4</plantuml.version>
-        <swiftboot.version>2.4.10</swiftboot.version>
+        <swiftboot.version>2.4.11</swiftboot.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.25.1</log4j2.version>
         <junit.version>5.13.3</junit.version>
-        <mfx.version>2.0.2</mfx.version>
+        <mfx.version>2.0.3</mfx.version>
         <gson.version>2.13.1</gson.version>
         <controlsfx.version>11.2.2</controlsfx.version>
         <richtextfx.version>0.11.4</richtextfx.version>
@@ -54,6 +54,7 @@
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.38</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
+        <okhttp3.version>4.12.0</okhttp3.version>
     </properties>
 
     <dependencies>
@@ -469,6 +470,11 @@
                 <groupId>io.methvin</groupId>
                 <artifactId>directory-watcher</artifactId>
                 <version>${directory-watcher.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp3.version}</version>
             </dependency>
 
             <dependency>

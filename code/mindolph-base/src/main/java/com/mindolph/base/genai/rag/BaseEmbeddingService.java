@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -11,6 +11,7 @@ public class ModelMetaBuilder {
     private int type = 1;
     private boolean active = false;
     private String langCode;
+    private boolean internal = false;
     private String downloadUrl;
 
     public ModelMetaBuilder name(String name) {
@@ -48,6 +49,11 @@ public class ModelMetaBuilder {
         return this;
     }
 
+    public ModelMetaBuilder internal(boolean internal) {
+        this.internal = internal;
+        return this;
+    }
+
     public ModelMetaBuilder downloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
         return this;
@@ -58,6 +64,7 @@ public class ModelMetaBuilder {
         mm.setName(name);
         mm.setType(type);
         mm.setLangCode(langCode);
+        mm.setInternal(internal);
         mm.setDownloadUrl(downloadUrl);
         mm.setActive(active);
         mm.setDimension(dimension);
