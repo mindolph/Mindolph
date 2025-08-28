@@ -4,6 +4,8 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
@@ -155,20 +157,28 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         int selectIdx = cbAgent.getItems().stream().map(Pair::getKey).toList().indexOf(latestAgentId);
         log.debug("pre-select agent item %s at index %s".formatted(latestAgentId, selectIdx));
         cbAgent.getSelectionModel().select(selectIdx);
+
+        // listen to the changes from dataset management
+        PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
+            if (pluginEvent.getEventType() == PluginEvent.EventType.DATASET_PREF_CHANGED) {
+                List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
+                this.initDatasetsTableView(datasetMetas);
+            }
+        });
     }
 
     private boolean initDatasetsTableView(List<DatasetMeta> datasetMetas) {
+        // clear the table anyway.
+        tvDatasets.getItems().clear();
         if (datasetMetas != null && !datasetMetas.isEmpty()) {
             log.debug("Select datasets: {}", datasetMetas);
             // force to convert lang code to language.
             datasetMetas.forEach(datasetMeta -> {
                 datasetMeta.setLanguageCode(SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode()));
             });
-            tvDatasets.getItems().clear();
             tvDatasets.getItems().addAll(datasetMetas);
-            return true;
         }
-        return false;
+        return true;
     }
 
     @Override

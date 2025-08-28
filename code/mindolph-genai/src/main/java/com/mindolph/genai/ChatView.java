@@ -75,13 +75,13 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.LOAD_FAILED)
                 .in(payload -> {
-                    lblAgent.setText("Fail");
+                    lblAgent.setText("Fail to load agent: %s".formatted(payload.getName()));
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })
                 .state(ChatState.READY)
                 .in(p -> {
-                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().getName(), p.getChatModel().getName()));
+                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), p.getChatModel().getName()));
                     taInput.setDisable(false);
                     taInput.setPromptText("Chat with your agent \"%s\"".formatted(p.getName()));
                     taInput.requestFocus();
@@ -166,6 +166,7 @@ public class ChatView extends BaseView implements Initializable {
                     put(ChatState.INIT, ChatState.LOADING);
                     put(ChatState.LOAD_FAILED, ChatState.LOADING);
                     put(ChatState.READY, ChatState.SWITCHING);
+                    put(ChatState.SWITCH_FAILED, ChatState.SWITCHING);
                 }
             });
             RagService.getInstance().listenOnProgressEvent(s -> {

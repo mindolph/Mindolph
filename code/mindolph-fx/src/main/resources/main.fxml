@@ -217,7 +217,7 @@
                         </Tab>
                         <Tab fx:id="tabAgent">
                             <tooltip>
-                                <Tooltip text="Agent"/>
+                                <Tooltip text="Agent(Preview)"/>
                             </tooltip>
                             <ChatView fx:id="chatView"/>
                         </Tab>

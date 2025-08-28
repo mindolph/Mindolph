@@ -94,11 +94,11 @@ public abstract class BaseEmbeddingService {
     }
 
     public void emitProgressEvent(String message) {
-        progressEventSource.push(new EmbeddingProgress(null, true, message, EmbeddingStage.PREPARE, 0));
+        progressEventSource.push(new EmbeddingProgress(null, true, 0, message, EmbeddingStage.PREPARE, 0));
     }
 
-    public void emitProgressEvent(File file, boolean success, String message, float ratio) {
-        progressEventSource.push(new EmbeddingProgress(file, success, message, EmbeddingStage.EMBEDDING, ratio));
+    public void emitProgressEvent(File file, boolean success, int successCount, String message, float ratio) {
+        progressEventSource.push(new EmbeddingProgress(file, success, successCount, message, EmbeddingStage.EMBEDDING, ratio));
     }
 
     public void setVectorStoreMeta(VectorStoreMeta vectorStoreMeta) {
@@ -108,19 +108,25 @@ public abstract class BaseEmbeddingService {
     /**
      * @param file
      * @param success
+     * @param successCount
      * @param msg
      * @param stage   the stage of whole embedding.
      * @param ratio   0-1 the percent to complete
      */
-    public record EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage,
+    public record EmbeddingProgress(File file, boolean success, int successCount, String msg, EmbeddingStage stage,
                                     float ratio) implements Serializable {
         public EmbeddingProgress(String msg) {
-            this(null, false, msg, null, 0);
+            this(null, false, 0, msg, null, 0);
         }
 
-        public EmbeddingProgress(File file, boolean success, String msg, EmbeddingStage stage, float ratio) {
+        public EmbeddingProgress(String msg, int successCount) {
+            this(null, false, successCount, msg, null, 0);
+        }
+
+        public EmbeddingProgress(File file, boolean success, int successCount, String msg, EmbeddingStage stage, float ratio) {
             this.file = file;
             this.success = success;
+            this.successCount = successCount;
             this.msg = msg;
             this.stage = stage;
             this.ratio = ratio;

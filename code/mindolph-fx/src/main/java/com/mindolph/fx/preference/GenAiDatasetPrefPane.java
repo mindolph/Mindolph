@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IdUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +254,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 try {
                     embeddingStateMachine.postWithPayload(EmbeddingState.EMBEDDING, new EmbeddingProgress("Start to embed selected files..."));
                     EmbeddingService.getInstance().embedDataset(currentDatasetMeta, progress -> {
+                        int percent = BigDecimal.valueOf(progress.successCount()).divide(BigDecimal.valueOf(currentDatasetMeta.getFiles().size()), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).intValue();
+                        currentDatasetMeta.setStatus(percent);
+                        super.saveChanges();
                         embeddingStateMachine.postWithPayload(EmbeddingState.DONE, progress);
                     });
                     // NOTE: the progress events are listened by the EmbeddingService::listenOnProgressEvent.

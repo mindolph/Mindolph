@@ -75,7 +75,7 @@ public class EmbeddingService extends BaseEmbeddingService {
         // load here for the config might be changed on the fly.
         super.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
-            log.warn("Vector store: " + vectorStoreMeta);
+            log.debug("Vector store: %s".formatted(vectorStoreMeta));
             throw new RuntimeException("Vector store is not well setup");
         }
         if (!datasetMeta.isAllSetup()) {
@@ -108,7 +108,8 @@ public class EmbeddingService extends BaseEmbeddingService {
                     File file = selectedFiles.get(i);
                     if (datasetMeta.isStop()) {
                         log.info("Embedding is stopped by user");
-                        completed.accept(new EmbeddingProgress("Embedding is stopped"));
+                        // todo update dataset status
+                        completed.accept(new EmbeddingProgress("Embedding is stopped", successCount));
                         break;
                     }
                     BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 3, RoundingMode.HALF_UP);
@@ -129,15 +130,17 @@ public class EmbeddingService extends BaseEmbeddingService {
                         }
                     }
                     Double percent = NumberFormatUtils.toPercent(ratio.doubleValue(), 1);
-                    super.emitProgressEvent(file, success, "Embedding...%.1f%%".formatted(percent), ratio.floatValue());
+                    super.emitProgressEvent(file, success, successCount, "Embedding...%.1f%%".formatted(percent), ratio.floatValue());
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                completed.accept(new EmbeddingProgress("Failed: %s".formatted(e.getMessage())));
+                // todo update dataset status
+                completed.accept(new EmbeddingProgress("Failed: %s".formatted(e.getMessage()), successCount));
                 return;
             }
             if (!datasetMeta.isStop()) {
-                completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total)));
+                // todo update dataset status
+                completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total), successCount));
             }
         });
     }
