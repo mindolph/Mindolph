@@ -55,7 +55,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
         this.useProxy = useProxy;
         FxPreferences fxPreferences = FxPreferences.getInstance();
         this.timeout = fxPreferences.getPreference(GEN_AI_TIMEOUT, 60);
-        // Proxy settings
+        // Proxy settings TODO use ProxyMeta instead
         proxyEnabled = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
         if (proxyEnabled) {
             proxyType = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_TYPE, "HTTP");

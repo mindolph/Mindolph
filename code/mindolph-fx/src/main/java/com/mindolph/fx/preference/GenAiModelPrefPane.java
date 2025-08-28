@@ -3,7 +3,7 @@ package com.mindolph.fx.preference;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
-import com.mindolph.base.control.BasePrefsPane;
+import com.mindolph.base.control.BaseOrganizedPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
@@ -40,7 +39,7 @@ import static com.mindolph.genai.GenaiUiConstants.*;
 /**
  * @since unknown
  */
-public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
+public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(GenAiModelPrefPane.class);
 
@@ -63,15 +62,13 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
     @FXML
     private CheckBox cbUseProxy;
 
-    private AtomicBoolean isReady;
-
     public GenAiModelPrefPane() {
         super("/preference/gen_ai_model_pref_pane.fxml");
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        isReady = new AtomicBoolean(false);
+        super.beforeLoading();
         // model providers
         cbModelProvider.setConverter(modelProviderConverter);
         List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
@@ -80,7 +77,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                 pair -> pair.getKey().name(),
                 providerName -> new Pair<>(valueOf(providerName), providerName),
                 selected -> {
-                    isReady.set(false);
+                    super.beforeLoading();
                     Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
                     GenAiModelProvider provider = selected.getKey();
                     if (provider != null) {
@@ -128,12 +125,12 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
                         cbModel.getSelectionModel().select(targetItem);
                         fxPreferences.savePreference(PrefConstants.GEN_AI_PROVIDER_LATEST, provider.name());
                     }
-                    isReady.set(true);
+                    super.afterLoading();
                 });
 
         // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!isReady.get()) return;
+            if (isLoading()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(newValue, null,
                     cbModel.getSelectionModel().getSelectedItem().getValue().getName(), cbUseProxy.isSelected(), customs);
@@ -142,7 +139,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
         });
         // Dynamic preference can't use bindPreference.
         tfBaseUrl.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!isReady.get()) return;
+            if (isLoading()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(null, newValue,
                     cbModel.getSelectionModel().getSelectedItem().getValue().getName(), cbUseProxy.isSelected(), customs);
@@ -237,7 +234,7 @@ public class GenAiModelPrefPane extends BasePrefsPane implements Initializable {
             }
         });
         cbUseProxy.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!isReady.get()) return;
+            if (isLoading()) return;
             List<ModelMeta> customs = cbCustomModels.getItems().stream().map(Pair::getValue).toList();
             ProviderMeta providerMeta = new ProviderMeta(tfApiKey.getText(), tfBaseUrl.getText(),
                     cbModel.getSelectionModel().getSelectedItem().getValue().getName(), newValue, customs);

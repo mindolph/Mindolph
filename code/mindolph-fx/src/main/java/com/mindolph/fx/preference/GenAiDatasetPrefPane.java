@@ -71,9 +71,6 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
     private DatasetMeta currentDatasetMeta;
 
-    private enum EmbeddingState {
-        READY, EMBEDDING, DONE
-    }
 
     private final StateMachine<EmbeddingState, EmbeddingProgress> embeddingStateMachine;
 
@@ -132,7 +129,6 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 .action("Restart embedding", EmbeddingState.DONE, EmbeddingState.EMBEDDING);
 
         embeddingStateMachine = new StateMachine<>(builder);
-        // embeddingStateMachine.setNoOutProcessForSelfCirculation(true);
         embeddingStateMachine.start();
 
     }
@@ -209,7 +205,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
-            log.debug("Workspace selected {}", newValue);
+            log.debug("Workspace changed: {}", newValue);
             fileSelectView.loadWorkspace(newValue.getValue(), currentDatasetMeta.getFiles(), true, false, pathname -> {
                 return FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES);
             });
@@ -323,4 +319,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         currentDatasetMeta = null;
     }
 
+    private enum EmbeddingState {
+        READY, EMBEDDING, DONE
+    }
 }

@@ -72,7 +72,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             if (checkedFiles != null) {
                 log.debug("Checked files: %d".formatted(checkedFiles.size()));
                 checkedFiles.forEach(file -> {
-                    log.debug("Checked file: {}", file);
+                    log.debug("  {}", file);
                 });
             }
             log.debug("Option expandAllAsDefault: {}", expandAllAsDefault);
@@ -93,16 +93,17 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     /**
      * Find embedding status from vector data store for all checked files and label the checked tree view items.
      *
-     * @param files
+     * @param allFiles
      */
-    private void labelTheCheckedFileWithEmbeddingStatus(List<File> files) {
+    private void labelTheCheckedFileWithEmbeddingStatus(List<File> allFiles) {
         GlobalExecutor.submit(() -> {
-            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(files);
-            Map<String, EmbeddingDocEntity> fileEntityMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
+            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(allFiles);
+            Map<String, EmbeddingDocEntity> embeddedMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
+            log.debug("Label checked files: %d".formatted(embeddedMap.size()));
             Platform.runLater(() -> {
-                for (File file : files) {
-                    if (fileEntityMap.containsKey(file.getPath())) {
-                        this.findAndUpdateName(file, fileEntityMap.get(file.getPath()).embedded() ? "embedded" : "fail");
+                for (File file : allFiles) {
+                    if (embeddedMap.containsKey(file.getPath())) {
+                        this.findAndUpdateName(file, embeddedMap.get(file.getPath()).embedded() ? "embedded" : "fail");
                     }
                     else {
                         this.findAndUpdateName(file, "never");

@@ -15,6 +15,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import dev.langchain4j.store.embedding.filter.comparison.IsEqualTo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -294,6 +295,7 @@ public class EmbeddingService extends BaseEmbeddingService {
     }
 
     public List<EmbeddingDocEntity> findDocuments(String datasetId) {
+        if (StringUtils.isBlank(datasetId)) return List.of();
         return super.withJdbcConnection(connection -> {
             try {
                 List<EmbeddingDocEntity> results = new ArrayList<>();
@@ -318,6 +320,7 @@ public class EmbeddingService extends BaseEmbeddingService {
     }
 
     public List<EmbeddingDocEntity> findDocuments(List<File> files) {
+        if (CollectionUtils.isEmpty(files)) return List.of();
         return super.withJdbcConnection(connection -> {
             try {
                 List<EmbeddingDocEntity> results = new ArrayList<>();

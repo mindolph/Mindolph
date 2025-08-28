@@ -81,8 +81,11 @@ public abstract class BaseEmbeddingService {
                 .createTable(createTable)
                 .dimension(embeddingModel.dimension())
                 .dropTableFirst(dropTable)
-                .metadataStorageConfig(DefaultMetadataStorageConfig.builder().storageMode(MetadataStorageMode.COLUMN_PER_KEY)
-                        .columnDefinitions(List.of("doc_id varchar(32) not null")).build())
+                .metadataStorageConfig(
+                        DefaultMetadataStorageConfig.builder()
+                                .storageMode(MetadataStorageMode.COLUMN_PER_KEY)
+                                .columnDefinitions(List.of("doc_id varchar(32) not null"))
+                                .build())
                 .build();
     }
 
