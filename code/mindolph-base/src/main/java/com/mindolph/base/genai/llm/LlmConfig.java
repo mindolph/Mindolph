@@ -161,12 +161,13 @@ public class LlmConfig {
 
     public List<DatasetMeta> getDatasetsFromIds(List<String> datasetIds) {
         Map<String, DatasetMeta> datasetMap = loadAllDatasets();
-        return datasetIds.stream().map(datasetMap::get).toList();
+        // the ids and the dataset metas might don't match in development.
+        return datasetIds.stream().map(datasetMap::get).filter(Objects::nonNull).toList();
     }
 
     public Map<String, DatasetMeta> loadAllDatasets() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(datasetConfigFile()), StandardCharsets.UTF_8))) {
+                new FileInputStream(this.datasetConfigFile()), StandardCharsets.UTF_8))) {
             Object o = GsonUtils.newGson().fromJson(reader, collectionType);
             if (o == null) {
                 return new HashMap<>();
@@ -233,6 +234,7 @@ public class LlmConfig {
         File f = new File(path);
         if (!f.exists()) {
             try {
+                if (!f.getParentFile().exists()) f.getParentFile().mkdirs();
                 if (f.createNewFile()) {
                     return f;
                 }

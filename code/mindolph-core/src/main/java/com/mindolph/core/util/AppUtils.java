@@ -1,5 +1,6 @@
 package com.mindolph.core.util;
 
+import com.mindolph.core.Env;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
@@ -10,6 +11,11 @@ import java.io.File;
 public class AppUtils {
 
     public static File getAppBaseDir() {
-        return new File(SystemUtils.getUserHome(), ".mindolph");
+        if (Env.isDevelopment) {
+            return new File(SystemUtils.getUserHome(), ".mindolph.dev");
+        }
+        else {
+            return new File(SystemUtils.getUserHome(), ".mindolph");
+        }
     }
 }
