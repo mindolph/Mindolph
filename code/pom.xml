@@ -55,6 +55,8 @@
         <lombok.version>1.18.38</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
         <okhttp3.version>4.12.0</okhttp3.version>
+        <onnxruntime.version>1.20.0</onnxruntime.version>
+        <tokenizers.version>0.31.1</tokenizers.version>
     </properties>
 
     <dependencies>
@@ -493,11 +495,13 @@
             <activation>
                 <os>
                     <family>unix</family>
+                    <arch>x86_64</arch>
                 </os>
             </activation>
             <properties>
                 <platform>linux</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</jfx_module_path>
+                <native.library.tokenizers>native/lib/linux-${os.arch}/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>
@@ -511,6 +515,8 @@
             <properties>
                 <platform>mac-aarch64</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</jfx_module_path>
+                <native.library.onnx>ai/onnxruntime/native/osx-${os.arch}</native.library.onnx>
+                <native.library.tokenizers>native/lib/osx-${os.arch}/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>
@@ -524,6 +530,8 @@
             <properties>
                 <platform>mac</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</jfx_module_path>
+                <native.library.onnx>ai/onnxruntime/native/osx-x64</native.library.onnx>
+                <native.library.tokenizers>native/lib/osx-${os.arch}/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>
@@ -531,11 +539,13 @@
             <activation>
                 <os>
                     <family>windows</family>
+                    <arch>x86_64</arch>
                 </os>
             </activation>
             <properties>
                 <platform>win</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods;${env.JAVAFX_HOME}</jfx_module_path>
+                <native.library.tokenizers>native/lib/win-${os.arch}/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>

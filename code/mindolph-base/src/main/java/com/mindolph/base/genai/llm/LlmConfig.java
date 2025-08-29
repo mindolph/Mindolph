@@ -218,7 +218,9 @@ public class LlmConfig {
         String json = fxPreferences.getPreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, "{}");
         Map<String, VectorStoreMeta> map = GsonUtils.newGson().fromJson(json, vectorStoreMetaType);
         VectorStoreMeta vectorStoreMeta = map.get(provider.name());
-        vectorStoreMeta.setProvider(provider);
+        if (vectorStoreMeta != null) {
+            vectorStoreMeta.setProvider(provider);
+        }
         return vectorStoreMeta;
     }
 

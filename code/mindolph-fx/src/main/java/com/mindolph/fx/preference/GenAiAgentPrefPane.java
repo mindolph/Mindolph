@@ -161,8 +161,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         // listen to the changes from dataset management
         PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
             if (pluginEvent.getEventType() == PluginEvent.EventType.DATASET_PREF_CHANGED) {
-                List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
-                this.initDatasetsTableView(datasetMetas);
+                if (currentAgentMeta != null) {
+                    List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
+                    this.initDatasetsTableView(datasetMetas);
+                }
             }
         });
     }

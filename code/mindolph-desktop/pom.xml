@@ -47,39 +47,6 @@
             </resource>
         </resources>
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-shade-plugin</artifactId>-->
-            <!--                <version>3.4.1</version>-->
-            <!--                <configuration>-->
-            <!--                    &lt;!&ndash; put your configurations here &ndash;&gt;-->
-            <!--                </configuration>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>shade</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            <transformers>-->
-            <!--                                <transformer-->
-            <!--                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-            <!--                                    <mainClass>${main-class}</mainClass>-->
-            <!--                                </transformer>-->
-            <!--                                <transformer-->
-            <!--                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">-->
-            <!--                                    <resources>-->
-            <!--                                        <resource>.so</resource>-->
-            <!--                                        <resource>.dylib</resource>-->
-            <!--                                        <resource>.txt</resource>-->
-            <!--                                        <resource>LICENSE</resource>-->
-            <!--                                    </resources>-->
-            <!--                                </transformer>-->
-            <!--                            </transformers>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
@@ -91,24 +58,55 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${main-class}</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <!-- put your configurations here -->
                 </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <finalName>Mindolph-${project.version}</finalName>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${main-class}</mainClass>
+                                </transformer>
+<!--                                <transformer-->
+<!--                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">-->
+<!--                                    <resources>-->
+<!--                                        <resource>.txt</resource>-->
+<!--                                        <resource>LICENSE</resource>-->
+<!--                                        <resource>*.dylib</resource>-->
+<!--                                    </resources>-->
+<!--                                </transformer>-->
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*.*</artifact>
+                                    <excludes>
+                                        <exclude>*.dylib</exclude>
+                                        <exclude>*.so</exclude>
+                                        <exclude>*.dll</exclude>
+                                        <exclude>*.txt</exclude>
+                                        <exclude>*.md</exclude>
+                                        <exclude>AUTHORS</exclude>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>META-INF/*.txt</exclude>
+                                        <exclude>META-INF/LICENSE*</exclude>
+                                        <exclude>META-INF/*LICENSE</exclude>
+                                        <exclude>META-INF/licenses/**</exclude>
+                                        <exclude>META-INF/LGPL2.1</exclude>
+                                        <exclude>META-INF/AL2.0</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -142,7 +140,34 @@
                         </goals>
                     </execution>
                     <execution>
-                        <!-- This copies all of the jar files declared by the Maven build into a single directory.
+                        <id>unpack-dependency</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.microsoft.onnxruntime</groupId>
+                                    <artifactId>onnxruntime</artifactId>
+                                    <version>${onnxruntime.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/unpacked-dependency</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ai.djl.huggingface</groupId>
+                                    <artifactId>tokenizers</artifactId>
+                                    <version>${tokenizers.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/unpacked-dependency</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- This copies all the jar files declared by the Maven build into a single directory.
                         This makes it easy to assemble the final installer package -->
                         <id>copy-dependencies</id>
                         <phase>package</phase>
@@ -153,12 +178,73 @@
                             <!--only necessary jars to copy -->
                             <includeScope>compile</includeScope>
                             <!-- The JavaFX libraries are bundled into the custom JVM, so we don't want to duplicate
-                            them in the bundled app and installer. This command skips all of the JavaFX by groupId. -->
+                            them in the bundled app and installer. This command skips all the JavaFX by groupId. -->
                             <excludeGroupIds>org.openjfx</excludeGroupIds>
+                            <excludeArtifactIds>onnxruntime,tokenizers</excludeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-filtered-native-libs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/unpacked-dependency</directory>
+                                    <includes>
+                                        <include>**/*.class</include>
+                                        <!-- for tokenizer.jar -->
+                                        <include>**/*.properties</include>
+                                        <include>nlp/**</include>
+                                        <include>META-INF/**</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/unpacked-dependency/${native.library.onnx}</directory>
+                                    <targetPath>${native.library.onnx}</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/unpacked-dependency/${native.library.tokenizers}</directory>
+                                    <targetPath>${native.library.tokenizers}</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <version>3.7.1</version>-->
+<!--                <configuration>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>${main-class}</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <!-- Plugin to make working with JavaFX nicer. See https://github.com/openjfx/javafx-maven-plugin -->
                 <groupId>org.openjfx</groupId>
