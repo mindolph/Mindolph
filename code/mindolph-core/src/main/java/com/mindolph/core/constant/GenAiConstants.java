@@ -100,9 +100,8 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-plus-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-coder-turbo-latest", 8192));
-//            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
-//            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 1024));
-
+            put(GenAiModelProvider.ALI_Q_WEN.getName(), new ModelMeta("qwen-omni-turbo", 2048));
+            put(GenAiModelProvider.ALI_Q_WEN.getName(),new  ModelMeta("qwen-long", 8192));
 
             // https://www.bigmodel.cn/console/modelcenter/square
 //            put(GenAiModelProvider.CHAT_GLM.getName(), new ModelMeta("glm-zero-preview", 16000));
@@ -121,7 +120,7 @@ public interface GenAiConstants {
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
             put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-chat", 8192));
-            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 8192));
+            put(GenAiModelProvider.DEEP_SEEK.getName(), new ModelMeta("deepseek-reasoner", 65536));
 
             // Moonshot
             put(GenAiModelProvider.MOONSHOT.getName(), new ModelMeta("kimi-latest-8k", 8192));
