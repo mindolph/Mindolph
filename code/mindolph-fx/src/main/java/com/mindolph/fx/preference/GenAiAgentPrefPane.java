@@ -6,6 +6,7 @@ import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
@@ -80,6 +81,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
                 tvDatasets.getItems().clear();
                 if (currentAgentMeta.getDatasetIds() != null) {
+
                     List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
                     this.initDatasetsTableView(datasetMetas);
                 }
@@ -89,6 +91,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 // chat provider and model
                 ChoiceUtils.selectOrUnselectProvider(this.cbChatProvider, currentAgentMeta.getChatProvider());
                 ChoiceUtils.selectOrUnselectModel(this.cbChatModel, currentAgentMeta.getChatModel());
+                this.enableAll();
+            }
+            else {
+                this.disableAll();
             }
             log.debug("Loading completed.");
             super.afterLoading();
@@ -122,8 +128,14 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
-                cbAgent.getItems().remove(new Pair<>(currentAgentMeta.getId(), currentAgentMeta));
-                clearAll();
+                cbAgent.getSelectionModel().clearSelection();
+                if (cbAgent.getItems().remove(new Pair<>(currentAgentMeta.getId(), currentAgentMeta))) {
+                    this.clearAll();
+                    this.disableAll();
+                }
+                else {
+                    log.warn("Failed to remove agent %s".formatted(currentAgentMeta.getName()));
+                }
                 afterLoading();
             }
         });
@@ -155,8 +167,13 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         // pre-select latest selected agent
         String latestAgentId = super.fxPreferences.getPreference(PrefConstants.GEN_AI_AGENT_LATEST, String.class);
         int selectIdx = cbAgent.getItems().stream().map(Pair::getKey).toList().indexOf(latestAgentId);
-        log.debug("pre-select agent item %s at index %s".formatted(latestAgentId, selectIdx));
-        cbAgent.getSelectionModel().select(selectIdx);
+        if (selectIdx != -1) {
+            log.debug("pre-select agent item %s at index %s".formatted(latestAgentId, selectIdx));
+            cbAgent.getSelectionModel().select(selectIdx);
+        }
+        else {
+            this.disableAll();
+        }
 
         // listen to the changes from dataset management
         PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
@@ -219,12 +236,19 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         return am;
     }
 
+    private void disableAll() {
+        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbChatProvider, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+    }
+
+    private void enableAll() {
+        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbChatProvider, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+    }
+
     private void clearAll() {
-        cbAgent.getSelectionModel().clearSelection();
         tfDescription.setText("");
         taAgentPrompt.setText("");
         cbLanguage.getSelectionModel().clearSelection();
-        selectEmbeddingProviderAndModel(null, null);
+        super.unselectEmbeddingProviderAndModel();
         tvDatasets.getItems().clear();
         currentAgentMeta = null;
     }

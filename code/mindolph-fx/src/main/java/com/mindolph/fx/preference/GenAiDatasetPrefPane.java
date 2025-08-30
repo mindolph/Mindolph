@@ -10,6 +10,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
 import com.mindolph.base.genai.rag.EmbeddingService;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
@@ -25,6 +26,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Pair;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -80,10 +82,18 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         super("/preference/gen_ai_dataset_pref_pane.fxml");
 
         StateBuilder<EmbeddingState, EmbeddingProgress> builder = new StateBuilder<>();
-        builder.state(EmbeddingState.READY)
+        builder.state(EmbeddingState.INIT)
                 .in(p -> {
                     Platform.runLater(() -> {
+                        this.disableAll();
+                    });
+                })
+                .state(EmbeddingState.READY)
+                .in(p -> {
+                    Platform.runLater(() -> {
+                        this.enableAll();
                         btnEmbedding.setText("Start embedding");
+                        btnEmbedding.setDisable(false);
                         lblEmbeddingStatus.setText("Ready to do embedding");
                         pbProgress.setVisible(true);
                         pbProgress.setProgress(0);
@@ -122,8 +132,10 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                         pbProgress.setProgress(0);
                     });
                 })
-                .initialize(EmbeddingState.READY)
-                .action("Ready", EmbeddingState.READY, EmbeddingState.READY)
+                .initialize(EmbeddingState.INIT)
+                .action("Ready", EmbeddingState.INIT, EmbeddingState.READY)
+                .action("Not ready", EmbeddingState.READY, EmbeddingState.INIT)
+                .action("Still ready", EmbeddingState.READY, EmbeddingState.READY)
                 .action("Start to embed", EmbeddingState.READY, EmbeddingState.EMBEDDING)
                 .action("Embedding", EmbeddingState.EMBEDDING, EmbeddingState.EMBEDDING)
                 .action("Embedding is done", EmbeddingState.EMBEDDING, EmbeddingState.DONE)
@@ -153,8 +165,12 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 // init model provider and model.
                 super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
                 lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles() == null ? 0 : datasetMeta.getFiles().size()));
+                btnRemoveDataset.setDisable(false);
+                Platform.runLater(() -> embeddingStateMachine.post(EmbeddingState.READY));
             }
             else {
+                Platform.runLater(() -> embeddingStateMachine.post(EmbeddingState.INIT));
+                btnRemoveDataset.setDisable(true);
                 log.warn("unknow dataset");
             }
             // init workspace selector and load selected files through workspace selection change event.
@@ -188,11 +204,13 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             if (currentDatasetMeta == null) {
                 return;
             }
-            if (DialogFactory.yesNoConfirmDialog("Removing Dataset", "Are you sure you want to remove the dataset '%s'?".formatted(currentDatasetMeta.getName()))) {
+            if (DialogFactory.yesNoConfirmDialog("Remove Dataset", "Are you sure to remove the dataset '%s'? All the embedded data of this dataset will be deleted as well.".formatted(currentDatasetMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeDataset(currentDatasetMeta.getId());
+                cbDataset.getSelectionModel().clearSelection();
                 if (cbDataset.getItems().remove(new Pair<>(currentDatasetMeta.getId(), currentDatasetMeta))) {
-                    clearAll();
+                    this.clearAll();
+                    embeddingStateMachine.post(EmbeddingState.INIT);
                 }
                 else {
                     log.warn("Failed to remove dataset '{}'", currentDatasetMeta.getId());
@@ -245,8 +263,12 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     DialogFactory.warnDialog("Please select a dataset first!");
                     return;
                 }
+                if (!currentDatasetMeta.isAllSetup()) {
+                    DialogFactory.warnDialog("Setup dataset first!");
+                    return;
+                }
                 currentDatasetMeta.setStop(false);
-                if (currentDatasetMeta.getFiles() == null) {
+                if (CollectionUtils.isEmpty(currentDatasetMeta.getFiles())) {
                     DialogFactory.warnDialog("Please select files to do embedding");
                     return;
                 }
@@ -313,10 +335,22 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         return datasetMeta;
     }
 
+    private void disableAll() {
+        NodeUtils.disable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding);
+        pbProgress.setVisible(false);
+        lblSelectedFiles.setText("");
+        lblEmbeddingStatus.setText("");
+    }
+
+    private void enableAll() {
+        NodeUtils.enable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding);
+    }
+
     private void clearAll() {
-        cbDataset.getSelectionModel().clearSelection();
+        // doesn't work here, guest it can't be called after elements were changed.
+//        cbDataset.getSelectionModel().clearSelection();
         cbLanguage.getSelectionModel().clearSelection();
-        super.selectEmbeddingProviderAndModel(null, null);
+        super.unselectEmbeddingProviderAndModel();
 //        workspaceSelector.getItems().clear();
         workspaceSelector.getSelectionModel().clearSelection();
         fileSelectView.getRootItem().getChildren().clear();
@@ -325,6 +359,6 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     }
 
     private enum EmbeddingState {
-        READY, EMBEDDING, DONE
+        INIT, READY, EMBEDDING, DONE
     }
 }

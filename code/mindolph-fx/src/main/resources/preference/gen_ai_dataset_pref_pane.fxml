@@ -13,7 +13,7 @@
             <ChoiceBox fx:id="cbDataset" prefWidth="140.0">
             </ChoiceBox>
             <Button fx:id="btnAddDataset"/>
-            <Button fx:id="btnRemoveDataset"/>
+            <Button fx:id="btnRemoveDataset" disable="true"/>
         </PreferenceItem>
         <PreferenceItem name="Language:">
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
@@ -35,15 +35,10 @@
         </PreferenceItem>
         <PreferenceItem name="Embedding: ">
             <VBox spacing="5">
+                <Button fx:id="btnEmbedding" text="Start embedding" disable="true"/>
+                <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
                 <Label fx:id="lblEmbeddingStatus"/>
-                <HBox spacing="5">
-                    <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
-                </HBox>
             </VBox>
-
-        </PreferenceItem>
-        <PreferenceItem>
-            <Button fx:id="btnEmbedding" text="Start embedding" disable="false"/>
         </PreferenceItem>
     </VBox>
 

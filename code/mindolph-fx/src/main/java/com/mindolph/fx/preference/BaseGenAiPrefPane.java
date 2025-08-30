@@ -47,6 +47,11 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
         ChoiceUtils.selectOrUnselectModel(this.cbEmbeddingModel, modelMeta);
     }
 
+    protected void unselectEmbeddingProviderAndModel() {
+        ChoiceUtils.selectOrUnselectProvider(this.cbEmbeddingProvider, null);
+        ChoiceUtils.selectOrUnselectModel(this.cbEmbeddingModel, null);
+    }
+
     @Override
     protected void onSave(boolean notify) {
         if (notify) {

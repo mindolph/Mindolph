@@ -139,16 +139,28 @@ public class DatasetMeta implements Serializable {
         return removedFiles;
     }
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     public boolean isStop() {
         return stop;
     }
 
     public void setStop(boolean stop) {
         this.stop = stop;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DatasetMeta that = (DatasetMeta) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
