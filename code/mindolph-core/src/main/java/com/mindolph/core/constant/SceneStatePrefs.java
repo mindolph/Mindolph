@@ -28,4 +28,10 @@ public interface SceneStatePrefs {
     String MINDOLPH_COLLECTION_MAP = "mindolph.collection.map";
 
 
+    String GEN_AI_DATASET_LATEST = "genai.dataset.latest";
+    String GEN_AI_AGENT_LATEST = "genai.agent.latest";
+    String GEN_AI_LATEST_GENERATE_PROMPT = "genai.generate.latestPrompt";
+    @Deprecated
+    String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
+    String GEN_AI_PROVIDER_LATEST = "genai.provider.latest";
 }

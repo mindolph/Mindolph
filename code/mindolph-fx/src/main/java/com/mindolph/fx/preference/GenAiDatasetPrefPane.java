@@ -5,7 +5,6 @@ import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.EmbeddingStage;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
@@ -15,6 +14,7 @@ import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceList;
+import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.control.WorkspaceSelector;
 import com.mindolph.fx.view.FileSelectView;
@@ -75,12 +75,15 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
     private DatasetMeta currentDatasetMeta;
 
+    private WorkspaceMeta latestWorkspace;
 
-    private final StateMachine<EmbeddingState, EmbeddingProgress> embeddingStateMachine;
+    private StateMachine<EmbeddingState, EmbeddingProgress> embeddingStateMachine;
 
     public GenAiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");
+    }
 
+    private void initStateMachine() {
         StateBuilder<EmbeddingState, EmbeddingProgress> builder = new StateBuilder<>();
         builder.state(EmbeddingState.INIT)
                 .in(p -> {
@@ -144,12 +147,12 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
         embeddingStateMachine = new StateMachine<>(builder);
         embeddingStateMachine.start();
-
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
+        this.initStateMachine();
         cbDataset.setConverter(datasetConverter);
         cbDataset.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
@@ -159,7 +162,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             if (datasetMeta != null) {
                 currentDatasetMeta = datasetMeta;
                 // save current active dataset ID.
-                super.fxPreferences.savePreference(PrefConstants.GEN_AI_DATASET_LATEST, datasetMeta.getId());
+                super.fxPreferences.savePreference(SceneStatePrefs.GEN_AI_DATASET_LATEST, datasetMeta.getId());
                 // init language selection
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 // init model provider and model.
@@ -173,10 +176,15 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 btnRemoveDataset.setDisable(true);
                 log.warn("unknow dataset");
             }
+
+            // clear file select view before init workspace selector.
+            fileSelectView.getRootItem().getChildren().clear();
+            fileSelectView.refresh();
             // init workspace selector and load selected files through workspace selection change event.
             String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
             WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
-            workspaceSelector.loadWorkspaces(workspaceList, workspaceList.getProjects().getFirst());
+            workspaceSelector.loadWorkspaces(workspaceList, latestWorkspace, false);
+
             afterLoading();
         });
         Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
@@ -225,7 +233,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
-            log.debug("Workspace changed: {}", newValue);
+            log.debug("Workspace changed: {}", newValue.getKey());
+            latestWorkspace = newValue.getValue();
             fileSelectView.loadWorkspace(newValue.getValue(), currentDatasetMeta.getFiles(), true, false, pathname -> {
                 return FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES);
             });
@@ -292,7 +301,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         });
 
         // pre-select latest selected dataset
-        String latestDatasetId = super.fxPreferences.getPreference(PrefConstants.GEN_AI_DATASET_LATEST, String.class);
+        String latestDatasetId = super.fxPreferences.getPreference(SceneStatePrefs.GEN_AI_DATASET_LATEST, String.class);
         int selectIdx = cbDataset.getItems().stream().map(Pair::getKey).toList().indexOf(latestDatasetId);
         log.debug("pre-select dataset item %s at index %s".formatted(latestDatasetId, selectIdx));
         cbDataset.getSelectionModel().select(selectIdx);
@@ -309,8 +318,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         super.onSave(notify);
         this.saveCurrentDataset();
         // update label after calculated.
-        lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
-        embeddingStateMachine.post(EmbeddingState.READY);
+//        lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
+//        embeddingStateMachine.post(EmbeddingState.READY);
     }
 
     private DatasetMeta saveCurrentDataset() {

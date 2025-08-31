@@ -20,8 +20,8 @@ public class WorkspaceList {
     }
 
     /**
-     * Find project meta by path of file in the project dir.
-     * If multiple workspaces matches (since a sub-dir in a workspace can be another workspace), jus return the deepest one.
+     * Find project meta by path of a file in the project dir.
+     * If multiple workspaces match (since a sub-dir in a workspace can be another workspace), jus return the deepest one.
      *
      * @param filePath
      * @return

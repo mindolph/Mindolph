@@ -2,7 +2,6 @@ package com.mindolph.genai;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.GenAiEvents.StreamOutput;
@@ -15,6 +14,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
+import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -206,7 +206,7 @@ public class AiGenerator implements Generator {
         }
         String prompt = defaultInput;
         if (StringUtils.isBlank(defaultInput)) {
-            prompt = FxPreferences.getInstance().getPreference(PrefConstants.GEN_AI_LATEST_GENERATE_PROMPT, "");
+            prompt = FxPreferences.getInstance().getPreference(SceneStatePrefs.GEN_AI_LATEST_GENERATE_PROMPT, "");
         }
         inputPanel = new AiInputPane(editorId, fileType, prompt);
         addToParent(inputPanel);

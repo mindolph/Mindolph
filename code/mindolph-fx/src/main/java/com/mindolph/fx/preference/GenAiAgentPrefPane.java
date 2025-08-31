@@ -2,12 +2,12 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
@@ -75,7 +75,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             log.debug("Agent changed: %s".formatted(agentMeta));
             if (agentMeta != null) {
                 currentAgentMeta = agentMeta;
-                super.fxPreferences.savePreference(PrefConstants.GEN_AI_AGENT_LATEST, agentMeta.getId());
+                super.fxPreferences.savePreference(SceneStatePrefs.GEN_AI_AGENT_LATEST, agentMeta.getId());
                 tfDescription.setText(agentMeta.getDescription());
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentAgentMeta.getLanguageCode());
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
@@ -165,7 +165,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         });
 
         // pre-select latest selected agent
-        String latestAgentId = super.fxPreferences.getPreference(PrefConstants.GEN_AI_AGENT_LATEST, String.class);
+        String latestAgentId = super.fxPreferences.getPreference(SceneStatePrefs.GEN_AI_AGENT_LATEST, String.class);
         int selectIdx = cbAgent.getItems().stream().map(Pair::getKey).toList().indexOf(latestAgentId);
         if (selectIdx != -1) {
             log.debug("pre-select agent item %s at index %s".formatted(latestAgentId, selectIdx));
@@ -237,11 +237,11 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     }
 
     private void disableAll() {
-        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbChatProvider, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
     }
 
     private void enableAll() {
-        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbChatProvider, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
     }
 
     private void clearAll() {

@@ -484,7 +484,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         String activeWorkspacePath = fxPreferences.getPreference(MINDOLPH_ACTIVE_WORKSPACE, String.class);
         log.debug("Last active workspace: %s".formatted(activeWorkspacePath));
 
-        workspaceSelector.loadWorkspaces(workspaceList, new WorkspaceMeta(activeWorkspacePath));
+        workspaceSelector.loadWorkspaces(workspaceList, new WorkspaceMeta(activeWorkspacePath), true);
 
         EventBus.getIns().notifyWorkspacesRestored(); // notify that all workspaces restored
     }

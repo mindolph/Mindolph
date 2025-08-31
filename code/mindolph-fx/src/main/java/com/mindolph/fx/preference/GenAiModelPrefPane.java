@@ -2,13 +2,13 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BaseOrganizedPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.dialog.CustomModelDialog;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
+import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
@@ -123,7 +123,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
                             }
                         }
                         cbModel.getSelectionModel().select(targetItem);
-                        fxPreferences.savePreference(PrefConstants.GEN_AI_PROVIDER_LATEST, provider.name());
+                        fxPreferences.savePreference(SceneStatePrefs.GEN_AI_PROVIDER_LATEST, provider.name());
                     }
                     super.afterLoading();
                 });
@@ -243,7 +243,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
         });
 
         // pre-select latest selected provider
-        String latestProviderKey = super.fxPreferences.getPreferenceAlias(PrefConstants.GEN_AI_PROVIDER_LATEST, GEN_AI_PROVIDER_ACTIVE, String.class);
+        String latestProviderKey = super.fxPreferences.getPreferenceAlias(SceneStatePrefs.GEN_AI_PROVIDER_LATEST, GEN_AI_PROVIDER_ACTIVE, String.class);
         int selectIdx = cbModelProvider.getItems().stream().map(Pair::getKey).map(GenAiModelProvider::name).toList().indexOf(latestProviderKey);
         log.debug("pre-select provider item %s at index %s".formatted(latestProviderKey, selectIdx));
         cbModelProvider.getSelectionModel().select(selectIdx);

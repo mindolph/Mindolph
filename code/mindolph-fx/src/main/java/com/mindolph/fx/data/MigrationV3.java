@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDER_ACTIVE;
+import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
 
 /**
  * Fix gen-ai settings

@@ -55,7 +55,7 @@ public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Select
             }
         });
 
-        workspaceSelector.loadWorkspaces(workspaceList, currentWorkspace);
+        workspaceSelector.loadWorkspaces(workspaceList, currentWorkspace, true);
 
         workspaceView.setOnKeyReleased(event -> {
             if (KeyCode.ESCAPE.equals(event.getCode())) {
