@@ -6,7 +6,7 @@
 }
 
 .diagramkeyword {
-    -fx-fill: blue;
+    -fx-fill: #0000c0;
     -fx-font-weight: bold;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .containing {
-    -fx-fill: crimson;
+    -fx-fill: #c80000;
     -fx-font-weight: bold;
 }
 
@@ -30,12 +30,13 @@
     -fx-font-weight: ${sans-font-weight};
     /*-fx-font-style: ${sans-font-posture};*/
     -fx-font-size: ${sans-font-size};
-    -fx-fill: grey;
+    -fx-fill: #707070;
     -fx-font-style: italic;
 }
 
 .connector {
-    -fx-fill: blue;
+    -fx-fill: #0000df;
+    -fx-font-weight: bold;
 }
 
 .quote {
@@ -43,7 +44,7 @@
     -fx-font-weight: ${sans-font-weight};
     -fx-font-style: ${sans-font-posture};
     -fx-font-size: ${sans-font-size};
-    -fx-fill: green;
+    -fx-fill: #006000;
 }
 
 .activity {
