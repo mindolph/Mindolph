@@ -3,6 +3,7 @@ package com.mindolph.base.collection;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
 import java.lang.reflect.Type;
@@ -96,6 +97,7 @@ public class CollectionManager {
 
     /**
      * Update any collection that contains the old file path with the new file path.
+     * If newFilePath is null or blank, just remove the file.
      *
      * @param oldFilePath
      * @param newFilePath
@@ -108,7 +110,9 @@ public class CollectionManager {
         collDict.keySet().forEach(collName -> {
             JsonArray paths = collDict.get(collName).getAsJsonArray();
             if (paths.remove(new JsonPrimitive(oldFilePath))) {
-                paths.add(new JsonPrimitive(newFilePath));
+                if (!StringUtils.isBlank(newFilePath)) {
+                    paths.add(new JsonPrimitive(newFilePath));
+                }
                 isChanged.set(true);
             }
         });

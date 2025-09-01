@@ -46,6 +46,7 @@ public class EventBus {
     private final EventSource<FileChangeEvent> fileChangeInWorkspace = new EventSource<>();
     private final EventSource<FolderReloadEvent> folderRefreshInWorkspace = new EventSource<>();
     private final EventSource<OpenFileEvent> openFile = new EventSource<>();
+    private final EventSource<NodeData> openFileFail = new EventSource<>();
     private final EventSource<FileActivatedEvent> fileActivated = new EventSource<>();
     private final EventSource<NodeData> locateInWorkspace = new EventSource<>();
     private final EventSource<NodeData> fileDeleted = new EventSource<>();
@@ -314,6 +315,21 @@ public class EventBus {
 //        newFileToWorkspace.push(file);
 //        return this;
 //    }
+
+    public EventBus subscribeOpenFileFail(Consumer<NodeData> consumer) {
+        openFileFail.subscribe(consumer);
+        return this;
+    }
+
+    public EventBus unsubscribeOpenFileFail(Consumer<NodeData> consumer) {
+        openFileFail.removeObserver(consumer);
+        return this;
+    }
+
+    public EventBus notifyOpenFileFail(NodeData event) {
+        openFileFail.push(event);
+        return this;
+    }
 
     public EventBus subscribeOpenFile(Consumer<OpenFileEvent> consumer) {
         openFile.subscribe(consumer);
