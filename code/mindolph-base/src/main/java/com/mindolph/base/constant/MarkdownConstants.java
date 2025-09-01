@@ -18,7 +18,7 @@ public interface MarkdownConstants extends SyntaxConstants {
     String EMPHASIS = "(()|(" + EMPHASIS_KW + EMPHASIS_CONTENT + "*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
     String HEADING_PATTERN = "(^|" + LINE_SEPARATOR + ")(#+\\s+[\\s\\S]*?(?=" + LINE_SEPARATOR + "))";
-    String LIST_PATTERN = "(^|" + LINE_SEPARATOR + ")[\\t ]*((\\* )|(\\+ )|(- )|(\\d. ))";
+    String LIST_PATTERN = "(^|" + LINE_SEPARATOR + ")[\\t ]*((\\* )|(\\+ )|(- )|(\\d+. ))";
     // "(\\|[\\s\\S]*?)+\\|" +
     String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|-+)+\\|" + LINE_SEPARATOR;
     String TABLE_PATTERN =  "(\\|)|(" + TABLE_SEPARATOR + ")";
