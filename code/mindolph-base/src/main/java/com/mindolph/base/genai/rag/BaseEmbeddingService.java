@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.constant.EmbeddingStage;
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.llm.DataSourceConfig;
 import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.core.util.AppUtils;
@@ -36,7 +37,12 @@ public abstract class BaseEmbeddingService {
 
     protected final EventSource<EmbeddingProgress> progressEventSource = new EventSource<>();
 
+    protected void loadVectorStorePrefs() {
+        this.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
+    }
+
     protected <T> T withJdbcConnection(Function<Connection, T> handler) {
+        this.loadVectorStorePrefs();
         DataSourceConfig dsConfig = new DataSourceConfig(vectorStoreMeta.getHost(), vectorStoreMeta.getPort());
         dsConfig.setUser(vectorStoreMeta.getUsername());
         dsConfig.setPassword(vectorStoreMeta.getPassword());
@@ -99,10 +105,6 @@ public abstract class BaseEmbeddingService {
 
     public void emitProgressEvent(File file, boolean success, int successCount, String message, float ratio) {
         progressEventSource.push(new EmbeddingProgress(file, success, successCount, message, EmbeddingStage.EMBEDDING, ratio));
-    }
-
-    public void setVectorStoreMeta(VectorStoreMeta vectorStoreMeta) {
-        this.vectorStoreMeta = vectorStoreMeta;
     }
 
     /**

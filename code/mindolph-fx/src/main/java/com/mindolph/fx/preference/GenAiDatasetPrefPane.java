@@ -235,9 +235,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             if (newValue == null || newValue.equals(oldValue)) return;
             log.debug("Workspace changed: {}", newValue.getKey());
             latestWorkspace = newValue.getValue();
-            fileSelectView.loadWorkspace(newValue.getValue(), currentDatasetMeta.getFiles(), true, false, pathname -> {
-                return FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES);
-            });
+            fileSelectView.loadWorkspace(currentDatasetMeta, latestWorkspace, true, false,
+                    pathname -> FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES));
         });
 
         EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
@@ -317,9 +316,6 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     protected void onSave(boolean notify) {
         super.onSave(notify);
         this.saveCurrentDataset();
-        // update label after calculated.
-//        lblSelectedFiles.setText("Selected %d files".formatted(currentDatasetMeta.getFiles().size()));
-//        embeddingStateMachine.post(EmbeddingState.READY);
     }
 
     private DatasetMeta saveCurrentDataset() {

@@ -65,7 +65,7 @@ public class RagService extends BaseEmbeddingService {
             return;
         }
         // load here for the config might be changed on the fly.
-        super.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
+        super.loadVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             finished.accept(new RuntimeException("Vector store is not well setup"));
 //            throw new RuntimeException("Vector store is not well setup");

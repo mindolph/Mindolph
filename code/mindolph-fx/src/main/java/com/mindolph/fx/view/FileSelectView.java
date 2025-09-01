@@ -8,6 +8,7 @@ import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
+import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import javafx.application.Platform;
@@ -57,21 +58,21 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     /**
      * Load all files in the workspace to the tree view asynchronously.
      *
+     * @param datasetMeta
      * @param workspaceMeta
-     * @param checkedFiles
      * @param expandAllAsDefault
      * @param excludeFiles
      * @param filter
      */
-    public void loadWorkspace(WorkspaceMeta workspaceMeta, List<File> checkedFiles, boolean expandAllAsDefault, boolean excludeFiles, FileFilter filter) {
+    public void loadWorkspace(DatasetMeta datasetMeta, WorkspaceMeta workspaceMeta,  boolean expandAllAsDefault, boolean excludeFiles, FileFilter filter) {
         this.expandAllAsDefault = expandAllAsDefault;
         this.excludeFiles = excludeFiles;
         this.fileFilter = filter;
         if (log.isDebugEnabled()) {
             log.debug("Load Workspace {}", workspaceMeta);
-            if (checkedFiles != null) {
-                log.debug("Checked files: %d".formatted(checkedFiles.size()));
-                checkedFiles.forEach(file -> {
+            if (datasetMeta.getFiles() != null) {
+                log.debug("Checked files: %d".formatted(datasetMeta.getFiles().size()));
+                datasetMeta.getFiles().forEach(file -> {
                     log.debug("  {}", file);
                 });
             }
@@ -83,11 +84,11 @@ public class FileSelectView extends CheckTreeView<NodeData> {
             Platform.runLater(() -> {
                 super.refresh();
                 super.requestFocus();
-                this.labelTheCheckedFileWithEmbeddingStatus(allFiles);
+                this.labelTheCheckedFileWithEmbeddingStatus(datasetMeta, allFiles);
             });
         });
         rootItem.getChildren().clear();
-        this.asyncCreateWorkspaceSubTree(workspaceMeta, checkedFiles);
+        this.asyncCreateWorkspaceSubTree(workspaceMeta, datasetMeta.getFiles());
     }
 
     /**
@@ -95,23 +96,27 @@ public class FileSelectView extends CheckTreeView<NodeData> {
      *
      * @param allFiles
      */
-    private void labelTheCheckedFileWithEmbeddingStatus(List<File> allFiles) {
+    private void labelTheCheckedFileWithEmbeddingStatus(DatasetMeta datasetMeta, List<File> allFiles) {
         GlobalExecutor.submit(() -> {
-            List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(allFiles);
-            Map<String, EmbeddingDocEntity> embeddedMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
-            log.debug("Label checked files: %d".formatted(embeddedMap.size()));
-            Platform.runLater(() -> {
-                for (File file : allFiles) {
-                    if (embeddedMap.containsKey(file.getPath())) {
-                        this.findAndUpdateName(file, embeddedMap.get(file.getPath()).embedded() ? "embedded" : "fail");
+            try {
+                List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(datasetMeta.getId(), allFiles);
+                Map<String, EmbeddingDocEntity> embeddedMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
+                log.debug("Label checked files: %d".formatted(embeddedMap.size()));
+                Platform.runLater(() -> {
+                    for (File file : allFiles) {
+                        if (embeddedMap.containsKey(file.getPath())) {
+                            this.findAndUpdateName(file, embeddedMap.get(file.getPath()).embedded() ? "embedded" : "fail");
+                        }
+                        else {
+                            this.findAndUpdateName(file, "never");
+                        }
                     }
-                    else {
-                        this.findAndUpdateName(file, "never");
-                    }
-                }
-                super.refresh();
-                super.requestFocus();
-            });
+                    super.refresh();
+                    super.requestFocus();
+                });
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
         });
     }
 
@@ -224,7 +229,11 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     }
 
     public void findAndUpdateName(File file, String label) {
-        FileTreeHelper.findAndUpdateName(rootItem, file, nodeData -> "%s (%s)".formatted(nodeData.getName(), label));
+        try {
+            FileTreeHelper.findAndUpdateName(rootItem, file, nodeData -> "%s (%s)".formatted(nodeData.getName(), label));
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        }
     }
 
     public CheckBoxTreeItem<NodeData> getRootItem() {

@@ -1,6 +1,5 @@
 package com.mindolph.base.genai.rag;
 
-import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.document.Document;
@@ -73,7 +72,7 @@ public class EmbeddingService extends BaseEmbeddingService {
             return;
         }
         // load here for the config might be changed on the fly.
-        super.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
+        super.loadVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             log.debug("Vector store: %s".formatted(vectorStoreMeta));
             throw new RuntimeException("Vector store is not well setup");
@@ -322,18 +321,19 @@ public class EmbeddingService extends BaseEmbeddingService {
         });
     }
 
-    public List<EmbeddingDocEntity> findDocuments(List<File> files) {
+    public List<EmbeddingDocEntity> findDocuments(String datasetId, List<File> files) {
         if (CollectionUtils.isEmpty(files)) return List.of();
         return super.withJdbcConnection(connection -> {
             try {
                 List<EmbeddingDocEntity> results = new ArrayList<>();
                 String params = StringUtils.join(Collections.nCopies(files.size(), "?"), ",");
-                String sql = "select * from mindolph_doc where file_path in (%s)".formatted(params);
+                String sql = "select * from mindolph_doc where dataset_id = ? and file_path in (%s)".formatted(params);
                 log.debug("Executing query: {}", sql);
                 PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, datasetId);
                 for (int i = 0; i < files.size(); i++) {
                     File file = files.get(i);
-                    ps.setString(i + 1, file.getPath());
+                    ps.setString(i + 2, file.getPath());
                 }
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
