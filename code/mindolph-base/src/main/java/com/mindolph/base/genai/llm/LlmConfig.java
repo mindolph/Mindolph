@@ -8,6 +8,7 @@ import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
 import com.mindolph.core.util.AppUtils;
 import com.mindolph.core.util.GsonUtils;
+import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +98,33 @@ public class LlmConfig {
     }
 
     /**
+     * Used for migration only.
+     *
+     * @return
+     */
+    @Deprecated(since = "1.13")
+    public Tuple2<GenAiModelProvider, String> getActiveProviderMeta() {
+        String providerName = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, String.class);
+        if (StringUtils.isBlank(providerName)) {
+            return null;
+        }
+        ProviderMeta providerMeta = this.loadProviderMeta(providerName);
+        if (providerMeta != null) {
+            if (StringUtils.isBlank(providerMeta.aiModel())|| "Custom".equals(providerMeta.aiModel())) {
+                Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
+                if (opt.isPresent()) {
+                    return new Tuple2<>(GenAiModelProvider.valueOf(providerName), opt.get().getName());
+                }
+                return null;
+            }
+            else {
+                return new Tuple2<>(GenAiModelProvider.valueOf(providerName), providerMeta.aiModel());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Activate a custom model directly for active provider.
      *
      * @param provider
@@ -104,6 +132,7 @@ public class LlmConfig {
      * @since 1.11
      * @deprecated
      */
+    @Deprecated(since = "1.13")
     public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
         ProviderMeta providerMeta = this.loadProviderMeta(provider.name());
         for (ModelMeta customModel : providerMeta.customModels()) {

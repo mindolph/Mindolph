@@ -10,6 +10,7 @@ public class ProviderMeta {
 
     private String apiKey;
     private String baseUrl;
+    @Deprecated
     private String aiModel;
     private boolean useProxy;
     private List<ModelMeta> customModels;

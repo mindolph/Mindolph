@@ -21,6 +21,7 @@ public class DataMigrator {
                 add(new MigrationV1());
                 add(new MigrationV2());
                 add(new MigrationV3());
+                add(new MigrationV4());
             }
         };
     }

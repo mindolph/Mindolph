@@ -15,11 +15,11 @@ import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
 
 /**
- * Fix gen-ai settings
+ * Migrate gen-ai settings
+ *
  * @since 1.12.5
  */
 public class MigrationV3 implements Migration {
-
 
     private static final Logger log = LoggerFactory.getLogger(MigrationV3.class);
 
@@ -30,6 +30,10 @@ public class MigrationV3 implements Migration {
 
     @Override
     public void doMigration() {
+        fixProviders();
+    }
+
+    private static void fixProviders() {
         Map<String, ProviderMeta> ProviderMeta = LlmConfig.getIns().loadAllProviderMetas();
         Map<String, ProviderMeta> newProviderMeta = new HashMap<>();
         for (String k : ProviderMeta.keySet()) {

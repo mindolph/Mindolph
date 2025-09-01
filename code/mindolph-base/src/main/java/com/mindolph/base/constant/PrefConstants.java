@@ -16,11 +16,12 @@ public interface PrefConstants {
     String GENERAL_GLOBAL_FONT_SIZE = "general.global.font.size";
     String GENERAL_GLOBAL_ICON_SIZE = "general.global.icon.size";
 
+    @Deprecated(since = "1.13")
+    String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
     String GEN_AI_PROVIDERS = "genai.providers";
     String GEN_AI_TIMEOUT = "genai.timeout";
     String GEN_AI_OUTPUT_LANGUAGE = "genai.outputLanguage";
     String GEN_AI_AGENTS = "genai.agents";
-    String GEN_AI_DATASETS = "genai.datasets";
 
     String GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE = "genai.vector.store.provider.active";
     String GEN_AI_VECTOR_STORE_PROVIDERS = "genai.vector.store.providers";

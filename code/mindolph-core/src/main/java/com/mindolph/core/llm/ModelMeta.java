@@ -15,6 +15,7 @@ public final class ModelMeta {
      * for embedding only.
      */
     private int dimension = 0;
+    @Deprecated
     private boolean active;
     /**
      * default is 1, 1 is Chat model, 2 is embedding model
@@ -28,6 +29,9 @@ public final class ModelMeta {
      * default is en, used for embedding model.
      */
     private String langCode = "en";
+    /**
+     * The base URL for download this model from HuggingFace
+     */
     private String downloadUrl;
 
     public ModelMeta() {
