@@ -341,14 +341,14 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     }
 
     private void disableAll() {
-        NodeUtils.disable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding);
+        NodeUtils.disable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
         pbProgress.setVisible(false);
         lblSelectedFiles.setText("");
         lblEmbeddingStatus.setText("");
     }
 
     private void enableAll() {
-        NodeUtils.enable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding);
+        NodeUtils.enable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
     }
 
     private void clearAll() {

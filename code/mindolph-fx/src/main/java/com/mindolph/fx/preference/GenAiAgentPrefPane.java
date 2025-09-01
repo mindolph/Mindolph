@@ -237,11 +237,11 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     }
 
     private void disableAll() {
-        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
     }
 
     private void enableAll() {
-        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent);
+        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
     }
 
     private void clearAll() {
