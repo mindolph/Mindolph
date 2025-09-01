@@ -215,7 +215,7 @@ public class MindMapEditor extends BaseEditor {
                     try {
                         save();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                 });
                 mindMapView.undoAvailableProperty().addListener((observable, oldValue, undoAvailable) -> {
@@ -234,7 +234,7 @@ public class MindMapEditor extends BaseEditor {
                 });
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -333,7 +333,7 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public boolean copy() {
-        // only focused can copy, cut and paste, otherwise the focused dialog will not work corretly.
+        // only focused can copy, cut and paste; otherwise the focused dialog will not work correctly.
         if (mindMapView.isFocused()) {
             mindMapView.copy();
             return true;

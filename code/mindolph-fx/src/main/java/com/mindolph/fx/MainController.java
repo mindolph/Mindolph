@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.*;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
@@ -388,12 +389,12 @@ public class MainController extends BaseController implements Initializable,
 
     @Override
     public void onOpenedFileRestore(List<File> files) {
-        Platform.runLater(() -> {
+//        Platform.runLater(() -> {
             for (File file : files) {
                 NodeData fileData = new NodeData(file);
                 openFile(fileData, true);
             }
-        });
+//        });
     }
 
     /**
@@ -404,6 +405,7 @@ public class MainController extends BaseController implements Initializable,
     private void openFile(NodeData fileData, boolean lazy) {
         if (!fileData.getFile().exists()) {
             log.warn("File %s failed to open because the file doesn't exist anymore.".formatted(fileData.getName()));
+            EventBus.getIns().notifyOpenFileFail(fileData);
             return;
         }
         WorkspaceMeta workspaceMeta = this.workspaceList.matchByFilePath(fileData.getFile().getPath());
@@ -815,12 +817,24 @@ public class MainController extends BaseController implements Initializable,
 
         log.info("Load collection %s".formatted(collectionName));
 
-        // close current opened files(no matter what collection is).
+        // close current opened files (no matter what collection is).
         fileTabView.closeAllTabs();
 
         // load files
         if (!files.isEmpty()) {
-            onOpenedFileRestore(files.stream().map(File::new).toList());
+            // listen for potential failed open files and remove them from the collection.
+            Consumer<NodeData> observer = nodeData -> {
+                log.debug("Remove non-exist file from collection %s".formatted(nodeData.getFile()));
+                this.cm.updateFilePath(nodeData.getFile().getPath(), null);
+            };
+            EventBus.getIns().subscribeOpenFileFail(observer);
+            Platform.runLater(() -> {
+                onOpenedFileRestore(files.stream().map(File::new).toList());
+                menuCollections.getItems().clear();
+                this.loadCollections();
+                // remove listener since the lister is created each time.
+                EventBus.getIns().unsubscribeOpenFileFail(observer);
+            });
         }
         this.cm.saveActiveCollectionName(collectionName);
 

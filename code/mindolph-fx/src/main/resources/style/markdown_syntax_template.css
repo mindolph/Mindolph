@@ -11,13 +11,17 @@
 }
 
 .list {
-    -fx-fill: red;
+    -fx-fill: #c80000;
     -fx-font-weight: bold;
 }
 
 .table {
-    -fx-fill: blue;
+    -fx-fill: #0000c0;
     -fx-font-weight: bold;
+}
+
+.url {
+    -fx-fill: #0000c0;
 }
 
 .code {
@@ -25,7 +29,7 @@
     -fx-font-weight: ${mono-font-weight};
     -fx-font-style: ${mono-font-posture};
     -fx-font-size: ${mono-font-size};
-    -fx-fill: green;
+    -fx-fill: #006000;
 }
 
 .code-block {
@@ -33,10 +37,10 @@
     -fx-font-weight: ${mono-font-weight};
     -fx-font-style: ${mono-font-posture};
     -fx-font-size: ${mono-font-size};
-    -fx-fill: green;
+    -fx-fill: #006000;
 }
 
 .md-quote {
-    -fx-fill: grey;
+    -fx-fill: #707070;
     -fx-font-weight: normal;
 }
