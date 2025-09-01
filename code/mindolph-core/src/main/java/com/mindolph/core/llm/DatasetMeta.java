@@ -20,7 +20,7 @@ public class DatasetMeta implements Serializable {
     private String id;
     private String name;
     private GenAiModelProvider provider;
-    private ModelMeta embeddingModel;
+    private String embeddingModel;
     private String languageCode;
     private List<File> files;
     /**
@@ -99,11 +99,11 @@ public class DatasetMeta implements Serializable {
         this.provider = provider;
     }
 
-    public ModelMeta getEmbeddingModel() {
+    public String getEmbeddingModel() {
         return embeddingModel;
     }
 
-    public void setEmbeddingModel(ModelMeta embeddingModel) {
+    public void setEmbeddingModel(String embeddingModel) {
         this.embeddingModel = embeddingModel;
     }
 

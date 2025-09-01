@@ -8,6 +8,7 @@ import com.mindolph.base.genai.llm.LlmProviderFactory;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.AgentMeta;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
@@ -66,8 +67,9 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
             }
         }).toList();
         String collectedMsg = String.join("\n", msgs);
+
         Input input = new InputBuilder().text(collectedMsg)
-                .model(agentMeta.getChatModel().getName()).maxTokens(agentMeta.getChatModel().maxTokens())
+                .model(agentMeta.getChatModel()).maxTokens(this.lookupModelMeta(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
                 .isStreaming(true).temperature(0.5f).createInput();
         OutputParams oparams = new OutputParams(null, GenAiConstants.OutputFormat.TEXT);
         this.llmProvider.stream(input, oparams, streamToken -> {
@@ -93,6 +95,21 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
                 }
             }
         });
+    }
+
+    /**
+     * TBD
+     *
+     * @param providerName
+     * @param modelName
+     * @return
+     */
+    private ModelMeta lookupModelMeta(String providerName, String modelName) {
+        ModelMeta modelMeta = GenAiConstants.lookupModelMeta(providerName, modelName);
+        if (modelMeta != null) {
+            return modelMeta;
+        }
+        return LlmConfig.getIns().lookupCustomModel(providerName, modelName);
     }
 
     public void setStop(boolean stop) {

@@ -64,7 +64,7 @@ public class ChoiceUtils {
         }
     }
 
-    public static void selectOrUnselectModel(ChoiceBox<Pair<String, ModelMeta>> cbModel, ModelMeta modelMeta) {
+    public static void selectOrUnselectModel(ChoiceBox<Pair<String, ModelMeta>> cbModel, String modelMeta) {
         if (modelMeta != null) {
             ChoiceUtils.selectModel(cbModel, modelMeta);
         }
@@ -96,9 +96,9 @@ public class ChoiceUtils {
      * @param modelMeta
      * @since unknown
      */
-    public static void selectModel(ChoiceBox<Pair<String, ModelMeta>> choiceBox, ModelMeta modelMeta) {
+    public static void selectModel(ChoiceBox<Pair<String, ModelMeta>> choiceBox, String modelMeta) {
         for (Pair<String, ModelMeta> item : choiceBox.getItems()) {
-            if (item.getValue().getName().equals(modelMeta.getName())) {
+            if (item.getValue().getName().equals(modelMeta)) {
                 choiceBox.getSelectionModel().select(item);
                 break;
             }

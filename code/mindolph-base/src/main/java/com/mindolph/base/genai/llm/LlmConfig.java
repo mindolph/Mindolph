@@ -83,6 +83,19 @@ public class LlmConfig {
         return null;
     }
 
+    public ModelMeta lookupCustomModel(String providerName, String modelName) {
+        Map<String, ProviderMeta> map = this.loadAllProviderMetas();
+        ProviderMeta providerMeta = map.get(providerName);
+        if (providerMeta != null) {
+            for (ModelMeta modelMeta : providerMeta.customModels()) {
+                if (modelMeta.getName().equals(modelName)) {
+                    return modelMeta;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Activate a custom model directly for active provider.
      *

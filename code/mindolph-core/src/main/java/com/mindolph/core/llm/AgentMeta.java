@@ -17,8 +17,8 @@ public class AgentMeta implements Serializable {
     private String languageCode;
     private GenAiModelProvider embeddingProvider;
     private GenAiModelProvider chatProvider;
-    private ModelMeta embeddingModel;
-    private ModelMeta chatModel;
+    private String embeddingModel;
+    private String chatModel;
     private String promptTemplate;
     private List<String> datasetIds;
 
@@ -75,19 +75,19 @@ public class AgentMeta implements Serializable {
         this.chatProvider = chatProvider;
     }
 
-    public ModelMeta getEmbeddingModel() {
+    public String getEmbeddingModel() {
         return embeddingModel;
     }
 
-    public void setEmbeddingModel(ModelMeta embeddingModel) {
+    public void setEmbeddingModel(String embeddingModel) {
         this.embeddingModel = embeddingModel;
     }
 
-    public ModelMeta getChatModel() {
+    public String getChatModel() {
         return chatModel;
     }
 
-    public void setChatModel(ModelMeta chatModel) {
+    public void setChatModel(String chatModel) {
         this.chatModel = chatModel;
     }
 

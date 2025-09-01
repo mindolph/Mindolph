@@ -106,7 +106,9 @@ public abstract class BaseAiPane extends StackPane {
                 lbMsg.setText("Max output tokens: %s".formatted(displayGenAiTokens(newValue.getValue().maxTokens())));
             }
         });
-        ChoiceUtils.selectModel(cbModel, targetModel);
+        if (targetModel != null) {
+            ChoiceUtils.selectModel(cbModel, targetModel.getName());
+        }
         cbModel.setConverter(modelMetaConverter);
         cbLanguage.setConverter(new PairStringStringConverter());
         ChoiceUtils.loadLanguagesToAndSelectDefault(cbLanguage);

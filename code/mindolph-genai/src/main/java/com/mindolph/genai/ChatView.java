@@ -81,7 +81,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.READY)
                 .in(p -> {
-                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), p.getChatModel().getName()));
+                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), p.getChatModel()));
                     taInput.setDisable(false);
                     taInput.setPromptText("Chat with your agent \"%s\"".formatted(p.getName()));
                     taInput.requestFocus();

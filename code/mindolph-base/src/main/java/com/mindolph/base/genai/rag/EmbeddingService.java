@@ -90,7 +90,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 if (embeddingModel == null) {
                     log.debug("Create embedding model instance");
                     embeddingModel = super.createEmbeddingModel(
-                            datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel().getName());
+                            datasetMeta.getLanguageCode(), datasetMeta.getEmbeddingModel());
                 }
                 if (embeddingStore == null) {
                     log.debug("Create embedding store instance");

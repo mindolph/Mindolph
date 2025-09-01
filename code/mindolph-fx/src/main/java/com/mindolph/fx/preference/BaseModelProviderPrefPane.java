@@ -158,7 +158,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
             Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(prefKey);
             if (providerModel != null) {
                 ChoiceUtils.selectOrUnselectProvider(cbProvider, providerModel.a());
-                ChoiceUtils.selectOrUnselectModel(cbModel, providerModel.b());
+                ChoiceUtils.selectOrUnselectModel(cbModel, providerModel.b().getName());
             }
         }
     }

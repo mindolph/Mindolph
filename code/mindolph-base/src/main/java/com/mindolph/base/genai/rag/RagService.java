@@ -71,7 +71,7 @@ public class RagService extends BaseEmbeddingService {
 //            throw new RuntimeException("Vector store is not well setup");
         }
         log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
-                agentMeta.getName(), agentMeta.getChatProvider().getName(), agentMeta.getChatModel().getName(), agentMeta.getEmbeddingProvider().getName(), agentMeta.getEmbeddingModel().getName());
+                agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel() , agentMeta.getEmbeddingProvider().getDisplayName(), agentMeta.getEmbeddingModel());
         GlobalExecutor.submit(() -> {
             try {
                 this.switchModel(agentMeta, o -> {
@@ -102,8 +102,8 @@ public class RagService extends BaseEmbeddingService {
     }
 
     public void switchModel(AgentMeta agentMeta, Consumer<Object> completed) {
-        log.debug("Switch language and embedding model to %s, %s ".formatted(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName()));
-        embeddingModel = super.createEmbeddingModel(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel().getName());
+        log.debug("Switch language and embedding model to %s, %s ".formatted(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel()));
+        embeddingModel = super.createEmbeddingModel(agentMeta.getLanguageCode(), agentMeta.getEmbeddingModel());
         try {
             embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
         } catch (Exception e) {

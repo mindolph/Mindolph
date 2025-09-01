@@ -222,10 +222,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             am.setChatProvider(cbChatProvider.getSelectionModel().getSelectedItem().getKey());
         }
         if (!cbEmbeddingModel.getSelectionModel().isEmpty()) {
-            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getValue());
+            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey());
         }
         if (!cbChatModel.getSelectionModel().isEmpty()) {
-            am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getValue());
+            am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getKey());
         }
         am.setPromptTemplate(taAgentPrompt.getText());
         if (!cbLanguage.getSelectionModel().isEmpty()) {

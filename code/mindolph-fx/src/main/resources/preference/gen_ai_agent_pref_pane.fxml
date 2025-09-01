@@ -7,35 +7,35 @@
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <VBox>
-        <PreferenceItem name="Agent: ">
+        <PreferenceItem name="Agent: " labelPrefWidth="220">
             <ChoiceBox fx:id="cbAgent" prefWidth="140.0">
             </ChoiceBox>
             <Button fx:id="btnAddAgent"/>
             <Button fx:id="btnRemoveAgent"/>
         </PreferenceItem>
-        <PreferenceItem name="Description:">
+        <PreferenceItem name="Description:" labelPrefWidth="220">
             <TextField fx:id="tfDescription" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Language:">
+        <PreferenceItem name="Language:" labelPrefWidth="220">
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Embedding Model: ">
+        <PreferenceItem name="Embedding Model: " labelPrefWidth="220">
             <ChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
             </ChoiceBox>
-            <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="140.0">
+            <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="180.0">
             </ChoiceBox>
         </PreferenceItem>
-        <PreferenceItem name="Chat Model: ">
+        <PreferenceItem name="Chat Model: " labelPrefWidth="220">
             <ChoiceBox fx:id="cbChatProvider" prefWidth="140.0">
             </ChoiceBox>
-            <ChoiceBox fx:id="cbChatModel" prefWidth="140.0">
+            <ChoiceBox fx:id="cbChatModel" prefWidth="180.0">
             </ChoiceBox>
         </PreferenceItem>
-        <PreferenceItem name="Prompt: ">
+        <PreferenceItem name="Prompt: " labelPrefWidth="220">
             <TextArea fx:id="taAgentPrompt" prefWidth="280.0" prefRowCount="10" prefColumnCount="100">
             </TextArea>
         </PreferenceItem>
-        <PreferenceItem name="Datasets: ">
+        <PreferenceItem name="Datasets: " labelPrefWidth="220">
             <TableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="320.0">
             </TableView>
             <Button fx:id="btnSetDataset"/>
