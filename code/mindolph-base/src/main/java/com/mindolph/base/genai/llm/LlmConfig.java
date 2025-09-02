@@ -23,6 +23,7 @@ import java.util.*;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE;
+import static com.mindolph.core.constant.GenAiConstants.CUSTOM_MODEL_KEY;
 
 /**
  * Manage llm config in java preference.
@@ -110,7 +111,7 @@ public class LlmConfig {
         }
         ProviderMeta providerMeta = this.loadProviderMeta(providerName);
         if (providerMeta != null) {
-            if (StringUtils.isBlank(providerMeta.aiModel())|| "Custom".equals(providerMeta.aiModel())) {
+            if (StringUtils.isBlank(providerMeta.aiModel()) || CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
                 Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
                 if (opt.isPresent()) {
                     return new Tuple2<>(GenAiModelProvider.valueOf(providerName), opt.get().getName());

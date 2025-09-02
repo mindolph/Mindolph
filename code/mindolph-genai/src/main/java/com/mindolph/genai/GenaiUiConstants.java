@@ -1,5 +1,6 @@
 package com.mindolph.genai;
 
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
@@ -22,7 +23,7 @@ public interface GenaiUiConstants {
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
 
-    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>("Custom", new ModelMetaBuilder().name("Custom").maxTokens(0).build());
+    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>(GenAiConstants.CUSTOM_MODEL_KEY, new ModelMetaBuilder().name(GenAiConstants.CUSTOM_MODEL_KEY).maxTokens(0).build());
 
     Map<String, String> SUPPORTED_EMBEDDING_LANG = Map.of("en", "English", "zh_CN", "Simplified Chinese");
 

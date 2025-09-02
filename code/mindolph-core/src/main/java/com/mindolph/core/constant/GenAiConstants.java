@@ -20,6 +20,11 @@ public interface GenAiConstants {
     int MODEL_TYPE_CHAT = 1;
     int MODEL_TYPE_EMBEDDING = 2;
 
+    // Be used to indicate that the model is a custom model
+    // This will be removed in the future.
+    @Deprecated(since = "1.13")
+    String CUSTOM_MODEL_KEY = "Custom";
+
     /**
      * Look up information for a pre-defined model.
      *

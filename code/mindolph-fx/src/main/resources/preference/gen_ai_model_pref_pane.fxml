@@ -7,17 +7,17 @@
          xmlns:fx="http://javafx.com/fxml/1">
 
     <VBox>
-        <PreferenceItem name="Gen-AI provider:">
+        <PreferenceItem name="Gen-AI provider:" labelPrefWidth="220">
             <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
             </ChoiceBox>
         </PreferenceItem>
-        <PreferenceItem name="API key:">
+        <PreferenceItem name="API key:" labelPrefWidth="220">
             <TextField fx:id="tfApiKey" prefWidth="300.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Base URL:">
+        <PreferenceItem name="Base URL:" labelPrefWidth="220">
             <TextField fx:id="tfBaseUrl" prefWidth="300.0" promptText="eg: http://127.0.0.1:11434"/>
         </PreferenceItem>
-        <PreferenceItem name="Model:" orientation="VERTICAL">
+        <PreferenceItem name="Model:" orientation="VERTICAL" labelPrefWidth="220">
             <ChoiceBox fx:id="cbModel" prefWidth="180.0"/>
             <HBox spacing="8">
                 <ChoiceBox fx:id="cbCustomModels" prefWidth="180.0"/>
@@ -28,7 +28,7 @@
                 <Label fx:id="lbMaxOutputTokens" text="Max output tokens:"/>
             </HBox>
         </PreferenceItem>
-        <PreferenceItem name="Use proxy:">
+        <PreferenceItem name="Use proxy:" labelPrefWidth="220">
             <tooltip>
                 <Tooltip text="Use global proxy settings"/>
             </tooltip>

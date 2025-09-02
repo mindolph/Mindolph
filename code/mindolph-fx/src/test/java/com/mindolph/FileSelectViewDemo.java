@@ -1,6 +1,7 @@
 package com.mindolph;
 
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.fx.view.FileSelectView;
 import javafx.application.Application;
@@ -10,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.swiftboot.util.IdUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,7 +26,8 @@ public class FileSelectViewDemo extends Application implements Initializable {
 
     @FXML
     private FileSelectView fileSelectView;
-//    private CheckBoxTreeItem<String> rootItem;
+
+    //    private CheckBoxTreeItem<String> rootItem;
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/file_select_view_demo.fxml"));
@@ -46,7 +49,9 @@ public class FileSelectViewDemo extends Application implements Initializable {
 //
 //        }).start();
         WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(JSON);
-        fileSelectView.loadWorkspace(workspaceList.getProjects().getFirst(), null, true, false, null);
+        DatasetMeta datasetMeta = new DatasetMeta();
+        datasetMeta.setId(IdUtils.makeUUID());
+        fileSelectView.loadWorkspace(datasetMeta, workspaceList.getProjects().getFirst(), true, false, null);
     }
 
     String JSON = """

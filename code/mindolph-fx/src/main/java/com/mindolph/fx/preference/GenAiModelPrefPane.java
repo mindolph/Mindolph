@@ -113,7 +113,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
                         }
                         cbModel.getItems().add(MODEL_CUSTOM_ITEM);
                         // select the preferred model
-                        if ("Custom".equals(providerMeta.aiModel())) {
+                        if (GenAiConstants.CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
                             targetItem = MODEL_CUSTOM_ITEM;
                         }
                         else {
