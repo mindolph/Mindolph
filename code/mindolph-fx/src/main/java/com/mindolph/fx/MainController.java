@@ -703,7 +703,7 @@ public class MainController extends BaseController implements Initializable,
             this.cm.saveActiveCollectionName(newColName);
 
             // remove for resorting first.
-            menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
+            this.clearCollectionMenuItems();
 
             // load all again to resort collections.
             this.loadCollections();
@@ -786,7 +786,7 @@ public class MainController extends BaseController implements Initializable,
             }
             this.cm.renameCollection(activeCollectionName, newName);
             // remove for resorting first.
-            menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
+            this.clearCollectionMenuItems();
 
             // load all again to resort collections.
             this.loadCollections();
@@ -824,7 +824,7 @@ public class MainController extends BaseController implements Initializable,
             EventBus.getIns().subscribeOpenFileFail(observer);
             Platform.runLater(() -> {
                 onOpenedFileRestore(files.stream().map(File::new).toList());
-                menuCollections.getItems().clear();
+                this.clearCollectionMenuItems();
                 this.loadCollections();
                 // remove listener since the lister is created each time.
                 EventBus.getIns().unsubscribeOpenFileFail(observer);
@@ -888,6 +888,10 @@ public class MainController extends BaseController implements Initializable,
 
     public void dispose() {
 
+    }
+
+    private void clearCollectionMenuItems() {
+        menuCollections.getItems().removeIf(mi -> mi instanceof RadioMenuItem);
     }
 
 }
