@@ -37,6 +37,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 //    private CheckBox ckbEnableAutoCreateProjectFolder;
     @FXML
     private CheckBox ckbShowHiddenFiles;
+    @FXML
+    private CheckBox ckbHideExtension;
     //    @FXML
 //    private CheckBox ckbAutoBackupLastEdit;
     @FXML
@@ -77,6 +79,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(ckbShowHiddenFiles.selectedProperty(), PrefConstants.GENERAL_SHOW_HIDDEN_FILES, false);
 //        super.bindPreference(ckbAutoBackupLastEdit.selectedProperty(), "general.autoBackupBeforeSaving", true);
         super.bindPreference(cbAutoSelectAfterFileOpened.selectedProperty(), GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true);
+
+        super.bindPreference(ckbHideExtension.selectedProperty(), PrefConstants.GENERAL_HIDE_EXTENSION, false);
 
         // global font size
         int globalFontSize = fxPreferences.getPreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, 0);

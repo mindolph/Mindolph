@@ -14,6 +14,8 @@ import com.mindolph.base.event.FileChangeEvent;
 import com.mindolph.base.event.FileChangeEvent.FileChangeType;
 import com.mindolph.base.event.FolderReloadEvent;
 import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.WorkspaceManager;
@@ -81,6 +83,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.mindolph.base.constant.Comparators.SORTING_TREE_ITEMS;
+import static com.mindolph.base.constant.PrefConstants.GENERAL_HIDE_EXTENSION;
+import static com.mindolph.base.constant.PrefConstants.GENERAL_SHOW_HIDDEN_FILES;
 import static com.mindolph.base.util.MindolphFileUtils.deleteMacFile;
 import static com.mindolph.base.util.MindolphFileUtils.isFolderEmpty;
 import static com.mindolph.core.constant.SceneStatePrefs.*;
@@ -148,6 +152,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     private DirectoryWatcher fileWatcher = null;
     // event source for directory monitor to reduce file change events.
     private final EventSource<List<File>> observerEventSource = new EventSource<>();
+
+    public static boolean hideFileExtension = FxPreferences.getInstance().getPreference(GENERAL_HIDE_EXTENSION, false);
 
     public WorkspaceViewEditable() {
         super("/view/workspace_view_editable.fxml");
@@ -367,6 +373,30 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         SearchService.getIns().registerMatcher(TYPE_MIND_MAP, new MindMapTextMatcher(true));
         SearchService.getIns().registerMatcher(TYPE_CSV, new CsvMatcher(true));
         SearchService.getIns().registerFileLinkMatcher(TYPE_MIND_MAP, new FileLinkMindMapSearchMatcher());
+
+        this.subscribePreferenceChanges();
+    }
+
+    private void subscribePreferenceChanges() {
+        hideFileExtension = FxPreferences.getInstance().getPreference(GENERAL_HIDE_EXTENSION, Boolean.FALSE);
+        workspaceConfig.setShowHiddenFile(FxPreferences.getInstance().getPreference(GENERAL_SHOW_HIDDEN_FILES, Boolean.FALSE));
+        PluginEventBus.getIns().subscribePreferenceChanges(pe -> {
+            if (pe.getEventType() == PluginEvent.EventType.GENERAL_PREF_CHANGED) {
+                Boolean prefHideExt = FxPreferences.getInstance().getPreference(GENERAL_HIDE_EXTENSION, Boolean.FALSE);
+                if (hideFileExtension != prefHideExt) {
+                    hideFileExtension = prefHideExt;
+                    this.treeView.refresh();
+                    this.treeView.requestFocus();
+                }
+                Boolean preShowHiddenFiles = FxPreferences.getInstance().getPreference(GENERAL_SHOW_HIDDEN_FILES, Boolean.FALSE);
+                if (workspaceConfig.isShowHiddenFile() != preShowHiddenFiles) {
+                    workspaceConfig.setShowHiddenFile(preShowHiddenFiles);
+                    reloadWorkspace(rootItem, activeWorkspaceData);
+                    this.treeView.refresh();
+                    this.treeView.requestFocus();
+                }
+            }
+        });
     }
 
     public void toggleButtons(boolean disable) {

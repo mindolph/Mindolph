@@ -18,8 +18,11 @@
       <!--                  <CheckBox fx:id="ckbEnableAutoCreateProjectFolder" />-->
       <!--               </items>-->
       <!--            </PreferenceItem>-->
-      <PreferenceItem name="Show hidden files(needs folder reload):">
+      <PreferenceItem name="Show hidden files:">
          <CheckBox fx:id="ckbShowHiddenFiles"/>
+      </PreferenceItem>
+      <PreferenceItem name="Hide file extension:">
+         <CheckBox fx:id="ckbHideExtension"/>
       </PreferenceItem>
        <PreferenceItem name="Auto select in workspace after a file is opened:">
            <CheckBox fx:id="cbAutoSelectAfterFileOpened" mnemonicParsing="false"/>

@@ -3,11 +3,14 @@ package com.mindolph.fx.view;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.AsyncUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+
+import static com.mindolph.base.constant.PrefConstants.GENERAL_HIDE_EXTENSION;
 
 
 /**
@@ -37,6 +42,8 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
     private MenuItem miOpenFile;
     private MenuItem miRemove;
 
+    public static boolean hideFileExtension = FxPreferences.getInstance().getPreference(GENERAL_HIDE_EXTENSION, false);
+
     public RecentView() {
         super("/view/recent_view.fxml", false);
         listView.setCellFactory(param -> new RecentViewCell());
@@ -49,6 +56,15 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
         listView.setContextMenu(itemContextMenu);
         // listen and update the path changed file
         EventBus.getIns().subscribeFilePathChanged(filePathChangedEvent -> updateRecentFile(filePathChangedEvent.getNodeData(), filePathChangedEvent.getNewFile()));
+
+        // refresh when general preferences changes.
+        PluginEventBus.getIns().subscribePreferenceChanges(pe-> {
+            if (pe.getEventType() == PluginEvent.EventType.GENERAL_PREF_CHANGED) {
+                hideFileExtension = FxPreferences.getInstance().getPreference(GENERAL_HIDE_EXTENSION, Boolean.FALSE);
+                this.listView.refresh();
+                this.listView.requestFocus();
+            }
+        });
     }
 
     public void load() {

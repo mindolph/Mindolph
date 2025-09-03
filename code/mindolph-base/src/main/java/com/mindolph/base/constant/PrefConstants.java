@@ -16,6 +16,8 @@ public interface PrefConstants {
     String GENERAL_GLOBAL_FONT_SIZE = "general.global.font.size";
     String GENERAL_GLOBAL_ICON_SIZE = "general.global.icon.size";
 
+    String GENERAL_HIDE_EXTENSION = "general.HideExtension";
+
     @Deprecated(since = "1.13")
     String GEN_AI_PROVIDER_ACTIVE = "genai.provider.active";
     String GEN_AI_PROVIDERS = "genai.providers";

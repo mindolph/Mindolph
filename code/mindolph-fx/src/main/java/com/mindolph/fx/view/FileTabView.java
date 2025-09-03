@@ -11,6 +11,8 @@ import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
@@ -130,6 +132,12 @@ public class FileTabView extends BaseView {
             }
         });
 
+        PluginEventBus.getIns().subscribePreferenceChanges(pe -> {
+            if (pe.getEventType() == PluginEvent.EventType.GENERAL_PREF_CHANGED) {
+                this.updateTabs();
+            }
+        });
+
     }
 
     /**
@@ -158,7 +166,7 @@ public class FileTabView extends BaseView {
         if (tab == null) {
             log.debug("Open file %s in new tab".formatted(lazy ? "lazily" : "instantly"));
             tab = new Tab();
-            tab.setText(fileData.getName());
+            tab.setText(this.makeTabNameForFile(fileData.getName(), false));
             fileData.setWorkspaceData(workspaceData); // just workaround
             tab.setUserData(fileData); //
             tab.setTooltip(new Tooltip(fileData.getFile().getPath()));
@@ -226,7 +234,7 @@ public class FileTabView extends BaseView {
                 editor.setOnFileChangedListener(changedFileData -> {
                     if (log.isTraceEnabled()) log.trace("File changed: %s".formatted(changedFileData.getFile()));
                     Tab changedTab = openedFileMap.get(changedFileData);
-                    changedTab.setText("*" + changedFileData.getName());
+                    changedTab.setText(this.makeTabNameForFile(changedFileData.getName(), true));
                     // changedTab.setStyle("-fx-font-size: 15"); // seams not work for default font
                     EventBus.getIns().notifyMenuStateChange(SAVE, true);
                     EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
@@ -234,7 +242,7 @@ public class FileTabView extends BaseView {
                 editor.setFileSavedEventHandler(savedFileData -> {
                     log.info("File %s saved.".formatted(savedFileData.getFile()));
                     Tab curTab = getCurrentTab();
-                    curTab.setText(fileData.getName());
+                    curTab.setText(this.makeTabNameForFile(fileData.getName(), false));
                     // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
                     EventBus.getIns().notifyMenuStateChange(SAVE, false);
                 });
@@ -479,8 +487,17 @@ public class FileTabView extends BaseView {
         }
     }
 
+    private void updateTabs() {
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab.getUserData() instanceof NodeData nd) {
+                Editable editable = tabEditorMap.get(tab);
+                tab.setText(this.makeTabNameForFile(nd.getName(), editable != null && editable.isChanged()));
+            }
+        }
+    }
+
     /**
-     * Update one opened tab and editor with new file path.
+     * Update one opened tab and editor with the new file path.
      *
      * @param origNodeData
      * @param newFile
@@ -492,7 +509,7 @@ public class FileTabView extends BaseView {
             // update opened file information.
             openedFileMap.remove(origNodeData);
             origNodeData.setFile(newFile);
-            // the userData of tab has already been referred by tab context menu, so replace the file instead of calling setUserData().
+            // The userData of tab has already been referred by tab context menu, so replace the file instead of calling setUserData().
             // otherwise the context menu can't manipulate the appropriate nodeData. In other words, the nodeData in tab might be equal but different to the one in TreeView.
             ((NodeData) tab.getUserData()).setFile(newFile);
             // re-add to mapping since the hash is already changed.
@@ -501,11 +518,11 @@ public class FileTabView extends BaseView {
             Editable editable = tabEditorMap.get(tab);
             if (editable == null) {
                 log.info("Editor for '%s' probably has not been instantiated yet.".formatted(tab.getText()));
-                tab.setText(newFile.getName());
+                tab.setText(this.makeTabNameForFile(newFile.getName(), false));
             }
             else {
                 editable.getEditorContext().getFileData().setFile(newFile);
-                tab.setText((editable.isChanged() ? "*" : StringUtils.EMPTY) + newFile.getName());
+                tab.setText(this.makeTabNameForFile(newFile.getName(), editable.isChanged()));
             }
             tab.setTooltip(new Tooltip(newFile.getPath()));
         }
@@ -559,7 +576,7 @@ public class FileTabView extends BaseView {
                         log.error(e.getLocalizedMessage(), e);
                         DialogFactory.errDialog("Saving file %s failed.".formatted(nodeData.getFile()));
                     }
-                    tab.setText(nodeData.getName());
+                    tab.setText(makeTabNameForFile(nodeData.getName(), false));
                     tab.setStyle("-fx-font-size: 14");
                 }
             }
@@ -591,7 +608,7 @@ public class FileTabView extends BaseView {
     }
 
     /**
-     * Close tab safely.
+     * Close a tab safely.
      *
      * @param fileData the file data that tab contains.
      * @return true if closed the tab, false if user canceled.
@@ -603,7 +620,7 @@ public class FileTabView extends BaseView {
             if (editor != null) editor.dispose();// editor may not be loaded
             Tab nextTab = TabManager.getIns().previousTabFrom(tab);
             if (nextTab != null) {
-                log.debug("Active tab: %s".formatted(nextTab.getText()));
+                log.debug("Activate tab: %s".formatted(nextTab.getText()));
                 tabPane.getSelectionModel().select(nextTab);
             }
             this.closeFileTab(tab, fileData);
@@ -750,5 +767,9 @@ public class FileTabView extends BaseView {
             }
             return null;
         }).filter(file -> file != null && file.isFile()).toList();
+    }
+
+    private String makeTabNameForFile(String fileName, boolean changed) {
+        return (changed ? "*" : StringUtils.EMPTY) + (WorkspaceViewEditable.hideFileExtension ? FilenameUtils.removeExtension(fileName) : fileName);
     }
 }

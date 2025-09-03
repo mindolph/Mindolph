@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactfx.AwaitingEventStream;
 import org.reactfx.EventSource;
@@ -217,7 +218,12 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             setGraphic(null);
         }
         else {
-            setText(item.toString());
+            if (WorkspaceViewEditable.hideFileExtension) {
+                setText(FilenameUtils.removeExtension(item.toString()));
+            }
+            else {
+                setText(item.toString());
+            }
             if (item.isFile()) {
 //                setFont(defaultFont);
                 setGraphic(FontIconManager.getIns().getIconForFile(item));

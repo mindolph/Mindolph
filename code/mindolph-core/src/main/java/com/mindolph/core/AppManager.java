@@ -110,7 +110,6 @@ public class AppManager {
 //            return snippetsRecord;
         } catch (FileNotFoundException e) {
             return null;
-            //Catch dessa exceção é novo também
         } catch (IOException e) {
             throw new RuntimeException();
         }

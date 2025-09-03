@@ -6,11 +6,10 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,17 +17,16 @@ import java.util.List;
  */
 public class WorkspaceConfig {
 
-
     private List<String> fileSuffixIncludes;
 
-    private List<String> fileSuffixExcludes = Arrays.asList(".DS_store");
+    private List<String> fileSuffixExcludes = List.of(".DS_store");
 
     private boolean showHiddenFile = false;
 
     private boolean showHiddenDir = false;
 
     /**
-     * Make filters for loading files in project.
+     * Make filters for loading files in the workspace.
      *
      * @return
      */
@@ -57,7 +55,7 @@ public class WorkspaceConfig {
                 filters.add(new AbstractFileFilter() {
                     @Override
                     public boolean accept(File file) {
-                        return !StringUtils.endsWithIgnoreCase(file.getName(), fileExtExclude);
+                        return !Strings.CI.endsWith(file.getName(), fileExtExclude);
                     }
                 });
             }
