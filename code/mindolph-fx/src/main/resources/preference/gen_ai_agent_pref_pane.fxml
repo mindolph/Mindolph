@@ -32,11 +32,12 @@
             </ChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Prompt: " labelPrefWidth="220">
-            <TextArea fx:id="taAgentPrompt" prefWidth="280.0" prefRowCount="10" prefColumnCount="100">
+            <TextArea fx:id="taAgentPrompt" prefWidth="280.0" prefRowCount="10" prefColumnCount="100" wrapText="true"
+                      promptText="Describe the agent's characteristics, capabilities, preferences, and anything else that can make the agent's answer more in line with your requirements">
             </TextArea>
         </PreferenceItem>
         <PreferenceItem name="Datasets: " labelPrefWidth="220">
-            <TableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="320.0">
+            <TableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="350.0">
             </TableView>
             <Button fx:id="btnSetDataset"/>
         </PreferenceItem>

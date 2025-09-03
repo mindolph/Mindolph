@@ -22,7 +22,7 @@
         </padding>
         <HBox spacing="5">
             <Label fx:id="lblAgentIcon" prefWidth="32" prefHeight="32"/>
-            <ChoiceBox fx:id="cbAgent"/>
+            <ChoiceBox fx:id="cbAgent" prefWidth="100"/>
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
             <Label fx:id="lblAgent" alignment="BASELINE_LEFT"/>
         </HBox>

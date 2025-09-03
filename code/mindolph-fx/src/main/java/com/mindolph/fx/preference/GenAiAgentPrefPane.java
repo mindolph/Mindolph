@@ -149,6 +149,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         TableColumn<DatasetMeta, String> colFiles = new TableColumn<>("Files");
         TableColumn<DatasetMeta, String> colLang = new TableColumn<>("Language");
         TableColumn<DatasetMeta, String> colStatus = new TableColumn<>("Status");
+        colName.setPrefWidth(120);
+        colFiles.setPrefWidth(40);
+        colLang.setPrefWidth(120);
+        colStatus.setPrefWidth(80);
         colName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getName()));
         colFiles.setCellValueFactory(param -> new SimpleStringProperty(String.valueOf(param.getValue().getFiles() == null ? 0 : param.getValue().getFiles().size())));
         colLang.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLanguageCode()));
