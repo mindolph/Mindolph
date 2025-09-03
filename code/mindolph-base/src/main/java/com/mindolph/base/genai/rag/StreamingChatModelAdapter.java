@@ -7,6 +7,7 @@ import com.mindolph.base.genai.llm.LlmProvider;
 import com.mindolph.base.genai.llm.LlmProviderFactory;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.GenAiConstants.OutputFormat;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -43,7 +44,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
 
     public StreamingChatModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
-        String providerName = agentMeta.getChatProvider().getName();
+        String providerName = agentMeta.getChatProvider().name();
         ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
         this.llmProvider = LlmProviderFactory.create(providerName, providerMeta);
     }
@@ -53,29 +54,23 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
         log.debug("Do chatting with LLM");
         List<ChatMessage> messages = chatRequest.messages();
         List<String> msgs = messages.stream().map(chatMessage -> {
-            if (chatMessage instanceof AiMessage am) {
-                return "AI: " + am.text();
-            }
-            else if (chatMessage instanceof UserMessage um) {
-                return "Human: " + StringUtils.join(um.contents(), ", ");
-            }
-            else if (chatMessage instanceof SystemMessage sm) {
-                return "System: " + sm.text();
-            }
-            else {
-                return StringUtils.EMPTY;
-            }
+            return switch (chatMessage) {
+                case AiMessage am -> "AI: " + am.text();
+                case UserMessage um -> "Human: " + StringUtils.join(um.contents(), ", ");
+                case SystemMessage sm -> "System: " + sm.text();
+                case null, default -> StringUtils.EMPTY;
+            };
         }).toList();
         String collectedMsg = String.join("\n", msgs);
 
         Input input = new InputBuilder().text(collectedMsg)
                 .model(agentMeta.getChatModel()).maxTokens(this.lookupModelMeta(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
                 .isStreaming(true).temperature(0.5f).createInput();
-        OutputParams oparams = new OutputParams(null, GenAiConstants.OutputFormat.TEXT);
+        OutputParams oparams = new OutputParams(null, OutputFormat.TEXT);
         this.llmProvider.stream(input, oparams, streamToken -> {
             if (streamToken.isError()) {
                 log.error("Streaming error: {}", streamToken.text());
-                handler.onError(new RuntimeException(streamToken.text()));
+                handler.onError(new RuntimeException("Streaming error: %s".formatted(streamToken.text())));
             }
             else {
                 // not matter user stops or provider stops.

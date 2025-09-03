@@ -161,6 +161,7 @@ public class ChatView extends BaseView implements Initializable {
             if (selectedAgent == null) {
                 return;
             }
+            // key is condition state, value is target state.
             chatStateMachine.postOnState(new HashMap<>() {
                 {
                     put(ChatState.INIT, ChatState.LOADING);
@@ -208,8 +209,8 @@ public class ChatView extends BaseView implements Initializable {
         btnSend.setOnAction(event -> {
             if (chatStateMachine.isState(ChatState.STREAMING)) {
                 // stop the streaming
-                RagService.getInstance().stop();
                 chatStateMachine.post(ChatState.STOPING);
+                RagService.getInstance().stop();
             }
             else {
                 if (currentAgentMeta == null) {
@@ -222,7 +223,7 @@ public class ChatView extends BaseView implements Initializable {
                     chat.setLast(true);
                     taInput.clear();
                     chatPane.appendChatPartial(chat);
-                    // to do real LLM chatting
+                    // to do the LLM chatting
                     RagService.getInstance().chat(chat.getText(), tokenStream -> {
                         tokenStream.onRetrieved(contents -> {
                                     log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
@@ -244,13 +245,14 @@ public class ChatView extends BaseView implements Initializable {
                                         chatPartial.setLast(true);
                                         chatPane.appendChatPartial(chatPartial);
                                         chatPane.scrollToBottom();
-                                        chatStateMachine.postWithPayload(ChatState.READY, currentAgentMeta);
+                                        chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPED, currentAgentMeta);
                                     });
                                 })
                                 .onError(e -> {
                                     Platform.runLater(() -> {
-                                        DialogFactory.errDialog(e.getMessage());
-                                        chatStateMachine.postWithPayload(ChatState.READY, currentAgentMeta);
+                                        // the STOP action might cause the LLM provider response with error, so it is inappropriate to show dialogs.
+                                        // DialogFactory.errDialog(e.getMessage());
+                                        chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPED, ChatState.STOPING, currentAgentMeta);
                                     });
                                 })
                                 .start();

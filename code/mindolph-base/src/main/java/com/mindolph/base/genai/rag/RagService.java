@@ -68,7 +68,6 @@ public class RagService extends BaseEmbeddingService {
         super.loadVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             finished.accept(new RuntimeException("Vector store is not well setup"));
-//            throw new RuntimeException("Vector store is not well setup");
         }
         log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
                 agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel() , agentMeta.getEmbeddingProvider().getDisplayName(), agentMeta.getEmbeddingModel());
@@ -111,6 +110,25 @@ public class RagService extends BaseEmbeddingService {
             throw new RuntimeException("Failed to prepare embedding store, check vector store setting or network", e);
         }
         completed.accept("RAG model is ready");
+    }
+
+    public void chat(String message, Consumer<TokenStream> consumer) {
+        log.info("Human: {}", message);
+        if (agent == null) {
+            throw new RuntimeException("Use agent before chatting");
+        }
+        GlobalExecutor.submit(() -> {
+            try {
+                TokenStream tokenStream = agent.chat(message);
+                consumer.accept(tokenStream);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+    }
+
+    public void stop() {
+        this.streamingChatModelAdapter.setStop(true);
     }
 
     private ContentRetriever buildContentRetriever(String agentId) {
@@ -162,23 +180,4 @@ public class RagService extends BaseEmbeddingService {
         return docIdList;
     }
 
-
-    public void chat(String message, Consumer<TokenStream> consumer) {
-        log.info("Human: {}", message);
-        if (agent == null) {
-            throw new RuntimeException("Use agent before chatting");
-        }
-        GlobalExecutor.submit(() -> {
-            try {
-                TokenStream tokenStream = agent.chat(message);
-                consumer.accept(tokenStream);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        });
-    }
-
-    public void stop() {
-        this.streamingChatModelAdapter.setStop(true);
-    }
 }
