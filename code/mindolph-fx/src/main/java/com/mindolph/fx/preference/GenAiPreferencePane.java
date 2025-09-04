@@ -99,15 +99,15 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         cbAiProvider.getItems().add(new Pair<>(CHAT_GLM, CHAT_GLM.getDisplayName()));
         cbAiProvider.getItems().add(new Pair<>(DEEP_SEEK, DEEP_SEEK.getDisplayName()));
         cbAiProvider.getItems().add(new Pair<>(MOONSHOT, MOONSHOT.getDisplayName()));
-        super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.getName(),
-                pair -> pair.getKey().getName(),
+        super.bindPreference(cbAiProvider.valueProperty(), GEN_AI_PROVIDER_ACTIVE, OPEN_AI.name(),
+                pair -> pair.getKey().name(),
                 providerName -> new Pair<>(valueOf(providerName), valueOf(providerName).getDisplayName()),
                 selected -> {
                     isReady.set(false);
                     Map<String, ProviderProps> map = LlmConfig.getIns().loadGenAiProviders();
                     GenAiModelProvider provider = selected.getKey();
                     if (provider != null) {
-                        log.debug("Load models for gen-ai provider: %s".formatted(provider.getName()));
+                        log.debug("Load models for gen-ai provider: %s".formatted(provider.name()));
                         if (provider.getType() == ProviderType.PUBLIC) {
                             tfApiKey.setDisable(false);
                             tfBaseUrl.setDisable(true);
@@ -116,9 +116,9 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                             tfApiKey.setDisable(true);
                             tfBaseUrl.setDisable(false);
                         }
-                        ProviderProps providerProps = map.get(provider.getName());
+                        ProviderProps providerProps = map.get(provider.name());
                         if (providerProps == null) {
-                            // init for a vendor who was never been setup.
+                            // init for a vendor who had never been set up.
                             providerProps = new ProviderProps("", "", MODEL_CUSTOM_ITEM.getValue().name(), false);
                         }
                         tfApiKey.setText(providerProps.apiKey());
@@ -130,8 +130,8 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
 
                         cbModel.getItems().clear();
                         // init all pre-defined models first
-                        PROVIDER_MODELS.get(provider.getName()).stream().map("  %s"::formatted).forEach(log::debug);
-                        List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(provider.getName())
+                        PROVIDER_MODELS.get(provider.name()).stream().map("  %s"::formatted).forEach(log::debug);
+                        List<Pair<String, ModelMeta>> models = PROVIDER_MODELS.get(provider.name())
                                 .stream().map(m -> new Pair<>(m.name(), m)).sorted(GenaiUiConstants.MODEL_COMPARATOR).toList();
                         Pair<String, ModelMeta> targetItem = null;
                         if (!models.isEmpty()) {
@@ -143,7 +143,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                             targetItem = MODEL_CUSTOM_ITEM;
                         }
                         else {
-                            ModelMeta defaultModel = GenAiConstants.lookupModelMeta(provider.getName(), providerProps.aiModel());
+                            ModelMeta defaultModel = GenAiConstants.lookupModelMeta(provider.name(), providerProps.aiModel());
                             if (defaultModel != null) {
                                 targetItem = new Pair<>(providerProps.aiModel(), defaultModel);
                             }
@@ -189,7 +189,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
                 cbCustomModels.getItems().clear();
                 return;
             }
-            String providerName = cbAiProvider.getValue().getKey().getName();
+            String providerName = cbAiProvider.getValue().getKey().name();
             ProviderProps providerProps = LlmConfig.getIns().loadGenAiProviders().get(providerName);
 
             List<ModelMeta> customModels = List.of();
@@ -223,7 +223,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             }
             btnRemove.setDisable(false);
             log.debug("on custom model selected: %s".formatted(selectedModel.getValue()));
-            String activeProviderName = cbAiProvider.getValue().getKey().getName();
+            String activeProviderName = cbAiProvider.getValue().getKey().name();
             LlmConfig.getIns().activateCustomModel(GenAiModelProvider.valueOf(activeProviderName), selectedModel.getValue());
             this.updateModelDescription(selectedModel.getValue());
         });
@@ -233,7 +233,7 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
             CustomModelDialog dialog = new CustomModelDialog();
             ModelMeta newCustomModel = dialog.showAndWait();
             if (newCustomModel == null) return;
-            String activeProviderName = cbAiProvider.getValue().getKey().getName();
+            String activeProviderName = cbAiProvider.getValue().getKey().name();
             // check existence before saving.
             ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
             log.debug("new custom model: %s".formatted(newCustomModel));
@@ -256,9 +256,9 @@ public class GenAiPreferencePane extends BasePrefsPane implements Initializable 
         });
         btnRemove.setOnAction(event -> {
             String name = cbCustomModels.getSelectionModel().getSelectedItem().getValue().name();
-            boolean sure = DialogFactory.okCancelConfirmDialog("Are you to delete the custom model '%s'".formatted(name));
+            boolean sure = DialogFactory.okCancelConfirmDialog("Are you sure to delete the custom model '%s'".formatted(name));
             if (sure) {
-                String activeProviderName = cbAiProvider.getValue().getKey().getName();
+                String activeProviderName = cbAiProvider.getValue().getKey().name();
                 ProviderProps props = LlmConfig.getIns().loadGenAiProviderProps(activeProviderName);
                 props.customModels().removeIf(mm -> mm.name().equals(name));
                 props.customModels().stream().findFirst().ifPresent(mm -> {
