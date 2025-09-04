@@ -16,8 +16,8 @@ public class LayoutUtils {
      * Limit one component in the area of another component.
      * If the component is out of the area, it will be moved to the best location.
      *
-     * @param parentBounds bounds of target component.
-     * @param hoverBounds  bounds of hover component which will be limited to the area of target component.
+     * @param parentBounds bounds of the target component.
+     * @param hoverBounds  bounds of the hover component which will be limited to the area of target component.
      * @param targetDim dimension of target component or region.
      * @param extraPadding extra padding to the border of target bounds, optional.
      * @return
@@ -36,6 +36,12 @@ public class LayoutUtils {
         return new Point2D(newX, newY);
     }
 
+    /**
+     * Setup anchor in 4 directions to the node.
+     *
+     * @param node
+     * @param value
+     */
     public static void anchor(Node node, double value) {
         AnchorPane.setLeftAnchor(node, value);
         AnchorPane.setTopAnchor(node, value);

@@ -51,10 +51,13 @@ public class ChatView extends BaseView implements Initializable {
 
     private AgentMeta currentAgentMeta;
 
-    private final StateMachine<ChatState, AgentMeta> chatStateMachine;
+    private StateMachine<ChatState, AgentMeta> chatStateMachine;
 
     public ChatView() {
         super("/genai/chat_view.fxml", false);
+    }
+
+    private void initStateMachine() {
         StateBuilder<ChatState, AgentMeta> builder = new StateBuilder<>();
         builder.initialize(ChatState.INIT)
                 .in(p -> {
@@ -82,6 +85,7 @@ public class ChatView extends BaseView implements Initializable {
                 .state(ChatState.READY)
                 .in(p -> {
                     lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), p.getChatModel()));
+                    chatPane.setDisable(false);
                     taInput.setDisable(false);
                     taInput.setPromptText("Chat with your agent \"%s\"".formatted(p.getName()));
                     taInput.requestFocus();
@@ -148,13 +152,16 @@ public class ChatView extends BaseView implements Initializable {
                 .action("User stop streaming response", ChatState.STREAMING, ChatState.STOPING)
                 .action("Streaming response is stoped", ChatState.STOPING, ChatState.STOPED)
                 .action("Streaming response completed", ChatState.STREAMING, ChatState.READY)
-                .action("User type again", ChatState.STOPED, ChatState.TYPING);
+                .action("User type again", ChatState.STOPED, ChatState.TYPING)
+                .action("Switch agent on STOPPED state", ChatState.STOPED, ChatState.SWITCHING)
+                .action("Switch agent on TYPING state", ChatState.TYPING, ChatState.SWITCHING);
         chatStateMachine = new StateMachine<>(builder);
         chatStateMachine.start();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.initStateMachine();
         lblAgentIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
         cbAgent.setConverter(GenaiUiConstants.agentConverter);
         cbAgent.valueProperty().addListener((observable, oldValue, selectedAgent) -> {
@@ -168,6 +175,8 @@ public class ChatView extends BaseView implements Initializable {
                     put(ChatState.LOAD_FAILED, ChatState.LOADING);
                     put(ChatState.READY, ChatState.SWITCHING);
                     put(ChatState.SWITCH_FAILED, ChatState.SWITCHING);
+                    put(ChatState.TYPING, ChatState.SWITCHING);
+                    put(ChatState.STOPED, ChatState.SWITCHING);
                 }
             });
             RagService.getInstance().listenOnProgressEvent(s -> {
@@ -266,9 +275,26 @@ public class ChatView extends BaseView implements Initializable {
     }
 
     private void loadAgents() {
+        if (chatStateMachine.isStateIn(ChatState.LOADING, ChatState.SWITCHING)) {
+            log.debug("The agent is loading...");
+            return;
+        }
+        Pair<String, AgentMeta> selectedItem = cbAgent.getSelectionModel().getSelectedItem();
+        String agentId = null;
+        if (selectedItem != null) {
+            agentId = selectedItem.getKey();
+        }
+
         cbAgent.getItems().clear();
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
-        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getName(), agentMeta)).toList());
+        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
+        if (StringUtils.isNotBlank(agentId)) {
+            AgentMeta agentMeta = agentMap.get(agentId);
+            if (agentMeta != null) {
+                log.debug("Reload agent: %s".formatted(agentMeta.getName()));
+                cbAgent.getSelectionModel().select(new Pair<>(agentId, agentMeta));
+            }
+        }
     }
 
     private enum ChatState {
