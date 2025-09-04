@@ -279,6 +279,7 @@ public class ChatView extends BaseView implements Initializable {
             log.debug("The agent is loading...");
             return;
         }
+        log.debug("Reload agents");
         Pair<String, AgentMeta> selectedItem = cbAgent.getSelectionModel().getSelectedItem();
         String agentId = null;
         if (selectedItem != null) {

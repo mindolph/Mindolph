@@ -37,6 +37,7 @@ public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
     protected void saveChanges() {
         // reducing saving changes request
         log.debug("Fire event to Save changes lazily");
+        // if the panel is loading, nothing will happen.
         changeEventSource.push(!isLoaded);
     }
 

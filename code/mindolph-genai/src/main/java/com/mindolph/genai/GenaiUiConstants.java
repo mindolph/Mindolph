@@ -19,6 +19,8 @@ public interface GenaiUiConstants {
         HUMAN, AI
     }
 
+    Comparator<ModelMeta> MODEL_META_COMPARATOR = Comparator.comparing(ModelMeta::getName);
+
     //     Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
@@ -68,7 +70,7 @@ public interface GenaiUiConstants {
 
     StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new ModelMetaConverter();
 
-    StringConverter<Pair<GenAiModelProvider, String>> modelProviderConverter = new ProviderConverter();
+    StringConverter<Pair<GenAiModelProvider, String>> providerConverter = new ProviderConverter();
 
     class ProviderConverter extends StringConverter<Pair<GenAiModelProvider, String>> {
         @Override

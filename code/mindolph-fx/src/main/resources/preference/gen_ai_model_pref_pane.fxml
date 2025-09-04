@@ -8,7 +8,7 @@
 
     <VBox>
         <PreferenceItem name="Gen-AI provider:" labelPrefWidth="220">
-            <ChoiceBox fx:id="cbModelProvider" prefWidth="140.0">
+            <ChoiceBox fx:id="cbProvider" prefWidth="140.0">
             </ChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="API key:" labelPrefWidth="220">
@@ -17,23 +17,25 @@
         <PreferenceItem name="Base URL:" labelPrefWidth="220">
             <TextField fx:id="tfBaseUrl" prefWidth="300.0" promptText="eg: http://127.0.0.1:11434"/>
         </PreferenceItem>
-        <PreferenceItem name="Model:" orientation="VERTICAL" labelPrefWidth="220">
-            <ChoiceBox fx:id="cbModel" prefWidth="180.0"/>
-            <HBox spacing="8">
-                <ChoiceBox fx:id="cbCustomModels" prefWidth="180.0"/>
-                <Button fx:id="btnAdd"/>
-                <Button fx:id="btnRemove"/>
-            </HBox>
-            <HBox spacing="8">
-                <Label fx:id="lbMaxOutputTokens" text="Max output tokens:"/>
-            </HBox>
-        </PreferenceItem>
         <PreferenceItem name="Use proxy:" labelPrefWidth="220">
             <tooltip>
                 <Tooltip text="Use global proxy settings"/>
             </tooltip>
             <CheckBox fx:id="cbUseProxy"/>
         </PreferenceItem>
+        <PreferenceItem name="Models:" labelPrefWidth="220">
+            <VBox spacing="8">
+                <HBox spacing="8">
+                    <ListView fx:id="lvModels" prefHeight="300"/>
+                    <Button fx:id="btnAdd"/>
+                    <Button fx:id="btnRemove" disable="true"/>
+                </HBox>
+                <HBox spacing="8">
+                    <Label fx:id="lbMaxOutputTokens" text="Max output tokens:"/>
+                </HBox>
+            </VBox>
+        </PreferenceItem>
+
     </VBox>
 
 

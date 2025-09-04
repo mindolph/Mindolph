@@ -25,6 +25,11 @@ public final class ModelMeta {
      * default is false, Internal is running on the local, and the model must be downloaded from downloadUrl.
      */
     private boolean isInternal = false;
+
+    /**
+     * This won't be saved to preference, only be used for UI logic.
+     */
+    private transient boolean isCustom = false;
     /**
      * default is en, used for embedding model.
      */
@@ -133,6 +138,14 @@ public final class ModelMeta {
 
     public void setInternal(boolean internal) {
         isInternal = internal;
+    }
+
+    public boolean isCustom() {
+        return isCustom;
+    }
+
+    public void setCustom(boolean custom) {
+        isCustom = custom;
     }
 
     public String getLangCode() {
