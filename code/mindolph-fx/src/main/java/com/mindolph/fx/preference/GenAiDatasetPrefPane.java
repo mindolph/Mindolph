@@ -107,6 +107,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     Platform.runLater(() -> {
                         if (progress.stage() == null) {
                             // start embedding
+                            disableAll();
                             btnEmbedding.setText("Stop embedding");
                             btnEmbedding.setDisable(false);
                             lblEmbeddingStatus.setText(progress.msg());
@@ -129,6 +130,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 .state(EmbeddingState.DONE)
                 .in(progress -> {
                     Platform.runLater(() -> {
+                        enableAll();
                         btnEmbedding.setText("Start embedding");
                         btnEmbedding.setDisable(false);
                         lblEmbeddingStatus.setText(progress.msg());

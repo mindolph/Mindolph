@@ -26,11 +26,11 @@
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
             <Label fx:id="lblAgent" alignment="BASELINE_LEFT"/>
         </HBox>
-        <ChatPane fx:id="chatPane" VBox.vgrow="ALWAYS">
+        <ChatPane fx:id="chatPane" VBox.vgrow="ALWAYS" disable="true">
 
         </ChatPane>
         <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
-            <TextArea fx:id="taInput" prefHeight="120.0" HBox.hgrow="ALWAYS"/>
+            <TextArea fx:id="taInput" prefHeight="120.0" HBox.hgrow="ALWAYS" disable="true"/>
             <Button fx:id="btnSend" alignment="BASELINE_CENTER" mnemonicParsing="false" disable="true"/>
         </HBox>
     </VBox>

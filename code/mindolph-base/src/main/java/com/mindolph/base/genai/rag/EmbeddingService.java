@@ -107,7 +107,6 @@ public class EmbeddingService extends BaseEmbeddingService {
                     File file = selectedFiles.get(i);
                     if (datasetMeta.isStop()) {
                         log.info("Embedding is stopped by user");
-                        // todo update dataset status
                         completed.accept(new EmbeddingProgress("Embedding is stopped", successCount));
                         break;
                     }
@@ -133,14 +132,12 @@ public class EmbeddingService extends BaseEmbeddingService {
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                // todo update dataset status
                 completed.accept(new EmbeddingProgress("Failed: %s".formatted(e.getMessage()), successCount));
                 return;
             }
-            if (!datasetMeta.isStop()) {
-                // todo update dataset status
+//            if (!datasetMeta.isStop()) {
                 completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total), successCount));
-            }
+//            }
         });
     }
 
