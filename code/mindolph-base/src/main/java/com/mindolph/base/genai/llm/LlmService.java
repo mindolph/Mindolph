@@ -48,9 +48,9 @@ public class LlmService {
             llmProvider = llmProviderMap.get(provider);
             if (llmProvider == null) {
                 Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
-                ProviderMeta props = map.get(provider.getName());
-                llmProvider = LlmProviderFactory.create(provider.getName(), props);
-                log.info("Using llm provider: %s".formatted(provider.getName()));
+                ProviderMeta props = map.get(provider.name());
+                llmProvider = LlmProviderFactory.create(provider.name(), props);
+                log.info("Using llm provider: %s".formatted(provider.name()));
                 llmProviderMap.put(provider, llmProvider);
             }
         }

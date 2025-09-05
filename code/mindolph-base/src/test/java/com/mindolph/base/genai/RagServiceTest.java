@@ -56,9 +56,9 @@ public class RagServiceTest extends BaseLlmTest {
         if (StringUtils.isNotBlank(json)) {
             super.props = JsonParser.parseString(json).getAsJsonObject();
             Map<String, ProviderMeta> propsMap = new HashMap<>();
-            String apiKey = loadApiKey(GenAiModelProvider.DEEP_SEEK.getName());
+            String apiKey = loadApiKey(GenAiModelProvider.DEEP_SEEK.name());
             ProviderMeta pp = new ProviderMeta(apiKey, "", "deepseek-chat", false);
-            propsMap.put(GenAiModelProvider.DEEP_SEEK.getName(), pp);
+            propsMap.put(GenAiModelProvider.DEEP_SEEK.name(), pp);
             FxPreferences.getInstance().savePreference(PrefConstants.GEN_AI_PROVIDERS, new Gson().toJson(propsMap));
         }
     }

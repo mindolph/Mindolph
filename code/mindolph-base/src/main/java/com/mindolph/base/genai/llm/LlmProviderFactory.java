@@ -13,28 +13,28 @@ public class LlmProviderFactory {
     public static LlmProvider create(String providerName, ProviderMeta props) {
         if (props != null) {
             LlmProvider llmProvider = null;
-            if (OPEN_AI.getName().equals(providerName)) {
+            if (OPEN_AI.name().equals(providerName)) {
                 llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (GEMINI.getName().equals(providerName)) {
+            else if (GEMINI.name().equals(providerName)) {
                 llmProvider = new GeminiProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (ALI_Q_WEN.getName().equals(providerName)) {
+            else if (ALI_Q_WEN.name().equals(providerName)) {
                 llmProvider = new QwenProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (OLLAMA.getName().equals(providerName)) {
+            else if (OLLAMA.name().equals(providerName)) {
                 llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel(), props.useProxy());
             }
-            else if (HUGGING_FACE.getName().equals(providerName)) {
+            else if (HUGGING_FACE.name().equals(providerName)) {
                 llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (CHAT_GLM.getName().equals(providerName)) {
+            else if (CHAT_GLM.name().equals(providerName)) {
                 llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (DEEP_SEEK.getName().equals(providerName)) {
+            else if (DEEP_SEEK.name().equals(providerName)) {
                 llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
-            else if (MOONSHOT.getName().equals(providerName)) {
+            else if (MOONSHOT.name().equals(providerName)) {
                 llmProvider = new MoonshotProvider(props.apiKey(), props.aiModel(), props.useProxy());
             }
             else {

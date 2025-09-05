@@ -222,7 +222,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
         }
         else {
             lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("%s\nMax output tokens: %s".formatted(model.isCustom() ? "Custom model" : "Pre-set model", displayGenAiTokens(model.maxTokens())));
+            lbMaxOutputTokens.setText("Is custom model: %s\nMax output tokens: %s".formatted(model.isCustom() ? "yes" : "no", displayGenAiTokens(model.maxTokens())));
         }
         if (model != null) {
             btnRemove.setDisable(!model.isCustom());
