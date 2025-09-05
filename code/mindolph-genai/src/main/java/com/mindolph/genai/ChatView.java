@@ -201,8 +201,7 @@ public class ChatView extends BaseView implements Initializable {
             });
         });
         PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
-            if (pluginEvent.getEventType() == EventType.AGENT_PREF_CHANGED
-                    || pluginEvent.getEventType() == EventType.MODEL_PREF_CHANGED) {
+            if (pluginEvent.getEventType() == EventType.MODEL_PREF_CHANGED) {
                 this.loadAgents();
             }
         });

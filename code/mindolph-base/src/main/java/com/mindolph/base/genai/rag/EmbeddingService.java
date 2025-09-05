@@ -136,7 +136,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 return;
             }
 //            if (!datasetMeta.isStop()) {
-                completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total), successCount));
+            completed.accept(new EmbeddingProgress("Embedding done with %d successes of %d".formatted(successCount, total), successCount));
 //            }
         });
     }
@@ -312,6 +312,25 @@ public class EmbeddingService extends BaseEmbeddingService {
                             rs.getString("comment")));
                 }
                 return results;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public int countEmbeddedDocuments(String datasetId) {
+        if (StringUtils.isBlank(datasetId)) return 0;
+        return super.withJdbcConnection(connection -> {
+            try {
+                String sql = "select count(id) from mindolph_doc where dataset_id = ? and embedded = true";
+                log.debug("Executing query: {}", sql);
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setString(1, datasetId);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    return rs.getInt(1);
+                }
+                return 0;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

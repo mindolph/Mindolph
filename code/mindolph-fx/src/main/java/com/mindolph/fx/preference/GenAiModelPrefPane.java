@@ -129,7 +129,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
                         // Specific to disable the proxy support for OLLAMA since the LangChain4j is not supported it yet.
                         cbUseProxy.setDisable(provider == OLLAMA || provider == ALI_Q_WEN);
 
-                        // init all pre-defined models and custom models
+                        // init all pre-set models and custom models
                         showAllModels(currentProviderName);
                         fxPreferences.savePreference(SceneStatePrefs.GEN_AI_PROVIDER_LATEST, currentProviderName);
                     }
@@ -204,7 +204,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
     private void showAllModels(String providerName) {
         if (StringUtils.isNotBlank(providerName)) {
             lvModels.getItems().clear();
-            // pre-defined models
+            // pre-set models
             PROVIDER_MODELS.get(providerName).stream().map("  %s"::formatted).forEach(log::trace);
             lvModels.getItems().addAll(PROVIDER_MODELS.get(providerName).stream().sorted(MODEL_META_COMPARATOR).toList());
             // custom models
@@ -222,7 +222,7 @@ public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initia
         }
         else {
             lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("%s\nMax output tokens: %s".formatted(model.isCustom() ? "Custom model" : "Not custom model", displayGenAiTokens(model.maxTokens())));
+            lbMaxOutputTokens.setText("%s\nMax output tokens: %s".formatted(model.isCustom() ? "Custom model" : "Pre-set model", displayGenAiTokens(model.maxTokens())));
         }
         if (model != null) {
             btnRemove.setDisable(!model.isCustom());

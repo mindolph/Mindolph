@@ -11,6 +11,7 @@ import com.mindolph.base.genai.rag.BaseEmbeddingService.EmbeddingProgress;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceList;
@@ -135,6 +136,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                         btnEmbedding.setDisable(false);
                         lblEmbeddingStatus.setText(progress.msg());
                         pbProgress.setProgress(0);
+                        this.updateSelectedFiles(currentDatasetMeta.getId());
                     });
                 })
                 .initialize(EmbeddingState.INIT)
@@ -169,7 +171,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 // init model provider and model.
                 super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-                lblSelectedFiles.setText("Selected %d files".formatted(datasetMeta.getFiles() == null ? 0 : datasetMeta.getFiles().size()));
+                this.updateSelectedFiles(datasetMeta.getId());
                 btnRemoveDataset.setDisable(false);
                 Platform.runLater(() -> embeddingStateMachine.post(EmbeddingState.READY));
             }
@@ -259,6 +261,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
                 }
                 super.saveChanges();
+                this.updateSelectedFiles(currentDatasetMeta.getId());
             });
         });
 
@@ -342,10 +345,19 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         return datasetMeta;
     }
 
+    private void updateSelectedFiles(String datasetId) {
+        GlobalExecutor.submit(() -> {
+            int count = EmbeddingService.getInstance().countEmbeddedDocuments(datasetId);
+            Platform.runLater(() -> {
+                lblSelectedFiles.setText("Selected %d files, %d have been embedded".formatted(currentDatasetMeta.getFiles() == null ? 0 : currentDatasetMeta.getFiles().size(), count));
+            });
+        });
+    }
+
     private void disableAll() {
         NodeUtils.disable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
         pbProgress.setVisible(false);
-        lblSelectedFiles.setText("");
+//        lblSelectedFiles.setText("");
         lblEmbeddingStatus.setText("");
     }
 

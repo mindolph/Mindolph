@@ -100,6 +100,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         GlobalExecutor.submit(() -> {
             try {
                 List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(datasetMeta.getId(), allFiles);
+                // file path -> embedding doc
                 Map<String, EmbeddingDocEntity> embeddedMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));
                 log.debug("Label checked files: %d".formatted(embeddedMap.size()));
                 Platform.runLater(() -> {
