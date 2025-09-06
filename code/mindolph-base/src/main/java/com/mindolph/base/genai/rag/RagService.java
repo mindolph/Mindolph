@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class RagService extends BaseEmbeddingService {
 

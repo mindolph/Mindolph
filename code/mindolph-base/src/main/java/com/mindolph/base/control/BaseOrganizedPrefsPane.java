@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.ResourceBundle;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public abstract class BaseOrganizedPrefsPane extends BasePrefsPane {
 

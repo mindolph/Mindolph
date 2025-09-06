@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class ChatPane extends BaseView {
 

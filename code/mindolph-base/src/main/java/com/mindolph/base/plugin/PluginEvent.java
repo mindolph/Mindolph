@@ -4,7 +4,7 @@ package com.mindolph.base.plugin;
  *
  * @param <T> Type of event payload.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class PluginEvent<T> {
 

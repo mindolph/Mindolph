@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class LocalModelManager {
 

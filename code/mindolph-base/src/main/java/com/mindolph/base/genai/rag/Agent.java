@@ -5,7 +5,7 @@ import dev.langchain4j.service.TokenStream;
 /**
  * Define Agent interface as langchain4j.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public interface Agent {
 

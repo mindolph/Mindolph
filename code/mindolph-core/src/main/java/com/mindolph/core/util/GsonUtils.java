@@ -6,7 +6,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class GsonUtils {
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class AgentMeta implements Serializable {
     private String id;

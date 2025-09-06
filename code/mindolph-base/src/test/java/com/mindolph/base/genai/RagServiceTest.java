@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class RagServiceTest extends BaseLlmTest {
 

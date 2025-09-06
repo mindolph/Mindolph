@@ -31,7 +31,7 @@ import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.agentConverter;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializable {
 

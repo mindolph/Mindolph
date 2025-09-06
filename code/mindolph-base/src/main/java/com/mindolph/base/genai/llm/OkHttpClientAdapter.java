@@ -28,7 +28,7 @@ import static com.mindolph.base.genai.llm.BaseApiLlmProvider.JSON;
 /**
  * Adapter to OKHttpClient.
  *
- * @since unknown
+ * @since 1.13.0
  * @see OkHttpClient
  */
 public class OkHttpClientAdapter implements HttpClient {

@@ -28,7 +28,7 @@ import static com.mindolph.core.constant.VectorStoreProvider.PG_VECTOR;
 import static com.mindolph.genai.GenaiUiConstants.vectorStoreConverter;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements Initializable {
 

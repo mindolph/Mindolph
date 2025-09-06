@@ -78,7 +78,7 @@ public class ChoiceUtils {
      *
      * @param choiceBox The provider choice box
      * @param provider
-     * @since unknown
+     * @since 1.13.0
      */
     public static void selectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> choiceBox, GenAiModelProvider provider) {
         for (Pair<GenAiModelProvider, String> item : choiceBox.getItems()) {
@@ -94,7 +94,7 @@ public class ChoiceUtils {
      *
      * @param choiceBox The model choice box
      * @param modelMeta
-     * @since unknown
+     * @since 1.13.0
      */
     public static void selectModel(ChoiceBox<Pair<String, ModelMeta>> choiceBox, String modelMeta) {
         for (Pair<String, ModelMeta> item : choiceBox.getItems()) {

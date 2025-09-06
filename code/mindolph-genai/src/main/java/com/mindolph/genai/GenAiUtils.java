@@ -21,7 +21,7 @@ public class GenAiUtils {
      *
      * @param prefKey
      * @return
-     * @since unknown
+     * @since 1.13.0
      */
     public static Tuple2<GenAiModelProvider, ModelMeta> parseModelPreference(String prefKey) {
         String preferenceValue = FxPreferences.getInstance().getPreference(prefKey, String.class);

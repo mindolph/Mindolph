@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.function.Function;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class FileTreeHelper {
 

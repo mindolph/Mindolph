@@ -5,7 +5,7 @@ import com.mindolph.genai.GenaiUiConstants.MessageType;
 /**
  * Represent the partial of one chat message for streaming output.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class ChatPartial {
 

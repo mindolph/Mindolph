@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class ChatView extends BaseView implements Initializable {
 

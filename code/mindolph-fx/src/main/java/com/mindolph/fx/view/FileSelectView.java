@@ -32,7 +32,7 @@ import static com.mindolph.base.constant.Comparators.SORTING_TREE_ITEMS;
 /**
  * File select view for selecting files to do embedding.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class FileSelectView extends CheckTreeView<NodeData> {
 

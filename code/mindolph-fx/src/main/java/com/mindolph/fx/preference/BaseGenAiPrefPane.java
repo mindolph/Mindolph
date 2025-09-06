@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implements Initializable {
 

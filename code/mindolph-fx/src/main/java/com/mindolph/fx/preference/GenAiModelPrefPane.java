@@ -37,7 +37,7 @@ import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.GenaiUiConstants.*;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initializable {
 

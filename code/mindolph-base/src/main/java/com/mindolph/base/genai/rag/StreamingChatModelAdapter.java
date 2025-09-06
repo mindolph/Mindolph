@@ -31,7 +31,7 @@ import java.util.List;
  * To utilize the RAG from LangChain4j, an adapter for LangChain's chat model is needed, although it seems redundant,
  * since the LLM provider implementations didn't follow the LangChain4j practices.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class StreamingChatModelAdapter implements StreamingChatModel {
 

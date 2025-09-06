@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.swiftboot.util.ClasspathResourceUtils;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class BaseLlmTest {
     protected JsonObject props;

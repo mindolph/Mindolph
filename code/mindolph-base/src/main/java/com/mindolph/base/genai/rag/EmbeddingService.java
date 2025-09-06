@@ -40,7 +40,7 @@ import static com.mindolph.core.constant.GenAiConstants.SUPPORTED_EMBEDDING_FILE
 import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class EmbeddingService extends BaseEmbeddingService {
 

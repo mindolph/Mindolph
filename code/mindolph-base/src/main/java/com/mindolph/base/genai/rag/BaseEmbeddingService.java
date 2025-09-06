@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public abstract class BaseEmbeddingService {
 

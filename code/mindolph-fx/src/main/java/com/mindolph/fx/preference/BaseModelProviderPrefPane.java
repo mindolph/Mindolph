@@ -30,7 +30,7 @@ import static com.mindolph.genai.GenaiUiConstants.*;
 /**
  * Include choice boxes for LLM providers and their models.
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 

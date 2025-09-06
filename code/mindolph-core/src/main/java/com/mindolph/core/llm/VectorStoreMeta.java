@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class VectorStoreMeta {
 

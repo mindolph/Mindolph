@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.igormaznitsa.mindmap.model.Constants.MMD_DATE_TIME_FORMAT;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class ConvertUtils {
 

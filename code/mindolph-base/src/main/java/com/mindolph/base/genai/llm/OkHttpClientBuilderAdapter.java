@@ -14,7 +14,7 @@ import java.time.Duration;
 /**
  * Adapter to OKHttp's HttpClientBuilder.
  *
- * @since unknown
+ * @since 1.13.0
  * @see HttpClientBuilder
  */
 public class OkHttpClientBuilderAdapter implements HttpClientBuilder {

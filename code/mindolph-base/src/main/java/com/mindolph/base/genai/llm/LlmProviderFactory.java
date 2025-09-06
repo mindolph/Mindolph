@@ -6,7 +6,7 @@ import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class LlmProviderFactory {
     

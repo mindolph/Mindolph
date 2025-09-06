@@ -18,7 +18,7 @@ import java.net.Proxy;
 /**
  * TODO authentication
  *
- * @since unknown
+ * @since 1.13.0
  */
 public class Downloader {
 

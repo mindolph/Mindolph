@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  * @param port
  * @param username
  * @param password
- * @since unknown
+ * @since 1.13.0
  */
 public record ProxyMeta(String type, String host, int port, String username, String password) {
     public String url() {

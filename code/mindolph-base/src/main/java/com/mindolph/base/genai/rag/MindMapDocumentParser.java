@@ -16,7 +16,7 @@ import static dev.langchain4j.internal.ValidationUtils.ensureNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * @since unknown
+ * @since 1.13.0
  */
 public class MindMapDocumentParser extends TextDocumentParser {
 
