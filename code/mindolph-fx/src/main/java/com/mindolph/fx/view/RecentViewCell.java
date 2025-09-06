@@ -76,7 +76,7 @@ public class RecentViewCell extends ListCell<NodeData> {
             if (globalFontSize == 0) {
                 globalFontSize = (int) lbFileName.getFont().getSize();// borrow
             }
-            lbFileName.setText(RecentView.hideFileExtension ? FilenameUtils.removeExtension(fileData.getName()) : fileData.getName());
+            lbFileName.setText((RecentView.hideFileExtension && !fileData.isFolder()) ? FilenameUtils.removeExtension(fileData.getName()) : fileData.getName());
             lbFileName.setFont(FontUtils.newFontWithSize(Font.getDefault(), (int) (globalFontSize * 1.1f)));
             lbFilePath.setText(desc);
 

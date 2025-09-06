@@ -218,7 +218,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             setGraphic(null);
         }
         else {
-            if (WorkspaceViewEditable.hideFileExtension) {
+            if (WorkspaceViewEditable.hideFileExtension&& !item.isFolder()) {
                 setText(FilenameUtils.removeExtension(item.toString()));
             }
             else {
