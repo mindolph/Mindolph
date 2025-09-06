@@ -96,19 +96,19 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 
 #### Release Notes
 
-* Stable Version: [v1.11.x](docs/release-notes/v1.11/v1.11.md)
-* Unstable Version: [v1.12.x](docs/release-notes/v1.12/v1.12.md)
+* Stable Version: [v1.12](docs/release-notes/v1.12/v1.12.md)
+* Unstable Version: [v1.13](docs/release-notes/v1.13/v1.13.md)
 
 #### Downloads
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9-x64.dmg) |[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4-x64.dmg) | Intel |
-|macOS|.dmg|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9-aarch64.dmg) |[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.msi) |[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4.msi) | |
-|Debian/Ubuntu|.deb|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.deb)|[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.rpm)|[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4.rpm)| |
-|Java Executable|.jar|[v1.11.9](https://github.com/mindolph/Mindolph/releases/download/v1.11.9/Mindolph-1.11.9.jar)|[v1.12.4](https://github.com/mindolph/Mindolph/releases/download/v1.12.4/Mindolph-1.12.4.jar)| Java 21 is the minimum version to run this application. 	</br> If you are using Linux, run the jar like this:  </br> `java -jar Mindolph-1.11.9.jar`  </br> If not, download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-24`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-24\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.11.9.jar` |
+|macOS|.dmg|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5-x64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-x64.dmg) | Intel |
+|macOS|.dmg|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5-aarch64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.msi) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.msi) | |
+|Debian/Ubuntu|.deb|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.deb)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.rpm)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.rpm)| |
+|Java Executable|.jar|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.jar)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.jar)| Java 22 is the minimum version to run this application. 	</br> download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-24`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-24\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.12.5.jar` |
 
 
 [Change Logs](docs/change_logs.md)

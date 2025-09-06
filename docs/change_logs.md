@@ -1,5 +1,26 @@
 # Change Logs
 
+### V1.13.0 Unstable Release
+* New, significant feature: AI Agent
+	* Build intelligent agents based on your own knowledge base to enable them to answer more specialized and specific questions.
+	* This feature requires a PostgreSQL database (either local or remote, currently only PostgreSQL is supported) with the pgvector extension installed. The knowledge base's vector data will be stored in this database.
+	* Configuration steps: Configure the LLM model -> Configure the database connection -> Create a dataset -> Perform embedding -> Create an agent -> Select the Agent tab in the left sidebar -> Select the name of your agent -> Enter content in the chat box to start a conversation with the agent.
+
+* Improvement:
+	* Added a global option to hide file extensions in the workspace directory tree, the recently opened files list, and the opened file tabs.
+
+	* Improved the configuration of the currently used model in Gen-AI, now allowing you to select different models for both content generation and content summarization.
+
+### V1.12.5 Release
+* Improvement:
+	* Optimize the syntax highlighting colors of Markdown and PlantUML to make them more beautiful and easier to read. 
+	* Update models  of Qwen and Deepseek.
+	* Reduce the size of the executable jar file.
+* Fix:
+	* Wrong highlighting for the numbered list of Markdown.
+	* When selecting a collection, the collection should be updated when any of the files in it are missing.
+
+
 ### V1.12.4 Unstable Release
 * Improvement
 	* Optimized the handling of moving files from folder to folder.
