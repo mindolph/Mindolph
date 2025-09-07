@@ -848,10 +848,12 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 return;
             }
             if (workspaceMeta.getBaseDirPath().equals(activeWorkspaceData.getFile().getPath())) {
+                // the current workspace is the target workspace
                 this.selectByNodeData(nodeData);
                 treeView.scrollToSelected();
             }
             else {
+                // switch to the target workspace before searching
                 EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
                     this.selectByNodeData(nodeData);
                     treeView.scrollToSelected();
@@ -863,7 +865,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     /**
-     * Find and select a tree item by it's node data and expand it's path nodes.
+     * Find and select a tree item by its node data and expand its path nodes.
      *
      * @param nodeData
      * @return TreeItem if selected.
@@ -873,8 +875,14 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             log.debug("Select in tree: %s".formatted(nodeData));
             return TreeVisitor.dfsSearch(rootItem, treeItem -> {
                 NodeData curNodeData = treeItem.getValue();
-                if (!treeItem.isLeaf() && curNodeData.isParentOf(nodeData)) {
-                    treeItem.setExpanded(true);
+                if (!treeItem.isLeaf()) {
+                    if (curNodeData.isParentOf(nodeData)) {
+                        treeItem.setExpanded(true);
+                    }
+                    else {
+                        // stop traversing deeper for unnecessary searching
+                        return null;
+                    }
                 }
                 if (curNodeData.getFile().equals(nodeData.getFile())) {
                     log.debug("Found tree item to select");
@@ -882,7 +890,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     treeView.reselect(treeItem);
                     return treeItem; // stop traversing
                 }
-                return null; // keep traversing
+                return new TreeItem<>(); // keep traversing
             });
         }
         return null;
