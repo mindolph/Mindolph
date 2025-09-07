@@ -504,7 +504,10 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
             this.expandTreeNodes();
             Platform.runLater(() -> treeView.requestFocus());
-            this.observeWorkspace(workspaceMeta);
+            GlobalExecutor.submit(() -> {
+                // NOTE the directory-watcher actually blocks the thread, so wrap it in a thread to void blocking.
+                this.observeWorkspace(workspaceMeta);
+            });
         });
         this.asyncCreateWorkspaceSubTree(workspaceMeta);
     }
@@ -577,6 +580,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 log.debug("reduced as %d dirs".formatted(dirs.size()));
                 EventBus.getIns().notifyFolderRefreshInWorkspace(new FolderReloadEvent(dirs));
             });
+            log.debug("Build file watcher...");
             // Monitor the directory of the active workspace.
             fileWatcher = DirectoryWatcher.builder()
                     .path(directoryToWatch)
@@ -606,7 +610,9 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                     // .logger(logger) // defaults to LoggerFactory.getLogger(DirectoryWatcher.class)
                     // .watchService(watchService) // defaults based on OS to either JVM WatchService or the JNA macOS WatchService
                     .build();
+            log.debug("Start to watch...");
             CompletableFuture<Void> fileWatcherFuture = fileWatcher.watchAsync();
+            log.debug("File watcher started for workspace: " + workspaceMeta.getBaseDirPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
