@@ -19,7 +19,7 @@ public class TreeVisitor {
      * Visit all nodes and sub-nodes of the root node (except itself) with deep-first-search strategy.
      *
      * @param root
-     * @param function return null means keep traversing, otherwise return the matched TreeItem.
+     * @param function return null means stop traversing deeper; return empty TreeItem means keep traversing, otherwise return the matched TreeItem.
      */
     public static <T> TreeItem<T> dfsSearch(TreeItem<T> root, Function<TreeItem<T>, TreeItem<T>> function) {
         if (root == null) {
@@ -32,12 +32,15 @@ public class TreeVisitor {
         for (TreeItem<T> child : children) {
             TreeItem<T> found = function.apply(child);
             if (found != null) {
-                return found;
-            }
-            if (!child.isLeaf()) {
-                found = dfsSearch(child, function);
-                if (found != null) {
-                    return found;
+                if (found.getValue() == null) {
+                    // go deeper if not leaf
+                    if (!child.isLeaf()) {
+                        found = dfsSearch(child, function);
+                        return found;
+                    }
+                }
+                else {
+                    return found; // found matched
                 }
             }
         }

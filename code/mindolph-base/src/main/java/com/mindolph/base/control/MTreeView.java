@@ -48,7 +48,7 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
 
     private void setExpanded(TreeItem<T> treeItem, boolean includeParent, boolean expand) {
         TreeVisitor.dfsTraverse(treeItem, item -> {
-            log.trace("%s node: %s".formatted(expand ? "Expand" : "Collapse", item));
+            if (log.isTraceEnabled()) log.trace("%s node: %s".formatted(expand ? "Expand" : "Collapse", item));
             item.setExpanded(expand);
             return Boolean.TRUE;
         });
@@ -72,6 +72,7 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
 
     /**
      * Clear current selection and select specified tree items.
+     *
      * @param treeItems
      */
     public void reselect(List<TreeItem<T>> treeItems) {
@@ -121,8 +122,8 @@ public class MTreeView<T extends ItemData> extends TreeView<T> {
         int f = vf.getFirstVisibleCell().getIndex();
         int l = vf.getLastVisibleCell().getIndex();
         Integer i = item.getValue().getDisplayIndex();
-        log.trace("The index of target tree item %d".formatted(i));
-        log.trace("  is between %d and %d".formatted(f, l));
+        if (log.isTraceEnabled()) log.trace("The index of target tree item %d".formatted(i));
+        if (log.isTraceEnabled()) log.trace("  is between %d and %d".formatted(f, l));
         return i != null && (i >= f && i <= l);
     }
 
