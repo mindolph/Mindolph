@@ -21,8 +21,9 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 	* Ollama  
 	* Google Gemini API  
 	* Hugging Face API  
-	* ChatGLM  
+	* ChatGLM
 	* DeepSeek
+	* Moonshot
 * Multiple tabs for opening files instead of a single file window, making it easy to switch back and forth between files.
 * Supports Mind Map(`*.mmd`), Markdown(`*.md`), PlantUML(`*.puml`), CSV sheet(`*.csv`) and plain text(`*.txt`) file formats, more formats will be supported in the future.
 * Save opened files  as a named `Collection` to manage related files even from different workspaces.

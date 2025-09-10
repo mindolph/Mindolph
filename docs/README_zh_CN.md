@@ -24,6 +24,7 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 	* Hugging Face API
 	* ChatGLM
 	* DeepSeek
+	* 月之暗面
 * 多标签页打开文件而不是单文件窗口，可以方便的在多个文件之间来回切换。
 * 支持思维导图(`*.mmd`), Markdown(`*.md`), PlantUML(`*.puml`), CSV 表格(`*.csv`) 以及纯文本(`*.txt`)等多种文件格式，后续还会支持更多格式。
 * 可以把打开的文件保存为一个集合（`Collection`），哪怕文件位于不同的工作空间。

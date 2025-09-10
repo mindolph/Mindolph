@@ -2,7 +2,7 @@
 
 ### V1.13.0 Unstable Release
 * New, significant feature: AI Agent
-	* Build intelligent agents based on your own knowledge base to enable them to answer more specialized and specific questions.
+	* Build intelligent agents easily based on your own knowledges to enable them to answer more specialized and specific questions.
 	* This feature requires a PostgreSQL database (either local or remote, currently only PostgreSQL is supported) with the pgvector extension installed. The knowledge base's vector data will be stored in this database.
 	* Configuration steps: Configure the LLM model -> Configure the database connection -> Create a dataset -> Perform embedding -> Create an agent -> Select the Agent tab in the left sidebar -> Select the name of your agent -> Enter content in the chat box to start a conversation with the agent.
 
@@ -42,7 +42,7 @@
 	* Flawed PlantUML code snippet.
 	* Remove deprecated models of Qwen.
 * Update JavaFX to 24.0.2
-* Update bundled JDK to 24.0.4
+* Update bundled JDK to 24.0.2
 * Update dependencies.
 
 
