@@ -49,7 +49,7 @@ public interface PlantUmlConstants extends SyntaxConstants {
     };
     String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     // include EBNF note
-    String COMMENT_PATTERN = "(%s*'.*)|(\\(\\*[.\\s\\S]+?\\*\\))".formatted(BLANK_CHAR);
+    String COMMENT_PATTERN = "(?<=^%s*)('.*)|(\\(\\*[.\\s\\S]+?\\*\\))".formatted(BLANK_CHAR);
     String BLOCK_COMMENT_PATTERN = "\\/'[.\\s\\S]+?'\\/";
 
     String ARROW1 = "[<>ox#\\*\\{\\}\\+\\^]";
