@@ -127,4 +127,13 @@ public class PumlRegexTest {
         System.out.println(matcher.group(3));
         Assertions.assertEquals("**  title  **", matcher.group(3));
     }
+
+    @Test
+    public void comment() {
+        System.out.println(COMMENT_PATTERN);
+        Pattern p = Pattern.compile(COMMENT_PATTERN);
+        Assertions.assertTrue(p.matcher("' comment").matches());
+        Assertions.assertTrue(p.matcher(" 'comment").find());
+        Assertions.assertTrue(p.matcher(" ' comment").find());
+    }
 }
