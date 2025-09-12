@@ -15,10 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.*;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CaretSelectionBind;
 import org.fxmisc.richtext.CodeArea;
@@ -77,7 +74,7 @@ public class ExtCodeArea extends CodeArea {
             Node node = (Node) contextMenuEvent.getSource();
             codeContextMenu.show(node.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        // the event should be emitted when text changed in editor
+        // the event should be emitted when the text is changed in the editor
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
@@ -92,7 +89,7 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * Override and call this method in sub-class if you want to add more menu items.
+     * Override and call this method in subclass if you want to add more menu items.
      *
      * @return
      */
@@ -425,7 +422,7 @@ public class ExtCodeArea extends CodeArea {
     /**
      * if any paragraph in selection has no {@code params.targets} start with, the operation will be trimming instead of adding.
      *
-     * @param params text to add to or trim from head of selected paragraphs.
+     * @param params text to add to or trim from the head of selected paragraphs.
      */
     public void addOrTrimHeadToParagraphsIfAdded(Replacement params) {
         if (!super.isEditable()) return;
@@ -435,7 +432,7 @@ public class ExtCodeArea extends CodeArea {
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
             if (params.getTargets() != null
-                    && !StringUtils.startsWithAny(p.getText(), params.getTargets().toArray(new String[]{}))) {
+                    && !Strings.CS.startsWithAny(p.getText(), params.getTargets().toArray(new String[]{}))) {
                 isAlreadyAdded = false;
             }
         }
@@ -449,7 +446,7 @@ public class ExtCodeArea extends CodeArea {
      */
     public void addOrTrimHeadToParagraphs(Replacement params, boolean needAddToHead) {
         if (!super.isEditable()) return;
-        String tail = ObjectUtils.defaultIfNull(params.getTail(), EMPTY);
+        String tail = ObjectUtils.getIfNull(params.getTail(), EMPTY);
         addOrTrimHeadToParagraphs(params, true, parText -> {
             String tailOfLine = (parText.endsWith(tail) ? EMPTY : tail);
             if (needAddToHead) {
@@ -458,8 +455,8 @@ public class ExtCodeArea extends CodeArea {
             else {
                 // replace targets with blank if given.
                 for (String target : params.getTargets()) {
-                    if (StringUtils.startsWith(parText, target)) {
-                        return StringUtils.replaceOnce(parText, target, EMPTY) + tailOfLine;
+                    if (Strings.CS.startsWith(parText, target)) {
+                        return Strings.CS.replaceOnce(parText, target, EMPTY) + tailOfLine;
                     }
                 }
             }
@@ -495,7 +492,7 @@ public class ExtCodeArea extends CodeArea {
                 newLine = converter.apply(p.getText());
             }
             newLines.add(newLine);
-            // calc offset for each line(but only head will be used)
+            // calc offset for each line (but only head will be used)
             int offset = newLine.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
             offsets.add(offset);
         }
@@ -503,8 +500,8 @@ public class ExtCodeArea extends CodeArea {
             return;
         }
 
-        int startOffset = offsets.get(0);
-        int endOffset = offsets.get(offsets.size() - 1);
+        int startOffset = offsets.getFirst();
+        int endOffset = offsets.getLast();
         int startInFirstPar = Math.max(super.getParagraphSelection(startPar).getStart() + startOffset, 0);
         int endInLastPar = Math.max(super.getParagraphSelection(endPar).getEnd() + endOffset, 0);
         int caretInPar = this.getCaretPosition() + endOffset; // this is for non-selection condition only.
@@ -582,7 +579,7 @@ public class ExtCodeArea extends CodeArea {
     // @since 1.7
     public double getLineHeight() {
         VirtualFlow<?, ?> vf = (VirtualFlow<?, ?>) this.lookup(".virtual-flow");
-        return vf.visibleCells().get(0).getNode().getLayoutBounds().getHeight();
+        return vf.visibleCells().getFirst().getNode().getLayoutBounds().getHeight();
     }
 
     /**
