@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static com.mindolph.base.constant.ShortcutConstants.*;
+import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
 import static javafx.scene.input.KeyCode.TAB;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -432,12 +434,23 @@ public class ExtCodeArea extends CodeArea {
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
             if (params.getTargets() != null
-                    && !Strings.CS.startsWithAny(p.getText(), params.getTargets().toArray(new String[]{}))) {
+                    && !startsWithAnyIgnoreBlank(p.getText(), params.getTargets())) {
                 isAlreadyAdded = false;
             }
         }
         boolean needAddToHead = !isAlreadyAdded;
         this.addOrTrimHeadToParagraphs(params, needAddToHead);
+    }
+
+    // Whether starts with any target ignoring the blank in the front.
+    private boolean startsWithAnyIgnoreBlank(String text, List<String> targets) {
+        for (String target : targets) {
+            Pattern pattern = Pattern.compile("^%s*%s.*".formatted(BLANK_CHAR, Pattern.quote(target)));
+            if (pattern.matcher(text).find()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -450,12 +463,15 @@ public class ExtCodeArea extends CodeArea {
         addOrTrimHeadToParagraphs(params, true, parText -> {
             String tailOfLine = (parText.endsWith(tail) ? EMPTY : tail);
             if (needAddToHead) {
-                return params.getSubstitute() + parText + tailOfLine;
+                // add substitute to the beginning of the visible characters in the paragraph (ignoring blank chars).
+                return RegExUtils.replaceFirst(parText, "(^%s*)".formatted(BLANK_CHAR), "$1%s".formatted(params.getSubstitute())) + tailOfLine;
             }
             else {
                 // replace targets with blank if given.
                 for (String target : params.getTargets()) {
-                    if (Strings.CS.startsWith(parText, target)) {
+                    // check the beginning of the visible characters in the paragraph (ignoring blank chars).
+                    Pattern pattern = Pattern.compile("^%s*%s.*".formatted(BLANK_CHAR, Pattern.quote(target)));
+                    if (pattern.matcher(parText).find()) {
                         return Strings.CS.replaceOnce(parText, target, EMPTY) + tailOfLine;
                     }
                 }
@@ -476,27 +492,27 @@ public class ExtCodeArea extends CodeArea {
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
         int startPar = caretSelectionBind.getStartParagraphIndex();
         int endPar = caretSelectionBind.getEndParagraphIndex();
-        int lineCount = endPar - startPar;
+        int parCount = endPar - startPar;
         boolean hasSelection = this.getSelection().getLength() != 0;
         if (hasSelection) log.debug("Selected from %s to %s".formatted(startPar, endPar));
 
-        List<String> newLines = new ArrayList<>();
+        List<String> newPars = new ArrayList<>();
         List<Integer> offsets = new ArrayList<>(); // offsets for each paragraph.
         for (int i = startPar; i < endPar + 1; i++) {
-            String newLine;
+            String newPar;
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
-            if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
-                newLine = EMPTY;
+            if (parCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
+                newPar = EMPTY;
             }
             else {
-                newLine = converter.apply(p.getText());
+                newPar = converter.apply(p.getText());
             }
-            newLines.add(newLine);
+            newPars.add(newPar);
             // calc offset for each line (but only head will be used)
-            int offset = newLine.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
+            int offset = newPar.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
             offsets.add(offset);
         }
-        if (CollectionUtils.isEmpty(newLines)) {
+        if (CollectionUtils.isEmpty(newPars)) {
             return;
         }
 
@@ -508,7 +524,7 @@ public class ExtCodeArea extends CodeArea {
         // calculate for replacement
         int start = this.getAbsolutePosition(startPar, 0);
         int end = this.getAbsolutePosition(endPar, 0) + this.getParagraph(endPar).length();
-        String replacement = StringUtils.join(newLines, TextConstants.LINE_SEPARATOR);
+        String replacement = StringUtils.join(newPars, TextConstants.LINE_SEPARATOR);
         this.replaceText(start, end, replacement);
         // reselect new range
         if (hasSelection) {
@@ -583,7 +599,6 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     *
      * @return
      * @since 1.8.5
      */
@@ -598,7 +613,6 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     *
      * @return
      * @since 1.8.5
      */
