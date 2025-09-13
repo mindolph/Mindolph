@@ -104,12 +104,12 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5-x64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-x64.dmg) | Intel |
-|macOS|.dmg|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5-aarch64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.msi) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.msi) | |
-|Debian/Ubuntu|.deb|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.deb)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.rpm)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.rpm)| |
-|Java Executable|.jar|[v1.12.5](https://github.com/mindolph/Mindolph/releases/download/v1.12.5/Mindolph-1.12.5.jar)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.jar)| Java 22 is the minimum version to run this application. 	</br> download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-24`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-24\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.12.5.jar` |
+|macOS|.dmg|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6-x64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-x64.dmg) | Intel |
+|macOS|.dmg|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6-aarch64.dmg) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6.msi) |[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.msi) | |
+|Debian/Ubuntu|.deb|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6.deb)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6.rpm)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.rpm)| |
+|Java Executable|.jar|[v1.12.6](https://github.com/mindolph/Mindolph/releases/download/v1.12.6/Mindolph-1.12.6.jar)|[v1.13.0](https://github.com/mindolph/Mindolph/releases/download/v1.13.0/Mindolph-1.13.0.jar)| Java 22 is the minimum version to run this application. 	</br> download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-24`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-24\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.12.6.jar` |
 
 
 [Change Logs](docs/change_logs.md)
@@ -121,8 +121,8 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 
 Future Plan:  
 
-* 1.12: Few new features and more usability improvements.
-* 1.13: AI Agent preview.
+* 1.13: AI agent (preview).
+* 1.14: Improvement of AI agent.
 
 ### Buy me a cup of coffee
 

@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.12.6 Release
+* Improvement
+	* Features that add prefix to the head of paragraph respect the blank chars in the beginning, including quick comment in the PlantUML, quick comment, quick bullet list in the Markdown, etc.
+	* Optimized the performance of locating a file in the workspace.
+	* Optimized the width of the blank characters before PlantUML comments to align them with the upper and lower lines of code.
+
+* Fix
+	* Performance issue when loading workspace with many files.
+
 ### V1.13.0 Unstable Release
 * New, significant feature: AI Agent
 	* Build intelligent agents easily based on your own knowledges to enable them to answer more specialized and specific questions.
