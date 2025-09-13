@@ -15,10 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.*;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CaretSelectionBind;
 import org.fxmisc.richtext.CodeArea;
@@ -33,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static com.mindolph.base.constant.ShortcutConstants.*;
+import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
 import static javafx.scene.input.KeyCode.TAB;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -77,7 +76,7 @@ public class ExtCodeArea extends CodeArea {
             Node node = (Node) contextMenuEvent.getSource();
             codeContextMenu.show(node.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        // the event should be emitted when text changed in editor
+        // the event should be emitted when the text is changed in the editor
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
@@ -92,7 +91,7 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * Override and call this method in sub-class if you want to add more menu items.
+     * Override and call this method in subclass if you want to add more menu items.
      *
      * @return
      */
@@ -425,7 +424,7 @@ public class ExtCodeArea extends CodeArea {
     /**
      * if any paragraph in selection has no {@code params.targets} start with, the operation will be trimming instead of adding.
      *
-     * @param params text to add to or trim from head of selected paragraphs.
+     * @param params text to add to or trim from the head of selected paragraphs.
      */
     public void addOrTrimHeadToParagraphsIfAdded(Replacement params) {
         if (!super.isEditable()) return;
@@ -435,12 +434,23 @@ public class ExtCodeArea extends CodeArea {
         for (int i = caretSelectionBind.getStartParagraphIndex(); i < caretSelectionBind.getEndParagraphIndex() + 1; i++) {
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
             if (params.getTargets() != null
-                    && !StringUtils.startsWithAny(p.getText(), params.getTargets().toArray(new String[]{}))) {
+                    && !startsWithAnyIgnoreBlank(p.getText(), params.getTargets())) {
                 isAlreadyAdded = false;
             }
         }
         boolean needAddToHead = !isAlreadyAdded;
         this.addOrTrimHeadToParagraphs(params, needAddToHead);
+    }
+
+    // Whether starts with any target ignoring the blank in the front.
+    private boolean startsWithAnyIgnoreBlank(String text, List<String> targets) {
+        for (String target : targets) {
+            Pattern pattern = Pattern.compile("^%s*%s.*".formatted(BLANK_CHAR, Pattern.quote(target)));
+            if (pattern.matcher(text).find()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -449,17 +459,20 @@ public class ExtCodeArea extends CodeArea {
      */
     public void addOrTrimHeadToParagraphs(Replacement params, boolean needAddToHead) {
         if (!super.isEditable()) return;
-        String tail = ObjectUtils.defaultIfNull(params.getTail(), EMPTY);
+        String tail = ObjectUtils.getIfNull(params.getTail(), EMPTY);
         addOrTrimHeadToParagraphs(params, true, parText -> {
             String tailOfLine = (parText.endsWith(tail) ? EMPTY : tail);
             if (needAddToHead) {
-                return params.getSubstitute() + parText + tailOfLine;
+                // add substitute to the beginning of the visible characters in the paragraph (ignoring blank chars).
+                return RegExUtils.replaceFirst(parText, "(^%s*)".formatted(BLANK_CHAR), "$1%s".formatted(params.getSubstitute())) + tailOfLine;
             }
             else {
                 // replace targets with blank if given.
                 for (String target : params.getTargets()) {
-                    if (StringUtils.startsWith(parText, target)) {
-                        return StringUtils.replaceOnce(parText, target, EMPTY) + tailOfLine;
+                    // check the beginning of the visible characters in the paragraph (ignoring blank chars).
+                    Pattern pattern = Pattern.compile("^%s*%s.*".formatted(BLANK_CHAR, Pattern.quote(target)));
+                    if (pattern.matcher(parText).find()) {
+                        return Strings.CS.replaceOnce(parText, target, EMPTY) + tailOfLine;
                     }
                 }
             }
@@ -479,39 +492,39 @@ public class ExtCodeArea extends CodeArea {
         CaretSelectionBind<Collection<String>, String, Collection<String>> caretSelectionBind = this.getCaretSelectionBind();
         int startPar = caretSelectionBind.getStartParagraphIndex();
         int endPar = caretSelectionBind.getEndParagraphIndex();
-        int lineCount = endPar - startPar;
+        int parCount = endPar - startPar;
         boolean hasSelection = this.getSelection().getLength() != 0;
         if (hasSelection) log.debug("Selected from %s to %s".formatted(startPar, endPar));
 
-        List<String> newLines = new ArrayList<>();
+        List<String> newPars = new ArrayList<>();
         List<Integer> offsets = new ArrayList<>(); // offsets for each paragraph.
         for (int i = startPar; i < endPar + 1; i++) {
-            String newLine;
+            String newPar;
             Paragraph<Collection<String>, String, Collection<String>> p = this.getParagraph(i);
-            if (lineCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
-                newLine = EMPTY;
+            if (parCount > 1 && skipEmptyLine && StringUtils.isBlank(p.getText())) {
+                newPar = EMPTY;
             }
             else {
-                newLine = converter.apply(p.getText());
+                newPar = converter.apply(p.getText());
             }
-            newLines.add(newLine);
-            // calc offset for each line(but only head will be used)
-            int offset = newLine.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
+            newPars.add(newPar);
+            // calc offset for each line (but only head will be used)
+            int offset = newPar.length() - p.getText().length() - ((hasSelection || params.tail == null) ? 0 : params.tail.length());
             offsets.add(offset);
         }
-        if (CollectionUtils.isEmpty(newLines)) {
+        if (CollectionUtils.isEmpty(newPars)) {
             return;
         }
 
-        int startOffset = offsets.get(0);
-        int endOffset = offsets.get(offsets.size() - 1);
+        int startOffset = offsets.getFirst();
+        int endOffset = offsets.getLast();
         int startInFirstPar = Math.max(super.getParagraphSelection(startPar).getStart() + startOffset, 0);
         int endInLastPar = Math.max(super.getParagraphSelection(endPar).getEnd() + endOffset, 0);
         int caretInPar = this.getCaretPosition() + endOffset; // this is for non-selection condition only.
         // calculate for replacement
         int start = this.getAbsolutePosition(startPar, 0);
         int end = this.getAbsolutePosition(endPar, 0) + this.getParagraph(endPar).length();
-        String replacement = StringUtils.join(newLines, TextConstants.LINE_SEPARATOR);
+        String replacement = StringUtils.join(newPars, TextConstants.LINE_SEPARATOR);
         this.replaceText(start, end, replacement);
         // reselect new range
         if (hasSelection) {
@@ -582,11 +595,10 @@ public class ExtCodeArea extends CodeArea {
     // @since 1.7
     public double getLineHeight() {
         VirtualFlow<?, ?> vf = (VirtualFlow<?, ?>) this.lookup(".virtual-flow");
-        return vf.visibleCells().get(0).getNode().getLayoutBounds().getHeight();
+        return vf.visibleCells().getFirst().getNode().getLayoutBounds().getHeight();
     }
 
     /**
-     *
      * @return
      * @since 1.8.5
      */
@@ -601,7 +613,6 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     *
      * @return
      * @since 1.8.5
      */
