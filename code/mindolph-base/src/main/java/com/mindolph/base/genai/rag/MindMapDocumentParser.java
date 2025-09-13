@@ -55,7 +55,7 @@ public class MindMapDocumentParser extends TextDocumentParser {
                 }
             });
 
-            String txtMarkdown = ConvertUtils.convertTopics(mindMap, List.of(mindMap.getRoot()), true);
+            String txtMarkdown = ConvertUtils.convertTopics(mindMap, List.of(mindMap.getRoot()), true, false);
 
             Metadata metadata = new Metadata();
             return new MindMapDocument(txtMarkdown, metadata);

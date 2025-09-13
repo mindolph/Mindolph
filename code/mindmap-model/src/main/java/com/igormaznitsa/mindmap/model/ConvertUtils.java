@@ -22,13 +22,15 @@ public class ConvertUtils {
     private static final Logger log = LoggerFactory.getLogger(ConvertUtils.class);
 
 
-    public static <T extends Topic<T>> String convertTopics(MindMap<T> model, List<T> topics, boolean includeAttributes) {
+    public static <T extends Topic<T>> String convertTopics(MindMap<T> model, List<T> topics, boolean includeAttributes, boolean includeMeta) {
         StringBuilder buf = new StringBuilder();
-        buf.append("<!--")
-                .append(Constants.NEXT_LINE)
-                .append(VendorConstants.GENERATE_BY)
-                .append(Constants.NEXT_LINE);
-        buf.append(DateFormatUtils.format(System.currentTimeMillis(), MMD_DATE_TIME_FORMAT)).append(Constants.NEXT_LINE).append("-->").append(Constants.NEXT_LINE);
+        if (includeMeta) {
+            buf.append("<!--")
+                    .append(Constants.NEXT_LINE)
+                    .append(VendorConstants.GENERATE_BY)
+                    .append(Constants.NEXT_LINE);
+            buf.append(DateFormatUtils.format(System.currentTimeMillis(), MMD_DATE_TIME_FORMAT)).append(Constants.NEXT_LINE).append("-->").append(Constants.NEXT_LINE);
+        }
         topics = TopicUtils.removeDuplicatedAndDescendants(topics);
         for (T selectedTopic : topics) {
             model.traverseTopicTree(selectedTopic, topicNode -> {
