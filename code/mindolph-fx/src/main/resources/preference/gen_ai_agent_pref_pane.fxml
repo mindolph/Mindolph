@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import com.mindolph.fx.control.DatasetTableView?>
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <VBox>
@@ -37,8 +38,8 @@
             </TextArea>
         </PreferenceItem>
         <PreferenceItem name="Datasets: " labelPrefWidth="220">
-            <TableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="350.0">
-            </TableView>
+            <DatasetTableView fx:id="tvDatasets" minHeight="80.0" minWidth="220.0" prefHeight="150.0" prefWidth="350.0">
+            </DatasetTableView>
             <Button fx:id="btnSetDataset"/>
         </PreferenceItem>
     </VBox>

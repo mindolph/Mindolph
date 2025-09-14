@@ -11,9 +11,9 @@ import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.fx.control.DatasetTableView;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 import static com.mindolph.genai.GenaiUiConstants.agentConverter;
 
 /**
@@ -49,7 +48,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     @FXML
     private TextArea taAgentPrompt;
     @FXML
-    private TableView<DatasetMeta> tvDatasets;
+    private DatasetTableView tvDatasets;
     @FXML
     private Button btnSetDataset;
 
@@ -81,9 +80,8 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
                 tvDatasets.getItems().clear();
                 if (currentAgentMeta.getDatasetIds() != null) {
-
                     List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
-                    this.initDatasetsTableView(datasetMetas);
+                    tvDatasets.replaceAll(datasetMetas);
                 }
                 // embedding provider and model
                 ChoiceUtils.selectOrUnselectProvider(this.cbEmbeddingProvider, currentAgentMeta.getEmbeddingProvider());
@@ -145,25 +143,13 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
             super.saveChanges(false);
         });
-        TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");
-        TableColumn<DatasetMeta, String> colFiles = new TableColumn<>("Files");
-        TableColumn<DatasetMeta, String> colLang = new TableColumn<>("Language");
-        TableColumn<DatasetMeta, String> colStatus = new TableColumn<>("Status");
-        colName.setPrefWidth(120);
-        colFiles.setPrefWidth(40);
-        colLang.setPrefWidth(120);
-        colStatus.setPrefWidth(80);
-        colName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getName()));
-        colFiles.setCellValueFactory(param -> new SimpleStringProperty(String.valueOf(param.getValue().getFiles() == null ? 0 : param.getValue().getFiles().size())));
-        colLang.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLanguageCode()));
-        colStatus.setCellValueFactory(param -> new SimpleStringProperty("%d%%".formatted(param.getValue().getStatus())));
-        tvDatasets.getColumns().addAll(List.of(colName, colFiles, colLang, colStatus));
+        tvDatasets.init();
         btnSetDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
         btnSetDataset.setOnAction(event -> {
             List<DatasetMeta> selectedDatasets = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
             DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets);
             List<DatasetMeta> datasetMetas = dialog.showAndWait();
-            if (this.initDatasetsTableView(datasetMetas)) {
+            if (tvDatasets.replaceAll(datasetMetas)) {
                 super.saveChanges();
             }
         });
@@ -184,24 +170,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             if (pluginEvent.getEventType() == PluginEvent.EventType.DATASET_PREF_CHANGED) {
                 if (currentAgentMeta != null) {
                     List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
-                    this.initDatasetsTableView(datasetMetas);
+                    tvDatasets.replaceAll(datasetMetas);
                 }
             }
         });
-    }
-
-    private boolean initDatasetsTableView(List<DatasetMeta> datasetMetas) {
-        // clear the table anyway.
-        tvDatasets.getItems().clear();
-        if (datasetMetas != null && !datasetMetas.isEmpty()) {
-            log.debug("Select datasets: {}", datasetMetas);
-            // force to convert lang code to language.
-            datasetMetas.forEach(datasetMeta -> {
-                datasetMeta.setLanguageCode(SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode()));
-            });
-            tvDatasets.getItems().addAll(datasetMetas);
-        }
-        return true;
     }
 
     @Override
