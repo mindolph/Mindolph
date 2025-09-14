@@ -67,7 +67,10 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 .post(requestBody)
                 .build();
         streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
-            log.debug(data);
+            if(log.isTraceEnabled()) log.trace(data);
+            if ("[DONE]".equals(data)) {
+                return;
+            }
             JsonObject resObject = null;
             try {
                 resObject = JsonParser.parseString(data).getAsJsonObject();

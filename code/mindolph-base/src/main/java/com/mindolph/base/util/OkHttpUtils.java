@@ -62,7 +62,7 @@ public class OkHttpUtils {
                     try {
                         dataConsumer.accept((T) data);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         eventSource.cancel(); // STOP the event source if exception is captured from callback. onFailure() will be called.
                     }
                 }

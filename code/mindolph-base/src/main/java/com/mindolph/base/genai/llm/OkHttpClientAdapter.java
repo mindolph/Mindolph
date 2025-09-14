@@ -59,7 +59,7 @@ public class OkHttpClientAdapter implements HttpClient {
         } catch (HttpException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -83,7 +83,7 @@ public class OkHttpClientAdapter implements HttpClient {
                         ServerSentEvent event = new ServerSentEvent(type, data);
                         serverSentEventListener.onEvent(event);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         eventSource.cancel(); // STOP the event source if exception is captured from callback. onFailure() will be called.
                     }
                 }
