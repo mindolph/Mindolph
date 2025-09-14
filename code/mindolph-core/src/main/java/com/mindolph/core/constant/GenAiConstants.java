@@ -55,28 +55,32 @@ public interface GenAiConstants {
 
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
-            // https://platform.openai.com/docs/models
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo", 4096));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4", 8192));
+            // GPT https://platform.openai.com/docs/models
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-mini", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-nano", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-chat-latest", 16384));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-mini", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-nano", 32768));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4", 8192));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4-turbo", 4096));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o", 16384));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o-mini", 16384));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.5-preview", 16384));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo", 4096));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
-            // https://ai.google.dev/gemini-api/docs/models/gemini
+            // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-pro", 65536));
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash", 65536));
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash-lite", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.0-flash", 8192));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.0-flash-lite", 8192));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-pro", 8192));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash", 8192));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
-            // https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
-
-//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwq-32b-preview", 16384));
+            // Qwen https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct-1m", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct-1m", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-72b-instruct", 8192));
@@ -103,12 +107,13 @@ public interface GenAiConstants {
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-7b-chat", 1500));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-longcontext-chat", 2000));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-chat", 2000));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-flash", 32768));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-max", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-max-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus-latest", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo-latest", 8192));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus-latest", 32768));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo", 16384));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo-latest", 16384));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-omni-turbo", 2048));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-omni-turbo-latest", 2048));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-math-plus", 3072));
@@ -128,8 +133,11 @@ public interface GenAiConstants {
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v1").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh_CN").build());
 
 
-            // https://www.bigmodel.cn/console/modelcenter/square
-//            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-zero-preview", 16000));
+            // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-airx", 98304));
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-air", 98304));
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-x", 98304));
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5", 98304));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-z1-air", 32768));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-z1-airx", 32768));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-z1-flash", 32768));
@@ -147,7 +155,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", 8192));
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
-            // Moonshot
+            // Moonshot https://platform.moonshot.cn/docs/introduction
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-8k", 8192));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-32k", 32768));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-128k", 131072));
