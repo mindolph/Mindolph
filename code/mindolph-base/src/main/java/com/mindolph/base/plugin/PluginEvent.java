@@ -38,5 +38,6 @@ public class PluginEvent<T> {
         AGENT_PREF_CHANGED,
         DATASET_PREF_CHANGED,
         MODEL_PREF_CHANGED,
+        OPTIONS_PREF_CHANGED
     }
 }

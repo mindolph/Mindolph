@@ -1,6 +1,6 @@
 package com.mindolph.fx.preference;
 
-import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
@@ -54,12 +54,13 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
 
     @Override
     protected void onSave(boolean notify) {
+        super.onSave(notify);
         if (notify) {
             if (this instanceof GenAiAgentPrefPane) {
-                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.AGENT_PREF_CHANGED);
+                PluginEventBus.getIns().emitPreferenceChanges(EventType.AGENT_PREF_CHANGED);
             }
             else if (this instanceof GenAiDatasetPrefPane) {
-                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.DATASET_PREF_CHANGED);
+                PluginEventBus.getIns().emitPreferenceChanges(EventType.DATASET_PREF_CHANGED);
             }
         }
     }

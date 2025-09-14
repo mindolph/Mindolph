@@ -2,7 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.control.BaseOrganizedPrefsPane;
+import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
@@ -39,7 +39,7 @@ import static com.mindolph.genai.GenaiUiConstants.*;
 /**
  * @since 1.13.0
  */
-public class GenAiModelPrefPane extends BaseOrganizedPrefsPane implements Initializable {
+public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(GenAiModelPrefPane.class);
 

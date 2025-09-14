@@ -71,7 +71,7 @@ public abstract class BaseAiPane extends StackPane {
                 modelName = modelMeta.getName();
             }
             else {
-                throw new RuntimeException("No models pre-defined for provider %s".formatted(providerName));
+                throw new RuntimeException("No models are pre-defined for provider %s".formatted(providerName));
             }
         }
         else {

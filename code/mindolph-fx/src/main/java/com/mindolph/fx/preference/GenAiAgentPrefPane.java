@@ -68,9 +68,9 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         cbAgent.setConverter(agentConverter);
-        super.beforeLoading();
         cbAgent.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
+            super.beforeLoading();
             AgentMeta agentMeta = newValue.getValue();
             log.debug("Agent changed: %s".formatted(agentMeta));
             if (agentMeta != null) {
@@ -101,8 +101,8 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         });
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
-        super.initEmbeddingModelComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
-        super.initChatModelComponents(this.cbChatProvider, this.cbChatModel);
+        super.initEmbeddingModelRelatedComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
+        super.initChatModelRelatedComponents(this.cbChatProvider, this.cbChatModel);
 
         btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
@@ -118,14 +118,14 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, currentAgentMeta);
                 cbAgent.getItems().add(newAgentPair);
                 cbAgent.getSelectionModel().select(newAgentPair);
-                super.saveChanges();
+                super.saveChanges(false);
             });
         });
         btnRemoveAgent.setOnAction(event -> {
             if (cbAgent == null) {
                 return;
             }
-            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure you want to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
+            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
                 cbAgent.getSelectionModel().clearSelection();
@@ -140,10 +140,10 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             }
         });
         tfDescription.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges();
+            super.saveChanges(false);
         });
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges();
+            super.saveChanges(false);
         });
         TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");
         TableColumn<DatasetMeta, String> colFiles = new TableColumn<>("Files");

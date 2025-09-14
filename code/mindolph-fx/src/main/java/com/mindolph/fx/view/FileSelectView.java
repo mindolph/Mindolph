@@ -69,7 +69,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         this.excludeFiles = excludeFiles;
         this.fileFilter = filter;
         if (log.isDebugEnabled()) {
-            log.debug("Load Workspace {}", workspaceMeta);
+            log.debug("Load Workspace {}", workspaceMeta.getName());
             if (datasetMeta.getFiles() != null) {
                 log.debug("Checked files: %d".formatted(datasetMeta.getFiles().size()));
                 datasetMeta.getFiles().forEach(file -> {

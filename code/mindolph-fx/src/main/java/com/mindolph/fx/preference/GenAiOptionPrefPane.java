@@ -112,23 +112,23 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
             this.saveChanges();
         });
 
-        super.initChatModelComponents(this.cbProviderGenerate, this.cbModelGenerate);
-        super.initChatModelComponents(this.cbProviderSummarize, this.cbModelSummarize);
+        super.initChatModelRelatedComponents(this.cbProviderGenerate, this.cbModelGenerate);
+        super.initChatModelRelatedComponents(this.cbProviderSummarize, this.cbModelSummarize);
 
         super.selectProviderAndModel(this.cbProviderGenerate, this.cbModelGenerate, GEN_AI_GENERATE_MODEL);
         super.selectProviderAndModel(this.cbProviderSummarize, this.cbModelSummarize, GEN_AI_SUMMARIZE_MODEL);
 
         this.cbProviderGenerate.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            this.saveChanges(false);
         });
         this.cbModelGenerate.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            this.saveChanges(false);
         });
         this.cbProviderSummarize.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            this.saveChanges(false);
         });
         this.cbModelSummarize.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            this.saveChanges(false);
         });
         super.loadPreferences();
     }
@@ -153,7 +153,6 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
         this.saveVectorStoragePrefs();
         super.saveProviderAndModelSelection(GEN_AI_GENERATE_MODEL, cbProviderGenerate, cbModelGenerate);
         super.saveProviderAndModelSelection(GEN_AI_SUMMARIZE_MODEL, cbProviderSummarize, cbModelSummarize);
-        if (notify)
-            PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.GLOBAL);
+        super.onSave(notify);
     }
 }

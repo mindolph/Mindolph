@@ -88,9 +88,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         StateBuilder<EmbeddingState, EmbeddingProgress> builder = new StateBuilder<>();
         builder.state(EmbeddingState.INIT)
                 .in(p -> {
-                    Platform.runLater(() -> {
-                        this.disableAll();
-                    });
+                    Platform.runLater(this::disableAll);
                 })
                 .state(EmbeddingState.READY)
                 .in(p -> {
@@ -209,7 +207,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 Pair<String, DatasetMeta> newAgentPair = new Pair<>(dsId, currentDatasetMeta);
                 cbDataset.getItems().add(newAgentPair);
                 cbDataset.getSelectionModel().select(newAgentPair);
-                super.saveChanges();
+                super.saveChanges(false);
             });
         });
         btnRemoveDataset.setOnAction(event -> {
@@ -232,7 +230,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         });
 
         // only embedding models are applied
-        super.initEmbeddingModelComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
+        super.initEmbeddingModelRelatedComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
 
         // workspace
         workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -246,9 +244,9 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         EventBus.getIns().subscribeWorkspaceLoaded(1, nodeDataTreeItem -> {
             // start to listen to checked files changes only after the workspace is loaded (to avoid redundant event handling)
             fileSelectView.getCheckModel().getCheckedItems().addListener((ListChangeListener<TreeItem<NodeData>>) changed -> {
-//                if (isLoading.get()) {
-//                    return;
-//                }
+                if (super.isLoading()) {
+                    return;
+                }
                 while (changed.next()) {
                     log.debug("Selection changed: added %d, removed %d".formatted(changed.getAddedSize(), changed.getRemovedSize()));
                     List<NodeData> addedNodes = changed.getAddedSubList().stream().map(TreeItem::getValue).filter(NodeData::isFile).toList();
@@ -260,7 +258,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     currentDatasetMeta.getAddedFiles().addAll(addedNodes.stream().map(NodeData::getFile).toList());
                     currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
                 }
-                super.saveChanges();
+                super.saveChanges(false);
                 this.updateSelectedFiles(currentDatasetMeta.getId());
             });
         });

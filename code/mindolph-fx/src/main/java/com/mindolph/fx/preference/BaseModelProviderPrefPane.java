@@ -1,8 +1,10 @@
 package com.mindolph.fx.preference;
 
-import com.mindolph.base.control.BaseOrganizedPrefsPane;
+import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.LocalModelManager;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.constant.GenAiConstants;
@@ -32,7 +34,7 @@ import static com.mindolph.genai.GenaiUiConstants.*;
  *
  * @since 1.13.0
  */
-public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
+public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseModelProviderPrefPane.class);
 
@@ -40,15 +42,25 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
         super(fxmlResourceUri);
     }
 
-
-    protected void initEmbeddingModelComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
-                                                ChoiceBox<Pair<String, String>> cbLanguage,
-                                                ChoiceBox<Pair<String, ModelMeta>> cbModel) {
+    /**
+     *
+     * @param cbProvider
+     * @param cbLanguage
+     * @param cbModel
+     */
+    protected void initEmbeddingModelRelatedComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                       ChoiceBox<Pair<String, String>> cbLanguage,
+                                                       ChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, cbLanguage, cbModel, MODEL_TYPE_EMBEDDING);
     }
 
-    protected void initChatModelComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
-                                           ChoiceBox<Pair<String, ModelMeta>> cbModel) {
+    /**
+     *
+     * @param cbProvider
+     * @param cbModel
+     */
+    protected void initChatModelRelatedComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                  ChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, null, cbModel, MODEL_TYPE_CHAT);
     }
 
@@ -83,7 +95,8 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
                 if (cbProvider.getSelectionModel().getSelectedItem() != null) {
                     this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getKey().name(), MODEL_TYPE_EMBEDDING, newValue.getKey());
                 }
-                super.saveChanges();
+                // language changes does not trigger saving since it's used for filtering the models.
+                // super.saveChanges();
             });
         }
         cbModel.setConverter(new ModelMetaConverter());
@@ -96,7 +109,7 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
                 // require download
                 if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel.getName())) {
                     if (DialogFactory.yesNoConfirmDialog("Download model",
-                            "Model files need required for selected model %s, do you want to download this embedding model?".formatted(selectedModel.getName()))) {
+                            "Model files are required for selected embedding model %s, do you want to download those files?".formatted(selectedModel.getName()))) {
                         GlobalExecutor.submit(() -> {
                             try {
                                 boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);
@@ -174,6 +187,10 @@ public class BaseModelProviderPrefPane extends BaseOrganizedPrefsPane {
 
     @Override
     protected void onSave(boolean notify) {
-
+        if (notify) {
+            if (this instanceof GenAiOptionPrefPane) {
+                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.OPTIONS_PREF_CHANGED);
+            }
+        }
     }
 }
