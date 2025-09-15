@@ -27,8 +27,8 @@ public class NodeData implements ItemData {
 
     private File file;
 
-    // the name is replaced by formatted content if exists.
-    private String formatted;
+    // extra label to display this node, depends on the implementation, like display as suffix of tree item, or display in tooltip.
+    private String label;
 
     private NodeData workspaceData; // just a reference for workaround
 
@@ -135,12 +135,12 @@ public class NodeData implements ItemData {
         this.name = file.getName();
     }
 
-    public String getFormatted() {
-        return formatted;
+    public String getLabel() {
+        return label;
     }
 
-    public void setFormatted(String formatted) {
-        this.formatted = formatted;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public NodeType getNodeType() {
@@ -191,6 +191,6 @@ public class NodeData implements ItemData {
 
     @Override
     public String toString() {
-        return StringUtils.isBlank(formatted)? name: formatted;
+        return StringUtils.isBlank(label)? name: label;
     }
 }

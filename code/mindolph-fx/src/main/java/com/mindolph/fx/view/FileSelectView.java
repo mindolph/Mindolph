@@ -14,6 +14,9 @@ import com.mindolph.core.model.NodeData;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.cell.CheckBoxTreeCell;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.CheckTreeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,25 @@ public class FileSelectView extends CheckTreeView<NodeData> {
         rootItem.setExpanded(true);
         super.setRoot(rootItem);
         super.setShowRoot(false);
+        super.setCellFactory(nodeDataTreeView -> new CheckBoxTreeCell<>() {
+            @Override
+            public void updateItem(NodeData item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                }
+                else {
+                    if (item.getFile().isFile()) {
+                        String status = StringUtils.isBlank(item.getLabel())?"": "(%s)".formatted(item.getLabel());
+                        setText("%s  %s  %s".formatted(item.getName(), FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(item.getFile())), status));
+                    }
+                    else {
+                        setText(item.getName());
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -64,7 +86,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
      * @param excludeFiles
      * @param filter
      */
-    public void loadWorkspace(DatasetMeta datasetMeta, WorkspaceMeta workspaceMeta,  boolean expandAllAsDefault, boolean excludeFiles, FileFilter filter) {
+    public void loadWorkspace(DatasetMeta datasetMeta, WorkspaceMeta workspaceMeta, boolean expandAllAsDefault, boolean excludeFiles, FileFilter filter) {
         this.expandAllAsDefault = expandAllAsDefault;
         this.excludeFiles = excludeFiles;
         this.fileFilter = filter;
@@ -126,7 +148,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
      */
     public void clearEmbeddingStatusLabels() {
         TreeVisitor.dfsTraverse(rootItem, treeItem -> {
-            treeItem.getValue().setFormatted(null);
+            treeItem.getValue().setLabel(null);
             return true;
         });
         super.refresh();
@@ -141,9 +163,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
 
             Platform.runLater(() -> {
                 allFiles.clear();
-//                rootItem = new CheckBoxTreeItem<>((NodeData) workspaceNode.getData());
                 this.loadTreeNode(workspaceNode, rootItem, checkedFiles);
-//                super.setRoot(rootItem);
                 log.debug("workspace loaded: %s".formatted(workspaceMeta.getBaseDirPath()));
                 EventBus.getIns().notifyWorkspaceLoaded(rootItem);
             });
@@ -231,7 +251,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
 
     public void findAndUpdateName(File file, String label) {
         try {
-            FileTreeHelper.findAndUpdateName(rootItem, file, nodeData -> "%s (%s)".formatted(nodeData.getName(), label));
+            FileTreeHelper.findAndUpdateLabel(rootItem, file, nodeData -> label);
         } catch (Exception e) {
             log.warn(e.getMessage());
         }
