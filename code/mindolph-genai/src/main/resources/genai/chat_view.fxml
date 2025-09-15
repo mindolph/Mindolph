@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 
-
+<?import com.mindolph.genai.AgentSelector?>
 <?import com.mindolph.genai.ChatPane?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
-<?import com.mindolph.genai.AgentSelector?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <fx:root prefHeight="600.0" prefWidth="400.0" type="AnchorPane" xmlns="http://javafx.com/javafx/23.0.1"
          xmlns:fx="http://javafx.com/fxml/1">
     <VBox layoutX="80.0" layoutY="121.0" prefHeight="200.0" prefWidth="100.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <HBox spacing="8">
+        <HBox spacing="5">
             <AgentSelector fx:id="agentSelector" style="-fx-background-color: transparent;" prefWidth="140"/>
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
             <Label fx:id="lblAgent" alignment="BASELINE_LEFT"/>
@@ -26,9 +22,15 @@
         <ChatPane fx:id="chatPane" VBox.vgrow="ALWAYS" disable="true">
 
         </ChatPane>
-        <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0" padding="8">
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
+            <padding>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
             <TextArea fx:id="taInput" prefHeight="120.0" HBox.hgrow="ALWAYS" disable="true"/>
-            <Button fx:id="btnSend" alignment="BASELINE_CENTER" mnemonicParsing="false" disable="true"/>
+            <VBox spacing="8">
+                <Button fx:id="btnSend" alignment="BASELINE_CENTER" mnemonicParsing="false" disable="true"/>
+                <Button fx:id="btnClear" alignment="BASELINE_CENTER" mnemonicParsing="false" disable="true"/>
+            </VBox>
         </HBox>
     </VBox>
 </fx:root>

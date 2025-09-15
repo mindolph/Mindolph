@@ -46,6 +46,8 @@ public class ChatView extends BaseView implements Initializable {
     private TextArea taInput;
     @FXML
     private Button btnSend;
+    @FXML
+    private Button btnClear;
 
     private AgentMeta currentAgentMeta;
 
@@ -82,12 +84,14 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.READY)
                 .in(p -> {
-                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), p.getChatModel()));
+                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), currentAgentMeta.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
-                    taInput.setPromptText("Chat with your agent \"%s\"".formatted(p.getName()));
+                    taInput.setPromptText("Chat with your agent \"%s\"".formatted(currentAgentMeta.getName()));
                     taInput.requestFocus();
                     btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
+                    btnSend.setDisable(true);
+                    btnClear.setDisable(true);
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })
@@ -107,11 +111,13 @@ public class ChatView extends BaseView implements Initializable {
                 .state(ChatState.TYPING)
                 .in(p -> {
                     btnSend.setDisable(false);
+                    btnClear.setDisable(false);
                 })
                 .state(ChatState.CHATTING)
                 .in(p -> {
                     taInput.setDisable(true);
                     btnSend.setDisable(true);
+                    btnClear.setDisable(true);
                     chatPane.scrollToBottom();
                     chatPane.waitForAnswer();
                 })
@@ -143,6 +149,7 @@ public class ChatView extends BaseView implements Initializable {
                 .action("User type(with original agent)", ChatState.SWITCH_FAILED, ChatState.TYPING)
                 .action("User type", ChatState.READY, ChatState.TYPING)
                 .action("User keep typing", ChatState.TYPING, ChatState.TYPING)
+                .action("User clear input", ChatState.TYPING, ChatState.READY)
                 .action("Send chat", ChatState.TYPING, ChatState.CHATTING)
                 .action("Streaming response begin", ChatState.CHATTING, ChatState.STREAMING)
                 .action("Streaming response", ChatState.STREAMING, ChatState.STREAMING)
@@ -211,6 +218,10 @@ public class ChatView extends BaseView implements Initializable {
             if (!StringUtils.isBlank(newValue)) {
                 chatStateMachine.post(ChatState.TYPING);
             }
+            else {
+                // return to ready when clear the input only on typing state (because sending chat clear the input text)
+                chatStateMachine.postOnState(ChatState.READY, ChatState.TYPING);
+            }
         });
 
         btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
@@ -270,6 +281,11 @@ public class ChatView extends BaseView implements Initializable {
                     taInput.setPromptText("Chat with your agent");
                 }
             }
+        });
+
+        btnClear.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLEAR));
+        btnClear.setOnAction(event -> {
+            taInput.clear();
         });
     }
 
