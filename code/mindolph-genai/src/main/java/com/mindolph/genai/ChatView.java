@@ -5,7 +5,6 @@ import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
@@ -15,15 +14,16 @@ import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.util.Pair;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -35,9 +35,7 @@ public class ChatView extends BaseView implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(ChatView.class);
 
     @FXML
-    private Label lblAgentIcon;
-    @FXML
-    private ChoiceBox<Pair<String, AgentMeta>> cbAgent;
+    private AgentSelector agentSelector;
     @FXML
     private ProgressIndicator piAgent;
     @FXML
@@ -162,9 +160,8 @@ public class ChatView extends BaseView implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.initStateMachine();
-        lblAgentIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
-        cbAgent.setConverter(GenaiUiConstants.agentConverter);
-        cbAgent.valueProperty().addListener((observable, oldValue, selectedAgent) -> {
+        agentSelector.setConverter(GenaiUiConstants.agentConverter);
+        agentSelector.valueProperty().addListener((observable, oldValue, selectedAgent) -> {
             if (selectedAgent == null) {
                 return;
             }
@@ -282,22 +279,7 @@ public class ChatView extends BaseView implements Initializable {
             return;
         }
         log.debug("Reload agents");
-        Pair<String, AgentMeta> selectedItem = cbAgent.getSelectionModel().getSelectedItem();
-        String agentId = null;
-        if (selectedItem != null) {
-            agentId = selectedItem.getKey();
-        }
-
-        cbAgent.getItems().clear();
-        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
-        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
-        if (StringUtils.isNotBlank(agentId)) {
-            AgentMeta agentMeta = agentMap.get(agentId);
-            if (agentMeta != null) {
-                log.debug("Reload agent: %s".formatted(agentMeta.getName()));
-                cbAgent.getSelectionModel().select(new Pair<>(agentId, agentMeta));
-            }
-        }
+        agentSelector.refresh();
     }
 
     private enum ChatState {

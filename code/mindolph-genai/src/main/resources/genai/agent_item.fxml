@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="HBox" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml">
+
+    <Label fx:id="lblIcon" prefWidth="28" prefHeight="28"/>
+
+    <Label fx:id="lblName" prefHeight="28" alignment="CENTER_LEFT"/>
+
+</fx:root>
