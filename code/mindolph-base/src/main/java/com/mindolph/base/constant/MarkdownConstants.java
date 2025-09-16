@@ -1,6 +1,7 @@
 package com.mindolph.base.constant;
 
 import com.mindolph.core.constant.SyntaxConstants;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +57,8 @@ public interface MarkdownConstants extends SyntaxConstants {
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
-        Matcher matcher = pattern.matcher("> hello1\n # heading\n  > hello2\n");
+        String text = "> hello1\n # heading\n  > hello2\n";
+        Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
@@ -70,7 +72,8 @@ public interface MarkdownConstants extends SyntaxConstants {
                                                                                     matcher.group("QUOTE") != null ? "md-quote" :
                                                                                             matcher.group("URL") != null ? "url" :
                                                                                                     "unknown";
-            System.out.println("style: " + styleClass);
+            System.out.printf("style: %s(%d-%d) %n", styleClass, matcher.start(), matcher.end());
+            System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
         }
     }
 }
