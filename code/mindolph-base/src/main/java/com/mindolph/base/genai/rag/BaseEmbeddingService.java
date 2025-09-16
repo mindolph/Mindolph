@@ -33,9 +33,15 @@ public abstract class BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEmbeddingService.class);
 
+    private final int CONNECT_TIME_IN_SECOND = 10;
+
     protected VectorStoreMeta vectorStoreMeta;
 
     protected final EventSource<EmbeddingProgress> progressEventSource = new EventSource<>();
+
+    public BaseEmbeddingService() {
+        DriverManager.setLoginTimeout(5);
+    }
 
     protected void loadVectorStorePrefs() {
         this.vectorStoreMeta = LlmConfig.getIns().loadActiveVectorStorePrefs();
@@ -47,7 +53,7 @@ public abstract class BaseEmbeddingService {
         dsConfig.setUser(vectorStoreMeta.getUsername());
         dsConfig.setPassword(vectorStoreMeta.getPassword());
         dsConfig.setDatabase(vectorStoreMeta.getDatabase());
-        String url = "jdbc:postgresql://%s:%d/%s".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase());
+        String url = "jdbc:postgresql://%s:%d/%s?connectTimeout=%d".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase(), CONNECT_TIME_IN_SECOND);
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
             return handler.apply(conn);
         } catch (Exception e) {
