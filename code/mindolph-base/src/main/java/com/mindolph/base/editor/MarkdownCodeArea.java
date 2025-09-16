@@ -20,8 +20,6 @@ import static com.mindolph.base.control.ExtCodeArea.FEATURE.*;
 import static com.mindolph.base.constant.MarkdownConstants.*;
 
 /**
- *
- *
  * @author mindolph.com@gmail.com
  */
 public class MarkdownCodeArea extends HighlightCodeArea {
@@ -42,7 +40,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
 
         super.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, BACK_QUOTE, AUTO_INDENT);
         InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)), keyEvent -> {
-            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ")); // TODO add tail
+            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  ")); // TODO add tail with trimming
         });
         Nodes.addInputMap(this, comment);
     }
@@ -60,13 +58,13 @@ public class MarkdownCodeArea extends HighlightCodeArea {
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
-                            matcher.group("CODEBLOCK") != null ? "code-block" :
-                                    matcher.group("LIST") != null ? "list" :
-                                            matcher.group("TABLE") != null ? "table" :
-                                                    matcher.group("BOLD") != null ? "bold" :
-                                                            matcher.group("ITALIC") != null ? "italic" :
-                                                                    matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                                            matcher.group("CODE") != null ? "code" :
+                            matcher.group("LIST") != null ? "list" :
+                                    matcher.group("TABLE") != null ? "table" :
+                                            matcher.group("BOLD") != null ? "bold" :
+                                                    matcher.group("ITALIC") != null ? "italic" :
+                                                            matcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                                    matcher.group("CODE") != null ? "code" :
+                                                                            matcher.group("CODEBLOCK") != null ? "code-block" :
                                                                                     matcher.group("QUOTE") != null ? "md-quote" :
                                                                                             matcher.group("URL") != null ? "url" :
                                                                                                     null; /* never happens */

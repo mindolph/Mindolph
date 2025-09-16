@@ -17,12 +17,12 @@ public interface MarkdownConstants extends SyntaxConstants {
     String EMPHASIS_CONTENT = "[^*_\\r\\n\\f\\v]";
     String EMPHASIS = "(()|(" + EMPHASIS_KW + EMPHASIS_CONTENT + "*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
-    String HEADING_PATTERN = "(^|" + LINE_SEPARATOR + ")(#+\\s+[\\s\\S]*?(?=" + LINE_SEPARATOR + "))";
-    String LIST_PATTERN = "(^|" + LINE_SEPARATOR + ")[\\t ]*((\\* )|(\\+ )|(- )|(\\d+. ))";
+    String HEADING_PATTERN = "%s(#+\\s+[\\s\\S]*?(?=%s))".formatted(LINE_START, LINE_END);
+    String LIST_PATTERN = "%s[\\t ]*((\\* )|(\\+ )|(- )|(\\d+. ))".formatted(LINE_START);
     // "(\\|[\\s\\S]*?)+\\|" +
     String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|-+)+\\|" + LINE_SEPARATOR;
-    String TABLE_PATTERN =  "(\\|)|(" + TABLE_SEPARATOR + ")";
-    
+    String TABLE_PATTERN = "(\\|)|(" + TABLE_SEPARATOR + ")";
+
     String BOLD_ITALIC_PATTERN = "((\\*\\*\\*)" + EMPHASIS + "(\\*\\*\\*))"
             + "|((\\*\\*_)" + EMPHASIS + "(_\\*\\*))"
             + "|((\\*__)" + EMPHASIS + "(__\\*))"
@@ -35,9 +35,14 @@ public interface MarkdownConstants extends SyntaxConstants {
             + "|(_" + EMPHASIS + "_)";
     String CODE_PATTERN = BLANK_CHAR + "*`[\\s\\S]*?`";
     String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
-    String QUOTE_PATTERN = "> [\\s\\S]*?(?=" + LINE_SEPARATOR + ")";
+    String QUOTE_PATTERN = "(?<=%s%s*)(> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 
+    /**
+     * Testing.
+     *
+     * @param args
+     */
     static void main(String[] args) {
         Pattern pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
@@ -51,8 +56,7 @@ public interface MarkdownConstants extends SyntaxConstants {
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
-        Matcher matcher = pattern.matcher("_not italic");
-        // System.out.println(matcher.groupCount());
+        Matcher matcher = pattern.matcher("> hello1\n # heading\n  > hello2\n");
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
@@ -63,10 +67,10 @@ public interface MarkdownConstants extends SyntaxConstants {
                                                             matcher.group("BOLDITALIC") != null ? "bold-italic" :
                                                                     matcher.group("CODE") != null ? "code" :
                                                                             matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                                                    matcher.group("QUOTE") != null ? "quote" :
+                                                                                    matcher.group("QUOTE") != null ? "md-quote" :
                                                                                             matcher.group("URL") != null ? "url" :
                                                                                                     "unknown";
-            System.out.println(styleClass);
+            System.out.println("style: " + styleClass);
         }
     }
 }
