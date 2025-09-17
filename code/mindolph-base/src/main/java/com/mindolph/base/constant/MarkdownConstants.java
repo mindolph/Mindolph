@@ -21,7 +21,7 @@ public interface MarkdownConstants extends SyntaxConstants {
     String HEADING_PATTERN = "%s(#+\\s+[\\s\\S]*?(?=%s))".formatted(LINE_START, LINE_END);
     String LIST_PATTERN = "%s[\\t ]*((\\* )|(\\+ )|(- )|(\\d+. ))".formatted(LINE_START);
     // "(\\|[\\s\\S]*?)+\\|" +
-    String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|-+)+\\|" + LINE_SEPARATOR;
+    String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|:?-{3,}:?)+\\|" + LINE_SEPARATOR;
     String TABLE_PATTERN = "(\\|)|(" + TABLE_SEPARATOR + ")";
 
     String BOLD_ITALIC_PATTERN = "((\\*\\*\\*)" + EMPHASIS + "(\\*\\*\\*))"
@@ -57,7 +57,8 @@ public interface MarkdownConstants extends SyntaxConstants {
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
-        String text = "> hello1\n # heading\n  > hello2\n";
+//        String text = "> hello1\n # heading\n  > hello2\n";
+        String text = "|A|B|C|\n|:---|:----:|---:|\n";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
