@@ -160,9 +160,9 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             try {
                 URI url = new URI(selectedText);
                 Node source = (Node) event.getSource();
-                BrowseUtils.browseURI(source.getScene().getWindow(), url, true);
+                BrowseUtils.browseURI(source.getScene().getWindow(), url, false);
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
         });
         btnClearAll.setOnAction(event -> textArea.clear());
