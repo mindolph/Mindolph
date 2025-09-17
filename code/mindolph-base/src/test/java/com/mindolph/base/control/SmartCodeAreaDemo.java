@@ -2,6 +2,7 @@ package com.mindolph.base.control;
 
 import com.mindolph.base.plugin.*;
 import com.mindolph.core.constant.SupportFileTypes;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -13,6 +14,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
+ * test enable/disable code area
+ * test richtextfx
+ *
  * @author mindolph.com@gmail.com
  * @since 1.6
  */
@@ -23,6 +27,9 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @FXML
     private Button btnEnable;
+
+    @FXML
+    private Button btnGetCaretPosition;
 
     @FXML
     public void onEnabled() {
@@ -36,10 +43,45 @@ public class SmartCodeAreaDemo implements Initializable {
         }
     }
 
+    @FXML
+    private void onGetCaretPosition() {
+        Platform.runLater(() -> {
+            int caretPosition = smartCodeArea.getCaretPosition();
+            System.out.println("caretPosition: " + caretPosition);
+            btnEnable.requestFocus();
+        });
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // register plugins TODO
         PluginManager.getIns().registerPlugin(new TestPlugin());
+        smartCodeArea.appendText("""
+                foo
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                bar                                                                                                  foo
+                """);
     }
 
     private static class TestPlugin extends BasePlugin {

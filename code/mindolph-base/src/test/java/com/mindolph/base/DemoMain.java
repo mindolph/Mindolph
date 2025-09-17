@@ -84,7 +84,7 @@ public class DemoMain extends Application {
     }
 
     @FXML
-    private void onExtCodeArea() {
+    private void onSmartCodeArea() {
         loadUriToStage("/control/smart_code_area_demo.fxml").show();
     }
 

@@ -250,13 +250,14 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     // @since 1.7
     private Point2D getPanelTargetPoint() {
         // calculate target point with x of the left side border and y of caret bottom.
-        // NOTE: since the v0.11.5 the getCharacterBoundsOnScreen(0, 0) throw exception,
-        // so if upgrade, it has to disable the following and use the X of caret bounds for workaround.
-        Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
-        Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
+        // NOTE: since the v0.11.5 the getCharacterBoundsOnScreen(0, 0) throws exception when the first paragraph is invisible,
+        // so instead, get the minX from the first visible bounds on screen for workaround, the visible bounds is a litter bit different from the character bounds for the gutter is included.
+        Bounds visibleParagraphBoundsOnScreen = super.getFirstVisibleBoundsOnScreen();
+//        Optional<Bounds> optBounds = getCharacterBoundsOnScreen(0, 0);
+//        Bounds leftSideBoundsInScreen = optBounds.orElse(BoundsUtils.newZero());
         // NOTE: getCaretBounds() is not working(return null sometime), so use getCaretBoundsOnScreen() instead.
         Bounds caretBoundsInScreen = this.getCaretBoundsOnScreen(this.getCaretSelectionBind().getUnderlyingCaret()).orElse(BoundsUtils.newZero());
-        Point2D targetPointInScreen = new Point2D(leftSideBoundsInScreen.getMinX(), caretBoundsInScreen.getMaxY());
+        Point2D targetPointInScreen = new Point2D(visibleParagraphBoundsOnScreen.getMinX(), caretBoundsInScreen.getMaxY());
         return parentPane.screenToLocal(targetPointInScreen);
     }
 
