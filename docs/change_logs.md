@@ -11,14 +11,15 @@
 
 ### V1.13.0 Unstable Release
 * New, significant feature: AI Agent
-	* Build intelligent agents easily based on your own knowledges to enable them to answer more specialized and specific questions.
+	* Build intelligent agents easily based on your own knowledge to enable them to answer more specialized and specific questions.
 	* This feature requires a PostgreSQL database (either local or remote, currently only PostgreSQL is supported) with the pgvector extension installed. The knowledge base's vector data will be stored in this database.
-	* Configuration steps: Configure the LLM model -> Configure the database connection -> Create a dataset -> Perform embedding -> Create an agent -> Select the Agent tab in the left sidebar -> Select the name of your agent -> Enter content in the chat box to start a conversation with the agent.
+	* Configuration steps: Configure the LLM model APIs in the `Models` panel-> Configure the postgres database connection in the `Options` panel -> Go to the `Datasets` panel, create a dataset, and choose a language and embedding model for the dataset -> Select files you want to add to the created dataset -> Perform embedding -> Go to the `Agents` panel, create an agent, choose an embedding model and a chat model for the created agent, select your created datasets that you want to use for the created agent.
+	* Usage: Select the Agent tab on the left side panel -> Select an agent from the agent list that you created  previously -> After the selected agent is loaded. Input content in the chat box to start a conversation with the agent.
 
-* Improvement:
+* Improvements:
 	* Added a global option to hide file extensions in the workspace directory tree, the recently opened files list, and the opened file tabs.
 
-	* Improved the configuration of the currently used model in Gen-AI, now allowing you to select different models for both content generation and content summarization.
+	* Improved the configuration of the currently used model in Gen-AI, now allowing you to select different models for both content generation and content summary.
 
 ### V1.12.5 Release
 * Improvement:
