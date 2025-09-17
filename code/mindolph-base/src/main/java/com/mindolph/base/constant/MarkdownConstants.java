@@ -36,7 +36,7 @@ public interface MarkdownConstants extends SyntaxConstants {
             + "|(_" + EMPHASIS + "_)";
     String CODE_PATTERN = BLANK_CHAR + "*`[\\s\\S]*?`";
     String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
-    String QUOTE_PATTERN = "(?<=%s%s*)(> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
+    String QUOTE_PATTERN = "(%s%s*> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
 
     /**
