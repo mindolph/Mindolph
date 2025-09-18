@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.http.client.HttpClientBuilder;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -86,6 +87,23 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: '%s'".formatted(prompt.text()));
         return prompt;
+    }
+
+    /**
+     * Create proxied http client builder if required.
+     *
+     * @return
+     * @since 1.13.1
+     */
+    protected HttpClientBuilder createProxyHttpClientBuilder() {
+        if (super.proxyEnabled && super.useProxy) {
+            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
+            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
+            return okHttpClientBuilder;
+        }
+        else {
+            return null;
+        }
     }
 
     protected abstract ChatModel buildAI(Input input);

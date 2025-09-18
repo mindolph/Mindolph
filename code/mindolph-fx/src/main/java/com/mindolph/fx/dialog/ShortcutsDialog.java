@@ -6,7 +6,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.BaseDialogController;

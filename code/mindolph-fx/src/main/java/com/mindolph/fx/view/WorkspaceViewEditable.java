@@ -19,7 +19,7 @@ import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.base.util.RegionUtils;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SceneStatePrefs;

@@ -1,6 +1,6 @@
 package com.mindolph.base.control;
 
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;

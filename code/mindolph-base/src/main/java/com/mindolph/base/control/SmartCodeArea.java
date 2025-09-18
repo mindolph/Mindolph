@@ -7,7 +7,7 @@ import com.mindolph.base.plugin.Plugin;
 import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.base.util.EventUtils;
 import com.mindolph.base.util.LayoutUtils;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DimensionUtils;

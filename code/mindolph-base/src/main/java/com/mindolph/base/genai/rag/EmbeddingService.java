@@ -1,6 +1,6 @@
 package com.mindolph.base.genai.rag;
 
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentParser;

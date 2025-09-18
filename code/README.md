@@ -12,7 +12,7 @@
     ```shell
     git clone https://github.com/mindolph/mfx.git
     cd mfx
-    git switch stable
+    git switch main
     mvn install -Dmaven.test.skip=true
     ```
   > If there is something wrong with the accessing Maven central repository, use the `aliyun` profile:  
@@ -60,11 +60,11 @@ mvn package -Dmaven.test.skip=true -Paliyun
 
 * Install JavaFX jmods:  
 
-    Download the latest JavaFX 25 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/mnt/javafx-jmods-25/`
+    Download the latest JavaFX 25 jmods package from https://gluonhq.com/products/javafx/ and extract to somewhere like `/usr/lib/javafx-jmods-25/`
 
     Set environment variable:  
     ```shell
-    export JAVAFX_HOME=/mnt/javafx-jmods-25/
+    export JAVAFX_HOME=/usr/lib/javafx-jmods-25/
     ```
 
 * Build Mindolph distribution for your operating system:  

@@ -13,7 +13,7 @@ import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.util.FileNameUtils;

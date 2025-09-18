@@ -1,5 +1,8 @@
 package com.mindolph.base.genai.llm;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dev.langchain4j.exception.HttpException;
 import dev.langchain4j.http.client.HttpClient;
 import dev.langchain4j.http.client.HttpRequest;
@@ -48,8 +51,7 @@ public class OkHttpClientAdapter implements HttpClient {
         try (Response response = okHttpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 log.error("Request failed, code: {}", response.code());
-                log.error(response.body().string());
-                throw new HttpException(response.code(), response.message());
+                throw new HttpException(response.code(), this.extractErrorMessageFromResponse(response));
             }
             SuccessfulHttpResponse.Builder respBuilder = SuccessfulHttpResponse.builder();
             respBuilder.statusCode(response.code());
@@ -57,10 +59,34 @@ public class OkHttpClientAdapter implements HttpClient {
             respBuilder.headers(response.headers().toMultimap());
             return respBuilder.build();
         } catch (HttpException e) {
+            log.error(e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Support OpenAI only api for now.
+     *
+     * @param response
+     * @return
+     */
+    private String extractErrorMessageFromResponse(Response response) {
+        if (response.isSuccessful() || response.body() == null ) {
+            return response.message();
+        }
+        try {
+            String jsonMessage = response.body().string();
+            JsonElement bodyElement = JsonParser.parseString(jsonMessage);
+            if (bodyElement.isJsonObject()) {
+                JsonObject messageElement = bodyElement.getAsJsonObject().get("error").getAsJsonObject();
+                return messageElement.get("message").getAsString().trim();
+            }
+            return response.message();
+        } catch (IOException e) {
+            return response.message();
         }
     }
 

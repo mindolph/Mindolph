@@ -71,6 +71,7 @@ public class LlmService {
             generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
             if (isStopped) {
+                log.debug("Got exception but the process is stopped: " + e.getLocalizedMessage());
                 return null;
             }
             else {

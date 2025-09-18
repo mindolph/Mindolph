@@ -3,7 +3,6 @@ package com.mindolph.core.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mindolph.core.async.GlobalExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -26,7 +26,7 @@ public class ReleaseUtils {
 
 
     public static void getLatestReleaseVersion(Consumer<ReleaseInfo> consumer) {
-        GlobalExecutor.submit(() -> {
+        Executors.newVirtualThreadPerTaskExecutor().submit(() -> {
             ReleaseInfo latestVersion = getLatestReleaseVersion();
             consumer.accept(latestVersion);
         });
@@ -66,7 +66,6 @@ public class ReleaseUtils {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
             log.info(json);
             log.error(e.getLocalizedMessage(), e);
             return null;

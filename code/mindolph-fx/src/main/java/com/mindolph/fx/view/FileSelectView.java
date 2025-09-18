@@ -6,7 +6,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.rag.EmbeddingDocEntity;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceMeta;

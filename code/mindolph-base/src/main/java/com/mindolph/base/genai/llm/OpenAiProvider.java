@@ -37,11 +37,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) input.temperature());
         if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
-        if (super.proxyEnabled && super.useProxy) {
-            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
-            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
-            builder.httpClientBuilder(okHttpClientBuilder);
-        }
+        builder.httpClientBuilder(super.createProxyHttpClientBuilder());
         return builder.build();
     }
 
@@ -53,11 +49,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider {
                 .timeout(Duration.ofSeconds(timeout))
                 .temperature((double) input.temperature());
         if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
-        if (super.proxyEnabled && super.useProxy) {
-            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
-            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
-            builder.httpClientBuilder(okHttpClientBuilder);
-        }
+        builder.httpClientBuilder(super.createProxyHttpClientBuilder());
         return builder.build();
     }
 

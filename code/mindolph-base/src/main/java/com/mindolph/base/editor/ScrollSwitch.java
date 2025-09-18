@@ -1,6 +1,6 @@
 package com.mindolph.base.editor;
 
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

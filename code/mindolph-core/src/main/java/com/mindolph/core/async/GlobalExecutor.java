@@ -7,8 +7,8 @@ import java.util.concurrent.Future;
 
 /**
  * Global executor for async tasks.
- * TODO to mfx
  * @since 1.12.4
+ * @deprecated to mfx
  */
 public class GlobalExecutor {
 

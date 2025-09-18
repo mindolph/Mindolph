@@ -16,7 +16,7 @@ import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.Env;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.template.HtmlBuilder;

@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.core.async.GlobalExecutor;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import dev.langchain4j.data.segment.TextSegment;
