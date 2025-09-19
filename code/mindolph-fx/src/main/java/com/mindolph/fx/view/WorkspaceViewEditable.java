@@ -47,6 +47,7 @@ import com.mindolph.mindmap.search.FileLinkMindMapSearchMatcher;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
 import com.mindolph.plantuml.PlantUmlTemplates;
 import io.methvin.watcher.DirectoryWatcher;
+import io.methvin.watcher.hashing.FileHasher;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -504,10 +505,10 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             expendedFileList = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_TREE_EXPANDED_LIST, new ArrayList<>());
             this.expandTreeNodes();
             Platform.runLater(() -> treeView.requestFocus());
-            GlobalExecutor.submit(() -> {
-                // NOTE the directory-watcher actually blocks the thread, so wrap it in a thread to void blocking.
+//            GlobalExecutor.submit(() -> {
+//                // NOTE the directory-watcher actually blocks the thread, so wrap it in a thread to void blocking.
                 this.observeWorkspace(workspaceMeta);
-            });
+//            });
         });
         this.asyncCreateWorkspaceSubTree(workspaceMeta);
     }
@@ -569,13 +570,12 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 fileWatcher.close();
             }
             observerEventSource.reduceSuccessions((a, b) -> {
-                List<File> reduced = Stream.concat(a.stream(), b.stream()).collect((Supplier<List<File>>) ArrayList::new, (files, target) -> {
+                return Stream.concat(a.stream(), b.stream()).collect((Supplier<List<File>>) ArrayList::new, (files, target) -> {
                     // collect folder if it is not subfolder of any collected.
                     if (files.isEmpty() || files.stream().noneMatch(f -> f.equals(target) || PathUtils.isParentFolder(f, target))) {
                         files.add(target);
                     }
                 }, List::addAll).stream().toList();
-                return reduced;
             }, Duration.ofMillis(500)).subscribe(dirs -> {
                 log.debug("reduced as %d dirs".formatted(dirs.size()));
                 EventBus.getIns().notifyFolderRefreshInWorkspace(new FolderReloadEvent(dirs));
@@ -584,6 +584,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             // Monitor the directory of the active workspace.
             fileWatcher = DirectoryWatcher.builder()
                     .path(directoryToWatch)
+                    .fileHasher(FileHasher.LAST_MODIFIED_TIME)
                     .listener(event -> {
                         Path filePath = event.path();
                         switch (event.eventType()) {
