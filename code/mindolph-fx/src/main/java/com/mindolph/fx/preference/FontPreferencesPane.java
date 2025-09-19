@@ -4,7 +4,6 @@ import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.dialog.FontSelectDialog;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.mfx.util.FontUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
@@ -74,7 +73,7 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
     }
 
     @FXML
-    private void onChange(ActionEvent event) {
+    private void onChange() {
         Font changedFont = new FontSelectDialog(taPreview.getFont()).showAndWait();
         if (changedFont != null) {
             lbFont.setText(FontUtils.fontToString(changedFont));

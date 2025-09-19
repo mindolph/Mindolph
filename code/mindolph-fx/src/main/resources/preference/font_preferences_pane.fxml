@@ -12,19 +12,19 @@
          xmlns:fx="http://javafx.com/fxml/1">
    <VBox prefHeight="361.0" prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <PreferenceItem name="Text:">
+      <PreferenceItem name="Text:" labelMinWidth="200">
          <ChoiceBox fx:id="cbText" prefWidth="300.0">
          </ChoiceBox>
       </PreferenceItem>
-      <PreferenceItem name="Font:">
+      <PreferenceItem name="Font:" labelMinWidth="200">
          <Label fx:id="lbFont"/>
       </PreferenceItem>
-      <PreferenceItem name="Preview:" prefHeight="150.0">
+      <PreferenceItem name="Preview:" prefHeight="150.0" labelMinWidth="200">
          <TextArea fx:id="taPreview" prefWidth="300.0" prefHeight="150.0" editable="false" focusTraversable="false"
                    text="The quick brown fox jumps over the lazy dog" wrapText="true" VBox.vgrow="ALWAYS">
          </TextArea>
       </PreferenceItem>
-      <PreferenceItem name="">
+      <PreferenceItem name="" labelMinWidth="200">
          <Button text="Change" onAction="#onChange"/>
       </PreferenceItem>
    </VBox>

@@ -19,6 +19,8 @@ public class PreferenceItem extends Control {
 
     private final StringProperty name = new SimpleStringProperty("Label");
 
+    private final DoubleProperty labelMinWidth = new SimpleDoubleProperty(250);
+
     private final DoubleProperty labelPrefWidth = new SimpleDoubleProperty(300);
 
     /**
@@ -85,6 +87,18 @@ public class PreferenceItem extends Control {
             orientation = new SimpleObjectProperty<>();
         }
         return orientation;
+    }
+
+    public double getLabelMinWidth() {
+        return labelMinWidth.get();
+    }
+
+    public void setLabelMinWidth(double labelMinWidth) {
+        this.labelMinWidth.set(labelMinWidth);
+    }
+
+    public DoubleProperty labelMinWidthProperty() {
+        return labelMinWidth;
     }
 
     public void setLabelPrefWidth(double value) {
