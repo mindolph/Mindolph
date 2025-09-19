@@ -327,7 +327,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setString(1, datasetId);
                 ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
+                if (rs.next()) {
                     return rs.getInt(1);
                 }
                 return 0;

@@ -6,6 +6,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.rag.EmbeddingDocEntity;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.core.WorkspaceManager;
+import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.llm.DatasetMeta;
@@ -28,6 +29,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.Comparators.SORTING_TREE_ITEMS;
@@ -118,8 +120,8 @@ public class FileSelectView extends CheckTreeView<NodeData> {
      *
      * @param allFiles
      */
-    private void labelTheCheckedFileWithEmbeddingStatus(DatasetMeta datasetMeta, List<File> allFiles) {
-        GlobalExecutor.submit(() -> {
+    private Future<?> labelTheCheckedFileWithEmbeddingStatus(DatasetMeta datasetMeta, List<File> allFiles) {
+        return GlobalExecutor.submit(() -> {
             try {
                 List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(datasetMeta.getId(), allFiles);
                 // file path -> embedding doc
@@ -139,6 +141,9 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                 });
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
+                Platform.runLater(() -> {
+                    DialogFactory.errDialog("Check embedding status fail: " + e.getLocalizedMessage());
+                });
             }
         });
     }

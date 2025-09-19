@@ -140,7 +140,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                         btnEmbedding.setDisable(false);
                         lblEmbeddingStatus.setText(progress.msg());
                         pbProgress.setProgress(0);
-                        this.updateSelectedFiles(currentDatasetMeta.getId());
+                        this.displaySelectedAndEmbeddedCount(currentDatasetMeta.getId());
                     });
                 })
                 .initialize(EmbeddingState.INIT)
@@ -175,7 +175,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 // init model provider and model.
                 super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-                this.updateSelectedFiles(datasetMeta.getId());
+                this.displaySelectedAndEmbeddedCount(datasetMeta.getId());
                 btnRemoveDataset.setDisable(false);
                 Platform.runLater(() -> embeddingStateMachine.post(EmbeddingState.READY));
             }
@@ -265,7 +265,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                     currentDatasetMeta.getRemovedFiles().addAll(removedNodes.stream().map(NodeData::getFile).toList());
                 }
                 super.saveChanges(false);
-                this.updateSelectedFiles(currentDatasetMeta.getId());
+                this.displaySelectedAndEmbeddedCount(currentDatasetMeta.getId());
             });
         });
 
@@ -349,12 +349,19 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         return datasetMeta;
     }
 
-    private void updateSelectedFiles(String datasetId) {
+    private void displaySelectedAndEmbeddedCount(String datasetId) {
         GlobalExecutor.submit(() -> {
-            int count = EmbeddingService.getInstance().countEmbeddedDocuments(datasetId);
-            Platform.runLater(() -> {
-                lblSelectedFiles.setText("Selected %d files, %d have been embedded".formatted(currentDatasetMeta.getFiles() == null ? 0 : currentDatasetMeta.getFiles().size(), count));
-            });
+            try {
+                int count = EmbeddingService.getInstance().countEmbeddedDocuments(datasetId);
+                Platform.runLater(() -> {
+                    lblSelectedFiles.setText("Selected %d files, %d have been embedded".formatted(currentDatasetMeta.getFiles() == null ? 0 : currentDatasetMeta.getFiles().size(), count));
+                });
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage(), e);
+                Platform.runLater(() -> {
+                    lblSelectedFiles.setText(e.getLocalizedMessage());
+                });
+            }
         });
     }
 
