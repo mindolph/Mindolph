@@ -1,8 +1,7 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.base.plugin.PluginEvent;
-import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -10,8 +9,13 @@ import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.genai.ChoiceUtils;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.GlobalExecutor;
+import com.mindolph.plantuml.constant.PlantUmlConstants;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
@@ -50,6 +54,8 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
     private TextField tfUsername;
     @FXML
     private TextField tfPassword;
+    @FXML
+    private Button btnTestConnection;
 
     @FXML
     protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProviderGenerate;
@@ -145,6 +151,27 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
             vectorStoreMeta.setPassword(tfPassword.getText());
             LlmConfig.getIns().saveVectorStorePrefs(provider, vectorStoreMeta);
         }
+    }
+
+    @FXML
+    protected void onTestConnection() {
+        NodeUtils.disable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
+        GlobalExecutor.submit(() -> {
+            try {
+                EmbeddingService.getInstance().testConnection();
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    DialogFactory.errDialog("Connect fail: " + e.getMessage());
+                });
+                return;
+            } finally {
+                NodeUtils.enable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
+            }
+            Platform.runLater(() -> {
+                DialogFactory.infoDialog("Connect success!");
+            });
+        });
+
     }
 
     @Override

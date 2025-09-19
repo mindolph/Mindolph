@@ -29,6 +29,7 @@
                     <TextField fx:id="tfUsername" promptText="user name" prefWidth="140" disable="true"/>
                     <PasswordField fx:id="tfPassword" promptText="password" prefWidth="140" disable="true"/>
                 </HBox>
+                <Button fx:id="btnTestConnection" text="Test Connection" onAction="#onTestConnection"/>
             </VBox>
         </PreferenceItem>
         <Separator prefWidth="200.0"/>

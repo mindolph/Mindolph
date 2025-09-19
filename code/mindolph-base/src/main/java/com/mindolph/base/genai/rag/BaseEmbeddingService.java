@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -48,18 +50,34 @@ public abstract class BaseEmbeddingService {
     }
 
     protected <T> T withJdbcConnection(Function<Connection, T> handler) {
+        return withJdbcConnection(handler, CONNECT_TIME_IN_SECOND);
+    }
+
+    protected <T> T withJdbcConnection(Function<Connection, T> handler, int timeout) {
         this.loadVectorStorePrefs();
         DataSourceConfig dsConfig = new DataSourceConfig(vectorStoreMeta.getHost(), vectorStoreMeta.getPort());
         dsConfig.setUser(vectorStoreMeta.getUsername());
         dsConfig.setPassword(vectorStoreMeta.getPassword());
         dsConfig.setDatabase(vectorStoreMeta.getDatabase());
-        String url = "jdbc:postgresql://%s:%d/%s?connectTimeout=%d".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase(), CONNECT_TIME_IN_SECOND);
+        String url = "jdbc:postgresql://%s:%d/%s?connectTimeout=%d".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase(), timeout);
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
             return handler.apply(conn);
         } catch (Exception e) {
             log.error("Error connecting to the database", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public void testConnection() {
+        this.withJdbcConnection((conn) -> {
+            try {
+                PreparedStatement ps = conn.prepareStatement("select 1");
+                ps.execute();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        }, 5);
     }
 
     protected EmbeddingModel createEmbeddingModel(String langCode, String modelName) {
@@ -118,8 +136,8 @@ public abstract class BaseEmbeddingService {
      * @param success
      * @param successCount
      * @param msg
-     * @param stage   the stage of whole embedding.
-     * @param ratio   0-1 the percent to complete
+     * @param stage        the stage of whole embedding.
+     * @param ratio        0-1 the percent to complete
      */
     public record EmbeddingProgress(File file, boolean success, int successCount, String msg, EmbeddingStage stage,
                                     float ratio) implements Serializable {
