@@ -11,7 +11,6 @@ import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.GlobalExecutor;
-import com.mindolph.plantuml.constant.PlantUmlConstants;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -161,7 +160,7 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
                 EmbeddingService.getInstance().testConnection();
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    DialogFactory.errDialog("Connect fail: " + e.getMessage());
+                    DialogFactory.errDialog("Connect fail: %s".formatted(e.getMessage()));
                 });
                 return;
             } finally {

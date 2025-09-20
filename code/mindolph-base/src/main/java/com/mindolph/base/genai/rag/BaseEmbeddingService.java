@@ -31,7 +31,7 @@ public abstract class BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEmbeddingService.class);
 
-    private final int CONNECT_TIME_IN_SECOND = 10;
+    private static final int CONNECT_TIME_IN_SECOND = 10;
 
     protected VectorStoreMeta vectorStoreMeta;
 
@@ -56,7 +56,9 @@ public abstract class BaseEmbeddingService {
         dsConfig.setPassword(vectorStoreMeta.getPassword());
         dsConfig.setDatabase(vectorStoreMeta.getDatabase());
         String url = "jdbc:postgresql://%s:%d/%s?connectTimeout=%d".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase(), timeout);
+        log.info("Try to connect database: %s".formatted(url));
         try (Connection conn = DriverManager.getConnection(url, dsConfig.getUser(), dsConfig.getPassword())) {
+            log.info("Connected to vector database: %s:%d/%s".formatted(dsConfig.getHost(), dsConfig.getPort(), dsConfig.getDatabase()));
             return handler.apply(conn);
         } catch (Exception e) {
             log.error("Error connecting to the database", e);
@@ -64,14 +66,26 @@ public abstract class BaseEmbeddingService {
         }
     }
 
+    public void checkDriver() {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            log.error(e.getLocalizedMessage(), e);
+            throw new RuntimeException("Unable to load postgres driver", e);
+        }
+    }
+
     public void testConnection() {
         this.withJdbcConnection((conn) -> {
+            log.info("Start to test database connection");
             try {
                 PreparedStatement ps = conn.prepareStatement("select 1");
                 ps.execute();
             } catch (SQLException e) {
+                log.error(e.getLocalizedMessage(), e);
                 throw new RuntimeException(e);
             }
+            log.info("Done with testing database connection");
             return null;
         }, 5);
     }

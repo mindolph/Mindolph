@@ -223,7 +223,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 splitter = DocumentSplitters.recursive(512, 0);
         }
 
-        log.debug("embed file with parser %s and splitter %s".formatted(documentParser.getClass().getSimpleName(), splitter.getClass().getSimpleName()));
+        log.info("embed file with parser %s and splitter %s".formatted(documentParser.getClass().getSimpleName(), splitter.getClass().getSimpleName()));
 
         // a docId is a unique identity for an embedded file.
         String docId = this.persistDocumentMetaIfNotExist(datasetId, f.getPath());
@@ -304,7 +304,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                     throw new RuntimeException("Failed to update document meta");
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e.getLocalizedMessage(), e);
             }
             return null;
         });
