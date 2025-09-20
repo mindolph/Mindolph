@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,7 +28,6 @@ import java.util.function.Function;
  * @since 1.13.0
  */
 public abstract class BaseEmbeddingService {
-
 
     private static final Logger log = LoggerFactory.getLogger(BaseEmbeddingService.class);
 
@@ -64,7 +60,7 @@ public abstract class BaseEmbeddingService {
             return handler.apply(conn);
         } catch (Exception e) {
             log.error("Error connecting to the database", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getLocalizedMessage(), e);
         }
     }
 

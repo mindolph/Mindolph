@@ -141,6 +141,23 @@ public class EmbeddingService extends BaseEmbeddingService {
         });
     }
 
+    public Boolean testTableExistence() {
+        return this.withJdbcConnection((conn) -> {
+            try (PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM information_schema.tables  WHERE table_schema = ? AND table_name = ?")) {
+                pstmt.setString(1, "public");
+                pstmt.setString(2, "mindolph_doc");
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getBoolean(1);
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e.getLocalizedMessage(), e);
+            }
+            return false;
+        });
+    }
 
     private void initDatabaseIfNotExist() {
         super.withJdbcConnection((Function<Connection, Void>) connection -> {
@@ -332,7 +349,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 }
                 return 0;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e.getLocalizedMessage(), e);
             }
         });
     }

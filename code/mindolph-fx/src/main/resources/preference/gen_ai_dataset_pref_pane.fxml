@@ -9,29 +9,29 @@
          xmlns:fx="http://javafx.com/fxml/1">
 
     <VBox>
-        <PreferenceItem name="Dataset: " labelPrefWidth="220">
+        <PreferenceItem name="Dataset: " labelMinWidth="180" labelPrefWidth="180">
             <ChoiceBox fx:id="cbDataset" prefWidth="140.0">
             </ChoiceBox>
             <Button fx:id="btnAddDataset"/>
             <Button fx:id="btnRemoveDataset" disable="true"/>
         </PreferenceItem>
-        <PreferenceItem name="Language:" labelPrefWidth="220">
+        <PreferenceItem name="Language:" labelMinWidth="180" labelPrefWidth="180">
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Embedding Model: " labelPrefWidth="220">
+        <PreferenceItem name="Embedding Model: " labelMinWidth="180" labelPrefWidth="180">
             <ChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
             </ChoiceBox>
             <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="180.0">
             </ChoiceBox>
         </PreferenceItem>
-        <PreferenceItem name="Select Files: " labelPrefWidth="220">
-            <VBox spacing="5" prefWidth="320" prefHeight="350">
+        <PreferenceItem name="Select Files: " labelMinWidth="180" labelPrefWidth="180">
+            <VBox spacing="5" prefWidth="400" prefHeight="350">
                 <WorkspaceSelector fx:id="workspaceSelector" prefWidth="240.0" HBox.hgrow="ALWAYS"/>
                 <FileSelectView fx:id="fileSelectView" prefWidth="320" prefHeight="350"/>
-                <Label fx:id="lblSelectedFiles" wrapText="true"/>
+                <Label fx:id="lblSelectedFiles" minWidth="250" prefWidth="400" wrapText="true" style="-fx-background-color: lightgray"/>
             </VBox>
         </PreferenceItem>
-        <PreferenceItem name="Embedding: " labelPrefWidth="220">
+        <PreferenceItem name="Embedding: " labelMinWidth="180" labelPrefWidth="180">
             <VBox spacing="5">
                 <Button fx:id="btnEmbedding" text="Start embedding" disable="true"/>
                 <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>

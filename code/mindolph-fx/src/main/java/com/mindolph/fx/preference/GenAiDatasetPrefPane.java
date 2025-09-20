@@ -352,6 +352,12 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     private void displaySelectedAndEmbeddedCount(String datasetId) {
         GlobalExecutor.submit(() -> {
             try {
+                if (!EmbeddingService.getInstance().testTableExistence()) {
+                    Platform.runLater(() -> {
+                        lblSelectedFiles.setText("You have never embedded any files yet");
+                    });
+                    return;
+                }
                 int count = EmbeddingService.getInstance().countEmbeddedDocuments(datasetId);
                 Platform.runLater(() -> {
                     lblSelectedFiles.setText("Selected %d files, %d have been embedded".formatted(currentDatasetMeta.getFiles() == null ? 0 : currentDatasetMeta.getFiles().size(), count));

@@ -320,7 +320,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * Override this method to load your own customized preferences.
      */
     protected void initComponentsFromPreferences() {
-        log.info("No customize preferences loaded");
+        log.info("No customized preferences loaded for %s".formatted(this.getClass()));
     }
 
     /**
