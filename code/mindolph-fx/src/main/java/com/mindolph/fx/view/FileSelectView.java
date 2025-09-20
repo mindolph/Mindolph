@@ -123,6 +123,10 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     private Future<?> labelTheCheckedFileWithEmbeddingStatus(DatasetMeta datasetMeta, List<File> allFiles) {
         return GlobalExecutor.submit(() -> {
             try {
+                if (!EmbeddingService.getInstance().testTableExistence()) {
+                    log.warn("The embedding has never been executed yet, starting an embedding will init the database");
+                    return;
+                }
                 List<EmbeddingDocEntity> embeddingStatues = EmbeddingService.getInstance().findDocuments(datasetMeta.getId(), allFiles);
                 // file path -> embedding doc
                 Map<String, EmbeddingDocEntity> embeddedMap = embeddingStatues.stream().collect(Collectors.toMap(EmbeddingDocEntity::file_path, e -> e));

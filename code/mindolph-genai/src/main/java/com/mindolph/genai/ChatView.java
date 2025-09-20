@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.READY)
                 .in(p -> {
-                    lblAgent.setText("%s: \n%s\n".formatted(currentAgentMeta.getChatProvider().name(), currentAgentMeta.getChatModel()));
+                    lblAgent.setText("%s: %s".formatted(currentAgentMeta.getChatProvider().getDisplayName(), currentAgentMeta.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
                     taInput.setPromptText("Chat with your agent \"%s\"".formatted(currentAgentMeta.getName()));
@@ -190,8 +191,9 @@ public class ChatView extends BaseView implements Initializable {
                 if (palyload instanceof Exception e) {
                     log.error("Failed to use agent: %s".formatted(selectedAgent.getValue().getName()), e);
                     Platform.runLater(() -> {
-                        chatStateMachine.postOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING);
-                        DialogFactory.errDialog("Failed to use agent: \n%s".formatted(e.getLocalizedMessage()));
+                        chatStateMachine.postWithPayloadOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING, selectedAgent.getValue());
+//                        DialogFactory.errDialog("Failed to use agent: \n%s".formatted(e.getLocalizedMessage()));
+                        Notifications.create().title("Use Agent").text("Failed to use agent: \n%s".formatted(e.getLocalizedMessage())).showWarning();
                     });
                     return;
                 }

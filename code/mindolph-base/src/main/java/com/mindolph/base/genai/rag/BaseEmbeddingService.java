@@ -97,22 +97,26 @@ public abstract class BaseEmbeddingService {
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
         this.emitProgressEvent("Preparing embedding store...");
-        return PgVectorEmbeddingStore.builder()
-                .host(vectorStoreMeta.getHost())
-                .port(vectorStoreMeta.getPort())
-                .database(vectorStoreMeta.getDatabase())
-                .user(vectorStoreMeta.getUsername())
-                .password(vectorStoreMeta.getPassword())
-                .table("mindolph_embedding_%d".formatted(embeddingModel.dimension()))
-                .createTable(createTable)
-                .dimension(embeddingModel.dimension())
-                .dropTableFirst(dropTable)
-                .metadataStorageConfig(
-                        DefaultMetadataStorageConfig.builder()
-                                .storageMode(MetadataStorageMode.COLUMN_PER_KEY)
-                                .columnDefinitions(List.of("doc_id varchar(32) not null"))
-                                .build())
-                .build();
+        try {
+            return PgVectorEmbeddingStore.builder()
+                    .host(vectorStoreMeta.getHost())
+                    .port(vectorStoreMeta.getPort())
+                    .database(vectorStoreMeta.getDatabase())
+                    .user(vectorStoreMeta.getUsername())
+                    .password(vectorStoreMeta.getPassword())
+                    .table("mindolph_embedding_%d".formatted(embeddingModel.dimension()))
+                    .createTable(createTable)
+                    .dimension(embeddingModel.dimension())
+                    .dropTableFirst(dropTable)
+                    .metadataStorageConfig(
+                            DefaultMetadataStorageConfig.builder()
+                                    .storageMode(MetadataStorageMode.COLUMN_PER_KEY)
+                                    .columnDefinitions(List.of("doc_id varchar(32) not null"))
+                                    .build())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getLocalizedMessage(), e);
+        }
     }
 
     public void listenOnProgressEvent(Consumer<EmbeddingProgress> callback) {

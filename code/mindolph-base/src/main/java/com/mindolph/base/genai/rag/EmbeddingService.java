@@ -380,7 +380,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 log.debug("Found {} embeddings for files {}", results.size(), files.size());
                 return results;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e.getLocalizedMessage(), e);
             }
         });
     }

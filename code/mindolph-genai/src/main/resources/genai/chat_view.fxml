@@ -17,8 +17,8 @@
         <HBox spacing="5">
             <AgentSelector fx:id="agentSelector" style="-fx-background-color: transparent;" prefWidth="140"/>
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
-            <Label fx:id="lblAgent" alignment="BASELINE_LEFT"/>
         </HBox>
+        <Label fx:id="lblAgent" alignment="BASELINE_RIGHT" textAlignment="RIGHT" VBox.vgrow="ALWAYS"/>
         <ChatPane fx:id="chatPane" VBox.vgrow="ALWAYS" disable="true">
 
         </ChatPane>

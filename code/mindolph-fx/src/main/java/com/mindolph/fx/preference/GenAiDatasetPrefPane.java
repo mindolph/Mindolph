@@ -354,7 +354,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             try {
                 if (!EmbeddingService.getInstance().testTableExistence()) {
                     Platform.runLater(() -> {
-                        lblSelectedFiles.setText("You have never embedded any files yet");
+                        lblSelectedFiles.setText("You have never done any embedding yet");
                     });
                     return;
                 }

@@ -28,7 +28,7 @@
             <VBox spacing="5" prefWidth="400" prefHeight="350">
                 <WorkspaceSelector fx:id="workspaceSelector" prefWidth="240.0" HBox.hgrow="ALWAYS"/>
                 <FileSelectView fx:id="fileSelectView" prefWidth="320" prefHeight="350"/>
-                <Label fx:id="lblSelectedFiles" minWidth="250" prefWidth="400" wrapText="true" style="-fx-background-color: lightgray"/>
+                <Label fx:id="lblSelectedFiles" minWidth="250" prefWidth="400" wrapText="true"/>
             </VBox>
         </PreferenceItem>
         <PreferenceItem name="Embedding: " labelMinWidth="180" labelPrefWidth="180">
