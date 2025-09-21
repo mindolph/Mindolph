@@ -1,5 +1,38 @@
 # Change Logs
 
+### V1.13.1 Unstable Release
+* Features:
+	* added a `test connection` button to the vector store preference panel.
+	* Added error message display for gen-ai dataset setting and chatting with agent.
+	* Added error message in the gen-ai Datasets setting panel for following scenarios, counting embedded files when loading a dataset, and checking selected files embedding status when loading a workspace. 
+	* Added a clear button to chat view to clear user input.
+
+* Improvement:
+	* Added a check for table existence when loading gen-ai dataset panel.
+	* Disabled the dataset combo box and the new dataset button during embedding to prevent conflict.
+	* Added a timeout to connecting to the embedding vector database.
+	* Added file size to the item of file select view in the dataset preference dialog. 
+	* Refactored agent selector in chat view. 
+	* Agents in the chat view now automatically reload when their preferences are changed.
+	* Remove the meta information when embedding a Mind Map document to optimize the RAG performance.
+	* The browser button in Mind Map note dialogs now opens URLs in an external browser by default.
+	* Some UI improvements.
+
+* Bug fixes:
+	* The app installed from the installation package cannot connect to the vector database.
+	* The send button state is incorrect after clearing the user input.
+	* The postgres driver cannot be loaded in the platform dependent installer. 
+	* Error messages from OpenAI are not displayed when generating content in a Mind Map. 
+	* Some problems with packaging into installation packages.
+	* Merged bug fixes from stable version.
+
+* Dependencies: 
+	* Updated JavaFX to 25, richtextfx to 0.11.6, mfx to 3.0.  
+	* Updated bundled JDK to 25.  
+	* Updated dependencies like langchain4j, plantuml, apache commons, etc.   
+
+* Updated docs for development   
+
 ### V1.12.6 Release
 * Improvement
 	* Features that add prefix to the head of paragraph respect the blank chars in the beginning, including quick comment in the PlantUML, quick comment, quick bullet list in the Markdown, etc.
