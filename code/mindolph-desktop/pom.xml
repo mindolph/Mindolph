@@ -212,6 +212,11 @@
                                 <resource>
                                     <directory>${project.build.directory}/unpacked-dependency/${native.library.onnx}</directory>
                                     <targetPath>${native.library.onnx}</targetPath>
+                                    <includes>
+                                        <include>*.so</include>
+                                        <include>*.dylib</include>
+                                        <include>*.dll</include>
+                                    </includes>
                                 </resource>
                                 <resource>
                                     <directory>${project.build.directory}/unpacked-dependency/${native.library.tokenizers}</directory>
