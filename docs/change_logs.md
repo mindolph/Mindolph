@@ -106,7 +106,7 @@
 * merged bug fixes from v1.11.9
 
 
-## V1.11.9 Release
+### V1.11.9 Release
 * Fix: PlantUML `group` snippet doesn't work for activity diagram.
 * Fix: the streaming Gen-AI output does not work on ChatGLM models.
 * update pre-set models for Qwen, ChatGLM and OpenAI.
