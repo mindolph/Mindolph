@@ -505,7 +505,8 @@
             <properties>
                 <platform>linux</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods:${env.JAVAFX_HOME}</jfx_module_path>
-                <native.library.tokenizers>native/lib/linux-${os.arch}/cpu</native.library.tokenizers>
+                <native.library.onnx>ai/onnxruntime/native/linux-x64</native.library.onnx>
+                <native.library.tokenizers>native/lib/linux-x86_64/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>
@@ -548,7 +549,8 @@
             <properties>
                 <platform>win</platform>
                 <jfx_module_path>${env.JAVA_HOME}/jmods;${env.JAVAFX_HOME}</jfx_module_path>
-                <native.library.tokenizers>native/lib/win-${os.arch}/cpu</native.library.tokenizers>
+                <native.library.onnx>ai/onnxruntime/native/win-x64</native.library.onnx>
+                <native.library.tokenizers>native/lib/win-x86_64/cpu</native.library.tokenizers>
             </properties>
         </profile>
         <profile>
