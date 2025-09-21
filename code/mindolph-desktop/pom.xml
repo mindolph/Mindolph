@@ -90,6 +90,8 @@
                                 <filter>
                                     <artifact>*.*</artifact>
                                     <excludes>
+                                        <exclude>**/*.pdb</exclude>
+                                        <exclude>**/*.dSYM/</exclude>
                                         <exclude>*.dylib</exclude>
                                         <exclude>*.so</exclude>
                                         <exclude>*.dll</exclude>
