@@ -6,7 +6,6 @@ import com.mindolph.base.genai.rag.LocalModelManager;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
@@ -14,6 +13,8 @@ import com.mindolph.core.util.Tuple2;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenAiUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.dialog.impl.SimpleProgressDialog;
+import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
@@ -25,8 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 
-import static com.mindolph.core.constant.GenAiConstants.*;
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
+import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
 import static com.mindolph.genai.GenaiUiConstants.*;
 
 /**
@@ -110,7 +113,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel.getName())) {
                     if (DialogFactory.yesNoConfirmDialog("Download model",
                             "Model files are required for selected embedding model %s, do you want to download those files?".formatted(selectedModel.getName()))) {
-                        GlobalExecutor.submit(() -> {
+                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading", "Downloading model %s".formatted(selectedModel.getName()));
+                        Future<?> future = GlobalExecutor.submit(() -> {
                             try {
                                 boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);
                                 Platform.runLater(() -> {
@@ -118,13 +122,24 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                                         DialogFactory.infoDialog("Download success");
                                     }
                                     else {
+                                        // deleted incomplete downloads
+                                        if (LocalModelManager.getIns().clearModel(langCode, selectedModel.getName())) {
+                                            log.info("Model files are deleted.");
+                                        }
                                         DialogFactory.errDialog("Download fail");
                                     }
+                                    progressDialog.close();
                                 });
                             } catch (Exception e) {
                                 log.error(e.getMessage(), e);
                             }
+                        });
 
+                        progressDialog.show(result -> {
+                            log.debug(result);
+                            if (result == null) {
+                                future.cancel(true);
+                            }
                         });
                     }
                 }

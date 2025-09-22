@@ -70,4 +70,18 @@ public class LocalModelManager {
             return false;
         }
     }
+
+    /**
+     *
+     * @param langCode
+     * @param modelName
+     * @return true if all files are deleted.
+     */
+    public boolean clearModel(String langCode, String modelName) {
+        File modelFile = getModelFile(langCode, modelName);
+        File tokenizerFile = getTokenizerFile(langCode, modelName);
+        log.debug("Delete model file: %s".formatted(modelFile));
+        log.debug("Delete tokenizer file: %s".formatted(tokenizerFile));
+        return modelFile.delete() && tokenizerFile.delete();
+    }
 }
