@@ -10,6 +10,7 @@ import com.mindolph.genai.GenaiUiConstants.MessageType;
 public class ChatPartial {
 
     private String text;
+    // is the last partial of the completed chat message.
     private boolean isLast = false;
     private MessageType type;
 

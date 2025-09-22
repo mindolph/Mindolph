@@ -123,7 +123,6 @@ public class ChatView extends BaseView implements Initializable {
                     btnSend.setDisable(true);
                     btnClear.setDisable(true);
                     chatPane.scrollToBottom();
-                    chatPane.waitForAnswer();
                 })
                 .state(ChatState.STREAMING)
                 .in(p -> {
@@ -159,7 +158,7 @@ public class ChatView extends BaseView implements Initializable {
                 .action("Streaming response", ChatState.STREAMING, ChatState.STREAMING)
                 .action("Streaming response stop with failure", ChatState.STREAMING, ChatState.READY)
                 .action("User stop streaming response", ChatState.STREAMING, ChatState.STOPING)
-                .action("Streaming response is stoped", ChatState.STOPING, ChatState.STOPED)
+                .action("Streaming response is stopped", ChatState.STOPING, ChatState.STOPED)
                 .action("Streaming response completed", ChatState.STREAMING, ChatState.READY)
                 .action("User type again", ChatState.STOPED, ChatState.TYPING)
                 .action("Switch agent on STOPPED state", ChatState.STOPED, ChatState.SWITCHING)
@@ -190,8 +189,8 @@ public class ChatView extends BaseView implements Initializable {
             RagService.getInstance().listenOnProgressEvent(s -> {
                 log.debug("RagService progress: {}", s);
             });
-            RagService.getInstance().useAgent(selectedAgent.getValue(), (palyload) -> {
-                if (palyload instanceof Exception e) {
+            RagService.getInstance().useAgent(selectedAgent.getValue(), (payload) -> {
+                if (payload instanceof Exception e) {
                     log.error("Failed to use agent: %s".formatted(selectedAgent.getValue().getName()), e);
                     Platform.runLater(() -> {
                         chatStateMachine.postWithPayloadOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING, selectedAgent.getValue());
@@ -245,12 +244,15 @@ public class ChatView extends BaseView implements Initializable {
                 }
                 if (StringUtils.isNotBlank(taInput.getText())) {
                     chatStateMachine.post(ChatState.CHATTING);
+                    // append chat from human to the chat box.
                     ChatPartial chat = new ChatPartial(taInput.getText(), MessageType.HUMAN);
                     chat.setLast(true);
                     taInput.clear();
                     chatPane.appendChatPartial(chat);
                     // to do the LLM chatting
+                    chatPane.waitForAnswer();
                     RagService.getInstance().chat(chat.getText(), tokenStream -> {
+                        //
                         tokenStream.onRetrieved(contents -> {
                                     log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
                                     log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));

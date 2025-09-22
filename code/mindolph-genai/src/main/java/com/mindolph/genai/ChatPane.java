@@ -25,6 +25,8 @@ public class ChatPane extends BaseView {
     @FXML
     private ScrollPane scrollPane;
 
+    private final HBox hbWaitPlaceHolder = new HBox();
+
     private TextFlow chatDisplay;
 
     private boolean isAutoScroll = true;
@@ -37,6 +39,14 @@ public class ChatPane extends BaseView {
                 pauseAutoScroll();
             }
         });
+        hbWaitPlaceHolder.setAlignment(Pos.TOP_LEFT);
+        hbWaitPlaceHolder.setPadding(new Insets(5, 20, 5, 5));
+        hbWaitPlaceHolder.setSpacing(5);
+        Label lblAvatar = new Label();
+        lblAvatar.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setPrefSize(16, 16);
+        hbWaitPlaceHolder.getChildren().addAll(lblAvatar, pi);
     }
 
     public void clearChatHistory() {
@@ -44,15 +54,19 @@ public class ChatPane extends BaseView {
         chatDisplay = null;
     }
 
+    /**
+     * Before receiving response from agent.
+     */
     public void waitForAnswer() {
-        ProgressIndicator pi = new ProgressIndicator();
-        pi.setPrefSize(16, 16);
-        vbChat.getChildren().add(pi);
+        vbChat.getChildren().add(hbWaitPlaceHolder);
     }
 
+    /**
+     * After receiving completed response from agent.
+     */
     public void endWaiting() {
-        if (!vbChat.getChildren().isEmpty() && vbChat.getChildren().getLast() instanceof ProgressIndicator pi) {
-            vbChat.getChildren().remove(pi);
+        if (!vbChat.getChildren().isEmpty() && vbChat.getChildren().getLast() == hbWaitPlaceHolder) {
+            vbChat.getChildren().remove(hbWaitPlaceHolder);
         }
     }
 
