@@ -20,6 +20,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,5 +181,7 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
         super.saveProviderAndModelSelection(GEN_AI_GENERATE_MODEL, cbProviderGenerate, cbModelGenerate);
         super.saveProviderAndModelSelection(GEN_AI_SUMMARIZE_MODEL, cbProviderSummarize, cbModelSummarize);
         super.onSave(notify);
+        // toggle test connection button
+        btnTestConnection.setDisable(StringUtils.isAnyBlank(tfHost.getText(), tfDatabase.getText(), tfUsername.getText(), tfPassword.getText()) || spPort.getValue() == null);
     }
 }
