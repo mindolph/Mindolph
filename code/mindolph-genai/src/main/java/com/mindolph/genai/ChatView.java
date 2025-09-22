@@ -5,6 +5,7 @@ import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
@@ -49,6 +50,8 @@ public class ChatView extends BaseView implements Initializable {
     private Button btnSend;
     @FXML
     private Button btnClear;
+    @FXML
+    private FixedSplitPane splitPanel;
 
     private AgentMeta currentAgentMeta;
 
@@ -216,6 +219,8 @@ public class ChatView extends BaseView implements Initializable {
         });
         this.loadAgents();
 
+        splitPanel.setFixedSize(100);
+        splitPanel.setFixed(splitPanel.getSecondary());
         taInput.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!StringUtils.isBlank(newValue)) {
                 chatStateMachine.post(ChatState.TYPING);

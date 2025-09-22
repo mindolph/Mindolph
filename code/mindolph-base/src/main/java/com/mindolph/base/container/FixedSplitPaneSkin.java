@@ -37,8 +37,8 @@ public class FixedSplitPaneSkin extends SkinBase<FixedSplitPane> {
         // change splitter position directly.
         pane.splitterPositionProperty().addListener((observable, oldValue, newValue) -> {
             ObservableList<SplitPane.Divider> dividers = splitPane.getDividers();
-            if (!dividers.isEmpty()){
-                dividers.get(0).setPosition(newValue.doubleValue());
+            if (!dividers.isEmpty()) {
+                dividers.getFirst().setPosition(newValue.doubleValue());
             }
         });
 
@@ -49,12 +49,12 @@ public class FixedSplitPaneSkin extends SkinBase<FixedSplitPane> {
         log.debug("%s: listening orientation change.".formatted(pane.getUserData()));
 
         pane.fixedProperty().addListener((observable, oldValue, newValue) -> {
-            log.trace("fixed changes");
+            if (log.isTraceEnabled()) log.trace("fixed changes");
             applyFixedSize();
         });
 
         pane.fixedSizeProperty().addListener((observable, oldValue, newValue) -> {
-            log.trace("fixed size changes");
+            if (log.isTraceEnabled()) log.trace("fixed size changes");
             applyFixedSize();
         });
 
@@ -96,11 +96,12 @@ public class FixedSplitPaneSkin extends SkinBase<FixedSplitPane> {
             return;
         }
         log.debug("enable divider listener");
-        SplitPane.Divider divider = splitPane.getDividers().get(0);
+        SplitPane.Divider divider = splitPane.getDividers().getFirst();
         divider.positionProperty().addListener((observable, oldValue, newValue) -> {
             // to keep size fixed when divider's position is changing.
             double size = fromPositionToSize(newValue.doubleValue());
-            log.trace("convert position from %.2f to size %.2f".formatted(newValue.doubleValue(), size));
+            if (log.isTraceEnabled())
+                log.trace("convert position from %.2f to size %.2f".formatted(newValue.doubleValue(), size));
             getSkinnable().setFixedSize(size);
         });
     }
@@ -112,12 +113,13 @@ public class FixedSplitPaneSkin extends SkinBase<FixedSplitPane> {
     }
 
     private void applyFixedSize() {
-        log.trace("apply fixed size");
+        if (log.isTraceEnabled()) log.trace("apply fixed size");
         // Reset the divider position
         double pos = fromSizeToPosition(getSkinnable().getFixedSize());
-        log.trace("%s - from size %.2f to pos %.2f".formatted(getSkinnable().getFixed(), getSkinnable().getFixedSize(), pos));
+        if (log.isTraceEnabled())
+            log.trace("%s - from size %.2f to pos %.2f".formatted(getSkinnable().getFixed(), getSkinnable().getFixedSize(), pos));
         if (isValidNumber(pos) && !splitPane.getDividers().isEmpty()) {
-            splitPane.getDividers().get(0).setPosition(pos);
+            splitPane.getDividers().getFirst().setPosition(pos);
             getSkinnable().setSplitterPosition(pos); // reset to align the position value.
         }
         else {
