@@ -17,9 +17,9 @@
             <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
         </HBox>
         <Label fx:id="lblAgent" alignment="BASELINE_RIGHT" textAlignment="RIGHT" VBox.vgrow="ALWAYS"/>
-        <FixedSplitPane fx:id="splitPanel" orientation="VERTICAL">
+        <FixedSplitPane fx:id="splitPanel" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <primary>
-                <ChatPane fx:id="chatPane" VBox.vgrow="ALWAYS" disable="true">
+                <ChatPane fx:id="chatPane" disable="true">
 
                 </ChatPane>
             </primary>
