@@ -2,6 +2,7 @@ package com.mindolph.fx.util;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.File;
 
@@ -30,6 +31,6 @@ public class DisplayUtils {
      * @return
      */
     public static String displayFile(File workspaceDir, File file) {
-        return StringUtils.substringAfter(file.getPath(), StringUtils.appendIfMissing(workspaceDir.getPath(), "/"));
+        return StringUtils.substringAfter(file.getPath(), Strings.CS.appendIfMissing(workspaceDir.getPath(), "/"));
     }
 }

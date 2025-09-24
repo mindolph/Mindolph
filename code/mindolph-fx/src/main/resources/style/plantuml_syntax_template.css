@@ -50,3 +50,8 @@
 .activity {
     -fx-font-style: italic;
 }
+
+.swimlane {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}

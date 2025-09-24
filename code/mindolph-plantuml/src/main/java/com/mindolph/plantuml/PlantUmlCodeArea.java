@@ -3,8 +3,10 @@ package com.mindolph.plantuml;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.control.HighlightCodeArea;
 import com.mindolph.core.constant.SupportFileTypes;
+import com.mindolph.core.util.DebugUtils;
 import com.mindolph.plantuml.constant.ShortcutConstants;
 import javafx.scene.input.KeyEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.fxmisc.wellbehaved.event.EventPattern;
@@ -23,19 +25,25 @@ import static com.mindolph.plantuml.constant.PlantUmlConstants.*;
  * @author mindolph.com@gmail.com
  */
 public class PlantUmlCodeArea extends HighlightCodeArea {
+    /**
+     * Pattern for highlighting.
+     */
+    protected static Pattern patternMajor;
 
     public PlantUmlCodeArea() {
-        pattern = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
-                        + "|(?<ACTIVITY>" + ACTIVITY + ")"
-                        + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
-                        + "|(?<CONNECTOR>" + CONNECTOR + ")"
-                        + "|(?<BLOCKCOMMENT>" + BLOCK_COMMENT_PATTERN + ")"
-                        + "|(?<DIAGRAMKEYWORDS>" + DIAGRAM_PATTERN + ")"
-                        + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
-                        + "|(?<CONTAININGKEYWORDS>" + CONTAINING_PATTERN + ")"
-                        + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
-                , Pattern.MULTILINE);
-
+        if (patternMajor == null) {
+            patternMajor = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
+                            + "|(?<ACTIVITY>" + ACTIVITY + ")"
+                            + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
+                            + "|(?<CONNECTOR>" + CONNECTOR + ")"
+                            + "|(?<BLOCKCOMMENT>" + BLOCK_COMMENT_PATTERN + ")"
+                            + "|(?<SWIMLANE>" + SWIMLANE_PATTERN + ")"
+                            + "|(?<DIAGRAMKEYWORDS>" + DIAGRAM_PATTERN + ")"
+                            + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
+                            + "|(?<CONTAININGKEYWORDS>" + CONTAINING_PATTERN + ")"
+                            + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+                    , Pattern.MULTILINE);
+        }
         super.addFeatures(HELPER, TAB_INDENT, QUOTE, DOUBLE_QUOTE, AUTO_INDENT);
 
         // comment or uncomment for plantuml.
@@ -52,7 +60,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
 
     @Override
     protected StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = patternMajor.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while (matcher.find()) {
@@ -60,6 +68,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
                     matcher.group("ACTIVITY") != null ? "activity" :
                             matcher.group("QUOTE") != null ? "quote" :
                                     matcher.group("CONNECTOR") != null ? "connector" :
+                                            matcher.group("SWIMLANE") != null ? "swimlane" :
                                             matcher.group("DIAGRAMKEYWORDS") != null ? "diagramkeyword" :
                                                     matcher.group("DIRECTIVE") != null ? "directive" :
                                                             matcher.group("CONTAININGKEYWORDS") != null ? "containing" :
@@ -68,6 +77,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
                                                                                     matcher.group("KEYWORD") != null ? "keyword" :
                                                                                             null; /* never happens */
             assert styleClass != null;
+            System.out.printf("matched %s: (pos: %d-%d) - %s %n", styleClass, matcher.start(), matcher.end(), DebugUtils.visible(StringUtils.substring(text, matcher.start(), matcher.end())));
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();
