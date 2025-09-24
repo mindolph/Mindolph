@@ -17,6 +17,7 @@ import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.util.FileNameUtils;
+import com.mindolph.csv.CsvEditor;
 import com.mindolph.fx.TabManager;
 import com.mindolph.fx.editor.EditorFactory;
 import com.mindolph.markdown.MarkdownEditor;
@@ -148,10 +149,15 @@ public class FileTabView extends BaseView {
             EventBus.getIns().disableMenuItems(SAVE_AS, SAVE_ALL, CLOSE_TAB, FIND, REPLACE, UNDO, REDO, CUT, COPY, PASTE, PRINT);
         }
         else {
+
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
-            boolean isEditable = editor instanceof BaseCodeAreaEditor || editor instanceof MindMapEditor;
+            boolean isEditable = editor instanceof CsvEditor || editor instanceof BaseCodeAreaEditor || editor instanceof MindMapEditor;
+            if (log.isDebugEnabled()) {
+                log.debug("isEditable: " + isEditable);
+                log.debug("isSearchable: " + editor.isSearchable());
+            }
             EventBus.getIns().notifyMenuStateChange(CUT, isEditable && editor.isSelected());
             EventBus.getIns().notifyMenuStateChange(COPY, isEditable && editor.isSelected());
             EventBus.getIns().notifyMenuStateChange(PASTE, isEditable);
