@@ -1,9 +1,9 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.mfx.util.GlobalExecutor;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -60,7 +60,7 @@ public class RagService extends BaseEmbeddingService {
      * @param finished
      */
     public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
-        if (!agentMeta.isAllSetup()) {
+        if (!agentMeta.isAllNecessarySetup()) {
             finished.accept(new RuntimeException("Agent is not well setup"));
             return;
         }
@@ -69,31 +69,49 @@ public class RagService extends BaseEmbeddingService {
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             finished.accept(new RuntimeException("Vector store is not well setup"));
         }
-        log.info("use agent: {}, with chat model {}-{} and embedding model {}-{}",
-                agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel() , agentMeta.getEmbeddingProvider().getDisplayName(), agentMeta.getEmbeddingModel());
+        log.info("use agent: {}, with chat model {}-{}",
+                agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel());
+
+        if (agentMeta.isAllSetup()) {
+            log.info("  and with embedding model: %s".formatted(agentMeta.getEmbeddingProvider().getDisplayName()), agentMeta.getEmbeddingModel());
+        }
+
         GlobalExecutor.submit(() -> {
             try {
-                this.switchModel(agentMeta, o -> {
-                    if (o instanceof Exception) {
-                        finished.accept(o);
-                    }
-                    else {
-                        this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
-                        this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
-                        if (this.contentRetriever == null) {
-                            finished.accept(new RuntimeException("Unable to use this agent"));
-                            return;
+                if (agentMeta.isAllSetup()) {
+                    // build agent with embedding
+                    this.switchModel(agentMeta, errorOrMessage -> {
+                        if (errorOrMessage instanceof Exception) {
+                            finished.accept(errorOrMessage);
                         }
-                        agent = AiServices.builder(Agent.class)
-                                .streamingChatModel(streamingChatModelAdapter)
-                                .contentRetriever(contentRetriever)
-                                .chatMemory(chatMemory)
-                                .build();
-                        log.debug(o.toString());
-                        finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
-                    }
-                });
-
+                        else {
+                            this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
+                            this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
+                            if (this.contentRetriever == null) {
+                                finished.accept(new RuntimeException("Unable to use this agent"));
+                                return;
+                            }
+                            agent = AiServices.builder(Agent.class)
+                                    .streamingChatModel(streamingChatModelAdapter)
+                                    .systemMessageProvider(o -> agentMeta.getPromptTemplate())
+                                    .contentRetriever(contentRetriever)
+                                    .chatMemory(chatMemory)
+                                    .build();
+                            log.debug(errorOrMessage.toString());
+                            finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                        }
+                    });
+                }
+                else {
+                    // build agent as a chatbot.
+                    this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
+                    AiServices<Agent> builder = AiServices.builder(Agent.class)
+                            .streamingChatModel(streamingChatModelAdapter)
+                            .systemMessageProvider(o -> agentMeta.getPromptTemplate())
+                            .chatMemory(chatMemory);
+                    agent = builder.build();
+                    finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                }
             } catch (Exception e) {
                 finished.accept(e);
             }

@@ -27,6 +27,10 @@ public class AgentMeta implements Serializable {
                 || StringUtils.isBlank(languageCode) || datasetIds == null || datasetIds.isEmpty());
     }
 
+    public boolean isAllNecessarySetup() {
+        return !(chatProvider == null || chatModel == null);
+    }
+
     public String getId() {
         return id;
     }

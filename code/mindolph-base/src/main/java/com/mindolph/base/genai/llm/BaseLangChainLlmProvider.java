@@ -10,6 +10,7 @@ import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,21 +48,30 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
     @Override
     public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
         Prompt prompt = this.createPrompt(input.text(), outputParams);
-        StreamingChatModel llm = buildStreamingAI(input);
+        StreamingChatModel llm = this.buildStreamingAI(input);
         this.stopStreaming = false;
         llm.chat(prompt.text().trim(), new StreamingChatResponseHandler() {
+            private final StringBuilder buffer = new StringBuilder();
+
             @Override
             public void onPartialResponse(String s) {
-                if (stopStreaming){
+                if (stopStreaming) {
                     throw new RuntimeException("user stop streaming");
                 }
+                buffer.append(s);
                 consumer.accept(new StreamToken(s, false, false));
             }
 
             @Override
             public void onCompleteResponse(ChatResponse response) {
                 log.debug("completed: %s%n".formatted(response.aiMessage()));
-                consumer.accept(new StreamToken(response.aiMessage().text(), response.tokenUsage().outputTokenCount(),
+                // since some models (like Qwen1.5-110b-chat) returns whole response in the last partial, so here is the handling.
+                String lastPartial = StringUtils.EMPTY;
+                if (!buffer.toString().equals(response.aiMessage().text())) {
+                    lastPartial = response.aiMessage().text();
+                }
+                buffer.delete(0, buffer.length());
+                consumer.accept(new StreamToken(lastPartial, response.tokenUsage().outputTokenCount(),
                         true, false));
             }
 

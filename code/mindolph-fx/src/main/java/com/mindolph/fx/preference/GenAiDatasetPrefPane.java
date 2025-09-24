@@ -390,6 +390,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 //        workspaceSelector.getItems().clear();
         workspaceSelector.getSelectionModel().clearSelection();
         fileSelectView.getRootItem().getChildren().clear();
+        lblSelectedFiles.setText("");
         lblEmbeddingStatus.setText("");
         currentDatasetMeta = null;
     }

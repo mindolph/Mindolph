@@ -14,9 +14,11 @@
           AnchorPane.topAnchor="0.0">
         <HBox spacing="5">
             <AgentSelector fx:id="agentSelector" style="-fx-background-color: transparent;" minWidth="150" prefWidth="999" HBox.hgrow="ALWAYS"/>
-            <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
         </HBox>
-        <Label fx:id="lblAgent" alignment="BASELINE_RIGHT" textAlignment="RIGHT" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="5">
+            <ProgressIndicator fx:id="piAgent" visible="false" prefWidth="16" prefHeight="16"/>
+            <Label fx:id="lblAgent" alignment="BASELINE_RIGHT" textAlignment="RIGHT" VBox.vgrow="ALWAYS"/>
+        </HBox>
         <FixedSplitPane fx:id="splitPanel" orientation="VERTICAL" VBox.vgrow="ALWAYS">
             <primary>
                 <ChatPane fx:id="chatPane" disable="true">
