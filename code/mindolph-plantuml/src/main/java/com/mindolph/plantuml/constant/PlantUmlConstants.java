@@ -1,8 +1,10 @@
 package com.mindolph.plantuml.constant;
 
 import com.mindolph.core.constant.SyntaxConstants;
-
 import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author mindolph.com@gmail.com
@@ -39,7 +41,7 @@ public interface PlantUmlConstants extends SyntaxConstants {
             "entity", "database", "detach", "participant", "order", "as", "actor", "autonumber", "resume", "newpage", "is",
             "break", "critical",
             "over", "top", "bottom", "right", "left", "of", "ref", "create", "box", "hide", "footbox",
-            "skinparam", "sequence", "start", "state", "stop", "file", "folder", "frame", "fork", "interface", "class", "abstract",
+            "skinparam", "sequence", "start", "state", "stop", "file", "folder", "frame", "fork", "interface", "class", "object", "abstract",
             "namespace", "page", "node", "package", "queue", "stack", "rectangle", "storage", "card", "cloud", "component", "agent", "artifact",
             "center", "footer", "return",
             // C4
@@ -54,10 +56,51 @@ public interface PlantUmlConstants extends SyntaxConstants {
 
     String ARROW1 = "[<>ox#\\*\\{\\}\\+\\^]";
     String ARROW2 = "([\\|\\}\\<][\\|o])|([\\|o][\\|\\{\\>])";
-    String BAR = "-|\\.|(--)|(\\.\\.)";
+    String BAR = "(--)|(\\.\\.)|-|\\.";
+    // like connectors between entities
     String CONNECTOR = "((%s)|(%s))*(%s)((%s)|(%s))*".formatted(ARROW2, ARROW1, BAR, ARROW2, ARROW1);
     // include EBNF quote
     String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])|(\\?[.\\s\\S]+?\\?)";
 
-    String ACTIVITY = ":[^;]*?;";
+    String ACTIVITY = "%s%s*:[^;\n]*?;%s".formatted(LINE_START, BLANK_CHAR, LINE_END);
+
+    String SWIMLANE_PATTERN = "\\|.*?\\|";
+
+    static void main(String[] args) {
+        System.out.println(CONNECTOR);
+        String text = """
+                :activity;
+                u-->m: a
+                m-->s: b
+                s-->b: c;
+                """;
+        Pattern patternMajor = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
+                        + "|(?<ACTIVITY>" + ACTIVITY + ")"
+                        + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
+                        + "|(?<CONNECTOR>" + CONNECTOR + ")"
+                        + "|(?<BLOCKCOMMENT>" + BLOCK_COMMENT_PATTERN + ")"
+                        + "|(?<SWIMLANE>" + SWIMLANE_PATTERN + ")"
+                        + "|(?<DIAGRAMKEYWORDS>" + DIAGRAM_PATTERN + ")"
+                        + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
+                        + "|(?<CONTAININGKEYWORDS>" + CONTAINING_PATTERN + ")"
+                        + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+                , Pattern.MULTILINE);
+        Matcher matcher = patternMajor.matcher(text);
+        while (matcher.find()) {
+            String styleClass =
+                    matcher.group("ACTIVITY") != null ? "activity" :
+                            matcher.group("QUOTE") != null ? "quote" :
+                                    matcher.group("CONNECTOR") != null ? "connector" :
+                                            matcher.group("SWIMLANE") != null ? "swimlane" :
+                                                    matcher.group("DIAGRAMKEYWORDS") != null ? "diagramkeyword" :
+                                                            matcher.group("DIRECTIVE") != null ? "directive" :
+                                                                    matcher.group("CONTAININGKEYWORDS") != null ? "containing" :
+                                                                            matcher.group("COMMENT") != null ? "comment" :
+                                                                                    matcher.group("BLOCKCOMMENT") != null ? "comment" :
+                                                                                            matcher.group("KEYWORD") != null ? "keyword" :
+                                                                                                    null; /* never happens */
+            assert styleClass != null;
+            System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher.start(), matcher.end(), matcher.groupCount());
+        }
+    }
 }

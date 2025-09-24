@@ -19,7 +19,7 @@ public interface MarkdownConstants extends SyntaxConstants {
     String EMPHASIS = "(()|(" + EMPHASIS_KW + EMPHASIS_CONTENT + "*?" + EMPHASIS_KW + "))"; // this can't be used to match directly
 
     String HEADING_PATTERN = "%s(#+\\s+[\\s\\S]*?(?=%s))".formatted(LINE_START, LINE_END);
-    String LIST_PATTERN = "%s[\\t ]*((\\* )|(\\+ )|(- )|(\\d+. ))".formatted(LINE_START);
+    String LIST_PATTERN = "%s%s*((\\* )|(\\+ )|(- )|(\\d+\\. ))".formatted(LINE_START, BLANK_CHAR);
     // "(\\|[\\s\\S]*?)+\\|" +
     String TABLE_SEPARATOR = LINE_SEPARATOR + "(\\|:?-{3,}:?)+\\|" + LINE_SEPARATOR;
     String TABLE_PATTERN = "(\\|)|(" + TABLE_SEPARATOR + ")";
@@ -34,7 +34,7 @@ public interface MarkdownConstants extends SyntaxConstants {
             + "|((__)" + EMPHASIS + "(__))";
     String ITALIC_PATTERN = "(\\*" + EMPHASIS + "\\*)"
             + "|(_" + EMPHASIS + "_)";
-    String CODE_PATTERN = BLANK_CHAR + "*`[\\s\\S]*?`";
+    String CODE_PATTERN = "(`[\\s\\S]*?`)";
     String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
     String QUOTE_PATTERN = "(%s%s*> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
@@ -48,33 +48,43 @@ public interface MarkdownConstants extends SyntaxConstants {
         Pattern pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
                         + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
-                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
-                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
                         + "|(?<TABLE>" + TABLE_PATTERN + ")"
-                        + "|(?<CODE>" + CODE_PATTERN + ")"
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
-//        String text = "> hello1\n # heading\n  > hello2\n";
-        String text = "|A|B|C|\n|:---|:----:|---:|\n";
+//        String text = "> hello1\n # heading\n  > hello `every`w`body` ==\n";
+//        String text = "|A|B|C|\n|:---|:----:|---:|\n";
+        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
                             matcher.group("LIST") != null ? "list" :
                                     matcher.group("TABLE") != null ? "table" :
-                                            matcher.group("BOLD") != null ? "bold" :
-                                                    matcher.group("ITALIC") != null ? "italic" :
-                                                            matcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                                                    matcher.group("CODE") != null ? "code" :
-                                                                            matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                                                    matcher.group("QUOTE") != null ? "md-quote" :
-                                                                                            matcher.group("URL") != null ? "url" :
-                                                                                                    "unknown";
-            System.out.printf("style: %s(%d-%d) %n", styleClass, matcher.start(), matcher.end());
+                                            matcher.group("CODEBLOCK") != null ? "code-block" :
+                                                    matcher.group("QUOTE") != null ? "md-quote" :
+                                                            matcher.group("URL") != null ? "url" :
+                                                                    "unknown";
+            System.out.printf("matched %s: (%d-%d) %n", styleClass, matcher.start(), matcher.end());
             System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
+        }
+
+        Pattern pattern2 = Pattern.compile("(?<CODE>" + CODE_PATTERN + ")"
+                + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
+                + "|(?<BOLD>" + BOLD_PATTERN + ")"
+                + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
+        );
+        Matcher matcher2 = pattern2.matcher(text);
+        while (matcher2.find()) {
+            System.out.println();
+            String styleClass = matcher2.group("CODE") != null ? "code" :
+                    matcher2.group("BOLD") != null ? "bold" :
+                            matcher2.group("ITALIC") != null ? "italic" :
+                                    matcher2.group("BOLDITALIC") != null ? "bold-italic" :
+                                            null;
+            System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher2.start(), matcher2.end(), matcher2.groupCount());
+            System.out.println(StringUtils.substring(text, matcher2.start(), matcher2.end()));
         }
     }
 }
