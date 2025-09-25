@@ -6,7 +6,7 @@
 
 * Improvement: 
 	* Optimized syntax highlighting performance.
-	* Add swimlane highliting for PlantUML.
+	* Add swimlane highlighting for PlantUML.
 	* Add new model `qwen3-max` to Qwen LLM provider.
 
 * Bug fixes: 
