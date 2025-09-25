@@ -1,8 +1,23 @@
 # Change Logs
 
+### V1.12.7 Release
+* Feature: 
+	* Implemented syntax highlighting in the quote paragraph of Markdown, like inline code, bold text, etc.
+
+* Improvement: 
+	* Optimized syntax highlighting performance.
+	* Add swimlane highliting for PlantUML.
+	* Add new model `qwen3-max` to Qwen LLM provider.
+
+* Bug fixes: 
+	* Replaced nonexistent Moonshot models with `kimi-latest`.
+	* Unable to launch find/replace, copy/cut/paste with shortcuts in CSV editor.
+	* Incorrect syntax highlighting for PlantUML.
+	* Incorrect highlighting of numbered list in Markdown.
+
 ### V1.13.1 Unstable Release
 * Features:
-	* added a `test connection` button to the vector store preference panel.
+	* Added a `Test Connection` button to the vector store preference panel.
 	* Added error message display for gen-ai dataset setting and chatting with agent.
 	* Added error message in the gen-ai Datasets setting panel for following scenarios, counting embedded files when loading a dataset, and checking selected files embedding status when loading a workspace. 
 	* Added a clear button to chat view to clear user input.
