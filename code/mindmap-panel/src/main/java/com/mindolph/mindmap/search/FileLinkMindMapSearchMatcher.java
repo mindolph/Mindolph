@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
+ * Matcher for searching links from mind map(mmd) files.
+ *
  * @author mindolph.com@gmail.com
  */
 public class FileLinkMindMapSearchMatcher implements SearchMatcher {
@@ -49,11 +51,11 @@ public class FileLinkMindMapSearchMatcher implements SearchMatcher {
             mindMap = new MindMap<>(reader, RootTopicCreator.defaultCreator);
             Pattern pattern = SearchUtils.string2pattern(absolutPathFile.getPath(), 0);
             if (mindMap.findNext(file.getParentFile(), mindMap.getRoot(), pattern, true, extras, TOPIC_FINDERS) != null) {
-                log.debug("Found");
+                log.debug("Found: %s".formatted(file));
                 return true;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         return false;
     }
