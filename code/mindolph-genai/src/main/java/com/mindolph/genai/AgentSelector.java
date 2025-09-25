@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
@@ -33,13 +34,16 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
 
     public AgentSelector() {
         super.setPromptText("Choose an Agent");
-        super.setCellFactory(comboBox-> new ListCell<>() {
+        super.setCellFactory(comboBox -> new ListCell<>() {
             @Override
             protected void updateItem(Pair<String, AgentMeta> item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item != null) {
                     FXMLLoader fxmlLoader = FxmlUtils.loadUri("/genai/agent_item.fxml", new ItemController(item));
                     Node root = fxmlLoader.getRoot();
+                    if (StringUtils.isNotBlank(item.getValue().getDescription())) {
+                        this.setTooltip(new Tooltip(item.getValue().getDescription()));
+                    }
                     setGraphic(root);
                 }
                 else {
@@ -50,7 +54,7 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
         });
     }
 
-    public void refresh() {
+    public void reloadAgents() {
         Pair<String, AgentMeta> selectedItem = this.getSelectionModel().getSelectedItem();
         String agentId = null;
         if (selectedItem != null) {

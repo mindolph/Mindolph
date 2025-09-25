@@ -304,7 +304,7 @@ public class ChatView extends BaseView implements Initializable {
             return;
         }
         log.debug("Reload agents");
-        agentSelector.refresh();
+        agentSelector.reloadAgents();
     }
 
     private enum ChatState {
