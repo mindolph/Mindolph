@@ -335,13 +335,17 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
         if (!cbLanguage.getSelectionModel().isEmpty()) {
             datasetMeta.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!super.cbEmbeddingProvider.getSelectionModel().isEmpty()) {
+        if (super.cbEmbeddingProvider.hasSelected()) {
             datasetMeta.setProvider(super.cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!super.cbEmbeddingModel.getSelectionModel().isEmpty()) {
+        else {
+            datasetMeta.setProvider(null);
+        }
+        if (super.cbEmbeddingModel.hasSelected()) {
             datasetMeta.setEmbeddingModel(super.cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey());
         }
         else {
+            datasetMeta.setProvider(null);
             datasetMeta.setEmbeddingModel(null);
         }
         datasetMeta.merge();

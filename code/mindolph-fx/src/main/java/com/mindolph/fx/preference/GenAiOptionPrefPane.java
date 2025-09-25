@@ -9,6 +9,7 @@ import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.genai.ChoiceUtils;
+import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
@@ -58,14 +59,14 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
     private Button btnTestConnection;
 
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProviderGenerate;
+    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderGenerate;
     @FXML
-    protected ChoiceBox<Pair<String, ModelMeta>> cbModelGenerate;
+    protected MChoiceBox<Pair<String, ModelMeta>> cbModelGenerate;
 
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProviderSummarize;
+    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderSummarize;
     @FXML
-    protected ChoiceBox<Pair<String, ModelMeta>> cbModelSummarize;
+    protected MChoiceBox<Pair<String, ModelMeta>> cbModelSummarize;
 
     public GenAiOptionPrefPane() {
         super("/preference/gen_ai_option_pref_pane.fxml");

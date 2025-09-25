@@ -5,9 +5,9 @@ import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.genai.ChoiceUtils;
+import com.mindolph.mfx.control.MChoiceBox;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
 
     // for Embedding model
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbEmbeddingProvider;
+    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbEmbeddingProvider;
     @FXML
-    protected ChoiceBox<Pair<String, ModelMeta>> cbEmbeddingModel;
+    protected MChoiceBox<Pair<String, ModelMeta>> cbEmbeddingModel;
 
     public BaseGenAiPrefPane(String fxmlResourceUri) {
         super(fxmlResourceUri);

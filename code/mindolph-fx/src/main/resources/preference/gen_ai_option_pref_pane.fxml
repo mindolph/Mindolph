@@ -3,6 +3,7 @@
 <?import com.mindolph.base.container.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.mindolph.mfx.control.MChoiceBox?>
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
 
@@ -34,16 +35,16 @@
         </PreferenceItem>
         <Separator prefWidth="200.0"/>
         <PreferenceItem name="Default Model for generate:" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbProviderGenerate" prefWidth="140.0">
-            </ChoiceBox>
-            <ChoiceBox fx:id="cbModelGenerate" prefWidth="180.0">
-            </ChoiceBox>
+            <MChoiceBox fx:id="cbProviderGenerate" prefWidth="140.0">
+            </MChoiceBox>
+            <MChoiceBox fx:id="cbModelGenerate" prefWidth="180.0">
+            </MChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Default Model for summarize:" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbProviderSummarize" prefWidth="140.0">
-            </ChoiceBox>
-            <ChoiceBox fx:id="cbModelSummarize" prefWidth="180.0">
-            </ChoiceBox>
+            <MChoiceBox fx:id="cbProviderSummarize" prefWidth="140.0">
+            </MChoiceBox>
+            <MChoiceBox fx:id="cbModelSummarize" prefWidth="180.0">
+            </MChoiceBox>
         </PreferenceItem>
     </VBox>
 

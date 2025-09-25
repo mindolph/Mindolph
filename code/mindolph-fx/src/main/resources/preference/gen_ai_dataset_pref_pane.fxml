@@ -5,6 +5,7 @@
 <?import com.mindolph.fx.view.FileSelectView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import com.mindolph.mfx.control.MChoiceBox?>
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
 
@@ -19,10 +20,10 @@
             <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
         <PreferenceItem name="Embedding Model: " labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
-            </ChoiceBox>
-            <ChoiceBox fx:id="cbEmbeddingModel" prefWidth="180.0">
-            </ChoiceBox>
+            <MChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
+            </MChoiceBox>
+            <MChoiceBox fx:id="cbEmbeddingModel" prefWidth="180.0">
+            </MChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Select Files: " labelMinWidth="180" labelPrefWidth="180">
             <VBox spacing="5" prefWidth="400" prefHeight="350">

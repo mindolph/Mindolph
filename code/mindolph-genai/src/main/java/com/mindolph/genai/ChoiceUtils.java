@@ -82,7 +82,7 @@ public class ChoiceUtils {
      */
     public static void selectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> choiceBox, GenAiModelProvider provider) {
         for (Pair<GenAiModelProvider, String> item : choiceBox.getItems()) {
-            if (item.getKey() == provider) {
+            if (item != null && item.getKey() == provider) {
                 choiceBox.getSelectionModel().select(item);
                 break;
             }
@@ -98,7 +98,7 @@ public class ChoiceUtils {
      */
     public static void selectModel(ChoiceBox<Pair<String, ModelMeta>> choiceBox, String modelMeta) {
         for (Pair<String, ModelMeta> item : choiceBox.getItems()) {
-            if (item.getValue().getName().equals(modelMeta)) {
+            if (item != null && item.getValue().getName().equals(modelMeta)) {
                 choiceBox.getSelectionModel().select(item);
                 break;
             }

@@ -13,6 +13,7 @@ import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.fx.control.DatasetTableView;
 import com.mindolph.genai.ChoiceUtils;
+import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -53,9 +54,9 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     private Button btnSetDataset;
 
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
+    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
     @FXML
-    protected ChoiceBox<Pair<String, ModelMeta>> cbChatModel;
+    protected MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
 
@@ -191,19 +192,38 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         AgentMeta am = currentAgentMeta;
         log.debug("On save agent {}: {}", am.getId(), am.getName());
         am.setDescription(tfDescription.getText());
-        if (!cbEmbeddingProvider.getSelectionModel().isEmpty()) {
-            am.setEmbeddingProvider(cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
-        }
-        if (!cbChatProvider.getSelectionModel().isEmpty()) {
+
+        // chat model
+        if (cbChatProvider.hasSelected()) {
             am.setChatProvider(cbChatProvider.getSelectionModel().getSelectedItem().getKey());
         }
-        if (!cbEmbeddingModel.getSelectionModel().isEmpty()) {
-            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey());
+        else {
+            am.setChatProvider(null);
         }
-        if (!cbChatModel.getSelectionModel().isEmpty()) {
+        if (cbChatModel.hasSelected()) {
             am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getKey());
         }
+        else {
+            // deselect provider if not select model
+            am.setChatProvider(null);
+            am.setChatModel(null);
+        }
         am.setPromptTemplate(taAgentPrompt.getText());
+        // embedding model
+        if (cbEmbeddingProvider.hasSelected()) {
+            am.setEmbeddingProvider(cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
+        }
+        else {
+            am.setEmbeddingProvider(null);
+        }
+        if (cbEmbeddingModel.hasSelected()) {
+            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey());
+        }
+        else {
+            // deselect provider if not select model
+            am.setEmbeddingProvider(null);
+            am.setEmbeddingModel(null);
+        }
         if (!cbLanguage.getSelectionModel().isEmpty()) {
             am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
         }
