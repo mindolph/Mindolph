@@ -96,7 +96,7 @@ public class SearchService {
      * @return
      */
     public List<File> searchLinksInFilesIn(File dir, IOFileFilter fileFilter, SearchParams searchParams) {
-        log.debug("Find in files by '%s' with file filters %s".formatted(searchParams, fileFilter));
+        log.debug("Find links in files by '%s' with file filters %s".formatted(searchParams, fileFilter));
         Collection<File> files = FileUtils.listFilesAndDirs(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         log.debug("Search in %d files".formatted(files.size()));
         if (searchParams != null && StringUtils.isNotBlank(searchParams.getKeywords())) {

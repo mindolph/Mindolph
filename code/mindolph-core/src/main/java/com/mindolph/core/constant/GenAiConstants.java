@@ -81,6 +81,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // Qwen https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct-1m", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct-1m", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-72b-instruct", 8192));
@@ -156,9 +157,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
             // Moonshot https://platform.moonshot.cn/docs/introduction
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-8k", 8192));
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-32k", 32768));
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest-128k", 131072));
+            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest", 131072)); // the max output tokens is dynamic, use the largest.
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-8k", 8192));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-32k", 32768));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-128k", 131072));

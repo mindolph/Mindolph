@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
+ * Matcher for searching links from textable file like Markdown, CSV
+ *
  * @author mindolph.com@gmail.com
  */
 public class FileLinkSearchMatcher implements SearchMatcher {
