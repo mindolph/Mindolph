@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 
 /**
  * A customized selector for AI agents.
+ * call reloadAgents() to load agents from user preferences.
  *
  * @since 1.13.1
  */
@@ -56,18 +57,18 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
 
     public void reloadAgents() {
         Pair<String, AgentMeta> selectedItem = this.getSelectionModel().getSelectedItem();
-        String agentId = null;
+        String selectedAgentId = null;
         if (selectedItem != null) {
-            agentId = selectedItem.getKey();
+            selectedAgentId = selectedItem.getKey();
         }
         this.getItems().clear();
         Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
         this.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
-        if (StringUtils.isNotBlank(agentId)) {
-            AgentMeta agentMeta = agentMap.get(agentId);
+        if (StringUtils.isNotBlank(selectedAgentId)) {
+            AgentMeta agentMeta = agentMap.get(selectedAgentId);
             if (agentMeta != null) {
                 log.debug("Reload agent: %s".formatted(agentMeta.getName()));
-                this.getSelectionModel().select(new Pair<>(agentId, agentMeta));
+                this.getSelectionModel().select(new Pair<>(selectedAgentId, agentMeta));
             }
         }
     }

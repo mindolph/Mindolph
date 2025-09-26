@@ -4,6 +4,7 @@ import com.github.swiftech.swstate.StateBuilder;
 import com.github.swiftech.swstate.StateMachine;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.genai.rag.RagService;
@@ -28,6 +29,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static com.mindolph.base.constant.ShortcutConstants.KEY_AGENT_SEND;
 
 /**
  * @since 1.13.0
@@ -87,11 +90,11 @@ public class ChatView extends BaseView implements Initializable {
                     piAgent.setManaged(false);
                 })
                 .state(ChatState.READY)
-                .in(p -> {
-                    lblAgent.setText("%s: %s".formatted(currentAgentMeta.getChatProvider().getDisplayName(), currentAgentMeta.getChatModel()));
+                .in(selectedAgent -> {
+                    lblAgent.setText("%s: %s".formatted(selectedAgent.getChatProvider().getDisplayName(), selectedAgent.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
-                    taInput.setPromptText("Chat with your agent \"%s\"".formatted(currentAgentMeta.getName()));
+                    taInput.setPromptText("Chat with your agent \"%s\", hit %s to send your message.".formatted(selectedAgent.getName(), ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));
                     taInput.requestFocus();
                     btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
                     btnSend.setDisable(true);
@@ -171,10 +174,13 @@ public class ChatView extends BaseView implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.initStateMachine();
         agentSelector.setConverter(GenaiUiConstants.agentConverter);
-        agentSelector.valueProperty().addListener((observable, oldValue, selectedAgent) -> {
-            if (selectedAgent == null) {
+        agentSelector.valueProperty().addListener((observable, oldSelectedAgent, selectedAgent) -> {
+            if (selectedAgent == null || selectedAgent == oldSelectedAgent) {
                 return;
             }
+
+            AgentMeta selectedAgentMeta = selectedAgent.getValue();
+
             // key is condition state, value is target state.
             chatStateMachine.postOnState(new HashMap<>() {
                 {
@@ -189,22 +195,25 @@ public class ChatView extends BaseView implements Initializable {
             RagService.getInstance().listenOnProgressEvent(s -> {
                 log.debug("RagService progress: {}", s);
             });
-            RagService.getInstance().useAgent(selectedAgent.getValue(), (payload) -> {
+            RagService.getInstance().useAgent(selectedAgentMeta, (payload) -> {
                 if (payload instanceof Exception e) {
-                    log.error("Failed to use agent: %s".formatted(selectedAgent.getValue().getName()), e);
+                    log.error("Failed to use agent: %s".formatted(selectedAgentMeta.getName()), e);
                     Platform.runLater(() -> {
-                        chatStateMachine.postWithPayloadOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING, selectedAgent.getValue());
+                        chatStateMachine.postWithPayloadOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING, selectedAgentMeta);
 //                        DialogFactory.errDialog("Failed to use agent: \n%s".formatted(e.getLocalizedMessage()));
                         Notifications.create().title("Use Agent").text("Failed to use agent: \n%s".formatted(e.getLocalizedMessage())).showWarning();
                     });
                     return;
                 }
-                currentAgentMeta = selectedAgent.getValue();
+
                 Platform.runLater(() -> {
-                    chatPane.clearChatHistory();
-                    ChatPartial cp = new ChatPartial("Ask me anything", MessageType.AI, true);
-                    chatPane.appendChatPartial(cp);
-                    chatStateMachine.postWithPayload(ChatState.READY, currentAgentMeta);
+                    if (currentAgentMeta == null || !selectedAgentMeta.getId().equals(currentAgentMeta.getId())) {
+                        chatPane.clearChatHistory();
+                        ChatPartial cp = new ChatPartial("I'm %s, ask me anything.".formatted(selectedAgentMeta.getName()), MessageType.AI, true);
+                        chatPane.appendChatPartial(cp);
+                    }
+                    chatStateMachine.postWithPayload(ChatState.READY, selectedAgentMeta);
+                    currentAgentMeta = selectedAgentMeta;
                 });
             });
         });
@@ -229,73 +238,82 @@ public class ChatView extends BaseView implements Initializable {
                 chatStateMachine.postOnState(ChatState.READY, ChatState.TYPING);
             }
         });
+        taInput.setOnKeyReleased(event -> {
+            if (ShortcutManager.getIns().isKeyEventMatch(event, KEY_AGENT_SEND)) {
+                this.sendChat();
+            }
+        });
 
         btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
         btnSend.setOnAction(event -> {
-            if (chatStateMachine.isState(ChatState.STREAMING)) {
-                // stop the streaming
-                chatStateMachine.post(ChatState.STOPING);
-                RagService.getInstance().stop();
-            }
-            else {
-                if (currentAgentMeta == null) {
-                    DialogFactory.infoDialog("Please choose an agent to chat with");
-                    return;
-                }
-                if (StringUtils.isNotBlank(taInput.getText())) {
-                    chatStateMachine.post(ChatState.CHATTING);
-                    // append chat from human to the chat box.
-                    ChatPartial chat = new ChatPartial(taInput.getText(), MessageType.HUMAN);
-                    chat.setLast(true);
-                    taInput.clear();
-                    chatPane.appendChatPartial(chat);
-                    // to do the LLM chatting
-                    chatPane.waitForAnswer();
-                    RagService.getInstance().chat(chat.getText(), tokenStream -> {
-                        //
-                        tokenStream.onRetrieved(contents -> {
-                                    log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
-                                    log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));
-                                    Platform.runLater(() -> {
-                                        chatStateMachine.post(ChatState.STREAMING);
-                                    });
-                                })
-                                .onPartialResponse(s -> {
-                                    Platform.runLater(() -> {
-                                        ChatPartial chatPartial = new ChatPartial(s, MessageType.AI);
-                                        chatPane.appendChatPartial(chatPartial);
-                                        chatStateMachine.post(ChatState.STREAMING);
-                                    });
-                                })
-                                .onCompleteResponse(resp -> {
-                                    Platform.runLater(() -> {
-                                        ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
-                                        chatPartial.setLast(true);
-                                        chatPane.appendChatPartial(chatPartial);
-                                        chatPane.scrollToBottom();
-                                        chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPED, currentAgentMeta);
-                                    });
-                                })
-                                .onError(e -> {
-                                    Platform.runLater(() -> {
-                                        // the STOP action might cause the LLM provider response with error, so it is inappropriate to show dialogs.
-                                        // DialogFactory.errDialog(e.getMessage());
-                                        chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPED, ChatState.STOPING, currentAgentMeta);
-                                    });
-                                })
-                                .start();
-                    });
-                }
-                else {
-                    taInput.setPromptText("Chat with your agent");
-                }
-            }
+            this.sendChat();
         });
 
         btnClear.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLEAR));
         btnClear.setOnAction(event -> {
             taInput.clear();
         });
+    }
+
+    private void sendChat() {
+        if (chatStateMachine.isState(ChatState.STREAMING)) {
+            // stop the streaming
+            chatStateMachine.post(ChatState.STOPING);
+            RagService.getInstance().stop();
+        }
+        else {
+            if (currentAgentMeta == null) {
+                DialogFactory.infoDialog("Please choose an agent to chat with");
+                return;
+            }
+            if (StringUtils.isNotBlank(taInput.getText())) {
+                chatStateMachine.post(ChatState.CHATTING);
+                // append chat from human to the chat box.
+                ChatPartial chat = new ChatPartial(taInput.getText(), MessageType.HUMAN);
+                chat.setLast(true);
+                taInput.clear();
+                chatPane.appendChatPartial(chat);
+                // to do the LLM chatting
+                chatPane.waitForAnswer();
+                RagService.getInstance().chat(chat.getText(), tokenStream -> {
+                    //
+                    tokenStream.onRetrieved(contents -> {
+                                log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
+                                log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));
+                                Platform.runLater(() -> {
+                                    chatStateMachine.post(ChatState.STREAMING);
+                                });
+                            })
+                            .onPartialResponse(s -> {
+                                Platform.runLater(() -> {
+                                    ChatPartial chatPartial = new ChatPartial(s, MessageType.AI);
+                                    chatPane.appendChatPartial(chatPartial);
+                                    chatStateMachine.post(ChatState.STREAMING);
+                                });
+                            })
+                            .onCompleteResponse(resp -> {
+                                Platform.runLater(() -> {
+                                    ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
+                                    chatPartial.setLast(true);
+                                    chatPane.appendChatPartial(chatPartial);
+                                    chatPane.scrollToBottom();
+                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPED, currentAgentMeta);
+                                });
+                            })
+                            .onError(e -> {
+                                Platform.runLater(() -> {
+                                    // the STOP action might cause the LLM provider response with error, so it is inappropriate to show dialogs.
+                                    // DialogFactory.errDialog(e.getMessage());
+                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPED, ChatState.STOPING, currentAgentMeta);
+                                });
+                            })
+                            .start();
+                });
+            }
+            else {
+//                taInput.setPromptText("Chat with your agent, hit %s to send your message.".formatted(ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));
+            }
+        }
     }
 
     private void loadAgents() {

@@ -36,4 +36,6 @@ public interface ShortcutConstants {
     // markdown
     ShortcutKey KEY_MD_COMMENT = new ShortcutKey("md.comment", "comment line", "Markdown");
 
+    // AI Agent
+    ShortcutKey KEY_AGENT_SEND = ShortcutKey.newShortcutKey("ai.agent.send", "send");
 }

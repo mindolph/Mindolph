@@ -45,6 +45,7 @@ public class ShortcutManager {
         shortcutMap.put(KEY_ZOOM_IN, new KeyCodeCombination(EQUALS, CONTROL_DOWN));
         shortcutMap.put(KEY_ZOOM_OUT, new KeyCodeCombination(MINUS, CONTROL_DOWN));
         shortcutMap.put(KEY_ZOOM_RESET, new KeyCodeCombination(DIGIT0, CONTROL_DOWN));
+        shortcutMap.put(KEY_AGENT_SEND, new KeyCodeCombination(ENTER, SHIFT_DOWN));
 
         // editor
         if (SystemUtils.IS_OS_MAC) {
