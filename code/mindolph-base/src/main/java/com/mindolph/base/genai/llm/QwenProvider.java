@@ -2,8 +2,8 @@ package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.GenAiEvents.Input;
-import dev.langchain4j.community.model.dashscope.QwenChatModel;
-import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
+import dev.langchain4j.community.model.dashscope.QwenChatModel.QwenChatModelBuilder;
+import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel.QwenStreamingChatModelBuilder;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ public class QwenProvider extends BaseLangChainLlmProvider {
 
     @Override
     protected ChatModel buildAI(Input input) {
-        QwenChatModel.QwenChatModelBuilder chatModelBuilder = new QwenChatModel.QwenChatModelBuilder()
+        QwenChatModelBuilder chatModelBuilder = new QwenChatModelBuilder()
                 .apiKey(this.apiKey)
                 .modelName(determineModel(input))
                 .temperature(input.temperature());
@@ -30,7 +30,7 @@ public class QwenProvider extends BaseLangChainLlmProvider {
 
     @Override
     protected StreamingChatModel buildStreamingAI(Input input) {
-        QwenStreamingChatModel.QwenStreamingChatModelBuilder chatModelBuilder = new QwenStreamingChatModel.QwenStreamingChatModelBuilder();
+        QwenStreamingChatModelBuilder chatModelBuilder = new QwenStreamingChatModelBuilder();
         chatModelBuilder
                 .apiKey(this.apiKey)
                 .modelName(determineModel(input))

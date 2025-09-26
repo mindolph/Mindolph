@@ -53,21 +53,23 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
     public void doChat(ChatRequest chatRequest, StreamingChatResponseHandler handler) {
         log.debug("Do chatting with LLM");
         List<ChatMessage> messages = chatRequest.messages();
-        List<String> msgs = messages.stream().map(chatMessage -> {
-            return switch (chatMessage) {
-                case AiMessage am -> "AI: " + am.text();
-                case UserMessage um -> "Human: " + StringUtils.join(um.contents(), ", ");
-                case SystemMessage sm -> "System: " + sm.text();
-                case null, default -> StringUtils.EMPTY;
-            };
+        List<String> msgs = messages.stream().map(chatMessage -> switch (chatMessage) {
+            case AiMessage am -> "AI: " + am.text();
+            case UserMessage um -> "Human: " + StringUtils.join(um.contents(), ", ");
+            case SystemMessage sm -> "System: " + sm.text();
+            case null, default -> StringUtils.EMPTY;
         }).toList();
         String collectedMsg = String.join("\n", msgs);
 
-        Input input = new InputBuilder().text(collectedMsg)
-                .model(agentMeta.getChatModel()).maxTokens(this.lookupModelMeta(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
-                .isStreaming(true).temperature(0.5f).createInput();
-        OutputParams oparams = new OutputParams(null, OutputFormat.TEXT);
-        this.llmProvider.stream(input, oparams, streamToken -> {
+        Input input = new InputBuilder()
+                .text(collectedMsg)
+                .model(agentMeta.getChatModel())
+                .maxTokens(this.lookupModelMeta(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
+                .isStreaming(true)
+                .temperature(0.5f)
+                .createInput();
+        OutputParams oParams = new OutputParams(null, OutputFormat.TEXT);
+        this.llmProvider.stream(input, oParams, streamToken -> {
             if (streamToken.isError()) {
                 log.error("Streaming error: {}", streamToken.text());
                 handler.onError(new RuntimeException("Streaming error: %s".formatted(streamToken.text())));
