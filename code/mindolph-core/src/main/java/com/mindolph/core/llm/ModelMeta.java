@@ -15,6 +15,9 @@ public final class ModelMeta {
      * for embedding only.
      */
     private int dimension = 0;
+    /**
+     * Kept for migration only.
+     */
     @Deprecated
     private boolean active;
     /**
@@ -92,6 +95,7 @@ public final class ModelMeta {
         return maxTokens;
     }
 
+    @Deprecated
     public boolean active() {
         return active;
     }
@@ -112,6 +116,7 @@ public final class ModelMeta {
         this.maxTokens = maxTokens;
     }
 
+    @Deprecated
     public void setActive(boolean active) {
         this.active = active;
     }

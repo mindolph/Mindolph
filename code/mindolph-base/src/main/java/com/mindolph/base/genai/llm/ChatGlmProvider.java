@@ -6,6 +6,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
@@ -54,16 +56,16 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
             }
             """;
 
-    public ChatGlmProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public ChatGlmProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         RequestBody requestBody = super.createRequestBody(streamTemplate, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL)
-                .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("Authorization", "Bearer %s".formatted(providerMeta.apiKey()))
                 .post(requestBody)
                 .build();
         streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
@@ -85,17 +87,17 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
             boolean isStop = determineStreamStop(choice, "finish_reason");
             if (isStop) {
                 // TODO count actual output tokens
-                consumer.accept(new StreamToken(StringUtils.EMPTY, 0, true, false));
+                consumer.accept(new StreamPartial(StringUtils.EMPTY, 0, true, false));
             }
             else {
-                consumer.accept(new StreamToken(result, false, false));
+                consumer.accept(new StreamPartial(result, false, false));
             }
         }, (msg, throwable) -> {
             log.error(msg, throwable);
             JsonElement jsonElement = JsonParser.parseString(msg);
             if (jsonElement.isJsonObject()) {
                 JsonObject asJsonObject = jsonElement.getAsJsonObject();
-                consumer.accept(new StreamToken(asJsonObject.get("error").getAsJsonObject().get("message").getAsString(), true, true));
+                consumer.accept(new StreamPartial(asJsonObject.get("error").getAsJsonObject().get("message").getAsString(), true, true));
             }
             else {
                 log.debug(jsonElement.toString());

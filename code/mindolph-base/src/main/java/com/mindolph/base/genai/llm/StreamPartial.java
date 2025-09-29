@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  *
  */
-public class StreamToken {
+public class StreamPartial {
     private String text;
     private int outputTokens;
     private boolean isStop;
@@ -17,14 +17,14 @@ public class StreamToken {
      * @param isStop       if true, no text data will be included.
      * @param isError
      */
-    public StreamToken(String text, int outputTokens, boolean isStop, boolean isError) {
+    public StreamPartial(String text, int outputTokens, boolean isStop, boolean isError) {
         this.text = text;
         this.outputTokens = outputTokens;
         this.isStop = isStop;
         this.isError = isError;
     }
 
-    public StreamToken(String text, boolean isStop, boolean isError) {
+    public StreamPartial(String text, boolean isStop, boolean isError) {
         this(text, 0, isStop, isError);
     }
 
@@ -64,7 +64,7 @@ public class StreamToken {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (StreamToken) obj;
+        var that = (StreamPartial) obj;
         return Objects.equals(this.text, that.text) &&
                 this.outputTokens == that.outputTokens &&
                 this.isStop == that.isStop &&

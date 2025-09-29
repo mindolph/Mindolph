@@ -8,7 +8,7 @@ import com.mindolph.base.genai.GenAiEvents.StreamOutput;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
-import com.mindolph.base.genai.llm.StreamToken;
+import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
 import com.mindolph.mfx.util.GlobalExecutor;
@@ -91,7 +91,7 @@ public class AiGenerator implements Generator {
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input);
 
-            Consumer<StreamToken> showReframePane = (streamToken) -> {
+            Consumer<StreamPartial> showReframePane = (streamToken) -> {
                 AiGenerator.this.removeFromParent(reframePanel);
                 AiGenerator.this.removeFromParent(inputPanel);
                 reframePanel = new AiReframePane(editorId, input, streamToken.outputTokens());
@@ -129,7 +129,7 @@ public class AiGenerator implements Generator {
             else {
                 GlobalExecutor.submit(() -> {
                     try {
-                        StreamToken generated = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
+                        StreamPartial generated = LlmService.getIns().predict(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType)));
                         if (generated == null) {
                             // probably stopped by user.
                             return;

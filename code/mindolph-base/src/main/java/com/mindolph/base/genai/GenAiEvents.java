@@ -1,6 +1,6 @@
 package com.mindolph.base.genai;
 
-import com.mindolph.base.genai.llm.StreamToken;
+import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.core.constant.GenAiConstants.ActionType;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -70,7 +70,7 @@ public class GenAiEvents {
     public record Output(GenAiModelProvider provider, String model, String generatedText, boolean isRetry) {
     }
 
-    public record StreamOutput(StreamToken streamToken, boolean isRetry) {
+    public record StreamOutput(StreamPartial streamPartial, boolean isRetry) {
     }
 
 }

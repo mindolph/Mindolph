@@ -14,14 +14,17 @@ import java.time.Duration;
 /**
  * Adapter to OKHttp's HttpClientBuilder.
  *
- * @since 1.13.0
  * @see HttpClientBuilder
+ * @since 1.13.0
  */
-public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
+public class OkHttpClientBuilder implements HttpClientBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(OkHttpClientBuilderAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(OkHttpClientBuilder.class);
 
     private final OkHttpClient.Builder builder;
+    // Since the LangChain doesn't support cancel/stop the running http request(sometimes SSE)
+    // the OkHttpClientAdapter (who implemented the stop method) must be hold to force to cancel/stop the http request.
+    private OkHttpClientAdapter okHttpClientAdapter;
 
     private String proxyType;
     private String proxyHost;
@@ -29,7 +32,7 @@ public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
     private Duration connectTimeout;
     private Duration readTimeout;
 
-    public OkHttpClientBuilderAdapter() {
+    public OkHttpClientBuilder() {
         builder = new OkHttpClient.Builder();
     }
 
@@ -61,7 +64,7 @@ public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
         return proxyType;
     }
 
-    public OkHttpClientBuilderAdapter setProxyType(String proxyType) {
+    public OkHttpClientBuilder setProxyType(String proxyType) {
         this.proxyType = proxyType;
         return this;
     }
@@ -70,7 +73,7 @@ public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
         return proxyHost;
     }
 
-    public OkHttpClientBuilderAdapter setProxyHost(String proxyHost) {
+    public OkHttpClientBuilder setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
         return this;
     }
@@ -79,9 +82,13 @@ public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
         return proxyPort;
     }
 
-    public OkHttpClientBuilderAdapter setProxyPort(int proxyPort) {
+    public OkHttpClientBuilder setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
         return this;
+    }
+
+    public OkHttpClientAdapter getOkHttpClientAdapter() {
+        return okHttpClientAdapter;
     }
 
     @Override
@@ -94,8 +101,9 @@ public class OkHttpClientBuilderAdapter implements HttpClientBuilder {
             log.info("Build HTTP client to with proxy '%s'".formatted(Proxy.Type.valueOf(this.proxyType.toUpperCase())));
         }
         builder.retryOnConnectionFailure(false);
-        OkHttpClient client = builder.build();
-        return new OkHttpClientAdapter(client);
+        OkHttpClient httpClient = builder.build();
+        okHttpClientAdapter = new OkHttpClientAdapter(httpClient);
+        return okHttpClientAdapter;
     }
 
 }

@@ -10,6 +10,7 @@ public class ProviderMeta {
 
     private String apiKey;
     private String baseUrl;
+    // kept for migration only.
     @Deprecated
     private String aiModel;
     private boolean useProxy;
@@ -36,6 +37,7 @@ public class ProviderMeta {
         return baseUrl;
     }
 
+    @Deprecated
     public String aiModel() {
         return aiModel;
     }
@@ -56,6 +58,7 @@ public class ProviderMeta {
         this.baseUrl = baseUrl;
     }
 
+    @Deprecated
     public void setAiModel(String aiModel) {
         this.aiModel = aiModel;
     }

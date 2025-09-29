@@ -17,6 +17,10 @@
             <artifactId>mindolph-base</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+        </dependency>
     </dependencies>
 
 

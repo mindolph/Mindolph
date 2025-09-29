@@ -2,10 +2,10 @@ package com.mindolph.base.genai.llm;
 
 import com.google.gson.JsonObject;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.util.TextUtils;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
+import okhttp3.*;
 import okhttp3.sse.EventSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -31,10 +31,11 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 
     protected OkHttpClient client;
 
+    // to cancel/stop the running http request.
     protected EventSource streamEventSource;
 
-    public BaseApiLlmProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public BaseApiLlmProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
         this.initHttpClient();
     }
 
@@ -42,15 +43,19 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .callTimeout(timeout, TimeUnit.SECONDS)
                 .readTimeout(timeout, TimeUnit.SECONDS);
-        if (super.proxyEnabled && super.useProxy) {
+        if (super.proxyEnabled && providerMeta.useProxy()) {
             log.debug("use proxy");
-            Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
-            Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
+            Proxy.Type proxyType = Proxy.Type.valueOf(proxyMeta.type().toUpperCase());
+            Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyMeta.host(), proxyMeta.port()));
             builder.proxy(proxy);
         }
-        log.info("Build HTTP client to access '%s' %s".formatted(this.aiModel,
-                super.proxyEnabled && super.useProxy ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
+        log.info("Build HTTP client to access '%s' %s".formatted(modelMeta.getName(),
+                super.proxyEnabled && super.providerMeta.useProxy() ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(proxyMeta.type().toUpperCase()), proxyMeta.url()) : "without proxy"));
         builder.retryOnConnectionFailure(false);
+        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .tlsVersions(TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
+                .build();
+        builder.connectionSpecs(Collections.singletonList(spec));
         client = builder.build();
     }
 

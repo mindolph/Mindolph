@@ -18,7 +18,7 @@
         <main-class>com.mindolph.desktop.Launcher</main-class>
         <app.name>Mindolph</app.name>
         <app.version>1.13.1</app.version>
-        <jvm.modules>java.base,java.sql,java.logging,java.desktop,java.management,java.naming,java.security.jgss,javafx.graphics,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec,jdk.unsupported</jvm.modules>
+        <jvm.modules>java.base,java.sql,java.logging,java.desktop,java.net.http,java.management,java.naming,java.security.jgss,javafx.graphics,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec,jdk.unsupported</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
         <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>

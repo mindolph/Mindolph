@@ -6,7 +6,6 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmProvider;
 import com.mindolph.base.genai.llm.LlmProviderFactory;
 import com.mindolph.base.genai.llm.OutputParams;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiConstants.OutputFormat;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
@@ -46,7 +45,8 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
         this.agentMeta = agentMeta;
         String providerName = agentMeta.getChatProvider().name();
         ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
-        this.llmProvider = LlmProviderFactory.create(providerName, providerMeta);
+        ModelMeta modelMeta = LlmConfig.getIns().lookupModel(providerName,  agentMeta.getChatModel());
+        this.llmProvider = LlmProviderFactory.create(providerName, providerMeta, modelMeta);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
         Input input = new InputBuilder()
                 .text(collectedMsg)
                 .model(agentMeta.getChatModel())
-                .maxTokens(this.lookupModelMeta(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
+                .maxTokens(LlmConfig.getIns().lookupModel(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
                 .isStreaming(true)
                 .temperature(0.5f)
                 .createInput();
@@ -92,21 +92,6 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
                 }
             }
         });
-    }
-
-    /**
-     * TBD
-     *
-     * @param providerName
-     * @param modelName
-     * @return
-     */
-    private ModelMeta lookupModelMeta(String providerName, String modelName) {
-        ModelMeta modelMeta = GenAiConstants.lookupModelMeta(providerName, modelName);
-        if (modelMeta != null) {
-            return modelMeta;
-        }
-        return LlmConfig.getIns().lookupCustomModel(providerName, modelName);
     }
 
     public void setStop(boolean stop) {

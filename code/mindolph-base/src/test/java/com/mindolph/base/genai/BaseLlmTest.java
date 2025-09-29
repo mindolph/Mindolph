@@ -2,6 +2,8 @@ package com.mindolph.base.genai;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -43,6 +45,14 @@ public class BaseLlmTest {
             return props.get(providerName).getAsJsonObject().get("apiKey").getAsString();
         }
         return SystemUtils.getEnvironmentVariable("API_KEY", "NONE");
+    }
+
+    protected ProviderMeta loadProviderMeta(String providerName, boolean useProxy) {
+        return new ProviderMeta(loadApiKey(providerName), null, null, useProxy, null);
+    }
+
+    protected ModelMeta loadModelMeta(String modelName) {
+        return new ModelMeta(modelName, null, null);
     }
 
 }

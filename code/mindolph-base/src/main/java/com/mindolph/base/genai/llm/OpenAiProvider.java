@@ -1,64 +1,40 @@
 package com.mindolph.base.genai.llm;
 
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.genai.model.OpenAiLangChainSupport;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel.OpenAiChatModelBuilder;
-import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.Proxy;
-import java.time.Duration;
 
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public class OpenAiProvider extends BaseLangChainLlmProvider {
+public class OpenAiProvider extends BaseLangChainLlmProvider implements OpenAiLangChainSupport {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiProvider.class);
 
-    public OpenAiProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public OpenAiProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
     protected ChatModel buildAI(Input input) {
-        log.info("Build OpenAI with model %s and access %s".formatted(this.aiModel,
-                super.proxyEnabled ? "with %s proxy %s".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
-        OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
-                .apiKey(this.apiKey)
-                .modelName(determineModel(input))
-                .maxRetries(1)
-                .timeout(Duration.ofSeconds(timeout))
-                .temperature((double) input.temperature());
-        if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
-        builder.httpClientBuilder(super.createProxyHttpClientBuilder());
-        return builder.build();
+        ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
+        return buildChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
     @Override
     protected StreamingChatModel buildStreamingAI(Input input) {
-        OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
-                .apiKey(this.apiKey)
-                .modelName(determineModel(input))
-                .timeout(Duration.ofSeconds(timeout))
-                .temperature((double) input.temperature());
-        if (input.maxTokens() != 0) builder.maxTokens(input.maxTokens());
-        builder.httpClientBuilder(super.createProxyHttpClientBuilder());
-        return builder.build();
+        ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
+        return buildStreamingChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
     @Override
     protected String extractErrorMessage(Throwable throwable) {
-        try {
-            return JsonParser.parseString(throwable.getLocalizedMessage()).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
-        } catch (JsonSyntaxException e) {
-            return throwable.getLocalizedMessage();
-        }
+        return extractErrorMessageFromLLM(throwable.getMessage());
     }
 }

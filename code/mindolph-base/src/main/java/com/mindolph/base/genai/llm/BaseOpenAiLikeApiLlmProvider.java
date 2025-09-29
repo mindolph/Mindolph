@@ -3,6 +3,8 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.GenAiEvents;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -17,16 +19,16 @@ public abstract class BaseOpenAiLikeApiLlmProvider extends BaseApiLlmProvider {
     private static final Logger log = LoggerFactory.getLogger(BaseOpenAiLikeApiLlmProvider.class);
 
 
-    public BaseOpenAiLikeApiLlmProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public BaseOpenAiLikeApiLlmProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
-    public StreamToken predict(GenAiEvents.Input input, OutputParams outputParams) {
+    public StreamPartial predict(GenAiEvents.Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(predictPromptTemplate(), determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(apiUrl())
-                .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("Authorization", "Bearer %s".formatted(providerMeta.apiKey()))
                 .header("x-wait-for-model", "true")
                 .post(requestBody)
                 .build();
@@ -46,9 +48,9 @@ public abstract class BaseOpenAiLikeApiLlmProvider extends BaseApiLlmProvider {
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
             int outputTokens = resObject.get("usage").getAsJsonObject().get("completion_tokens").getAsInt();
-            return new StreamToken(result, outputTokens, true, false);
+            return new StreamPartial(result, outputTokens, true, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

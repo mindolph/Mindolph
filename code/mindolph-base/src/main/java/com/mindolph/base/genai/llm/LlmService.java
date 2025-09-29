@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class LlmService {
         });
     }
 
-    private LlmProvider getLlmProvider(GenAiModelProvider provider) {
+    private LlmProvider getLlmProvider(GenAiModelProvider provider, String modelName) {
         LlmProvider llmProvider;
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
             log.warn("Using mock LLM provider");
@@ -47,10 +48,10 @@ public class LlmService {
         else {
             llmProvider = llmProviderMap.get(provider);
             if (llmProvider == null) {
-                Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
-                ProviderMeta props = map.get(provider.name());
-                llmProvider = LlmProviderFactory.create(provider.name(), props);
-                log.info("Using llm provider: %s".formatted(provider.name()));
+                ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
+                ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider, modelName);
+                llmProvider = LlmProviderFactory.create(provider.name(), providerMeta, modelMeta);
+                log.info("Using llm provider %s and model %s".formatted(provider.name(), modelName));
                 llmProviderMap.put(provider, llmProvider);
             }
         }
@@ -62,12 +63,12 @@ public class LlmService {
      * @param outputParams
      * @return
      */
-    public StreamToken predict(Input input, OutputParams outputParams) {
+    public StreamPartial predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
         isStopped = false;
-        StreamToken generated = null;
+        StreamPartial generated = null;
         try {
-            LlmProvider llmProvider = getLlmProvider(input.provider());
+            LlmProvider llmProvider = getLlmProvider(input.provider(), input.model());
             generated = llmProvider.predict(input, outputParams);
         } catch (Exception e) {
             if (isStopped) {
@@ -96,9 +97,9 @@ public class LlmService {
      * @param outputParams
      * @param consumer     to handle streaming result, like streaming output, error handling or stopping handling.
      */
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         isStopped = false;
-        LlmProvider llmProvider = getLlmProvider(input.provider());
+        LlmProvider llmProvider = getLlmProvider(input.provider(), input.model());
         llmProvider.stream(input, outputParams, streamToken -> {
             if (isStopped) {
                 // Don't use stopping flag to control the working states, since the stream might return with multiple times even you stop it.

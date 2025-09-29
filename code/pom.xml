@@ -48,9 +48,9 @@
         <jsoup.version>1.21.2</jsoup.version>
         <json.version>20250517</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>1.4.0</langchain4j.version>
-        <langchain4j.community.version>1.4.0-beta10</langchain4j.community.version>
-        <dashscope.version>2.21.5</dashscope.version>
+        <langchain4j.version>1.5.0</langchain4j.version>
+        <langchain4j.community.version>1.5.0-beta11</langchain4j.community.version>
+        <dashscope.version>2.21.10</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.40</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
@@ -108,6 +108,11 @@
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-open-ai</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-google-ai-gemini</artifactId>
                 <version>${langchain4j.version}</version>
             </dependency>
             <dependency>

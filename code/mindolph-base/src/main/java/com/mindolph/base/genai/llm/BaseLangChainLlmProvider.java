@@ -1,9 +1,10 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.http.client.HttpClientBuilder;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -27,12 +28,12 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
 
     private boolean stopStreaming = false;
 
-    public BaseLangChainLlmProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public BaseLangChainLlmProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
-    public StreamToken predict(Input input, OutputParams outputParams) {
+    public StreamPartial predict(Input input, OutputParams outputParams) {
         log.debug("Proxy: %s".formatted(System.getenv("http.proxyHost")));
         PromptTemplate promptTemplate = PromptTemplate.from(PROMPT_FORMAT_TEMPLATE);
         Map<String, Object> params = super.formatParams(input.text(), outputParams);
@@ -42,11 +43,11 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         ChatModel llm = buildAI(input);
         ChatMessage chatMessage = new UserMessage(prompt.text());
         ChatResponse aiMessage = llm.chat(chatMessage);
-        return new StreamToken(aiMessage.aiMessage().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
+        return new StreamPartial(aiMessage.aiMessage().text(), aiMessage.tokenUsage().outputTokenCount(), true, false);
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         Prompt prompt = this.createPrompt(input.text(), outputParams);
         StreamingChatModel llm = this.buildStreamingAI(input);
         this.stopStreaming = false;
@@ -59,7 +60,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                     throw new RuntimeException("user stop streaming");
                 }
                 buffer.append(s);
-                consumer.accept(new StreamToken(s, false, false));
+                consumer.accept(new StreamPartial(s, false, false));
             }
 
             @Override
@@ -71,7 +72,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                     lastPartial = response.aiMessage().text();
                 }
                 buffer.delete(0, buffer.length());
-                consumer.accept(new StreamToken(lastPartial, response.tokenUsage().outputTokenCount(),
+                consumer.accept(new StreamPartial(lastPartial, response.tokenUsage().outputTokenCount(),
                         true, false));
             }
 
@@ -80,7 +81,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                 log.error("LLM streaming with error.", throwable);
                 // force to stop when exception happens.
                 if (throwable != null) {
-                    consumer.accept(new StreamToken(extractErrorMessage(throwable), true, true));
+                    consumer.accept(new StreamPartial(extractErrorMessage(throwable), true, true));
                 }
             }
         });
@@ -97,23 +98,6 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         Prompt prompt = promptTemplate.apply(params);
         log.info("prompt: '%s'".formatted(prompt.text()));
         return prompt;
-    }
-
-    /**
-     * Create proxied http client builder if required.
-     *
-     * @return
-     * @since 1.13.1
-     */
-    protected HttpClientBuilder createProxyHttpClientBuilder() {
-        if (super.proxyEnabled && super.useProxy) {
-            OkHttpClientBuilderAdapter okHttpClientBuilder = new OkHttpClientBuilderAdapter();
-            okHttpClientBuilder.setProxyHost(super.proxyHost).setProxyPort(super.proxyPort).setProxyType(super.proxyType.toUpperCase());
-            return okHttpClientBuilder;
-        }
-        else {
-            return null;
-        }
     }
 
     protected abstract ChatModel buildAI(Input input);

@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -61,17 +63,17 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             }
             """;
 
-    public HuggingFaceProvider2(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public HuggingFaceProvider2(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
 
     @Override
-    public StreamToken predict(Input input, OutputParams outputParams) {
+    public StreamPartial predict(Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
-                .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("Authorization", "Bearer %s".formatted(providerMeta.apiKey()))
                 .header("x-wait-for-model", "true")
                 .post(requestBody)
                 .build();
@@ -88,19 +90,19 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             JsonObject resJson = resArray.get(0).getAsJsonObject();
             String result = resJson.get("generated_text").getAsString();
             int outputTokens = resJson.get("details").getAsJsonObject().get("generated_tokens").getAsInt();
-            return new StreamToken(result, outputTokens, true, false);
+            return new StreamPartial(result, outputTokens, true, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL.formatted(determineModel(input)))
-                .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("Authorization", "Bearer %s".formatted(providerMeta.apiKey()))
                 .header("x-wait-for-model", "true")
                 .post(requestBody)
                 .build();
@@ -113,10 +115,10 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
             boolean isStop = candidate.get("special").getAsBoolean();
             outputTokens.set(resBody.get("index").getAsInt());
             if (isStop) {
-                consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));
+                consumer.accept(new StreamPartial(StringUtils.EMPTY, true, false));
             }
             else {
-                consumer.accept(new StreamToken(result, false, false));
+                consumer.accept(new StreamPartial(result, false, false));
             }
         }, (msg, throwable) -> {
 //            log.error(msg, throwable);
@@ -131,9 +133,9 @@ public class HuggingFaceProvider2 extends BaseApiLlmProvider {
                     message = msg;
                 }
             }
-            consumer.accept(new StreamToken(message, true, true));
+            consumer.accept(new StreamPartial(message, true, true));
         }, () -> {
-            consumer.accept(new StreamToken(StringUtils.EMPTY, outputTokens.get(), true, false));
+            consumer.accept(new StreamPartial(StringUtils.EMPTY, outputTokens.get(), true, false));
         });
     }
 

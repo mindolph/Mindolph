@@ -29,16 +29,19 @@ import java.util.List;
 import static com.mindolph.base.genai.llm.BaseApiLlmProvider.JSON;
 
 /**
- * Adapter to OKHttpClient.
+ * Adapt LangChain HttpClient to OKHttpClient.
  *
- * @since 1.13.0
  * @see OkHttpClient
+ * @since 1.13.0
  */
 public class OkHttpClientAdapter implements HttpClient {
 
     private static final Logger log = LoggerFactory.getLogger(OkHttpClientAdapter.class);
 
     private final OkHttpClient okHttpClient;
+
+    // hold the EventSource to cancel/stop the http request.
+    private EventSource eventSource;
 
     public OkHttpClientAdapter(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
@@ -74,7 +77,7 @@ public class OkHttpClientAdapter implements HttpClient {
      * @return
      */
     private String extractErrorMessageFromResponse(Response response) {
-        if (response.isSuccessful() || response.body() == null ) {
+        if (response.isSuccessful() || response.body() == null) {
             return response.message();
         }
         try {
@@ -95,7 +98,7 @@ public class OkHttpClientAdapter implements HttpClient {
     public void execute(HttpRequest httpRequest, ServerSentEventParser serverSentEventParser, ServerSentEventListener serverSentEventListener) {
         EventSource.Factory factory = EventSources.createFactory(okHttpClient);
         Request okHttpRequest = createOkRequestFromLangchainRequest(httpRequest);
-        EventSource eventSource = factory.newEventSource(okHttpRequest, new EventSourceListener() {
+        eventSource = factory.newEventSource(okHttpRequest, new EventSourceListener() {
             @Override
             public void onOpen(@NotNull EventSource eventSource, @NotNull Response response) {
                 log.debug("Open SSE connection");
@@ -117,7 +120,7 @@ public class OkHttpClientAdapter implements HttpClient {
 
             @Override
             public void onClosed(@NotNull EventSource eventSource) {
-                log.debug("SSE connection closed");
+                log.debug("SSE connection closed from server");
                 if (serverSentEventListener != null) serverSentEventListener.onClose();
             }
 
@@ -131,9 +134,14 @@ public class OkHttpClientAdapter implements HttpClient {
                             resMsg = t.getLocalizedMessage();
                         }
                         log.error("SSE failure with response: %s".formatted(resMsg));
+                        log.debug("throws: %s".formatted(t));
+                        if (t == null) {
+                            t = new RuntimeException(resMsg);
+                        }
                         if (serverSentEventListener != null) serverSentEventListener.onError(t);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+                        if (serverSentEventListener != null) serverSentEventListener.onError(e);
                     }
                 }
                 else {
@@ -149,6 +157,15 @@ public class OkHttpClientAdapter implements HttpClient {
             }
         });
         eventSource.request();
+    }
+
+    /**
+     * Close the incompleted HTTP request since the LLM generating is usually with SSE.
+     */
+    public void close() {
+        if (eventSource != null) {
+            eventSource.cancel();
+        }
     }
 
 

@@ -192,12 +192,12 @@ public interface GenAiConstants {
         Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
                 .stream().map(je -> (JsonObject) je).toList()
                 .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
-        return mapped.getOrDefault(langCode, "as the language that I'm using.");
+        return mapped.getOrDefault(langCode, "the same language that I just said to you.");
     }
 
     String LANGS_JSON = """
             [
-                {"code": "as-is", "name": "as the language that I'm using"},
+                {"code": "as-is", "name": "the same language that I just said to you"},
                 {"code": "en-US", "name": "American English"},
                 {"code": "en-GB", "name": "British English"},
                 {"code": "en-AU", "name": "Australian English"},

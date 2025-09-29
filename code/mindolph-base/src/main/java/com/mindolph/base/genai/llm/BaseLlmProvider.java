@@ -2,7 +2,11 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents.Input;
+import com.mindolph.base.util.NetworkUtils;
+import com.mindolph.core.config.ProxyMeta;
 import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,54 +27,42 @@ public abstract class BaseLlmProvider implements LlmProvider {
 
     private static final Logger log = LoggerFactory.getLogger(BaseLlmProvider.class);
 
+    protected ProviderMeta providerMeta;
+    protected ModelMeta modelMeta;
+    protected ProxyMeta proxyMeta;
+    /**
+     * Whether proxy is enabled globally.
+     */
+    protected boolean proxyEnabled = false;
     /**
      * In Seconds
      */
     protected final int timeout;
-    protected final String apiKey;
-    protected final String aiModel;
-    protected final boolean useProxy;
-    protected final static String PROMPT_FORMAT_TEMPLATE = """
 
+    protected final static String PROMPT_FORMAT_TEMPLATE = """
+            
             {{input}}.
             {{format}}.
             {{length}}.
             {{language}}
             """;
 
-    /**
-     * Proxy settings.
-     */
-    protected boolean proxyEnabled = false;
-    protected String proxyUrl;
-    protected String proxyType;
-    protected String proxyHost;
-    protected int proxyPort;
-    protected String proxyUser;
-    protected String proxyPassword;
-
-    public BaseLlmProvider(String apiKey, String aiModel, boolean useProxy) {
-        this.apiKey = apiKey;
-        this.aiModel = aiModel;
-        this.useProxy = useProxy;
+    public BaseLlmProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
         FxPreferences fxPreferences = FxPreferences.getInstance();
+        this.providerMeta = providerMeta;
+        this.modelMeta = modelMeta;
         this.timeout = fxPreferences.getPreference(GEN_AI_TIMEOUT, 60);
-        // Proxy settings TODO use ProxyMeta instead
-        proxyEnabled = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
-        if (proxyEnabled) {
-            proxyType = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_TYPE, "HTTP");
-            proxyHost = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_HOST, "");
-            proxyPort = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PORT, 0);
-            proxyUrl = "%s://%s:%s".formatted(StringUtils.lowerCase(proxyType), proxyHost, proxyPort).trim();
-            proxyUser = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_USERNAME, "");
-            proxyPassword = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_PASSWORD, "");
+        // Proxy settings
+        this.proxyEnabled = fxPreferences.getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
+        if (this.proxyEnabled) {
+            this.proxyMeta = NetworkUtils.getProxyMeta();
         }
     }
 
     //
     protected String determineModel(Input input) {
         if (StringUtils.isBlank(input.model())) {
-            return aiModel;
+            return modelMeta.getName();
         }
         else {
             return input.model();

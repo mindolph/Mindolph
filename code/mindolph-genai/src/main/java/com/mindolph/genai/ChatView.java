@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
@@ -138,7 +139,7 @@ public class ChatView extends BaseView implements Initializable {
                 .in(p -> {
                     btnSend.setDisable(true);
                 })
-                .state(ChatState.STOPED)
+                .state(ChatState.STOPPED)
                 .in(p -> {
                     taInput.setDisable(false);
                     btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
@@ -161,10 +162,10 @@ public class ChatView extends BaseView implements Initializable {
                 .action("Streaming response", ChatState.STREAMING, ChatState.STREAMING)
                 .action("Streaming response stop with failure", ChatState.STREAMING, ChatState.READY)
                 .action("User stop streaming response", ChatState.STREAMING, ChatState.STOPING)
-                .action("Streaming response is stopped", ChatState.STOPING, ChatState.STOPED)
+                .action("Streaming response is stopped", ChatState.STOPING, ChatState.STOPPED)
                 .action("Streaming response completed", ChatState.STREAMING, ChatState.READY)
-                .action("User type again", ChatState.STOPED, ChatState.TYPING)
-                .action("Switch agent on STOPPED state", ChatState.STOPED, ChatState.SWITCHING)
+                .action("User type again", ChatState.STOPPED, ChatState.TYPING)
+                .action("Switch agent on STOPPED state", ChatState.STOPPED, ChatState.SWITCHING)
                 .action("Switch agent on TYPING state", ChatState.TYPING, ChatState.SWITCHING);
         chatStateMachine = new StateMachine<>(builder);
         chatStateMachine.start();
@@ -189,7 +190,7 @@ public class ChatView extends BaseView implements Initializable {
                     put(ChatState.READY, ChatState.SWITCHING);
                     put(ChatState.SWITCH_FAILED, ChatState.SWITCHING);
                     put(ChatState.TYPING, ChatState.SWITCHING);
-                    put(ChatState.STOPED, ChatState.SWITCHING);
+                    put(ChatState.STOPPED, ChatState.SWITCHING);
                 }
             });
             RagService.getInstance().listenOnProgressEvent(s -> {
@@ -234,8 +235,8 @@ public class ChatView extends BaseView implements Initializable {
                 chatStateMachine.post(ChatState.TYPING);
             }
             else {
-                // return to ready when clear the input only on typing state (because sending chat clear the input text)
-                chatStateMachine.postOnState(ChatState.READY, ChatState.TYPING);
+                // return to ready when clear the input only on typing state (distinguish with sending chat clear the input text)
+                chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.TYPING, currentAgentMeta);
             }
         });
         taInput.setOnKeyReleased(event -> {
@@ -297,14 +298,22 @@ public class ChatView extends BaseView implements Initializable {
                                     chatPartial.setLast(true);
                                     chatPane.appendChatPartial(chatPartial);
                                     chatPane.scrollToBottom();
-                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPED, currentAgentMeta);
+                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPPED, currentAgentMeta);
                                 });
                             })
                             .onError(e -> {
                                 Platform.runLater(() -> {
-                                    // the STOP action might cause the LLM provider response with error, so it is inappropriate to show dialogs.
-                                    // DialogFactory.errDialog(e.getMessage());
-                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPED, ChatState.STOPING, currentAgentMeta);
+                                    log.error(e.getMessage(), e);
+                                    // the STOP action might cause the LLM provider response with error, so only exception from LLM provider (which means in state STREAMING) shows error to user.
+                                    if (chatStateMachine.isState(ChatState.STREAMING)) {
+                                        String errMsg = RagService.getInstance().extractErrorMessageFromLLM(currentAgentMeta.getChatProvider(), e.getLocalizedMessage());
+                                        Notifications.create().title("Error from agent").text(errMsg).hideAfter(Duration.seconds(15)).show();
+                                        chatPane.endWaiting();
+                                        RagService.getInstance().stop(); // make sure the http connection is closed.
+                                    }
+                                    // to READY if LLM provider response with errors.
+                                    // to STOPPED if user stopped the streaming.
+                                    chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPPED, ChatState.STOPING, currentAgentMeta);
                                 });
                             })
                             .start();
@@ -326,6 +335,6 @@ public class ChatView extends BaseView implements Initializable {
     }
 
     private enum ChatState {
-        INIT, LOADING, LOAD_FAILED, READY, SWITCHING, SWITCH_FAILED, TYPING, CHATTING, STREAMING, STOPING, STOPED
+        INIT, LOADING, LOAD_FAILED, READY, SWITCHING, SWITCH_FAILED, TYPING, CHATTING, STREAMING, STOPING, STOPPED
     }
 }

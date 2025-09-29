@@ -1,12 +1,23 @@
 package com.mindolph.base.genai.rag;
 
+import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.base.genai.llm.OkHttpClientAdapter;
+import com.mindolph.base.genai.model.LangChainSupport;
+import com.mindolph.base.util.NetworkUtils;
+import com.mindolph.core.config.ProxyMeta;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
+import com.mindolph.core.util.Tuple2;
+import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.GlobalExecutor;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
@@ -34,7 +45,12 @@ public class RagService extends BaseEmbeddingService {
 
     private static RagService instance;
 
-    private StreamingChatModelAdapter streamingChatModelAdapter;
+    private StreamingChatModel streamingChatModel;
+
+    // Since the LangChain doesn't support cancel/stop the running http request(sometimes SSE), the OkHttpClientAdapter has to be here to do that.
+    private OkHttpClientAdapter okHttpClientAdapter;
+
+    private LangChainSupport langChainSupport;
 
     private Agent agent;
 
@@ -85,14 +101,14 @@ public class RagService extends BaseEmbeddingService {
                             finished.accept(errorOrMessage);
                         }
                         else {
-                            this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
+                            this.streamingChatModel = this.buildStreamingChatModel(agentMeta);
                             this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
                             if (this.contentRetriever == null) {
                                 finished.accept(new RuntimeException("Unable to use this agent"));
                                 return;
                             }
                             agent = AiServices.builder(Agent.class)
-                                    .streamingChatModel(streamingChatModelAdapter)
+                                    .streamingChatModel(streamingChatModel)
                                     .systemMessageProvider(o -> agentMeta.getPromptTemplate())
                                     .contentRetriever(contentRetriever)
                                     .chatMemory(chatMemory)
@@ -104,9 +120,9 @@ public class RagService extends BaseEmbeddingService {
                 }
                 else {
                     // build agent as a chatbot.
-                    this.streamingChatModelAdapter = new StreamingChatModelAdapter(agentMeta);
+                    this.streamingChatModel = this.buildStreamingChatModel(agentMeta);
                     AiServices<Agent> builder = AiServices.builder(Agent.class)
-                            .streamingChatModel(streamingChatModelAdapter)
+                            .streamingChatModel(streamingChatModel)
                             .systemMessageProvider(o -> agentMeta.getPromptTemplate())
                             .chatMemory(chatMemory);
                     agent = builder.build();
@@ -146,7 +162,57 @@ public class RagService extends BaseEmbeddingService {
     }
 
     public void stop() {
-        this.streamingChatModelAdapter.setStop(true);
+        if (this.streamingChatModel instanceof StreamingChatModelAdapter scma) {
+            scma.setStop(true);
+        }
+        else {
+            if (okHttpClientAdapter != null) {
+                okHttpClientAdapter.close();
+            }
+        }
+    }
+
+    public String extractErrorMessageFromLLM(GenAiModelProvider provider, String llmMsg) {
+        if (this.supportedByLangchain(provider) && langChainSupport != null) {
+            try {
+                return langChainSupport.extractErrorMessageFromLLM(llmMsg);
+            } catch (Exception e) {
+                log.warn(e.getMessage(), e);
+                return llmMsg;
+            }
+        }
+        else {
+            return llmMsg;
+        }
+    }
+
+    private StreamingChatModel buildStreamingChatModel(AgentMeta agentMeta) {
+        GenAiModelProvider provider = agentMeta.getChatProvider();
+        if (this.supportedByLangchain(provider)) {
+            this.langChainSupport = LangChainSupport.createSupport(provider);
+            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
+            ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider.name(), agentMeta.getChatModel());
+            Boolean proxyEnabled = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
+            ProxyMeta proxyMeta = NetworkUtils.getProxyMeta();
+            // The Input is not for inputting but for compatible with the providers for Generate&Summarize features;
+            // TODO temperature should be parameterized.
+            Tuple2<StreamingChatModel, OkHttpClientAdapter> tuple = langChainSupport.buildStreamingChatModel(providerMeta, modelMeta, 0.5f, proxyMeta, proxyEnabled);
+            this.okHttpClientAdapter = tuple.b();
+            return tuple.a();
+        }
+        else {
+            // TODO how about extracting err message like LangChainSupport?
+            return new StreamingChatModelAdapter(agentMeta);
+        }
+    }
+
+    private boolean supportedByLangchain(GenAiModelProvider genAiModelProvider) {
+        // NOTE: some providers are supported by LangChain4j but not with streaming like ChatGLM, they are excluded.
+        // some providers support like HuggingFace don't include some features like streaming, they are also excluded.
+        return GenAiModelProvider.ALI_Q_WEN == genAiModelProvider
+                || GenAiModelProvider.OPEN_AI == genAiModelProvider
+                || GenAiModelProvider.OLLAMA == genAiModelProvider
+                || GenAiModelProvider.GEMINI == genAiModelProvider;
     }
 
     private ContentRetriever buildContentRetriever(String agentId) {

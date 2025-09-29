@@ -15,14 +15,14 @@ public interface LlmProvider {
      * @param outputParams
      * @return
      */
-    StreamToken predict(Input input, OutputParams outputParams);
+    StreamPartial predict(Input input, OutputParams outputParams);
 
     /**
      * @param input
      * @param outputParams
      * @param consumer
      */
-    void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer);
+    void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer);
 
     /**
      * Stop the streaming when it's running.

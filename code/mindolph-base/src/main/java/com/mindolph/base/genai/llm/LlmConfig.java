@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
@@ -83,6 +84,18 @@ public class LlmConfig {
             }
         }
         return null;
+    }
+
+    public ModelMeta lookupModel(GenAiModelProvider provider, String modelName) {
+        return lookupModel(provider.name(), modelName);
+    }
+
+    public ModelMeta lookupModel(String providerName, String modelName) {
+        ModelMeta modelMeta = GenAiConstants.lookupModelMeta(providerName, modelName);
+        if (modelMeta == null) {
+            modelMeta = LlmConfig.getIns().lookupCustomModel(providerName, modelName);
+        }
+        return modelMeta;
     }
 
     public ModelMeta lookupCustomModel(String providerName, String modelName) {

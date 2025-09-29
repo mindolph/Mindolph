@@ -5,6 +5,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
@@ -52,16 +54,16 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
             }
             """;
 
-    public DeepSeekProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public DeepSeekProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         RequestBody requestBody = super.createRequestBody(streamTemplate, determineModel(input), input, outputParams);
         Request request = new Request.Builder()
                 .url(API_URL)
-                .header("Authorization", "Bearer %s".formatted(apiKey))
+                .header("Authorization", "Bearer %s".formatted(providerMeta.apiKey()))
                 .header("x-wait-for-model", "true")
                 .post(requestBody)
                 .build();
@@ -77,13 +79,13 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
             boolean isStop = super.determineStreamStop(choices, "finish_reason");
             if (isStop) {
                 outputTokens.set(resObject.get("usage").getAsJsonObject().get("completion_tokens").getAsInt());
-                consumer.accept(new StreamToken(StringUtils.EMPTY, outputTokens.get(), true, false));
+                consumer.accept(new StreamPartial(StringUtils.EMPTY, outputTokens.get(), true, false));
             }
             else {
                 String result = choices
                         .get("delta").getAsJsonObject()
                         .get("content").getAsString();
-                consumer.accept(new StreamToken(result, false, false));
+                consumer.accept(new StreamPartial(result, false, false));
             }
         }, (msg, throwable) -> {
 //            log.error(msg, throwable);
@@ -98,7 +100,7 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
                     message = msg;
                 }
             }
-            consumer.accept(new StreamToken(message, true, true));
+            consumer.accept(new StreamPartial(message, true, true));
         }, () -> {
 //            consumer.accept(new StreamToken(StringUtils.EMPTY, outputTokens.get(), true, false));
         });

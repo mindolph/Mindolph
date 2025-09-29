@@ -6,6 +6,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
+ * Gemini is supported by LangChain but the legacy code is kept.
+ *
  * @author mindolph.com@gmail.com
  * @since 1.7.4
  */
@@ -76,15 +80,15 @@ public class GeminiProvider extends BaseApiLlmProvider {
             }
             """;
 
-    public GeminiProvider(String apiKey, String aiModel, boolean useProxy) {
-        super(apiKey, aiModel, useProxy);
+    public GeminiProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+        super(providerMeta, modelMeta);
     }
 
     @Override
-    public StreamToken predict(Input input, OutputParams outputParams) {
+    public StreamPartial predict(Input input, OutputParams outputParams) {
         RequestBody requestBody = super.createRequestBody(template, null, input, outputParams);
         Request request = new Request.Builder()
-                .url(apiUrl().formatted(determineModel(input), apiKey))
+                .url(apiUrl().formatted(determineModel(input), providerMeta.apiKey()))
                 .post(requestBody)
                 .build();
 
@@ -109,17 +113,17 @@ public class GeminiProvider extends BaseApiLlmProvider {
                     .get("text").getAsString();
 
             int outputTokens = resBody.get("usageMetadata").getAsJsonObject().get("candidatesTokenCount").getAsInt();
-            return new StreamToken(result, outputTokens, true, false);
+            return new StreamPartial(result, outputTokens, true, false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         RequestBody requestBody = super.createRequestBody(streamTemplate, null, input, outputParams);
         Request request = new Request.Builder()
-                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(determineModel(input), apiKey))
+                .url("https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s".formatted(determineModel(input), providerMeta.apiKey()))
                 .post(requestBody)
                 .build();
         log.info("Generate content screamingly by model %s ...".formatted(determineModel(input)));
@@ -140,11 +144,12 @@ public class GeminiProvider extends BaseApiLlmProvider {
                         outputTokens = resBody.get("usageMetadata").getAsJsonObject().get("candidatesTokenCount").getAsInt();
                         log.debug("outputTokens: {}", outputTokens);
                     }
-                    consumer.accept(new StreamToken(result, outputTokens, isStop, false));
+                    consumer.accept(new StreamPartial(result, outputTokens, isStop, false));
                 }, (msg, throwable) -> {
                     String message = "ERROR";
                     if (StringUtils.isNotBlank(msg)) {
                         try {
+                            // TODO refactor to share method
                             message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
                         } catch (JsonSyntaxException e) {
                             log.warn("Not exception from Gemini API", e);
@@ -153,7 +158,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
                         }
                     }
                     log.error(message, throwable);
-                    consumer.accept(new StreamToken(message, true, true));
+                    consumer.accept(new StreamPartial(message, true, true));
                 }, () -> {
                     // NO NEED
                 });

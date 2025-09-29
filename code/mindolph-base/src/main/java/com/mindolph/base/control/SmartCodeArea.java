@@ -169,14 +169,14 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     });
                     generator.setOnStreaming((streamOutput, pane) -> {
                         Platform.runLater(() -> {
-                            if (!streamOutput.streamToken().isStop()) {
+                            if (!streamOutput.streamPartial().isStop()) {
                                 if (StringUtils.isNotBlank(SmartCodeArea.this.getSelectedText())) {
-                                    SmartCodeArea.this.replaceSelection(streamOutput.streamToken().text());
+                                    SmartCodeArea.this.replaceSelection(streamOutput.streamPartial().text());
                                 }
                                 else {
-                                    SmartCodeArea.this.insertText(streamOutput.streamToken().text());
+                                    SmartCodeArea.this.insertText(streamOutput.streamPartial().text());
                                 }
-                                if (log.isTraceEnabled()) log.trace(String.valueOf(streamOutput.streamToken()));
+                                if (log.isTraceEnabled()) log.trace(String.valueOf(streamOutput.streamPartial()));
                                 SmartCodeArea.this.relocatedPanelToCaret(pane);
                             }
                             else {

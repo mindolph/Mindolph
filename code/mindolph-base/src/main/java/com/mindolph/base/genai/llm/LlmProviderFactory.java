@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 
 import static com.mindolph.core.constant.GenAiModelProvider.*;
@@ -10,32 +11,32 @@ import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
  */
 public class LlmProviderFactory {
     
-    public static LlmProvider create(String providerName, ProviderMeta props) {
-        if (props != null) {
+    public static LlmProvider create(String providerName, ProviderMeta providerMeta, ModelMeta modelMeta) {
+        if (providerMeta != null) {
             LlmProvider llmProvider = null;
             if (OPEN_AI.name().equals(providerName)) {
-                llmProvider = new OpenAiProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new OpenAiProvider(providerMeta, modelMeta);
             }
             else if (GEMINI.name().equals(providerName)) {
-                llmProvider = new GeminiProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new GeminiProvider(providerMeta, modelMeta);
             }
             else if (ALI_Q_WEN.name().equals(providerName)) {
-                llmProvider = new QwenProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new QwenProvider(providerMeta, modelMeta);
             }
             else if (OLLAMA.name().equals(providerName)) {
-                llmProvider = new OllamaProvider(props.baseUrl(), props.aiModel(), props.useProxy());
+                llmProvider = new OllamaProvider(providerMeta, modelMeta);
             }
             else if (HUGGING_FACE.name().equals(providerName)) {
-                llmProvider = new HuggingFaceProvider2(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new HuggingFaceProvider2(providerMeta, modelMeta);
             }
             else if (CHAT_GLM.name().equals(providerName)) {
-                llmProvider = new ChatGlmProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new ChatGlmProvider(providerMeta, modelMeta);
             }
             else if (DEEP_SEEK.name().equals(providerName)) {
-                llmProvider = new DeepSeekProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new DeepSeekProvider(providerMeta, modelMeta);
             }
             else if (MOONSHOT.name().equals(providerName)) {
-                llmProvider = new MoonshotProvider(props.apiKey(), props.aiModel(), props.useProxy());
+                llmProvider = new MoonshotProvider(providerMeta, modelMeta);
             }
             else {
                 throw new RuntimeException("No llm provider setup: %s".formatted(providerName));

@@ -87,16 +87,16 @@ public class DummyLlmProvider implements LlmProvider {
     };
 
     @Override
-    public StreamToken predict(Input input, OutputParams outputParams) {
+    public StreamPartial predict(Input input, OutputParams outputParams) {
         try {
-            Thread.sleep(RandomUtils.nextInt(500, 3000));
+            Thread.sleep(RandomUtils.secure().randomInt(500, 3000));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         if (System.currentTimeMillis() % 3 == 0) {
             throw new RuntimeException("Mock LLM exception");
         }
-        String chatId = RandomStringUtils.randomAlphabetic(10);
+        String chatId = RandomStringUtils.secure().nextAlphabetic(10);
 
         String length = LENGTH_NORMAL;
         if (input.text().contains(LENGTH_LONG)) {
@@ -124,11 +124,11 @@ public class DummyLlmProvider implements LlmProvider {
                     break;
             }
         }
-        return new StreamToken(generated, 999, true, false);
+        return new StreamPartial(generated, 999, true, false);
     }
 
     @Override
-    public void stream(Input input, OutputParams outputParams, Consumer<StreamToken> consumer) {
+    public void stream(Input input, OutputParams outputParams, Consumer<StreamPartial> consumer) {
         // TODO
     }
 

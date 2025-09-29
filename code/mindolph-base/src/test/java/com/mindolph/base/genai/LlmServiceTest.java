@@ -3,7 +3,7 @@ package com.mindolph.base.genai;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
-import com.mindolph.base.genai.llm.StreamToken;
+import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,9 +27,9 @@ public class LlmServiceTest {
 
     @Test
     public void predict() {
-        StreamToken predict1 = LlmService.getIns().predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        StreamPartial predict1 = LlmService.getIns().predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(predict1);
-        StreamToken predict2 = LlmService.getIns().predict(testInput, new OutputParams(OutputAdjust.LONGER, OutputFormat.TEXT));
+        StreamPartial predict2 = LlmService.getIns().predict(testInput, new OutputParams(OutputAdjust.LONGER, OutputFormat.TEXT));
         System.out.println(predict2);
     }
 
