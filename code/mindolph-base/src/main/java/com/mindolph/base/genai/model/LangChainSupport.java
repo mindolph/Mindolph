@@ -85,7 +85,7 @@ public interface LangChainSupport {
                 return new OllamaLangChainSupport() {
                 };
             }
-            default -> throw new RuntimeException("Not supported provider:" + providerType.name());
+            default -> throw new RuntimeException("Not supported provider:%s".formatted(providerType.name()));
         }
     }
 
@@ -99,7 +99,7 @@ public interface LangChainSupport {
     }
 
     default Duration defaultTimeout() {
-        return Duration.ofSeconds(FxPreferences.getInstance().getPreference(GEN_AI_TIMEOUT, 60));
+        return Duration.ofSeconds(FxPreferences.getInstance().getPreference(GEN_AI_TIMEOUT, 30));
     }
 
     /**
@@ -110,6 +110,7 @@ public interface LangChainSupport {
      */
     default OkHttpClientBuilder createHttpClientBuilder(ProviderMeta providerMeta, boolean proxyEnabled, ProxyMeta proxyMeta) {
         OkHttpClientBuilder okHttpClientBuilder = new OkHttpClientBuilder();
+        okHttpClientBuilder.connectTimeout(defaultTimeout());
         if (providerMeta.useProxy() && proxyEnabled && proxyMeta != null) {
             okHttpClientBuilder.setProxyHost(proxyMeta.host()).setProxyPort(proxyMeta.port()).setProxyType(proxyMeta.type().toUpperCase());
         }

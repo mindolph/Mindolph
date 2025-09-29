@@ -116,6 +116,8 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
                             tfApiKey.setDisable(true);
                             tfBaseUrl.setDisable(false);
                         }
+                        btnAdd.setDisable(provider.getType() == ProviderType.INTERNAL);
+                        btnRemove.setDisable(true); // disable when provider changes.
                         ProviderMeta providerMeta = map.get(currentProviderName);
                         if (providerMeta == null) {
                             // init for a vendor who had never been set up.
@@ -182,9 +184,6 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
                 boolean sure = DialogFactory.okCancelConfirmDialog("Are you sure to delete the custom model '%s'".formatted(modelMeta.getName()));
                 if (sure) {
                     currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
-                    currentProviderMeta.customModels().stream().findFirst().ifPresent(mm -> {
-                        mm.setActive(true);
-                    });
                     super.saveChanges();
                     showAllModels(currentProviderName);
                 }
@@ -217,14 +216,27 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
     }
 
     private void updateByModelSelection(ModelMeta model) {
-        if (model == null || model.maxTokens() <= 0) {
-            lbMaxOutputTokens.setVisible(false);
-        }
-        else {
-            lbMaxOutputTokens.setVisible(true);
-            lbMaxOutputTokens.setText("Is custom model: %s\nMax output tokens: %s".formatted(model.isCustom() ? "yes" : "no", displayGenAiTokens(model.maxTokens())));
-        }
+        lbMaxOutputTokens.setVisible(model != null && (model.isInternal() || model.maxTokens() > 0));
         if (model != null) {
+            if (model.isInternal()) {
+                String template = """
+                        Type: Internal embedding model
+                        Language code: %s
+                        Dimension: %d
+                        """;
+                lbMaxOutputTokens.setText(template.formatted(SUPPORTED_EMBEDDING_LANG.get(model.getLangCode()), model.getDimension()));
+            }
+            else {
+                // external models
+                if (model.maxTokens() > 0) {
+                    String template = """
+                            Type: Chat model
+                            Is custom: %s
+                            Max output tokens: %s
+                            """;
+                    lbMaxOutputTokens.setText(template.formatted(model.isCustom() ? "yes" : "no", displayGenAiTokens(model.maxTokens())));
+                }
+            }
             btnRemove.setDisable(!model.isCustom());
         }
     }
