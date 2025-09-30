@@ -55,6 +55,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
                 datasetMeta.setLanguageCode(SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode()));
             });
             this.getItems().addAll(datasetMetas);
+            super.refresh();
         }
         return true;
     }

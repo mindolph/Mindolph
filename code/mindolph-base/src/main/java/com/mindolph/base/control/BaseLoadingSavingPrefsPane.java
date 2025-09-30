@@ -40,7 +40,7 @@ public abstract class BaseLoadingSavingPrefsPane extends BasePrefsPane {
      */
     protected void saveChanges() {
         // reducing saving changes request
-        log.debug("Fire event to Save changes lazily");
+        log.debug("Fire event to Save changes lazily without notification");
         // if the panel is loading, nothing will happen.
         changeEventSource.push(new SavingChanges(!isLoaded));
     }
@@ -51,7 +51,7 @@ public abstract class BaseLoadingSavingPrefsPane extends BasePrefsPane {
      * @param doNotify whether notify to the listener that some important preferences have been changed.
      */
     protected void saveChanges(boolean doNotify) {
-        log.debug("Fire event to Save changes lazily with notify flag: %s".formatted(doNotify));
+        log.debug("Fire event to Save changes lazily with notification: %s".formatted(doNotify));
         changeEventSource.push(new SavingChanges(!isLoaded, doNotify));
     }
 

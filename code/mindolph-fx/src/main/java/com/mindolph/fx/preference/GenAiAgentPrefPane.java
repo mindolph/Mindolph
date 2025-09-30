@@ -43,6 +43,8 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     @FXML
     private Button btnRemoveAgent;
     @FXML
+    private TextField tfName;
+    @FXML
     private TextField tfDescription;
     @FXML
     private ChoiceBox<Pair<String, String>> cbLanguage;
@@ -76,6 +78,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             if (agentMeta != null) {
                 currentAgentMeta = agentMeta;
                 super.fxPreferences.savePreference(SceneStatePrefs.GEN_AI_AGENT_LATEST, agentMeta.getId());
+                tfName.setText(agentMeta.getName());
                 tfDescription.setText(agentMeta.getDescription());
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentAgentMeta.getLanguageCode());
                 taAgentPrompt.setText(agentMeta.getPromptTemplate());
@@ -98,8 +101,9 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             log.debug("Loading completed.");
             super.afterLoading();
         });
-        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
-        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
+
+        this.reloadAgents();
+
         super.initEmbeddingModelRelatedComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
         super.initChatModelRelatedComponents(this.cbChatProvider, this.cbChatModel);
 
@@ -137,6 +141,9 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
                 }
                 afterLoading();
             }
+        });
+        tfName.textProperty().addListener((observable, oldValue, newValue) -> {
+            super.saveChanges();
         });
         tfDescription.textProperty().addListener((observable, oldValue, newValue) -> {
             super.saveChanges(false);
@@ -177,10 +184,23 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         });
     }
 
+    private void reloadAgents() {
+        log.debug("reload agents for selection");
+        int selectedIndex = cbAgent.getSelectionModel().getSelectedIndex();
+        cbAgent.getItems().clear();
+        Map<String, AgentMeta> agentMap = LlmConfig.getIns().loadAgents();
+        cbAgent.getItems().addAll(agentMap.values().stream().map(agentMeta -> new Pair<>(agentMeta.getId(), agentMeta)).toList());
+        cbAgent.getSelectionModel().select(selectedIndex);
+    }
+
     @Override
     protected void onSave(boolean notify) {
         log.debug("onSave");
+        boolean isNameChanged = !currentAgentMeta.getName().equals(tfName.getText());
         this.saveCurrentAgent();
+        if (isNameChanged) {
+            this.reloadAgents();
+        }
         super.onSave(notify);
     }
 
@@ -191,6 +211,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
 //        }
         AgentMeta am = currentAgentMeta;
         log.debug("On save agent {}: {}", am.getId(), am.getName());
+        am.setName(tfName.getText());
         am.setDescription(tfDescription.getText());
 
         // chat model
@@ -231,16 +252,17 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     }
 
     private void disableAll() {
-        NodeUtils.disable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
+        NodeUtils.disable(tfName, tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
     }
 
     private void enableAll() {
-        NodeUtils.enable(tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
+        NodeUtils.enable(tfName, tfDescription, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, cbChatProvider, cbChatModel, btnSetDataset, tvDatasets, btnRemoveAgent, taAgentPrompt);
     }
 
     private void clearAll() {
-        tfDescription.setText("");
-        taAgentPrompt.setText("");
+        tfName.clear();
+        tfDescription.clear();
+        taAgentPrompt.clear();
         cbLanguage.getSelectionModel().clearSelection();
         super.unselectEmbeddingProviderAndModel();
         tvDatasets.getItems().clear();

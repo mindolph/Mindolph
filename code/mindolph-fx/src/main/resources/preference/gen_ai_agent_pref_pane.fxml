@@ -15,6 +15,9 @@
             <Button fx:id="btnAddAgent"/>
             <Button fx:id="btnRemoveAgent"/>
         </PreferenceItem>
+        <PreferenceItem name="Name:" labelMinWidth="180" labelPrefWidth="180">
+            <TextField fx:id="tfName" prefWidth="240.0"/>
+        </PreferenceItem>
         <PreferenceItem name="Description:" labelMinWidth="180" labelPrefWidth="180">
             <TextField fx:id="tfDescription" prefWidth="240.0"/>
         </PreferenceItem>

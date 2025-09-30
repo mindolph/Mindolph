@@ -58,6 +58,8 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     @FXML
     private Button btnRemoveDataset;
     @FXML
+    private TextField tfName;
+    @FXML
     private ChoiceBox<Pair<String, String>> cbLanguage;
     @FXML
     private WorkspaceSelector workspaceSelector;
@@ -171,6 +173,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
                 currentDatasetMeta = datasetMeta;
                 // save current active dataset ID.
                 super.fxPreferences.savePreference(SceneStatePrefs.GEN_AI_DATASET_LATEST, datasetMeta.getId());
+                tfName.setText(datasetMeta.getName());
                 // init language selection
                 ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
                 // init model provider and model.
@@ -195,10 +198,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
             afterLoading();
         });
-        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
-        if (datasetMap != null && !datasetMap.isEmpty()) {
-            cbDataset.getItems().addAll(datasetMap.values().stream().map(ds -> new Pair<>(ds.getId(), ds)).toList());
-        }
+        this.reloadDatasets();
         btnAddDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddDataset.setOnAction(event -> {
@@ -308,6 +308,10 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
             }
         });
 
+        tfName.textProperty().addListener((observable, oldValue, newValue) -> {
+            super.saveChanges();
+        });
+
         // pre-select latest selected dataset
         String latestDatasetId = super.fxPreferences.getPreference(SceneStatePrefs.GEN_AI_DATASET_LATEST, String.class);
         int selectIdx = cbDataset.getItems().stream().map(Pair::getKey).toList().indexOf(latestDatasetId);
@@ -321,10 +325,25 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 
     }
 
+    private void reloadDatasets() {
+        log.debug("reload datasets for selection");
+        int selectedIndex = cbDataset.getSelectionModel().getSelectedIndex();
+        cbDataset.getItems().clear();
+        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
+        if (datasetMap != null && !datasetMap.isEmpty()) {
+            cbDataset.getItems().addAll(datasetMap.values().stream().map(ds -> new Pair<>(ds.getId(), ds)).toList());
+        }
+        cbDataset.getSelectionModel().select(selectedIndex);
+    }
+
     @Override
     protected void onSave(boolean notify) {
-        super.onSave(notify);
+        boolean isNameChanged = !currentDatasetMeta.getName().equals(tfName.getText());
         this.saveCurrentDataset();
+        if (isNameChanged) {
+            this.reloadDatasets();
+        }
+        super.onSave(notify);
     }
 
     private DatasetMeta saveCurrentDataset() {
@@ -332,6 +351,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 //            return null;
 //        }
         DatasetMeta datasetMeta = currentDatasetMeta;
+        datasetMeta.setName(this.tfName.getText());
         datasetMeta.setLanguageCode(super.safeGetSelectedLanguageCode(cbLanguage));
         if (super.cbEmbeddingProvider.hasSelected()) {
             datasetMeta.setProvider(super.cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
@@ -374,19 +394,20 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
     }
 
     private void disableAll() {
-        NodeUtils.disable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
+        NodeUtils.disable(tfName, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
         pbProgress.setVisible(false);
 //        lblSelectedFiles.setText("");
         lblEmbeddingStatus.setText("");
     }
 
     private void enableAll() {
-        NodeUtils.enable(cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
+        NodeUtils.enable(tfName, cbLanguage, cbEmbeddingProvider, cbEmbeddingModel, workspaceSelector, btnRemoveDataset, btnEmbedding, fileSelectView);
     }
 
     private void clearAll() {
         // doesn't work here, guest it can't be called after elements were changed.
 //        cbDataset.getSelectionModel().clearSelection();
+        tfName.clear();
         cbLanguage.getSelectionModel().clearSelection();
         super.unselectEmbeddingProviderAndModel();
 //        workspaceSelector.getItems().clear();
