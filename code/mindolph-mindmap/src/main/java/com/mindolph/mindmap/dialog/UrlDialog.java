@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Dialog to input URL, called from Swing.
+ * Dialog to input URL.
  *
  * @author mindolph.com@gmail.com
  */
