@@ -31,6 +31,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -281,7 +282,7 @@ public class InputHelperManager {
                         .distinct().toList();
 
                 // use user input to filter the help words.
-                List<String> filtered = helpWords.stream().filter(s -> StringUtils.startsWithIgnoreCase(s, input)).toList();
+                List<String> filtered = helpWords.stream().filter(s -> Strings.CI.startsWith(s, input)).toList();
 
                 if (CollectionUtils.isEmpty(filtered)) {
                     continue;

@@ -120,7 +120,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             ModelMeta selectedModel = newValue.getValue();
             if (selectedModel.isInternal() && selectedModel.getType() == MODEL_TYPE_EMBEDDING && StringUtils.isNotBlank(selectedModel.getDownloadUrl())) {
                 log.debug("selected model is local embedding model: %s".formatted(selectedModel.getName()));
-                String langCode = cbLanguage.getSelectionModel().getSelectedItem().getKey();
+                String langCode = safeGetSelectedLanguageCode(cbLanguage);
                 // require download
                 if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel.getName())) {
                     if (DialogFactory.yesNoConfirmDialog("Download model",
@@ -158,6 +158,12 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             }
             super.saveChanges();
         });
+    }
+
+    protected String safeGetSelectedLanguageCode(ChoiceBox<Pair<String, String>> cbLanguage) {
+        return (cbLanguage == null || cbLanguage.getSelectionModel().isEmpty())
+                ? null
+                : cbLanguage.getSelectionModel().getSelectedItem().getKey();
     }
 
     // update the model component by provider and language choices.

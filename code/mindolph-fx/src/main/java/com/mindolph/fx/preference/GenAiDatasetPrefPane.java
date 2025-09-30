@@ -332,9 +332,7 @@ public class GenAiDatasetPrefPane extends BaseGenAiPrefPane implements Initializ
 //            return null;
 //        }
         DatasetMeta datasetMeta = currentDatasetMeta;
-        if (!cbLanguage.getSelectionModel().isEmpty()) {
-            datasetMeta.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
-        }
+        datasetMeta.setLanguageCode(super.safeGetSelectedLanguageCode(cbLanguage));
         if (super.cbEmbeddingProvider.hasSelected()) {
             datasetMeta.setProvider(super.cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
         }

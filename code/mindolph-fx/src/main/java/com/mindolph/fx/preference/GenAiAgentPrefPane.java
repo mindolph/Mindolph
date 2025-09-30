@@ -148,7 +148,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         btnSetDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
         btnSetDataset.setOnAction(event -> {
             List<DatasetMeta> selectedDatasets = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
-            DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets);
+            DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets, super.safeGetSelectedLanguageCode(cbLanguage));
             List<DatasetMeta> datasetMetas = dialog.showAndWait();
             if (tvDatasets.replaceAll(datasetMetas)) {
                 super.saveChanges();
@@ -224,9 +224,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
             am.setEmbeddingProvider(null);
             am.setEmbeddingModel(null);
         }
-        if (!cbLanguage.getSelectionModel().isEmpty()) {
-            am.setLanguageCode(cbLanguage.getSelectionModel().getSelectedItem().getKey());
-        }
+        am.setLanguageCode(super.safeGetSelectedLanguageCode(cbLanguage));
         am.setDatasetIds(tvDatasets.getItems().stream().map(DatasetMeta::getId).toList());
         LlmConfig.getIns().saveAgent(am.getId(), am);
         return am;
