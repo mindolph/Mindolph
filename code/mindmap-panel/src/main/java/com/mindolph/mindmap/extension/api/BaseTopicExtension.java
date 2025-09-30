@@ -13,7 +13,6 @@ public abstract class BaseTopicExtension extends BasePopupMenuItemExtension {
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {
 
         MenuItem result = new MenuItem(getName(context, activeTopic), getIcon(context, activeTopic));
-
 //        result.setToolTipText(getReference());
 
         result.setOnAction(e -> {
@@ -42,7 +41,7 @@ public abstract class BaseTopicExtension extends BasePopupMenuItemExtension {
 
     @Override
     public boolean isEnabled(ExtensionContext context, TopicNode activeTopic) {
-        return context.getSelectedTopics().size() == 1 || (context.getSelectedTopics().size() == 0 && activeTopic != null);
+        return context.getSelectedTopics().size() == 1 || (context.getSelectedTopics().isEmpty() && activeTopic != null);
     }
 
     protected void doActionForTopic(ExtensionContext context, TopicNode actionTopic) {

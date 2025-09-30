@@ -578,8 +578,8 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             }
 
             new UrlDialog(String.format("URL of topic %s", topic.getText()), url).show(resultURL -> {
-                log.debug("URL: " + resultURL);
-                if (resultURL == null) {
+                log.debug("URL: %s".formatted(resultURL));
+                if (resultURL == null || resultURL.trim().equals(topic.getExtras().get(Extra.ExtraType.LINK).getAsString())) {
                     return; // cancel
                 }
                 if (StringUtils.isBlank(resultURL)) {
@@ -587,7 +587,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                 }
                 else {
                     try {
-                        topic.setExtra(new ExtraLink(resultURL));
+                        topic.setExtra(new ExtraLink(resultURL.trim()));
                     } catch (URISyntaxException e) {
                         log.error(e.getMessage(), e);
                     }
