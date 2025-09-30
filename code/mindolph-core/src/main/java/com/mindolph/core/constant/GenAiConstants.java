@@ -55,9 +55,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash-lite", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.0-flash", 8192));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.0-flash-lite", 8192));
-            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-pro", 8192));
-            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash", 8192));
-            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
+//            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-pro", 8192));
+//            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash", 8192));
+//            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // Qwen https://help.aliyun.com/zh/model-studio/developer-reference/what-is-qwen-llm#267c7b3691v9k
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", 65536));
