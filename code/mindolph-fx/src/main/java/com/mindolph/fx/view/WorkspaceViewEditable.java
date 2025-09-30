@@ -882,20 +882,21 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             log.debug("Select in tree: %s".formatted(nodeData));
             return TreeVisitor.dfsSearch(rootItem, treeItem -> {
                 NodeData curNodeData = treeItem.getValue();
+                if (curNodeData.getFile().equals(nodeData.getFile())) {
+                    log.debug("Found tree item to select");
+                    treeItem.setExpanded(true);
+                    treeView.reselect(treeItem);
+                    return treeItem; // stop traversing
+                }
                 if (!treeItem.isLeaf()) {
                     if (curNodeData.isParentOf(nodeData)) {
                         treeItem.setExpanded(true);
                     }
                     else {
                         // stop traversing deeper for unnecessary searching
+                        log.debug("Not traversing deeper for the tree item is not parent of target node");
                         return null;
                     }
-                }
-                if (curNodeData.getFile().equals(nodeData.getFile())) {
-                    log.debug("Found tree item to select");
-                    treeItem.setExpanded(true);
-                    treeView.reselect(treeItem);
-                    return treeItem; // stop traversing
                 }
                 return new TreeItem<>(); // keep traversing
             });
