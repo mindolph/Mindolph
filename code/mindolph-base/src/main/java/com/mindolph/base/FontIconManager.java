@@ -248,6 +248,9 @@ public class FontIconManager {
         else if (fileData.isImage()) {
             return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.IMAGE, iconSize);
         }
+        else if (fileData.isUnknown()) {
+            return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_OUTLINE, iconSize); // as default icon
+        }
         else {
             return MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.FILE_OUTLINE, iconSize); // as default icon
         }
