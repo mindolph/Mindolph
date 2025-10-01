@@ -39,7 +39,7 @@ public class NodeData implements ItemData {
     public NodeData(File file) {
         this.file = file;
         this.name = file.getName();
-        this.nodeType = file.isFile() ? NodeType.FILE : NodeType.FOLDER;
+        this.nodeType = file.isFile() ? NodeType.FILE : (file.isDirectory() ? NodeType.FOLDER : NodeType.UNKNOWN);
     }
 
     public NodeData(NodeType nodeType, File file) {
@@ -63,6 +63,10 @@ public class NodeData implements ItemData {
 
     public boolean isFile() {
         return nodeType == NodeType.FILE;
+    }
+
+    public boolean isUnknown() {
+        return nodeType == NodeType.UNKNOWN;
     }
 
     public boolean isParentOf(NodeData nodeData) {
