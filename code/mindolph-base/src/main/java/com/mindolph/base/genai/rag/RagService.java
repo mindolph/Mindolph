@@ -3,7 +3,7 @@ package com.mindolph.base.genai.rag;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
-import com.mindolph.base.genai.model.LangChainSupport;
+import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.util.NetworkUtils;
 import com.mindolph.core.config.ProxyMeta;
 import com.mindolph.core.constant.GenAiModelProvider;

@@ -3,7 +3,7 @@ package com.mindolph.fx.dialog;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.fx.preference.FontPreferencesPane;
-import com.mindolph.fx.preference.GenAiPreferencePane;
+import com.mindolph.fx.preference.AiPreferencePane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
 import com.mindolph.mfx.container.SideTabPane;
@@ -44,7 +44,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 //    private PlantumlPreferences plantumlPreferences;
 
     @FXML
-    private GenAiPreferencePane genAiPreferences;
+    private AiPreferencePane genAiPreferences;
 
     @FXML
     private Tab tabGeneral;

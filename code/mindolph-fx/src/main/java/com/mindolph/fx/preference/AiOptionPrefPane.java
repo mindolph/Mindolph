@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.VectorStoreProvider.PG_VECTOR;
@@ -35,9 +36,9 @@ import static com.mindolph.genai.GenaiUiConstants.vectorStoreConverter;
 /**
  * @since 1.13.0
  */
-public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements Initializable {
+public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initializable {
 
-    private static final Logger log = LoggerFactory.getLogger(GenAiOptionPrefPane.class);
+    private static final Logger log = LoggerFactory.getLogger(AiOptionPrefPane.class);
     @FXML
     private ChoiceBox<Pair<String, String>> cbLanguages;
     @FXML
@@ -68,7 +69,7 @@ public class GenAiOptionPrefPane extends BaseModelProviderPrefPane implements In
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbModelSummarize;
 
-    public GenAiOptionPrefPane() {
+    public AiOptionPrefPane() {
         super("/preference/gen_ai_option_pref_pane.fxml");
     }
 

@@ -52,9 +52,9 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbLanguage
      * @param cbModel
      */
-    protected void initEmbeddingModelRelatedComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
-                                                       ChoiceBox<Pair<String, String>> cbLanguage,
-                                                       ChoiceBox<Pair<String, ModelMeta>> cbModel) {
+    protected void initEmbeddingModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                       MChoiceBox<Pair<String, String>> cbLanguage,
+                                                       MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, cbLanguage, cbModel, MODEL_TYPE_EMBEDDING);
     }
 
@@ -63,8 +63,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbProvider
      * @param cbModel
      */
-    protected void initChatModelRelatedComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
-                                                  ChoiceBox<Pair<String, ModelMeta>> cbModel) {
+    protected void initChatModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                  MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, null, cbModel, MODEL_TYPE_CHAT);
     }
 
@@ -74,16 +74,16 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbModel
      * @param type       1 is chat model, 2 is embedding model, see {@link GenAiConstants}
      */
-    private void initModelRelatedComponents(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
-                                            ChoiceBox<Pair<String, String>> cbLanguage,
-                                            ChoiceBox<Pair<String, ModelMeta>> cbModel,
+    private void initModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                            MChoiceBox<Pair<String, String>> cbLanguage,
+                                            MChoiceBox<Pair<String, ModelMeta>> cbModel,
                                             int type) {
         if (cbLanguage != null) {
             cbLanguage.setConverter(new PairStringStringConverter());
             cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
             cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
+                log.debug("Language changed to {}", newValue);
                 if (newValue == null) return;
-                log.debug("Language changed: %s".formatted(newValue));
                 if (cbProvider.getSelectionModel().getSelectedItem() != null) {
                     this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getKey().name(), MODEL_TYPE_EMBEDDING, newValue.getKey());
                 }
@@ -97,6 +97,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         cbProvider.getItems().add(null); // none select
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("Provider changed to %s".formatted(newValue));
             if (newValue == null) {
                 log.debug("Unselect provider");
                 cbModel.getItems().clear();
@@ -104,13 +105,13 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 return;
             }
             String providerName = newValue.getKey().name();
-            log.debug("Provider changed: %s".formatted(providerName));
             Pair<String, String> lang = cbLanguage == null ? null : cbLanguage.getSelectionModel().getSelectedItem();
             this.updateModelComponent(cbModel, providerName, type, lang == null ? null : lang.getKey());
             super.saveChanges();
         });
         cbModel.setConverter(new ModelMetaConverter());
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
+            log.debug("cbModel changed to %s".formatted(newValue));
             if (super.isLoading()) return;
             if (newValue == null) {
                 log.debug("Unselect model");
@@ -224,7 +225,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
     @Override
     protected void onSave(boolean notify) {
         if (notify) {
-            if (this instanceof GenAiOptionPrefPane) {
+            if (this instanceof AiOptionPrefPane) {
                 PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.OPTIONS_PREF_CHANGED);
             }
         }

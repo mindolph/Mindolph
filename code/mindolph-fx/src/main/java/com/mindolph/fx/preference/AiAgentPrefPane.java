@@ -15,6 +15,7 @@ import com.mindolph.fx.control.DatasetTableView;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -33,9 +34,9 @@ import static com.mindolph.genai.GenaiUiConstants.agentConverter;
 /**
  * @since 1.13.0
  */
-public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializable {
+public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
 
-    private static final Logger log = LoggerFactory.getLogger(GenAiAgentPrefPane.class);
+    private static final Logger log = LoggerFactory.getLogger(AiAgentPrefPane.class);
     @FXML
     private ChoiceBox<Pair<String, AgentMeta>> cbAgent;
     @FXML
@@ -47,22 +48,21 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
     @FXML
     private TextField tfDescription;
     @FXML
-    private ChoiceBox<Pair<String, String>> cbLanguage;
-    @FXML
     private TextArea taAgentPrompt;
     @FXML
     private DatasetTableView tvDatasets;
     @FXML
     private Button btnSetDataset;
-
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
+    private MChoiceBox<Pair<String, String>> cbLanguage;
     @FXML
-    protected MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
+    private MChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
+    @FXML
+    private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
 
-    public GenAiAgentPrefPane() {
+    public AiAgentPrefPane() {
         super("/preference/gen_ai_agent_pref_pane.fxml");
     }
 
@@ -110,19 +110,7 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddAgent.setOnAction(event -> {
-            TextInputDialog dialog = new TextInputDialog("My Agent");
-            dialog.setTitle("Create new agent");
-            dialog.setContentText("Enter agent name:");
-            dialog.showAndWait().ifPresent(agentName -> {
-                String agtId = IdUtils.makeUUID();
-                currentAgentMeta = new AgentMeta();
-                currentAgentMeta.setId(agtId);
-                currentAgentMeta.setName(agentName);
-                Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, currentAgentMeta);
-                cbAgent.getItems().add(newAgentPair);
-                cbAgent.getSelectionModel().select(newAgentPair);
-                super.saveChanges(false);
-            });
+            this.createNewAgent("My Agent");
         });
         btnRemoveAgent.setOnAction(event -> {
             if (cbAgent == null) {
@@ -193,6 +181,31 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         cbAgent.getSelectionModel().select(selectedIndex);
     }
 
+    private void createNewAgent(String defaultNewName) {
+        Dialog<String> dialog = new TextDialogBuilder()
+                .owner(DialogFactory.DEFAULT_WINDOW)
+                .title("Create new agent")
+                .content("Input agent name")
+                .text(defaultNewName)
+                .width(400)
+                .build();
+        dialog.showAndWait().ifPresent(agentName -> {
+            if (cbAgent.getItems().stream().anyMatch(p -> p.getValue().getName().equals(agentName))) {
+                DialogFactory.warnDialog("Dataset names %s already exists".formatted(agentName));
+                this.createNewAgent(agentName);
+                return;
+            }
+            String agtId = IdUtils.makeUUID();
+            currentAgentMeta = new AgentMeta();
+            currentAgentMeta.setId(agtId);
+            currentAgentMeta.setName(agentName);
+            Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, currentAgentMeta);
+            cbAgent.getItems().add(newAgentPair);
+            cbAgent.getSelectionModel().select(newAgentPair);
+            super.saveChanges(false);
+        });
+    }
+
     @Override
     protected void onSave(boolean notify) {
         log.debug("onSave");
@@ -215,35 +228,19 @@ public class GenAiAgentPrefPane extends BaseGenAiPrefPane implements Initializab
         am.setDescription(tfDescription.getText());
 
         // chat model
-        if (cbChatProvider.hasSelected()) {
-            am.setChatProvider(cbChatProvider.getSelectionModel().getSelectedItem().getKey());
-        }
-        else {
-            am.setChatProvider(null);
-        }
-        if (cbChatModel.hasSelected()) {
-            am.setChatModel(cbChatModel.getSelectionModel().getSelectedItem().getKey());
-        }
-        else {
+        am.setChatProvider(cbChatProvider.hasSelected() ? cbChatProvider.getSelectionModel().getSelectedItem().getKey() : null);
+        am.setChatModel(cbChatModel.hasSelected() ? cbChatModel.getSelectionModel().getSelectedItem().getKey() : null);
+        if (!cbChatModel.hasSelected()) {
             // deselect provider if not select model
             am.setChatProvider(null);
-            am.setChatModel(null);
         }
         am.setPromptTemplate(taAgentPrompt.getText());
         // embedding model
-        if (cbEmbeddingProvider.hasSelected()) {
-            am.setEmbeddingProvider(cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey());
-        }
-        else {
-            am.setEmbeddingProvider(null);
-        }
-        if (cbEmbeddingModel.hasSelected()) {
-            am.setEmbeddingModel(cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey());
-        }
-        else {
+        am.setEmbeddingProvider(cbEmbeddingProvider.hasSelected() ? cbEmbeddingProvider.getSelectionModel().getSelectedItem().getKey() : null);
+        am.setEmbeddingModel(cbEmbeddingModel.hasSelected() ? cbEmbeddingModel.getSelectionModel().getSelectedItem().getKey() : null);
+        if (!cbEmbeddingModel.hasSelected()) {
             // deselect provider if not select model
             am.setEmbeddingProvider(null);
-            am.setEmbeddingModel(null);
         }
         am.setLanguageCode(super.safeGetSelectedLanguageCode(cbLanguage));
         am.setDatasetIds(tvDatasets.getItems().stream().map(DatasetMeta::getId).toList());

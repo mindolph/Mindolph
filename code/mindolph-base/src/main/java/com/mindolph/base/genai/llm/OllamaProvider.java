@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.genai.model.OllamaLangChainSupport;
+import com.mindolph.base.genai.langchain.OllamaLangChainSupport;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;

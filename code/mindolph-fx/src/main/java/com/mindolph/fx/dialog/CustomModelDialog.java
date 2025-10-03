@@ -24,27 +24,26 @@ public class CustomModelDialog extends BaseDialogController<ModelMeta> {
     @FXML
     private Spinner<Integer> spMaxOutputTokens;
 
-    public CustomModelDialog() {
+    public CustomModelDialog(ModelMeta defaultCustomModel) {
         dialog = new CustomDialogBuilder<ModelMeta>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Custom Model")
                 .fxmlUri("dialog/custom_model_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))
-                .defaultValue(origin)
+                .defaultValue(defaultCustomModel)
                 .controller(CustomModelDialog.this)
                 .build();
-        result = origin;
         dialog.setOnShown(event -> {
             Platform.runLater(() -> tfModel.requestFocus());
         });
-        spMaxOutputTokens.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1024, Integer.MAX_VALUE, 1024, 1024));
+        tfModel.setText(defaultCustomModel.getName());
+        spMaxOutputTokens.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1024, Integer.MAX_VALUE, defaultCustomModel.getMaxTokens(), 1024));
         tfModel.textProperty().addListener((observable, oldValue, newValue) -> {
             result = new ModelMetaBuilder().name(tfModel.getText()).maxTokens(spMaxOutputTokens.getValue()).build();
         });
         spMaxOutputTokens.valueProperty().addListener((observable, oldValue, newValue) -> {
             result = new ModelMetaBuilder().name(tfModel.getText()).maxTokens(spMaxOutputTokens.getValue()).build();
         });
-
     }
 }

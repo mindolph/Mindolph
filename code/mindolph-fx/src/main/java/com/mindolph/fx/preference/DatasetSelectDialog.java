@@ -49,8 +49,8 @@ public class DatasetSelectDialog extends BaseDialogController<List<DatasetMeta>>
                     setText(null);
                 }
                 else {
-                    setText("%s (%s)".formatted(item.getName(), GenaiUiConstants.SUPPORTED_EMBEDDING_LANG.get(item.getLanguageCode())));
-                    if (!item.getLanguageCode().equals(langCode)) {
+                    setText("%s (%s)".formatted(item.getName(), GenaiUiConstants.lookupLanguage(item.getLanguageCode())));
+                    if (item.getLanguageCode() == null || !item.getLanguageCode().equals(langCode)) {
                         this.setDisable(true);
                     }
                 }

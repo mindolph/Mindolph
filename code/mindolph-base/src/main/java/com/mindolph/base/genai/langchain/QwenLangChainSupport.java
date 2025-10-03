@@ -1,4 +1,4 @@
-package com.mindolph.base.genai.model;
+package com.mindolph.base.genai.langchain;
 
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
@@ -14,7 +14,7 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * @since 1.13.2
  */
 public interface QwenLangChainSupport extends LangChainSupport {
 

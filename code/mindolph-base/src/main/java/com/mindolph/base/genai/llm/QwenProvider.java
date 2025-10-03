@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.genai.model.QwenLangChainSupport;
+import com.mindolph.base.genai.langchain.QwenLangChainSupport;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import dev.langchain4j.model.chat.ChatModel;

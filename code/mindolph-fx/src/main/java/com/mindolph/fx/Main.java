@@ -93,7 +93,7 @@ public class Main extends Application implements WindowRestoreListener {
 
     @Override
     public void start(Stage primaryStage) {
-        // start is called on the FX Application Thread,
+        // start() is called in the FX Application Thread,
         // so Thread.currentThread() is the FX application thread:
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
             log.error("Mindolph Error: ", throwable);

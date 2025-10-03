@@ -1,6 +1,6 @@
 package com.mindolph.base.genai.rag;
 
-import com.mindolph.base.constant.EmbeddingStage;
+import com.mindolph.base.constant.Stage;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.llm.DataSourceConfig;
 import com.mindolph.core.llm.VectorStoreMeta;
@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.Serializable;
 import java.sql.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -98,19 +97,19 @@ public abstract class BaseEmbeddingService {
         File tokenizerFile = new File(baseDir, pathToTokenizer);
         if (!modelFile.exists()) {
             // download
-            this.emitProgressEvent("Downloading onnx model...");
+            this.emitEmbeddingProgressEvent("Downloading onnx model...");
         }
         if (!tokenizerFile.exists()) {
             // download
-            this.emitProgressEvent("Downloading onnx tokenizer...");
+            this.emitEmbeddingProgressEvent("Downloading onnx tokenizer...");
         }
         PoolingMode poolingMode = PoolingMode.MEAN;
-        this.emitProgressEvent("Loading onnx model tokenizer...");
+        this.emitEmbeddingProgressEvent("Loading onnx model tokenizer...");
         return new OnnxEmbeddingModel(modelFile.getPath(), tokenizerFile.getPath(), poolingMode);
     }
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
-        this.emitProgressEvent("Preparing embedding store...");
+        this.emitEmbeddingProgressEvent("Preparing embedding store...");
         try {
             return PgVectorEmbeddingStore.builder()
                     .host(vectorStoreMeta.getHost())
@@ -137,39 +136,20 @@ public abstract class BaseEmbeddingService {
         progressEventSource.subscribe(callback);
     }
 
-    public void emitProgressEvent(String message) {
-        progressEventSource.push(new EmbeddingProgress(null, true, 0, message, EmbeddingStage.PREPARE, 0));
+    // TBD
+    public void emitEmbeddingProgressEvent(String message) {
+        progressEventSource.push(new EmbeddingProgressBuilder().success().msg(message).stage(Stage.PREPARE).build());
     }
 
-    public void emitProgressEvent(File file, boolean success, int successCount, String message, float ratio) {
-        progressEventSource.push(new EmbeddingProgress(file, success, successCount, message, EmbeddingStage.EMBEDDING, ratio));
+    // TBD
+    public void emitEmbeddingProgressEvent(File file, boolean success, int successCount, String message, float ratio) {
+        progressEventSource.push(new EmbeddingProgressBuilder().file(file).success(success).successCount(successCount).msg(message).stage(Stage.EMBEDDING).ratio(ratio).build());
     }
 
-    /**
-     * @param file
-     * @param success
-     * @param successCount
-     * @param msg
-     * @param stage        the stage of whole embedding.
-     * @param ratio        0-1 the percent to complete
-     */
-    public record EmbeddingProgress(File file, boolean success, int successCount, String msg, EmbeddingStage stage,
-                                    float ratio) implements Serializable {
-        public EmbeddingProgress(String msg) {
-            this(null, false, 0, msg, null, 0);
-        }
-
-        public EmbeddingProgress(String msg, int successCount) {
-            this(null, false, successCount, msg, null, 0);
-        }
-
-        public EmbeddingProgress(File file, boolean success, int successCount, String msg, EmbeddingStage stage, float ratio) {
-            this.file = file;
-            this.success = success;
-            this.successCount = successCount;
-            this.msg = msg;
-            this.stage = stage;
-            this.ratio = ratio;
-        }
+    // TBD
+    public void emitUnembeddingProgressEvent(File file, int successCount, String message, float ratio) {
+        progressEventSource.push(new EmbeddingProgressBuilder().file(file).success(true).successCount(successCount).msg(message).stage(Stage.UNEMBEDDING).ratio(ratio).build());
     }
+
+
 }

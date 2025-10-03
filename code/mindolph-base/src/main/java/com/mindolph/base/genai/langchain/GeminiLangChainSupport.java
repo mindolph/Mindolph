@@ -1,4 +1,4 @@
-package com.mindolph.base.genai.model;
+package com.mindolph.base.genai.langchain;
 
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
@@ -16,7 +16,7 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiStreamingChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiStreamingChatModel.GoogleAiGeminiStreamingChatModelBuilder;
 
 /**
- *
+ * @since 1.13.2
  */
 public interface GeminiLangChainSupport extends LangChainSupport {
 

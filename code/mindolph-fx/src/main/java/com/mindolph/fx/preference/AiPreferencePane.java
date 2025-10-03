@@ -1,7 +1,6 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
-import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import javafx.fxml.FXML;
@@ -19,28 +18,28 @@ import java.util.ResourceBundle;
  * @see GenAiModelProvider
  * @since 1.7.1
  */
-public class GenAiPreferencePane extends BasePrefsPane implements Initializable {
+public class AiPreferencePane extends BasePrefsPane implements Initializable {
 
-    private static final Logger log = LoggerFactory.getLogger(GenAiPreferencePane.class);
+    private static final Logger log = LoggerFactory.getLogger(AiPreferencePane.class);
 
     @FXML
     private TabPane tpGenAi;
 
     @FXML
-    private GenAiModelPrefPane genAiModelPrefPane;
+    private AiProviderPrefPane aiProviderPrefPane;
 
     @FXML
-    private GenAiAgentPrefPane genAiAgentPrefPane;
+    private AiAgentPrefPane aiAgentPrefPane;
 
     @FXML
-    private GenAiDatasetPrefPane genAiDatasetPrefPane;
+    private AiDatasetPrefPane aiDatasetPrefPane;
 
     @FXML
-    private GenAiOptionPrefPane genAiOptionPrefPane;
+    private AiOptionPrefPane aiOptionPrefPane;
 
     private static int latestActivePaneIndex = 0;
 
-    public GenAiPreferencePane() {
+    public AiPreferencePane() {
         super("/preference/gen_ai_preferences_pane.fxml");
     }
 

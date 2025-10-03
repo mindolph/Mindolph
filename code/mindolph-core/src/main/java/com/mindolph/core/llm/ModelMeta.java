@@ -10,6 +10,9 @@ import java.util.Objects;
 public final class ModelMeta {
     private String name;
     private int maxInputTokens = 0;
+    /**
+     * Max output tokens.
+     */
     private int maxTokens = 0;
     /**
      * for embedding only.
@@ -110,6 +113,10 @@ public final class ModelMeta {
 
     public void setMaxInputTokens(int maxInputTokens) {
         this.maxInputTokens = maxInputTokens;
+    }
+
+    public int getMaxTokens() {
+        return maxTokens;
     }
 
     public void setMaxTokens(int maxTokens) {

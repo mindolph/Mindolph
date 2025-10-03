@@ -26,7 +26,7 @@ public class DatasetMeta implements Serializable {
     /**
      * Status of embedding, 0-100 means the percentage of files embedded.
      */
-    private int status;
+    private int progress;
     @JsonIgnore
     private final transient List<File> addedFiles = new ArrayList<>();
     @JsonIgnore
@@ -39,6 +39,14 @@ public class DatasetMeta implements Serializable {
 
     public boolean isAllSetup() {
         return StringUtils.isNoneBlank(name, languageCode) && !(embeddingModel == null || files == null);
+    }
+
+    public boolean isReadyForEmbedding() {
+        return provider != null && StringUtils.isNoneBlank(embeddingModel, languageCode);
+    }
+
+    public int size() {
+        return files == null ? 0 : files.size();
     }
 
     /**
@@ -123,12 +131,12 @@ public class DatasetMeta implements Serializable {
         this.files = files;
     }
 
-    public int getStatus() {
-        return status;
+    public int getProgress() {
+        return progress;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public List<File> getAddedFiles() {

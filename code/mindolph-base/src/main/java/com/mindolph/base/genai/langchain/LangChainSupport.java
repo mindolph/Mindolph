@@ -1,4 +1,4 @@
-package com.mindolph.base.genai.model;
+package com.mindolph.base.genai.langchain;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.LlmConfig;
@@ -22,7 +22,7 @@ import java.time.Duration;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
 
 /**
- *
+ * @since 1.13.2
  */
 public interface LangChainSupport {
 

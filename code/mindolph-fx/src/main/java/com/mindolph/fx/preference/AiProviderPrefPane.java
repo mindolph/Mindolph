@@ -6,13 +6,13 @@ import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.dialog.CustomModelDialog;
 import com.mindolph.mfx.dialog.DialogFactory;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -20,7 +20,6 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Pair;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +38,9 @@ import static com.mindolph.genai.GenaiUiConstants.*;
 /**
  * @since 1.13.0
  */
-public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements Initializable {
+public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements Initializable {
 
-    private static final Logger log = LoggerFactory.getLogger(GenAiModelPrefPane.class);
+    private static final Logger log = LoggerFactory.getLogger(AiProviderPrefPane.class);
 
     @FXML
     private ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider;
@@ -63,7 +62,7 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
     private String currentProviderName;
     private ProviderMeta currentProviderMeta;
 
-    public GenAiModelPrefPane() {
+    public AiProviderPrefPane() {
         super("/preference/gen_ai_model_pref_pane.fxml");
     }
 
@@ -157,37 +156,10 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
         btnAdd.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemove.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAdd.setOnAction(event -> {
-            CustomModelDialog dialog = new CustomModelDialog();
-            ModelMeta newCustomModel = dialog.showAndWait();
-            if (newCustomModel == null) return;
-            // check existence before saving.
-            log.debug("new custom model %s to provider %s".formatted(newCustomModel, currentProviderName));
-            if (currentProviderMeta.customModels() == null) {
-                currentProviderMeta.setCustomModels(new ArrayList<>());
-            }
-            else {
-                if (currentProviderMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
-                    Platform.runLater(() -> {
-                        Notifications.create().title("Notice").text("Model %s already exists".formatted(newCustomModel.getName())).showWarning();
-                    });
-                    return; // already exists
-                }
-            }
-
-            currentProviderMeta.customModels().add(newCustomModel);
-            super.saveChanges();
-            showAllModels(currentProviderName);
+            this.createNewCustomModel(new ModelMeta());
         });
         btnRemove.setOnAction(event -> {
-            ModelMeta modelMeta = lvModels.getSelectionModel().getSelectedItem();
-            if (modelMeta != null && modelMeta.isCustom()) {
-                boolean sure = DialogFactory.okCancelConfirmDialog("Are you sure to delete the custom model '%s'".formatted(modelMeta.getName()));
-                if (sure) {
-                    currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
-                    super.saveChanges();
-                    showAllModels(currentProviderName);
-                }
-            }
+            this.removeSelectedCustomModel();
         });
 
 
@@ -215,6 +187,40 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
         }
     }
 
+    private void createNewCustomModel(ModelMeta modelMeta) {
+        CustomModelDialog dialog = new CustomModelDialog(modelMeta);
+        ModelMeta newCustomModel = dialog.showAndWait();
+        if (newCustomModel == null|| newCustomModel == modelMeta) return;
+        // check existence before saving.
+        log.debug("new custom model %s to provider %s".formatted(newCustomModel, currentProviderName));
+        if (currentProviderMeta.customModels() == null) {
+            currentProviderMeta.setCustomModels(new ArrayList<>());
+        }
+        else {
+            if (currentProviderMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
+                DialogFactory.warnDialog("Model %s already exists".formatted(newCustomModel.getName()));
+                this.createNewCustomModel(newCustomModel);
+                return; // already exists
+            }
+        }
+
+        currentProviderMeta.customModels().add(newCustomModel);
+        super.saveChanges();
+        showAllModels(currentProviderName);
+    }
+
+    private void removeSelectedCustomModel() {
+        ModelMeta modelMeta = lvModels.getSelectionModel().getSelectedItem();
+        if (modelMeta != null && modelMeta.isCustom()) {
+            boolean sure = DialogFactory.okCancelConfirmDialog("Are you sure to delete the custom model '%s'".formatted(modelMeta.getName()));
+            if (sure) {
+                currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
+                super.saveChanges();
+                showAllModels(currentProviderName);
+            }
+        }
+    }
+
     private void updateByModelSelection(ModelMeta model) {
         lbMaxOutputTokens.setVisible(model != null && (model.isInternal() || model.maxTokens() > 0));
         if (model != null) {
@@ -224,7 +230,7 @@ public class GenAiModelPrefPane extends BaseLoadingSavingPrefsPane implements In
                         Language code: %s
                         Dimension: %d
                         """;
-                lbMaxOutputTokens.setText(template.formatted(SUPPORTED_EMBEDDING_LANG.get(model.getLangCode()), model.getDimension()));
+                lbMaxOutputTokens.setText(template.formatted(GenAiConstants.lookupLanguage(model.getLangCode()), model.getDimension()));
             }
             else {
                 // external models

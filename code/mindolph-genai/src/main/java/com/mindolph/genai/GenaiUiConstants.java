@@ -6,6 +6,7 @@ import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -95,4 +96,13 @@ public interface GenaiUiConstants {
             return null;
         }
     }
+
+    static String lookupLanguage(String languageCode) {
+        if (StringUtils.isBlank(languageCode)) {
+            return "Unknown";
+        }
+        String lang = SUPPORTED_EMBEDDING_LANG.get(languageCode);
+        return StringUtils.isBlank(lang) ? languageCode : lang;
+    }
+
 }

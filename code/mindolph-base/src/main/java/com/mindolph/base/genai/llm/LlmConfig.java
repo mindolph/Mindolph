@@ -251,9 +251,10 @@ public class LlmConfig {
         }
     }
 
-    public void removeDataset(String datasetId) {
+    public void removeDataset(DatasetMeta datasetMeta) {
+        log.debug("remove dataset {}", datasetMeta.getId());
         Map<String, DatasetMeta> datasetMap = this.loadAllDatasets();
-        datasetMap.remove(datasetId);
+        datasetMap.remove(datasetMeta.getId());
         String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
         try {
             IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);

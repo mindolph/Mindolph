@@ -18,9 +18,9 @@ import java.util.ResourceBundle;
 /**
  * @since 1.13.0
  */
-public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implements Initializable {
+public abstract class BaseAiPrefPane extends BaseModelProviderPrefPane implements Initializable {
 
-    private static final Logger log = LoggerFactory.getLogger(BaseGenAiPrefPane.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseAiPrefPane.class);
 
     // for Embedding model
     @FXML
@@ -28,7 +28,7 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbEmbeddingModel;
 
-    public BaseGenAiPrefPane(String fxmlResourceUri) {
+    public BaseAiPrefPane(String fxmlResourceUri) {
         super(fxmlResourceUri);
     }
 
@@ -56,10 +56,10 @@ public abstract class BaseGenAiPrefPane extends BaseModelProviderPrefPane implem
     protected void onSave(boolean notify) {
         super.onSave(notify);
         if (notify) {
-            if (this instanceof GenAiAgentPrefPane) {
+            if (this instanceof AiAgentPrefPane) {
                 PluginEventBus.getIns().emitPreferenceChanges(EventType.AGENT_PREF_CHANGED);
             }
-            else if (this instanceof GenAiDatasetPrefPane) {
+            else if (this instanceof AiDatasetPrefPane) {
                 PluginEventBus.getIns().emitPreferenceChanges(EventType.DATASET_PREF_CHANGED);
             }
         }

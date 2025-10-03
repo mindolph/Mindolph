@@ -1,5 +1,6 @@
 package com.mindolph.fx.control;
 
+import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.DatasetMeta;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -41,7 +42,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
         colName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getName()));
         colFiles.setCellValueFactory(param -> new SimpleStringProperty(String.valueOf(param.getValue().getFiles() == null ? 0 : param.getValue().getFiles().size())));
         colLang.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLanguageCode()));
-        colStatus.setCellValueFactory(param -> new SimpleStringProperty("%d%%".formatted(param.getValue().getStatus())));
+        colStatus.setCellValueFactory(param -> new SimpleStringProperty("%d%%".formatted(param.getValue().getProgress())));
         this.getColumns().addAll(List.of(colName, colFiles, colLang, colStatus));
     }
 
@@ -52,7 +53,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
             log.debug("Select datasets: {}", datasetMetas);
             // force to convert lang code to language.
             datasetMetas.forEach(datasetMeta -> {
-                datasetMeta.setLanguageCode(SUPPORTED_EMBEDDING_LANG.get(datasetMeta.getLanguageCode()));
+                datasetMeta.setLanguageCode(GenAiConstants.lookupLanguage(datasetMeta.getLanguageCode()));
             });
             this.getItems().addAll(datasetMetas);
             super.refresh();

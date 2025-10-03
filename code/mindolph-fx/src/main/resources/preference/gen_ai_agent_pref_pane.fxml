@@ -33,7 +33,7 @@
             </TextArea>
         </PreferenceItem>
         <PreferenceItem name="Language:" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
+            <MChoiceBox fx:id="cbLanguage" prefWidth="240.0"/>
         </PreferenceItem>
         <PreferenceItem name="Embedding Model: " labelMinWidth="180" labelPrefWidth="180">
             <MChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">

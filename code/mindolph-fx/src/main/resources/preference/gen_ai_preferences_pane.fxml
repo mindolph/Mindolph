@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.mindolph.fx.preference.GenAiAgentPrefPane?>
-<?import com.mindolph.fx.preference.GenAiDatasetPrefPane?>
-<?import com.mindolph.fx.preference.GenAiModelPrefPane?>
-<?import com.mindolph.fx.preference.GenAiOptionPrefPane?>
+<?import com.mindolph.fx.preference.AiAgentPrefPane?>
+<?import com.mindolph.fx.preference.AiDatasetPrefPane?>
+<?import com.mindolph.fx.preference.AiProviderPrefPane?>
+<?import com.mindolph.fx.preference.AiOptionPrefPane?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
@@ -11,16 +11,16 @@
     <TabPane fx:id="tpGenAi" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Tab fx:id="tabAgents" text="Agents">
-            <GenAiAgentPrefPane fx:id="genAiAgentsPrefPane"/>
+            <AiAgentPrefPane fx:id="aiAgentsPrefPane"/>
         </Tab>
-        <Tab fx:id="tabModels" text="Models">
-            <GenAiModelPrefPane fx:id="genAiModelPrefPane"/>
+        <Tab fx:id="tabModels" text="Providers">
+            <AiProviderPrefPane fx:id="aiProviderPrefPane"/>
         </Tab>
         <Tab fx:id="tabDataset" text="Datasets">
-            <GenAiDatasetPrefPane fx:id="genAiDatasetPrefPane"/>
+            <AiDatasetPrefPane fx:id="aiDatasetPrefPane"/>
         </Tab>
         <Tab fx:id="tabOptions" text="Options">
-            <GenAiOptionPrefPane fx:id="genAiOptionPane"/>
+            <AiOptionPrefPane fx:id="aiOptionPane"/>
         </Tab>
     </TabPane>
 
