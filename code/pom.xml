@@ -38,7 +38,7 @@
         <swiftboot.version>2.4.11</swiftboot.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.25.1</log4j2.version>
-        <junit.version>5.13.3</junit.version>
+        <junit.version>5.14.0</junit.version>
         <mfx.version>3.0</mfx.version>
         <gson.version>2.13.2</gson.version>
         <controlsfx.version>11.2.2</controlsfx.version>
@@ -48,15 +48,15 @@
         <jsoup.version>1.21.2</jsoup.version>
         <json.version>20250517</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>1.5.0</langchain4j.version>
-        <langchain4j.community.version>1.5.0-beta11</langchain4j.community.version>
-        <dashscope.version>2.21.10</dashscope.version>
+        <langchain4j.version>1.6.0</langchain4j.version>
+        <langchain4j.community.version>1.6.0-beta12</langchain4j.community.version>
+        <dashscope.version>2.21.11</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.40</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <onnxruntime.version>1.20.0</onnxruntime.version>
-        <tokenizers.version>0.31.1</tokenizers.version>
+        <onnxruntime.version>1.23.0</onnxruntime.version>
+        <tokenizers.version>0.34.0</tokenizers.version>
         <postgresql.version>42.7.8</postgresql.version>
     </properties>
 
@@ -230,6 +230,24 @@
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-embeddings</artifactId>
                 <version>${langchain4j.community.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
+            <dependency>
+                <groupId>com.microsoft.onnxruntime</groupId>
+                <artifactId>onnxruntime</artifactId>
+                <version>${onnxruntime.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/ai.djl.huggingface/tokenizers -->
+            <dependency>
+                <groupId>ai.djl.huggingface</groupId>
+                <artifactId>tokenizers</artifactId>
+                <version>${tokenizers.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/ai.djl/api -->
+            <dependency>
+                <groupId>ai.djl</groupId>
+                <artifactId>api</artifactId>
+                <version>${tokenizers.version}</version>
             </dependency>
             <dependency>
                 <groupId>dev.langchain4j</groupId>

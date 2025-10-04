@@ -277,7 +277,7 @@ public class ChatView extends BaseView implements Initializable {
                 // to do the LLM chatting
                 chatPane.waitForAnswer();
                 RagService.getInstance().chat(chat.getText(), tokenStream -> {
-                    //
+                    final StringBuilder buffer = new StringBuilder();
                     tokenStream.onRetrieved(contents -> {
                                 log.debug("retrieved %d contents from embedding store".formatted(contents.size()));
                                 log.debug("with size: %s".formatted(contents.stream().map(c -> String.valueOf(c.textSegment().text().length())).collect(Collectors.joining(","))));
@@ -286,6 +286,7 @@ public class ChatView extends BaseView implements Initializable {
                                 });
                             })
                             .onPartialResponse(s -> {
+                                buffer.append(s);
                                 Platform.runLater(() -> {
                                     ChatPartial chatPartial = new ChatPartial(s, MessageType.AI);
                                     chatPane.appendChatPartial(chatPartial);
@@ -294,9 +295,12 @@ public class ChatView extends BaseView implements Initializable {
                             })
                             .onCompleteResponse(resp -> {
                                 Platform.runLater(() -> {
-                                    ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
-                                    chatPartial.setLast(true);
-                                    chatPane.appendChatPartial(chatPartial);
+                                    if (!buffer.toString().equals(resp.aiMessage().text())) {
+                                        ChatPartial chatPartial = new ChatPartial(resp.aiMessage().text(), MessageType.AI);
+                                        chatPartial.setLast(true);
+                                        chatPane.appendChatPartial(chatPartial);
+                                    }
+                                    buffer.delete(0, buffer.length());
                                     chatPane.scrollToBottom();
                                     chatStateMachine.postWithPayloadOnState(ChatState.READY, ChatState.STREAMING, ChatState.STOPING, ChatState.STOPPED, currentAgentMeta);
                                 });
