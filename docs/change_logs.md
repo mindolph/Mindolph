@@ -1,5 +1,12 @@
 # Change Logs
 
+### V1.12.8 Release
+* Fixes
+	* Files in recent list display with folder icon if those files are deleted outside Mindolph.
+	* Cancel `Add URL` dialog in mind map causes the file state to be modified.
+	* Can't locate a folder in workspace file tree from `Go to file` search result.
+	* Remove deprecated Gemini 1.5 models
+
 ### V1.12.7 Release
 * Feature: 
 	* Implemented syntax highlighting in the quote paragraph of Markdown, like inline code, bold text, etc.
