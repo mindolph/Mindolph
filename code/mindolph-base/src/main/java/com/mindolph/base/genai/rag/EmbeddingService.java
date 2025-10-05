@@ -186,7 +186,6 @@ public class EmbeddingService extends BaseEmbeddingService {
         else {
             log.info("No documents to be unembed.");
         }
-//        DoneEvent doneEvent = new DoneEvent(Stage.UNEMBEDDING, "Unembedding is done");
         return deletedCount;
     }
 

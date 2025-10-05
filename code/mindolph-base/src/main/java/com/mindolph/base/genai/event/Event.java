@@ -15,6 +15,7 @@ public class Event implements Serializable {
     Stage stage;
 
     public Event(Stage stage, String message, boolean success) {
+        this.stage = stage;
         this.message = message;
         this.success = success;
     }
@@ -34,7 +35,6 @@ public class Event implements Serializable {
     public void setSuccess(boolean success) {
         this.success = success;
     }
-
 
     public Stage getStage() {
         return stage;

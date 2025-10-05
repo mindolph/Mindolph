@@ -139,8 +139,11 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             if (pe.getStage() == Stage.EMBED_DATASET) {
                                 btnEmbedding.setText("Stop embedding");
                             }
-                            else {
+                            else if (pe.getStage() == Stage.REMOVE_DATASET){
                                 btnEmbedding.setText("Stop removing embeddings");
+                            }
+                            else {
+                                log.debug("Unknown stage: %s".formatted(pe));
                             }
                         });
                     }
