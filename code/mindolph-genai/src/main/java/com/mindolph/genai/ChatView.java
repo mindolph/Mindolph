@@ -193,9 +193,6 @@ public class ChatView extends BaseView implements Initializable {
                     put(ChatState.STOPPED, ChatState.SWITCHING);
                 }
             });
-            RagService.getInstance().listenOnProgressEvent(s -> {
-                log.debug("RagService progress: {}", s);
-            });
             RagService.getInstance().useAgent(selectedAgentMeta, (payload) -> {
                 if (payload instanceof Exception e) {
                     log.error("Failed to use agent: %s".formatted(selectedAgentMeta.getName()), e);
