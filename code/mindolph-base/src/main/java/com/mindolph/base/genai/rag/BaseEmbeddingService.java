@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.rag;
 
-import com.mindolph.base.constant.Stage;
+import com.mindolph.base.genai.event.AiEventBus;
+import com.mindolph.base.genai.event.PrepareEvent;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.llm.DataSourceConfig;
 import com.mindolph.core.llm.VectorStoreMeta;
@@ -13,14 +14,15 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.DefaultMetadataStorageConfig;
 import dev.langchain4j.store.embedding.pgvector.MetadataStorageMode;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
-import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -33,8 +35,6 @@ public abstract class BaseEmbeddingService {
     private static final int CONNECT_TIME_IN_SECOND = 10;
 
     protected VectorStoreMeta vectorStoreMeta;
-
-    protected final EventSource<EmbeddingProgress> progressEventSource = new EventSource<>();
 
     public BaseEmbeddingService() {
         DriverManager.setLoginTimeout(5);
@@ -97,19 +97,19 @@ public abstract class BaseEmbeddingService {
         File tokenizerFile = new File(baseDir, pathToTokenizer);
         if (!modelFile.exists()) {
             // download
-            this.emitEmbeddingProgressEvent("Downloading onnx model...");
+            AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx model..."));
         }
         if (!tokenizerFile.exists()) {
             // download
-            this.emitEmbeddingProgressEvent("Downloading onnx tokenizer...");
+            AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx tokenizer..."));
         }
         PoolingMode poolingMode = PoolingMode.MEAN;
-        this.emitEmbeddingProgressEvent("Loading onnx model tokenizer...");
+        AiEventBus.getInstance().emitEvent(new PrepareEvent("Loading onnx model tokenizer..."));
         return new OnnxEmbeddingModel(modelFile.getPath(), tokenizerFile.getPath(), poolingMode);
     }
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
-        this.emitEmbeddingProgressEvent("Preparing embedding store...");
+        AiEventBus.getInstance().emitEvent(new PrepareEvent("Preparing embedding store..."));
         try {
             return PgVectorEmbeddingStore.builder()
                     .host(vectorStoreMeta.getHost())
@@ -131,25 +131,4 @@ public abstract class BaseEmbeddingService {
             throw new RuntimeException(e.getLocalizedMessage(), e);
         }
     }
-
-    public void listenOnProgressEvent(Consumer<EmbeddingProgress> callback) {
-        progressEventSource.subscribe(callback);
-    }
-
-    // TBD
-    public void emitEmbeddingProgressEvent(String message) {
-        progressEventSource.push(new EmbeddingProgressBuilder().success().msg(message).stage(Stage.PREPARE).build());
-    }
-
-    // TBD
-    public void emitEmbeddingProgressEvent(File file, boolean success, int successCount, String message, float ratio) {
-        progressEventSource.push(new EmbeddingProgressBuilder().file(file).success(success).successCount(successCount).msg(message).stage(Stage.EMBEDDING).ratio(ratio).build());
-    }
-
-    // TBD
-    public void emitUnembeddingProgressEvent(File file, int successCount, String message, float ratio) {
-        progressEventSource.push(new EmbeddingProgressBuilder().file(file).success(true).successCount(successCount).msg(message).stage(Stage.UNEMBEDDING).ratio(ratio).build());
-    }
-
-
 }
