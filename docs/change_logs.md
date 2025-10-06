@@ -1,5 +1,31 @@
 # Change Logs
 
+### V1.13.2 Unstable Release
+* Features:
+	* The agent can be created without embedding model, which means it is an agent as a chat bot. 
+	* Add waiting status display when waiting for the agent reply in the agent chat panel. 
+	* Add rename feature to datasets and agents settings. 
+
+* Improvement:
+	* In the chat panel, add provider&model information to the items of the agent selector list. Show description tooltip of agent in the the agent list. Add the shortcut `shift`+`enter` to send chat message to the agent. Handle redundant streaming output from some specific LLM models when chatting with the agent. Improve UI.
+	* In Gen-AI setting panels, the provider and model can be unselected. 
+	* In the agent setting panel, add language description to the items of dataset selector list. disable items of the dataset selector that are not in the same language as the language of agent. 
+	* In the providers setting panel, optimize model information display. Disable `Add`/`Remove` button when internal provider is activated. 
+	* In the dataset setting panel, add a waiting dialog for downloading embedding model files. Disable embedding model selections if a dataset has been embedded. refactored embedding processing. 
+	* Toggle the `Test connection` button for vector store settings. 
+	* UI refactor. 
+
+* Bug fixes:
+	* Reloading agents from preference changes clears the chat session, which is inappropriate. 
+	* Check for duplicate names when creating a custom model for a provider. 
+	* The agent chat panel doesn't respond when there are errors from model APIs. 
+	* The format of the response of some LLMs is incorrect. 
+	* Clear message after a dataset has been deleted. 
+	* Embedding data of a dataset has not been deleted after the dataset is removed. 
+
+* update langchain4j to 1.6.0 and other dependencies. 
+
+
 ### V1.12.8 Release
 * Fixes
 	* Files in recent list display with folder icon if those files are deleted outside Mindolph.
