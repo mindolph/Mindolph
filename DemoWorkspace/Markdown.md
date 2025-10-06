@@ -2,9 +2,9 @@
 
 ### Paragraphs
 
-`Hello`, world.
+Hello, `Mindolph`.
 
-你好，世界
+你好，Mindolph
 
 こんにちは
 
@@ -31,7 +31,7 @@
 
 ### Quote
 
-> Hello, world.  
+> Hello, `Mindolph`.  what a **great** job.
 	
 ### Source Code
 
