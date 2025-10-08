@@ -47,6 +47,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
         if (patternMinor == null) {
             patternMinor = Pattern.compile(
                     "(?<CODE>" + CODE_PATTERN + ")"
+                            + "|(?<HRULE>" + HORIZONTAL_RULE_PATTERN + ")"
                             + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
                             + "|(?<BOLD>" + BOLD_PATTERN + ")"
                             + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
@@ -91,11 +92,12 @@ public class MarkdownCodeArea extends HighlightCodeArea {
         Matcher minorMatcher = patternMinor.matcher(text);
         while (minorMatcher.find()) {
             String styleClass = minorMatcher.group("CODE") != null ? "code" :
-                    minorMatcher.group("BOLD") != null ? "bold" :
-                            minorMatcher.group("ITALIC") != null ? "italic" :
-                                    minorMatcher.group("BOLDITALIC") != null ? "bold-italic" :
-                                            minorMatcher.group("URL") != null ? "url" :
-                                                    null;
+                    minorMatcher.group("HRULE") != null ? "bold" :
+                            minorMatcher.group("BOLD") != null ? "bold" :
+                                    minorMatcher.group("ITALIC") != null ? "italic" :
+                                            minorMatcher.group("BOLDITALIC") != null ? "bold-italic" :
+                                                    minorMatcher.group("URL") != null ? "url" :
+                                                            null;
             if (log.isTraceEnabled())
                 log.trace("minor matched %s: (%d-%d) - %s".formatted(styleClass, minorMatcher.start(), minorMatcher.end(), DebugUtils.visible(StringUtils.substring(text, minorMatcher.start(), minorMatcher.end()))));
             super.cutInNewStyle(styleClass, minorMatcher.start(), minorMatcher.end());

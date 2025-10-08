@@ -38,6 +38,7 @@ public interface MarkdownConstants extends SyntaxConstants {
     String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
     String QUOTE_PATTERN = "(%s%s*> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
+    String HORIZONTAL_RULE_PATTERN = "((--[-]+%s*?(?=%s))|(\\*\\*[\\*]+%s*?(?=%s))|(__[_]+%s*?(?=%s)))".formatted(BLANK_CHAR, LINE_SEPARATOR, BLANK_CHAR, LINE_SEPARATOR, BLANK_CHAR, LINE_SEPARATOR);
 
     /**
      * Testing.
@@ -56,7 +57,8 @@ public interface MarkdownConstants extends SyntaxConstants {
 //        String text = "> hello1\n # heading\n  > hello `every`w`body` ==\n";
 //        String text = "|A|B|C|\n|:---|:----:|---:|\n";
 //        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
-        String text = "hello `abc` foobar";
+//        String text = "hello `abc` foobar";
+        String text = "\n---\n---- \n***\n**** \n___\n____ \nfoo `bar`\n";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
@@ -71,7 +73,9 @@ public interface MarkdownConstants extends SyntaxConstants {
             System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
         }
 
+        System.out.println(HORIZONTAL_RULE_PATTERN);
         Pattern pattern2 = Pattern.compile("(?<CODE>" + CODE_PATTERN + ")"
+                + "|(?<HRULE>" + HORIZONTAL_RULE_PATTERN + ")"
                 + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
                 + "|(?<BOLD>" + BOLD_PATTERN + ")"
                 + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
@@ -80,10 +84,11 @@ public interface MarkdownConstants extends SyntaxConstants {
         while (matcher2.find()) {
             System.out.println();
             String styleClass = matcher2.group("CODE") != null ? "code" :
-                    matcher2.group("BOLD") != null ? "bold" :
-                            matcher2.group("ITALIC") != null ? "italic" :
-                                    matcher2.group("BOLDITALIC") != null ? "bold-italic" :
-                                            null;
+                    matcher2.group("HRULE") != null ? "bold" :
+                            matcher2.group("BOLD") != null ? "bold" :
+                                    matcher2.group("ITALIC") != null ? "italic" :
+                                            matcher2.group("BOLDITALIC") != null ? "bold-italic" :
+                                                    null;
             System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher2.start(), matcher2.end(), matcher2.groupCount());
             System.out.println(StringUtils.substring(text, matcher2.start(), matcher2.end()));
         }
