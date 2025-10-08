@@ -153,7 +153,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             int i = 0;
             for (Paragraph<Collection<String>, String, Collection<String>> paragraph : codeArea.getParagraphs()) {
                 i++;
-                if (log.isTraceEnabled()) log.trace("%d: %s".formatted(i, paragraph.getText()));
+                if (log.isTraceEnabled()) log.trace("P%d: %s".formatted(i, paragraph.getText()));
             }
 
             // emit file content loaded event for like scrolling to pos of anchor or updating menu state, etc.

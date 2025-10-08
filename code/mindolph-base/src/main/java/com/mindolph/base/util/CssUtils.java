@@ -65,12 +65,12 @@ public class CssUtils {
     public static String fontCss(String cssTemplate, Font sansFont, Font monoFont) {
         String formatted = TemplateUtils.format(cssTemplate,
                 new String[]{"sans-font-family", "sans-font-weight", "sans-font-posture", "sans-font-size"},
-                new String[]{sansFont.getFamily(), FontUtils.fontWeight(sansFont).name(), fontPosture(sansFont).name(), String.valueOf(sansFont.getSize())});
+                new String[]{sansFont.getFamily(), FontUtils.fontWeight(sansFont).name().toLowerCase(), fontPosture(sansFont).name().toLowerCase(), String.valueOf(sansFont.getSize())});
 
 
         formatted = TemplateUtils.format(formatted,
                 new String[]{"mono-font-family", "mono-font-weight", "mono-font-posture", "mono-font-size"},
-                new String[]{monoFont.getFamily(), FontUtils.fontWeight(monoFont).name(), fontPosture(monoFont).name(), String.valueOf(monoFont.getSize())});
+                new String[]{monoFont.getFamily(), FontUtils.fontWeight(monoFont).name().toLowerCase(), fontPosture(monoFont).name().toLowerCase(), String.valueOf(monoFont.getSize())});
 
         return formatted;
     }

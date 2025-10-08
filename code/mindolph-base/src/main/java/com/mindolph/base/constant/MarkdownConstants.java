@@ -55,7 +55,8 @@ public interface MarkdownConstants extends SyntaxConstants {
         );
 //        String text = "> hello1\n # heading\n  > hello `every`w`body` ==\n";
 //        String text = "|A|B|C|\n|:---|:----:|---:|\n";
-        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
+//        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
+        String text = "hello `abc` foobar";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =

@@ -45,15 +45,21 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
      * @param end           exclusive
      */
     protected void cutInNewStyle(String newStyleClass, int start, int end) {
+        int inclusiveEnd = end - 1;
+        if (styleRanges.isEmpty()) {
+            styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClass));
+            return;
+        }
         for (StyleRange styleRange : styleRanges) {
+            int idx = styleRanges.indexOf(styleRange);
             String oldStyleClass = styleRange.styleClass();
             IntegerRange oldRange = styleRange.range();
-            int inclusiveEnd = end - 1;
+
             if (oldRange.isBefore(start)) {
-                continue;
+                continue; // try next until find conflict.
             }
-            int idx = styleRanges.indexOf(styleRange);
             if (oldRange.contains(start) && oldRange.contains(inclusiveEnd)) {
+                // if the new style is within the old range, like inline code in the quote block.
                 styleRanges.remove(styleRange);
                 if (start > oldRange.getMinimum()) {
                     StyleRange sr0 = StyleRange.of(oldRange.getMinimum(), start - 1, oldStyleClass);
@@ -67,15 +73,19 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
                 }
             }
             else if (IntegerRange.of(start, inclusiveEnd).containsRange(oldRange)) {
-                // overwrite
+                // if the new style is over the old range, like inline code contains bold/italic chars.
+                // just overwrite the old one.
                 styleRanges.remove(styleRange);
                 styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClass));
             }
             else {
+                // no conflict, just add as new style range at the index.
                 styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClass));
             }
-            break;
+            return;
         }
+        // add new style if no conflict.
+        styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClass));
     }
 
     /**

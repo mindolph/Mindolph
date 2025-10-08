@@ -83,7 +83,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
             assert styleClass != null;
             if (StringUtils.isNotBlank(styleClass)) {
                 if (log.isTraceEnabled())
-                    log.trace("matched %s: (%d-%d) - %s".formatted(styleClass, majorMatcher.start(), majorMatcher.end(), DebugUtils.visible(StringUtils.substring(text, majorMatcher.start(), majorMatcher.end()))));
+                    log.trace("major matched %s: (%d-%d) - %s".formatted(styleClass, majorMatcher.start(), majorMatcher.end(), DebugUtils.visible(StringUtils.substring(text, majorMatcher.start(), majorMatcher.end()))));
                 super.append(styleClass, majorMatcher.start(), majorMatcher.end());
             }
         }
@@ -97,7 +97,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
                                             minorMatcher.group("URL") != null ? "url" :
                                                     null;
             if (log.isTraceEnabled())
-                log.trace("matched %s: (%d-%d) - %s".formatted(styleClass, minorMatcher.start(), minorMatcher.end(), DebugUtils.visible(StringUtils.substring(text, minorMatcher.start(), minorMatcher.end()))));
+                log.trace("minor matched %s: (%d-%d) - %s".formatted(styleClass, minorMatcher.start(), minorMatcher.end(), DebugUtils.visible(StringUtils.substring(text, minorMatcher.start(), minorMatcher.end()))));
             super.cutInNewStyle(styleClass, minorMatcher.start(), minorMatcher.end());
         }
 
