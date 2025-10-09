@@ -92,7 +92,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
         Matcher minorMatcher = patternMinor.matcher(text);
         while (minorMatcher.find()) {
             String styleClass = minorMatcher.group("CODE") != null ? "code" :
-                    minorMatcher.group("HRULE") != null ? "bold" :
+                    minorMatcher.group("HRULE") != null ? "hrule" :
                             minorMatcher.group("BOLD") != null ? "bold" :
                                     minorMatcher.group("ITALIC") != null ? "italic" :
                                             minorMatcher.group("BOLDITALIC") != null ? "bold-italic" :

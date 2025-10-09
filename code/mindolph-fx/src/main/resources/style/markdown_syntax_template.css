@@ -44,3 +44,8 @@
     -fx-fill: #707070;
     -fx-font-weight: normal;
 }
+
+.hrule {
+    -fx-fill: #707070;
+    -fx-font-weight: bold;
+}
