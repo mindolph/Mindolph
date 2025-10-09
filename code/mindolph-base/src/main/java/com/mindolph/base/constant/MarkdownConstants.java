@@ -84,7 +84,7 @@ public interface MarkdownConstants extends SyntaxConstants {
         while (matcher2.find()) {
             System.out.println();
             String styleClass = matcher2.group("CODE") != null ? "code" :
-                    matcher2.group("HRULE") != null ? "bold" :
+                    matcher2.group("HRULE") != null ? "hrule" :
                             matcher2.group("BOLD") != null ? "bold" :
                                     matcher2.group("ITALIC") != null ? "italic" :
                                             matcher2.group("BOLDITALIC") != null ? "bold-italic" :
