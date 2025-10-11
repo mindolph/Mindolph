@@ -53,12 +53,15 @@ public interface MarkdownConstants extends SyntaxConstants {
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
+        System.out.println(LIST_PATTERN);
 //        String text = "> hello1\n # heading\n  > hello `every`w`body` ==\n";
 //        String text = "|A|B|C|\n|:---|:----:|---:|\n";
 //        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
 //        String text = "hello `abc` foobar";
 //        String text = "\n---\n---- \n***\n**** \n___\n____ \nfoo `bar`\n";
-        String text = "```\n [key] \n```";
+//        String text = "```\n [key] \n```";
+        String text = "* \uD83D\uDE02 hello\n";
+//        String text = "> \uD83D\uDE02 hello\n";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
@@ -72,7 +75,6 @@ public interface MarkdownConstants extends SyntaxConstants {
             System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
         }
 
-        System.out.println(HORIZONTAL_RULE_PATTERN);
         Pattern pattern2 = Pattern.compile(
                 "(?<HRULE>" + HORIZONTAL_RULE_PATTERN + ")"
                         + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"

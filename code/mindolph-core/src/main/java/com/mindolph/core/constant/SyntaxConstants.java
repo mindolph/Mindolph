@@ -16,4 +16,7 @@ public interface SyntaxConstants {
     String LINE_START = "(^|%s)".formatted(LINE_SEPARATOR);
 
     String LINE_END = "($|%s)".formatted(LINE_SEPARATOR);
+
+    String EMOJI_CHAR = "\\u2600-\\u27BF\\uD83C\\uD000-\\uD83C\\uDFFF\\uD83D\\uDC00-\\uD83D\\uDDFF\\uD83E\\uDD00-\\uD83E\\uDDFF";
+
 }

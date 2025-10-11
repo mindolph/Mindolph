@@ -27,7 +27,7 @@ public class RegExTest {
 
     @Test
     public void testReplacePattern() {
-        String s = RegExUtils.replacePattern("###...", "#", "");
+        String s = RegExUtils.replaceAll("###...", "#", "");
         Assertions.assertEquals("...", s);
     }
 
@@ -64,11 +64,11 @@ public class RegExTest {
     public static void main(String[] args) {
         String text = """
                 # Awesome JavaFX [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
-                                
+                
                 A curated list of awesome JavaFX frameworks, libraries, books etc... .
-                                
+                
                 ----
-                                
+                
                 ## Contents
                 - [Libraries, Tools and Projects](#libraries-tools-and-projects)
                 - [Frameworks](#frameworks)
@@ -80,10 +80,10 @@ public class RegExTest {
                 - [Slides](#slides)
                 - [Articles](#articles)
                 - [Real World Examples](#real-world-examples)
-                                
-                                
+                
+                
                 ----
-                                
+                
                 ## Libraries, Tools and Projects
                 - [Actlist](https://github.com/actlist/actlist) - Actlist is a utility platform to execute your own action list easily and simply.
                 - [Advanced-Bindings for JavaFX (8)](https://github.com/lestard/advanced-bindings) - advanced-bindings is a collection of useful helpers and custom binding implementations like java.lang.Math or Switch-Case as JavaFX binding.
@@ -178,7 +178,7 @@ public class RegExTest {
                 - [Welk Lidwoord](https://github.com/Hakky54/welk-lidwoord) - An app that will help you to improve your Dutch grammar.
                 - [WellBehavedFX](https://github.com/TomasMikula/WellBehavedFX) - Composable event handlers and skin scaffolding for JavaFX controls.
                 - [Wordagam](https://github.com/gravetii/wordagam) - A fun little word game built with openjfx.
-                                
+                
                 ## Frameworks
                 - [afterburner.fx](http://afterburner.adam-bien.com/) - afterburner.fx is a minimalistic (3 classes) JavaFX MVP framework based on Convention over Configuration and Dependency Injection.
                 - [APX](https://github.com/othreecodes/APX) - A JavaFX Library for Creating and Implementing MVC Type applications.
@@ -201,34 +201,34 @@ public class RegExTest {
                 - [ScalaFX](http://www.scalafx.org/) - simplifies creation of JavaFX-based user interfaces in Scala.
                 - [TornadoFX](https://github.com/edvin/tornadofx) - Lightweight JavaFX Framework for Kotlin.
                 - [WorkbenchFX](https://github.com/dlemmermann/WorkbenchFX) - A lightweight RCP framework for JavaFX applications.
-                                
+                
                 ## Books
-                                
+                
                 - [Getting started with Java on the Raspberry Pi](https://leanpub.com/gettingstartedwithjavaontheraspberrypi/) - By [Frank Delporte](https://twitter.com/FrankDelporte)<br/>
                 Get started with the latest versions of Java, JavaFX, Pi4J, Spring and so much more. Learn the power (and fun!) of experimenting with electronics. All explained in many small and easy to understand examples.
-                                
+                
                 - [Introducing JavaFX 8 Programming](https://www.mhprofessional.com/details.php?isbn=0071842551) - By Herbert Schildt<br/>
                 Introducing JavaFX 8 Programming provides a fast-paced, practical introduction to JavaFX, Java's next-generation GUI programming framework. In this easy-to-read guide, best-selling author Herb Schildt presents the key topics and concepts you'll need to start developing modern, dynamic JavaFX GUI applications.
-                                
+                
                 - [JavaFX 9 by Example](https://www.apress.com/gp/book/9781484219607) - by [Carl Dea](https://twitter.com/carldea) , [Mark Heckler](https://twitter.com/MkHeck) , [Gerrit Grunwald](https://twitter.com/hansolo_) , [José Pereda](https://twitter.com/JPeredaDnr) , [Sean Phillips](https://twitter.com/SeanMiPhillips)<br/>
                 JavaFX 9 by Example is chock-full of engaging, fun-to-work examples that bring you up to speed on the major facets of JavaFX 9.
-                                
+                
                 - [JavaFX Essentials](https://www.packtpub.com/web-development/javafx-essentials) - By [Mohamed Taman](https://twitter.com/_tamanm)<br/>
                 Create amazing Java GUI applications with this hands-on, fast-paced guide
-                                
+                
                 - [Learn JavaFX 8 Building User Experience and Interfaces with Java 8](http://www.apress.com/9781484211434) - by Kishori Sharan<br/>
                 Start developing rich-client desktop applications using your Java skills. Learn MVC patterns, FXML, effects, transformations, charts, images, canvas, audio and video, DnD, and more. After reading and using Learn JavaFX 8, you'll come away with a comprehensive introduction to the JavaFX APIs as found in the new Java 8 platform.
-                                
+                
                 - [Mastering JavaFX 8 Controls](https://www.mhprofessional.com/details.php?isbn=0071833773) - By [Hendrik Ebbers](https://twitter.com/hendrikEbbers)<br/>
                 Deliver state-of-the-art applications with visually stunning UIs. Mastering JavaFX 8 Controls provides clear instructions, detailed examples, and ready-to-use code samples. Find out how to work with the latest JavaFX APIs, configure UI components, automatically generate FXML, build cutting-edge controls, and effectively apply CSS styling. Troubleshooting, tuning, and deployment are also covered in this Oracle Press guide.
-                                
+                
                 - [Pro Java 9 Games Development Leveraging the JavaFX APIs](https://www.apress.com/gp/book/9781484209745) - By Wallace Jackson<br/>
                 Use Java 9 and JavaFX 9 to write 3D games for the latest consumer electronics devices.\s
-                                
+                
                 - [Pro JavaFX 9 A Definitive Guide to Building Desktop, Mobile, and Embedded Java Clients](https://www.apress.com/gp/book/9781484230411) - By [Johan Vos](https://twitter.com/johanvos) , [Weiqi Gao](https://twitter.com/weiqigao) , [James Weaver](https://twitter.com/JavaFXpert) , [Stephen Chin](https://twitter.com/steveonjava) , [Dean Iverson](https://twitter.com/deanriverson)<br/>
                 The expert authors cover the new more modular JavaFX 9 APIs, development tools, and best practices and provide code examples that explore the exciting new features provided with JavaFX 9, part of Oracle's new Java 9 release.
-                                
-                                
+                
+                
                 ## Blogs and Sites
                 - [falkhausen.de](http://www.falkhausen.de/JavaFX/index.html) - Class diagrams for JavaFX by Markus Falkhausen.
                 - [FX Experience](http://fxexperience.com/) - FX Experience has been the premiere site for JavaFX code, posts, and insights since mid-2009, and readership continues to grow every month. You should absolutly follow their weekly links.
@@ -241,7 +241,7 @@ public class RegExTest {
                 - [Kware](http://www.kware.net/) - A blog about JavaFX by Christoph Keimel.
                 - [Pixel Duke](https://www.pixelduke.com) - Several articles on JavaFX from someone who has worked with JavaFX since its first beta release, for example, he was the author of a component that allowed Swing and JavaFX interoperability in the first versions of JavaFX when that was still not possible. The blog owner is a [JavaFX and Swing Freelancer and Consultant](http://www.pixelduke.com) or more generally a Front End Freelancer and Consultant who's also a Software Designer.
                 - [Pixel Perfect](http://dlsc.com/blog/) - You can find good articles about java and specially JavaFX by [Dirk Lemmermann](https://twitter.com/dlemmermann).
-                                
+                
                 ## People
                 *These people share good stuff on their twitter accounts. Some of them are Legends, Champions and Rockstars. Follow them on Twitter. Descriptions from Twitter.*
                 * [Andres Almiray](https://twitter.com/aalmiray) - JSR377 Spec lead, Groovy aficionado, Griffon project lead, Basilisk project lead, Java Champion http://manning.com/almiray.
@@ -283,7 +283,7 @@ public class RegExTest {
                 * [Tom Schindl](https://twitter.com/tomsontom) - Eclipse Committer, [e(fx)clipse](http://www.efxclipse.org/) project lead and CTO at [BestSolution.at](http://bestsolution.at/en/index.html)
                 * [Weiqi Gao](https://twitter.com/weiqigao) - JavaFX Author
                 * [William Antônio](https://twitter.com/William_Antonio) - JBoss Support Enginner and JavaFX enthusiast. Java* Blogger.
-                                
+                
                 ## Tutorials
                 *Good online resources including free and paid courses to learn JavaFX.*
                 - [Building Your First JavaFX Application](http://www.pluralsight.com/courses/java-se-java-fx-application-building-your-first) - This course will provide you with a quick introduction to basic JavaFX features and help you build your first JavaFX Application.
@@ -296,7 +296,7 @@ public class RegExTest {
                 - [TeamTreeHouse Build a JavaFX Application](https://teamtreehouse.com/library/build-a-javafx-application) - Learn JavaFX fundamentals, Event driven application development and Client based application layout.
                 - [TheNewBoston JavaFX](https://www.youtube.com/watch?v=FLkOX4Eez6o&list=PL6gx4Cwl9DGBzfXLWLSYVy8EbTdpGbUIG) - Youtube JavaFX Video Tutorial. It's Simple and it's good place to start JavaFX.
                 - [Udemy Build Outstanding JavaFX](https://www.udemy.com/javafx-gui-programming/) - Udemy Video Tutorial for JavaFX. Build Outstanding Java Apps with JavaFX much faster. Launch a beautiful Java app by the end of the week. Learn smarter Programming with the JavaFX GUI Framework.
-                                
+                
                 ## Talks
                 *Interesting talks in conferences like JavaOne, Devoxx and others*
                 - [Creating Amazing Visualization Tools With JavaFX 8 (3D)](https://www.youtube.com/watch?v=xk-YfIdH0_Y) - By [Michael Hoffer](https://twitter.com/mihosoft)<br/>
@@ -318,7 +318,7 @@ public class RegExTest {
                 - [JavaFX Pitfalls](http://www.slideshare.net/alexandercasall/javafx-pitfalls). Tips and tricks regarding JavaFX.
                 - [The JavaFX Community and Ecosystem](http://www.slideshare.net/alexandercasall?utm_campaign=profiletracking&utm_medium=sssite&utm_source=ssslideview). JavaOne talk about the Ecosystem in the year 2014.
                 - [The JavaFX Ecosystem](http://www.slideshare.net/aalmiray/the-javafx-ecosystem-63538844). A collection of Open Source libraries for building JavaFX applications.
-                                
+                
                 ## Articles
                 *Interesting Articles about JavaFX*
                 - [Building a JavaFX Search Bar](https://vocabhunter.github.io/2017/01/15/Search-Bar.html) - How to add a search bar to your JavaFX user interface. The article is based on a real application and includes links to all of the source code.
@@ -328,7 +328,7 @@ public class RegExTest {
                 - [JavaFX 8 Refcard](https://dzone.com/refcardz/javafx-8-1) - Gives you what you need to start using the powerful JavaFX 8 UI and graphics tool with code snippets and visual examples of shapes and controls.
                 - [JavaFX Refcard](https://dzone.com/refcardz/getting-started-javafx) - Gets you started with JavaFX, which makes it easier to build better RIAs with graphics, animation, and media.
                 - [User Interface Testing with TestFX](https://vocabhunter.github.io/2016/07/27/TestFX.html) - A guide to using TestFX to automate JavaFX user interface testing.
-                                
+                
                 ## Real World Examples
                 *Real World Examples of JavaFX and Applications*
                 - [20 real world examples on JAXenter](https://jaxenter.com/20-javafx-real-world-applications-123653.html)
@@ -355,14 +355,26 @@ public class RegExTest {
                 - [VocabHunter](https://vocabhunter.github.io/) - VocabHunter is a system to help learners of foreign languages.
                 - [WavesFX](https://github.com/wavesfx/wavesfx) - A community-driven Waves desktop wallet which offers users multi-network and multi-address functionality.
                 - [XR3Player](https://github.com/goxr3plus/XR3Player) - XR3Player is an opensource Java/JavaFX Media Player, WebBrowser, Media File Organizer, aiming to be something more than a Media Player.
-                                
+                
                 ----
-                                
+                
                 ## Contribute
                 Contributions are always welcome!
-                                
+                
                 """;
         String result = RegExUtils.replaceAll(text, "[\\s\\r,.()=\"'`\\[\\]\\\\/\\-\\?:#\\!\\^&%\\$]", " ");
         System.out.println(result);
+    }
+
+    @Test
+    public void emoji() {
+        String text = "Hello 😀, 世界 🌍! How are you? 👨‍👩‍👧‍👦";
+        Pattern pattern = Pattern.compile("[\\u2600-\\u27BF\\uD83C\\uD000-\\uD83C\\uDFFF\\uD83D\\uDC00-\\uD83D\\uDDFF\\uD83E\\uDD00-\\uD83E\\uDDFF]");
+        Matcher matcher = pattern.matcher(text);
+
+        System.out.println("Using Unicode property:");
+        while (matcher.find()) {
+            System.out.printf("Found emoji: %s at position %d%n", matcher.group(), matcher.start());
+        }
     }
 }
