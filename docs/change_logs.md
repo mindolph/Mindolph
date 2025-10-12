@@ -6,7 +6,7 @@
 
 * Bug Fixes:
 	* The `Generate` dialog automatically moves to the end of the file when an editor is opened but has never been clicked
-	* Incorrect sytax highlighting of the code block in Markdown.
+	* Incorrect syntax highlighting of the code block in Markdown.
 	* Inline syntax highlighting doesn't work for last plain paragraph in Markdown.
 
 ### V1.13.2 Unstable Release
