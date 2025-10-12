@@ -1,5 +1,14 @@
 # Change Logs
 
+### V1.12.9 Release
+* Improvement: 
+	* Syntax highlighting for horizontal rule in Markdown editor.
+
+* Bug Fixes:
+	* The `Generate` dialog automatically moves to the end of the file when an editor is opened but has never been clicked
+	* Incorrect sytax highlighting of the code block in Markdown.
+	* Inline syntax highlighting doesn't work for last plain paragraph in Markdown.
+
 ### V1.13.2 Unstable Release
 * Features:
 	* The agent can be created without embedding model, which means it is an agent as a chat bot. 
