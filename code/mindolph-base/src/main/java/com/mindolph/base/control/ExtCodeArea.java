@@ -70,7 +70,7 @@ public class ExtCodeArea extends CodeArea {
 
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
-        super.caretPositionProperty().addListener((observableValue, integer, t1) -> ExtCodeArea.super.requestFollowCaret());
+        super.caretPositionProperty().addListener((observableValue, integer, t1) -> super.requestFollowCaret());
         this.setOnContextMenuRequested(contextMenuEvent -> {
             ContextMenu codeContextMenu = createContextMenu();
             Node node = (Node) contextMenuEvent.getSource();

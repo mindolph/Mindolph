@@ -14,6 +14,8 @@ import com.mindolph.base.event.NotificationType;
 import com.mindolph.core.async.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.core.search.TextAnchor;
+import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.csv.CsvEditor;
 import com.mindolph.fx.TabManager;
@@ -226,6 +228,10 @@ public class FileTabView extends BaseView {
         // do something to init the editor when the file is loaded and update menu states.
         EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
             Platform.runLater(() -> {
+                if (fileData.getAnchor() == null) {
+                    // force to the begging of the code area (to solve the problem that the caret jumps to the end when using the Generate feature)
+                    fileData.setAnchor(new TextAnchor(TextLocation.DEFAULT));
+                }
                 editor.locate(fileData.getAnchor());
                 fileData.setAnchor(null); // clear the anchor by 'find in files'
 

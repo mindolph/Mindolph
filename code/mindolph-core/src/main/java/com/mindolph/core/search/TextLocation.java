@@ -6,6 +6,9 @@ import java.util.Objects;
  * @author mindolph.com@gmail.com
  */
 public class TextLocation {
+
+    public static TextLocation DEFAULT = new TextLocation(0, 0, 0, 0);
+
     private int startRow = 0;
     private int startCol = 0;
     private int endRow = 0; // inclusive
