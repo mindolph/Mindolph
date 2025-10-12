@@ -48,47 +48,51 @@ public interface MarkdownConstants extends SyntaxConstants {
     static void main(String[] args) {
         Pattern pattern = Pattern.compile(
                 "(?<HEADING>" + HEADING_PATTERN + ")"
-                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
                         + "|(?<LIST>" + LIST_PATTERN + ")"
                         + "|(?<TABLE>" + TABLE_PATTERN + ")"
                         + "|(?<QUOTE>" + QUOTE_PATTERN + ")"
                         + "|(?<URL>" + URL_PATTERN + ")"
         );
+        System.out.println(LIST_PATTERN);
 //        String text = "> hello1\n # heading\n  > hello `every`w`body` ==\n";
 //        String text = "|A|B|C|\n|:---|:----:|---:|\n";
 //        String text = " `' *foobar*`  `' **foobar**` **`foobar`**";
 //        String text = "hello `abc` foobar";
-        String text = "\n---\n---- \n***\n**** \n___\n____ \nfoo `bar`\n";
+//        String text = "\n---\n---- \n***\n**** \n___\n____ \nfoo `bar`\n";
+//        String text = "```\n [key] \n```";
+        String text = "* \uD83D\uDE02 hello\n";
+//        String text = "> \uD83D\uDE02 hello\n";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
                     matcher.group("HEADING") != null ? "heading" :
                             matcher.group("LIST") != null ? "list" :
                                     matcher.group("TABLE") != null ? "table" :
-                                            matcher.group("CODEBLOCK") != null ? "code-block" :
-                                                    matcher.group("QUOTE") != null ? "md-quote" :
-                                                            matcher.group("URL") != null ? "url" :
-                                                                    "unknown";
+                                            matcher.group("QUOTE") != null ? "md-quote" :
+                                                    matcher.group("URL") != null ? "url" :
+                                                            "unknown";
             System.out.printf("matched %s: (%d-%d) %n", styleClass, matcher.start(), matcher.end());
             System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
         }
 
-        System.out.println(HORIZONTAL_RULE_PATTERN);
-        Pattern pattern2 = Pattern.compile("(?<CODE>" + CODE_PATTERN + ")"
-                + "|(?<HRULE>" + HORIZONTAL_RULE_PATTERN + ")"
-                + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
-                + "|(?<BOLD>" + BOLD_PATTERN + ")"
-                + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
+        Pattern pattern2 = Pattern.compile(
+                "(?<HRULE>" + HORIZONTAL_RULE_PATTERN + ")"
+                        + "|(?<BOLDITALIC>" + BOLD_ITALIC_PATTERN + ")"
+                        + "|(?<BOLD>" + BOLD_PATTERN + ")"
+                        + "|(?<ITALIC>" + ITALIC_PATTERN + ")"
+                        + "|(?<CODEBLOCK>" + CODE_BLOCK_PATTERN + ")"
+                        + "|(?<CODE>" + CODE_PATTERN + ")"
         );
         Matcher matcher2 = pattern2.matcher(text);
         while (matcher2.find()) {
             System.out.println();
-            String styleClass = matcher2.group("CODE") != null ? "code" :
-                    matcher2.group("HRULE") != null ? "hrule" :
-                            matcher2.group("BOLD") != null ? "bold" :
-                                    matcher2.group("ITALIC") != null ? "italic" :
-                                            matcher2.group("BOLDITALIC") != null ? "bold-italic" :
-                                                    null;
+            String styleClass = matcher2.group("HRULE") != null ? "hrule" :
+                    matcher2.group("BOLD") != null ? "bold" :
+                            matcher2.group("ITALIC") != null ? "italic" :
+                                    matcher2.group("BOLDITALIC") != null ? "bold-italic" :
+                                            matcher2.group("CODEBLOCK") != null ? "code-block" :
+                                                    matcher2.group("CODE") != null ? "code" :
+                                                            null;
             System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher2.start(), matcher2.end(), matcher2.groupCount());
             System.out.println(StringUtils.substring(text, matcher2.start(), matcher2.end()));
         }
