@@ -1,12 +1,11 @@
 package com.mindolph.fx.view;
 
 import com.mindolph.base.BaseView;
+import com.mindolph.base.control.FileTreeHelper;
 import com.mindolph.base.control.MTreeView;
-import com.mindolph.base.control.TreeFinder;
 import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.base.event.*;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.constant.NodeType;
 import com.mindolph.core.constant.SceneStatePrefs;
@@ -17,6 +16,7 @@ import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.helper.TreeExpandRestoreListener;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.mindmap.search.MindMapTextMatcher;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -132,8 +132,8 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
                     }
                     File draggingFile = fileData.getFile();
                     // update the tree
-                    TreeItem<NodeData> treeItemFile = findTreeItemByFile(draggingFile);
-                    TreeItem<NodeData> treeItemFolder = findTreeItemByFile(toDir);
+                    TreeItem<NodeData> treeItemFile = FileTreeHelper.findTreeItemByFile(rootItem, draggingFile);
+                    TreeItem<NodeData> treeItemFolder = FileTreeHelper.findTreeItemByFile(rootItem, toDir);
                     if (treeItemFile == null || treeItemFolder == null
                             || treeItemFile == treeItemFolder
                             || treeItemFile.getParent() == treeItemFolder) {
@@ -494,27 +494,6 @@ public class WorkspaceView extends BaseView implements EventHandler<ActionEvent>
         else {
             return findParentNodeWithDataType(treeItem.getParent(), nodeType);
         }
-    }
-
-    /**
-     * Find a tree item by searching exactly the path of file,
-     * because it's faster than traversing the whole tree.
-     *
-     * @param file
-     * @return
-     */
-    public TreeItem<NodeData> findTreeItemByFile(File file) {
-        return TreeFinder.findTreeItemPathMatch(rootItem, treeItem -> {
-            File nodeFile = treeItem.getValue().getFile();
-            return rootItem == treeItem ||
-                    file.getPath().startsWith(nodeFile.getPath());
-        }, treeItem -> {
-            if (treeItem == rootItem) {
-                return false;
-            }
-            File nodeFile = treeItem.getValue().getFile();
-            return nodeFile.equals(file);
-        });
     }
 
     public void removeTreeNode(NodeData nodeData) {

@@ -163,8 +163,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
 
         workspaceSelector.getSelectionModel().selectedItemProperty().addListener((observableValue, workspaceMeta, selectedWorkspace) -> {
             if (selectedWorkspace != null) {
-                this.loadWorkspace(selectedWorkspace.getValue());
-                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getBaseDirPath());
+                this.loadWorkspace(selectedWorkspace.getValue().getWorkspaceMeta());
+                fxPreferences.savePreference(MINDOLPH_ACTIVE_WORKSPACE, selectedWorkspace.getValue().getWorkspaceMeta().getBaseDirPath());
             }
             else {
                 // clear the tree view if the last workspace is closed.

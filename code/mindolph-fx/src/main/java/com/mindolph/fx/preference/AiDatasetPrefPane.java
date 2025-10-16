@@ -139,7 +139,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             if (pe.getStage() == Stage.EMBED_DATASET) {
                                 btnEmbedding.setText("Stop embedding");
                             }
-                            else if (pe.getStage() == Stage.REMOVE_DATASET){
+                            else if (pe.getStage() == Stage.REMOVE_DATASET) {
                                 btnEmbedding.setText("Stop removing embeddings");
                             }
                             else {
@@ -247,10 +247,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         super.initEmbeddingModelRelatedComponents(this.cbEmbeddingProvider, this.cbLanguage, this.cbEmbeddingModel);
 
         // workspace
-        workspaceSelector.valueProperty().addListener((observable, oldValue, newValue) -> {
+        workspaceSelector.listenValueChange((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.equals(oldValue)) return;
             log.debug("Workspace changed: {}", newValue.getKey());
-            latestWorkspace = newValue.getValue();
+            latestWorkspace = newValue.getValue().getWorkspaceMeta();
             fileSelectView.loadWorkspace(currentDatasetMeta, latestWorkspace, true, false,
                     pathname -> FilenameUtils.isExtension(pathname.getName(), SUPPORTED_EMBEDDING_FILE_TYPES));
         });
@@ -274,6 +274,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 }
                 super.saveChanges(false);
                 currentDatasetMeta.merge();
+                this.updateWorkspaceSelector(); // to update the file counter in workspace selector.
                 this.displaySelectedAndEmbeddedCountAsync(currentDatasetMeta.getId(), success -> {
                 });
             });
@@ -372,12 +373,24 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         // clear file select view before init workspace selector.
         fileSelectView.getRootItem().getChildren().clear();
         fileSelectView.refresh();
-        // init workspace selector and load selected files through workspace selection change event.
-        String jsonWorkspaces = fxPreferences.getPreference(SceneStatePrefs.MINDOLPH_PROJECTS, "{}");
-        WorkspaceList workspaceList = WorkspaceManager.getIns().loadFromJson(jsonWorkspaces);
-        workspaceSelector.loadWorkspaces(workspaceList, latestWorkspace, false);
 
+        // init workspace selector and load selected files through workspace selection change event.
+        WorkspaceList workspaceList = WorkspaceManager.getIns().getWorkspaceList();
+        workspaceSelector.loadWorkspaces(workspaceList, latestWorkspace, false);
+        this.updateWorkspaceSelector();
         afterLoading();
+    }
+
+    // update workspace selector with file counter.
+    private void updateWorkspaceSelector() {
+        WorkspaceList workspaceList = WorkspaceManager.getIns().getWorkspaceList();
+        Map<WorkspaceMeta, List<File>> mapping = workspaceList.grouping(currentDatasetMeta.getFiles());
+        workspaceSelector.updateWorkspaceLabels(wm -> {
+            if (mapping.containsKey(wm)) {
+                return (" (%s files)".formatted(mapping.get(wm).size()));
+            }
+            return null;
+        });
     }
 
     private void createNewDataset(String defaultNewName) {

@@ -44,7 +44,7 @@ public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Select
                 .build();
         workspaceSelector.getSelectionModel().selectedItemProperty().addListener((observableValue, workspaceMeta, selectedWorkspace) -> {
             if (selectedWorkspace != null) {
-                WorkspaceMeta selectedWorkspaceMeta = selectedWorkspace.getValue();
+                WorkspaceMeta selectedWorkspaceMeta = selectedWorkspace.getValue().getWorkspaceMeta();
                 workspaceView.loadWorkspace(selectedWorkspaceMeta, true, true);
                 // workspace dir path as selected dir
                 result = new Selection(selectedWorkspaceMeta, new File(selectedWorkspaceMeta.getBaseDirPath()));
@@ -67,7 +67,7 @@ public class WorkspaceDialog extends BaseDialogController<WorkspaceDialog.Select
         workspaceView.subscribeSelected(nodeData -> {
             log.debug("Selected target workspace: %s".formatted(workspaceSelector.getSelectionModel().getSelectedItem().getKey()));
             log.debug("Selected target folder: %s".formatted(nodeData.getFile().getPath()));
-            result = new Selection(workspaceSelector.getSelectionModel().getSelectedItem().getValue(), nodeData.getFile());
+            result = new Selection(workspaceSelector.getSelectedWorkspace(), nodeData.getFile());
         });
     }
 

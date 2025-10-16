@@ -1,7 +1,11 @@
 package com.mindolph.core.meta;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author mindolph.com@gmail.com
@@ -50,6 +54,18 @@ public class WorkspaceList {
             }
         }
         return null;
+    }
+
+    /**
+     * Grouping files by the workspace they belong.
+     * Be used to identifying file's workspace.
+     *
+     * @param files
+     * @return
+     */
+    public Map<WorkspaceMeta, List<File>> grouping(List<File> files) {
+        files.removeIf(file -> this.matchByFilePath(file.getAbsolutePath()) == null);
+        return files.stream().collect(Collectors.groupingBy(file -> this.matchByFilePath(file.getPath()), LinkedHashMap::new, Collectors.toList()));
     }
 
     public int getSize() {
