@@ -641,6 +641,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     private void processMoveFocusByKey(KeyEvent event) {
         if (event.isConsumed()) return;
+        event.consume(); // has to consume or the event will broadcast to parent node.
         BaseElement lastSelected = getLastSelectedTopicElement();
         if (lastSelected == null) {
             return;
@@ -668,7 +669,6 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 };
                 TopicNode topic = isUp ? lastSelTopic.findPrev(checker) : lastSelTopic.findNext(checker);
                 nextFocused = topic == null ? null : (BaseElement) topic.getPayload();
-                event.consume();
             }
             else if (sm.getKeyCombination(KEY_FOCUS_MOVE_LEFT_ADD_FOCUSED).getCode() == event.getCode()) {
                 if (lastSelected.isLeftDirection()) {
@@ -677,7 +677,6 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 else {
                     nextFocused = (BaseElement) lastSelTopic.getParent().getPayload();
                 }
-                event.consume();
             }
             else if (sm.getKeyCombination(KEY_FOCUS_MOVE_RIGHT_ADD_FOCUSED).getCode() == event.getCode()) {
                 if (lastSelected.isLeftDirection()) {
@@ -686,7 +685,6 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 else {
                     expandFirstChild = true;
                 }
-                event.consume();
             }
         }
         if (expandFirstChild) {
@@ -966,7 +964,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     public void deleteTopics(boolean notifyModelChanged, TopicNode topic) {
-        List<TopicNode> l = new  ArrayList<>();
+        List<TopicNode> l = new ArrayList<>();
         l.add(topic);
         deleteTopics(notifyModelChanged, l); // can't be immutable list
     }
