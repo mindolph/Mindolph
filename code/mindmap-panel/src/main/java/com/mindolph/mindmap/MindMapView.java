@@ -525,7 +525,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     @Override
     protected void onKeyPressed(KeyEvent event) {
         super.onKeyPressed(event);
-        log.trace("Key pressed: " + event.getCharacter());
+        log.trace("Key pressed: %s".formatted(event.getCharacter()));
         if (!event.isConsumed()) {
             processEditingTopic(event);
             processMoveTopics(event);
@@ -641,7 +641,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     private void processMoveFocusByKey(KeyEvent event) {
         if (event.isConsumed()) return;
-        event.consume(); // has to consume or the event will broadcast to parent node.
+//        event.consume(); // has to consume or the event will broadcast to parent node.
         BaseElement lastSelected = getLastSelectedTopicElement();
         if (lastSelected == null) {
             return;
@@ -669,6 +669,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 };
                 TopicNode topic = isUp ? lastSelTopic.findPrev(checker) : lastSelTopic.findNext(checker);
                 nextFocused = topic == null ? null : (BaseElement) topic.getPayload();
+                event.consume();
             }
             else if (sm.getKeyCombination(KEY_FOCUS_MOVE_LEFT_ADD_FOCUSED).getCode() == event.getCode()) {
                 if (lastSelected.isLeftDirection()) {
@@ -677,6 +678,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 else {
                     nextFocused = (BaseElement) lastSelTopic.getParent().getPayload();
                 }
+                event.consume();
             }
             else if (sm.getKeyCombination(KEY_FOCUS_MOVE_RIGHT_ADD_FOCUSED).getCode() == event.getCode()) {
                 if (lastSelected.isLeftDirection()) {
@@ -685,6 +687,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 else {
                     expandFirstChild = true;
                 }
+                event.consume();
             }
         }
         if (expandFirstChild) {
@@ -693,7 +696,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                     ((BaseCollapsableElement) lastSelected).setCollapse(false);
                     modelChanged = true;
                 }
-                nextFocused = (BaseElement) (lastSelTopic.getChildren().get(0)).getPayload();
+                nextFocused = (BaseElement) (lastSelTopic.getChildren().getFirst()).getPayload();
             }
         }
         // left button
@@ -727,9 +730,18 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             selectAndUpdate(nextFocused.getModel(), false);
         }
 
+        // has to consume or the event will broadcast to parent node.
+        if (isDirectionKey(event)) {
+            event.consume();
+        }
+
         if (modelChanged) {
             onMindMapModelChanged(true);
         }
+    }
+
+    private boolean isDirectionKey(KeyEvent ke) {
+        return ke.getCode() == KeyCode.UP || ke.getCode() == KeyCode.DOWN | ke.getCode() == KeyCode.LEFT || ke.getCode() == KeyCode.RIGHT;
     }
 
     private void processMoveTopics(KeyEvent event) {
@@ -1369,11 +1381,11 @@ public class MindMapView extends BaseScalableView implements Anchorable {
     }
 
     public TopicNode getFirstSelectedTopic() {
-        return this.selection.get().isEmpty() ? null : this.selection.get().get(0);
+        return this.selection.get().isEmpty() ? null : this.selection.get().getFirst();
     }
 
     private TopicNode getLastSelectedTopic() {
-        return this.selection.get().isEmpty() ? null : this.selection.get().get(this.selection.get().size() - 1);
+        return this.selection.get().isEmpty() ? null : this.selection.get().getLast();
     }
 
     private BaseElement getLastSelectedTopicElement() {
