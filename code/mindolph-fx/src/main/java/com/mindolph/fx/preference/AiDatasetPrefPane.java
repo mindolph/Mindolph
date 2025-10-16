@@ -384,7 +384,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     // update workspace selector with file counter.
     private void updateWorkspaceSelector() {
         WorkspaceList workspaceList = WorkspaceManager.getIns().getWorkspaceList();
-        Map<WorkspaceMeta, List<File>> mapping = workspaceList.grouping(currentDatasetMeta.getFiles());
+        Map<WorkspaceMeta, List<File>> mapping = currentDatasetMeta.getFiles() == null ? Map.of() : workspaceList.grouping(currentDatasetMeta.getFiles());
         workspaceSelector.updateWorkspaceLabels(wm -> {
             if (mapping.containsKey(wm)) {
                 return (" (%s files)".formatted(mapping.get(wm).size()));
