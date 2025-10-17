@@ -1,6 +1,7 @@
 package com.mindolph.base.constant;
 
 import com.mindolph.core.constant.SyntaxConstants;
+import com.mindolph.core.util.DebugUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -34,9 +35,10 @@ public interface MarkdownConstants extends SyntaxConstants {
             + "|((__)" + EMPHASIS + "(__))";
     String ITALIC_PATTERN = "(\\*" + EMPHASIS + "\\*)"
             + "|(_" + EMPHASIS + "_)";
+    String QUOTE_HEAD = "%s%s*> ".formatted(LINE_START, BLANK_CHAR);
+    String QUOTE_PATTERN = "(%s[\\s\\S]*?)(?=%s)".formatted(QUOTE_HEAD, LINE_SEPARATOR);
     String CODE_PATTERN = "(`[\\s\\S]*?`)";
-    String CODE_BLOCK_PATTERN = BLANK_CHAR + "*`{3}[\\s\\S]*?`{3}";
-    String QUOTE_PATTERN = "(%s%s*> [\\s\\S]*?)(?=%s)".formatted(LINE_START, BLANK_CHAR, LINE_SEPARATOR);
+    String CODE_BLOCK_PATTERN = "%s*`{3}[\\s\\S]*?`{3}".formatted(BLANK_CHAR);
     String URL_PATTERN = "(!?\\[[\\s\\S]*?\\])(\\([\\s\\S]*?\\))?";
     String HORIZONTAL_RULE_PATTERN = "((--[-]+%s*?(?=%s))|(\\*\\*[\\*]+%s*?(?=%s))|(__[_]+%s*?(?=%s)))".formatted(BLANK_CHAR, LINE_SEPARATOR, BLANK_CHAR, LINE_SEPARATOR, BLANK_CHAR, LINE_SEPARATOR);
 
@@ -60,8 +62,9 @@ public interface MarkdownConstants extends SyntaxConstants {
 //        String text = "hello `abc` foobar";
 //        String text = "\n---\n---- \n***\n**** \n___\n____ \nfoo `bar`\n";
 //        String text = "```\n [key] \n```";
-        String text = "* \uD83D\uDE02 hello\n";
+//        String text = "* \uD83D\uDE02 hello\n";
 //        String text = "> \uD83D\uDE02 hello\n";
+        String text = "> ```\n> foobar\n> ```";
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String styleClass =
@@ -72,7 +75,7 @@ public interface MarkdownConstants extends SyntaxConstants {
                                                     matcher.group("URL") != null ? "url" :
                                                             "unknown";
             System.out.printf("matched %s: (%d-%d) %n", styleClass, matcher.start(), matcher.end());
-            System.out.println(StringUtils.substring(text, matcher.start(), matcher.end()));
+            System.out.println(DebugUtils.visible(StringUtils.substring(text, matcher.start(), matcher.end())));
         }
 
         Pattern pattern2 = Pattern.compile(
@@ -94,7 +97,7 @@ public interface MarkdownConstants extends SyntaxConstants {
                                                     matcher2.group("CODE") != null ? "code" :
                                                             null;
             System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher2.start(), matcher2.end(), matcher2.groupCount());
-            System.out.println(StringUtils.substring(text, matcher2.start(), matcher2.end()));
+            System.out.println(DebugUtils.visible(StringUtils.substring(text, matcher2.start(), matcher2.end())));
         }
     }
 }

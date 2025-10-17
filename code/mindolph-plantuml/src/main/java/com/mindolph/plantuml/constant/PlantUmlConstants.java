@@ -2,6 +2,7 @@ package com.mindolph.plantuml.constant;
 
 import com.mindolph.core.constant.SyntaxConstants;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,9 +46,9 @@ public interface PlantUmlConstants extends SyntaxConstants {
             "namespace", "page", "node", "package", "queue", "stack", "rectangle", "storage", "card", "cloud", "component", "agent", "artifact",
             "center", "footer", "return",
             // C4
-            "Person", "Person_Ext", "System", "System_Ext", "SystemDb", "SystemQueue", "SystemDb_Ext", "SystemQueue_Ext", "Boundary", "Enterprise_Boundary", "System_Boundary", "Container", "ContainerDb", "ContainerQueue", "Container_Ext", "ContainerDb_Ext", "ContainerQueue_Ext", "Container_Boundary", "Component", "ComponentDb", "ComponentQueue", "Component_Ext", "ComponentDb_Ext", "ComponentQueue_Ext", "Deployment_Node", "Node", "Node_L", "Node_R", "Rel", "BiRel", "Rel_U", "Rel_Up", "Rel_D", "Rel_Down", "Rel_L", "Rel_Left", "Rel_R", "Rel_Right", "Lay_U", "Lay_Up", "Lay_D", "Lay_Down", "Lay_L", "Lay_Left", "Lay_R", "Lay_Right", "AddElementTag", "AddRelTag", "AddBoundaryTag", "AddPersonTag", "AddExternalPersonTag", "AddSystemTag", "AddExternalSystemTag", "AddComponentTag", "AddExternalComponentTag", "AddContainerTag", "AddExternalContainerTag", "AddNodeTag", "UpdateElementStyle", "UpdateRelStyle", "UpdateBoundaryStyle", "UpdateContainerBoundaryStyle", "UpdateSystemBoundaryStyle", "UpdateEnterpriseBoundaryStyle", "UpdateLegendTitle", "RoundedBoxShape", "EightSidedShape", "DashedLine", "DottedLine", "BoldLine", "SolidLine", "SetPropertyHeader", "WithoutPropertyHeader", "AddProperty", "LAYOUT_TOP_DOWN","LAYOUT_LEFT_RIGHT","LAYOUT_LANDSCAPE","LAYOUT_WITH_LEGEND","SHOW_LEGEND","SHOW_FLOATING_LEGEND","LEGEND","LAYOUT_AS_SKETCH","SET_SKETCH_STYLE","HIDE_STEREOTYPE","HIDE_PERSON_SPRITE","SHOW_PERSON_SPRITE","SHOW_PERSON_PORTRAIT","SHOW_PERSON_OUTLINE",
+            "Person", "Person_Ext", "System", "System_Ext", "SystemDb", "SystemQueue", "SystemDb_Ext", "SystemQueue_Ext", "Boundary", "Enterprise_Boundary", "System_Boundary", "Container", "ContainerDb", "ContainerQueue", "Container_Ext", "ContainerDb_Ext", "ContainerQueue_Ext", "Container_Boundary", "Component", "ComponentDb", "ComponentQueue", "Component_Ext", "ComponentDb_Ext", "ComponentQueue_Ext", "Deployment_Node", "Node", "Node_L", "Node_R", "Rel", "BiRel", "Rel_U", "Rel_Up", "Rel_D", "Rel_Down", "Rel_L", "Rel_Left", "Rel_R", "Rel_Right", "Lay_U", "Lay_Up", "Lay_D", "Lay_Down", "Lay_L", "Lay_Left", "Lay_R", "Lay_Right", "AddElementTag", "AddRelTag", "AddBoundaryTag", "AddPersonTag", "AddExternalPersonTag", "AddSystemTag", "AddExternalSystemTag", "AddComponentTag", "AddExternalComponentTag", "AddContainerTag", "AddExternalContainerTag", "AddNodeTag", "UpdateElementStyle", "UpdateRelStyle", "UpdateBoundaryStyle", "UpdateContainerBoundaryStyle", "UpdateSystemBoundaryStyle", "UpdateEnterpriseBoundaryStyle", "UpdateLegendTitle", "RoundedBoxShape", "EightSidedShape", "DashedLine", "DottedLine", "BoldLine", "SolidLine", "SetPropertyHeader", "WithoutPropertyHeader", "AddProperty", "LAYOUT_TOP_DOWN", "LAYOUT_LEFT_RIGHT", "LAYOUT_LANDSCAPE", "LAYOUT_WITH_LEGEND", "SHOW_LEGEND", "SHOW_FLOATING_LEGEND", "LEGEND", "LAYOUT_AS_SKETCH", "SET_SKETCH_STYLE", "HIDE_STEREOTYPE", "HIDE_PERSON_SPRITE", "SHOW_PERSON_SPRITE", "SHOW_PERSON_PORTRAIT", "SHOW_PERSON_OUTLINE",
             // CSS styles
-            "FontName","FontColor","FontSize","FontStyle","BackGroundColor","HyperLinkColor","RoundCorner","DiagonalCorner","LineColor","LineThickness","LineStyle","Padding","Margin","MaximumWidth","Shadowing","HyperlinkUnderlineStyle","HyperlinkUnderlineThickness", "HorizontalAlignment"
+            "FontName", "FontColor", "FontSize", "FontStyle", "BackGroundColor", "HyperLinkColor", "RoundCorner", "DiagonalCorner", "LineColor", "LineThickness", "LineStyle", "Padding", "Margin", "MaximumWidth", "Shadowing", "HyperlinkUnderlineStyle", "HyperlinkUnderlineThickness", "HorizontalAlignment"
     };
     String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     // include EBNF note
@@ -59,21 +60,44 @@ public interface PlantUmlConstants extends SyntaxConstants {
     String BAR = "(--)|(\\.\\.)|-|\\.";
     // like connectors between entities
     String CONNECTOR = "((%s)|(%s))*(%s)((%s)|(%s))*".formatted(ARROW2, ARROW1, BAR, ARROW2, ARROW1);
-    // include EBNF quote
-    String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])|(\\?[.\\s\\S]+?\\?)";
+    // include EBNF quote(without line break)
+    String QUOTE_BLOCK = "(\"[^\"]*?\")|(\\[[^\\]]*?\\])|(\\?.+?\\?)";
 
     String ACTIVITY = "%s%s*:[^;\n]*?;%s".formatted(LINE_START, BLANK_CHAR, LINE_END);
 
     String SWIMLANE_PATTERN = "\\|.*?\\|";
 
+    String JSON_PATTERN = "(?<=@startjson)([\\s\\S^@]*?)(?=@endjson)";
+
+    String YAML_PATTERN = "(?<=@startyaml)([\\s\\S^@]*?)(?=@endyaml)";
+
     static void main(String[] args) {
         System.out.println(CONNECTOR);
-        String text = """
-                :activity;
-                u-->m: a
-                m-->s: b
-                s-->b: c;
-                """;
+//        String text = """
+//                :activity;
+//                u-->m: a
+//                m-->s: b
+//                s-->b: c;
+//                """;
+//        String text = """
+//                @startjson
+//                title "hello json"
+//                {
+//                  "name": "explain",
+//                  "description": "explain the web page.",
+//                  "actions" : [
+//                  ]
+//                }
+//                @endjson
+//                @startjson
+//                {
+//                }
+//                @endjson
+//                @startyaml
+//                key: value
+//                @endyaml
+//                """;
+        String text = "? foobar ?";
         Pattern patternMajor = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
                         + "|(?<ACTIVITY>" + ACTIVITY + ")"
                         + "|(?<QUOTE>" + QUOTE_BLOCK + ")"
@@ -84,6 +108,8 @@ public interface PlantUmlConstants extends SyntaxConstants {
                         + "|(?<DIRECTIVE>" + DIRECTIVE_PATTERN + ")"
                         + "|(?<CONTAININGKEYWORDS>" + CONTAINING_PATTERN + ")"
                         + "|(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+                        + "|(?<JSON>" + JSON_PATTERN + ")"
+                        + "|(?<YAML>" + YAML_PATTERN + ")"
                 , Pattern.MULTILINE);
         Matcher matcher = patternMajor.matcher(text);
         while (matcher.find()) {
@@ -98,9 +124,26 @@ public interface PlantUmlConstants extends SyntaxConstants {
                                                                             matcher.group("COMMENT") != null ? "comment" :
                                                                                     matcher.group("BLOCKCOMMENT") != null ? "comment" :
                                                                                             matcher.group("KEYWORD") != null ? "keyword" :
+                                                                                                    matcher.group("JSON") != null ? "json" :
+                                                                                                            matcher.group("YAML") != null ? "yaml" :
                                                                                                     null; /* never happens */
             assert styleClass != null;
             System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcher.start(), matcher.end(), matcher.groupCount());
+            System.out.printf("`%s`%n", StringUtils.substring(text, matcher.start(), matcher.end()));
         }
+
+//        Pattern patternMinor = Pattern.compile("(?<JSON>" + JSON_PATTERN + ")"
+//                        + "|(?<YAML>" + YAML_PATTERN + ")"
+//                , Pattern.MULTILINE);
+//        Matcher matcherMinor = patternMinor.matcher(text);
+//        while (matcherMinor.find()) {
+//            String styleClass =
+//                    matcherMinor.group("JSON") != null ? "json" :
+//                            matcherMinor.group("YAML") != null ? "yaml" :
+//                                    null; /* never happens */
+//            assert styleClass != null;
+//            System.out.printf("matched %s: (pos: %d-%d, count: %d) %n", styleClass, matcherMinor.start(), matcherMinor.end(), matcherMinor.groupCount());
+//            System.out.printf("`%s`%n", StringUtils.substring(text, matcherMinor.start(), matcherMinor.end()));
+//        }
     }
 }
