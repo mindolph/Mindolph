@@ -40,17 +40,18 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
     /**
      * Cut in new style class to the styles from the major processing.
      *
-     * @param newStyleClass
+     * @param newStyleClassName
      * @param start
      * @param end           exclusive
      */
-    protected void cutInNewStyle(String newStyleClass, int start, int end) {
+    protected void cutInNewStyle(String newStyleClassName, int start, int end) {
         int inclusiveEnd = end - 1;
         if (styleRanges.isEmpty()) {
-            styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClass));
+            styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClassName));
             return;
         }
-        for (StyleRange styleRange : styleRanges) {
+        boolean isAdded = false; // indicate that the new style has already been added (but the process still on goring).
+        for (StyleRange styleRange : styleRanges.stream().toList()) {
             int idx = styleRanges.indexOf(styleRange);
             String oldStyleClass = styleRange.styleClass();
             IntegerRange oldRange = styleRange.range();
@@ -65,27 +66,35 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
                     StyleRange sr0 = StyleRange.of(oldRange.getMinimum(), start - 1, oldStyleClass);
                     styleRanges.add(idx++, sr0);
                 }
-                StyleRange sr1 = StyleRange.of(start, inclusiveEnd, newStyleClass);
+                StyleRange sr1 = StyleRange.of(start, inclusiveEnd, newStyleClassName);
                 styleRanges.add(idx++, sr1);
                 if ((inclusiveEnd) < oldRange.getMaximum()) {
                     StyleRange sr2 = StyleRange.of(inclusiveEnd + 1, oldRange.getMaximum(), oldStyleClass);
                     styleRanges.add(idx, sr2);
                 }
+                return;
             }
             else if (IntegerRange.of(start, inclusiveEnd).containsRange(oldRange)) {
                 // if the new style is over the old range, like inline code contains bold/italic chars.
                 // just overwrite the old one.
                 styleRanges.remove(styleRange);
-                styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClass));
+                if (!isAdded) {
+                    styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClassName));
+                    isAdded = true;
+                }
             }
             else {
                 // no conflict, just add as new style range at the index.
-                styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClass));
+                if (!isAdded) {
+                    styleRanges.add(idx, StyleRange.of(start, inclusiveEnd, newStyleClassName));
+                    isAdded = true;
+                }
             }
-            return;
         }
         // add new style if no conflict.
-        styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClass));
+        if (!isAdded) {
+            styleRanges.add(StyleRange.of(start, inclusiveEnd, newStyleClassName));
+        }
     }
 
     /**
@@ -110,7 +119,7 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
                 spansBuilder.add(Collections.emptyList(), start - lastKwEnd);
             }
             if (log.isTraceEnabled())
-                log.trace("%s: (%d-%d) - '%s'%n".formatted(styleClass, start, end, DebugUtils.visible(StringUtils.substring(text, start, end))));
+                log.trace("%s: (%d-%d) - '%s'".formatted(styleClass, start, end, DebugUtils.visible(StringUtils.substring(text, start, end))));
             spansBuilder.add(Collections.singleton(styleClass), end - start);
             lastKwEnd = end;
         }

@@ -55,3 +55,11 @@
     -fx-fill: purple;
     -fx-font-weight: bold;
 }
+
+.json {
+    -fx-fill: #c80000;
+}
+
+.yaml {
+    -fx-fill: indigo;
+}
