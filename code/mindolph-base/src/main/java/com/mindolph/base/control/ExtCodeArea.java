@@ -11,6 +11,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -18,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.*;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.richtext.CaretSelectionBind;
+import org.fxmisc.richtext.CharacterHit;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.wellbehaved.event.EventPattern;
@@ -72,7 +74,9 @@ public class ExtCodeArea extends CodeArea {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> super.requestFollowCaret());
         this.setOnContextMenuRequested(contextMenuEvent -> {
-            ContextMenu codeContextMenu = createContextMenu();
+            // change the caret to where user click before popup context menu
+            this.moveCaretByScreen(contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+            ContextMenu codeContextMenu = this.createContextMenu();
             Node node = (Node) contextMenuEvent.getSource();
             codeContextMenu.show(node.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
@@ -81,6 +85,7 @@ public class ExtCodeArea extends CodeArea {
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
     }
+
 
     public void refresh() {
         // DO NOTHING
@@ -312,6 +317,20 @@ public class ExtCodeArea extends CodeArea {
         if (targetPar != null) {
             super.moveTo(newParIdx, Math.min(super.getCaretColumn(), targetPar.length()));
         }
+    }
+
+    /**
+     * move caret to the text position by screen coordinate.
+     *
+     * @param x
+     * @param y
+     * @since 1.12.10
+     */
+    private void moveCaretByScreen(double x, double y) {
+        Point2D p = super.screenToLocal(x, y);
+        CharacterHit hit = super.hit(p.getX(), p.getY());
+        if (log.isDebugEnabled()) log.debug("Hit (%f-%f) %d".formatted(p.getX(), p.getY(), hit.getInsertionIndex()));
+        super.moveTo(hit.getInsertionIndex());
     }
 
     private int getCaretInCurrentLine() {

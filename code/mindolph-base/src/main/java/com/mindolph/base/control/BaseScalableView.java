@@ -180,6 +180,9 @@ public abstract class BaseScalableView extends Control {
                 scrollInCenter(oldDim, newDim);
             }
         });
+        this.setOnKeyReleased(event -> {
+            onKeyReleased(event);
+        });
     }
 
     protected void onMouseMoved(MouseEvent event) {
@@ -200,6 +203,11 @@ public abstract class BaseScalableView extends Control {
 
     protected void onKeyPressed(KeyEvent event) {
         // DO NOTHING
+    }
+
+    protected void onKeyReleased(KeyEvent event) {
+        // DO NOTHING
+        if (log.isTraceEnabled()) log.trace("Key released: %s".formatted(event.getCharacter()));
     }
 
     /**

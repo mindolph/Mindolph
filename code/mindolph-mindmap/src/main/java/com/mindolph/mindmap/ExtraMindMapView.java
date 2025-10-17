@@ -577,7 +577,8 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
             new UrlDialog(String.format("URL of topic %s", topic.getText()), url).show(resultURL -> {
                 log.debug("URL: %s".formatted(resultURL));
-                if (resultURL == null || resultURL.trim().equals(topic.getExtras().get(Extra.ExtraType.LINK).getAsString())) {
+                boolean hasLinkAlready = topic.getExtras().containsKey(Extra.ExtraType.LINK);
+                if (resultURL == null || (hasLinkAlready && resultURL.trim().equals(topic.getExtras().get(Extra.ExtraType.LINK).getAsString()))) {
                     return; // cancel
                 }
                 if (StringUtils.isBlank(resultURL)) {
