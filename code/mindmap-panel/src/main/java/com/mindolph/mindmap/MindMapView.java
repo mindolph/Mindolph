@@ -644,6 +644,10 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 //        event.consume(); // has to consume or the event will broadcast to parent node.
         BaseElement lastSelected = getLastSelectedTopicElement();
         if (lastSelected == null) {
+            // has to consume or the event will broadcast to parent node.
+            if (isDirectionKey(event)) {
+                event.consume();
+            }
             return;
         }
         TopicNode lastSelTopic = lastSelected.getModel();
