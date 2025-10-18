@@ -19,6 +19,7 @@ package com.mindolph.mindmap.extension.exporters;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
@@ -32,12 +33,13 @@ import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.text.Text;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
@@ -100,10 +102,10 @@ public final class PNGImageExporter extends BaseExportExtension {
             }
         }
 
-        ByteArrayOutputStream buff = new ByteArrayOutputStream(128000);
-        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", buff);
-
-        byte[] imageData = buff.toByteArray();
+//        ByteArrayOutputStream buff = new ByteArrayOutputStream(128000);
+//        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+//        ImageIO.write(bufferedImage, "png", buff);
+//        byte[] imageData = buff.toByteArray();
 
         File fileToSave = null;
         if (out == null) {
@@ -114,19 +116,22 @@ public final class PNGImageExporter extends BaseExportExtension {
                     I18n.getIns().getString("PNGImageExporter.filterDescription"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".png");
-            log.debug("Save to " + fileToSave);
-            out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
+            log.debug("Save to %s".formatted(fileToSave));
+//            out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            AwtImageUtils.addCommentToImageAndSave(bufferedImage, "png", fileToSave, "This file is created by Mindolph (https://github.com/mindolph/Mindolph)");
+            Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
         }
-        if (out != null) {
-            try {
-                IOUtils.write(imageData, out);
-                Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
-            } finally {
-                if (fileToSave != null) {
-                    IOUtils.closeQuietly(out);
-                }
-            }
-        }
+//        if (out != null) {
+//            try {
+//                IOUtils.write(imageData, out);
+//                Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
+//            } finally {
+//                if (fileToSave != null) {
+//                    IOUtils.closeQuietly(out);
+//                }
+//            }
+//        }
     }
 
     @Override

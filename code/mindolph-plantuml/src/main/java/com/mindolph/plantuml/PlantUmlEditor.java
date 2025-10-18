@@ -12,6 +12,7 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.AwtImageUtils;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -37,15 +38,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IoUtils;
 import org.swiftboot.util.TextUtils;
+import org.w3c.dom.NodeList;
 
-import javax.imageio.ImageIO;
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -187,7 +195,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         return;
                     }
                     log.debug("Export image: %sx%s".formatted(image.getWidth(), image.getHeight()));
-                    ImageIO.write(SwingFXUtils.fromFXImage(image, null), "jpg", snapshotFile);
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                    AwtImageUtils.addCommentToImageAndSave(bufferedImage, "JPEG", snapshotFile, "This file is created by Mindolph (https://github.com/mindolph/Mindolph)");
+                    Files.setLastModifiedTime(snapshotFile.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
+//                    ImageIO.write(bufferedImage, "jpg", snapshotFile);
                     log.info("Exported image to file: %s".formatted(snapshotFile));
                 }
             } catch (Exception e) {
@@ -197,6 +208,77 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         contextMenu.getItems().addAll(new SeparatorMenuItem(), miExport, new SeparatorMenuItem(), miCopyImage, miCopyAscii, miCopyScript);
         if (indicator.isEmpty()) contextMenu.getItems().forEach(mi -> mi.setDisable(true));
         log.debug("Context menu created with %d menu items".formatted(contextMenu.getItems().size()));
+    }
+
+    public static IIOImage addMetaToImage(BufferedImage image, File output, String content) throws IOException {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
+
+        try (ImageOutputStream ios = ImageIO.createImageOutputStream(output)) {
+            writer.setOutput(ios);
+
+            // 创建图像写入参数
+            ImageWriteParam params = writer.getDefaultWriteParam();
+
+            // 创建图像元数据
+            IIOMetadata metadata = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), params);
+
+            // 设置文本数据
+            IIOMetadataNode textEntry = new IIOMetadataNode("TextEntry");
+            textEntry.setAttribute("keyword", "Description");
+            textEntry.setAttribute("value", content);
+            textEntry.setAttribute("encoding", "UTF-8");
+            textEntry.setAttribute("language", "en");
+            textEntry.setAttribute("compression", "none");
+
+            IIOMetadataNode text = new IIOMetadataNode("Text");
+            text.appendChild(textEntry);
+
+            IIOMetadataNode root = new IIOMetadataNode("javax_imageio_1.0");
+            root.appendChild(text);
+
+            metadata.mergeTree("javax_imageio_1.0", root);
+            return new IIOImage(image, null, metadata);
+
+            // 写入图像
+//            writer.write(null, new IIOImage(image, null, metadata), params);
+        } finally {
+            writer.dispose();
+        }
+    }
+
+    public static void addCommentToImage(BufferedImage image, File output, String comment) throws IOException {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
+
+        try (ImageOutputStream ios = ImageIO.createImageOutputStream(output)) {
+            writer.setOutput(ios);
+
+            // 创建包含注释的元数据
+            IIOMetadata metadata = writer.getDefaultImageMetadata(
+                    new ImageTypeSpecifier(image), null);
+
+            // 获取现有的元数据树
+            IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
+            IIOMetadataNode markerSequence;
+            NodeList sequences = root.getElementsByTagName("markerSequence");
+            if (sequences.getLength() > 0) {
+                markerSequence = (IIOMetadataNode) sequences.item(0);
+            }
+            else {
+                markerSequence = new IIOMetadataNode("markerSequence");
+                root.appendChild(markerSequence);
+            }
+
+            IIOMetadataNode comNode = new IIOMetadataNode("com");
+            comNode.setUserObject(comment.getBytes("UTF-8"));
+            markerSequence.appendChild(comNode);
+
+//            root.appendChild(markerSequence);
+
+            metadata.mergeTree("javax_imageio_jpeg_image_1.0", root);
+            writer.write(new IIOImage(image, null, metadata));
+        } finally {
+            writer.dispose();
+        }
     }
 
     private String convertPageToString(FileFormat fileFormat) {
