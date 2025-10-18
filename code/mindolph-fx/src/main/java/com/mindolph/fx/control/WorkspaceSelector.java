@@ -2,7 +2,7 @@ package com.mindolph.fx.control;
 
 import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
-import com.mindolph.mfx.PausableChangeListener;
+import com.mindolph.mfx.listener.PausableChangeListener;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
