@@ -320,15 +320,22 @@ public class ExtCodeArea extends CodeArea {
     }
 
     /**
-     * move caret to the text position by screen coordinate.
+     * move caret to the text position by screen coordinate if the coordinate is not on selected text.
      *
-     * @param x
-     * @param y
+     * @param x of screen
+     * @param y of screen
      * @since 1.12.10
      */
     private void moveCaretByScreen(double x, double y) {
         Point2D p = super.screenToLocal(x, y);
         CharacterHit hit = super.hit(p.getX(), p.getY());
+        if (super.getSelection().getLength() > 0) {
+            Range<Integer> selectedRange = Range.of(super.getSelection().getStart(), super.getSelection().getEnd() - 1);
+            if (selectedRange.contains(hit.getInsertionIndex())) {
+                // don't move caret if click on selected text.
+                return;
+            }
+        }
         if (log.isDebugEnabled()) log.debug("Hit (%f-%f) %d".formatted(p.getX(), p.getY(), hit.getInsertionIndex()));
         super.moveTo(hit.getInsertionIndex());
     }
