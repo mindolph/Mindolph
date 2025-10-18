@@ -34,6 +34,7 @@ public class MarkdownCodeArea extends HighlightCodeArea {
     protected static Pattern patternMinor;
 
     public MarkdownCodeArea() {
+        super();
         if (patternMajor == null) {
             patternMajor = Pattern.compile(
                     "(?<HEADING>" + HEADING_PATTERN + ")"
@@ -61,11 +62,6 @@ public class MarkdownCodeArea extends HighlightCodeArea {
             super.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  ")); // TODO add tail with trimming
         });
         Nodes.addInputMap(this, comment);
-    }
-
-    @Override
-    public void refresh() {
-        this.setStyleSpans(0, computeHighlighting(this.getText()));
     }
 
     @Override
