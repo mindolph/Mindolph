@@ -29,6 +29,7 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
     protected static Pattern patternMajor;
 
     public PlantUmlCodeArea() {
+        super();
         if (patternMajor == null) {
             patternMajor = Pattern.compile("(?<COMMENT>" + COMMENT_PATTERN + ")"
                             + "|(?<ACTIVITY>" + ACTIVITY + ")"
@@ -51,11 +52,6 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
             super.addOrTrimHeadToParagraphsIfAdded(new Replacement("' "));
         });
         Nodes.addInputMap(this, comment);
-    }
-
-    @Override
-    public void refresh() {
-        this.setStyleSpans(0, computeHighlighting(this.getText()));
     }
 
     @Override

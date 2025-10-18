@@ -5,9 +5,11 @@ import org.apache.commons.lang3.IntegerRange;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -22,8 +24,21 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
 
     protected LinkedList<StyleRange> styleRanges = new LinkedList<>();
 
+    protected EventSource<Void> refreshEvent = new EventSource<>();
+
     protected abstract StyleSpans<Collection<String>> computeHighlighting(String text);
 
+    public HighlightCodeArea() {
+        refreshEvent.reduceSuccessions((v1, v2) -> v2, Duration.ofMillis(250)).subscribe(v -> {
+            StyleSpans<Collection<String>> styleSpans = computeHighlighting(this.getText());
+            this.setStyleSpans(0, styleSpans);
+        });
+    }
+
+    @Override
+    public void refresh() {
+        refreshEvent.push(null);
+    }
 
     /**
      * Append style class to the list.
@@ -42,7 +57,7 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
      *
      * @param newStyleClassName
      * @param start
-     * @param end           exclusive
+     * @param end               exclusive
      */
     protected void cutInNewStyle(String newStyleClassName, int start, int end) {
         int inclusiveEnd = end - 1;
