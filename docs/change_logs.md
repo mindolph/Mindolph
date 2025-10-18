@@ -1,5 +1,17 @@
 # Change Logs
 
+### V1.12.10 Release
+
+* Improvement:
+	* Optimized the performance of code syntax highlighting. 
+	* Syntax highlighting for JSON and YAML in PlantUML. 
+	* Update PlantUML file templates. 
+	* Change the caret to where user click on code editor before context menu popup.
+* Bug Fixes:
+	* Incorrect syntax highlighting in PlantUML. 
+	* In the mind map, when the root topic is selected or no topic is selected, pressing the arrow keys will incorrectly switch files tab. 
+	* The `Add URL` doesn't save the URL in Mind Map. 
+
 ### V1.12.9 Release
 * Improvement: 
 	* Syntax highlighting for horizontal rule in Markdown editor.
