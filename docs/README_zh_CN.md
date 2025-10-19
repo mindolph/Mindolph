@@ -111,7 +111,7 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 |Windows|.msi|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.msi)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.msi)| |
 |Debian/Ubuntu|.deb|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.deb)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
 |Fedora|.rpm|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.rpm)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.rpm)| |
-|Java Executable|.jar|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| Java 22 是运行 Mindolph 稳定版的最低版本要求.   	</br> 先下载支持您的系统的 JavaFX SDK 并解压缩到某个目录，例如: `c:\javafx-sdk-24`, 按照以下方式运行:     </br>`java --module-path c:\javafx-sdk-24\lib --add-modules java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.12.10.jar` |
+|Java Executable|.jar|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| 请看 [如何运行](./INSTALL_zh_CN.md) |
 
 
 

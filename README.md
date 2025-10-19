@@ -109,7 +109,7 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 |Windows|.msi|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.msi) |[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.msi) | |
 |Debian/Ubuntu|.deb|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.deb)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
 |Fedora|.rpm|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.rpm)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.rpm)| |
-|Java Executable|.jar|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| Java 22 is the minimum version to run this stable version application. 	</br> download latest JavaFX SDK for your platform and extract to somewhere eg: `c:\javafx-sdk-24`, run the jar file like this:   </br> `java --module-path c:\javafx-sdk-24\lib --add-modules  java.sql,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec -jar  Mindolph-1.12.10.jar` |
+|Java Executable|.jar|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| see [how to run](./docs/INSTALL.md) |
 
 
 [Change Logs](docs/change_logs.md)
