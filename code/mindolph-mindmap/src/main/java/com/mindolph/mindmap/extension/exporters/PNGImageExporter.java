@@ -116,11 +116,13 @@ public final class PNGImageExporter extends BaseExportExtension {
                     I18n.getIns().getString("PNGImageExporter.filterDescription"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".png");
-            log.debug("Save to %s".formatted(fileToSave));
+            if (fileToSave != null) {
+                log.debug("Save to %s".formatted(fileToSave));
 //            out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-            AwtImageUtils.addCommentToImageAndSave(bufferedImage, "png", fileToSave, "This file is created by Mindolph (https://github.com/mindolph/Mindolph)");
-            Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                AwtImageUtils.addCommentToImageAndSave(bufferedImage, "png", fileToSave, "This file is created by Mindolph (https://github.com/mindolph/Mindolph)");
+                Files.setLastModifiedTime(fileToSave.toPath(), FileTime.fromMillis(System.currentTimeMillis()));
+            }
         }
 //        if (out != null) {
 //            try {

@@ -65,8 +65,6 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
 
                 doExport(context, selectedOptions, exportFileName, null);
 
-                log.debug(String.valueOf(e.getClass()));
-
                 // this modifier cannot be got, ignore for now.
 //                    if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
 //                        LOGGER.info("Export map into file: " + AbstractExporter.this);
