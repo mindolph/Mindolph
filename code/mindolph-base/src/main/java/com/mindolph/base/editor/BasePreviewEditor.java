@@ -1,14 +1,8 @@
 package com.mindolph.base.editor;
 
-import java.util.concurrent.atomic.AtomicLong;
-
-import com.mindolph.base.event.EventBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.container.FixedSplitPane;
-
+import com.mindolph.base.event.EventBus;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -18,6 +12,12 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
+import org.reactfx.EventSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Editor with preview.
@@ -54,6 +54,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     private final AtomicLong scrollStartTime = new AtomicLong(0);
     private final static double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
+    private EventSource<String> refreshEventSource = new EventSource<>();
+
     public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext, acceptDraggingFiles);
         if (fixedSplitPane == null) {
@@ -74,6 +76,17 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
             }
         });
         codeArea.setParentPane(this);
+
+        // reduce preview refreshing for performance.
+        refreshEventSource.reduceSuccessions((t1, t2) -> t2, Duration.ofMillis(250)).subscribe(text -> {
+            refreshPreview(text, renderContent -> {
+                Platform.runLater(() -> {
+                    render(renderContent);
+                    afterRender();
+                });
+                return null;
+            });
+        });
     }
 
     protected void enablePageSwipe() {
@@ -191,13 +204,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     @Override
     protected void refresh(String text) {
         if (viewMode != ViewMode.TEXT_ONLY) {
-            refreshPreview(text, renderContent -> {
-                Platform.runLater(() -> {
-                    render(renderContent);
-                    afterRender();
-                });
-                return null;
-            });
+            refreshEventSource.push(text);
         }
     }
 
