@@ -65,7 +65,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         Label lbWorkspacePath;
         @FXML
         Button btnActions;
-        private WorkspaceMeta workspaceMeta;
+        private final WorkspaceMeta workspaceMeta;
 
         public ItemController(WorkspaceMeta workspaceMeta) {
             this.workspaceMeta = workspaceMeta;
@@ -117,7 +117,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         @Override
         public void handle(ActionEvent event) {
             if (event.getSource() == miRename) {
-                Dialog dialog = new TextDialogBuilder()
+                Dialog<String> dialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
                         .title("Rename %s".formatted(workspaceMeta.getName()))
                         .content("Input a workspace name")

@@ -1384,7 +1384,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
             File newNameFile = new File(origFile.getParentFile(), newName);
             if (newNameFile.exists()) {
-                DialogFactory.errDialog("file %s already exists".formatted(newName));
+                DialogFactory.errDialog("Folder or file %s already exists".formatted(newName));
+                this.requestRenameFolderOrFile(selectedData, consumer);
             }
             else {
                 if (origFile.renameTo(newNameFile)) {
