@@ -2,7 +2,7 @@
     <property name="LOG_PATTERN" value="%d{HH:mm:ss} [%-18.18thread] %-5level %-36.36logger{36} - %msg%n"/>
     <property name="LOG_PATTERN_COLOR" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(--){faint} %clr([%12.12t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
 
-<!--    <property name="LOG_DIR" value="${user.home}/.mindolph:-./.mindolph"/>-->
+<!--    <property name="LOG_DIR" value="${user.home}/.mindolph:-./.mindolph/logs"/>-->
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

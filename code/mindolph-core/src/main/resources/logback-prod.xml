@@ -1,6 +1,6 @@
 <configuration>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%-18.18thread] %-5level %-36.36logger{36} - %msg%n"/>
-    <property name="LOG_DIR" value="${user.home}/.mindolph:-./.mindolph"/>
+    <property name="LOG_DIR" value="${user.home}/.mindolph:-./.mindolph/logs"/>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/mindolph.log</file>
