@@ -1,0 +1,26 @@
+<configuration>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%-18.18thread] %-5level %-36.36logger{36} - %msg%n"/>
+    <property name="LOG_DIR" value="${user.home}/.mindolph/logs:-./.mindolph/logs"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/mindolph.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/mindolph.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>${LOG_PATTERN}</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <root level="INFO">
+        <appender-ref ref="FILE" />
+<!--        <appender-ref ref="CONSOLE" />-->
+    </root>
+</configuration>

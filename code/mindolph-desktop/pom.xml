@@ -20,7 +20,7 @@
         <app.version>1.12.10</app.version>
         <jvm.modules>java.logging,javafx.graphics,javafx.controls,javafx.fxml,javafx.swing,javafx.web,jdk.crypto.ec</jvm.modules>
         <app.vendor>Mindolph Team</app.vendor>
-        <log4j.config>-Dlog4j2.configurationFile=log4j2-prod.xml</log4j.config>
+        <logback.config>-Dlogback.configurationFile=logback-prod.xml</logback.config>
         <app.arg.disable.reopen>-Ddisable-reopen=true</app.arg.disable.reopen>
     </properties>
 

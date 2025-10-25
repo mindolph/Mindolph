@@ -18,7 +18,7 @@ import javafx.application.Application;
  * disable-window-resize=true|false
  * mock-llm=true|false
  *
- * If more log output required, add -Dlog4j2.configurationFile=log4j2-debug.xml to application arguments.
+ * If more log output required, add -Dlogback.configurationFile=logback-debug.xml to application arguments.
  * Add -Djdk.gtk.version=2 to JVM options if CJK input method is used on Linux.
  *
  * @author mindolph.com@gmail.com
