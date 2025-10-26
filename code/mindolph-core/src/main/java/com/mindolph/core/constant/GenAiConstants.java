@@ -39,6 +39,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-mini", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-nano", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-chat-latest", 16384));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-pro", 272000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-mini", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-nano", 32768));
@@ -110,6 +111,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-long", 8192));
 
             // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.6", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-airx", 98304));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-air", 98304));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.5-x", 98304));
