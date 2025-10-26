@@ -1,5 +1,13 @@
 # Change Logs
 
+### V1.12.11 Release
+
+* Improvement: 
+	* Optimized application launching performance, now it's much faster. 🎉.
+	* Update model list for OpenAI and ChatGLM.  
+* Fix: Code delay highlighting should only be effective when the user is typing.
+
+
 ### V1.12.10 Release
 
 * Improvement:

@@ -106,12 +106,12 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10-x64.dmg)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2-x64.dmg)| Intel |
-|macOS|.dmg|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10-aarch64.dmg) |[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
-|Windows|.msi|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.msi)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.msi)| |
-|Debian/Ubuntu|.deb|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.deb)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.rpm)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.rpm)| |
-|Java Executable|.jar|[v1.12.10](https://github.com/mindolph/Mindolph/releases/download/v1.12.10/Mindolph-1.12.10.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| 请看 [如何运行](./INSTALL_zh_CN.md) |
+|macOS|.dmg|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11-x64.dmg)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2-x64.dmg)| Intel |
+|macOS|.dmg|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11-aarch64.dmg) |[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
+|Windows|.msi|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11.msi)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.msi)| |
+|Debian/Ubuntu|.deb|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11.deb)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11.rpm)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.rpm)| |
+|Java Executable|.jar|[v1.12.11](https://github.com/mindolph/Mindolph/releases/download/v1.12.11/Mindolph-1.12.11.jar)|[v1.13.2](https://github.com/mindolph/Mindolph/releases/download/v1.13.2/Mindolph-1.13.2.jar)| 请看 [如何运行](./INSTALL_zh_CN.md) |
 
 
 
