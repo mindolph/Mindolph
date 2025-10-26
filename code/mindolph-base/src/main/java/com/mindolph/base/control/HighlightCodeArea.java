@@ -30,13 +30,18 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
 
     public HighlightCodeArea() {
         refreshEvent.reduceSuccessions((v1, v2) -> v2, Duration.ofMillis(250)).subscribe(v -> {
-            StyleSpans<Collection<String>> styleSpans = computeHighlighting(this.getText());
-            this.setStyleSpans(0, styleSpans);
+            this.refresh();
         });
     }
 
     @Override
     public void refresh() {
+        StyleSpans<Collection<String>> styleSpans = computeHighlighting(this.getText());
+        this.setStyleSpans(0, styleSpans);
+    }
+
+    @Override
+    public void refreshAsync() {
         refreshEvent.push(null);
     }
 

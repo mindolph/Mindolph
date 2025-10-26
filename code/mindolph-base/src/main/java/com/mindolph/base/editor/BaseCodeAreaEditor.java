@@ -135,7 +135,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
                 if (!Strings.CS.equals(oldValue, newText)) {
                     this.codeArea.doHistory();
                     if (log.isTraceEnabled()) log.trace("Refresh editor since text are changed.");
-                    refresh(newText);
+                    refreshAsync(newText);
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                     this.outline();
@@ -169,6 +169,8 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
      * @param text
      */
     protected abstract void refresh(String text);
+
+    protected abstract void refreshAsync(String text);
 
     protected abstract String getOutlinePattern();
 

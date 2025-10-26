@@ -91,6 +91,10 @@ public class ExtCodeArea extends CodeArea {
         // DO NOTHING
     }
 
+    public void refreshAsync() {
+        // DO NOTHING
+    }
+
     public void doHistory() {
         historySource.push(null);
     }

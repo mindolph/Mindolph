@@ -341,6 +341,13 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    protected void refreshAsync(String text) {
+        codeArea.refreshAsync();
+        super.refresh(text);
+        this.refresh();
+    }
+
+    @Override
     public void refreshPreview(String text, Callback<Object, Void> previewConsumer) {
         indicator.reset();
         log.debug("Current page: %d".formatted(indicator.page));

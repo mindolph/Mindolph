@@ -237,7 +237,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     if (!Strings.CS.equals(oldValue, newValue)) {
                         this.textArea.doHistory();
                     }
-                    textArea.refresh();
+                    textArea.refreshAsync();
                 }
         );
         textArea.undoAvailableProperty().addListener((observableValue, aBoolean, newValue) -> btnUndo.setDisable(!newValue));
