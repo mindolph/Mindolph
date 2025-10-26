@@ -375,6 +375,13 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
+    protected void refreshAsync(String text) {
+        codeArea.refreshAsync();
+        super.refresh(text);
+        this.refresh();
+    }
+
+    @Override
     public void refreshPreview(String text, Callback<Object, Void> callback) {
         if (codeArea.getLength() == 0) {
             log.debug("No text to preview");

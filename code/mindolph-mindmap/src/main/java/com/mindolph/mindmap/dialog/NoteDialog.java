@@ -162,7 +162,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 Node source = (Node) event.getSource();
                 BrowseUtils.browseURI(source.getScene().getWindow(), url, true);
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage(), e);
             }
         });
         btnClearAll.setOnAction(event -> textArea.clear());
@@ -237,7 +237,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                     if (!Strings.CS.equals(oldValue, newValue)) {
                         this.textArea.doHistory();
                     }
-                    textArea.refresh();
+                    textArea.refreshAsync();
                 }
         );
         textArea.undoAvailableProperty().addListener((observableValue, aBoolean, newValue) -> btnUndo.setDisable(!newValue));
