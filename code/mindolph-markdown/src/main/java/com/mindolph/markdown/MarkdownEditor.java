@@ -368,17 +368,15 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
-    protected void refresh(String text) {
+    public void refresh() {
         codeArea.refresh();
-        super.refresh(text);
-        this.refresh();
+        super.refresh();
     }
 
     @Override
-    protected void refreshAsync(String text) {
+    protected void refreshAsync() {
         codeArea.refreshAsync();
-        super.refresh(text);
-        this.refresh();
+        super.refresh();
     }
 
     @Override
@@ -426,7 +424,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         miRefresh.setOnAction(e -> {
             timestamp = String.valueOf(System.currentTimeMillis());
             webEngine.load("about:blank");
-            refresh(codeArea.getText());
+            refresh();
         });
         miExportHtml.setOnAction(e -> {
             Node document = parser.parse(codeArea.getText());

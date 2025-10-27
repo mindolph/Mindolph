@@ -57,12 +57,7 @@ public class PlainTextEditor extends BaseCodeAreaEditor {
     }
 
     @Override
-    protected void refresh(String text) {
-        super.refresh();
-    }
-
-    @Override
-    protected void refreshAsync(String text) {
+    protected void refreshAsync() {
         // DO NOTHING
     }
 

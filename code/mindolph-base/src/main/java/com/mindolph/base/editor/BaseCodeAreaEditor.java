@@ -128,14 +128,14 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
             this.codeArea.getUndoManager().mark();
 
             // refresh before listening to the text change event.
-            this.refresh(text);
+            this.refresh();
 
             // add text change listener should after CodeArea init content.
             this.codeArea.textProperty().addListener((observable, oldValue, newText) -> {
                 if (!Strings.CS.equals(oldValue, newText)) {
                     this.codeArea.doHistory();
                     if (log.isTraceEnabled()) log.trace("Refresh editor since text are changed.");
-                    refreshAsync(newText);
+                    refreshAsync();
                     isChanged = true;
                     fileChangedEventHandler.onFileChanged(editorContext.getFileData());
                     this.outline();
@@ -162,15 +162,10 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         });
     }
 
-
     /**
-     * Refresh anything from the text if needed.
-     *
-     * @param text
+     * Only apply for continuously text changing like user inputting.
      */
-    protected abstract void refresh(String text);
-
-    protected abstract void refreshAsync(String text);
+    protected abstract void refreshAsync();
 
     protected abstract String getOutlinePattern();
 

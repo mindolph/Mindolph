@@ -109,7 +109,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             if (isAutoSwitch) {
                 if (indicator.toPageByRow(currentRow)) {
                     log.info("Change page to " + indicator.page);
-                    refresh(codeArea.getText());
+                    refresh();
                 }
             }
         });
@@ -150,7 +150,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             }
             miPageX.setOnAction(event -> {
                 indicator.page = (int) miPageX.getUserData();
-                refresh(codeArea.getText());
+                refresh();
             });
             contextMenu.getItems().add(miPageX);
         }
@@ -317,14 +317,14 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     @Override
     protected void nextPage() {
         if (indicator.nextPage()) {
-            refresh(codeArea.getText());
+            refresh();
         }
     }
 
     @Override
     protected void prevPage() {
         if (indicator.prevPage()) {
-            refresh(codeArea.getText());
+            refresh();
         }
     }
 
@@ -334,17 +334,15 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     }
 
     @Override
-    protected void refresh(String text) {
+    public void refresh() {
         codeArea.refresh();
-        super.refresh(text);
-        this.refresh();
+        super.refresh();
     }
 
     @Override
-    protected void refreshAsync(String text) {
+    protected void refreshAsync() {
         codeArea.refreshAsync();
-        super.refresh(text);
-        this.refresh();
+        super.refresh();
     }
 
     @Override

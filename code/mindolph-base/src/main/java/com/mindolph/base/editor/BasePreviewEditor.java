@@ -54,7 +54,8 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     private final AtomicLong scrollStartTime = new AtomicLong(0);
     private final static double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
-    private EventSource<String> refreshEventSource = new EventSource<>();
+    // for refreshing preview
+    private EventSource<Void> refreshEventSource = new EventSource<>();
 
     public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext, acceptDraggingFiles);
@@ -79,7 +80,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
         // reduce preview refreshing for performance.
         refreshEventSource.reduceSuccessions((t1, t2) -> t2, Duration.ofMillis(250)).subscribe(text -> {
-            refreshPreview(text, renderContent -> {
+            refreshPreview(codeArea.getText(), renderContent -> {
                 Platform.runLater(() -> {
                     render(renderContent);
                     afterRender();
@@ -143,7 +144,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
                 }
                 case BOTH -> {
                     fixedSplitPane.showAll(); // TODO to be restored from saved splitter position for each editor.
-                    this.refresh(codeArea.getText()); // refresh preview from possible updated text
+                    this.refresh(); // refresh preview from possible updated text
                     this.toggleEditableMenuItems(true);
                 }
             }
@@ -160,7 +161,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
 
     public void toggleOrientation() {
         fixedSplitPane.toggleOrientation();
-        this.refresh(codeArea.getText()); // ensure the preview fit
+        this.refresh(); // ensure the preview fit
     }
 
 
@@ -202,9 +203,9 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     }
 
     @Override
-    protected void refresh(String text) {
+    public void refresh() {
         if (viewMode != ViewMode.TEXT_ONLY) {
-            refreshEventSource.push(text);
+            refreshEventSource.push(null);
         }
     }
 

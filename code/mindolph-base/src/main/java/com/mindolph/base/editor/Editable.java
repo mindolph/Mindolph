@@ -32,7 +32,6 @@ public interface Editable {
      * Refresh editor in some cases like config changed.
      * Don't load data in the method.
      *
-     * @deprecated only implemented by mind map editor, so...
      */
     void refresh();
 

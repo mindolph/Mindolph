@@ -25,7 +25,7 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <javafx.version>25</javafx.version>
+        <javafx.version>25.0.1</javafx.version>
         <commons.lang.version>3.18.0</commons.lang.version>
         <commons.io.version>2.20.0</commons.io.version>
         <commons.text.version>1.14.0</commons.text.version>
