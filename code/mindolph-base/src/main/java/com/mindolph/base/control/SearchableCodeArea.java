@@ -9,6 +9,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.Selection;
 import org.fxmisc.richtext.SelectionImpl;
@@ -196,10 +197,10 @@ public class SearchableCodeArea extends SmartCodeArea {
         }
         String replacedText;
         if (searchOptions.isCaseSensitive()) {
-            replacedText = StringUtils.replace(this.getText(), keywords, replacement == null ? "" : replacement);
+            replacedText = Strings.CS.replace(this.getText(), keywords, replacement == null ? "" : replacement);
         }
         else {
-            replacedText = StringUtils.replaceIgnoreCase(this.getText(), keywords, replacement == null ? "" : replacement);
+            replacedText = Strings.CI.replace(this.getText(), keywords, replacement == null ? "" : replacement);
         }
         super.replaceText(replacedText);
     }

@@ -51,6 +51,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
             // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-pro-preview", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-pro", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash-lite", 65536));
@@ -91,7 +92,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-flash", 32768));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-max", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-max-latest", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus", 16384));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus", 32768));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus-latest", 32768));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo", 16384));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo-latest", 16384));
