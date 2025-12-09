@@ -291,7 +291,7 @@ public class MindMapEditor extends BaseEditor {
     }
 
     @Override
-    public void replaceSelection(String keywords, TextSearchOptions options, String replacement) {
+    public void replace(String keywords, TextSearchOptions options, String replacement) {
         mindMapView.replaceSelection(keywords, options, replacement);
         Pattern pattern = SearchUtils.string2pattern(keywords, options.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
         mindMapView.findTopicByPattern(pattern, options, false);

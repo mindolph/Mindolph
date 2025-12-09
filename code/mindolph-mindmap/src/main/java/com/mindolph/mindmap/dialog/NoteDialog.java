@@ -7,6 +7,7 @@ import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.editor.MarkdownCodeArea;
 import com.mindolph.base.editor.MarkdownToolbar;
 import com.mindolph.base.util.CssUtils;
+import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -262,14 +263,28 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
             textSearchOptions.setCaseSensitive(searchParams.isCaseSensitive());
             textArea.searchNext(searchParams.getKeywords(), textSearchOptions);
         });
+        searchBar.subscribeReplace(searchParams -> {
+            TextSearchOptions searchOptions = createTextSearchOptions(searchParams);
+            log.debug("replace selected text with '%s'".formatted(searchParams.getReplacement()));
+            searchOptions.setForReplacement(true);
+            textArea.searchAndReplaceSelection(searchParams.getKeywords(), searchOptions, searchParams.getReplacement());
+        });
+        searchBar.subscribeReplaceAll(searchParams -> {
+            log.debug("replace all matched text with '%s'".formatted(searchParams.getReplacement()));
+            textArea.replaceAllMatch(searchParams.getKeywords(), createTextSearchOptions(searchParams), searchParams.getReplacement());
+        });
         searchBar.subscribeExit(unused -> {
             vbox.getChildren().remove(searchBar);
             tbtnSearch.setSelected(false);
             tbtnReplace.setSelected(false);
             textArea.requestFocus();
         });
-
         textArea.refresh();
+    }
 
+    private TextSearchOptions createTextSearchOptions(SearchParams searchParams) {
+        TextSearchOptions options = new TextSearchOptions();
+        options.setCaseSensitive(searchParams.isCaseSensitive());
+        return options;
     }
 }

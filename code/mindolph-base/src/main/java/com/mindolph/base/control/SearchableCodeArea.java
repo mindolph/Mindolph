@@ -153,7 +153,20 @@ public class SearchableCodeArea extends SmartCodeArea {
         });
     }
 
-    public boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
+    public void searchAndReplaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
+        if (StringUtils.isEmpty(keywords)) {
+            return;
+        }
+        if (this.getSelection().getLength() == 0) {
+            this.searchNext(keywords, searchOptions); // select first for replacement
+        }
+        if (!this.replaceSelection(keywords, searchOptions.isCaseSensitive(), replacement)) {
+            log.debug("no text replaced");
+        }
+        this.searchNext(keywords, searchOptions);
+    }
+
+    private boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
         // blank string CAN be replaced.
         if (StringUtils.isEmpty(keywords)) {
             return false;

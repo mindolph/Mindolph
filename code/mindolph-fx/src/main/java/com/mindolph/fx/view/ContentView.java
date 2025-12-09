@@ -208,7 +208,7 @@ public class ContentView extends BaseView {
             TextSearchOptions searchOptions = createTextSearchOptions(searchParams);
             log.debug("replace selected text with '%s'".formatted(searchParams.getReplacement()));
             searchOptions.setForReplacement(true);
-            editor.replaceSelection(searchParams.getKeywords(), searchOptions, searchParams.getReplacement());
+            editor.replace(searchParams.getKeywords(), searchOptions, searchParams.getReplacement());
         });
         searchReplaceBar.subscribeReplaceAll(searchParams -> {
             log.debug("replace all matched text with '%s'".formatted(searchParams.getReplacement()));
