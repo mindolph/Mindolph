@@ -573,7 +573,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     }
 
     @Override
-    public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
+    public void replace(String keywords, TextSearchOptions searchOptions, String replacement) {
         BiFunction<String, String, Boolean> contains = searchOptions.isCaseSensitive() ? Strings.CS::contains : Strings.CI::contains;
         String firstSelectedText = tableView.getFirstSelectedText();
         if (contains.apply(firstSelectedText, keywords)) {

@@ -35,7 +35,7 @@ public abstract class BaseViewerEditor extends BaseEditor {
     }
 
     @Override
-    public void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
+    public void replace(String keywords, TextSearchOptions searchOptions, String replacement) {
         // DO NOTHING
     }
 

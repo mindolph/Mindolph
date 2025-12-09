@@ -9,6 +9,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.IndexRange;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.Selection;
 import org.fxmisc.richtext.SelectionImpl;
@@ -153,7 +154,20 @@ public class SearchableCodeArea extends SmartCodeArea {
         });
     }
 
-    public boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
+    public void searchAndReplaceSelection(String keywords, TextSearchOptions searchOptions, String replacement) {
+        if (StringUtils.isEmpty(keywords)) {
+            return;
+        }
+        if (this.getSelection().getLength() == 0) {
+            this.searchNext(keywords, searchOptions); // select first for replacement
+        }
+        if (!this.replaceSelection(keywords, searchOptions.isCaseSensitive(), replacement)) {
+            log.debug("no text replaced");
+        }
+        this.searchNext(keywords, searchOptions);
+    }
+
+    private boolean replaceSelection(String keywords, boolean isCaseSensitivity, String replacement) {
         // blank string CAN be replaced.
         if (StringUtils.isEmpty(keywords)) {
             return false;
@@ -183,10 +197,10 @@ public class SearchableCodeArea extends SmartCodeArea {
         }
         String replacedText;
         if (searchOptions.isCaseSensitive()) {
-            replacedText = StringUtils.replace(this.getText(), keywords, replacement == null ? "" : replacement);
+            replacedText = Strings.CS.replace(this.getText(), keywords, replacement == null ? "" : replacement);
         }
         else {
-            replacedText = StringUtils.replaceIgnoreCase(this.getText(), keywords, replacement == null ? "" : replacement);
+            replacedText = Strings.CI.replace(this.getText(), keywords, replacement == null ? "" : replacement);
         }
         super.replaceText(replacedText);
     }

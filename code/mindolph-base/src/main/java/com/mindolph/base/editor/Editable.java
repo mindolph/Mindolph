@@ -50,7 +50,7 @@ public interface Editable {
 
     void searchPrev(String keyword, TextSearchOptions options);
 
-    void replaceSelection(String keywords, TextSearchOptions searchOptions, String replacement);
+    void replace(String keywords, TextSearchOptions searchOptions, String replacement);
 
     void replaceAll(String keywords, TextSearchOptions searchOptions, String replacement);
 
