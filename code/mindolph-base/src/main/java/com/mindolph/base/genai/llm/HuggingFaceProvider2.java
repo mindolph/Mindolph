@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     private static final Logger log = LoggerFactory.getLogger(HuggingFaceProvider2.class);
 
-    String API_URL = "https://api-inference.huggingface.co/models/%s";
+    String API_URL = "https://router.huggingface.co/models/%s";
 
     String template = """
             {

@@ -3,6 +3,7 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.JsonObject;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.mfx.util.TextUtils;
+import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -47,6 +48,15 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
             Proxy.Type proxyType = Proxy.Type.valueOf(super.proxyType.toUpperCase());
             Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
             builder.proxy(proxy);
+            builder.proxyAuthenticator((route, response) -> {
+                if (response.request().header("Proxy-Authorization") != null) {
+                    return null; //
+                }
+                String credential = Credentials.basic(proxyUser, proxyPassword);
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            });
         }
         log.info("Build HTTP client to access '%s' %s".formatted(this.aiModel,
                 super.proxyEnabled && super.useProxy ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(super.proxyType.toUpperCase()), this.proxyUrl) : "without proxy"));
