@@ -1,5 +1,13 @@
 # Change Logs
 
+### V1.12.12 Release
+* Update pre-set models for Gemini and Qwen.
+* Bug Fixes:
+  * Proxy username and password don't work.
+  * The domain of huggingface's api is changed.
+  * The `replace` and `replace all`  features in the note editor of mind map do not work.
+
+
 ### V1.12.11 Release
 
 * Improvement: 
