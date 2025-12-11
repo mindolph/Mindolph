@@ -48,6 +48,15 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
             Proxy.Type proxyType = Proxy.Type.valueOf(proxyMeta.type().toUpperCase());
             Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyMeta.host(), proxyMeta.port()));
             builder.proxy(proxy);
+            builder.proxyAuthenticator((route, response) -> {
+                if (response.request().header("Proxy-Authorization") != null) {
+                    return null; //
+                }
+                String credential = Credentials.basic(proxyMeta.username(), proxyMeta.password());
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            });
         }
         log.info("Build HTTP client to access '%s' %s".formatted(modelMeta.getName(),
                 super.proxyEnabled && super.providerMeta.useProxy() ? "with %s proxy '%s'".formatted(Proxy.Type.valueOf(proxyMeta.type().toUpperCase()), proxyMeta.url()) : "without proxy"));
