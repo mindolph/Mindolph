@@ -9,10 +9,16 @@ public class ModelMetaBuilder {
      */
     private int dimension = 0;
     private int type = 1;
+    /**
+     * Kept for migration only.
+     * @deprecated
+     */
+    @Deprecated
     private boolean active = false;
     private String langCode;
     private boolean internal = false;
-    private String downloadUrl;
+    private String downloadBaseUrl;
+    private String downloadModelPath; // path in url to the model that to download, use default path if not provide
 
     public ModelMetaBuilder name(String name) {
         this.name = name;
@@ -54,8 +60,13 @@ public class ModelMetaBuilder {
         return this;
     }
 
-    public ModelMetaBuilder downloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
+    public ModelMetaBuilder downloadBaseUrl(String downloadBaseUrl) {
+        this.downloadBaseUrl = downloadBaseUrl;
+        return this;
+    }
+
+    public ModelMetaBuilder downloadModelPath(String downloadModelPath) {
+        this.downloadModelPath = downloadModelPath;
         return this;
     }
 
@@ -65,7 +76,8 @@ public class ModelMetaBuilder {
         mm.setType(type);
         mm.setLangCode(langCode);
         mm.setInternal(internal);
-        mm.setDownloadUrl(downloadUrl);
+        mm.setDownloadUrl(downloadBaseUrl);
+        mm.setDownloadModelPath(downloadModelPath);
         mm.setActive(active);
         mm.setDimension(dimension);
         mm.setMaxInputTokens(maxInputTokens);

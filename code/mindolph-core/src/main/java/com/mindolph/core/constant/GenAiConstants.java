@@ -22,6 +22,8 @@ public interface GenAiConstants {
 
     int MODEL_TYPE_CHAT = 1;
     int MODEL_TYPE_EMBEDDING = 2;
+    // The code to support all languages.
+    String ALL_LANGUAGE_CODE = "all";
 
     // Be used to indicate that the model is a custom model
     // This will be removed in the future.
@@ -54,8 +56,12 @@ public interface GenAiConstants {
     }
 
 
-    ModelMeta MM_BGE_SMALL_EN_1_5 = new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("en").dimension(384).internal(true).downloadUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/resolve/main").build();
-    ModelMeta MM_BGE_SMALL_ZH_CN_1_5 = new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("zh_CN").dimension(512).internal(true).downloadUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/resolve/main").build();
+    ModelMeta MM_BGE_SMALL_EN_1_5 = new ModelMetaBuilder().name("BAAI/bge-small-en-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("en").dimension(384).internal(true).downloadBaseUrl("https://huggingface.co/Xenova/bge-small-en-v1.5/resolve/main").build();
+    ModelMeta MM_BGE_SMALL_ZH_1_5 = new ModelMetaBuilder().name("BAAI/bge-small-zh-v1.5").type(MODEL_TYPE_EMBEDDING).langCode("zh").dimension(512).internal(true).downloadBaseUrl("https://huggingface.co/Xenova/bge-small-zh-v1.5/resolve/main").build();
+    // https://huggingface.co/google-t5/t5-small/tree/main
+//    ModelMeta MM_GOGGLE_T5_SMALL = new ModelMetaBuilder().name("google-t5/t5-small").type(MODEL_TYPE_EMBEDDING).langCode("fr").dimension(512).internal(true).downloadBaseUrl("https://huggingface.co/google-t5/t5-small/resolve/main").downloadModelPath("onnx/encoder_model_quantized.onnx").build();
+    // https://huggingface.co/intfloat/multilingual-e5-small/tree/main
+    ModelMeta MM_MULTILINGUAL_E5_SMALL = new ModelMetaBuilder().name("intfloat/multilingual-e5-small").type(MODEL_TYPE_EMBEDDING).langCode(ALL_LANGUAGE_CODE).dimension(384).internal(true).downloadBaseUrl("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main").downloadModelPath("onnx/model_qint8_avx512_vnni.onnx").build();
 
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
@@ -135,9 +141,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-coder-turbo-latest", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-omni-turbo", 2048));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-long", 8192));
-//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v3").type(MODEL_TYPE_EMBEDDING).dimension(1024).langCode("zh_CN").build());
-//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v2").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh_CN").build());
-//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v1").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh_CN").build());
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v3").type(MODEL_TYPE_EMBEDDING).dimension(1024).langCode("zh").build());
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v2").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh").build());
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMetaBuilder().name("text-embedding-v1").type(MODEL_TYPE_EMBEDDING).dimension(1536).langCode("zh").build());
 
 
             // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
@@ -171,7 +177,9 @@ public interface GenAiConstants {
 
             // Internal
             put(GenAiModelProvider.INTERNAL.name(), MM_BGE_SMALL_EN_1_5);
-            put(GenAiModelProvider.INTERNAL.name(), MM_BGE_SMALL_ZH_CN_1_5);
+            put(GenAiModelProvider.INTERNAL.name(), MM_BGE_SMALL_ZH_1_5);
+//            put(GenAiModelProvider.INTERNAL.name(), MM_GOGGLE_T5_SMALL);
+            put(GenAiModelProvider.INTERNAL.name(), MM_MULTILINGUAL_E5_SMALL);
         }
     };
 
@@ -179,7 +187,10 @@ public interface GenAiConstants {
     MultiValuedMap<String, ModelMeta> INTERNAL_EMBEDDING_MODELS = new HashSetValuedHashMap<>() {
         {
             put("en", MM_BGE_SMALL_EN_1_5);
-            put("zh_CN", MM_BGE_SMALL_ZH_CN_1_5);
+            put("zh", MM_BGE_SMALL_ZH_1_5);
+//            put("fr", MM_GOGGLE_T5_SMALL);
+            put(ALL_LANGUAGE_CODE, MM_MULTILINGUAL_E5_SMALL);
+
         }
     };
 
@@ -202,6 +213,7 @@ public interface GenAiConstants {
         return mapped.getOrDefault(langCode, "the same language that I just said to you.");
     }
 
+    // Languages code and name mapping for generating llm content.
     String LANGS_JSON = """
             [
                 {"code": "as-is", "name": "the same language that I just said to you"},

@@ -37,13 +37,18 @@ public final class ModelMeta {
      */
     private transient boolean isCustom = false;
     /**
-     * default is en, used for embedding model.
+     * default is `en`, be used for embedding model.
      */
     private String langCode = "en";
     /**
-     * The base URL for download this model from HuggingFace
+     * The base URL for downloading the model from HuggingFace
      */
     private String downloadUrl;
+
+    /**
+     * path in url to the model that to download, use default path if not provide
+     */
+    private String downloadModelPath;
 
     public ModelMeta() {
     }
@@ -174,6 +179,14 @@ public final class ModelMeta {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getDownloadModelPath() {
+        return downloadModelPath;
+    }
+
+    public void setDownloadModelPath(String downloadModelPath) {
+        this.downloadModelPath = downloadModelPath;
     }
 
     @Override

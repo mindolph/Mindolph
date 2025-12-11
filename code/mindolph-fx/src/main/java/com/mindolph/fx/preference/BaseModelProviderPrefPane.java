@@ -29,8 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_EMBEDDING;
+import static com.mindolph.core.constant.GenAiConstants.*;
 import static com.mindolph.genai.GenaiUiConstants.*;
 
 /**
@@ -80,7 +79,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                                             int type) {
         if (cbLanguage != null) {
             cbLanguage.setConverter(new PairStringStringConverter());
-            cbLanguage.getItems().addAll(SUPPORTED_EMBEDDING_LANG.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList());
+            ChoiceUtils.loadEmbeddingLanguages(cbLanguage);
             cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> {
                 log.debug("Language changed to {}", newValue);
                 if (newValue == null) return;
@@ -123,28 +122,28 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 log.debug("selected model is local embedding model: %s".formatted(selectedModel.getName()));
                 String langCode = safeGetSelectedLanguageCode(cbLanguage);
                 // require download
-                if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel.getName())) {
+                if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel)) {
                     if (DialogFactory.yesNoConfirmDialog("Download model",
                             "Model files are required for selected embedding model %s, do you want to download those files?".formatted(selectedModel.getName()))) {
-                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading", "Downloading model %s".formatted(selectedModel.getName()));
+                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading", "Downloading model %s, it might takes \nseconds or minutes, depends on your network.".formatted(selectedModel.getName()));
                         Future<?> future = GlobalExecutor.submit(() -> {
                             try {
                                 boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);
                                 Platform.runLater(() -> {
-                                    if (success) {
-                                        DialogFactory.infoDialog("Download success");
-                                    }
-                                    else {
-                                        // deleted incomplete downloads
-                                        if (LocalModelManager.getIns().clearModel(langCode, selectedModel.getName())) {
-                                            log.info("Model files are deleted.");
-                                        }
-                                        DialogFactory.errDialog("Download fail");
-                                    }
+                                    DialogFactory.infoDialog("Download success");
                                     progressDialog.close();
                                 });
                             } catch (Exception e) {
                                 log.error(e.getMessage(), e);
+                                Platform.runLater(() -> {
+                                    // deleted incomplete downloads
+                                    if (LocalModelManager.getIns().clearModel(langCode, selectedModel)) {
+                                        log.info("Model files are deleted.");
+                                    }
+                                    DialogFactory.errDialog("Download fail, " + e.getLocalizedMessage());
+                                    progressDialog.close();
+                                    cbModel.bounce();
+                                });
                             }
                         });
 
@@ -154,6 +153,9 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                                 future.cancel(true);
                             }
                         });
+                    }
+                    else {
+                        cbModel.bounce(); // return to previously selected model.
                     }
                 }
             }
@@ -172,7 +174,9 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         Collection<ModelMeta> preDefinedModels = GenAiConstants.getFilteredPreDefinedModels(providerName, modelType);
 
         if (StringUtils.isNotBlank(langCode)) {
-            preDefinedModels = preDefinedModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
+            preDefinedModels = preDefinedModels.stream().filter(mm ->
+                    mm.getLangCode().equals(langCode) || ALL_LANGUAGE_CODE.equals(mm.getLangCode())
+            ).toList();
         }
 
         cbModel.getItems().clear();
@@ -185,7 +189,9 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         Collection<ModelMeta> customModels = LlmConfig.getIns().getFilteredCustomModels(providerName, modelType);
         if (CollectionUtils.isNotEmpty(customModels)) {
             if (StringUtils.isNotBlank(langCode)) {
-                customModels = customModels.stream().filter(mm -> mm.getLangCode().equals(langCode)).toList();
+                customModels = customModels.stream().filter(mm ->
+                        mm.getLangCode().equals(langCode) || ALL_LANGUAGE_CODE.equals(mm.getLangCode())
+                ).toList();
             }
             if (CollectionUtils.isNotEmpty(customModels)) {
                 log.debug("Found %d custom models for provider %s and type %s".formatted(customModels.size(), providerName, modelType));

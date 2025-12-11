@@ -3,9 +3,10 @@ package com.mindolph.base.genai.rag;
 import com.mindolph.base.genai.event.AiEventBus;
 import com.mindolph.base.genai.event.PrepareEvent;
 import com.mindolph.base.genai.llm.LlmConfig;
+import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.DataSourceConfig;
+import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
-import com.mindolph.core.util.AppUtils;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.OnnxEmbeddingModel;
@@ -24,6 +25,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
+
+import static com.mindolph.core.constant.GenAiConstants.lookupModelMeta;
 
 /**
  * @since 1.13.0
@@ -90,11 +93,9 @@ public abstract class BaseEmbeddingService {
     }
 
     protected EmbeddingModel createEmbeddingModel(String langCode, String modelName) {
-        File baseDir = AppUtils.getAppBaseDir();
-        String pathToModel = "models/%s/%s/model.onnx".formatted(langCode, modelName);
-        String pathToTokenizer = "models/%s/%s/tokenizer.json".formatted(langCode, modelName);
-        File modelFile = new File(baseDir, pathToModel);
-        File tokenizerFile = new File(baseDir, pathToTokenizer);
+        ModelMeta modelMeta = lookupModelMeta(GenAiModelProvider.INTERNAL.name(),  modelName);
+        File modelFile = LocalModelManager.getIns().getModelFile(langCode, modelMeta);
+        File tokenizerFile = LocalModelManager.getIns().getTokenizerFile(langCode, modelMeta);
         if (!modelFile.exists()) {
             // download
             AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx model..."));

@@ -38,7 +38,7 @@
         <PreferenceItem name="Embedding Model: " labelMinWidth="180" labelPrefWidth="180">
             <MChoiceBox fx:id="cbEmbeddingProvider" prefWidth="140.0">
             </MChoiceBox>
-            <MChoiceBox fx:id="cbEmbeddingModel" prefWidth="180.0">
+            <MChoiceBox fx:id="cbEmbeddingModel" prefWidth="220.0">
             </MChoiceBox>
         </PreferenceItem>
         <PreferenceItem name="Datasets: " labelMinWidth="180" labelPrefWidth="180">

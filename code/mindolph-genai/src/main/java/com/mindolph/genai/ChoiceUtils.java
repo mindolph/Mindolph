@@ -15,36 +15,25 @@ import java.util.List;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
 import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
-import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
+import static com.mindolph.genai.GenaiUiConstants.LANGUAGES_IN_JSON;
 
 /**
  * @since 1.11.1
  */
 public class ChoiceUtils {
 
-    /**
-     * Load pre-defined languages to a ChoiceBox and select the default one.
-     *
-     * @param choiceBox
-     */
-    public static void loadLanguagesToAndSelectDefault(ChoiceBox<Pair<String, String>> choiceBox) {
-        JsonArray langs = new Gson().fromJson(LANGS_JSON, JsonArray.class);
+    public static void loadEmbeddingLanguages(ChoiceBox<Pair<String, String>> choiceBox) {
+        JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
         List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
         choiceBox.getItems().clear();
         choiceBox.getItems().addAll(list);
-        String savedLangCode = FxPreferences.getInstance().getPreference(GEN_AI_OUTPUT_LANGUAGE, list.stream().findFirst().get().getKey());
-        if (savedLangCode != null) {
-//            log.debug("Saved language: %s".formatted(savedLang.getKey()));
-            String language = lookupLanguage(savedLangCode);
-            choiceBox.getSelectionModel().select(new Pair<>(savedLangCode, language));
-        }
     }
 
     public static void selectOrUnselectLanguage(ChoiceBox<Pair<String, String>> choiceBox, String languageCode) {
         if (StringUtils.isNotBlank(languageCode)) {
-            String language = SUPPORTED_EMBEDDING_LANG.get(languageCode);
+            String language = GenaiUiConstants.lookupLanguage(languageCode);
             if (StringUtils.isNotBlank(language)) {
-                choiceBox.getSelectionModel().select(new Pair<>(languageCode, SUPPORTED_EMBEDDING_LANG.get(languageCode)));
+                choiceBox.getSelectionModel().select(new Pair<>(languageCode, language));
             }
             else {
                 choiceBox.getSelectionModel().clearSelection();
@@ -102,6 +91,25 @@ public class ChoiceUtils {
                 choiceBox.getSelectionModel().select(item);
                 break;
             }
+        }
+    }
+
+
+    /**
+     * Load pre-defined languages to a ChoiceBox and select the default one.
+     * Only be used for LLM generating content.
+     * @param choiceBox
+     */
+    public static void loadLanguagesToAndSelectDefault(ChoiceBox<Pair<String, String>> choiceBox) {
+        JsonArray langs = new Gson().fromJson(LANGS_JSON, JsonArray.class);
+        List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
+        choiceBox.getItems().clear();
+        choiceBox.getItems().addAll(list);
+        String savedLangCode = FxPreferences.getInstance().getPreference(GEN_AI_OUTPUT_LANGUAGE, list.stream().findFirst().get().getKey());
+        if (savedLangCode != null) {
+//            log.debug("Saved language: %s".formatted(savedLang.getKey()));
+            String language = lookupLanguage(savedLangCode);
+            choiceBox.getSelectionModel().select(new Pair<>(savedLangCode, language));
         }
     }
 }

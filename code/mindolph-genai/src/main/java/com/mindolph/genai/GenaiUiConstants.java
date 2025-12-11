@@ -1,15 +1,20 @@
 package com.mindolph.genai;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
-import com.mindolph.core.llm.*;
+import com.mindolph.core.llm.AgentMeta;
+import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ModelMetaBuilder;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
-import java.util.Map;
 
 /**
  * @since 1.11
@@ -27,8 +32,6 @@ public interface GenaiUiConstants {
             (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
 
     Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>(GenAiConstants.CUSTOM_MODEL_KEY, new ModelMetaBuilder().name(GenAiConstants.CUSTOM_MODEL_KEY).maxTokens(0).build());
-
-    Map<String, String> SUPPORTED_EMBEDDING_LANG = Map.of("en", "English", "zh_CN", "Simplified Chinese");
 
     StringConverter<Pair<VectorStoreProvider, String>> vectorStoreConverter = new StringConverter<>() {
 
@@ -101,8 +104,74 @@ public interface GenaiUiConstants {
         if (StringUtils.isBlank(languageCode)) {
             return "Unknown";
         }
-        String lang = SUPPORTED_EMBEDDING_LANG.get(languageCode);
-        return StringUtils.isBlank(lang) ? languageCode : lang;
+        JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
+        for (JsonElement lang : langs) {
+            if (lang.getAsJsonObject().get("code").getAsString().equals(languageCode)) {
+                return lang.getAsJsonObject().get("name").getAsString();
+            }
+        }
+        return languageCode;
     }
+
+    // Languages code and name mapping for embedding.
+    String LANGUAGES_IN_JSON = """
+            [
+                {"code": "en", "name": "English"},
+                {"code": "zh", "name": "Chinese"},
+                {
+                    "code": "hi",
+                    "name": "Hindi"
+                },
+                {"code": "es", "name": "Spanish"},
+                {"code": "fr", "name": "French"},
+                {"code": "ar", "name": "Arabic"},
+                {
+                    "code": "bn",
+                    "name": "Bengali"
+                },
+                {
+                    "code": "ru",
+                    "name": "Russian"
+                },
+                {"code": "pt", "name": "Portuguese"},
+                {
+                    "code": "id",
+                    "name": "Indonesian"
+                },
+                {
+                    "code": "ur",
+                    "name": "Urdu"
+                },
+                {
+                    "code": "ja",
+                    "name": "Japanese"
+                },
+                {"code": "de", "name": "German"},
+                {
+                    "code": "mr",
+                    "name": "Marathi"
+                },
+                {
+                    "code": "te",
+                    "name": "Telugu"
+                },
+                {
+                    "code": "tr",
+                    "name": "Turkish"
+                },
+                {
+                    "code": "ta",
+                    "name": "Tamil"
+                },
+                {
+                    "code": "vi",
+                    "name": "Vietnamese"
+                },
+                {
+                    "code": "ko",
+                    "name": "Korean"
+                }
+            ]
+            """;
 
 }

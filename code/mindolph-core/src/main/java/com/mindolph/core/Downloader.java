@@ -2,9 +2,7 @@ package com.mindolph.core;
 
 
 import com.mindolph.core.config.ProxyMeta;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.time.Duration;
 
 /**
  * TODO authentication
@@ -31,8 +30,8 @@ public class Downloader {
      * @param saveFile
      * @return
      */
-    public boolean download(String fileUrl, File saveFile) {
-        return this.downloadWithProxy(fileUrl, saveFile, null);
+    public void download(String fileUrl, File saveFile) {
+        this.downloadWithProxy(fileUrl, saveFile, null, null);
     }
 
     /**
@@ -43,8 +42,9 @@ public class Downloader {
      * @param proxyMeta
      * @return
      */
-    public boolean downloadWithProxyMeta(String fileUrl, File saveFile, ProxyMeta proxyMeta) {
+    public void downloadWithProxyMeta(String fileUrl, File saveFile, ProxyMeta proxyMeta) {
         Proxy proxy = null;
+        Authenticator authenticator = null;
         if (proxyMeta != null) {
             Proxy.Type proxyType;
             try {
@@ -54,8 +54,19 @@ public class Downloader {
                 throw new RuntimeException("Not supported proxy type: %s".formatted(proxyMeta.type()));
             }
             proxy = new Proxy(proxyType, new InetSocketAddress(proxyMeta.host(), proxyMeta.port()));
+            authenticator = (route, response) -> {
+                if (response.request().header("Proxy-Authorization") != null) {
+                    return null; // 如果已经尝试过认证但失败了，返回null避免无限循环
+                }
+
+                // 代理认证信息
+                String credential = Credentials.basic(proxyMeta.username(), proxyMeta.password());
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            };
         }
-        return this.downloadWithProxy(fileUrl, saveFile, proxy);
+        this.downloadWithProxy(fileUrl, saveFile, proxy, authenticator);
     }
 
     /**
@@ -66,11 +77,15 @@ public class Downloader {
      * @param proxy
      * @return
      */
-    public boolean downloadWithProxy(String fileUrl, File saveFile, Proxy proxy) {
+    public void downloadWithProxy(String fileUrl, File saveFile, Proxy proxy, Authenticator authenticator) {
         OkHttpClient client;
         if (proxy != null) {
             client = new OkHttpClient.Builder()
-                    .proxy(proxy) //
+                    .proxy(proxy)
+                    .proxyAuthenticator(authenticator)
+                    .connectTimeout(Duration.ofSeconds(30))
+                    .readTimeout(Duration.ofMinutes(10))
+                    .writeTimeout(Duration.ofMinutes(5))
                     .build();
         }
         else {
@@ -100,10 +115,11 @@ public class Downloader {
             }
             outputStream.close();
             inputStream.close();
-            return true;
+//            return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return false;
+            throw new RuntimeException(e.getLocalizedMessage(), e);
+//            return false;
         }
     }
 

@@ -1,7 +1,7 @@
 package com.mindolph.fx.control;
 
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.llm.DatasetMeta;
+import com.mindolph.genai.GenaiUiConstants;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-
-import static com.mindolph.genai.GenaiUiConstants.SUPPORTED_EMBEDDING_LANG;
 
 /**
  * For displaying embedding datasets.
@@ -53,7 +51,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
             log.debug("Select datasets: {}", datasetMetas);
             // force to convert lang code to language.
             datasetMetas.forEach(datasetMeta -> {
-                datasetMeta.setLanguageCode(GenAiConstants.lookupLanguage(datasetMeta.getLanguageCode()));
+                datasetMeta.setLanguageCode(GenaiUiConstants.lookupLanguage(datasetMeta.getLanguageCode()));
             });
             this.getItems().addAll(datasetMetas);
             super.refresh();
