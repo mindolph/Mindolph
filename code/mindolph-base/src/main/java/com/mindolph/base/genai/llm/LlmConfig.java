@@ -3,11 +3,11 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.util.ConfigUtils;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
-import com.mindolph.core.util.AppUtils;
 import com.mindolph.core.util.GsonUtils;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -223,7 +223,7 @@ public class LlmConfig {
 
     public Map<String, DatasetMeta> loadAllDatasets() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(this.datasetConfigFile()), StandardCharsets.UTF_8))) {
+                new FileInputStream(ConfigUtils.datasetConfigFile()), StandardCharsets.UTF_8))) {
             Object o = GsonUtils.newGson().fromJson(reader, collectionType);
             if (o == null) {
                 return new HashMap<>();
@@ -245,7 +245,7 @@ public class LlmConfig {
         String json = JsonUtils.object2PrettyJson(datasetMap);
 //        String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
         try {
-            IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);
+            IOUtils.write(json, new FileOutputStream(ConfigUtils.datasetConfigFile()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -257,7 +257,7 @@ public class LlmConfig {
         datasetMap.remove(datasetMeta.getId());
         String json = GsonUtils.newGson().toJson(datasetMap, collectionType);
         try {
-            IOUtils.write(json, new FileOutputStream(datasetConfigFile()), StandardCharsets.UTF_8);
+            IOUtils.write(json, new FileOutputStream(ConfigUtils.datasetConfigFile()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -286,22 +286,6 @@ public class LlmConfig {
         Map<String, VectorStoreMeta> map = GsonUtils.newGson().fromJson(json, vectorStoreMetaType);
         map.put(provider.name(), vectorStoreMeta);
         fxPreferences.savePreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, GsonUtils.newGson().toJson(map));
-    }
-
-    private File datasetConfigFile() {
-        String path = "%s/conf/datasets.json".formatted(AppUtils.getAppBaseDir());
-        File f = new File(path);
-        if (!f.exists()) {
-            try {
-                if (!f.getParentFile().exists()) f.getParentFile().mkdirs();
-                if (f.createNewFile()) {
-                    return f;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return f;
     }
 
 //    public List<DatasetMeta> getDatasetsFromAgentId(String agentId) {

@@ -3,7 +3,7 @@ package com.mindolph.fx;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
-import com.mindolph.base.collection.CollectionManager;
+import com.mindolph.base.collection.JsonCollectionManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.container.FixedSplitPane;
@@ -80,7 +80,7 @@ public class MainController extends BaseController implements Initializable,
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
-    private final CollectionManager cm = CollectionManager.getIns();
+    private final JsonCollectionManager jcm = JsonCollectionManager.getIns();
 
     private final Map<Tab, BaseView> tabViewMap = new HashMap<>();
 
@@ -311,12 +311,12 @@ public class MainController extends BaseController implements Initializable,
         });
         menuCollections.getItems().add(rmiCollectionDefault);
 
-        Map<String, List<String>> fileCollectionMap = this.cm.getFileCollectionMap();
+        Map<String, List<String>> fileCollectionMap = this.jcm.getFileCollectionMap();
         if (fileCollectionMap.isEmpty()) {
             // init the default collection from the opened file list for the first time.
             List<String> openedFileList = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
-            this.cm.saveCollectionFilePaths("default", openedFileList);
-            this.cm.saveActiveCollectionName("default");
+            this.jcm.saveCollectionFilePaths("default", openedFileList);
+            this.jcm.saveActiveCollectionName("default");
             if (openedFileList != null) {
                 rmiCollectionDefault.setText("default(%d)".formatted(openedFileList.size()));
             }
@@ -330,7 +330,7 @@ public class MainController extends BaseController implements Initializable,
                 rmiCollectionDefault.setText("default(%d)".formatted(filesInDefault.size()));
             }
 
-            String activeCollName = this.cm.getActiveCollectionName();
+            String activeCollName = this.jcm.getActiveCollectionName();
             rmiCollectionDefault.setSelected("default".equals(activeCollName));
             // load sorted collection names to the menu except the default one.
             fileCollectionMap.keySet().stream()
@@ -518,7 +518,7 @@ public class MainController extends BaseController implements Initializable,
         log.debug("file renamed from %s to %s".formatted(nodeData.getFile(), renamedFile));
         if (nodeData.isFile()) {
             fileTabView.updateOpenedTabAndEditor(nodeData, renamedFile);
-            this.cm.updateFilePath(nodeData.getFile().getPath(), renamedFile.getPath());
+            this.jcm.updateFilePath(nodeData.getFile().getPath(), renamedFile.getPath());
         }
         else if (nodeData.isFolder() || nodeData.isWorkspace()) {
             // update all opened file under this folder.
@@ -700,13 +700,13 @@ public class MainController extends BaseController implements Initializable,
         Optional<String> optColName = dialog.showAndWait();
         if (optColName.isPresent()) {
             String newColName = optColName.get().trim();
-            if (this.cm.getFileCollectionMap().containsKey(newColName)) {
+            if (this.jcm.getFileCollectionMap().containsKey(newColName)) {
                 DialogFactory.warnDialog("The name '%s' already exists!".formatted(newColName));
                 return;
             }
 
-            this.cm.saveCollectionFilePaths(newColName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
-            this.cm.saveActiveCollectionName(newColName);
+            this.jcm.saveCollectionFilePaths(newColName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
+            this.jcm.saveActiveCollectionName(newColName);
 
             // remove for resorting first.
             this.clearCollectionMenuItems();
@@ -724,7 +724,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onSaveCollection() {
         // save the current collection with opened files
-        String activeCollectionName = this.cm.getActiveCollectionName();
+        String activeCollectionName = this.jcm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName)) {
             log.warn("No active collection found");
             return;
@@ -733,7 +733,7 @@ public class MainController extends BaseController implements Initializable,
             DialogFactory.warnDialog("No files is opened for saving collection.");
             return;
         }
-        this.cm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
+        this.jcm.saveCollectionFilePaths(activeCollectionName, fileTabView.getAllOpenedFiles().stream().map(File::toString).toList());
 
         // reset the file counter in the text of the menu item.
         Optional<MenuItem> first = menuCollections.getItems().stream().filter(menuItem ->
@@ -749,7 +749,7 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onRemoveCollection() {
         // remove the current user defined collection.
-        String activeCollectionName = this.cm.getActiveCollectionName();
+        String activeCollectionName = this.jcm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName) || "default".equalsIgnoreCase(activeCollectionName)) {
             DialogFactory.warnDialog("The default collection cannot be removed.");
             return;
@@ -759,7 +759,7 @@ public class MainController extends BaseController implements Initializable,
             // switch to a default collection first
             this.onSelectCollection("default");
             // delete current user-defined collection
-            this.cm.deleteCollection(activeCollectionName);
+            this.jcm.deleteCollection(activeCollectionName);
             menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
             this.resetCollectionSelection("default");
             Platform.runLater(() -> {
@@ -771,7 +771,7 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onRenameCollection() {
-        String activeCollectionName = this.cm.getActiveCollectionName();
+        String activeCollectionName = this.jcm.getActiveCollectionName();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title("Rename Collection %s".formatted(activeCollectionName))
@@ -786,11 +786,11 @@ public class MainController extends BaseController implements Initializable,
             if (Strings.CS.equals(newName, activeCollectionName)) {
                 return;
             }
-            if (!activeCollectionName.equals(newName) && this.cm.getFileCollectionMap().containsKey(newName)) {
+            if (!activeCollectionName.equals(newName) && this.jcm.getFileCollectionMap().containsKey(newName)) {
                 DialogFactory.warnDialog("The name '%s' already exists!".formatted(newName));
                 return;
             }
-            this.cm.renameCollection(activeCollectionName, newName);
+            this.jcm.renameCollection(activeCollectionName, newName);
             // remove for resorting first.
             this.clearCollectionMenuItems();
 
@@ -804,7 +804,7 @@ public class MainController extends BaseController implements Initializable,
         List<String> files;
         if (StringUtils.isNotBlank(collectionName)) {
             // get files of a selected collection.
-            files = this.cm.getCollectionFilePaths(collectionName);
+            files = this.jcm.getCollectionFilePaths(collectionName);
         }
         else {
             files = fxPreferences.getPreference(MINDOLPH_OPENED_FILE_LIST, new ArrayList<>());
@@ -825,7 +825,7 @@ public class MainController extends BaseController implements Initializable,
             // listen for potential failed open files and remove them from the collection.
             Consumer<NodeData> observer = nodeData -> {
                 log.debug("Remove non-exist file from collection %s".formatted(nodeData.getFile()));
-                this.cm.updateFilePath(nodeData.getFile().getPath(), null);
+                this.jcm.updateFilePath(nodeData.getFile().getPath(), null);
             };
             EventBus.getIns().subscribeOpenFileFail(observer);
             Platform.runLater(() -> {
@@ -836,7 +836,7 @@ public class MainController extends BaseController implements Initializable,
                 EventBus.getIns().unsubscribeOpenFileFail(observer);
             });
         }
-        this.cm.saveActiveCollectionName(collectionName);
+        this.jcm.saveActiveCollectionName(collectionName);
 
         EventBus.getIns().notifyMenuStateChange(MenuTag.REMOVE_COLLECTION, !"default".equals(collectionName));
     }

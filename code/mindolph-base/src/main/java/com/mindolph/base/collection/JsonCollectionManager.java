@@ -2,37 +2,42 @@ package com.mindolph.base.collection;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.mindolph.base.util.ConfigUtils;
+import com.mindolph.core.util.GsonUtils;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_COLLECTION_ACTIVE;
-import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_COLLECTION_MAP;
 
 /**
- * Manage file collections.
- * <p>
- * TODO move to module core once the FxPreferences is replaced with abstract one.
- *
- * @since 1.9
- * @deprecated JsonCollectionManager
+ * @since 1.13.3
  */
-@Deprecated(since = "1.13.3")
-public class CollectionManager {
+public class JsonCollectionManager {
 
-    private static final CollectionManager ins = new CollectionManager();
+    private static final JsonCollectionManager ins = new JsonCollectionManager();
 
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
-    public static CollectionManager getIns() {
+    private final Type collectionType = new TypeToken<Map<String, List<String>>>() {
+    }.getType();
+
+    public static JsonCollectionManager getIns() {
         return ins;
     }
+
+    private JsonCollectionManager() {
+    }
+
 
     public String getActiveCollectionName() {
         return fxPreferences.getPreference(MINDOLPH_COLLECTION_ACTIVE, "default");
@@ -53,11 +58,16 @@ public class CollectionManager {
      * @return
      */
     public Map<String, List<String>> getFileCollectionMap() {
-        String strCollectionMap = fxPreferences.getPreference(MINDOLPH_COLLECTION_MAP, "{}");
-        Type collectionType = new TypeToken<Map<String, List<String>>>() {
-        }.getType();
-        Map<String, List<String>> result = new Gson().fromJson(strCollectionMap, collectionType);
-        return result == null ? new HashMap<>() : result;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(ConfigUtils.collectionConfigFile()), StandardCharsets.UTF_8))) {
+            Map<String, List<String>> o = GsonUtils.newGson().fromJson(reader, collectionType);
+            if (o == null) {
+                return new HashMap<>();
+            }
+            return o;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -82,11 +92,12 @@ public class CollectionManager {
         Map<String, List<String>> collectionMap = this.getFileCollectionMap();
         collectionMap.put(newName, collectionMap.get(oldName));
         collectionMap.remove(oldName);
-        fxPreferences.savePreference(MINDOLPH_COLLECTION_MAP, new Gson().toJson(collectionMap));
+        this.saveToConfigFile(new Gson().toJson(collectionMap));
     }
 
     /**
      * Save file paths to the collection.
+     * If connection name does not exist, new one will be created.
      *
      * @param collectionName
      * @param files
@@ -94,7 +105,7 @@ public class CollectionManager {
     public void saveCollectionFilePaths(String collectionName, List<String> files) {
         Map<String, List<String>> collectionMap = this.getFileCollectionMap();
         collectionMap.put(collectionName, files);
-        fxPreferences.savePreference(MINDOLPH_COLLECTION_MAP, new Gson().toJson(collectionMap));
+        this.saveToConfigFile(new Gson().toJson(collectionMap));
     }
 
     /**
@@ -105,23 +116,27 @@ public class CollectionManager {
      * @param newFilePath
      */
     public void updateFilePath(String oldFilePath, String newFilePath) {
-        String strCollectionMap = fxPreferences.getPreference(MINDOLPH_COLLECTION_MAP, "{}");
-        JsonElement root = JsonParser.parseString(strCollectionMap);
-        JsonObject collDict = root.getAsJsonObject();
-        AtomicBoolean isChanged = new AtomicBoolean(false);
-        collDict.keySet().forEach(collName -> {
-            JsonArray paths = collDict.get(collName).getAsJsonArray();
-            if (paths.remove(new JsonPrimitive(oldFilePath))) {
-                if (!StringUtils.isBlank(newFilePath)) {
-                    paths.add(new JsonPrimitive(newFilePath));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(ConfigUtils.collectionConfigFile()), StandardCharsets.UTF_8))) {
+            JsonElement root = JsonParser.parseReader(reader);
+            JsonObject collDict = root.getAsJsonObject();
+            AtomicBoolean isChanged = new AtomicBoolean(false);
+            collDict.keySet().forEach(collName -> {
+                JsonArray paths = collDict.get(collName).getAsJsonArray();
+                if (paths.remove(new JsonPrimitive(oldFilePath))) {
+                    if (!StringUtils.isBlank(newFilePath)) {
+                        paths.add(new JsonPrimitive(newFilePath));
+                    }
+                    isChanged.set(true);
                 }
-                isChanged.set(true);
+            });
+            if (isChanged.get()) {
+                // save json object to json config file
+                String newJson = new Gson().toJson(root);
+                this.saveToConfigFile(newJson);
             }
-        });
-        if (isChanged.get()) {
-            // save json object to json preferences
-            String newJson = new Gson().toJson(root);
-            fxPreferences.savePreference(MINDOLPH_COLLECTION_MAP, newJson);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -133,7 +148,14 @@ public class CollectionManager {
     public void deleteCollection(String collectionName) {
         Map<String, List<String>> collectionMap = this.getFileCollectionMap();
         collectionMap.remove(collectionName);
-        fxPreferences.savePreference(MINDOLPH_COLLECTION_MAP, new Gson().toJson(collectionMap));
+        this.saveToConfigFile(new Gson().toJson(collectionMap));
     }
 
+    private void saveToConfigFile(String json) {
+        try {
+            IOUtils.write(json, new FileOutputStream(ConfigUtils.collectionConfigFile()), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
