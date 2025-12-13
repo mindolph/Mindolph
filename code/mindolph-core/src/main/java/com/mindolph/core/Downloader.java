@@ -15,7 +15,7 @@ import java.net.Proxy;
 import java.time.Duration;
 
 /**
- * TODO authentication
+ *
  *
  * @since 1.13.0
  */
@@ -80,6 +80,7 @@ public class Downloader {
     public void downloadWithProxy(String fileUrl, File saveFile, Proxy proxy, Authenticator authenticator) {
         OkHttpClient client;
         if (proxy != null) {
+            log.info("Download with proxy: %s".formatted(proxy));
             client = new OkHttpClient.Builder()
                     .proxy(proxy)
                     .proxyAuthenticator(authenticator)
@@ -95,7 +96,7 @@ public class Downloader {
         Request request = new Request.Builder()
                 .url(fileUrl)
                 .build();
-
+        log.info("Start to download from: %s".formatted(fileUrl));
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Error from server: " + response);

@@ -25,6 +25,7 @@ public interface SceneStatePrefs {
 
     // save all collections name(unique) and files
     String MINDOLPH_COLLECTION_ACTIVE = "mindolph.collection.active";
+    @Deprecated(since = "1.13.3")
     String MINDOLPH_COLLECTION_MAP = "mindolph.collection.map";
 
 

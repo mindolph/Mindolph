@@ -6,7 +6,7 @@
     <parent>
         <artifactId>mindolph</artifactId>
         <groupId>com.mindolph</groupId>
-        <version>1.13.2</version>
+        <version>1.13.3</version>
     </parent>
 
     <artifactId>mindmap-panel</artifactId>
