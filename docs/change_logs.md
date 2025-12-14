@@ -1,5 +1,26 @@
 # Change Logs
 
+### V1.13.3 Unstable Release
+
+* Features
+    * Added multilingual embedding models for the world's major languages.  
+    * Change output logs to `logs/` dir.  
+
+* Improvements
+    * Display detailed error message when downloading embedding model fails.  
+    * Refactor code editors.  
+    * Improved refreshing performance for preview mode of Markdown and PlantUML.  
+    * Add file count to the items of workspace selector in the Datasets setting panel.  
+
+* Bug Fixes
+    * Too much files in the collections cause exception.  
+    * If rename folder/file  fails, the input dialog should pop up again.  
+    * in Datasets settings, exception when there is no files selected for a dataset.  
+
+* Merged bug fixes from stable versions.
+
+* Update JavaFX to 25.0.1, RichTextFX to 0.11.7 and other dependencies.
+
 ### V1.12.12 Release
 * Update pre-set models for Gemini and Qwen.
 * Bug Fixes:
