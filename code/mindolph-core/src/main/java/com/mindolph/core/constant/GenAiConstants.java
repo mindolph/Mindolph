@@ -66,6 +66,8 @@ public interface GenAiConstants {
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // GPT https://platform.openai.com/docs/models
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.2", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.2-pro", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-mini", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5-nano", 128000));
@@ -169,7 +171,10 @@ public interface GenAiConstants {
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", 8192));
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
-            // Moonshot https://platform.moonshot.cn/docs/introduction
+            // Moonshot https://platform.moonshot.cn/docs/introduction#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8
+            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144));
+            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144));
+            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking-turbo", 262144));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-latest", 131072)); // the max output tokens is dynamic, use the largest.
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-8k", 8192));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-32k", 32768));

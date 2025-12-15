@@ -252,9 +252,10 @@ public class FileTabView extends BaseView {
                     EventBus.getIns().notifyMenuStateChange(SAVE_ALL, true);
                 });
                 editor.setFileSavedEventHandler(savedFileData -> {
-                    log.info("File %s saved.".formatted(savedFileData.getFile()));
-                    Tab curTab = getCurrentTab();
-                    curTab.setText(this.makeTabNameForFile(fileData.getName(), false));
+                    log.info("File is saved: %s.".formatted(savedFileData.getFile()));
+                    // don't use current tab for save all.
+                    Tab theTab = openedFileMap.get(fileData);
+                    theTab.setText(this.makeTabNameForFile(fileData.getName(), false));
                     // curTab.setStyle("-fx-font-size: 14"); seams not work for default font
                     EventBus.getIns().notifyMenuStateChange(SAVE, false);
                 });
@@ -588,8 +589,6 @@ public class FileTabView extends BaseView {
                         log.error(e.getLocalizedMessage(), e);
                         DialogFactory.errDialog("Saving file %s failed.".formatted(nodeData.getFile()));
                     }
-                    tab.setText(makeTabNameForFile(nodeData.getName(), false));
-                    tab.setStyle("-fx-font-size: 14");
                 }
             }
         }
