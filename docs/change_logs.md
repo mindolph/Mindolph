@@ -1,5 +1,11 @@
 # Change Logs
 
+### V1.12.13 Release
+
+* Update pre-set models for OpenAI and Moonshot(Kimi).  
+
+* The `Save all` updates file name in tabs incorrectly.  
+
 ### V1.13.3 Unstable Release
 
 * Features
