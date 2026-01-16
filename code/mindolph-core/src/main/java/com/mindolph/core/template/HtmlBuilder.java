@@ -288,6 +288,21 @@ public final class HtmlBuilder {
                     """.formatted(TOOL_SCRIPT, script, onLoadFunction);
         }
 
+        if (StringUtils.isNotBlank(onLoadFunction)) {
+            ret = """
+                    <body onload='onload()'>
+                    %s
+                    </body>
+                    """.formatted(ret);
+        }
+        else {
+            ret = """
+                    <body'>
+                    %s
+                    </body>
+                    """.formatted(ret);
+        }
+
         if (StringUtils.isNotBlank(title)) {
             ret = """
                     <!DOCTYPE html>
@@ -303,9 +318,7 @@ public final class HtmlBuilder {
                     %s
                     %s
                     </head>
-                    <body onload='onload()'>
                     %s
-                    </body>
                     </html>
                     """.formatted(title, scripts, styles, ret);
         }
