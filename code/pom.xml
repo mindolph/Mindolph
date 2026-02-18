@@ -25,39 +25,39 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <javafx.version>25.0.1</javafx.version>
+        <javafx.version>25.0.2</javafx.version>
         <commons.lang.version>3.20.0</commons.lang.version>
         <commons.io.version>2.21.0</commons.io.version>
-        <commons.text.version>1.14.0</commons.text.version>
+        <commons.text.version>1.15.0</commons.text.version>
         <commons.collections.version>4.5.0</commons.collections.version>
         <commons.codec.version>1.20.0</commons.codec.version>
         <commons.validator.version>1.10.1</commons.validator.version>
         <commons.csv.version>1.14.1</commons.csv.version>
         <swstate.version>2.2.1</swstate.version>
-        <plantuml.version>1.2025.10</plantuml.version>
+        <plantuml.version>1.2026.1</plantuml.version>
         <swiftboot.version>2.4.11</swiftboot.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.21</logback.version>
-        <junit.version>5.14.1</junit.version>
+        <logback.version>1.5.25</logback.version>
+        <junit.version>5.14.2</junit.version>
         <mfx.version>3.0</mfx.version>
         <gson.version>2.13.2</gson.version>
-        <controlsfx.version>11.2.2</controlsfx.version>
+        <controlsfx.version>11.2.3</controlsfx.version>
         <richtextfx.version>0.11.7</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
-        <jsoup.version>1.21.2</jsoup.version>
-        <json.version>20250517</json.version>
+        <jsoup.version>1.22.1</jsoup.version>
+        <json.version>20251224</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>1.9.1</langchain4j.version>
-        <langchain4j.community.version>1.9.1-beta17</langchain4j.community.version>
-        <dashscope.version>2.22.2</dashscope.version>
+        <langchain4j.version>1.11.0</langchain4j.version>
+        <langchain4j.community.version>1.11.0-beta19</langchain4j.community.version>
+        <dashscope.version>2.22.8</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.42</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <onnxruntime.version>1.23.2</onnxruntime.version>
-        <tokenizers.version>0.35.1</tokenizers.version>
-        <postgresql.version>42.7.8</postgresql.version>
+        <onnxruntime.version>1.24.1</onnxruntime.version>
+        <tokenizers.version>0.36.0</tokenizers.version>
+        <postgresql.version>42.7.10</postgresql.version>
     </properties>
 
     <dependencies>
