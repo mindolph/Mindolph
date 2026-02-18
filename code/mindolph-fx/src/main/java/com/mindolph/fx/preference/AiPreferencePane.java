@@ -5,6 +5,7 @@ import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +27,13 @@ public class AiPreferencePane extends BasePrefsPane implements Initializable {
     private TabPane tpGenAi;
 
     @FXML
-    private AiProviderPrefPane aiProviderPrefPane;
-
+    private Tab tabAgents;
     @FXML
-    private AiAgentPrefPane aiAgentPrefPane;
-
+    private Tab tabProviders;
     @FXML
-    private AiDatasetPrefPane aiDatasetPrefPane;
-
+    private Tab tabDataset;
     @FXML
-    private AiOptionPrefPane aiOptionPrefPane;
+    private Tab tabOptions;
 
     private static int latestActivePaneIndex = 0;
 
@@ -45,11 +43,25 @@ public class AiPreferencePane extends BasePrefsPane implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tpGenAi.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            latestActivePaneIndex = newValue.intValue();
+        tpGenAi.getSelectionModel().selectedIndexProperty().addListener((observable, oldIdx, newIdx) -> {
+            switch (newIdx.intValue()) {
+                case 0:
+                    if (tabAgents.getContent() == null) tabAgents.setContent(new AiAgentPrefPane());
+                    break;
+                case 1:
+                    if (tabProviders.getContent() == null) tabProviders.setContent(new AiProviderPrefPane());
+                    break;
+                case 2:
+                    if (tabDataset.getContent() == null) tabDataset.setContent(new AiDatasetPrefPane());
+                    break;
+                case 3:
+                    if (tabOptions.getContent() == null) tabOptions.setContent(new AiOptionPrefPane());
+                    break;
+            }
+            latestActivePaneIndex = newIdx.intValue();
         });
-        tpGenAi.getSelectionModel().select(latestActivePaneIndex);
-
+        // load first tab
+        tabAgents.setContent(new AiAgentPrefPane());
     }
 
     @Override

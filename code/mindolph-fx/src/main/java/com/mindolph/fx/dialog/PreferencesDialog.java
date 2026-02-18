@@ -44,7 +44,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 //    private PlantumlPreferences plantumlPreferences;
 
     @FXML
-    private AiPreferencePane genAiPreferences;
+    private AiPreferencePane aiPreferences;
 
     @FXML
     private Tab tabGeneral;
@@ -55,7 +55,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     @FXML
     private Tab tabMarkdown;
     @FXML
-    private Tab tabGenAi;
+    private Tab tabAi;
 
     // be used to remember the last activated tab for user convenience until the application exits.
     private static int lastActivatedTabIndex = 0;
@@ -79,7 +79,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                         fontPreferencesPane.resetToDefault();
                         mmdPreferences.resetToDefault();
                         mdPreferences.resetToDefault();
-                        genAiPreferences.resetToDefault();
+                        aiPreferences.resetToDefault();
 //                        plantumlPreferences.resetToDefault();
                     }
                 })
@@ -92,7 +92,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
         generalPreferencesPane.loadPreferences();
         mmdPreferences.loadPreferences();
 //        plantumlPreferences.loadPreferences();
-        genAiPreferences.loadPreferences();
+        aiPreferences.loadPreferences();
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> lastActivatedTabIndex = newValue.intValue());
 
@@ -101,7 +101,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
             tabPane.setTabIcon(tabFont, FontIconManager.getIns().getIcon(IconKey.FONT));
             tabPane.setTabIcon(tabMindMap, FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
             tabPane.setTabIcon(tabMarkdown, FontIconManager.getIns().getIcon(IconKey.FILE_MD));
-            tabPane.setTabIcon(tabGenAi, FontIconManager.getIns().getIcon(IconKey.MAGIC));
+            tabPane.setTabIcon(tabAi, FontIconManager.getIns().getIcon(IconKey.MAGIC));
             this.selectTab(lastActivatedTabIndex);
         });
     }
