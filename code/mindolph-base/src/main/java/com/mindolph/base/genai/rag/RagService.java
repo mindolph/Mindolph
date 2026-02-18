@@ -129,6 +129,7 @@ public class RagService extends BaseEmbeddingService {
                     finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
                 }
             } catch (Exception e) {
+                log.error(e.getLocalizedMessage(), e);
                 finished.accept(e);
             }
         });

@@ -125,7 +125,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel)) {
                     if (DialogFactory.yesNoConfirmDialog("Download model",
                             "Model files are required for selected embedding model %s, do you want to download those files?".formatted(selectedModel.getName()))) {
-                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading", "Downloading model %s, it might takes \nseconds or minutes, depends on your network.".formatted(selectedModel.getName()));
+                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading",
+                                "Downloading model %s, it might takes \nseconds or minutes, depends on your network. Try to use proxy if it is necessary(General->Enable proxy).".formatted(selectedModel.getName()));
                         Future<?> future = GlobalExecutor.submit(() -> {
                             try {
                                 boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);

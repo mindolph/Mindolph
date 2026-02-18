@@ -3,6 +3,7 @@ package com.mindolph.base.genai.rag;
 import com.mindolph.base.constant.Stage;
 import com.mindolph.base.genai.event.AiEventBus;
 import com.mindolph.base.genai.event.DoneEvent;
+import com.mindolph.base.genai.event.PrepareEvent;
 import com.mindolph.base.genai.event.ProgressEvent;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.mfx.util.GlobalExecutor;
@@ -69,9 +70,11 @@ public class EmbeddingService extends BaseEmbeddingService {
      * Unembed documents all files in dataset.
      *
      * @param datasetMeta
+     * @param deleteDataset whether delete the dataset either after all embeddings for this dataset have been deleted successfully.
      * @return true means all documents have been deleted.
      */
-    public CompletableFuture<Boolean> unembedDataset(DatasetMeta datasetMeta) {
+    public CompletableFuture<Boolean> unembedDataset(DatasetMeta datasetMeta, boolean deleteDataset) {
+        final Stage stage = deleteDataset ? Stage.REMOVE_DATASET : Stage.CLEAR_EMBEDDING;
         return GlobalExecutor.submitCompletable(() -> {
             try {
                 this.initDatabaseIfNotExist(); // check the database before starting embedding.
@@ -79,29 +82,29 @@ public class EmbeddingService extends BaseEmbeddingService {
                 List<EmbeddingDocEntity> documents = this.findDocuments(datasetMeta.getId());
                 if (embeddingStore == null) {
                     log.warn("EmbeddingStore is not built");
-                    AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.REMOVE_DATASET, "Embedding store is not built", false));
+                    AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Embedding store is not built", false));
                     return false;
                 }
                 else {
                     log.info("Try to unembed %d documents...".formatted(documents.size()));
-                    ProgressEvent progressEvent = new ProgressEvent(Stage.REMOVE_DATASET, "Removing embedded document...%.1f%%".formatted(0f), null, 0, 0f);
+                    ProgressEvent progressEvent = new ProgressEvent(stage, "Removing embedded document...%.1f%%".formatted(0f), null, 0, 0f);
                     AiEventBus.getInstance().emitEvent(progressEvent);
 
                     Integer successCount = this.unembedFiles(documents, event -> {
-                        event.setStage(Stage.REMOVE_DATASET);
+                        event.setStage(stage);
                         AiEventBus.getInstance().emitEvent(event);
                     });
                     if (successCount == documents.size()) {
-                        AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.REMOVE_DATASET, "Un-embedding done with %d successes of %d files.".formatted(successCount, documents.size()), true));
+                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Un-embedding done with %d successes of %d files.".formatted(successCount, documents.size()), true));
                     }
                     else {
-                        AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.REMOVE_DATASET, "Un-embedding fail with %d successes of %d files.".formatted(successCount, documents.size()), false));
+                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Un-embedding fail with %d successes of %d files.".formatted(successCount, documents.size()), false));
                     }
                     return successCount == documents.size();
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.REMOVE_DATASET, e.getLocalizedMessage(), false));
+                AiEventBus.getInstance().emitEvent(new DoneEvent(stage, e.getLocalizedMessage(), false));
                 throw new RuntimeException(e);
             }
         });
@@ -110,7 +113,7 @@ public class EmbeddingService extends BaseEmbeddingService {
     /**
      *
      * @param datasetMeta
-     * @param filter filter documents to be un-embedded
+     * @param filter      filter documents to be un-embedded
      * @return
      */
     public CompletableFuture<Boolean> embedDataset(DatasetMeta datasetMeta, Predicate<EmbeddingDocEntity> filter) {
@@ -240,6 +243,8 @@ public class EmbeddingService extends BaseEmbeddingService {
     }
 
     public void loadEmbeddingStoreIfNotExist(DatasetMeta datasetMeta) {
+        // make sure that the state is transmitted to 'preparing' (for re-embedding scenario).
+        AiEventBus.getInstance().emitEvent(new PrepareEvent("Prepare..."));
         if (embeddingModel == null) {
             log.debug("Create embedding model instance");
             embeddingModel = super.createEmbeddingModel(
@@ -475,7 +480,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                             rs.getBoolean("embedded"),
                             rs.getString("comment")));
                 }
-                log.debug("Found {} embeddings for files {}", results.size(), files.size());
+                log.debug("Found {}/{} embeddings files.", results.size(), files.size());
                 return results;
             } catch (Exception e) {
                 throw new RuntimeException(e.getLocalizedMessage(), e);

@@ -95,15 +95,12 @@ public class ChatPane extends BaseView {
             }
             hBox.getChildren().add(chatDisplay);
             vbChat.getChildren().add(hBox);
-            if (chatPartial.isLast()) {
-                chatDisplay = null;
-            }
         }
         else {
             chatDisplay.getChildren().add(new Text(chatPartial.getText()));
-            if (chatPartial.isLast()) {
-                chatDisplay = null;
-            }
+        }
+        if (chatPartial.isLast()) {
+            chatDisplay = null;
         }
     }
 

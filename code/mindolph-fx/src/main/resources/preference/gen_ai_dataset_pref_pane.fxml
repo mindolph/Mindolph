@@ -37,7 +37,10 @@
         </PreferenceItem>
         <PreferenceItem name="Embedding: " labelMinWidth="180" labelPrefWidth="180">
             <VBox spacing="5">
-                <Button fx:id="btnEmbedding" text="Start embedding" disable="true"/>
+                <HBox spacing="5">
+                    <Button fx:id="btnEmbedding" text="Start embedding" disable="true"/>
+                    <Button fx:id="btnClear" text="Clear embedding" disable="true"/>
+                </HBox>
                 <ProgressBar fx:id="pbProgress" prefHeight="8.0" prefWidth="250" visible="false"/>
                 <Label fx:id="lblEmbeddingStatus"/>
             </VBox>

@@ -78,6 +78,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     @FXML
     private Button btnEmbedding;
     @FXML
+    private Button btnClear;
+    @FXML
     private ProgressBar pbProgress;
     @FXML
     private Label lblEmbeddingStatus;
@@ -93,6 +95,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     private StateMachine<EmbeddingState, Event> stateMachine;
 
     private EventSource<Void> stateMachineReady;
+
+    // future after starting embedding
+    private CompletableFuture<Boolean> futureOfEmbedding;
+
 
     public AiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");
@@ -117,6 +123,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         this.toggleEmbeddingModel();
                         btnEmbedding.setText("Start embedding");
                         lblEmbeddingStatus.setText("Ready to do embedding");
+                        lblSelectedFiles.setDisable(false);
                         pbProgress.setVisible(false);
                         pbProgress.setProgress(0);
                     });
@@ -130,6 +137,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         pbProgress.setVisible(true);
                         pbProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                         fileSelectView.clearEmbeddingStatusLabels();
+                        // It also can be interrupted during the preparing status.
+                        NodeUtils.enable(btnEmbedding);
+                        btnEmbedding.setText("Stop preparing");
+                        btnClear.setDisable(true);
                     });
                 })
                 .out(progress -> {
@@ -185,8 +196,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         Platform.runLater(() -> {
                             enableAll();
                             this.toggleEmbeddingModel();
-                            btnEmbedding.setDisable(doneEvent.getStage() == Stage.REMOVE_DATASET); // should be disabled for unembedding because the dataset selection has been cleared
+                            btnEmbedding.setDisable(doneEvent.getStage() == Stage.REMOVE_DATASET); // should be disabled for removing dataset because the dataset selection has been cleared
                             btnEmbedding.setText("Start embedding");
+                            btnClear.setDisable(doneEvent.getStage() == Stage.CLEAR_EMBEDDING);
+                            lblSelectedFiles.setDisable(false);
                             lblEmbeddingStatus.setText(doneEvent.getMessage());
                             pbProgress.setDisable(true);
                             pbProgress.setProgress(0);
@@ -199,11 +212,14 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 .action("Still ready", EmbeddingState.READY, EmbeddingState.READY)
                 .action("Prepare embedding", EmbeddingState.READY, EmbeddingState.PREPARING)
                 .action("Still prepare embedding", EmbeddingState.PREPARING, EmbeddingState.PREPARING)
+                .action("User stopped preparing", EmbeddingState.PREPARING, EmbeddingState.READY)
                 .action("Fail to prepare or no data required to proceed", EmbeddingState.PREPARING, EmbeddingState.DONE)
                 .action("Start to embedding", EmbeddingState.PREPARING, EmbeddingState.EMBEDDING)
                 .action("Start to unembedding", EmbeddingState.PREPARING, EmbeddingState.UNEMBEDDING)
+                .action("User stopped embedding", EmbeddingState.EMBEDDING, EmbeddingState.READY)
                 .action("Embedding on progress", EmbeddingState.EMBEDDING, EmbeddingState.EMBEDDING)
                 .action("Embedding is done", EmbeddingState.EMBEDDING, EmbeddingState.DONE)
+                .action("User stopped unembedding", EmbeddingState.UNEMBEDDING, EmbeddingState.READY)
                 .action("Unembedding on progress", EmbeddingState.UNEMBEDDING, EmbeddingState.UNEMBEDDING)
                 .action("Unembedding is done with error", EmbeddingState.UNEMBEDDING, EmbeddingState.DONE)
                 .action("Unembedding is done and dataset is removed", EmbeddingState.UNEMBEDDING, EmbeddingState.INIT)
@@ -285,7 +301,20 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         });
 
         btnEmbedding.setOnAction(event -> {
-            this.embedCurrentDataset();
+            if (stateMachine.isStateIn(EmbeddingState.PREPARING, EmbeddingState.EMBEDDING, EmbeddingState.UNEMBEDDING)) {
+                // do stopping the preparing, embedding or unembedding.
+                log.warn("stop preparing, embedding or unembedding..."); // the preparing process might fail, so it should be allowed to stop.
+                futureOfEmbedding.cancel(true);
+                stateMachine.post(EmbeddingState.READY);
+            }
+            else {
+                // do embedding for current dataset
+                this.embedCurrentDataset();
+            }
+        });
+
+        btnClear.setOnAction(event -> {
+            this.clearEmbeddingForSelectedDataset();
         });
 
         AiEventBus.getInstance().subscribeEvent(event -> {
@@ -326,6 +355,13 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                     embeddingContext.setEmbedded(true);
                     stateMachine.postWithPayload(EmbeddingState.DONE, de);
                 }
+                else if (de.getStage() == Stage.CLEAR_EMBEDDING) {
+                    int percent = BigDecimal.valueOf(de.getSuccessCount()).divide(BigDecimal.valueOf(currentDatasetMeta.getFiles().size()), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).intValue();
+                    currentDatasetMeta.setProgress(percent);
+                    super.saveChanges();
+                    embeddingContext.setEmbedded(false);
+                    stateMachine.postWithPayload(EmbeddingState.DONE, de);
+                }
                 else {
                     log.warn("Unknown stage");
                 }
@@ -346,7 +382,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void switchDataset(DatasetMeta datasetMeta) {
-        beforeLoading();
+        super.beforeLoading();
         // init all components from dataset choosing.
         if (datasetMeta != null) {
             currentDatasetMeta = datasetMeta;
@@ -362,6 +398,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 log.debug("Is this dataset embedded: %s".formatted(isEmbedded));
                 embeddingContext.setEmbedded(isEmbedded);
                 btnRemoveDataset.setDisable(false);
+                btnClear.setDisable(!isEmbedded);
                 stateMachine.post(EmbeddingState.READY);
             });
         }
@@ -378,7 +415,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         WorkspaceList workspaceList = WorkspaceManager.getIns().getWorkspaceList();
         workspaceSelector.loadWorkspaces(workspaceList, latestWorkspace, false);
         this.updateWorkspaceSelector();
-        afterLoading();
+        super.afterLoading();
     }
 
     // update workspace selector with file counter.
@@ -442,16 +479,16 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             return;
         }
         try {
-            log.info("Start to delete embedding data for unselected files...");
+            log.info("Begin...");
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent(""));
 
             // try to remove data of unselected files first.
             List<File> selectedFiles = currentDatasetMeta.getFiles();
             List<String> selectedFilePaths = selectedFiles.stream().map(File::getPath).toList();
-            CompletableFuture<Boolean> futureOfUnembedding = EmbeddingService.getInstance().embedDataset(currentDatasetMeta, embeddingDocEntity -> !selectedFilePaths.contains(embeddingDocEntity.file_path()));
+            futureOfEmbedding = EmbeddingService.getInstance().embedDataset(currentDatasetMeta, embeddingDocEntity -> !selectedFilePaths.contains(embeddingDocEntity.file_path()));
 
             // do embedding after the unembedding is done.
-            futureOfUnembedding.thenApply(success -> {
+            futureOfEmbedding.thenApply(success -> {
                 if (!success) {
                     // stop here since the state could be DONE already? BED?
                     stateMachine.postWithPayload(EmbeddingState.DONE, new DoneEvent(Stage.EMBED_DATASET, "Embedding failed."));
@@ -471,18 +508,38 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         }
     }
 
+    private void clearEmbeddingForSelectedDataset() {
+        if (DialogFactory.yesNoConfirmDialog("Clear Embedding", "Are you sure to clear embeddings for dataset '%s'?".formatted(currentDatasetMeta.getName()))) {
+            super.beforeLoading();
+            stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
+            CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(this.currentDatasetMeta, false);
+            completableFuture.thenAccept(success -> {
+                log.debug("Unembedding done with success %s".formatted(success));
+                // different from remove dataset, clearing embeddings should do this.
+                this.displaySelectedAndEmbeddedCountAsync(this.currentDatasetMeta.getId(), isEmbedded -> {
+                    log.debug("Is this dataset embedded: %s".formatted(isEmbedded));
+                    embeddingContext.setEmbedded(isEmbedded);
+                    btnRemoveDataset.setDisable(false);
+                    btnClear.setDisable(!isEmbedded);
+                    stateMachine.post(EmbeddingState.READY);
+                });
+            });
+            super.afterLoading();
+        }
+    }
+
     private void removeSelectedDataset() {
         if (currentDatasetMeta == null) {
             return;
         }
         if (DialogFactory.yesNoConfirmDialog("Remove Dataset", "Are you sure to remove the dataset '%s'? All the embedded data of this dataset will be deleted as well.".formatted(currentDatasetMeta.getName()))) {
-            beforeLoading();
+            super.beforeLoading();
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
-            CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(currentDatasetMeta);
+            CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(currentDatasetMeta, true);
             completableFuture.thenAccept(success -> {
                 log.debug("Unembedding done with success %s".formatted(success));
             });
-            afterLoading();
+            super.afterLoading();
         }
     }
 

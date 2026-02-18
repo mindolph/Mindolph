@@ -55,8 +55,10 @@
         <lombok.version>1.18.42</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <onnxruntime.version>1.24.1</onnxruntime.version>
-        <tokenizers.version>0.36.0</tokenizers.version>
+<!--        <onnxruntime.version>1.24.1</onnxrunt/ime.version>-->
+<!--        <tokenizers.version>0.36.0</tokenizers.version>-->
+        <onnxruntime.version>1.23.2</onnxruntime.version>
+        <tokenizers.version>0.35.1</tokenizers.version>
         <postgresql.version>42.7.10</postgresql.version>
     </properties>
 

@@ -29,6 +29,8 @@ import java.util.function.Function;
 import static com.mindolph.core.constant.GenAiConstants.lookupModelMeta;
 
 /**
+ * base class for embedding service and rag service.
+ *
  * @since 1.13.0
  */
 public abstract class BaseEmbeddingService {
@@ -104,6 +106,8 @@ public abstract class BaseEmbeddingService {
             // download
             AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx tokenizer..."));
         }
+        log.debug("Model file: %s".formatted(modelFile.getPath()));
+        log.debug("Tokenizer file: %s".formatted(tokenizerFile.getPath()));
         PoolingMode poolingMode = PoolingMode.MEAN;
         AiEventBus.getInstance().emitEvent(new PrepareEvent("Loading onnx model tokenizer..."));
         return new OnnxEmbeddingModel(modelFile.getPath(), tokenizerFile.getPath(), poolingMode);
