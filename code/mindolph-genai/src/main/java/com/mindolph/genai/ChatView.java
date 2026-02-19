@@ -277,7 +277,7 @@ public class ChatView extends BaseView implements Initializable {
         }
         else {
             if (currentAgentMeta == null) {
-                DialogFactory.infoDialog("Please choose an agent to chat with");
+                DialogFactory.infoDialog("Please choose an agent you want to chat with");
                 return;
             }
             if (StringUtils.isNotBlank(taInput.getText())) {

@@ -72,35 +72,42 @@ public class ChatPane extends BaseView {
 
     public synchronized void appendChatPartial(ChatPartial chatPartial) {
         this.endWaiting();
-        if (chatDisplay == null) {
-            // first partial arrived.
+        if (chatPartial.getType() == MessageType.HUMAN) {
             HBox hBox = new HBox();
             Text text = new Text(chatPartial.getText());
             chatDisplay = new TextFlow(text);
             chatDisplay.setPadding(new Insets(5, 10, 5, 10));
-            if (chatPartial.getType() == MessageType.HUMAN) {
-                chatDisplay.setStyle(
-                        "-fx-color: rgb(239, 242, 255);" +
-                                "-fx-background-color: rgb(200, 200, 200);" +
-                                "-fx-background-radius: 15px;");
-                hBox.setAlignment(Pos.CENTER_RIGHT);
-                hBox.setPadding(new Insets(5, 5, 5, 20));
-            }
-            else if (chatPartial.getType() == MessageType.AI) {
+            chatDisplay.setStyle(
+                    "-fx-color: rgb(239, 242, 255);" +
+                            "-fx-background-color: rgb(200, 200, 200);" +
+                            "-fx-background-radius: 15px;");
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+            hBox.setPadding(new Insets(5, 5, 5, 20));
+            hBox.getChildren().add(chatDisplay);
+            vbChat.getChildren().add(hBox);
+            chatDisplay = null;
+        }
+        else if (chatPartial.getType() == MessageType.AI) {
+            if (chatDisplay == null) {
+                // first partial arrived.
+                HBox hBox = new HBox();
+                Text text = new Text(chatPartial.getText());
+                chatDisplay = new TextFlow(text);
+                chatDisplay.setPadding(new Insets(5, 10, 5, 10));
                 hBox.setAlignment(Pos.TOP_LEFT);
                 hBox.setPadding(new Insets(5, 20, 5, 5));
                 Label lblAvatar = new Label();
                 lblAvatar.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
                 hBox.getChildren().add(lblAvatar);
+                hBox.getChildren().add(chatDisplay);
+                vbChat.getChildren().add(hBox);
             }
-            hBox.getChildren().add(chatDisplay);
-            vbChat.getChildren().add(hBox);
-        }
-        else {
-            chatDisplay.getChildren().add(new Text(chatPartial.getText()));
-        }
-        if (chatPartial.isLast()) {
-            chatDisplay = null;
+            else {
+                chatDisplay.getChildren().add(new Text(chatPartial.getText()));
+            }
+            if (chatPartial.isLast()) {
+                chatDisplay = null;
+            }
         }
     }
 
