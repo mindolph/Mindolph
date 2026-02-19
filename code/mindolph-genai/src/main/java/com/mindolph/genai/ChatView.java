@@ -170,6 +170,7 @@ public class ChatView extends BaseView implements Initializable {
                 .action("Switch agent on STOPPED state", ChatState.STOPPED, ChatState.SWITCHING)
                 .action("Switch agent on TYPING state", ChatState.TYPING, ChatState.SWITCHING);
         chatStateMachine = new StateMachine<>(builder);
+//        chatStateMachine.setSilent(true);
         chatStateMachine.start();
     }
 
@@ -272,8 +273,9 @@ public class ChatView extends BaseView implements Initializable {
     private void sendChat() {
         if (chatStateMachine.isState(ChatState.STREAMING)) {
             // stop the streaming
-            chatStateMachine.post(ChatState.STOPING);
-            RagService.getInstance().stop();
+            if (RagService.getInstance().stop()) {
+                chatStateMachine.post(ChatState.STOPING);
+            }
         }
         else {
             if (currentAgentMeta == null) {

@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 /**
@@ -53,6 +54,7 @@ public class RagService extends BaseEmbeddingService {
     private LangChainSupport langChainSupport;
 
     private Agent agent;
+    private Future<?> agentChatFuture;
 
     private ContentRetriever contentRetriever;
     private EmbeddingModel embeddingModel;
@@ -152,7 +154,7 @@ public class RagService extends BaseEmbeddingService {
         if (agent == null) {
             throw new RuntimeException("Use agent before chatting");
         }
-        GlobalExecutor.submit(() -> {
+        this.agentChatFuture = GlobalExecutor.submit(() -> {
             try {
                 TokenStream tokenStream = agent.chat(message);
                 consumer.accept(tokenStream);
@@ -162,15 +164,24 @@ public class RagService extends BaseEmbeddingService {
         });
     }
 
-    public void stop() {
+    public boolean stop() {
         if (this.streamingChatModel instanceof StreamingChatModelAdapter scma) {
+            log.debug("Stop the chatting from the adapter of langchain4j chat model.");
             scma.setStop(true);
         }
         else {
+//            log.debug("Stop the chatting from the future of agent chat.");
+//            this.agentChatFuture.cancel(true);
             if (okHttpClientAdapter != null) {
                 okHttpClientAdapter.close();
             }
+            else {
+                // TODO find a way for QwenLangchainSupport to stop the streaming.
+                log.warn("Unable to stop the streaming yet for this provider.");
+                return false;
+            }
         }
+        return true;
     }
 
     public String extractErrorMessageFromLLM(GenAiModelProvider provider, String llmMsg) {
@@ -220,7 +231,7 @@ public class RagService extends BaseEmbeddingService {
         List<String> docIds = this.findDocIdsByAgent(agentId);
         if (docIds == null || docIds.isEmpty()) {
             log.warn("No docs found for agent {}, the agent might not work.", agentId);
-            throw new RuntimeException("No docs found for agent");
+            throw new RuntimeException("No docs found for agent, try to setup the datasets for the agent.");
         }
         if (embeddingStore == null || embeddingModel == null) {
             log.warn("No embedding store or embedding model for agent {}", agentId);
