@@ -2,6 +2,8 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.EmbeddingService;
+import com.mindolph.base.plugin.PluginEvent;
+import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -27,10 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
 
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.VectorStoreProvider.PG_VECTOR;
+import static com.mindolph.genai.GenaiUiConstants.PAYLOAD_VECTOR_DB;
 import static com.mindolph.genai.GenaiUiConstants.vectorStoreConverter;
 
 /**
@@ -39,6 +41,7 @@ import static com.mindolph.genai.GenaiUiConstants.vectorStoreConverter;
 public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(AiOptionPrefPane.class);
+
     @FXML
     private ChoiceBox<Pair<String, String>> cbLanguages;
     @FXML
@@ -105,19 +108,19 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
                     }
                 });
         tfHost.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            super.saveChanges(PAYLOAD_VECTOR_DB);
         });
         spPort.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            super.saveChanges(PAYLOAD_VECTOR_DB);
         });
         tfDatabase.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            super.saveChanges(PAYLOAD_VECTOR_DB);
         });
         tfUsername.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            super.saveChanges(PAYLOAD_VECTOR_DB);
         });
         tfPassword.textProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges();
+            super.saveChanges(PAYLOAD_VECTOR_DB);
         });
 
         super.initChatModelRelatedComponents(this.cbProviderGenerate, this.cbModelGenerate);
@@ -127,16 +130,16 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
         super.selectProviderAndModel(this.cbProviderSummarize, this.cbModelSummarize, GEN_AI_SUMMARIZE_MODEL);
 
         this.cbProviderGenerate.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges(false);
+            super.saveChanges(false);
         });
         this.cbModelGenerate.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges(false);
+            super.saveChanges(false);
         });
         this.cbProviderSummarize.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges(false);
+            super.saveChanges(false);
         });
         this.cbModelSummarize.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.saveChanges(false);
+            super.saveChanges(false);
         });
         super.loadPreferences();
     }
@@ -177,13 +180,17 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         log.debug("On gen-ai options saving");
         this.saveVectorStoragePrefs();
         super.saveProviderAndModelSelection(GEN_AI_GENERATE_MODEL, cbProviderGenerate, cbModelGenerate);
         super.saveProviderAndModelSelection(GEN_AI_SUMMARIZE_MODEL, cbProviderSummarize, cbModelSummarize);
-        super.onSave(notify);
+        super.onSave(notify, payload);
         // toggle test connection button
         btnTestConnection.setDisable(StringUtils.isAnyBlank(tfHost.getText(), tfDatabase.getText(), tfUsername.getText(), tfPassword.getText()) || spPort.getValue() == null);
+        if (notify) {
+            PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.OPTIONS_PREF_CHANGED, payload);
+        }
+        super.onSave(notify, payload);
     }
 }

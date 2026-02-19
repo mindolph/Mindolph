@@ -91,7 +91,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         spGlobalFontSize.getValueFactory().setValue(globalFontSize);
         spGlobalFontSize.valueProperty().addListener((observable, oldValue, newValue) -> {
             fxPreferences.savePreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, newValue);
-            this.onSave(true);
+            this.onSave(true, null);
         });
         // global icon size
         super.bindSpinner(spGlobalIconSize, 16, 24, 4, GENERAL_GLOBAL_ICON_SIZE, 16);
@@ -171,7 +171,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         if (notify)
             PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.GENERAL_PREF_CHANGED);
     }

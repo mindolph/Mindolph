@@ -89,7 +89,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
                 log.debug("Save preference: %s".formatted(prefName));
                 // save all (call save()) or single? TODO
                 fxPreferences.savePreference(prefName, newValue);
-                this.onSave(true);
+                this.onSave(true, newValue); // new value as payload
             }
         });
     }
@@ -156,7 +156,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
                 R converted = saveConverter.apply(property.getValue());
                 if (converted != null) {
                     fxPreferences.savePreference(prefName, converted);
-                    this.onSave(true);
+                    this.onSave(true, newValue); // new value as payload
                 }
             }
         };
@@ -178,7 +178,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, fxPreferences.getPreference(prefName, defaultValue), step));
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             fxPreferences.savePreference(prefName, newValue);
-            this.onSave(true);
+            this.onSave(true, newValue); // new value as payload
         });
     }
 
@@ -327,8 +327,9 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * Be called after preference has been saved to storage.
      *
      * @param notify
+     * @param payload
      */
-    protected abstract void onSave(boolean notify);
+    protected abstract void onSave(boolean notify, Object payload);
 
     public static class Pref<T, R> {
         Property<T> property;

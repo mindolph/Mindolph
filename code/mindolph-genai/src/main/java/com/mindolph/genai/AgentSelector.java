@@ -91,7 +91,9 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
         public void initialize(URL url, ResourceBundle resourceBundle) {
             lblIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
             AgentMeta am = item.getValue();
-            lblName.setText("%s (%s : %s)".formatted(am.getName(), am.getChatProvider().getDisplayName(), am.getChatModel()));
+            log.debug("Agent name: %s".formatted(am.getName()));
+            lblName.setText("%s (%s : %s)".formatted(am.getName(),
+                    am.getChatProvider() == null ? "" : am.getChatProvider().getDisplayName(), am.getChatModel() == null ? "" : am.getChatModel()));
         }
     }
 

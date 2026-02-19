@@ -65,7 +65,7 @@ public class AiPreferencePane extends BasePrefsPane implements Initializable {
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         // DO NOTHING
     }
 }

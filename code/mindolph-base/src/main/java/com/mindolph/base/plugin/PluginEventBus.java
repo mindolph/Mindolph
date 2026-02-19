@@ -32,4 +32,8 @@ public class PluginEventBus {
     public void emitPreferenceChanges(EventType eventType) {
         preferenceChangeEvent.push(new PluginEvent<>(eventType));
     }
+
+    public void emitPreferenceChanges(EventType eventType, Object payload) {
+        preferenceChangeEvent.push(new PluginEvent<>(eventType, payload));
+    }
 }

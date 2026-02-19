@@ -44,7 +44,7 @@ public class PlantumlPreferences extends BasePrefsPane implements Initializable 
     }
 
     @Override
-    public void onSave(boolean notify) {
+    public void onSave(boolean notify, Object payload) {
         final String pathToGraphVizDot = tfGraphvizPath.getText();
         if (pathToGraphVizDot.trim().isEmpty()) {
             fxPreferences.removePreference("plantuml.dotpath");

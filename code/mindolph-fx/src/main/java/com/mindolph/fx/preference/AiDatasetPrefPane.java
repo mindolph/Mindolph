@@ -297,7 +297,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         });
 
         tfName.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges();
+            super.saveChanges(true, currentDatasetMeta);
         });
 
         btnEmbedding.setOnAction(event -> {
@@ -351,7 +351,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 else if (de.getStage() == Stage.EMBED_DATASET) {
                     int percent = BigDecimal.valueOf(de.getSuccessCount()).divide(BigDecimal.valueOf(currentDatasetMeta.getFiles().size()), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).intValue();
                     currentDatasetMeta.setProgress(percent);
-                    super.saveChanges();
+                    super.saveChanges(true, currentDatasetMeta);
                     embeddingContext.setEmbedded(true);
                     stateMachine.postWithPayload(EmbeddingState.DONE, de);
                 }
@@ -544,7 +544,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         if (currentDatasetMeta != null) {
             boolean isNameChanged = !currentDatasetMeta.getName().equals(tfName.getText());
             this.saveCurrentDataset();
@@ -552,7 +552,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 this.reloadDatasets();
             }
         }
-        super.onSave(notify);
+        super.onSave(notify, payload);
     }
 
     private DatasetMeta saveCurrentDataset() {

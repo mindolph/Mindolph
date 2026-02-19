@@ -128,16 +128,17 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
                     log.warn("Failed to remove agent %s".formatted(currentAgentMeta.getName()));
                 }
                 afterLoading();
+                super.saveChanges(true);
             }
         });
         tfName.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges();
+            super.saveChanges(currentAgentMeta);
         });
         tfDescription.textProperty().addListener((observable, oldValue, newValue) -> {
             super.saveChanges(false);
         });
         taAgentPrompt.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges(false);
+            super.saveChanges(currentAgentMeta);
         });
         tvDatasets.init();
         btnSetDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEAR));
@@ -146,7 +147,7 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             DatasetSelectDialog dialog = new DatasetSelectDialog(selectedDatasets, super.safeGetSelectedLanguageCode(cbLanguage));
             List<DatasetMeta> datasetMetas = dialog.showAndWait();
             if (tvDatasets.replaceAll(datasetMetas)) {
-                super.saveChanges();
+                super.saveChanges(currentAgentMeta);
             }
         });
 
@@ -202,19 +203,25 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             Pair<String, AgentMeta> newAgentPair = new Pair<>(agtId, currentAgentMeta);
             cbAgent.getItems().add(newAgentPair);
             cbAgent.getSelectionModel().select(newAgentPair);
-            super.saveChanges(false);
+            super.saveChanges(currentAgentMeta);
         });
     }
 
     @Override
-    protected void onSave(boolean notify) {
-        log.debug("onSave");
-        boolean isNameChanged = !currentAgentMeta.getName().equals(tfName.getText());
-        this.saveCurrentAgent();
-        if (isNameChanged) {
-            this.reloadAgents();
+    protected void onSave(boolean notify, Object payload) {
+        log.info("onSave-%s %s payload".formatted(notify, payload == null ? "without" : "with"));
+        // the currentAgentMeta is null when removing an agent.
+        if (currentAgentMeta != null) {
+            boolean isNameChanged = !currentAgentMeta.getName().equals(tfName.getText());
+            this.saveCurrentAgent();
+            if (isNameChanged) {
+                this.reloadAgents();
+            }
         }
-        super.onSave(notify);
+        else {
+            log.debug("No current agent meta to save.");
+        }
+        super.onSave(notify, payload);
     }
 
     private AgentMeta saveCurrentAgent() {

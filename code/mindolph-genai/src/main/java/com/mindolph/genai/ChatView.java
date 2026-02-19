@@ -11,6 +11,7 @@ import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.AgentMeta;
+import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.genai.GenaiUiConstants.MessageType;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
@@ -32,6 +33,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.ShortcutConstants.KEY_AGENT_SEND;
+import static com.mindolph.genai.GenaiUiConstants.PAYLOAD_VECTOR_DB;
 
 /**
  * @since 1.13.0
@@ -216,11 +218,25 @@ public class ChatView extends BaseView implements Initializable {
             });
         });
         PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
-            if (pluginEvent.getEventType() == EventType.DATASET_PREF_CHANGED
-                    || pluginEvent.getEventType() == EventType.AGENT_PREF_CHANGED
-                    || pluginEvent.getEventType() == EventType.OPTIONS_PREF_CHANGED) {
-                log.debug("Got preference change event: %s".formatted(pluginEvent.getEventType()));
+            log.debug("Got preference change event: %s".formatted(pluginEvent.getEventType()));
+            log.debug("Payload: %s".formatted(pluginEvent.getPayload()));
+            if (pluginEvent.getEventType() == EventType.AGENT_PREF_CHANGED) {
                 this.loadAgents();
+            }
+            else if (pluginEvent.getEventType() == EventType.DATASET_PREF_CHANGED) {
+                if (pluginEvent.getPayload() instanceof DatasetMeta dm) {
+                    // Only changes to the dataset contained in the agent will trigger an agent reload.
+                    log.debug("Dataset '%s'(%s) is changed".formatted(dm.getName(), dm.getId()));
+                    log.debug(StringUtils.join(currentAgentMeta.getDatasetIds(), ","));
+                    if (currentAgentMeta.getDatasetIds().contains(dm.getId())) {
+                        this.loadAgents();
+                    }
+                }
+            }
+            else if (pluginEvent.getEventType() == EventType.OPTIONS_PREF_CHANGED) {
+                if (PAYLOAD_VECTOR_DB.equals(pluginEvent.getPayload())) {
+                    this.loadAgents();
+                }
             }
         });
         this.loadAgents();

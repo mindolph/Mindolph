@@ -69,7 +69,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                 .fxmlUri("dialog/preferences_dialog.fxml")
                 .button(ButtonType.CLOSE, dialog -> {
 //                    fontPreferencesPane.save
-                    mmdPreferences.onSave(true); // todo use change status to avoid unnecessary save
+                    mmdPreferences.onSave(true, null); // todo use change status to avoid unnecessary save
                     dialog.close();
                 })
                 .button(resetButtonType, dialog -> {

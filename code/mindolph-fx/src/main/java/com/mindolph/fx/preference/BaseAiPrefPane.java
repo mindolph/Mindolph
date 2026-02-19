@@ -53,14 +53,14 @@ public abstract class BaseAiPrefPane extends BaseModelProviderPrefPane implement
     }
 
     @Override
-    protected void onSave(boolean notify) {
-        super.onSave(notify);
+    protected void onSave(boolean notify, Object payload) {
+        super.onSave(notify, payload);
         if (notify) {
             if (this instanceof AiAgentPrefPane) {
-                PluginEventBus.getIns().emitPreferenceChanges(EventType.AGENT_PREF_CHANGED);
+                PluginEventBus.getIns().emitPreferenceChanges(EventType.AGENT_PREF_CHANGED, payload);
             }
             else if (this instanceof AiDatasetPrefPane) {
-                PluginEventBus.getIns().emitPreferenceChanges(EventType.DATASET_PREF_CHANGED);
+                PluginEventBus.getIns().emitPreferenceChanges(EventType.DATASET_PREF_CHANGED, payload);
             }
         }
     }

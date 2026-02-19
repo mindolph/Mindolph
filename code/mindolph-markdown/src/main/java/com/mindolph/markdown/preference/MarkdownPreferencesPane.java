@@ -72,18 +72,18 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
 
     private void onFileChanged(String filePath) {
         if (StringUtils.isBlank(filePath)) {
-            this.onSave(true);
+            this.onSave(true, null);
         }
         else {
             File file = new File(filePath);
             if (file.exists()) {
-                this.onSave(true);
+                this.onSave(true, null);
             }
         }
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         fxPreferences.savePreference(PREF_KEY_MD_SANS_FONT_FILE, tfSansFontFile.getText());
         fxPreferences.savePreference(PREF_KEY_MD_MONO_FONT_FILE, tfMonoFontFile.getText());
     }

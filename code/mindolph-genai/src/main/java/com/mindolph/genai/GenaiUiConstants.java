@@ -25,6 +25,9 @@ public interface GenaiUiConstants {
         HUMAN, AI
     }
 
+    // be used to notify vector db config has been changed.
+    String PAYLOAD_VECTOR_DB = "vector_db";
+
     Comparator<ModelMeta> MODEL_META_COMPARATOR = Comparator.comparing(ModelMeta::getName);
 
     //     Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());

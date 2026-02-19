@@ -248,7 +248,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     }
 
     @Override
-    protected void onSave(boolean notify) {
+    protected void onSave(boolean notify, Object payload) {
         this.saveCurrentProvider();
         if (notify)
             PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.MODEL_PREF_CHANGED);

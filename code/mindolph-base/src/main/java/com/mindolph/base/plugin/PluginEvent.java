@@ -16,6 +16,11 @@ public class PluginEvent<T> {
         this.eventType = eventType;
     }
 
+    public PluginEvent(EventType eventType, T payload) {
+        this.eventType = eventType;
+        this.payload = payload;
+    }
+
     public EventType getEventType() {
         return eventType;
     }

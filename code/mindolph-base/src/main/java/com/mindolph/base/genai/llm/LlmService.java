@@ -1,7 +1,6 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -31,11 +30,6 @@ public class LlmService {
     }
 
     private LlmService() {
-        // reload active LLM provider if preferences changed
-        PluginEventBus.getIns().subscribePreferenceChanges(o -> {
-            log.info("On preferences changed, reload LLM");
-//            this.loadActiveLlm();
-        });
     }
 
     private LlmProvider getLlmProvider(GenAiModelProvider provider, String modelName) {
@@ -66,7 +60,7 @@ public class LlmService {
     public StreamPartial predict(Input input, OutputParams outputParams) {
         log.info("Generate content with LLM provider");
         isStopped = false;
-        StreamPartial generated = null;
+        StreamPartial generated;
         try {
             LlmProvider llmProvider = getLlmProvider(input.provider(), input.model());
             generated = llmProvider.predict(input, outputParams);

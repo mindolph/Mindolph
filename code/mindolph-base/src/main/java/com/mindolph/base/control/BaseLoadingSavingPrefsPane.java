@@ -29,14 +29,14 @@ public abstract class BaseLoadingSavingPrefsPane extends BasePrefsPane {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         changeEventSource = new EventSource<>();
-        changeEventSource.reduceSuccessions((a, b) -> b, Duration.ofMillis(SAVING_DELAYS_IN_MILLIS)).subscribe(payload -> {
+        changeEventSource.reduceSuccessions((a, b) -> b, Duration.ofMillis(SAVING_DELAYS_IN_MILLIS)).subscribe(savingChanges -> {
             // use event payload to avoid redundant savings.
-            if (!payload.isLoading) this.onSave(payload.doNotify);
+            if (!savingChanges.isLoading) this.onSave(savingChanges.doNotify, savingChanges.payload);
         });
     }
 
     /**
-     * Save changes lately, this will cause onSave() method be called.
+     * Save changes lately without notification, this will cause onSave() method be called.
      */
     protected void saveChanges() {
         // reducing saving changes request
@@ -45,14 +45,26 @@ public abstract class BaseLoadingSavingPrefsPane extends BasePrefsPane {
         changeEventSource.push(new SavingChanges(!isLoaded));
     }
 
+    protected void saveChanges(Object payload) {
+        // reducing saving changes request
+        log.debug("Fire event to Save changes lazily with notification and payload");
+        // if the panel is loading, nothing will happen.
+        changeEventSource.push(new SavingChanges(!isLoaded, true, payload));
+    }
+
     /**
      * Save changes lately, this will cause onSave() method be called.
      *
      * @param doNotify whether notify to the listener that some important preferences have been changed.
      */
     protected void saveChanges(boolean doNotify) {
-        log.debug("Fire event to Save changes lazily with notification: %s".formatted(doNotify));
-        changeEventSource.push(new SavingChanges(!isLoaded, doNotify));
+        log.debug("Fire event to Save changes lazily with notification: %s but no payload".formatted(doNotify));
+        changeEventSource.push(new SavingChanges(!isLoaded, doNotify, null));
+    }
+
+    protected void saveChanges(boolean doNotify, Object payload) {
+        log.debug("Fire event to Save changes lazily with notification: %s and payload".formatted(doNotify));
+        changeEventSource.push(new SavingChanges(!isLoaded, doNotify, payload));
     }
 
     protected void beforeLoading() {
@@ -72,9 +84,13 @@ public abstract class BaseLoadingSavingPrefsPane extends BasePrefsPane {
      * @param isLoading
      * @param doNotify default is true
      */
-    protected record SavingChanges(boolean isLoading, boolean doNotify) {
+    protected record SavingChanges(boolean isLoading, boolean doNotify, Object payload) {
+        /**
+         * with notify but no payload.
+         * @param isLoading
+         */
         public SavingChanges(boolean isLoading) {
-            this(isLoading, true);
+            this(isLoading, true, null);
         }
     }
 

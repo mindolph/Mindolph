@@ -3,8 +3,6 @@ package com.mindolph.fx.preference;
 import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.LocalModelManager;
-import com.mindolph.base.plugin.PluginEvent;
-import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -100,13 +98,13 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             if (newValue == null) {
                 log.debug("Unselect provider");
                 cbModel.getItems().clear();
-                super.saveChanges();
+                super.saveChanges(true);
                 return;
             }
             String providerName = newValue.getKey().name();
             Pair<String, String> lang = cbLanguage == null ? null : cbLanguage.getSelectionModel().getSelectedItem();
             this.updateModelComponent(cbModel, providerName, type, lang == null ? null : lang.getKey());
-            super.saveChanges();
+            super.saveChanges(false); // selecting provider is not decisive, no notification.
         });
         cbModel.setConverter(new ModelMetaConverter());
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -114,7 +112,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             if (super.isLoading()) return;
             if (newValue == null) {
                 log.debug("Unselect model");
-                super.saveChanges();
+                super.saveChanges(true);
                 return;
             }
             ModelMeta selectedModel = newValue.getValue();
@@ -160,7 +158,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                     }
                 }
             }
-            super.saveChanges();
+            super.saveChanges(true);
         });
     }
 
@@ -230,11 +228,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
 
 
     @Override
-    protected void onSave(boolean notify) {
-        if (notify) {
-            if (this instanceof AiOptionPrefPane) {
-                PluginEventBus.getIns().emitPreferenceChanges(PluginEvent.EventType.OPTIONS_PREF_CHANGED);
-            }
-        }
+    protected void onSave(boolean notify, Object payload) {
+
     }
 }
