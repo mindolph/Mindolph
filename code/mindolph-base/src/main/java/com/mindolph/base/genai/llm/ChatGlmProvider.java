@@ -36,7 +36,8 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "temperature": %s,
                 "top_p": 0.8,
-                "max_tokens": %d
+                "max_tokens": %d,
+                "thinking": "disabled"
             }
             """;
 
@@ -52,7 +53,10 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 "stream": true,
                 "temperature": %s,
                 "top_p": 0.8,
-                "max_tokens": %d
+                "max_tokens": %d,
+                "thinking": {
+                    "type": "disabled"
+                }
             }
             """;
 
@@ -69,7 +73,7 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 .post(requestBody)
                 .build();
         streamEventSource = OkHttpUtils.sse(client, request, (Consumer<String>) data -> {
-            if(log.isTraceEnabled()) log.trace(data);
+            if (log.isTraceEnabled()) log.trace(data);
             if ("[DONE]".equals(data)) {
                 return;
             }
@@ -81,9 +85,15 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 log.warn("Ignore data: %s".formatted(data));
             }
             JsonObject choice = resObject.get("choices").getAsJsonArray().get(0).getAsJsonObject();
-            String result = choice
-                    .get("delta").getAsJsonObject()
-                    .get("content").getAsString();
+            JsonObject delta = choice
+                    .get("delta").getAsJsonObject();
+            String result = "";
+            if (delta.has("content")) {
+                result = delta.get("content").getAsString();
+            }
+            else if (delta.has("reasoning_content")) {
+                result = delta.get("reasoning_content").getAsString();
+            }
             boolean isStop = determineStreamStop(choice, "finish_reason");
             if (isStop) {
                 // TODO count actual output tokens
@@ -94,14 +104,21 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
             }
         }, (msg, throwable) -> {
             log.error(msg, throwable);
-            JsonElement jsonElement = JsonParser.parseString(msg);
-            if (jsonElement.isJsonObject()) {
-                JsonObject asJsonObject = jsonElement.getAsJsonObject();
-                consumer.accept(new StreamPartial(asJsonObject.get("error").getAsJsonObject().get("message").getAsString(), true, true));
+            String errMsg;
+            try {
+                JsonElement jsonElement = JsonParser.parseString(msg);
+                if (jsonElement.isJsonObject()) {
+                    JsonObject asJsonObject = jsonElement.getAsJsonObject();
+                    errMsg = asJsonObject.get("error").getAsJsonObject().get("message").getAsString();
+                }
+                else {
+                    errMsg = msg;
+                }
+            } catch (Exception e) {
+                errMsg = msg;
             }
-            else {
-                log.debug(jsonElement.toString());
-            }
+            log.error(errMsg, throwable);
+            consumer.accept(new StreamPartial(errMsg, true, true));
         }, () -> {
 //            log.info("completed");
 //            consumer.accept(new StreamToken(StringUtils.EMPTY, true, false));

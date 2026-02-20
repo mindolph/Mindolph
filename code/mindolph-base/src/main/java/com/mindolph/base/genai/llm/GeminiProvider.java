@@ -3,7 +3,6 @@ package com.mindolph.base.genai.llm;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.OkHttpUtils;
 import com.mindolph.core.llm.ModelMeta;
@@ -144,6 +143,11 @@ public class GeminiProvider extends BaseApiLlmProvider {
                         outputTokens = resBody.get("usageMetadata").getAsJsonObject().get("candidatesTokenCount").getAsInt();
                         log.debug("outputTokens: {}", outputTokens);
                     }
+                    log.debug("chunk: %s".formatted(result));
+                    if (StringUtils.isNotBlank(result)) {
+                        // workaround to handle the last chunk of data from Gemini
+                        consumer.accept(new StreamPartial(result, outputTokens, false, false));
+                    }
                     consumer.accept(new StreamPartial(result, outputTokens, isStop, false));
                 }, (msg, throwable) -> {
                     String message = "ERROR";
@@ -151,7 +155,7 @@ public class GeminiProvider extends BaseApiLlmProvider {
                         try {
                             // TODO refactor to share method
                             message = JsonParser.parseString(msg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
-                        } catch (JsonSyntaxException e) {
+                        } catch (Exception e) {
                             log.warn("Not exception from Gemini API", e);
                             // skip exception
                             message = msg;

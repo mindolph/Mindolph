@@ -44,7 +44,7 @@ public class OkHttpUtils {
      * @param errorConsumer
      * @param onComplete    be called when completed (in case there is no specific indication on data event raised)
      * @param <T>
-     * @return
+     * @return EventSource
      */
     public static <T> EventSource sse(OkHttpClient client, Request request,
                                       Consumer<T> dataConsumer, BiConsumer<String, Throwable> errorConsumer, Runnable onComplete) {
@@ -77,28 +77,42 @@ public class OkHttpUtils {
             @Override
             public void onFailure(@NotNull EventSource eventSource, @Nullable Throwable t, @Nullable Response response) {
                 log.debug("SSE failure");
+                if (t != null) log.error(t.getLocalizedMessage(), t);
+                String resMsg = "ERROR";
                 if (response != null) {
                     try {
-                        String resMsg = response.body().string();
-                        if (StringUtils.isBlank(resMsg) && t != null) {
-                            resMsg = t.getLocalizedMessage();
+                        if (response.isSuccessful()) {
+                            log.warn("Weired, fail but still returns successful response?");
                         }
-                        log.error("SSE failure with response: %s".formatted(resMsg));
-                        if (errorConsumer != null) errorConsumer.accept(resMsg, null);
+                        else {
+                            log.error("SSE failure: %s".formatted(response.code()));
+                            // JSON or plain text
+                            resMsg = response.body().string();
+                            if (StringUtils.isBlank(resMsg)) {
+                                if (t != null) {
+                                    // just in case.
+                                    resMsg = t.getLocalizedMessage();
+                                }
+                                else {
+                                    resMsg = response.message();
+                                }
+                            }
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 else {
                     if (t == null) {
-                        log.error("SSE failure without any information");
-                        if (errorConsumer != null) errorConsumer.accept("", null);
+                        log.error("SSE failure without any error information");
                     }
                     else {
                         log.error("SSE failure with exception", t);
-                        if (errorConsumer != null) errorConsumer.accept(t.getLocalizedMessage(), t);
+                        resMsg = "Call API fail: " + t.getLocalizedMessage();
                     }
                 }
+                log.debug(resMsg);
+                if (errorConsumer != null) errorConsumer.accept(resMsg, t);
             }
         });
         eventSource.request();

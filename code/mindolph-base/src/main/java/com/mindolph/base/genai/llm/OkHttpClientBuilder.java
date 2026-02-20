@@ -2,6 +2,7 @@ package com.mindolph.base.genai.llm;
 
 import dev.langchain4j.http.client.HttpClient;
 import dev.langchain4j.http.client.HttpClientBuilder;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
     private String proxyType;
     private String proxyHost;
     private int proxyPort;
+    private String proxyUsername;
+    private String proxyPassword;
     private Duration connectTimeout;
     private Duration readTimeout;
 
@@ -87,6 +90,24 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
         return this;
     }
 
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    public OkHttpClientBuilder setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+        return this;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    public OkHttpClientBuilder setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+        return this;
+    }
+
     public OkHttpClientAdapter getOkHttpClientAdapter() {
         return okHttpClientAdapter;
     }
@@ -98,6 +119,15 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
             Proxy.Type proxyType = Proxy.Type.valueOf(this.proxyType.toUpperCase());
             Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort));
             builder.proxy(proxy);
+            builder.proxyAuthenticator((route, response) -> {
+                if (response.request().header("Proxy-Authorization") != null) {
+                    return null; //
+                }
+                String credential = Credentials.basic(this.proxyUsername, this.proxyPassword);
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            });
             log.info("Build HTTP client to with proxy '%s'".formatted(Proxy.Type.valueOf(this.proxyType.toUpperCase())));
         }
         builder.retryOnConnectionFailure(false);

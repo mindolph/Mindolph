@@ -112,7 +112,10 @@ public interface LangChainSupport {
         OkHttpClientBuilder okHttpClientBuilder = new OkHttpClientBuilder();
         okHttpClientBuilder.connectTimeout(defaultTimeout());
         if (providerMeta.useProxy() && proxyEnabled && proxyMeta != null) {
-            okHttpClientBuilder.setProxyHost(proxyMeta.host()).setProxyPort(proxyMeta.port()).setProxyType(proxyMeta.type().toUpperCase());
+            okHttpClientBuilder
+                    .setProxyType(proxyMeta.type().toUpperCase())
+                    .setProxyHost(proxyMeta.host()).setProxyPort(proxyMeta.port())
+                    .setProxyUsername(proxyMeta.username()).setProxyPassword(proxyMeta.password());
         }
         return okHttpClientBuilder;
     }
