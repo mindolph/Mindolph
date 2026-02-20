@@ -1,5 +1,29 @@
 # Change Logs
 
+### V1.13.4 Unstable Release
+
+Features: 
+	* Add new `Clear embedding` support for embedded datasets.
+
+* Improvements
+	* Lazily load the tabs of gen-ai preferences.   
+	* Rename the `Gen-AI` tab to `AI`.   
+	* Update preset models for Gemini, Qwen, Kimi and ChatGLM.   
+
+* Bug Fixes
+	* Incorrect UI states when doing re-embedding just after one embedding done.   
+	* Canceling embedding doesn't work. 
+	* Proxy authentication does not work for Agent. 
+	* Gemini output is not handled properly. 
+	* ChatGLM error message is not handled properly. 
+	* Exception when stopping the outputting of agent with Qwen. 
+	* Human message does not display well in the agent chat view. 
+	* Modifying AI-related settings always causes the agent in the chat view to reload, even if the changes are unrelated to the current agent. 
+	* Redundant onload event handler for exported HTML file from Markdown. 
+
+* Update JavaFX to 25.0.2, bundled JDK to 25.0.2 and other dependencies include maven plugins. 
+
+
 ### V1.12.13 Release
 
 * Update pre-set models for OpenAI and Moonshot(Kimi).  
