@@ -155,7 +155,7 @@ public final class ModelUtils {
 
     public static String unescapeMarkdownStr(String text) {
         String unescaped = UNESCAPE_BR.matcher(text).replaceAll("\n");
-        StringBuffer result = new StringBuffer(text.length());
+        StringBuilder result = new StringBuilder(text.length());
         Matcher escaped = MD_ESCAPED_PATTERN.matcher(unescaped);
         while (escaped.find()) {
             String group = escaped.group(1);

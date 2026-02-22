@@ -2,11 +2,12 @@ package com.mindolph.csv;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -31,7 +32,7 @@ public class CsvNavigator {
         this.cells = cells;
         this.rowSize = rowSize;
         this.total = cells.size();
-        this.reversedCells = new LinkedList<>();
+        this.reversedCells = new ArrayList<>();
         CollectionUtils.addAll(reversedCells, cells);
         Collections.reverse(reversedCells); // reverse for search back
         log.trace("Initialized CSV navigator as [%s] with row size %d".formatted(StringUtils.join(cells, ","), rowSize));
@@ -77,7 +78,7 @@ public class CsvNavigator {
 
     private int locate(String keyword, boolean caseSensitive, boolean reverse) {
         log.debug("locate from %d %s".formatted(cursor, (reverse ? "backward" : "forward")));
-        BiFunction<String, String, Boolean> contains = caseSensitive ? StringUtils::contains : StringUtils::containsIgnoreCase;
+        BiFunction<String, String, Boolean> contains = caseSensitive ? Strings.CS::contains : Strings.CI::contains;
         for (int i = (reverse ? (total - cursor - 1) : cursor);
              i < total;
              i++) {

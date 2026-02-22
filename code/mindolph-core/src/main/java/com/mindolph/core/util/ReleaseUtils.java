@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -26,10 +27,12 @@ public class ReleaseUtils {
 
 
     public static void getLatestReleaseVersion(Consumer<ReleaseInfo> consumer) {
-        Executors.newVirtualThreadPerTaskExecutor().submit(() -> {
-            ReleaseInfo latestVersion = getLatestReleaseVersion();
-            consumer.accept(latestVersion);
-        });
+        try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
+            executorService.submit(() -> {
+                ReleaseInfo latestVersion = getLatestReleaseVersion();
+                consumer.accept(latestVersion);
+            });
+        }
     }
 
     public static ReleaseInfo getLatestReleaseVersion() {
@@ -41,8 +44,8 @@ public class ReleaseUtils {
             HttpURLConnection httpConn = (HttpURLConnection) u.openConnection();
             try (InputStream inputStream = httpConn.getInputStream();) {
                 // TODO replace with BufferedIoUtils.readAllAsString() later
-                StringBuffer buf = new StringBuffer();
-                BufferedIoUtils.readInputStream(inputStream, 1024, bytes -> {
+                StringBuilder buf = new StringBuilder();
+                BufferedIoUtils.readFrom(inputStream, 1024, bytes -> {
                     String s = new String(bytes, StandardCharsets.UTF_8);
                     //log.debug("'%s'".formatted(s));
                     buf.append(s);

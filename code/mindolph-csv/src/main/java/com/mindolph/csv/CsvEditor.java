@@ -390,7 +390,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             columns.forEach(col -> col.setText(EMPTY));
         }
         // init data content
-        List<Row> rows = new LinkedList<>();
+        List<Row> rows = new ArrayList<>();
         for (CSVRecord record : records) {
             if (log.isTraceEnabled())
                 log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
