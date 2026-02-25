@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="AnchorPane" fx:id="buttons"  minHeight="28"
+         xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+         stylesheets="@/style/base/icon_button.css"
+         styleClass="no-scroll-bar">
+    <HBox alignment="BASELINE_LEFT">
+
+        <ToggleButton fx:id="tbtnSearch" mnemonicParsing="false" styleClass="icon-toggle">
+            <tooltip>
+                <Tooltip text="Search"/>
+            </tooltip>
+        </ToggleButton>
+        <ToggleButton fx:id="tbtnReplace" mnemonicParsing="false" styleClass="icon-toggle">
+            <tooltip>
+                <Tooltip text="Replace"/>
+            </tooltip>
+        </ToggleButton>
+        <Button fx:id="btnSave" mnemonicParsing="false" disable="true" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Save"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnUndo" mnemonicParsing="false" disable="true" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Undo"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnRedo" mnemonicParsing="false" disable="true" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Redo"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnClear" mnemonicParsing="false" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Clear"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnBrowse" mnemonicParsing="false" disable="true" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Browse"/>
+            </tooltip>
+        </Button>
+        <ToggleButton fx:id="tbtnProtect" mnemonicParsing="false" styleClass="icon-toggle">
+            <tooltip>
+                <Tooltip text="Protect"/>
+            </tooltip>
+        </ToggleButton>
+        <Button fx:id="btnImport" mnemonicParsing="false" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Import"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="btnExport" mnemonicParsing="false" styleClass="icon_button">
+            <tooltip>
+                <Tooltip text="Export"/>
+            </tooltip>
+        </Button>
+    </HBox>
+</fx:root>

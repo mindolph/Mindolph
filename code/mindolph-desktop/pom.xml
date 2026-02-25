@@ -45,6 +45,14 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
+            <!-- Share styles from mindolph-base module-->
+            <resource>
+                <directory>${project.basedir}/mindolph-base/src/main/resources/style/base</directory>
+                <includes>
+                    <include>**/*.css</include>
+                </includes>
+                <targetPath>${project.build.directory}/classes/</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>

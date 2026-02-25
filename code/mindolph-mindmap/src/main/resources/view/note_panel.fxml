@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.base.editor.MarkdownCodeArea?>
+<?import javafx.scene.layout.*?>
+<?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<fx:root type="AnchorPane" prefHeight="420.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <VBox fx:id="vbox" layoutX="40.0" layoutY="36.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox fx:id="hbToolbar">
+        </HBox>
+        <AnchorPane fx:id="paneCode" VBox.vgrow="ALWAYS">
+            <VirtualizedScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <!-- content is required-->
+                <content>
+                    <MarkdownCodeArea fx:id="textArea" wrapText="true"/>
+                </content>
+            </VirtualizedScrollPane>
+        </AnchorPane>
+    </VBox>
+</fx:root>
