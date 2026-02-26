@@ -705,7 +705,7 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
             }
         }
 
-        if (!this.extras.entrySet().isEmpty()) {
+        if (!this.extras.isEmpty()) {
             List<Extra.ExtraType> types = new ArrayList<>(this.extras.keySet());
             types.sort(Comparator.comparing(Enum::name));
 

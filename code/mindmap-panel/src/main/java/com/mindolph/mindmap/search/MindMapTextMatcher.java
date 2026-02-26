@@ -63,7 +63,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
                 log.debug("found topic: " + StringUtils.abbreviate(next.getText(), 100));
                 if (returnContextEnabled) {
                     List<TopicNode> pathNodes = next.getPath();
-                    pathNodes.remove(pathNodes.size() - 1);
+                    pathNodes.removeLast();
                     String path = pathNodes.stream().map(topicNode -> StringUtils.abbreviate(topicNode.getText(), 16))
                             .collect(Collectors.joining(NODE_CONNECTOR));
 
@@ -92,7 +92,7 @@ public class MindMapTextMatcher extends BaseSearchMatcher {
             }
             return contained;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error(ex.getLocalizedMessage(), ex);
         }
         return false;
     }
