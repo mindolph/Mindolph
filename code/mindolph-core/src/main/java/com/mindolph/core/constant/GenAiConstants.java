@@ -66,6 +66,10 @@ public interface GenAiConstants {
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // GPT https://platform.openai.com/docs/models
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4-pro", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4-mini", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4-nano", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.2", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.2-pro", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5", 128000));
@@ -84,7 +88,9 @@ public interface GenAiConstants {
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
             // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
-            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-pro-preview", 65536));
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-pro-preview", 65536));
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-flash-lite-preview", 65536));
+//            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-pro-preview", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-flash-preview", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-pro", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-flash", 65536));
@@ -96,6 +102,7 @@ public interface GenAiConstants {
 //            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // Qwen https://help.aliyun.com/zh/model-studio/models?spm=a2c4g.11186623.help-menu-2400256.d_0_0_2.677b394evAGcfh
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-flash", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-plus", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-omni-flash", 16384));
@@ -132,7 +139,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen1.5-7b-chat", 2000));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen1.5-1.8b-chat", 2000));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen1.5-0.5b-chat", 2000));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-flash", 32768));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-flash", 81920));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-max", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-plus", 32768));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-turbo", 16384));
@@ -145,7 +152,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-mt-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-coder-plus", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-coder-flash", 65536));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-coder-plus", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-coder-plus", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-coder-turbo", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-long", 8192));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-doc-turbo", 32768));
@@ -162,6 +169,7 @@ public interface GenAiConstants {
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-chat", 2000));
 
             // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5-turbo", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.7", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.7-flash", 131072));
