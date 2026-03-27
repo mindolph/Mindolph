@@ -67,7 +67,6 @@ public class AiSummaryPane extends BaseAiPane {
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
         String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
-        lbTitle.setText("Summarize selected content by %s".formatted(providerDisplayName));
         tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
@@ -121,7 +120,7 @@ public class AiSummaryPane extends BaseAiPane {
                 """.formatted(
                 StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
                 txtToBeSummarized);
-        Input input = new InputBuilder().provider(GenAiModelProvider.valueOf(super.providerName)).model(modelMeta.getName()).text(prompt).temperature(0.5f)
+        Input input = new InputBuilder().provider(super.cbProvider.getValue().getKey()).model(modelMeta.getName()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
                 .maxTokens(modelMeta.maxTokens()).outputAdjust(null).isRetry(false).isStreaming(true)
                 .createInput();

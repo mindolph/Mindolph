@@ -20,12 +20,18 @@ public class QwenProvider extends BaseLangChainLlmProvider implements QwenLangCh
     @Override
     protected ChatModel buildAI(Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
+        if (actualModelMeta == null) {
+            throw new RuntimeException("No model meta found for %s".formatted(input.model()));
+        }
         return buildChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
     @Override
     protected StreamingChatModel buildStreamingAI(Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
+        if (actualModelMeta == null) {
+            throw new RuntimeException("No model meta found for %s".formatted(input.model()));
+        }
         return buildStreamingChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 

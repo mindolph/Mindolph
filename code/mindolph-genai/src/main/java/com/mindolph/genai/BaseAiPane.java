@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +27,7 @@ import java.util.List;
 import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
 import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
-import static com.mindolph.genai.GenaiUiConstants.MODEL_COMPARATOR;
-import static com.mindolph.genai.GenaiUiConstants.modelMetaConverter;
+import static com.mindolph.genai.GenaiUiConstants.*;
 
 /**
  * @since 1.11.1
@@ -35,6 +35,8 @@ import static com.mindolph.genai.GenaiUiConstants.modelMetaConverter;
 public abstract class BaseAiPane extends StackPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseAiPane.class);
+    @FXML
+    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider;
     @FXML
     protected ChoiceBox<Pair<String, ModelMeta>> cbModel;
     @FXML
@@ -81,22 +83,24 @@ public abstract class BaseAiPane extends StackPane {
 
         log.debug("choose model %s from gen-ai provider %s".formatted(modelName, providerName));
 
-        // collect pre-defined models for the provider.
-        List<Pair<String, ModelMeta>> preModelPairs = GenAiConstants.getFilteredPreDefinedModels(providerName, MODEL_TYPE_CHAT)
-                .stream().map(m -> new Pair<>(m.getName(), m)).sorted(MODEL_COMPARATOR).toList();
-        List<Pair<String, ModelMeta>> allModelPairs = new ArrayList<>(preModelPairs);
 
-        // collect custom models(if exists)
-        Collection<ModelMeta> filteredCustomModels = LlmConfig.getIns().getFilteredCustomModels(providerName, MODEL_TYPE_CHAT);
-        if (CollectionUtils.isNotEmpty(filteredCustomModels)) {
-            allModelPairs.addAll(filteredCustomModels.stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList());
-        }
+        // load all providers and pre-select the preferred provider from user preferences.
+        cbProvider.setConverter(GenaiUiConstants.providerConverter);
+        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
+        cbProvider.getItems().addAll(providerPairs);
+        cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                // change models
+                this.reloadModels(newValue.getKey().name());
+            }
+        });
+        ChoiceUtils.selectProvider(cbProvider, GenAiModelProvider.valueOf(providerName));
 
-        cbModel.getItems().clear();
-        cbModel.getItems().addAll(allModelPairs);
+        this.reloadModels(providerName);
 
         ModelMeta targetModel = GenAiConstants.lookupModelMeta(providerName, modelName);
         if (targetModel == null) {
+            Collection<ModelMeta> filteredCustomModels = LlmConfig.getIns().getFilteredCustomModels(providerName, MODEL_TYPE_CHAT);
             targetModel = filteredCustomModels.stream().filter(modelMeta -> modelMeta.getName().equals(modelName))
                     .findFirst().orElse(null);
         }
@@ -112,6 +116,27 @@ public abstract class BaseAiPane extends StackPane {
         cbModel.setConverter(modelMetaConverter);
         cbLanguage.setConverter(new PairStringStringConverter());
         ChoiceUtils.loadLanguagesToAndSelectDefault(cbLanguage);
+    }
+
+    /**
+     * Reload models when loading this panel or changing provider by user.
+     *
+     * @param providerName
+     */
+    protected void reloadModels(String providerName) {
+        // collect pre-defined models for the provider.
+        List<Pair<String, ModelMeta>> preModelPairs = GenAiConstants.getFilteredPreDefinedModels(providerName, MODEL_TYPE_CHAT)
+                .stream().map(m -> new Pair<>(m.getName(), m)).sorted(MODEL_COMPARATOR).toList();
+        List<Pair<String, ModelMeta>> allModelPairs = new ArrayList<>(preModelPairs);
+
+        // collect custom models(if exists)
+        Collection<ModelMeta> filteredCustomModels = LlmConfig.getIns().getFilteredCustomModels(providerName, MODEL_TYPE_CHAT);
+        if (CollectionUtils.isNotEmpty(filteredCustomModels)) {
+            allModelPairs.addAll(filteredCustomModels.stream().map(modelMeta -> new Pair<>(modelMeta.getName(), modelMeta)).toList());
+        }
+
+        cbModel.getItems().clear();
+        cbModel.getItems().addAll(allModelPairs);
     }
 
     protected void toggleComponents(boolean isGenerating) {
