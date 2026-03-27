@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
@@ -196,21 +197,22 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 contextMenu.getItems().clear();
                 contextMenu.hide();
             }
-            miDuplicate = new MenuItem("Duplicate", FontIconManager.getIns().getIcon(IconKey.CLONE));
-            miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
+            miDuplicate = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.duplicate"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+            miDelete = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setDisable(isPredefinedTheme(mindMapConfig.getThemeName()));
             miDuplicate.setOnAction(event1 -> {
+                I18nHelper i18n = I18nHelper.getInstance();
                 Dialog<String> nameDialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
-                        .title("New Theme Name")
-                        .content("Give a name for you own customized theme: ")
+                        .title(i18n.get("prefs.mindmap.theme.new.name", "New Theme Name"))
+                        .content(i18n.get("prefs.mindmap.theme.name.prompt", "Give a name for you own customized theme: "))
                         .width(480)
                         .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
                 Optional<String> optName = nameDialog.showAndWait();
                 if (optName.isPresent()) {
                     String newName = optName.get();
                     if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))) {
-                        DialogFactory.errDialog("Theme %s already exists".formatted(newName));
+                        DialogFactory.errDialog(i18n.get("prefs.mindmap.theme.exists", newName));
                         return;
                     }
 

@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.model.PasswordData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,7 +25,7 @@ public class PasswordDialog extends BaseDialogController<PasswordData> {
     public PasswordDialog(PasswordData origin) {
         dialog = new CustomDialogBuilder<PasswordData>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Set Password")
+                .title(I18nHelper.getInstance().get("mindmap.password.set.title"))
                 .fxmlUri("dialog/password_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

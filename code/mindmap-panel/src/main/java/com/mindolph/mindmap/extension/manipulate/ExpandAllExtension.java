@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.manipulate;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -13,7 +13,7 @@ public class ExpandAllExtension extends BasePopupMenuItemExtension {
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode topic) {
-        MenuItem result = new MenuItem(I18n.getIns().getString("MindMapPanel.menu.miExpandAll"), FontIconManager.getIns().getIcon(IconKey.EXPAND_ALL));
+        MenuItem result = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.expand.all"), FontIconManager.getIns().getIcon(IconKey.EXPAND_ALL));
         result.setDisable(context.getModel().getRoot() == null);
         result.setOnAction(e -> context.collapseOrExpandAll(false));
         return result;

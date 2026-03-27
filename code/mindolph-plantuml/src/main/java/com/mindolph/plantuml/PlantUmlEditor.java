@@ -1,5 +1,9 @@
 package com.mindolph.plantuml;
 
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
+import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_START;
+
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -12,39 +16,9 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
-import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.util.Callback;
-import net.sourceforge.plantuml.BlockUml;
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.core.DiagramDescription;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.swiftboot.util.IoUtils;
-import org.swiftboot.util.TextUtils;
-import org.w3c.dom.NodeList;
 
-import javax.imageio.*;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,14 +37,45 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
-import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
-import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_START;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.util.Callback;
+
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+
+import net.sourceforge.plantuml.BlockUml;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.core.DiagramDescription;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.swiftboot.util.IoUtils;
+import org.swiftboot.util.TextUtils;
+import org.w3c.dom.NodeList;
 
 /**
  * @author mindolph.com@gmail.com
  */
 public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
+
     private static final Logger log = LoggerFactory.getLogger(PlantUmlEditor.class);
 
     @FXML
@@ -78,6 +83,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @FXML
     private VBox vbToolbar;
+
     private PlantUmlToolbar plantUmlToolbar;
 
     private final ContextMenu contextMenu = new ContextMenu();
@@ -104,15 +110,17 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         vbToolbar.getChildren().add(new PlantUmlToolbar((PlantUmlCodeArea) super.codeArea));
 
         // auto switch preview page
-        super.codeArea.currentParagraphProperty().addListener((observable, oldValue, newValue) -> {
-            int currentRow = newValue;
-            if (isAutoSwitch) {
-                if (indicator.toPageByRow(currentRow)) {
-                    log.info("Change page to " + indicator.page);
-                    refresh();
-                }
-            }
-        });
+        super.codeArea
+                .currentParagraphProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    int currentRow = newValue;
+                    if (isAutoSwitch) {
+                        if (indicator.toPageByRow(currentRow)) {
+                            log.info("Change page to " + indicator.page);
+                            refresh();
+                        }
+                    }
+                });
 
         this.previewPane.setOnContextMenuRequested(event -> {
             log.debug("context menu requested");
@@ -127,13 +135,15 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         this.previewPane.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) contextMenu.hide();
         });
-        this.previewPane.getScalableView().scaleProperty().addListener((observable, oldValue, newValue) -> {
-            EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("%.0f%%".formatted(newValue.doubleValue() * 100)));
-        });
+        this.previewPane.getScalableView()
+                .scaleProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg("%.0f%%".formatted(newValue.doubleValue() * 100)));
+                });
 
         super.enablePageSwipe();
 
-        this.refresh();// to set up the font
+        this.refresh(); // to set up the font
     }
 
     protected void createContextMenu() {
@@ -141,7 +151,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         log.info("Total pages: " + indicator.totalPages);
         ToggleGroup toggleGroup = new ToggleGroup();
         for (int i = 0; i < indicator.totalPages; i++) {
-            RadioMenuItem miPageX = new RadioMenuItem("Page %d: %s".formatted(i + 1, indicator.pages.get(i).title));
+            RadioMenuItem miPageX = new RadioMenuItem(I18nHelper.getInstance().get("plantuml.msg.page.info", i + 1, indicator.totalPages, indicator.pages.get(i).title));
             miPageX.setToggleGroup(toggleGroup);
             miPageX.setUserData(i);
             miPageX.setGraphic(FontIconManager.getIns().getIcon(IconKey.PAGE));
@@ -154,20 +164,20 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             });
             contextMenu.getItems().add(miPageX);
         }
-        MenuItem miExport = new MenuItem("Export Image as File...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miCopyImage = new MenuItem("Copy Image to Clipboard");
+        MenuItem miExport = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miCopyImage = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.image"));
         miCopyImage.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putImage(image);
             Clipboard.getSystemClipboard().setContent(content);
         });
-        MenuItem miCopyAscii = new MenuItem("Copy ASCII Image to Clipboard");
+        MenuItem miCopyAscii = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.ascii"));
         miCopyAscii.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(this.convertPageToString(FileFormat.ATXT));
             Clipboard.getSystemClipboard().setContent(content);
         });
-        MenuItem miCopyScript = new MenuItem("Copy Script to Clipboard");
+        MenuItem miCopyScript = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.script"));
         miCopyScript.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(this.convertPageToString(null));
@@ -180,9 +190,12 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 //                    .extensionFilters(new FileChooser.ExtensionFilter("JPG", "*.jpg"))
 //                    .buildAndShow();
             File file = editorContext.getFileData().getFile();
-            File snapshotFile = DialogFactory.openSaveFileDialog(getScene().getWindow(), file.getParentFile(),
+            File snapshotFile = DialogFactory.openSaveFileDialog(
+                    getScene().getWindow(),
+                    file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".jpg",
-                    new FileChooser.ExtensionFilter("Image file(jpg)", "*.jpg"));
+                    new FileChooser.ExtensionFilter(I18nHelper.getInstance().get("dialog.save.as.filter"), "*.jpg")
+            );
             Image image = previewPane.getImage();
             try {
                 if (snapshotFile != null) {
@@ -253,8 +266,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             writer.setOutput(ios);
 
             // 创建包含注释的元数据
-            IIOMetadata metadata = writer.getDefaultImageMetadata(
-                    new ImageTypeSpecifier(image), null);
+            IIOMetadata metadata = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), null);
 
             // 获取现有的元数据树
             IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
@@ -291,8 +303,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 return StringUtils.join(blockUml.getDefinition(true), TextConstants.LINE_SEPARATOR);
             }
             else {
-                DiagramDescription description = reader
-                        .outputImage(utfBuffer, indicator.page, new FileFormatOption(fileFormat, false));
+                DiagramDescription description = reader.outputImage(utfBuffer, indicator.page, new FileFormatOption(fileFormat, false));
                 String result = utfBuffer.toString(StandardCharsets.UTF_8);
                 Pattern pattern = Pattern.compile("java\\.lang\\.\\S+?Exception");
                 Matcher matcher = pattern.matcher(result);
@@ -308,10 +319,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 
     @Override
@@ -381,9 +390,10 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                             log.error(e.getLocalizedMessage(), e);
                         }
                         Platform.runLater(() -> {
-                            EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
-                                    new StatusMsg("Something wrong with your code in page %d".formatted(curPage + 1),
-                                            "See the description", image));
+                            EventBus.getIns().notifyStatusMsg(
+                                    editorContext.getFileData().getFile(),
+                                    new StatusMsg(I18nHelper.getInstance().get("plantuml.msg.page.error", curPage + 1), "See the description", image)
+                            );
                         });
                     } catch (IOException e) {
                         log.error(e.getLocalizedMessage(), e);
@@ -397,14 +407,16 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             indicator.fitPage();
             log.debug("total pages %d, current page %d, error page count %d".formatted(indicator.totalPages, indicator.page, indicator.errPages.size()));
             if (indicator.isEmpty()) {
-                return;// this is en empty file
+                return; // this is en empty file
             }
 
             if (!indicator.isCurrentPageError()) {
                 Platform.runLater(() -> {
                     String title = indicator.page < indicator.pages.size() ? indicator.pages.get(indicator.page).title : StringUtils.EMPTY;
-                    EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(),
-                            new StatusMsg("Page %d/%d: %s".formatted(indicator.page + 1, indicator.totalPages, title)));
+                    EventBus.getIns().notifyStatusMsg(
+                            editorContext.getFileData().getFile(),
+                            new StatusMsg(I18nHelper.getInstance().get("plantuml.msg.page.info", indicator.page + 1, indicator.totalPages, title))
+                    );
                 });
                 log.trace(String.valueOf(reader.generateDiagramDescription()));
                 try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
@@ -431,7 +443,8 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private String extractDiagramTitle(List<String> lines) {
         // TODO to be refactored for multiline title.
         List<String> prediction = lines.stream()
-                .filter(string -> string.trim().startsWith("title") || string.trim().startsWith("caption")).collect(Collectors.toList());
+                .filter(string -> string.trim().startsWith("title") || string.trim().startsWith("caption"))
+                .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(prediction)) {
             String title = prediction.get(0);
             if (title.startsWith("title")) {
@@ -440,7 +453,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     // TODO
                 }
                 title = TextUtils.removeQuotes(title);
-
             }
             else {
                 title = StringUtils.substringAfter(title, "caption");
@@ -448,7 +460,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             return title;
         }
         else {
-            return "[Unnamed]";
+            return I18nHelper.getInstance().get("plantuml.msg.unnamed");
         }
     }
 
@@ -468,13 +480,12 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected String getHeadingLevelTag() {
-        return null;// no level for now
+        return null; // no level for now
     }
 
     @Override
     protected int determineOutlineLevel(String heading) {
-        return ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim()) ? 1
-                : com.mindolph.mfx.util.TextUtils.countInStarting(heading.trim(), "*") + 1;
+        return ArrayUtils.contains(DIAGRAM_KEYWORDS_START, heading.trim()) ? 1 : com.mindolph.mfx.util.TextUtils.countInStarting(heading.trim(), "*") + 1;
     }
 
     @Override
@@ -518,6 +529,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     }
 
     private static class Indicator {
+
         int totalPages = 0;
         int page = 0;
         List<Integer> errPages;

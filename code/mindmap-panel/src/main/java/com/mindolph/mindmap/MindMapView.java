@@ -13,6 +13,7 @@ import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;
@@ -1809,7 +1810,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                                 ImageVisualAttributeExtension.clearCachedImages(); // TODO this should be refactored to be more elegant.
                                 onMindMapModelChanged(true);
                             } catch (Exception ex) {
-                                DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+                                DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
                                 log.error("Unexpected error during image import from clipboard", ex);
                                 throw new RuntimeException(ex);
                             }

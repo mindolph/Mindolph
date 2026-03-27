@@ -18,7 +18,7 @@ package com.mindolph.mindmap.extension.exporters;
 
 
 import com.igormaznitsa.mindmap.model.*;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.MindMapConfig;
 import com.igormaznitsa.mindmap.model.VendorConstants;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
@@ -200,10 +200,10 @@ public class FreeMindExporter extends BaseExportExtension {
         OutputStream theOut = out;
         if (theOut == null) {
             fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
-                    I18n.getIns().getString("FreeMindExporter.saveDialogTitle"),
+                    I18nHelper.getInstance().get("mindmap.export.freemind.title"),
                     null,
                     ".mm",
-                    I18n.getIns().getString("FreeMindExporter.filterDescription"),
+                    I18nHelper.getInstance().get("mindmap.export.freemind.filter"),
                     exportFileName);
             fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".mm");
             theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
@@ -225,12 +225,12 @@ public class FreeMindExporter extends BaseExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("FreeMindExporter.exporterName");
+        return I18nHelper.getInstance().get("mindmap.export.freemind.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("FreeMindExporter.exporterReference");
+        return I18nHelper.getInstance().get("mindmap.export.freemind.reference");
     }
 
     @Override

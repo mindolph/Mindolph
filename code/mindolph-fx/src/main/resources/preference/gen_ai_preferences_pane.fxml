@@ -6,13 +6,13 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <TabPane fx:id="tpGenAi" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Tab fx:id="tabAgents" text="Agents">
+        <Tab fx:id="tabAgents" text="%prefs.ai.agents">
         </Tab>
-        <Tab fx:id="tabProviders" text="Providers">
+        <Tab fx:id="tabProviders" text="%prefs.ai.providers">
         </Tab>
-        <Tab fx:id="tabDataset" text="Datasets">
+        <Tab fx:id="tabDataset" text="%prefs.ai.datasets">
         </Tab>
-        <Tab fx:id="tabOptions" text="Options">
+        <Tab fx:id="tabOptions" text="%prefs.ai.options">
         </Tab>
     </TabPane>
 

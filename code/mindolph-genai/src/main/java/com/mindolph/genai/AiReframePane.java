@@ -8,6 +8,7 @@ import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,16 +24,22 @@ public class AiReframePane extends StackPane {
 
     @FXML
     private Label lbIcon;
+
     @FXML
     private Button btnKeep;
+
     @FXML
     private Button btnRetry;
+
     @FXML
     private Button btnAdjust;
+
     @FXML
     private Button btnDiscard;
+
     @FXML
     private ProgressBar pbWaiting;
+
     @FXML
     private Label lbMsg;
 
@@ -60,10 +67,18 @@ public class AiReframePane extends StackPane {
             this.onWorking();
         });
         btnRetry.setOnAction(event -> {
-            GenAiEvents.getIns().emitGenerateEvent(editorId,
-                    new InputBuilder().model(input.model()).text(input.text()).temperature(input.temperature())
-                            .maxTokens(input.maxTokens()).outputAdjust(null).isRetry(true).isStreaming(input.isStreaming())
-                            .createInput());
+            GenAiEvents.getIns().emitGenerateEvent(
+                    editorId,
+                    new InputBuilder()
+                            .model(input.model())
+                            .text(input.text())
+                            .temperature(input.temperature())
+                            .maxTokens(input.maxTokens())
+                            .outputAdjust(null)
+                            .isRetry(true)
+                            .isStreaming(input.isStreaming())
+                            .createInput()
+            );
             this.onWorking();
         });
         btnAdjust.setOnMouseClicked(event -> {
@@ -82,14 +97,22 @@ public class AiReframePane extends StackPane {
         ContextMenu menu = new ContextMenu();
         EventHandler<ActionEvent> eventHandler = event -> {
             MenuItem mi = (MenuItem) event.getSource();
-            GenAiEvents.getIns().emitGenerateEvent(editorId,
-                    new InputBuilder().model(input.model()).text(input.text()).temperature(input.temperature())
-                            .maxTokens(input.maxTokens()).outputAdjust((OutputAdjust) mi.getUserData()).isRetry(true).isStreaming(input.isStreaming())
-                            .createInput());
+            GenAiEvents.getIns().emitGenerateEvent(
+                    editorId,
+                    new InputBuilder()
+                            .model(input.model())
+                            .text(input.text())
+                            .temperature(input.temperature())
+                            .maxTokens(input.maxTokens())
+                            .outputAdjust((OutputAdjust) mi.getUserData())
+                            .isRetry(true)
+                            .isStreaming(input.isStreaming())
+                            .createInput()
+            );
             onWorking();
         };
-        MenuItem miShorter = new MenuItem("Shorter", FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
-        MenuItem miLonger = new MenuItem("Longer", FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
+        MenuItem miShorter = new MenuItem(I18nHelper.getInstance().get("ai.reframe.shorter"), FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
+        MenuItem miLonger = new MenuItem(I18nHelper.getInstance().get("ai.reframe.longer"), FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
         miShorter.setUserData(GenAiConstants.OutputAdjust.SHORTER);
         miLonger.setUserData(GenAiConstants.OutputAdjust.LONGER);
         miShorter.setOnAction(eventHandler);
@@ -112,5 +135,4 @@ public class AiReframePane extends StackPane {
         lbMsg.setText(reason);
         NodeUtils.enable(btnKeep, btnRetry, btnAdjust, btnDiscard);
     }
-
 }

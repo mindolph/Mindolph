@@ -12,6 +12,7 @@ import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.fx.control.DatasetTableView;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -116,7 +117,8 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             if (cbAgent == null) {
                 return;
             }
-            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
+            I18nHelper i18n = I18nHelper.getInstance();
+            if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.agent.remove.confirm", currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
                 cbAgent.getSelectionModel().clearSelection();
@@ -183,16 +185,17 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void createNewAgent(String defaultNewName) {
+        I18nHelper i18n = I18nHelper.getInstance();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Create new agent")
+                .title(i18n.get("prefs.ai.agent.create", "Create new agent"))
                 .content("Input agent name")
                 .text(defaultNewName)
                 .width(400)
                 .build();
         dialog.showAndWait().ifPresent(agentName -> {
             if (cbAgent.getItems().stream().anyMatch(p -> p.getValue().getName().equals(agentName))) {
-                DialogFactory.warnDialog("Dataset names %s already exists".formatted(agentName));
+                DialogFactory.warnDialog(i18n.get("msg.dataset.exists", agentName));
                 this.createNewAgent(agentName);
                 return;
             }

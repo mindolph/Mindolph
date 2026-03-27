@@ -15,20 +15,20 @@
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
         <MenuBar fx:id="menuBar">
-            <Menu mnemonicParsing="true" text="_File">
-                <MenuItem mnemonicParsing="true" onAction="#onMenuNewWorkspace" text="New _Workspace..."/>
+            <Menu mnemonicParsing="true" text="%menu.file">
+                <MenuItem mnemonicParsing="true" onAction="#onMenuNewWorkspace" text="%menu.file.new.workspace"/>
                 <!--                      <MenuItem mnemonicParsing="true" fx:id="miNewFile" text="New File" disable="true">-->
                 <!--                           <accelerator>-->
                 <!--                              <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />-->
                 <!--                           </accelerator></MenuItem>-->
                 <!--                      <SeparatorMenuItem />-->
-                <MenuItem mnemonicParsing="true" onAction="#onMenuOpenWorkspace" text="_Open Workspace..."/>
-                <Menu fx:id="menuRecentWorkspaces" mnemonicParsing="true" text="Open Recent Workspace"/>
+                <MenuItem mnemonicParsing="true" onAction="#onMenuOpenWorkspace" text="%menu.file.open.workspace"/>
+                <Menu fx:id="menuRecentWorkspaces" mnemonicParsing="true" text="%menu.file.open.recent.workspace"/>
                 <MenuItem fx:id="menuManageWorkspaces" onAction="#onMenuManageWorkspaces"
-                          mnemonicParsing="true" text="_Manage Workspaces..."/>
+                          mnemonicParsing="true" text="%menu.file.manage.workspaces"/>
                 <!--                      <MenuItem mnemonicParsing="true" fx:id="miOpenFile" accelerator="#onMenuOpenFile" text="Open File" disable="true"/>-->
                 <SeparatorMenuItem/>
-                <MenuItem mnemonicParsing="true" fx:id="miSave" onAction="#onMenuSave" text="_Save"
+                <MenuItem mnemonicParsing="true" fx:id="miSave" onAction="#onMenuSave" text="%menu.file.save"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP"
@@ -36,8 +36,8 @@
                     </accelerator>
                 </MenuItem>
                 <MenuItem mnemonicParsing="true" fx:id="miSaveAs" onAction="#onMenuSaveAs"
-                          text="Save _As..." disable="true"/>
-                <MenuItem mnemonicParsing="true" fx:id="miSaveAll" text="Save All" onAction="#onMenuSaveAll"
+                          text="%menu.file.save.as" disable="true"/>
+                <MenuItem mnemonicParsing="true" fx:id="miSaveAll" text="%menu.file.save.all" onAction="#onMenuSaveAll"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN"
@@ -51,28 +51,28 @@
                 <!--                      </MenuItem>-->
                 <SeparatorMenuItem/>
                 <MenuItem mnemonicParsing="true" fx:id="miCloseTab" onAction="#onMenuClose"
-                          text="Close _Tab" disable="true">
+                          text="%menu.file.close.tab" disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
-                <MenuItem mnemonicParsing="true" onAction="#onMenuExit" text="_Exit">
+                <MenuItem mnemonicParsing="true" onAction="#onMenuExit" text="%menu.file.exit">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP"
                                             shortcut="UP"/>
                     </accelerator>
                 </MenuItem>
             </Menu>
-            <Menu mnemonicParsing="true" text="_Edit">
-                <MenuItem mnemonicParsing="true" fx:id="miUndo" onAction="#onMenuUndo" text="_Undo"
+            <Menu mnemonicParsing="true" text="%menu.edit">
+                <MenuItem mnemonicParsing="true" fx:id="miUndo" onAction="#onMenuUndo" text="%menu.edit.undo"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
-                <MenuItem mnemonicParsing="true" fx:id="miRedo" onAction="#onMenuRedo" text="_Redo"
+                <MenuItem mnemonicParsing="true" fx:id="miRedo" onAction="#onMenuRedo" text="%menu.edit.redo"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="DOWN"
@@ -80,21 +80,21 @@
                     </accelerator>
                 </MenuItem>
                 <SeparatorMenuItem/>
-                <MenuItem mnemonicParsing="true" fx:id="miCut" onAction="#onMenuCut" text="Cut"
+                <MenuItem mnemonicParsing="true" fx:id="miCut" onAction="#onMenuCut" text="%menu.edit.cut"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="X" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
-                <MenuItem mnemonicParsing="true" fx:id="miCopy" onAction="#onMenuCopy" text="Copy"
+                <MenuItem mnemonicParsing="true" fx:id="miCopy" onAction="#onMenuCopy" text="%menu.edit.copy"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="C" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
-                <MenuItem mnemonicParsing="true" fx:id="miPaste" onAction="#onMenuPaste" text="Paste"
+                <MenuItem mnemonicParsing="true" fx:id="miPaste" onAction="#onMenuPaste" text="%menu.edit.paste"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="V" control="UP" meta="UP" shift="UP"
@@ -102,7 +102,7 @@
                     </accelerator>
                 </MenuItem>
                 <SeparatorMenuItem/>
-                <MenuItem mnemonicParsing="true" fx:id="miFind" onAction="#onMenuFind" text="_Find..."
+                <MenuItem mnemonicParsing="true" fx:id="miFind" onAction="#onMenuFind" text="%menu.edit.find"
                           disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="UP"
@@ -110,43 +110,43 @@
                     </accelerator>
                 </MenuItem>
                 <MenuItem mnemonicParsing="true" fx:id="miReplace" onAction="#onMenuReplace"
-                          text="_Replace..." disable="true">
+                          text="%menu.edit.replace" disable="true">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="DOWN"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
                 <SeparatorMenuItem/>
-                <MenuItem mnemonicParsing="true" onAction="#onMenuPreferences" text="_Preferences...">
+                <MenuItem mnemonicParsing="true" onAction="#onMenuPreferences" text="%menu.edit.preferences">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="COMMA" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
             </Menu>
-            <Menu mnemonicParsing="true" text="_View">
+            <Menu mnemonicParsing="true" text="%menu.view">
                 <CheckMenuItem fx:id="miToggleWorkspaceView" onAction="#onMenuToggleWorkspaceView"
-                               mnemonicParsing="true" text="_Workspace View" selected="true"/>
+                               mnemonicParsing="true" text="%menu.view.workspace.view" selected="true"/>
             </Menu>
-            <Menu mnemonicParsing="true" text="_Navigate">
-                <MenuItem mnemonicParsing="true" onAction="#onMenuGotoFile" text="_Go to File...">
+            <Menu mnemonicParsing="true" text="%menu.navigate">
+                <MenuItem mnemonicParsing="true" onAction="#onMenuGotoFile" text="%menu.navigate.goto.file">
                     <accelerator>
                         <KeyCodeCombination alt="UP" code="T" control="UP" meta="UP" shift="UP"
                                             shortcut="DOWN"/>
                     </accelerator>
                 </MenuItem>
             </Menu>
-            <Menu fx:id="menuCollections" text="_Collections">
-                <MenuItem onAction="#onCreateCollection" text="Create Collection..."/>
-                <MenuItem onAction="#onSaveCollection" text="Save Collection"/>
-                <MenuItem onAction="#onRenameCollection" text="Rename Collection..."/>
-                <MenuItem fx:id="miRemoveCollection" onAction="#onRemoveCollection" text="Remove Collection"/>
+            <Menu fx:id="menuCollections" text="%menu.collections">
+                <MenuItem onAction="#onCreateCollection" text="%menu.collections.create"/>
+                <MenuItem onAction="#onSaveCollection" text="%menu.collections.save"/>
+                <MenuItem onAction="#onRenameCollection" text="%menu.collections.rename"/>
+                <MenuItem fx:id="miRemoveCollection" onAction="#onRemoveCollection" text="%menu.collections.remove"/>
                 <SeparatorMenuItem/>
             </Menu>
-            <Menu mnemonicParsing="true" text="_Help">
-                <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="_Key Reference..."/>
-                <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="_Check for update..."/>
-                <MenuItem mnemonicParsing="true" onAction="#onMenuAbout" text="_About"/>
+            <Menu mnemonicParsing="true" text="%menu.help">
+                <MenuItem mnemonicParsing="true" onAction="#onMenuShortcuts" text="%menu.help.shortcuts"/>
+                <MenuItem mnemonicParsing="true" onAction="#onMenuCheckUpdate" text="%menu.help.check.update"/>
+                <MenuItem mnemonicParsing="true" onAction="#onMenuAbout" text="%menu.help.about"/>
             </Menu>
         </MenuBar>
         <FixedSplitPane fx:id="splitPane" VBox.vgrow="ALWAYS" fixedSize="250">
@@ -158,7 +158,7 @@
                              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <Tab fx:id="tabWorkspaces">
                             <tooltip>
-                                <Tooltip text="Workspaces"/>
+                                <Tooltip text="%tooltip.workspaces"/>
                             </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
@@ -178,7 +178,7 @@
                         </Tab>
                         <Tab fx:id="tabRecentFiles">
                             <tooltip>
-                                <Tooltip text="Recent Files"/>
+                                <Tooltip text="%tooltip.recent.files"/>
                             </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
@@ -191,7 +191,7 @@
                         </Tab>
                         <Tab fx:id="tabOutline">
                             <tooltip>
-                                <Tooltip text="Outline"/>
+                                <Tooltip text="%tooltip.outline"/>
                             </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
@@ -204,7 +204,7 @@
                         </Tab>
                         <Tab fx:id="tabSnippet">
                             <tooltip>
-                                <Tooltip text="Snippet"/>
+                                <Tooltip text="%tooltip.snippet"/>
                             </tooltip>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                                         prefWidth="200.0">
@@ -217,7 +217,7 @@
                         </Tab>
                         <Tab fx:id="tabAgent">
                             <tooltip>
-                                <Tooltip text="Agent(Preview)"/>
+                                <Tooltip text="%tooltip.agent"/>
                             </tooltip>
                             <ChatView fx:id="chatView"/>
                         </Tab>

@@ -4,6 +4,7 @@ import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -40,20 +41,20 @@ public class ConvertTopicExtension extends BasePopupMenuItemExtension {
         if (activeTopic == null) {
             return null;
         }
-        Menu menu = new Menu("Convert to", FontIconManager.getIns().getIcon(IconKey.CONVERT));
-        MenuItem miToTopics = new MenuItem("Topics", FontIconManager.getIns().getIcon(IconKey.TOPIC));
+        Menu menu = new Menu(I18nHelper.getInstance().get("mindmap.menu.convert.to"), FontIconManager.getIns().getIcon(IconKey.CONVERT));
+        MenuItem miToTopics = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.convert.to.topics"), FontIconManager.getIns().getIcon(IconKey.TOPIC));
 //        MenuItem miToMerge = new MenuItem("Merge", ImageIconServiceProvider.getInstance().getIconForId(IconID.POPUP_CLONE_TOPIC));
-        MenuItem miToNote = new MenuItem("Note", FontIconManager.getIns().getIcon(IconKey.NOTE));
-        MenuItem miToUri = new MenuItem("URI", FontIconManager.getIns().getIcon(IconKey.URI));
+        MenuItem miToNote = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.convert.to.note"), FontIconManager.getIns().getIcon(IconKey.NOTE));
+        MenuItem miToUri = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.convert.to.uri"), FontIconManager.getIns().getIcon(IconKey.URI));
         miToTopics.setDisable(true);
 //        miToMerge.setDisable(true);
         miToNote.setDisable(true);
         miToUri.setDisable(true);
 
-        Tooltip.install(menu.getGraphic(), new Tooltip("Convert topic(without attributes)"));
-        Tooltip.install(miToTopics.getGraphic(), new Tooltip("Convert topic to multiple topics(by line)"));
-        Tooltip.install(miToNote.getGraphic(), new Tooltip("Convert topic(without attributes) to note of parent"));
-        Tooltip.install(miToUri.getGraphic(), new Tooltip("Convert topic(without attributes) to URI of parent"));
+        Tooltip.install(menu.getGraphic(), new Tooltip(I18nHelper.getInstance().get("mindmap.menu.convert.tooltip")));
+        Tooltip.install(miToTopics.getGraphic(), new Tooltip(I18nHelper.getInstance().get("mindmap.menu.convert.tooltip.topics")));
+        Tooltip.install(miToNote.getGraphic(), new Tooltip(I18nHelper.getInstance().get("mindmap.menu.convert.tooltip.note")));
+        Tooltip.install(miToUri.getGraphic(), new Tooltip(I18nHelper.getInstance().get("mindmap.menu.convert.tooltip.uri")));
 
         if (activeTopic.getNumberOfExtras() == 0 && !activeTopic.hasChildren()) {
             miToTopics.setOnAction(event -> {

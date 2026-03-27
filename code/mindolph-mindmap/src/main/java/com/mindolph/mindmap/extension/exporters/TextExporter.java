@@ -1,6 +1,6 @@
 package com.mindolph.mindmap.extension.exporters;
 
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.exporters.branch.TextBranchExporter;
@@ -40,7 +40,7 @@ public class TextExporter extends TextBranchExporter {
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("TextExporter.exporterReference");
+        return I18nHelper.getInstance().get("mindmap.export.text.reference");
     }
 
     @Override

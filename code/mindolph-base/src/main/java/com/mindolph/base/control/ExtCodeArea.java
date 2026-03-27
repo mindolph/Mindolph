@@ -1,12 +1,24 @@
 package com.mindolph.base.control;
 
+import static com.mindolph.base.constant.ShortcutConstants.*;
+import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
+import static javafx.scene.input.KeyCode.TAB;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
@@ -28,16 +40,6 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.Duration;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import static com.mindolph.base.constant.ShortcutConstants.*;
-import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
-import static javafx.scene.input.KeyCode.TAB;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Supports:
@@ -69,7 +71,6 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
-
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> super.requestFollowCaret());
@@ -85,7 +86,6 @@ public class ExtCodeArea extends CodeArea {
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
     }
-
 
     public void refresh() {
         // DO NOTHING
@@ -106,11 +106,11 @@ public class ExtCodeArea extends CodeArea {
      */
     protected ContextMenu createContextMenu() {
         ContextMenu menu = new ContextMenu();
-        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
-        CheckMenuItem miWordWrap = new CheckMenuItem("Word Wrap", FontIconManager.getIns().getIcon(IconKey.WRAP));
+        MenuItem miCut = new MenuItem(I18nHelper.getInstance().get("codearea.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem(I18nHelper.getInstance().get("codearea.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem(I18nHelper.getInstance().get("codearea.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem(I18nHelper.getInstance().get("codearea.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+        CheckMenuItem miWordWrap = new CheckMenuItem(I18nHelper.getInstance().get("codearea.menu.word.wrap"), FontIconManager.getIns().getIcon(IconKey.WRAP));
         miCut.setOnAction(event -> {
             this.cut();
         });
@@ -132,7 +132,6 @@ public class ExtCodeArea extends CodeArea {
         menu.getItems().addAll(miCut, miCopy, miPaste, miDelete, new SeparatorMenuItem(), miWordWrap);
         return menu;
     }
-
 
     public void addFeatures(FEATURE... features) {
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();
@@ -405,7 +404,7 @@ public class ExtCodeArea extends CodeArea {
         if (!super.isEditable()) return;
         int endParLen = super.getParagraphLength(endParIndex);
         boolean isLastLine = endParIndex == super.getParagraphs().size() - 1;
-        int endLineLen = isLastLine ? endParLen : endParLen + 1;// condition for last line
+        int endLineLen = isLastLine ? endParLen : endParLen + 1; // condition for last line
         int startColIndex = isLastLine ? -1 : 0;
         this.deleteText(startParIndex, startColIndex, endParIndex, endLineLen);
     }
@@ -706,10 +705,11 @@ public class ExtCodeArea extends CodeArea {
         // delete current line
         LINE_DELETE,
         // move current line
-        LINES_MOVE
+        LINES_MOVE,
     }
 
     public static class Replacement {
+
         // substitute to be added in the head.
         String substitute;
         // targets to be trimmed in the head.

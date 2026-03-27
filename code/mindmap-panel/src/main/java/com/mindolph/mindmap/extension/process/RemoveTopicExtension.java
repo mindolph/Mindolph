@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.process;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -25,7 +25,7 @@ public class RemoveTopicExtension extends BaseTopicExtension {
 
     @Override
     protected String getName(ExtensionContext context, TopicNode activeTopic) {
-        return context.getSelectedTopics().size() > 0 ? I18n.getIns().getString("MindMapPanel.menu.miRemoveSelectedTopics") : I18n.getIns().getString("MindMapPanel.menu.miRemoveTheTopic");
+        return context.getSelectedTopics().size() > 0 ? I18nHelper.getInstance().get("mindmap.menu.remove.selected") : I18nHelper.getInstance().get("mindmap.menu.remove.topic");
     }
 
     @Override

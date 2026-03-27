@@ -1,5 +1,10 @@
 package com.mindolph.markdown;
 
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
+import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
+import static com.mindolph.base.constant.PrefConstants.*;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
@@ -16,15 +21,16 @@ import com.mindolph.base.util.CssUtils;
 import com.mindolph.base.util.FxImageUtils;
 import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.core.Env;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextBlockDialog;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.sun.javafx.webkit.WebConsoleListener;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
@@ -35,6 +41,23 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -72,31 +95,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLAnchorElement;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-
-import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
-import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
-import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
-import static com.mindolph.base.constant.PrefConstants.*;
-import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
-
 /**
- * @see MarkdownCodeArea
  * @author mindolph.com@gmail.com
+ * @see MarkdownCodeArea
  */
 public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
@@ -105,13 +106,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     public static final String URL_MARKUP = "[%s](%s)";
     public static final String IMG_MARKUP = "![%s](%s)";
 
-
     private static final String initScrollScript = """
             function initScrollPos(){
                 window.scrollTo(${xPos}, ${yPos})
             }
             """;
-
 
     @FXML
     private AnchorPane panePreview;
@@ -121,10 +120,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @FXML
     private VBox vbToolbar;
+
     private MarkdownToolbar markdownToolbar;
 
     @FXML
     private WebView webView;
+
     private WebEngine webEngine;
     private String html;
     private ContextMenu contextMenu;
@@ -152,7 +153,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 //            Platform.runLater(() -> codeScrollPane.estimatedScrollYProperty().setValue(0.0));
 //        });
 
-
         // init the toolbar
         markdownToolbar = new MarkdownToolbar((MarkdownCodeArea) codeArea);
         vbToolbar.getChildren().add(markdownToolbar);
@@ -172,15 +172,19 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         URL cssUri = getCssResourceURI();
         log.debug("Set webview with css: %s".formatted(cssUri));
         webEngine.setUserStyleSheetLocation(cssUri.toString());
-        webEngine.getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) ->
-                log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))));
-        webEngine.getLoadWorker().exceptionProperty().addListener((observableValue, throwable, t1) -> {
-            if (t1 != null) log.error("Markdown Preview Error", t1);
-        });
+        webEngine.getLoadWorker().progressProperty()
+                .addListener((observable, oldValue, newValue) ->
+                        log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP)))
+                );
+        webEngine.getLoadWorker().exceptionProperty()
+                .addListener((observableValue, throwable, t1) -> {
+                    if (t1 != null) log.error("Markdown Preview Error", t1);
+                });
 
-        webEngine.documentProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) interceptLinks(newValue);
-        });
+        webEngine.documentProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) interceptLinks(newValue);
+                });
 
         contextMenu = createContextMenu();
         webView.setOnMouseClicked(mouseEvent -> {
@@ -194,11 +198,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
         // see https://github.com/vsch/flexmark-java/wiki/Extensions
         MutableDataSet options = new MutableDataSet()
-                .set(Parser.EXTENSIONS, Arrays.asList(
-                        TablesExtension.create(),
-                        AutolinkExtension.create(),
-                        AnchorLinkExtension.create()
-                ))
+                .set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), AutolinkExtension.create(), AnchorLinkExtension.create()))
                 .set(Parser.REFERENCES_KEEP, KeepType.LAST)
                 .set(Parser.LISTS_ITEM_MARKER_SPACE, true)
                 .set(Parser.LISTS_NEW_ITEM_CODE_INDENT, 2)
@@ -209,7 +209,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         renderer = HtmlRenderer.builder(options).build();
         // this.refresh();// to set up the font
 
-        scrollEventCode.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
+        scrollEventCode
+                .reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
                 .subscribe(newY -> {
                     scrollEventPreview.suspenderOf(scrollEventCode.suppressible().suppressible());
                     scrollSwitch.scrollFirst(() -> {
@@ -227,7 +228,8 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         }
                     });
                 });
-        scrollEventPreview.reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
+        scrollEventPreview
+                .reduceSuccessions((s1, s2) -> s2, Duration.ofMillis(100))
                 .subscribe(newY -> {
                     scrollSwitch.scrollSecond(() -> {
                         try {
@@ -247,27 +249,28 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        codeScrollPane.estimatedScrollYProperty().addListener((ov, oldY, newY) -> {
-//            System.out.printf("A: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
-            if (!super.getIsAutoScroll() || oldY.equals(newY) || viewMode != ViewMode.BOTH) {
-                return;
-            }
-            scrollEventCode.push(newY);
-        });
+        codeScrollPane.estimatedScrollYProperty()
+                .addListener((ov, oldY, newY) -> {
+                    //            System.out.printf("A: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
+                    if (!super.getIsAutoScroll() || oldY.equals(newY) || viewMode != ViewMode.BOTH) {
+                        return;
+                    }
+                    scrollEventCode.push(newY);
+                });
 
         // method onWebviewScroll() will be called when scrolling webview.
-        webView.getEngine().getLoadWorker().stateProperty().addListener((observableValue, state, newState) -> {
-            JSObject window = (JSObject) webView.getEngine().executeScript("window");
-            if (window == null) {
-                log.warn("web window is null");
-            }
-            else {
-                window.setMember("scrollListener", this);
-                window.setMember("hoverListener", this);
-                window.setMember("clickListener", this);
-            }
-        });
+        webView.getEngine().getLoadWorker().stateProperty()
+                .addListener((observableValue, state, newState) -> {
+                    JSObject window = (JSObject) webView.getEngine().executeScript("window");
+                    if (window == null) {
+                        log.warn("web window is null");
+                    }
+                    else {
+                        window.setMember("scrollListener", this);
+                        window.setMember("hoverListener", this);
+                        window.setMember("clickListener", this);
+                    }
+                });
 
         // listen for console output for debugging.
         if (Env.isDevelopment) {
@@ -297,13 +300,14 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     protected void onFilesDropped(CharacterHit hit, List<File> files) {
-        List<String> paths = files.stream().map(
-                file -> {
+        List<String> paths = files.stream()
+                .map(file -> {
                     String markup = FileNameUtils.isImageFile(file) ? IMG_MARKUP : URL_MARKUP;
                     String filePath = super.getRelatedPathInCurrentWorkspace(file).orElseGet(file::getPath);
                     String mdFileMarkup = markup.formatted(file.getName(), filePath);
                     return "%s  ".formatted(mdFileMarkup); // add 2 blanks for Markdown
-                }).toList();
+                })
+                .toList();
         codeArea.insertText(hit.getInsertionIndex(), StringUtils.join(paths, LINE_SEPARATOR));
     }
 
@@ -334,16 +338,19 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         for (int i = 0; i < linkNodeList.getLength(); i++) {
             org.w3c.dom.Node item = linkNodeList.item(i);
             EventTarget eventTarget = (EventTarget) item;
-            eventTarget.addEventListener("click", evt -> {
-                HTMLAnchorElement anchorElement = (HTMLAnchorElement) evt.getCurrentTarget();
-                String href = anchorElement.getHref();
-                if (UrlUtils.isValid(href)) {
-                    // handle opening URL outside JavaFX WebView
-                    log.debug(href);
-                    DesktopUtils.openURL(href);
-                    evt.preventDefault();
-                }
-            }, false);
+            eventTarget.addEventListener("click",
+                    evt -> {
+                        HTMLAnchorElement anchorElement = (HTMLAnchorElement) evt.getCurrentTarget();
+                        String href = anchorElement.getHref();
+                        if (UrlUtils.isValid(href)) {
+                            // handle opening URL outside JavaFX WebView
+                            log.debug(href);
+                            DesktopUtils.openURL(href);
+                            evt.preventDefault();
+                        }
+                    },
+                    false
+            );
         }
     }
 
@@ -402,12 +409,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miViewSource = new MenuItem("View Source...");
-        MenuItem miRefresh = new MenuItem("Refresh", FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        MenuItem miExportHtml = new MenuItem("Export to HTML file...", FontIconManager.getIns().getIcon(IconKey.BROWSE));
-        MenuItem miExportImage = new MenuItem("Export to Image file...", FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miExportPdf = new MenuItem("Export to PDF file...", FontIconManager.getIns().getIcon(IconKey.PDF));
-
+        MenuItem miViewSource = new MenuItem(I18nHelper.getInstance().get("markdown.menu.view.source"));
+        MenuItem miRefresh = new MenuItem(I18nHelper.getInstance().get("markdown.menu.refresh"), FontIconManager.getIns().getIcon(IconKey.REFRESH));
+        MenuItem miExportHtml = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.html"), FontIconManager.getIns().getIcon(IconKey.BROWSE));
+        MenuItem miExportImage = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExportPdf = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.pdf"), FontIconManager.getIns().getIcon(IconKey.PDF));
 
         miViewSource.setOnAction(e -> {
             Node document = parser.parse(codeArea.getText());
@@ -418,7 +424,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     .script(initScrollScript, "initScrollPos")
                     .markdown("markdown-body")
                     .build(timestamp);
-//            html = this.wrap(this.fixTheImageUrl(html));
+            //            html = this.wrap(this.fixTheImageUrl(html));
             new TextBlockDialog(getScene().getWindow(), "Source", finalHtml, true).showAndWait();
         });
         miRefresh.setOnAction(e -> {
@@ -439,9 +445,12 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
             log.trace("Export to html: %s".formatted(StringUtils.abbreviate(finalHtml, 50)));
             File file = editorContext.getFileData().getFile();
-            File htmlFile = DialogFactory.openSaveFileDialog(getScene().getWindow(), file.getParentFile(),
+            File htmlFile = DialogFactory.openSaveFileDialog(
+                    getScene().getWindow(),
+                    file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".html",
-                    new FileChooser.ExtensionFilter("HTML file", "*.html"));
+                    new FileChooser.ExtensionFilter("HTML file", "*.html")
+            );
             if (htmlFile != null) {
                 try {
                     FileUtils.writeStringToFile(htmlFile, finalHtml, StandardCharsets.UTF_8);
@@ -464,17 +473,21 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
             canvasWebView.setPrefWidth(1000);
             canvasWebView.setPrefHeight(1000);
             WebEngine engine = canvasWebView.getEngine();
-            engine.getLoadWorker().workDoneProperty().addListener((observable, oldValue, newValue) -> {
-                WritableImage snapshot = canvasWebView.snapshot(null, null);
-                FxImageUtils.dumpImage(snapshot);
-            });
+            engine.getLoadWorker().workDoneProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        WritableImage snapshot = canvasWebView.snapshot(null, null);
+                        FxImageUtils.dumpImage(snapshot);
+                    });
             canvasWebView.getEngine().loadContent(html);
         });
         miExportPdf.setOnAction(event -> {
             File file = editorContext.getFileData().getFile();
-            File pdfFile = DialogFactory.openSaveFileDialog(getScene().getWindow(), file.getParentFile(),
+            File pdfFile = DialogFactory.openSaveFileDialog(
+                    getScene().getWindow(),
+                    file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".pdf",
-                    new FileChooser.ExtensionFilter("PDF file", "*.pdf"));
+                    new FileChooser.ExtensionFilter("PDF file", "*.pdf")
+            );
             if (pdfFile != null && pdfFile.getParentFile().exists()) {
                 log.info("Export to pdf file: %s".formatted(pdfFile));
                 GlobalExecutor.submit(() -> {
@@ -529,7 +542,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         }
         return contextMenu;
     }
-
 
     @Override
     protected void render(Object renderObject) {
@@ -612,5 +624,4 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     protected String extractOutlineTitle(String heading, TextLocation location, TextLocation nextBlockLocation) {
         return RegExUtils.replacePattern(heading, "#", "");
     }
-
 }

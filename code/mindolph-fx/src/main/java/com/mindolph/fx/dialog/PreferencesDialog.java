@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.fx.preference.FontPreferencesPane;
 import com.mindolph.fx.preference.AiPreferencePane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
 import com.mindolph.mfx.container.SideTabPane;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -60,20 +61,23 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     // be used to remember the last activated tab for user convenience until the application exits.
     private static int lastActivatedTabIndex = 0;
 
-    private final ButtonType resetButtonType = new ButtonType("Reset Default", ButtonBar.ButtonData.LEFT);
-
     public PreferencesDialog() {
+        I18nHelper i18n = I18nHelper.getInstance();
+        String title = i18n.get("dialog.preferences.title", "Preferences");
+        String resetBtn = i18n.get("dialog.preferences.reset.default", "Reset Default");
+        String closeBtn = i18n.get("dialog.preferences.close", "Close");
+
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Preferences")
+                .title(title)
                 .fxmlUri("dialog/preferences_dialog.fxml")
                 .button(ButtonType.CLOSE, dialog -> {
 //                    fontPreferencesPane.save
                     mmdPreferences.onSave(true, null); // todo use change status to avoid unnecessary save
                     dialog.close();
                 })
-                .button(resetButtonType, dialog -> {
-                    boolean confirmed = DialogFactory.okCancelConfirmDialog("Are you sure, this operation will reset all your preferences to default");
+                .button(new ButtonType(resetBtn, ButtonBar.ButtonData.LEFT), dialog -> {
+                    boolean confirmed = DialogFactory.okCancelConfirmDialog(i18n.get("msg.confirm.reset.preferences", "Are you sure, this operation will reset all your preferences to default"));
                     if (confirmed) {
                         generalPreferencesPane.resetToDefault();
                         fontPreferencesPane.resetToDefault();
@@ -84,7 +88,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                     }
                 })
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))
-                .icon(resetButtonType, FontIconManager.getIns().getIcon(IconKey.REFRESH))
+                .icon(new ButtonType(resetBtn, ButtonBar.ButtonData.LEFT), FontIconManager.getIns().getIcon(IconKey.REFRESH))
                 .defaultValue(null)
                 .controller(this)
                 .resizable(true)

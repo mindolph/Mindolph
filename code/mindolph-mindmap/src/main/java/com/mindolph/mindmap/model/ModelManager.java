@@ -25,7 +25,7 @@ public class ModelManager {
         try (StringReader reader = new StringReader(FileUtils.readFileToString(file, StandardCharsets.UTF_8))) {
             return new MindMap<>(reader, RootTopicCreator.defaultCreator);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getLocalizedMessage(), e);
             throw new RuntimeException("Failed to load mind map file " + file, e);
         }
     }

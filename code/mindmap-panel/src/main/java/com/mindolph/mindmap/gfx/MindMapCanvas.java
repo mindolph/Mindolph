@@ -1,11 +1,12 @@
 package com.mindolph.mindmap.gfx;
 
-import com.igormaznitsa.mindmap.model.*;
+import com.igormaznitsa.mindmap.model.Extra;
+import com.igormaznitsa.mindmap.model.ExtraTopic;
+import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.constant.StrokeType;
 import com.mindolph.base.graphic.CanvasGraphicsWrapper;
 import com.mindolph.base.graphic.Graphics;
 import com.mindolph.base.util.GeometryConvertUtils;
-import com.mindolph.mindmap.I18n;
 import com.mindolph.mindmap.MindMapCalculateHelper;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
@@ -24,7 +25,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -375,47 +375,4 @@ public class MindMapCanvas {
         return ((CanvasGraphicsWrapper) gfx).getCanvas().snapshot(null, null);
     }
 
-    static String makeHtmlTooltipForExtra(MindMap<TopicNode> model, Extra<?> extra) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<html>");
-        switch (extra.getType()) {
-            case FILE: {
-                ExtraFile efile = (ExtraFile) extra;
-                String line = efile.getAsURI().getParameters().getProperty("line", null);
-                if (line != null && !line.equals("0")) {
-                    builder.append(String.format(I18n.getIns().getString("MindMapPanel.tooltipOpenFileWithLine"), StringEscapeUtils.escapeHtml3(efile.getAsString()), StringEscapeUtils.escapeHtml3(line)));
-                }
-                else {
-                    builder.append(I18n.getIns().getString("MindMapPanel.tooltipOpenFile")).append(StringEscapeUtils.escapeHtml3(efile.getAsString()));
-                }
-            }
-            break;
-            case TOPIC: {
-                TopicNode topic = model.findTopicForLink((ExtraTopic) extra);
-                builder.append(I18n.getIns().getString("MindMapPanel.tooltipJumpToTopic")).append(StringEscapeUtils.escapeHtml3(ModelUtils.makeShortTextVersion(topic == null ? "----" : topic.getText(), 32)));
-            }
-            break;
-            case LINK: {
-                builder.append(I18n.getIns().getString("MindMapPanel.tooltipOpenLink")).append(StringEscapeUtils.escapeHtml3(ModelUtils.makeShortTextVersion(extra.getAsString(), 48)));
-            }
-            break;
-            case NOTE: {
-                ExtraNote extraNote = (ExtraNote) extra;
-                if (extraNote.isEncrypted()) {
-                    builder.append(I18n.getIns().getString("MindMapPanel.tooltipOpenText")).append("#######");
-                }
-                else {
-                    builder.append(I18n.getIns().getString("MindMapPanel.tooltipOpenText")).append(StringEscapeUtils
-                            .escapeHtml3(ModelUtils.makeShortTextVersion(extra.getAsString(), 64)));
-                }
-            }
-            break;
-            default: {
-                builder.append("<b>Unknown</b>");
-            }
-            break;
-        }
-        builder.append("</html>");
-        return builder.toString();
-    }
 }

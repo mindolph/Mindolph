@@ -22,7 +22,7 @@ import com.igormaznitsa.mindmap.model.MMapURI;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.util.ColorUtils;
 import com.mindolph.mfx.util.FxImageUtils;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -102,7 +102,7 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
     @Override
     public MindMap<TopicNode> doImport(ExtensionContext context) throws Exception {
-        File file = this.selectFileForExtension(I18n.getIns().getString("MMDImporters.CoggleMM2MindMap.openDialogTitle"), null, "mm", "Coggle MM files (.mm)");
+        File file = this.selectFileForExtension(I18nHelper.getInstance().get("mindmap.import.coggle.title"), null, "mm", "Coggle MM files (.mm)");
 
         if (file == null) {
             return null;
@@ -252,12 +252,12 @@ public class CoggleMM2MindMapImporter extends BaseImportExtension {
 
     @Override
     public String getName(ExtensionContext context) {
-        return I18n.getIns().getString("MMDImporters.CoggleMM2MindMap.Name");
+        return I18nHelper.getInstance().get("mindmap.import.coggle.name");
     }
 
     @Override
     public String getReference(ExtensionContext context) {
-        return I18n.getIns().getString("MMDImporters.CoggleMM2MindMap.Reference");
+        return I18nHelper.getInstance().get("mindmap.import.coggle.reference");
     }
 
     @Override

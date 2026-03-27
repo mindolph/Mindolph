@@ -1,5 +1,7 @@
 package com.mindolph.fx.view;
 
+import static com.mindolph.base.event.EventBus.MenuTag.*;
+
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -13,7 +15,6 @@ import com.mindolph.base.event.FileActivatedEvent;
 import com.mindolph.base.event.NotificationType;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.EditorConfig;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.core.search.TextAnchor;
@@ -25,10 +26,18 @@ import com.mindolph.fx.editor.EditorFactory;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
+import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.plantuml.PlantUmlEditor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -43,13 +52,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.mindolph.base.event.EventBus.MenuTag.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -74,40 +76,41 @@ public class FileTabView extends BaseView {
 
     public FileTabView() {
         super("/view/file_tab_view.fxml");
-        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTab, selectingTab) -> {
-            Object oldData = selectedTab == null ? null : selectedTab.getUserData();
-            if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
-                // disabled tab means it is closing, no need to be loaded (for close all or close others from the context menu)
-                log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
-                TabManager.getIns().activeTab(selectingTab);
-                BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
-                Object tabUserData = selectingTab.getUserData();
-                if (tabUserData instanceof NodeData tud) {
-                    if (editor == null) {
-                        NodeData fileData = (NodeData) tabUserData;
-                        this.loadEditorToTab(fileData, selectingTab);
+        tabPane.getSelectionModel().selectedItemProperty()
+                .addListener((observable, selectedTab, selectingTab) -> {
+                    Object oldData = selectedTab == null ? null : selectedTab.getUserData();
+                    if (selectingTab != null && selectedTab != selectingTab && !selectingTab.isDisabled()) {
+                        // disabled tab means it is closing, no need to be loaded (for close all or close others from the context menu)
+                        log.debug("Tab selection changed from %s to %s".formatted(selectedTab == null ? "null" : selectedTab.getText(), selectingTab.getText()));
+                        TabManager.getIns().activeTab(selectingTab);
+                        BaseEditor editor = (BaseEditor) tabEditorMap.get(selectingTab);
+                        Object tabUserData = selectingTab.getUserData();
+                        if (tabUserData instanceof NodeData tud) {
+                            if (editor == null) {
+                                NodeData fileData = (NodeData) tabUserData;
+                                this.loadEditorToTab(fileData, selectingTab);
+                            }
+                            else {
+                                if (editor.isNeedRefresh()) {
+                                    editor.applyStyles();
+                                    editor.refresh();
+                                    editor.setNeedRefresh(false);
+                                }
+                                editor.requestFocus();
+                                editor.locate(tud.getAnchor()); // locating for 'find in files'
+                                tud.setAnchor(null); // clear the anchor by 'find in files'
+                                this.updateMenuState(editor);
+                                editor.outline();
+                            }
+                            EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, tud));
+                        }
                     }
                     else {
-                        if (editor.isNeedRefresh()) {
-                            editor.applyStyles();
-                            editor.refresh();
-                            editor.setNeedRefresh(false);
-                        }
-                        editor.requestFocus();
-                        editor.locate(tud.getAnchor()); // locating for 'find in files'
-                        tud.setAnchor(null); // clear the anchor by 'find in files'
-                        this.updateMenuState(editor);
-                        editor.outline();
+                        this.updateMenuState(null);
+                        EventBus.getIns().notifyOutline(null); // clear the outline view since there is no tab exists.
+                        EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, null));
                     }
-                    EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, tud));
-                }
-            }
-            else {
-                this.updateMenuState(null);
-                EventBus.getIns().notifyOutline(null); // clear the outline view since there is no tab exists.
-                EventBus.getIns().notifyFileActivated(new FileActivatedEvent((NodeData) oldData, null));
-            }
-        });
+                });
         tabPane.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getClickCount() == 2) {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
@@ -140,7 +143,6 @@ public class FileTabView extends BaseView {
                 this.updateTabs();
             }
         });
-
     }
 
     /**
@@ -151,7 +153,6 @@ public class FileTabView extends BaseView {
             EventBus.getIns().disableMenuItems(SAVE_AS, SAVE_ALL, CLOSE_TAB, FIND, REPLACE, UNDO, REDO, CUT, COPY, PASTE, PRINT);
         }
         else {
-
             EventBus.getIns().notifyMenuStateChange(SAVE, editor.isChanged());
             EventBus.getIns().notifyMenuStateChange(UNDO, editor.isUndoAvailable());
             EventBus.getIns().notifyMenuStateChange(REDO, editor.isRedoAvailable());
@@ -197,7 +198,7 @@ public class FileTabView extends BaseView {
         else {
             log.debug("file tab already exists: %s".formatted(fileData.getFile()));
             log.debug(StringUtils.join(openedFileMap.keySet()));
-            tab.setUserData(fileData);// update user data because the file data is probably updated(with Anchor for example)
+            tab.setUserData(fileData); // update user data because the file data is probably updated(with Anchor for example)
             tabPane.getSelectionModel().select(tab);
             tabEditorMap.get(tab).requestFocus();
         }
@@ -283,9 +284,12 @@ public class FileTabView extends BaseView {
             }
 
             // call to remember opened files.
-            EventBus.getIns().notifyOpenedFileChange(tabPane.getTabs().stream()
-                    .filter(tb -> tb.getUserData() instanceof NodeData && ((NodeData) tb.getUserData()).isFile())
-                    .map(tb -> ((NodeData) tb.getUserData()).getFile()).collect(Collectors.toList()));
+            EventBus.getIns().notifyOpenedFileChange(
+                    tabPane.getTabs().stream()
+                            .filter(tb -> tb.getUserData() instanceof NodeData && ((NodeData) tb.getUserData()).isFile())
+                            .map(tb -> ((NodeData) tb.getUserData()).getFile())
+                            .collect(Collectors.toList())
+            );
             // add to recent files history
             RecentManager.getInstance().addToRecent(fileData.getFile());
 
@@ -307,12 +311,12 @@ public class FileTabView extends BaseView {
         Object selectedTabUserData = selectedTab.getUserData();
         if (selectedTabUserData != null) log.debug(((NodeData) selectedTabUserData).getFile().getPath());
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
-        MenuItem miCloseOthers = new MenuItem("Close Others");
-        MenuItem miCloseAll = new MenuItem("Close All");
-        MenuItem miSaveAs = new MenuItem("Save As..");
-        MenuItem miSelectInTree = new MenuItem("Select in Workspace", FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
-        MenuItem miOpenInSystem = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+        MenuItem miClose = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
+        MenuItem miCloseOthers = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close.others"));
+        MenuItem miCloseAll = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close.all"));
+        MenuItem miSaveAs = new MenuItem(I18nHelper.getInstance().get("filetab.menu.save.as"));
+        MenuItem miSelectInTree = new MenuItem(I18nHelper.getInstance().get("filetab.menu.select.in.tree"), FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
+        MenuItem miOpenInSystem = new MenuItem(I18nHelper.getInstance().get("filetab.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
 
         // actions
         miSaveAs.setOnAction(event -> {
@@ -342,9 +346,7 @@ public class FileTabView extends BaseView {
             }
         });
         if (selectedTabUserData instanceof NodeData data && ((NodeData) selectedTabUserData).isFile()) {
-            contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll,
-                    new SeparatorMenuItem(), miSaveAs,
-                    new SeparatorMenuItem(), miSelectInTree);
+            contextMenu.getItems().addAll(miClose, miCloseOthers, miCloseAll, new SeparatorMenuItem(), miSaveAs, new SeparatorMenuItem(), miSelectInTree);
             if (!data.isMindMap()) {
                 contextMenu.getItems().add(miOpenInSystem);
             }
@@ -355,12 +357,12 @@ public class FileTabView extends BaseView {
         Editable editor = tabEditorMap.get(selectedTab);
         if (editor != null) {
             if (editor instanceof BasePreviewEditor previewEditor) {
-                MenuItem miChangeSplitterOrientation = new MenuItem("Change Splitter Orientation");
-                Menu mViewMode = new Menu("View Mode");
+                MenuItem miChangeSplitterOrientation = new MenuItem(I18nHelper.getInstance().get("filetab.menu.change.splitter"));
+                Menu mViewMode = new Menu(I18nHelper.getInstance().get("filetab.menu.view.mode"));
                 ToggleGroup toggleGroup = new ToggleGroup();
-                RadioMenuItem miTextOnly = new RadioMenuItem("Text Only", FontIconManager.getIns().getIcon(IconKey.CODE));
-                RadioMenuItem miPreviewOnly = new RadioMenuItem("Preview Only", FontIconManager.getIns().getIcon(IconKey.PREVIEW));
-                RadioMenuItem miBoth = new RadioMenuItem("Both");
+                RadioMenuItem miTextOnly = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.text.only"), FontIconManager.getIns().getIcon(IconKey.CODE));
+                RadioMenuItem miPreviewOnly = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.preview.only"), FontIconManager.getIns().getIcon(IconKey.PREVIEW));
+                RadioMenuItem miBoth = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.both"));
                 miBoth.setSelected(true);
                 miTextOnly.setToggleGroup(toggleGroup);
                 miPreviewOnly.setToggleGroup(toggleGroup);
@@ -391,11 +393,13 @@ public class FileTabView extends BaseView {
                         bpe.changeViewMode(Editable.ViewMode.BOTH);
                     }
                 });
-                previewEditor.orientationObjectProperty().addListener((observable, oldValue, newValue) -> {
-                    Orientation orientation = previewEditor.getOrientation();
-                    Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
-                    miChangeSplitterOrientation.setGraphic(icon);
-                });
+                previewEditor.orientationObjectProperty()
+                        .addListener((observable, oldValue, newValue) -> {
+                            Orientation orientation = previewEditor.getOrientation();
+                            Text icon =
+                                    orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
+                            miChangeSplitterOrientation.setGraphic(icon);
+                        });
                 Orientation orientation = previewEditor.getOrientation();
                 Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
                 miChangeSplitterOrientation.setGraphic(icon);
@@ -403,7 +407,7 @@ public class FileTabView extends BaseView {
             }
 
             if (editor instanceof MarkdownEditor mde) {
-                CheckMenuItem miAutoScroll = new CheckMenuItem("Auto Scroll");
+                CheckMenuItem miAutoScroll = new CheckMenuItem(I18nHelper.getInstance().get("filetab.menu.auto.scroll"));
                 miAutoScroll.setSelected(true);
                 miAutoScroll.setOnAction(actionEvent -> {
                     mde.setIsAutoScroll(miAutoScroll.isSelected());
@@ -411,7 +415,7 @@ public class FileTabView extends BaseView {
                 contextMenu.getItems().add(miAutoScroll);
             }
             else if (editor instanceof PlantUmlEditor pue) {
-                CheckMenuItem miAutoSwitch = new CheckMenuItem("Auto Switch");
+                CheckMenuItem miAutoSwitch = new CheckMenuItem(I18nHelper.getInstance().get("plantuml.menu.auto.switch"));
                 miAutoSwitch.setSelected(true);
                 miAutoSwitch.setOnAction(actionEvent -> {
                     pue.setAutoSwitch(miAutoSwitch.isSelected());
@@ -440,8 +444,12 @@ public class FileTabView extends BaseView {
         File origFile = fileData.getFile();
         String extension = FilenameUtils.getExtension(origFile.getName());
         FileChooser.ExtensionFilter extensionFilter = DialogFileFilters.getExtensionFilter(extension);
-        File saveAsFile = DialogFactory.openSaveFileDialog(this.getScene().getWindow(), origFile.getParentFile(),
-                "%sCopy.%s".formatted(FilenameUtils.getBaseName(origFile.getName()), extension), extensionFilter);
+        File saveAsFile = DialogFactory.openSaveFileDialog(
+                this.getScene().getWindow(),
+                origFile.getParentFile(),
+                "%sCopy.%s".formatted(FilenameUtils.getBaseName(origFile.getName()), extension),
+                extensionFilter
+        );
         if (saveAsFile == null) {
             log.debug("No file selected to save");
         }
@@ -628,7 +636,7 @@ public class FileTabView extends BaseView {
         Tab tab = openedFileMap.get(fileData);
         if (tab != null && this.saveEditorFile(fileData)) {
             Editable editor = tabEditorMap.get(tab);
-            if (editor != null) editor.dispose();// editor may not be loaded
+            if (editor != null) editor.dispose(); // editor may not be loaded
             Tab nextTab = TabManager.getIns().previousTabFrom(tab);
             if (nextTab != null) {
                 log.debug("Activate tab: %s".formatted(nextTab.getText()));
@@ -676,9 +684,12 @@ public class FileTabView extends BaseView {
         openedFileMap.remove(fileData);
         tabEditorMap.remove(tab);
         EventBus.getIns().unsubscribeFileLoaded(fileData);
-        EventBus.getIns().notifyOpenedFileChange(tabPane.getTabs().stream()
-                .filter(tab1 -> tab1.getUserData() instanceof NodeData && ((NodeData) tab1.getUserData()).isFile())
-                .map(tb -> ((NodeData) tb.getUserData()).getFile()).collect(Collectors.toList()));
+        EventBus.getIns().notifyOpenedFileChange(
+                tabPane.getTabs().stream()
+                        .filter(tab1 -> tab1.getUserData() instanceof NodeData && ((NodeData) tab1.getUserData()).isFile())
+                        .map(tb -> ((NodeData) tb.getUserData()).getFile())
+                        .collect(Collectors.toList())
+        );
         EventBus.getIns().notifyMenuStateChange(CLOSE_TAB, getCurrentTab() != null);
         EventBus.getIns().notifyMenuStateChange(SAVE_AS, getCurrentTab() != null);
 //        EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.PRINT, getCurrentTab() != null);
@@ -692,7 +703,10 @@ public class FileTabView extends BaseView {
      * @since 1.9
      */
     public void closeAllTabsExcept(Tab ignoredTab) {
-        List<Tab> otherTabs = tabPane.getTabs().stream().filter(tab -> tab != ignoredTab).toList();
+        List<Tab> otherTabs = tabPane
+                .getTabs().stream()
+                .filter(tab -> tab != ignoredTab)
+                .toList();
         // disable closing tabs to avoid them to be loaded (in lazy mode).
         for (Tab otherTab : otherTabs) {
             otherTab.setDisable(true);
@@ -745,11 +759,16 @@ public class FileTabView extends BaseView {
             return true; // also close non-editor tab
         }
         if (editor.isChanged()) {
-            Boolean needSave = new ConfirmDialogBuilder().title("Confirm unsaved file")
+            Boolean needSave = new ConfirmDialogBuilder()
+                    .title("Confirm unsaved file")
                     .content("You are closing an unsaved file, do you want to save it? " + fileData.getName())
-                    .positive("Save").asDefault().no().cancel().showAndWait();
+                    .positive("Save")
+                    .asDefault()
+                    .no()
+                    .cancel()
+                    .showAndWait();
             if (needSave == null) {
-                return false;// cancel closing file
+                return false; // cancel closing file
             }
             if (needSave) {
                 try {
@@ -772,12 +791,14 @@ public class FileTabView extends BaseView {
     }
 
     public List<File> getAllOpenedFiles() {
-        return tabPane.getTabs().stream().map(tab -> {
-            if (tab.getUserData() instanceof NodeData nd) {
-                return nd.getFile();
-            }
-            return null;
-        }).filter(file -> file != null && file.isFile()).toList();
+        return tabPane.getTabs().stream()
+                .map(tab -> {
+                    if (tab.getUserData() instanceof NodeData nd) {
+                        return nd.getFile();
+                    }
+                    return null;
+                }).filter(file -> file != null && file.isFile())
+                .toList();
     }
 
     private String makeTabNameForFile(String fileName, boolean changed) {

@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.manipulate;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -20,8 +20,8 @@ public class TopicColorExtension extends BasePopupMenuItemExtension {
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode topic) {
         MenuItem result = new MenuItem(
                 context.getSelectedTopics() != null && context.getSelectedTopics().size() > 0
-                        ? I18n.getIns().getString("MindMapPanel.menu.miColorsForSelected") :
-                        I18n.getIns().getString("MindMapPanel.menu.miColorsForTopic"), FontIconManager.getIns().getIcon(IconKey.EDIT_COLORS));
+                        ? I18nHelper.getInstance().get("mindmap.menu.colors.for.selected") :
+                        I18nHelper.getInstance().get("mindmap.menu.colors.for.topic"), FontIconManager.getIns().getIcon(IconKey.EDIT_COLORS));
 
         result.setOnAction(e -> context.processExtensionActivation(TopicColorExtension.this, topic));
         return result;

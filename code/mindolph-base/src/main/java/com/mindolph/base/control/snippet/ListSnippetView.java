@@ -9,6 +9,12 @@ import com.mindolph.core.AppManager;
 import com.mindolph.core.model.Snippet;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
+import com.mindolph.mfx.i18n.I18nHelper;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -23,10 +29,6 @@ import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.TextUtils;
-
-import java.util.Collections;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * View for snippets that contains a ListView.
@@ -44,10 +46,10 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final ListView<Snippet> listView;
 
-    private final MenuItem miNew = new MenuItem("New Snippet", FontIconManager.getIns().getIcon(IconKey.PLUS));
-    private final MenuItem miEdit = new MenuItem("Edit Snippet", FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
-    private final MenuItem miClone = new MenuItem("Clone Snippet", FontIconManager.getIns().getIcon(IconKey.CLONE));
-    private final MenuItem miRemove = new MenuItem("Remove Snippet", FontIconManager.getIns().getIcon(IconKey.DELETE));
+    private final MenuItem miNew = new MenuItem(I18nHelper.getInstance().get("snippet.menu.new"), FontIconManager.getIns().getIcon(IconKey.PLUS));
+    private final MenuItem miEdit = new MenuItem(I18nHelper.getInstance().get("snippet.menu.edit"), FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+    private final MenuItem miClone = new MenuItem(I18nHelper.getInstance().get("snippet.menu.clone"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+    private final MenuItem miRemove = new MenuItem(I18nHelper.getInstance().get("snippet.menu.remove"), FontIconManager.getIns().getIcon(IconKey.DELETE));
 
     // event to SnippetView after snippet changes
     private final EventSource<Snippet> snippetChanged = new EventSource<>();
@@ -191,5 +193,4 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
     public void setEditable(boolean editable) {
         this.editableProperty.set(editable);
     }
-
 }

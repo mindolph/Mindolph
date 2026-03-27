@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.process;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -24,7 +24,7 @@ public class EditTextExtension extends BaseTopicExtension {
 
     @Override
     protected String getName(ExtensionContext context, TopicNode activeTopic) {
-        return I18n.getIns().getString("MindMapPanel.menu.miEditText");
+        return I18nHelper.getInstance().get("mindmap.menu.edit.text");
     }
 
     @Override

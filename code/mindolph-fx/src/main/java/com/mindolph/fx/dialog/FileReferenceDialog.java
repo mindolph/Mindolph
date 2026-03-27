@@ -4,21 +4,23 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.control.FileTreeView;
 import com.mindolph.fx.control.FileTreeView.FileTreeViewData;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+
+import java.io.File;
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Related operations:
@@ -46,11 +48,12 @@ public class FileReferenceDialog extends BaseDialogController<Boolean> {
     private List<File> foundFiles;
 
     public FileReferenceDialog(SearchParams searchParams, List<File> foundFiles) {
+        I18nHelper i18n = I18nHelper.getInstance();
         this.searchParams = searchParams;
         this.foundFiles = foundFiles;
         dialog = new CustomDialogBuilder<Boolean>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("File References")
+                .title(i18n.get("dialog.file.reference", "File Reference"))
                 .fxmlUri("dialog/file_reference_dialog.fxml")
                 .buttons(ButtonType.YES, ButtonType.NO)
                 .icon(ButtonType.YES, FontIconManager.getIns().getIcon(IconKey.YES))
@@ -60,7 +63,7 @@ public class FileReferenceDialog extends BaseDialogController<Boolean> {
                 .controller(this)
                 .build();
 
-        lblMsg.setText("File or folder '%s' is referenced by other file(s), are you sure to proceed?".formatted(searchParams.getKeywords()));
+        lblMsg.setText(i18n.get("file.reference.dialog.msg", searchParams.getKeywords()));
 
         rootItem = new TreeItem<>();
         rootItem.setExpanded(true);

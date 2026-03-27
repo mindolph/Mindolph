@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import com.mindolph.fx.control.FileFilterButtonGroup?>
 <?import com.mindolph.fx.control.FileTreeView?>
 <?import javafx.geometry.Insets?>
@@ -23,7 +22,7 @@
                 <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
             </padding>
             <VBox fx:id="vbKeywords" prefWidth="300"/>
-            <Button fx:id="btnSearch" mnemonicParsing="false" text="Search"/>
+            <Button fx:id="btnSearch" mnemonicParsing="false" text="%search.result.button"/>
             <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
                 <HBox.margin>
                     <Insets/>

@@ -8,14 +8,14 @@
          xmlns:fx="http://javafx.com/fxml/1">
 
     <VBox>
-        <PreferenceItem name="Output language:" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="%prefs.ai.output.language" labelMinWidth="180" labelPrefWidth="180">
             <ChoiceBox fx:id="cbLanguages" prefWidth="240.0"/>
         </PreferenceItem>
-        <PreferenceItem name="Time out(second):" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="%prefs.ai.timeout" labelMinWidth="180" labelPrefWidth="180">
             <Spinner fx:id="spTimeOut" min="1" max="300" editable="true" prefWidth="80"/>
         </PreferenceItem>
         <Separator prefWidth="200.0"/>
-        <PreferenceItem name="Vector store:" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="%prefs.ai.vector.store" labelMinWidth="180" labelPrefWidth="180">
             <VBox spacing="8">
                 <ChoiceBox fx:id="cbVectorStoreProvider" prefWidth="240.0">
                 </ChoiceBox>
@@ -30,17 +30,17 @@
                     <TextField fx:id="tfUsername" promptText="user name" prefWidth="140" disable="true"/>
                     <PasswordField fx:id="tfPassword" promptText="password" prefWidth="140" disable="true"/>
                 </HBox>
-                <Button fx:id="btnTestConnection" text="Test Connection" onAction="#onTestConnection"/>
+                <Button fx:id="btnTestConnection" text="%prefs.ai.test.connection" onAction="#onTestConnection"/>
             </VBox>
         </PreferenceItem>
         <Separator prefWidth="200.0"/>
-        <PreferenceItem name="Default Model for generate:" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="%prefs.ai.default.model.generate" labelMinWidth="180" labelPrefWidth="180">
             <MChoiceBox fx:id="cbProviderGenerate" prefWidth="140.0">
             </MChoiceBox>
             <MChoiceBox fx:id="cbModelGenerate" prefWidth="180.0">
             </MChoiceBox>
         </PreferenceItem>
-        <PreferenceItem name="Default Model for summarize:" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="%prefs.ai.default.model.summarize" labelMinWidth="180" labelPrefWidth="180">
             <MChoiceBox fx:id="cbProviderSummarize" prefWidth="140.0">
             </MChoiceBox>
             <MChoiceBox fx:id="cbModelSummarize" prefWidth="180.0">

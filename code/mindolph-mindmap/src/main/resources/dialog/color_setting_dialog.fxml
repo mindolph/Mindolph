@@ -1,39 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
-
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <VBox layoutX="100.0" layoutY="39.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <HBox>
-         <Label fx:id="lblBorderColor" alignment="CENTER" prefWidth="160.0" text="Border Color">
-            <padding>
-               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
-            </padding>
-         </Label>
-         <ColorPicker fx:id="cpBorderColor" prefWidth="160.0"/>
-      </HBox>
-      <HBox>
-         <Label fx:id="lblFillColor" alignment="CENTER" prefWidth="160.0" text="Fill Color">
-            <padding>
-               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
-            </padding>
-         </Label>
-         <ColorPicker fx:id="cpFillColor" prefWidth="160.0"/>
-      </HBox>
-      <HBox>
-         <Label fx:id="lblTextColor" alignment="CENTER" prefWidth="160.0" text="Text Color">
-            <padding>
-               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
-            </padding>
-         </Label>
-         <ColorPicker fx:id="cpTextColor" prefWidth="160.0"/>
-      </HBox>
-   </VBox>
+    <VBox layoutX="100.0" layoutY="39.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox>
+            <Label fx:id="lblBorderColor" alignment="CENTER" prefWidth="160.0" text="%mindmap.dialog.color.border">
+                <padding>
+                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                </padding>
+            </Label>
+            <ColorPicker fx:id="cpBorderColor" prefWidth="160.0"/>
+        </HBox>
+        <HBox>
+            <Label fx:id="lblFillColor" alignment="CENTER" prefWidth="160.0" text="%mindmap.dialog.color.fill">
+                <padding>
+                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                </padding>
+            </Label>
+            <ColorPicker fx:id="cpFillColor" prefWidth="160.0"/>
+        </HBox>
+        <HBox>
+            <Label fx:id="lblTextColor" alignment="CENTER" prefWidth="160.0" text="%mindmap.dialog.color.text">
+                <padding>
+                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                </padding>
+            </Label>
+            <ColorPicker fx:id="cpTextColor" prefWidth="160.0"/>
+        </HBox>
+    </VBox>
 </AnchorPane>

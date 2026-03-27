@@ -19,6 +19,7 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.control.WorkspaceSelector;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.fx.view.FileSelectView;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
@@ -431,16 +432,17 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void createNewDataset(String defaultNewName) {
+        I18nHelper i18n = I18nHelper.getInstance();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Create new dataset")
+                .title(i18n.get("prefs.ai.dataset.create", "Create new dataset"))
                 .content("Input dataset name")
                 .text(defaultNewName)
                 .width(400)
                 .build();
         dialog.showAndWait().ifPresent(datasetName -> {
             if (cbDataset.getItems().stream().anyMatch(p -> p.getValue().getName().equals(datasetName))) {
-                DialogFactory.warnDialog("Dataset names %s already exists".formatted(datasetName));
+                DialogFactory.warnDialog(i18n.get("msg.dataset.exists", datasetName));
                 this.createNewDataset(datasetName);
                 return;
             }
@@ -456,6 +458,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void embedCurrentDataset() {
+        I18nHelper i18n = I18nHelper.getInstance();
         btnEmbedding.setDisable(true); // MUST disable it.
         if (stateMachine.isState(EmbeddingState.EMBEDDING)) {
             // try to stop the embedding.
@@ -463,18 +466,18 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             return;
         }
         if (currentDatasetMeta == null) {
-            DialogFactory.warnDialog("Please select a dataset first.");
+            DialogFactory.warnDialog(i18n.get("msg.dataset.select.warning", "Please select a dataset first."));
             btnEmbedding.setDisable(false);
             return;
         }
         if (!currentDatasetMeta.isAllSetup()) {
-            DialogFactory.warnDialog("Setup dataset first");
+            DialogFactory.warnDialog(i18n.get("msg.dataset.setup.warning", "Setup dataset first"));
             btnEmbedding.setDisable(false);
             return;
         }
         currentDatasetMeta.setStop(false);
         if (CollectionUtils.isEmpty(currentDatasetMeta.getFiles())) {
-            DialogFactory.warnDialog("Please select files to do embedding");
+            DialogFactory.warnDialog(i18n.get("msg.dataset.embed.warning", "Please select files to do embedding"));
             btnEmbedding.setDisable(false);
             return;
         }
@@ -509,7 +512,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void clearEmbeddingForSelectedDataset() {
-        if (DialogFactory.yesNoConfirmDialog("Clear Embedding", "Are you sure to clear embeddings for dataset '%s'?".formatted(currentDatasetMeta.getName()))) {
+        I18nHelper i18n = I18nHelper.getInstance();
+        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.clear.embedding"), i18n.get("msg.dataset.clear.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
             CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(this.currentDatasetMeta, false);
@@ -532,7 +536,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         if (currentDatasetMeta == null) {
             return;
         }
-        if (DialogFactory.yesNoConfirmDialog("Remove Dataset", "Are you sure to remove the dataset '%s'? All the embedded data of this dataset will be deleted as well.".formatted(currentDatasetMeta.getName()))) {
+        I18nHelper i18n = I18nHelper.getInstance();
+        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.remove.confirm"), i18n.get("msg.dataset.remove.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
             CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(currentDatasetMeta, true);

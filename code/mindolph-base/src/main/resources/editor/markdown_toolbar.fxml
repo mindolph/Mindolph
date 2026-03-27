@@ -1,54 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
-<fx:root type="ScrollPane" fx:id="buttons" styleClass="no-scroll-bar" minHeight="28"
-         xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-         stylesheets="@../style/base/icon_button.css">
+<fx:root
+        type="ScrollPane"
+        fx:id="buttons"
+        styleClass="no-scroll-bar"
+        minHeight="28"
+        xmlns="http://javafx.com/javafx/18"
+        xmlns:fx="http://javafx.com/fxml/1"
+        stylesheets="@../style/base/icon_button.css"
+>
     <HBox alignment="BASELINE_LEFT">
         <Button fx:id="btnHeader1" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 1"/>
+                <Tooltip text="%markdown.toolbar.header1"/>
             </tooltip>
         </Button>
         <Button fx:id="btnHeader2" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 2"/>
+                <Tooltip text="%markdown.toolbar.header2"/>
             </tooltip>
         </Button>
         <Button fx:id="btnHeader3" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 3"/>
+                <Tooltip text="%markdown.toolbar.header3"/>
             </tooltip>
         </Button>
         <Button fx:id="btnHeader4" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 4"/>
+                <Tooltip text="%markdown.toolbar.header4"/>
             </tooltip>
         </Button>
         <Button fx:id="btnHeader5" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 5"/>
+                <Tooltip text="%markdown.toolbar.header5"/>
             </tooltip>
         </Button>
         <Button fx:id="btnHeader6" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Header 6"/>
+                <Tooltip text="%markdown.toolbar.header6"/>
             </tooltip>
         </Button>
         <Button fx:id="btnBold" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Bold text"/>
+                <Tooltip text="%markdown.toolbar.bold"/>
             </tooltip>
         </Button>
         <Button fx:id="btnItalic" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Italic text"/>
+                <Tooltip text="%markdown.toolbar.italic"/>
             </tooltip>
         </Button>
         <Button fx:id="btnBullet" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Bullet List"/>
+                <Tooltip text="%markdown.toolbar.bullet.list"/>
             </tooltip>
         </Button>
         <!--                        <Button fx:id="btnNumber" mnemonicParsing="false" styleClass="icon_button">-->
@@ -57,37 +62,37 @@
         <!--                           </tooltip></Button>-->
         <Button fx:id="btnLink" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Link"/>
+                <Tooltip text="%markdown.toolbar.link"/>
             </tooltip>
         </Button>
         <Button fx:id="btnImage" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Image"/>
+                <Tooltip text="%markdown.toolbar.image"/>
             </tooltip>
         </Button>
         <Button fx:id="btnQuote" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Quote"/>
+                <Tooltip text="%markdown.toolbar.quote"/>
             </tooltip>
         </Button>
         <Button fx:id="btnCode" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Code"/>
+                <Tooltip text="%markdown.toolbar.code"/>
             </tooltip>
         </Button>
         <Button fx:id="btnTable" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Table"/>
+                <Tooltip text="%markdown.toolbar.table"/>
             </tooltip>
         </Button>
         <Button fx:id="btnSeparator" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Horizontal Rule"/>
+                <Tooltip text="%markdown.toolbar.horizontal.rule"/>
             </tooltip>
         </Button>
         <Button fx:id="btnComment" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Markdown Comment"/>
+                <Tooltip text="%markdown.toolbar.comment"/>
             </tooltip>
         </Button>
     </HBox>

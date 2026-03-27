@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -9,7 +8,8 @@
             <padding>
                 <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
             </padding>
-            <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Find:" HBox.hgrow="ALWAYS"/>
+            <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="%search.bar.find"
+                   HBox.hgrow="ALWAYS"/>
 
             <VBox fx:id="vbKeywords" prefWidth="250.0"/>
 
@@ -25,7 +25,7 @@
                     <Insets/>
                 </HBox.margin>
                 <tooltip>
-                    <Tooltip text="Case sensitivity"/>
+                    <Tooltip text="%search.match.case"/>
                 </tooltip>
             </ToggleButton>
         </HBox>
@@ -35,9 +35,11 @@
         <padding>
             <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
         </padding>
-        <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="Replace:"/>
+        <Label focusTraversable="false" prefHeight="24.0" prefWidth="60.0" text="%search.bar.replace"/>
         <VBox fx:id="vbReplacement" prefWidth="250.0"/>
-        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplace" text="Replace"/>
-        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplaceAll" text="Replace All"/>
+        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplace"
+                text="%search.bar.button.replace"/>
+        <Button focusTraversable="false" mnemonicParsing="false" onAction="#onReplaceAll"
+                text="%search.bar.button.replace.all"/>
     </HBox>
 </fx:root>

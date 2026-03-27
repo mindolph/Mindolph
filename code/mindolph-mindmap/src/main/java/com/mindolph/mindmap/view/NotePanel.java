@@ -9,6 +9,7 @@ import com.mindolph.base.util.CssUtils;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BrowseUtils;
 import com.mindolph.mindmap.dialog.NoteToolbar;
 import com.mindolph.mindmap.dialog.PasswordSettingDialog;
@@ -63,6 +64,7 @@ public class NotePanel extends BaseView {
     private VBox vbox;
 
     private final SearchBar searchBar = new SearchBar();
+    private final NoteToolbar noteToolbar;
 
     private NoteEditorData data;
 
@@ -71,7 +73,7 @@ public class NotePanel extends BaseView {
     public NotePanel(TopicNode topic, NoteEditorData noteEditorData) {
         super("/view/note_panel.fxml");
         this.data = noteEditorData;
-        NoteToolbar noteToolbar = new NoteToolbar(textArea);
+        this.noteToolbar = new NoteToolbar(textArea);
 
         Button btnSave = noteToolbar.getBtnSave();
         btnSave.setOnAction(event -> {
@@ -119,7 +121,7 @@ public class NotePanel extends BaseView {
                 }
             }
             else {
-                if (DialogFactory.okCancelConfirmDialog("Reset password", "Do you really want reset password for the note?")) {
+                if (DialogFactory.okCancelConfirmDialog(I18nHelper.getInstance().get("mindmap.password.reset.title"), I18nHelper.getInstance().get("mindmap.password.reset.confirm"))) {
                     this.data.setPassword(null);
                     this.data.setHint(null);
                 }
@@ -167,13 +169,13 @@ public class NotePanel extends BaseView {
         });
         noteToolbar.getBtnExport().setOnAction(actionEvent -> {
             File file = DialogFactory.openSaveFileDialog(NotePanel.this.getScene().getWindow(), SystemUtils.getUserHome()
-                    , null, new FileChooser.ExtensionFilter("Text File(*.txt)", "*.txt"));
+                    , null, new FileChooser.ExtensionFilter(I18nHelper.getInstance().get("mindmap.note.export.filter"), "*.txt"));
             if (file != null && !file.exists()) {
                 try {
                     FileUtils.writeStringToFile(file, textArea.getText(), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
-                    DialogFactory.errDialog("Failed to export note to a txt file");
+                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.note.export.error"));
                 }
             }
         });

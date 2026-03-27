@@ -5,6 +5,7 @@ import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.Strings;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.*;
@@ -39,6 +41,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
     private CheckBox ckbShowHiddenFiles;
     @FXML
     private CheckBox ckbHideExtension;
+    @FXML
+    private ComboBox<String> cbLanguage;
     //    @FXML
 //    private CheckBox ckbAutoBackupLastEdit;
     @FXML
@@ -73,6 +77,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        I18nHelper i18n = I18nHelper.getInstance();
         super.bindPreference(cbConfirmBeforeQuitting.selectedProperty(), PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         super.bindPreference(cbOpenLastFiles.selectedProperty(), PrefConstants.GENERAL_OPEN_LAST_FILES, true);
 //        super.bindPreference(ckbEnableAutoCreateProjectFolder.selectedProperty(), PrefConstants.GENERAL_KNOWLEDGE_FOLDER_GENERATION_ALLOWED, false);
@@ -81,6 +86,26 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(cbAutoSelectAfterFileOpened.selectedProperty(), GENERAL_AUTO_SELECT_AFTER_FILE_OPENED, true);
 
         super.bindPreference(ckbHideExtension.selectedProperty(), PrefConstants.GENERAL_HIDE_EXTENSION, false);
+
+        // language selection
+        cbLanguage.getItems().addAll(i18n.get("prefs.general.language.en", "English"), i18n.get("prefs.general.language.zh_CN", "简体中文"));
+        String currentLang = fxPreferences.getPreference(PrefConstants.GENERAL_LANGUAGE, "en");
+        if ("zh_CN".equals(currentLang)) {
+            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.zh_CN", "简体中文"));
+        }
+        else {
+            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.en", "English"));
+        }
+        cbLanguage.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (i18n.get("prefs.general.language.en", "English").equals(newValue)) {
+                fxPreferences.savePreference(PrefConstants.GENERAL_LANGUAGE, "en");
+                I18nHelper.getInstance().setLocale(Locale.ENGLISH);
+            }
+            else if (i18n.get("prefs.general.language.zh_CN", "简体中文").equals(newValue)) {
+                fxPreferences.savePreference(PrefConstants.GENERAL_LANGUAGE, "zh_CN");
+                I18nHelper.getInstance().setLocale(Locale.SIMPLIFIED_CHINESE);
+            }
+        });
 
         // global font size
         int globalFontSize = fxPreferences.getPreference(PrefConstants.GENERAL_GLOBAL_FONT_SIZE, 0);
@@ -96,8 +121,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         // global icon size
         super.bindSpinner(spGlobalIconSize, 16, 24, 4, GENERAL_GLOBAL_ICON_SIZE, 16);
 
-        TableColumn<OrientationItem, Object> colEditor = new TableColumn<>("Editor");
-        TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>("Orientation");
+        TableColumn<OrientationItem, Object> colEditor = new TableColumn<>(i18n.get("prefs.orientation.editor", "Editor"));
+        TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>(i18n.get("prefs.orientation.orientation", "Orientation"));
         colEditor.setSortable(false);
         colEditor.setEditable(false);
         colEditor.setPrefWidth(120);
@@ -160,7 +185,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 aBoolean -> aBoolean ? "SOCKS" : null, // null indicate that no event emits since it will cause exception.
                 str -> Strings.CS.equals(str, "SOCKS"));
         super.bindPreference(tfProxyHost.textProperty(), PrefConstants.GENERAL_PROXY_HOST, "");
-        super.bindSpinner(spProxyPort,1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);
+        super.bindSpinner(spProxyPort, 1, 65535, 1, PrefConstants.GENERAL_PROXY_PORT, 1);
         super.bindPreference(tfProxyUsername.textProperty(), PrefConstants.GENERAL_PROXY_USERNAME, "");
         super.bindPreference(pfProxyPassword.textProperty(), PrefConstants.GENERAL_PROXY_PASSWORD, "");
     }

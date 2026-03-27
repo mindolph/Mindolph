@@ -2,7 +2,7 @@ package com.mindolph.mindmap.util;
 
 import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.ColorType;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.paint.Color;
@@ -80,7 +80,7 @@ public final class MindMapUtils {
             return null;
         }
         if (file.isDirectory()) {
-            DialogFactory.errDialog(String.format(I18n.getIns().getString("AbstractMindMapExporter.msgErrorItIsDirectory"), file.getAbsolutePath()));
+            DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.export.error.is.directory", file.getAbsolutePath()));
             return null;
         }
         if (file.isFile()) {
@@ -89,7 +89,7 @@ public final class MindMapUtils {
 //            }
         }
         else if (!file.getName().toLowerCase(Locale.ENGLISH).endsWith(dottedExtension.toLowerCase(Locale.ENGLISH))) {
-            if (DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("AbstractMindMapExporter.msgTitleAddExtension"), String.format(I18n.getIns().getString("AbstractMindMapExporter.msgAddExtensionQuestion"), dottedExtension))) {
+            if (DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.export.no.extension"), I18nHelper.getInstance().get("mindmap.export.add.extension", dottedExtension))) {
                 return new File(file.getParent(), file.getName() + dottedExtension);
             }
         }
@@ -103,29 +103,29 @@ public final class MindMapUtils {
                 ExtraFile efile = (ExtraFile) extra;
                 String line = efile.getAsURI().getParameters().getProperty("line", null);
                 if (line != null && !line.equals("0")) {
-                    builder.append("Open File\n%s\nline:%s".formatted(efile.getAsString(), line));
+                    builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.open.file.line", efile.getAsString(), line));
                 }
                 else {
-                    builder.append("Open File\n").append(efile.getAsString());
+                    builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.open.file")).append(efile.getAsString());
                 }
             }
             break;
             case TOPIC: {
                 TopicNode topic = model.findTopicForLink((ExtraTopic) extra);
-                builder.append("Jump to topic\n").append(ModelUtils.makeShortTextVersion(topic == null ? "----" : topic.getText(), 32));
+                builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.jump.to.topic")).append(ModelUtils.makeShortTextVersion(topic == null ? "----" : topic.getText(), 32));
             }
             break;
             case LINK: {
-                builder.append("Open link\n").append(ModelUtils.makeShortTextVersion(extra.getAsString(), 48));
+                builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.open.link")).append(ModelUtils.makeShortTextVersion(extra.getAsString(), 48));
             }
             break;
             case NOTE: {
                 ExtraNote extraNote = (ExtraNote) extra;
                 if (extraNote.isEncrypted()) {
-                    builder.append("Open text content\n").append("#######");
+                    builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.open.text")).append("#######");
                 }
                 else {
-                    builder.append("Open text content\n").append(ModelUtils.makeShortTextVersion(extra.getAsString(), 64));
+                    builder.append(I18nHelper.getInstance().get("mindmap.msg.tooltip.open.text")).append(ModelUtils.makeShortTextVersion(extra.getAsString(), 64));
                 }
             }
             break;

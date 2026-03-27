@@ -12,6 +12,7 @@ import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.dialog.CustomModelDialog;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -198,7 +199,8 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         }
         else {
             if (currentProviderMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
-                DialogFactory.warnDialog("Model %s already exists".formatted(newCustomModel.getName()));
+                I18nHelper i18n = I18nHelper.getInstance();
+                DialogFactory.warnDialog(i18n.get("msg.model.exists", newCustomModel.getName()));
                 this.createNewCustomModel(newCustomModel);
                 return; // already exists
             }
@@ -212,7 +214,8 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     private void removeSelectedCustomModel() {
         ModelMeta modelMeta = lvModels.getSelectionModel().getSelectedItem();
         if (modelMeta != null && modelMeta.isCustom()) {
-            boolean sure = DialogFactory.okCancelConfirmDialog("Are you sure to delete the custom model '%s'".formatted(modelMeta.getName()));
+            I18nHelper i18n = I18nHelper.getInstance();
+            boolean sure = DialogFactory.okCancelConfirmDialog(i18n.get("msg.model.delete.confirm", modelMeta.getName()));
             if (sure) {
                 currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
                 super.saveChanges();

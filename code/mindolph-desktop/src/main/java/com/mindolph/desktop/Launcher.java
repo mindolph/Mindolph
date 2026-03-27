@@ -1,8 +1,8 @@
 package com.mindolph.desktop;
 
-import com.mindolph.core.Env;
 import com.mindolph.base.plugin.ContextHelperPlugin;
 import com.mindolph.base.plugin.PluginManager;
+import com.mindolph.core.Env;
 import com.mindolph.fx.Main;
 import com.mindolph.fx.data.DataMigrator;
 import com.mindolph.genai.GenAiPlugin;

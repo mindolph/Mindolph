@@ -8,6 +8,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
@@ -40,42 +41,41 @@ public class MindMapBranchExporter extends BaseExportExtension {
     @Override
     public void doExport(ExtensionContext context, List<Boolean> options, String exportFileName, OutputStream out) throws IOException {
         if (context.getSelectedTopics().isEmpty()) {
-            DialogFactory.infoDialog("Select topic(s) to export");
+            DialogFactory.infoDialog(I18nHelper.getInstance().get("mindmap.export.select.topics"));
             return;
         }
 
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Text of the root node in new mind map").text("").width(400)
+                .title(I18nHelper.getInstance().get("mindmap.export.branch.mindmap.root.title")).text("").width(400)
                 .build();
         dialog.setGraphic(FontIconManager.getIns().getIconForFile(SupportFileTypes.TYPE_MIND_MAP, 32));
         Optional<String> input = dialog.showAndWait();
         if (input.isPresent() && StringUtils.isNotBlank(input.get())) {
             MindMap<TopicNode> newModel = new MindMap<>();
 
-            ExtraNote extraNote = new ExtraNote("This file is exported from %s at %s".formatted(exportFileName, TimeUtils.createTimestamp()));
+            ExtraNote extraNote = new ExtraNote(I18nHelper.getInstance().get("mindmap.export.branch.mindmap.note", exportFileName, TimeUtils.createTimestamp()));
             TopicNode rootNode = new TopicNode(newModel, null, input.get(), extraNote);
             newModel.setRoot(rootNode);
             List<TopicNode> topics = TopicUtils.removeDuplicatedAndDescendants(context.getSelectedTopics());
             if (topics.isEmpty()) {
-                DialogFactory.infoDialog("Select topic(s) to export");
+                DialogFactory.infoDialog(I18nHelper.getInstance().get("mindmap.export.select.topics"));
                 return;
             }
             topics.forEach(topicNode -> newModel.getRoot().addChild(topicNode));
 
             File fileToSave = DialogUtils.selectFileToSaveForFileFilter(
-                    "Export to mind map",
+                    I18nHelper.getInstance().get("mindmap.export.branch.mindmap.title"),
                     null,
                     ".mmd",
-                    "Mind Map files (*.mmd)",
+                    I18nHelper.getInstance().get("mindmap.export.branch.mindmap.filter"),
                     exportFileName);
 
             try (Writer w = new StringWriter()) {
                 String newFileData = newModel.write(w).toString();
                 FileUtils.writeStringToFile(fileToSave, newFileData, StandardCharsets.UTF_8);
 //                EventBus.getIns().notifyNewFileToWorkspace(fileToSave);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 log.error(ex.getLocalizedMessage(), ex);
             }
         }
@@ -94,12 +94,12 @@ public class MindMapBranchExporter extends BaseExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode activeTopic) {
-        return "Mind Map";
+        return I18nHelper.getInstance().get("mindmap.export.branch.mindmap.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode activeTopic) {
-        return "Export branches as mind map file";
+        return I18nHelper.getInstance().get("mindmap.export.branch.mindmap.reference");
     }
 
     @Override

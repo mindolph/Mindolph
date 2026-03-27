@@ -15,6 +15,7 @@ import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;
@@ -183,7 +184,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     }
                 } catch (Exception ex) {
                     log.error("Error during visual attribute processing", ex);
-                    DialogFactory.errDialog("Error occurred");
+                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.error.visual.attribute"));
                 }
             }
         }
@@ -244,9 +245,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, MANIPULATE, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, EXTRAS, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
 
-        Menu importMenu = new Menu(I18n.getIns().getString("MMDImporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
-        Menu exportMenu = new Menu(I18n.getIns().getString("MMDExporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
-        Menu exportBranchesMenu = new Menu("Export branches as", FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu importMenu = new Menu(I18nHelper.getInstance().get("mindmap.import.submenu"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
+        Menu exportMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu exportBranchesMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.branches.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
 
         putAllItemsAsSection(ctxMenu, importMenu, findPopupMenuItems(this, IMPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         if (isModelNotEmpty) {
@@ -280,7 +281,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             String textToBeSummarized = null;
                             List<TopicNode> selectedTopics = getSelectedTopics();
                             boolean hasChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
-                            if (hasChildren && DialogFactory.yesNoConfirmDialog("Do you want all the sub topics of selected topics to be summarized either?")) {
+                            if (hasChildren && DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.ai.summarize.subtopics.confirm"))) {
                                 textToBeSummarized = selectedTopics.stream().map(selectedTopic -> {
                                     StringBuilder buf = new StringBuilder();
                                     getModel().traverseTopicTree(selectedTopic, t -> {
@@ -524,8 +525,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         if (note == null) {
             // create new
             editingNoteData = new NoteEditorData();
-            NoteDialog noteDialog = new NoteDialog(topic,
-                    String.format("Create Note of '%s'", topic.getText()), editingNoteData);
+            NoteDialog noteDialog = new NoteDialog(topic, I18nHelper.getInstance().get("mindmap.note.create.title", topic.getText()), editingNoteData);
             noteDialog.show(callbackForNoteEdit);
         }
         else {
@@ -559,8 +559,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             else {
                 editingNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, null);
             }
-            new NoteDialog(topic,
-                    String.format("Edit note of '%s'", topic.getText()), editingNoteData)
+            new NoteDialog(topic, I18nHelper.getInstance().get("mindmap.note.edit.title", topic.getText()), editingNoteData)
                     .show(callbackForNoteEdit);
         }
         // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.

@@ -1,42 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.scene.control.*?>
 <?import org.controlsfx.control.SegmentedButton?>
 <fx:root type="SegmentedButton" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
     <buttons>
-        <ToggleButton fx:id="tbAll" mnemonicParsing="false" selected="true" text="all" userData="all">
+        <ToggleButton fx:id="tbAll" mnemonicParsing="false" selected="true" text="%file.filter.all" userData="all">
             <tooltip>
-                <Tooltip text="All matched folders and files"/>
+                <Tooltip text="%file.filter.all" />
             </tooltip>
         </ToggleButton>
         <ToggleButton fx:id="tbFolder" mnemonicParsing="false" userData="folder" minHeight="26">
             <tooltip>
-                <Tooltip text="Folder"/>
+                <Tooltip text="%file.filter.folder" />
             </tooltip>
         </ToggleButton>
         <ToggleButton mnemonicParsing="false" userData="mmd" minHeight="26">
             <tooltip>
-                <Tooltip text="Mind map(.mmd)"/>
+                <Tooltip text="%file.filter.mindmap" />
             </tooltip>
         </ToggleButton>
         <ToggleButton mnemonicParsing="false" userData="puml" minHeight="26">
             <tooltip>
-                <Tooltip text="Plant UML(.puml)"/>
+                <Tooltip text="%file.filter.plantuml" />
             </tooltip>
         </ToggleButton>
         <ToggleButton mnemonicParsing="false" userData="md" minHeight="26">
             <tooltip>
-                <Tooltip text="Markdown(.md)"/>
+                <Tooltip text="%file.filter.markdown" />
             </tooltip>
         </ToggleButton>
         <ToggleButton mnemonicParsing="false" userData="csv" minHeight="26">
             <tooltip>
-                <Tooltip text="CSV(.csv)"/>
+                <Tooltip text="%file.filter.csv" />
             </tooltip>
         </ToggleButton>
         <ToggleButton mnemonicParsing="false" userData="txt" minHeight="26">
             <tooltip>
-                <Tooltip text="Plain text(.txt)"/>
+                <Tooltip text="%file.filter.plain.text" />
             </tooltip>
         </ToggleButton>
     </buttons>

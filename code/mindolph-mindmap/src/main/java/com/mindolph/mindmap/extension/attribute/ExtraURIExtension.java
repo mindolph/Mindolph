@@ -19,7 +19,7 @@ package com.mindolph.mindmap.extension.attribute;
 import com.igormaznitsa.mindmap.model.Extra;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -44,8 +44,8 @@ public class ExtraURIExtension extends BaseTopicExtension {
         if (activeTopic == null) {
             return StringUtils.EMPTY;
         }
-        return activeTopic.getExtras().containsKey(Extra.ExtraType.LINK) ? I18n.getIns().getString("MindMapPanel.menu.miEditURI") :
-                I18n.getIns().getString("MindMapPanel.menu.miAddURI");
+        return activeTopic.getExtras().containsKey(Extra.ExtraType.LINK) ? I18nHelper.getInstance().get("mindmap.menu.edit.uri") :
+                I18nHelper.getInstance().get("mindmap.menu.add.uri");
     }
 
     @Override

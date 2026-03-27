@@ -1,5 +1,6 @@
 package com.mindolph.base.control;
 
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -48,12 +49,19 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         FXMLLoader fxmlloader = new FXMLLoader(resource);
         fxmlloader.setRoot(this);
         fxmlloader.setController(this);
+        // Set resource bundle for i18n
+        try {
+            ResourceBundle resourceBundle = I18nHelper.getInstance().getResourceBundle();
+            fxmlloader.setResources(resourceBundle);
+        } catch (Exception e) {
+            log.warn("Failed to load resource bundle for " + fxmlResourceUri, e);
+        }
 
         try {
             fxmlloader.load();
         } catch (Exception exception) {
-            log.error("Failed to load fxml file" + fxmlResourceUri, exception);
-            throw new RuntimeException("Failed to load preference pane " + this.getClass());
+            log.error("Failed to load fxml file: " + fxmlResourceUri, exception);
+            throw new RuntimeException("Failed to load preference pane: " + this.getClass());
         }
     }
 
@@ -82,7 +90,8 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * @param <T>
      */
     protected <T> void bindPreference(Property<T> property, String prefName, T defaultValue) {
-        bondPrefMap.put(prefName, new Pref<T, T>(property, defaultValue, t -> t)); // the converter just return what it is for there is no need to convert.
+        // the converter just return what it is for there is no need to convert.
+        bondPrefMap.put(prefName, new Pref<T, T>(property, defaultValue, t -> t));
         // save to preference when value changes.
         property.addListener((ChangeListener<Object>) (observable, oldValue, newValue) -> {
             if (isLoaded) {
@@ -202,7 +211,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         this.isLoaded = true;
     }
 
-
     /**
      * Reset all preferences to default and save, UI of this panel also will be refreshed.
      */
@@ -219,6 +227,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
     }
 
     // @since 1.7
+    @SuppressWarnings("unchecked")
     private <T> T genericValue(Object defaultValue) {
         if (defaultValue instanceof Boolean) {
             return (T) defaultValue;
@@ -240,7 +249,6 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         }
     }
 
-
     private <T> T loadPreferenceValueByDefault(String prefName, Property<?> property, Object defaultValue) {
         if (defaultValue == null) {
             Object preference = fxPreferences.getPreference(prefName);
@@ -250,20 +258,16 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
             return null;
         }
         if (defaultValue instanceof Boolean) {
-            Boolean preference = fxPreferences.getPreference(prefName, Boolean.class, (Boolean) defaultValue);
-            return (T) preference;
+            return (T) fxPreferences.getPreference(prefName, Boolean.class, (Boolean) defaultValue);
         }
         else if (defaultValue instanceof Integer) {
-            Integer preference = fxPreferences.getPreference(prefName, Integer.class, (Integer) defaultValue);
-            return (T) preference;
+            return (T) fxPreferences.getPreference(prefName, Integer.class, (Integer) defaultValue);
         }
         else if (defaultValue instanceof String) {
-            String preference = fxPreferences.getPreference(prefName, String.class, (String) defaultValue);
-            return (T) preference;
+            return (T) fxPreferences.getPreference(prefName, String.class, (String) defaultValue);
         }
         else if (defaultValue instanceof Double) {
-            Double preference = fxPreferences.getPreference(prefName, Double.class, (Double) defaultValue);
-            return (T) preference;
+            return (T) fxPreferences.getPreference(prefName, Double.class, (Double) defaultValue);
         }
         else if (defaultValue instanceof List) {
             List<String> preferenceList = (List<String>) fxPreferences.getPreference(prefName, (List) defaultValue);
