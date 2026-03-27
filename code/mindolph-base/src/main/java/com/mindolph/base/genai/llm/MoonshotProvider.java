@@ -35,7 +35,7 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "stream": false,
                 "temperature": %s,
-                "top_p": 0.8
+                "top_p": 0.95
             }
             """; // max token can not post to api
 
@@ -48,7 +48,7 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "stream": true,
                 "temperature": %s,
-                "top_p": 0.8,
+                "top_p": 0.95,
                 "include_usage": true
             }
             """;// max token can not post to api
@@ -60,6 +60,7 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
     /**
      * Moonshot's streaming api is different from OpenAI api that the 'usage' field is returned with the 'choices' node instead of the root node.
      * (the error message is also different)
+     *
      * @param input
      * @param outputParams
      * @param consumer
@@ -88,10 +89,15 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 consumer.accept(new StreamPartial(StringUtils.EMPTY, outputTokens.get(), true, false));
             }
             else {
-                String result = choices
-                        .get("delta").getAsJsonObject()
-                        .get("content").getAsString();
-                consumer.accept(new StreamPartial(result, false, false));
+                JsonObject delta = choices.get("delta").getAsJsonObject();
+                if (delta.has("content")) {
+                    String result = delta.get("content").getAsString();
+                    consumer.accept(new StreamPartial(result, false, false));
+                }
+                else {
+                    // TODO
+                    log.trace("Ignore reasoning data for now");
+                }
             }
         }, (msg, throwable) -> {
 //            log.error(msg, throwable);

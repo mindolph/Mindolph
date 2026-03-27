@@ -196,7 +196,7 @@ public interface GenAiConstants {
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
             // Moonshot https://platform.moonshot.cn/docs/introduction#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", 262144));
+            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", 262144, 1.0f));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking-turbo", 262144));

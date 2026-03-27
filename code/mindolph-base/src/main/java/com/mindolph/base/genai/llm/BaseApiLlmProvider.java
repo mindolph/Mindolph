@@ -70,15 +70,15 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
 
     /**
      * @param template     the template should contain only user input, temperature and max output tokens variables.
-     * @param model
+     * @param modelName
      * @param input
      * @param input
      * @param outputParams
      * @return
      */
-    protected RequestBody createRequestBody(String template, String model, Input input, OutputParams outputParams) {
+    protected RequestBody createRequestBody(String template, String modelName, Input input, OutputParams outputParams) {
         log.debug("Input: %s".formatted(input));
-        log.debug("Create request body by model: %s, temperature: %s, %s".formatted(model, input.temperature(), outputParams));
+        log.debug("Create request body by model: %s, temperature: %s, %s".formatted(modelName, input.temperature(), outputParams));
         // compose user prompt first
 //        String encoded = new String(JsonStringEncoder.getInstance().encodeAsUTF8(input.text()));
         String encoded = input.text();
@@ -91,13 +91,15 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         formattedPrompt = StringEscapeUtils.escapeJson(formattedPrompt);
         log.debug(formattedPrompt);
 
+        // some models like kimi-k2.5 forces tht temperature.
+        float temperature = super.modelMeta.getTemperature() != null ? super.modelMeta.getTemperature() : input.temperature();
         // format the JSON params
         String jsonParams;
-        if (StringUtils.isNotBlank(model)) {
-            jsonParams = template.formatted(model, formattedPrompt.trim(), input.temperature(), input.maxTokens());
+        if (StringUtils.isNotBlank(modelName)) {
+            jsonParams = template.formatted(modelName, formattedPrompt.trim(), temperature, input.maxTokens());
         }
         else {
-            jsonParams = template.formatted(formattedPrompt.trim(), input.temperature(), input.maxTokens());
+            jsonParams = template.formatted(formattedPrompt.trim(), temperature, input.maxTokens());
         }
         log.debug(jsonParams);
         RequestBody requestBody = RequestBody.create(jsonParams, JSON);

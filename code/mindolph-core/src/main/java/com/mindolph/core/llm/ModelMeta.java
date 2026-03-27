@@ -28,6 +28,11 @@ public final class ModelMeta {
      */
     private int type = 1;
     /**
+     * Some models (like kimi-k2.5) forces the temperature.
+     * If provides, use this temperature.
+     */
+    private Float temperature;
+    /**
      * default is false, Internal is running on the local, and the model must be downloaded from downloadUrl.
      */
     private boolean isInternal = false;
@@ -65,6 +70,13 @@ public final class ModelMeta {
 
     public ModelMeta(String name, int maxTokens) {
         this(name, maxTokens, false);
+    }
+
+    // for kimi-k2.5
+    public ModelMeta(String name, int maxTokens, Float temperature) {
+        this.name = name;
+        this.maxTokens = maxTokens;
+        this.temperature = temperature;
     }
 
     /**
@@ -139,6 +151,14 @@ public final class ModelMeta {
 
     public void setDimension(int dimension) {
         this.dimension = dimension;
+    }
+
+    public Float getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(Float temperature) {
+        this.temperature = temperature;
     }
 
     public int getType() {
