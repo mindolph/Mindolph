@@ -190,7 +190,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     private void createNewCustomModel(ModelMeta modelMeta) {
         CustomModelDialog dialog = new CustomModelDialog(modelMeta);
         ModelMeta newCustomModel = dialog.showAndWait();
-        if (newCustomModel == null|| newCustomModel == modelMeta) return;
+        if (newCustomModel == null || newCustomModel == modelMeta) return;
         // check existence before saving.
         log.debug("new custom model %s to provider %s".formatted(newCustomModel, currentProviderName));
         if (currentProviderMeta.customModels() == null) {
