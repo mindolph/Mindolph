@@ -180,6 +180,9 @@
                     <PreferenceItem name="%prefs.mindmap.topic.attr.dbl.click">
                         <CheckBox fx:id="ckbTopicAttrByDblClicking"/>
                     </PreferenceItem>
+                    <PreferenceItem name="%prefs.mindmap.topic.attr.panel.open.default">
+                        <CheckBox fx:id="ckbOpenAttributePanelByDefault"/>
+                    </PreferenceItem>
                     <PreferenceItem name="%prefs.mindmap.undo.redo.max">
                         <Spinner fx:id="spnUndRedo" editable="true"/>
                     </PreferenceItem>

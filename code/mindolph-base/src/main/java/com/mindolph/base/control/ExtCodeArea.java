@@ -1,10 +1,5 @@
 package com.mindolph.base.control;
 
-import static com.mindolph.base.constant.ShortcutConstants.*;
-import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
-import static javafx.scene.input.KeyCode.TAB;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
@@ -13,12 +8,6 @@ import com.mindolph.core.constant.TextConstants;
 import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
-
-import java.time.Duration;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
@@ -40,6 +29,16 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import static com.mindolph.base.constant.ShortcutConstants.*;
+import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHAR;
+import static javafx.scene.input.KeyCode.TAB;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Supports:
@@ -84,6 +83,28 @@ public class ExtCodeArea extends CodeArea {
         // the event should be emitted when the text is changed in the editor
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
+
+        disableUndo.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+                ));
+            }
+        });
+        disableRedo.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+                ));
+            }
+        });
+        disablePaste.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+                ));
+            }
+        });
 
     }
 
@@ -230,21 +251,21 @@ public class ExtCodeArea extends CodeArea {
         // which causes the paste action be performed twice.
         // so disable (by consuming key event)  PASTE shortcut on macOS to avoid conflict with global.
         if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+//            ));
         }
         // disable undo to avoid conflict with global shortcut
         if (disableUndo.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+//            ));
         }
         // disable redo to avoid conflict with global shortcut
         if (disableRedo.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+//            ));
         }
         Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
     }

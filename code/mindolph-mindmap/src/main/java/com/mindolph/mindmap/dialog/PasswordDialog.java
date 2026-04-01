@@ -25,7 +25,7 @@ public class PasswordDialog extends BaseDialogController<PasswordData> {
     public PasswordDialog(PasswordData origin) {
         dialog = new CustomDialogBuilder<PasswordData>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(I18nHelper.getInstance().get("mindmap.password.set.title"))
+                .title(I18nHelper.getInstance().get("mindmap.password.enter.title"))
                 .fxmlUri("dialog/password_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

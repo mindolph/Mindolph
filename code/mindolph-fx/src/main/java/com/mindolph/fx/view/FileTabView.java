@@ -1,7 +1,5 @@
 package com.mindolph.fx.view;
 
-import static com.mindolph.base.event.EventBus.MenuTag.*;
-
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -32,12 +30,6 @@ import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.mindmap.MindMapEditor;
 import com.mindolph.plantuml.PlantUmlEditor;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -53,7 +45,16 @@ import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mindolph.base.event.EventBus.MenuTag.*;
+
 /**
+ * The view to manage opened file tabs and editors.
+ *
  * @author mindolph.com@gmail.com
  */
 public class FileTabView extends BaseView {
@@ -232,13 +233,13 @@ public class FileTabView extends BaseView {
         contentView.withEditor(editor);
         tab.setContent(contentView);
         this.tabEditorMap.put(tab, editor);
-        this.createContextMenuForTab(tab);
+//        this.createContextMenuForTab(tab);
 
         // do something to init the editor when the file is loaded and update menu states.
         EventBus.getIns().subscribeFileLoaded(fileData, nodeData -> {
             Platform.runLater(() -> {
                 if (fileData.getAnchor() == null) {
-                    // force to the begging of the code area (to solve the problem that the caret jumps to the end when using the Generate feature)
+                    // force to the beginning of the code area (to solve the problem that the caret jumps to the end when using the Generate feature)
                     fileData.setAnchor(new TextAnchor(TextLocation.DEFAULT));
                 }
                 editor.locate(fileData.getAnchor());
@@ -267,6 +268,10 @@ public class FileTabView extends BaseView {
                 }
 
                 this.updateMenuState(editor);
+
+                // since one of the menu item depends on the editor state,
+                // so create context menu after the editor is loaded to make sure the menu item state is correct.
+                this.createContextMenuForTab(tab);
             });
         });
 
@@ -421,6 +426,14 @@ public class FileTabView extends BaseView {
                     pue.setAutoSwitch(miAutoSwitch.isSelected());
                 });
                 contextMenu.getItems().add(miAutoSwitch);
+            }
+            else if (editor instanceof MindMapEditor mme) {
+                CheckMenuItem miShowAttributePanel = new CheckMenuItem(I18nHelper.getInstance().get("mindmap.menu.show.attribute.panel"));
+                miShowAttributePanel.setSelected(!mme.isAttributePanelHidden());
+                miShowAttributePanel.setOnAction(actionEvent -> {
+                    mme.toggleAttributePanel();
+                });
+                contextMenu.getItems().add(miShowAttributePanel);
             }
         }
 
@@ -760,9 +773,9 @@ public class FileTabView extends BaseView {
         }
         if (editor.isChanged()) {
             Boolean needSave = new ConfirmDialogBuilder()
-                    .title("Confirm unsaved file")
-                    .content("You are closing an unsaved file, do you want to save it? " + fileData.getName())
-                    .positive("Save")
+                    .title(I18nHelper.getInstance().get("msg.confirm.unsaved.file.title"))
+                    .content(I18nHelper.getInstance().get("msg.confirm.unsaved.file", fileData.getName()))
+                    .positive(I18nHelper.getInstance().get("button.save"))
                     .asDefault()
                     .no()
                     .cancel()

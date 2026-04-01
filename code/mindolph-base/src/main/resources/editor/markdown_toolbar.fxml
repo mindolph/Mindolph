@@ -10,7 +10,7 @@
         xmlns:fx="http://javafx.com/fxml/1"
         stylesheets="@../style/base/icon_button.css"
 >
-    <HBox alignment="BASELINE_LEFT">
+    <HBox fx:id="hBox" alignment="BASELINE_LEFT">
         <Button fx:id="btnHeader1" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
                 <Tooltip text="%markdown.toolbar.header1"/>

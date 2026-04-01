@@ -6,8 +6,10 @@ import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.i18n.I18nHelper;
+import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.model.NoteEditorData;
 import com.mindolph.mindmap.model.TopicNode;
+import com.mindolph.mindmap.view.AttributesMode;
 import com.mindolph.mindmap.view.NotePanel;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
@@ -23,16 +25,21 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
 
     private static final Logger log = LoggerFactory.getLogger(NoteDialog.class);
 
-    private NotePanel notePanel;
+    private final NotePanel notePanel;
+
+    private final TopicNode topic;
 
     /**
+     * @param topic
      * @param title
      * @param noteEditorData
      */
     public NoteDialog(TopicNode topic, String title, NoteEditorData noteEditorData) {
         super(noteEditorData);
+        this.topic = topic;
         this.result = new NoteEditorData(origin.getText(), origin.isEncrypted(), origin.getPassword(), origin.getHint());
-        this.notePanel = new NotePanel(topic, this.result);
+        this.notePanel = new NotePanel();
+        this.notePanel.setMode(AttributesMode.MODE_DIALOG);
 
         CustomDialogBuilder<NoteEditorData> builder = new CustomDialogBuilder<NoteEditorData>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
@@ -44,19 +51,34 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 .defaultValue(origin)
                 .resizable(true)
                 .controller(NoteDialog.this);
-        this.notePanel.setOnSaveListener(data -> {
+        MindmapEvents.subscribeNoteSaveEvent(this.topic, data -> {
             origin = data; // reset the origin for closing dialog negatively.
             builder.defaultValue(data); // reset the default value for builder to convert the dialog result when any button (or ESC) clicks.
         });
         dialog = builder.build();
-        dialog.setOnShown(event -> {
-            Platform.runLater(() -> notePanel.requestInputFocus());
+        dialog.setOnShowing(event -> {
+            if (!this.notePanel.loadData(topic, this.result, true)) {
+                // Closing dialog here causes flashing. TODO
+                Platform.runLater(() -> dialog.close());
+            }
+            else {
+                notePanel.requestInputFocus();
+            }
         });
         dialog.setOnCloseRequest(dialogEvent -> {
-            if (!super.confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.note.changed"))) {
-                dialogEvent.consume(); // keep the dialog open
+            this.notePanel.handleNoteData();
+            if (this.origin.hasChanges(this.result)) {
+                if (!super.confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.note.changed"))) {
+                    dialogEvent.consume(); // keep the dialog open
+                }
             }
         });
     }
 
+    @Override
+    public void onPositive(NoteEditorData result) {
+        // export data to mindmap when click the positive button.
+        this.notePanel.exportNoteData();
+        MindmapEvents.notifyAttributesChangeEvent(this.topic);
+    }
 }

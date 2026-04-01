@@ -6,7 +6,7 @@
          xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
          stylesheets="@/style/base/icon_button.css"
          styleClass="no-scroll-bar">
-    <HBox alignment="BASELINE_LEFT">
+    <HBox fx:id="hBox" alignment="BASELINE_LEFT">
 
         <ToggleButton fx:id="tbtnSearch" mnemonicParsing="false" styleClass="icon-toggle">
             <tooltip>

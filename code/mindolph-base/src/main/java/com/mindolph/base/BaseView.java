@@ -21,6 +21,8 @@ public abstract class BaseView extends AnchorPane {
      */
     protected BooleanProperty active = new SimpleBooleanProperty(true);
 
+    protected boolean loading = false;
+
     public BaseView(String fxmlUri) {
         this(fxmlUri, true);
     }

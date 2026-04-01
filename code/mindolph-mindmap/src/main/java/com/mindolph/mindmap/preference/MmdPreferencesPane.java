@@ -121,6 +121,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     @FXML
     private CheckBox ckbCopyParentColorToNewChild;
     @FXML
+    private CheckBox ckbOpenAttributePanelByDefault;
+    @FXML
     private CheckBox ckbSmartTextPaste;
     @FXML
     private CheckBox ckbTopicAttrByDblClicking;
@@ -135,7 +137,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
 
     // listeners for binding
-    private Map<ReadOnlyProperty, ChangeListener> listeners = new HashMap<>();
+    private final Map<ReadOnlyProperty<?>, ChangeListener<?>> listeners = new HashMap<>();
 
     // any preference has been changed.
     private boolean changed = false;
@@ -322,6 +324,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         this.bindPreference(ckbSmartTextPaste.selectedProperty(), mindMapConfig::setSmartTextPaste);
 //        super.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), PrefConstants.PREF_KEY_MMD_OPEN_TOPIC_ATTR_BY_DBL_CLICKING, true);
         this.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), mindMapConfig::setTopicAttrByDblClicking);
+        this.bindPreference(ckbOpenAttributePanelByDefault.selectedProperty(), mindMapConfig::setOpenAttributePanelByDefault);
     }
 
     /**
@@ -403,6 +406,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         spnSelectionGap.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 8f, theme.getSelectLineGap()));
         ckbSmartTextPaste.setSelected(mindMapConfig.isSmartTextPaste());
         ckbTopicAttrByDblClicking.setSelected(mindMapConfig.isTopicAttrByDblClicking());
+        ckbOpenAttributePanelByDefault.setSelected(mindMapConfig.isOpenAttributePanelByDefault());
         spnUndRedo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 50, mindMapConfig.getMaxRedoUndo()));
     }
 

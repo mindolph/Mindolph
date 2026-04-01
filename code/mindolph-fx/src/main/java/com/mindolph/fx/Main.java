@@ -24,6 +24,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -33,10 +34,13 @@ import org.swiftboot.util.pref.StringConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
+import static com.mindolph.mfx.i18n.I18nHelper.LANG_PREF_KEY;
 import static com.mindolph.plantuml.constant.ShortcutConstants.KEY_PUML_COMMENT;
 import static javafx.scene.input.KeyCombination.ALT_DOWN;
 import static javafx.scene.input.KeyCombination.META_DOWN;
@@ -99,16 +103,26 @@ public class Main extends Application implements WindowRestoreListener {
         // so Thread.currentThread() is the FX application thread:
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
             log.error("Mindolph Error: ", throwable);
-            MessageTextBlockDialog dialog = new MessageTextBlockDialog(this.window, "Unexpected Exception",
-                    "An unexpected exception occurred",
+            MessageTextBlockDialog dialog = new MessageTextBlockDialog(this.window, I18nHelper.getInstance().get("app.exception.dialog.title"),
+                    I18nHelper.getInstance().get("app.exception.dialog.description"),
                     ExceptionUtils.getStackTrace(throwable),
                     false);
             dialog.showAndWait();
         });
 
         // add resource files from all modules.
-        I18nHelper.getInstance().addBundle("i18n/mindmap-panel");
-        I18nHelper.getInstance().addBundle("i18n/messages");
+        String languageCode = FxPreferences.getInstance().getPreference(LANG_PREF_KEY, "");
+        Locale locale = Locale.getDefault();
+        if (StringUtils.isNotBlank(languageCode)) {
+            if ("zh_CN".equals(languageCode)) {
+                locale = Locale.SIMPLIFIED_CHINESE;
+            } else if ("en".equals(languageCode)) {
+                locale = Locale.ENGLISH;
+            }
+        }
+        I18nHelper.getInstance().setLocale(locale);
+        List<String> bundleNames = List.of("i18n/mindmap-panel", "i18n/mindolph-base", "i18n/messages");
+        I18nHelper.getInstance().addBundles(bundleNames);
         I18nHelper.getInstance().reloadAllBundles();
 
         // register restore listeners to restore scene.
