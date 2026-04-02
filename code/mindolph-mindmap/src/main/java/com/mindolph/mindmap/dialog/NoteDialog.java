@@ -52,7 +52,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
                 .resizable(true)
                 .controller(NoteDialog.this);
         MindmapEvents.subscribeNoteSaveEvent(this.topic, data -> {
-            origin = data; // reset the origin for closing dialog negatively.
+            this.origin = data; // reset the origin for closing dialog negatively.
             builder.defaultValue(data); // reset the default value for builder to convert the dialog result when any button (or ESC) clicks.
         });
         dialog = builder.build();

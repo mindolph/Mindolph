@@ -5,5 +5,5 @@ package com.mindolph.mindmap.view;
  */
 public interface AttributesMode {
     String MODE_DIALOG="DIALOG";
-    String MODE_SIDE_PANE ="SIDE_PANE";
+    String MODE_PANEL ="PANEL";
 }

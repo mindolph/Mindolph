@@ -42,10 +42,6 @@ public class AttributesView extends BaseView {
 
     private MindMapView mindMapView; // used to notify the mind map view to save file when note changes.
 
-    private NoteEditorData originNoteData; // used to compare whether the note has changed when closing the view.
-
-    private boolean hasChanges;
-
     // used to control the merging of editing history.
     private final EventSource<String> inputtingSource = new EventSource<>();
 
@@ -92,25 +88,33 @@ public class AttributesView extends BaseView {
         super.loading = true;
         this.topic = topic;
         MindmapEvents.subscribeAttributesChangeEvent(topic, v -> {
-            this.hasChanges = true;
             inputtingSource.push(null);
         });
-        // only one listener exists even call this subscribe method multiple times.
-        MindmapEvents.subscribeNoteSaveEvent(topic, newNoteData -> {
-            log.debug(newNoteData.getText());
-            log.debug("Notify mmd editor to save file");
-            MindmapEvents.notifyMmdSaveEvent(this.mindMapView);
-            mindMapView.updateStatusBarForTopic(topic);
+        // listen for the original topic changes.
+        MindmapEvents.subscribeTopicChangeEvent(topic, t -> {
+            this.topic = topic;
+            this.loadAttributes();
         });
+        // no need since it's unable to save note directly in the panel for now.
+        // only one listener exists even call this subscribe method multiple times.
+//        MindmapEvents.subscribeNoteSaveEvent(topic, newNoteData -> {
+//            log.debug(newNoteData.getText());
+//            log.debug("Notify mmd editor to save file");
+//            MindmapEvents.notifyMmdSaveEvent(this.mindMapView);
+//            mindMapView.updateStatusBarForTopic(topic);
+//        });
+        this.loadAttributes();
+        super.loading = false;
+    }
+
+    private void loadAttributes() {
         if (topic != null) {
             // NOTE attribute
             ExtraNote note = (ExtraNote) topic.getExtras().get(Extra.ExtraType.NOTE);
             if (note != null) {
-                this.originNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, note.getHint());
                 notePanel.loadData(topic, new NoteEditorData(note.getValue(), note.isEncrypted(), null, note.getHint()), false);
             }
             else {
-                this.originNoteData = new NoteEditorData("", false, null, null);
                 notePanel.loadData(topic, new NoteEditorData("", false, null, null), false);
             }
             // URL attribute
@@ -139,13 +143,11 @@ public class AttributesView extends BaseView {
 //            }
         }
         else {
-            this.originNoteData = null;
             notePanel.loadData(null, null, false);
             tfUrl.setDisable(true);
             tfUrl.setText(StringUtils.EMPTY);
 //            tfFile.setText(StringUtils.EMPTY);
         }
-        super.loading = false;
     }
 
 

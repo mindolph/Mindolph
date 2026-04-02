@@ -92,8 +92,8 @@ public class NotePanel extends BaseView {
         // and the note toolbar and editor toolbar will be initialized after the mode is set.
         this.mode.addListener((observable, oldValue, newValue) -> {
             log.debug("Mode is changed to %s".formatted(newValue));
-            this.noteToolbar.setup(AttributesMode.MODE_SIDE_PANE.equals(this.mode.get()));
-            if (AttributesMode.MODE_SIDE_PANE.equals(this.mode.get())) {
+            this.noteToolbar.setup(AttributesMode.MODE_PANEL.equals(this.mode.get()));
+            if (AttributesMode.MODE_PANEL.equals(this.mode.get())) {
                 // avoid conflict with global undo/redo in mind map when note editor is used as side pane, so disable the undo/redo feature in this case.
                 textArea.setDisableUndo(true);
                 textArea.setDisableRedo(true);
@@ -115,6 +115,9 @@ public class NotePanel extends BaseView {
                 noteToolbar.getBtnSave().setDisable(true);
                 MindmapEvents.notifyNoteSaveEvent(this.topic, this.data);
                 textArea.getUndoManager().forgetHistory();
+            }
+            else {
+                log.warn("Failed to handle note data");
             }
         });
 
@@ -226,13 +229,21 @@ public class NotePanel extends BaseView {
                     btnSave.setDisable(oldValue.equals(newValue));
                     if (!Strings.CS.equals(oldValue, newValue)) {
                         if (AttributesMode.MODE_DIALOG.equals(this.mode.get())) {
+                            log.debug("Do editing history in text area.");
                             this.textArea.doHistory();
                         }
-                        else if (AttributesMode.MODE_SIDE_PANE.equals(this.mode.get())) {
+                        else if (AttributesMode.MODE_PANEL.equals(this.mode.get())) {
+                            log.debug("Do editing history in external component.");
                             this.handleNoteData();
                             this.exportNoteData();
                             MindmapEvents.notifyAttributesChangeEvent(this.topic);
                         }
+                        else {
+                            log.warn("Unknown panel mode: %s".formatted(this.mode.get()));
+                        }
+                    }
+                    else {
+                        log.debug("No need to handle text change event");
                     }
                 }
         );
@@ -365,14 +376,18 @@ public class NotePanel extends BaseView {
         log.debug("Selected note is protected, disable the editor and show the hint if exists");
         tbtnProtect.setSelected(true);
         textArea.setDisable(true);
-        textArea.setText("[Password protected note]");
+        textArea.setText("**[Encrypted note]**");
     }
 
+    /**
+     * Handle data from UI to the note data object, but not to the topic.
+     * @return
+     */
     public boolean handleNoteData() {
         if (this.data != null) {
             // clear the note attribute
             if (StringUtils.isEmpty(this.textArea.getText())) {
-                topic.removeExtra(Extra.ExtraType.NOTE);
+                this.data.setText(this.textArea.getText());
             }
             else {
                 // save the note attribute if changed.
@@ -403,8 +418,16 @@ public class NotePanel extends BaseView {
         }
     }
 
+    /**
+     * Export note data to the topic.
+     */
     public void exportNoteData() {
-        this.topic.setExtra(new ExtraNote(this.data.getText(), this.data.isEncrypted(), this.data.getHint()));
+        if (StringUtils.isBlank(this.data.getText())){
+            topic.removeExtra(Extra.ExtraType.NOTE);
+        }
+        else {
+            this.topic.setExtra(new ExtraNote(this.data.getText(), this.data.isEncrypted(), this.data.getHint()));
+        }
     }
 
     public void requestInputFocus() {

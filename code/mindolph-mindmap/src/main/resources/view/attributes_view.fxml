@@ -7,7 +7,7 @@
          xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <NotePanel fx:id="notePanel" mode="SIDE_PANE" minHeight="80" VBox.vgrow="ALWAYS"/>
+        <NotePanel fx:id="notePanel" mode="PANEL" minHeight="80" VBox.vgrow="ALWAYS"/>
         <HBox spacing="12">
             <!--            <Button fx:id="btnEmoticon" />-->
             <TextField fx:id="tfUrl" promptText="URI" HBox.hgrow="ALWAYS" maxWidth="9999"/>

@@ -64,9 +64,13 @@ public class NoteToolbar extends AnchorPane {
         btnExport.setGraphic(fim.getIcon(IconKey.EXPORT));
     }
 
+    /**
+     * Setup by the mode of NotePanel.
+     * @param hideSaveUndoRedo
+     */
     public void setup(boolean hideSaveUndoRedo) {
         if (hideSaveUndoRedo) {
-            hBox.getChildren().removeAll(btnSave, btnUndo, btnRedo);
+            hBox.getChildren().removeAll(btnSave, btnUndo, btnRedo, tbtnProtect);
         }
     }
 

@@ -493,11 +493,19 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         }
         NoteDialog noteDialog = new NoteDialog(topic, title, editingNoteData);
         noteDialog.show(noteData -> {
+            // do nothing.
+        });
+        if (noteDialog.isChanged()){
+            // notify if the edited node is the selected node
+            if (getSelectedTopics().size() == 1 && getFirstSelectedTopic() == topic) {
+                log.debug("Notify that the topic has been changed.");
+                MindmapEvents.notifyTopicChangeEvent(topic);
+            }
             onMindMapModelChanged(true);
             super.updateStatusBarForTopic(topic);
-        });
-        // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.
-        MindmapEvents.unsubscribeNoteSaveEvent(topic);
+            // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.
+            MindmapEvents.unsubscribeNoteSaveEvent(topic);
+        }
     }
 
     private void editTopicLink(TopicNode topic) {
