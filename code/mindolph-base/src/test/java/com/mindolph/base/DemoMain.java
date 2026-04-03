@@ -23,7 +23,7 @@ import static com.mindolph.mfx.util.FxmlUtils.loadUriToStage;
  */
 public class DemoMain extends Application {
 
-    public static class TestLauncher {
+    public static class DemoMainLauncher {
         public static void main(String[] args) {
             launch(DemoMain.class, args);
         }

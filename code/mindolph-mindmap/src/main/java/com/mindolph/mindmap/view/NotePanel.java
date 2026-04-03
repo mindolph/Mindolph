@@ -241,6 +241,7 @@ public class NotePanel extends BaseView {
                         else {
                             log.warn("Unknown panel mode: %s".formatted(this.mode.get()));
                         }
+                        textArea.refreshAsync();
                     }
                     else {
                         log.debug("No need to handle text change event");
@@ -358,6 +359,8 @@ public class NotePanel extends BaseView {
                         }
                     }
                     else {
+                        // set the text area to avoid changes validation when closing the note dialog
+                        textArea.setText(this.data.getText());
                         // Canceled. notify to close the dialog(if it's in dialog)
                         return false;
                     }
