@@ -31,7 +31,7 @@ public class ShortcutsDialog extends BaseDialogController<Void> {
         I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.shortcuts.title", "Key Reference"))
+                .title(i18n.get("dialog.shortcuts.title"))
                 .fxmlUri("dialog/shortcuts_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))

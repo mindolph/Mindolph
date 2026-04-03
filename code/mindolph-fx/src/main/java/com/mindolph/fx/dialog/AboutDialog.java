@@ -27,7 +27,7 @@ public class AboutDialog extends BaseDialogController<Void> {
         I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.about.title", "About Mindolph"))
+                .title(i18n.get("dialog.about.title"))
                 .fxmlUri("dialog/about_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))
@@ -38,7 +38,7 @@ public class AboutDialog extends BaseDialogController<Void> {
         dialog.setTitle(
                 String.format(
                         "%s %s %s",
-                        i18n.get("dialog.about.title", "About Mindolph"),
+                        i18n.get("dialog.about.title"),
                         Env.isDevelopment ? "(Dev)" : StringUtils.EMPTY,
                         StringUtils.isNotBlank(appVersion) ? appVersion : StringUtils.EMPTY
                 )

@@ -206,8 +206,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 I18nHelper i18n = I18nHelper.getInstance();
                 Dialog<String> nameDialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
-                        .title(i18n.get("prefs.mindmap.theme.new.name", "New Theme Name"))
-                        .content(i18n.get("prefs.mindmap.theme.name.prompt", "Give a name for you own customized theme: "))
+                        .title(i18n.get("prefs.mindmap.theme.new.name"))
+                        .content(i18n.get("prefs.mindmap.theme.name.prompt"))
                         .width(480)
                         .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
                 Optional<String> optName = nameDialog.showAndWait();

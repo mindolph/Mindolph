@@ -53,7 +53,7 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
         this.searchParams = searchParams;
         dialog = new CustomDialogBuilder<SearchParams>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.usage", "File Usage"))
+                .title(i18n.get("dialog.usage"))
                 .fxmlUri("dialog/usage_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))

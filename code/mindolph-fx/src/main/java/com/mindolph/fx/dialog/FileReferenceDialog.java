@@ -53,7 +53,7 @@ public class FileReferenceDialog extends BaseDialogController<Boolean> {
         this.foundFiles = foundFiles;
         dialog = new CustomDialogBuilder<Boolean>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.file.reference", "File Reference"))
+                .title(i18n.get("dialog.file.reference"))
                 .fxmlUri("dialog/file_reference_dialog.fxml")
                 .buttons(ButtonType.YES, ButtonType.NO)
                 .icon(ButtonType.YES, FontIconManager.getIns().getIcon(IconKey.YES))

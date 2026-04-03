@@ -32,7 +32,7 @@ public class WorkspaceManagementDialog extends BaseDialogController<Void> {
         I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.workspace.management", "Manage Workspaces"))
+                .title(i18n.get("dialog.workspace.management"))
                 .fxmlUri("dialog/workspace_management_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))

@@ -49,7 +49,7 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
         Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<SearchParams>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.find.in.files", "Find in Files"))
+                .title(i18n.get("dialog.find.in.files"))
                 .fxmlUri("dialog/find_in_files_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

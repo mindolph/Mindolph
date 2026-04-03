@@ -63,9 +63,9 @@ public class PreferencesDialog extends BaseDialogController<Void> {
 
     public PreferencesDialog() {
         I18nHelper i18n = I18nHelper.getInstance();
-        String title = i18n.get("dialog.preferences.title", "Preferences");
-        String resetBtn = i18n.get("dialog.preferences.reset.default", "Reset Default");
-        String closeBtn = i18n.get("dialog.preferences.close", "Close");
+        String title = i18n.get("dialog.preferences.title");
+        String resetBtn = i18n.get("dialog.preferences.reset.default");
+        String closeBtn = i18n.get("dialog.preferences.close");
 
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
@@ -77,7 +77,7 @@ public class PreferencesDialog extends BaseDialogController<Void> {
                     dialog.close();
                 })
                 .button(new ButtonType(resetBtn, ButtonBar.ButtonData.LEFT), dialog -> {
-                    boolean confirmed = DialogFactory.okCancelConfirmDialog(i18n.get("msg.confirm.reset.preferences", "Are you sure, this operation will reset all your preferences to default"));
+                    boolean confirmed = DialogFactory.okCancelConfirmDialog(i18n.get("msg.confirm.reset.preferences"));
                     if (confirmed) {
                         generalPreferencesPane.resetToDefault();
                         fontPreferencesPane.resetToDefault();

@@ -69,7 +69,7 @@ public class GotoFileDialog extends BaseDialogController<Void> {
         Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.goto.file", "Go to file"))
+                .title(i18n.get("dialog.goto.file"))
                 .fxmlUri("dialog/goto_file_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))
