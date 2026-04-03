@@ -88,20 +88,20 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         super.bindPreference(ckbHideExtension.selectedProperty(), PrefConstants.GENERAL_HIDE_EXTENSION, false);
 
         // language selection
-        cbLanguage.getItems().addAll(i18n.get("prefs.general.language.en", "English"), i18n.get("prefs.general.language.zh_CN", "简体中文"));
+        cbLanguage.getItems().addAll(i18n.get("prefs.general.language.en"), i18n.get("prefs.general.language.zh_CN"));
         String currentLang = fxPreferences.getPreference(PrefConstants.GENERAL_LANGUAGE, "en");
         if ("zh_CN".equals(currentLang)) {
-            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.zh_CN", "简体中文"));
+            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.zh_CN"));
         }
         else {
-            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.en", "English"));
+            cbLanguage.getSelectionModel().select(i18n.get("prefs.general.language.en"));
         }
         cbLanguage.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (i18n.get("prefs.general.language.en", "English").equals(newValue)) {
+            if (i18n.get("prefs.general.language.en").equals(newValue)) {
                 fxPreferences.savePreference(PrefConstants.GENERAL_LANGUAGE, "en");
                 I18nHelper.getInstance().setLocale(Locale.ENGLISH);
             }
-            else if (i18n.get("prefs.general.language.zh_CN", "简体中文").equals(newValue)) {
+            else if (i18n.get("prefs.general.language.zh_CN").equals(newValue)) {
                 fxPreferences.savePreference(PrefConstants.GENERAL_LANGUAGE, "zh_CN");
                 I18nHelper.getInstance().setLocale(Locale.SIMPLIFIED_CHINESE);
             }
@@ -121,8 +121,8 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         // global icon size
         super.bindSpinner(spGlobalIconSize, 16, 24, 4, GENERAL_GLOBAL_ICON_SIZE, 16);
 
-        TableColumn<OrientationItem, Object> colEditor = new TableColumn<>(i18n.get("prefs.orientation.editor", "Editor"));
-        TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>(i18n.get("prefs.orientation.orientation", "Orientation"));
+        TableColumn<OrientationItem, Object> colEditor = new TableColumn<>(i18n.get("prefs.orientation.editor"));
+        TableColumn<OrientationItem, Object> colOrientation = new TableColumn<>(i18n.get("prefs.orientation.orientation"));
         colEditor.setSortable(false);
         colEditor.setEditable(false);
         colEditor.setPrefWidth(120);

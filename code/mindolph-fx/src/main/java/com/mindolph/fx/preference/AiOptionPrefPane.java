@@ -175,7 +175,7 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
                 NodeUtils.enable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
             }
             Platform.runLater(() -> {
-                DialogFactory.infoDialog(i18n.get("msg.connect.success", "Connect success!"));
+                DialogFactory.infoDialog(i18n.get("msg.connect.success"));
             });
         });
 

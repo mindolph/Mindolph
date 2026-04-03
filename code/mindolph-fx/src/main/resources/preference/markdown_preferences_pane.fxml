@@ -15,20 +15,20 @@
 <!--         <Label text="Font file path for export to PDF" minWidth="100" prefWidth="300" alignment="TOP_RIGHT"/>-->
 <!--         <Separator prefWidth="400.0"/>-->
 <!--      </HBox>-->
-      <PreferenceItem name="Font file path for exporting to PDF:" labelMinWidth="220">
+      <PreferenceItem name="%prefs.markdown.font.file.path.export" labelMinWidth="220">
          <VBox spacing="12">
             <VBox spacing="8">
-               <Label text="Sans-serif:"/>
+               <Label text="%prefs.markdown.sans.serif"/>
                <HBox spacing="4">
                   <TextField fx:id="tfSansFontFile" minWidth="200.0" prefWidth="400.0"/>
-                  <Button fx:id="btnSelectSans" mnemonicParsing="false" text="Select"/>
+                  <Button fx:id="btnSelectSans" mnemonicParsing="false" text="%prefs.markdown.select"/>
                </HBox>
             </VBox>
             <VBox spacing="8">
-               <Label text="Fixed-width:"/>
+               <Label text="%prefs.markdown.fixed.width"/>
                <HBox spacing="4">
                   <TextField fx:id="tfMonoFontFile" minWidth="200.0" prefWidth="400.0"/>
-                  <Button fx:id="btnSelectMono" mnemonicParsing="false" text="Select"/>
+                  <Button fx:id="btnSelectMono" mnemonicParsing="false" text="%prefs.markdown.select"/>
                </HBox>
             </VBox>
          </VBox>

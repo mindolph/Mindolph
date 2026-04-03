@@ -1,4 +1,4 @@
-package com.mindolph.fx.preference;
+package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -8,6 +8,7 @@ import com.mindolph.genai.GenaiUiConstants;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.ControlUtils;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ public class DatasetSelectDialog extends BaseDialogController<List<DatasetMeta>>
     public DatasetSelectDialog(List<DatasetMeta> datasets, String langCode) {
         dialog = new CustomDialogBuilder<List<DatasetMeta>>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Select datasets")
+                .title(I18nHelper.getInstance().get("dialog.datasets"))
                 .fxmlUri("dialog/datasets_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

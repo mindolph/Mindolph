@@ -100,6 +100,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     // future after starting embedding
     private CompletableFuture<Boolean> futureOfEmbedding;
 
+    private I18nHelper i18n = I18nHelper.getInstance();
 
     public AiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");
@@ -113,7 +114,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         disableAll();
                         NodeUtils.enable(cbDataset, btnAddDataset);
                         clearAll();
-                        btnEmbedding.setText("Start embedding");
+                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
                         stateMachineReady.push(null); // notify that sm is ready.
                     });
                 })
@@ -122,8 +123,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                     Platform.runLater(() -> {
                         this.enableAll();
                         this.toggleEmbeddingModel();
-                        btnEmbedding.setText("Start embedding");
-                        lblEmbeddingStatus.setText("Ready to do embedding");
+                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
+                        lblEmbeddingStatus.setText(i18n.get(""));
                         lblSelectedFiles.setDisable(false);
                         pbProgress.setVisible(false);
                         pbProgress.setProgress(0);
@@ -140,7 +141,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         fileSelectView.clearEmbeddingStatusLabels();
                         // It also can be interrupted during the preparing status.
                         NodeUtils.enable(btnEmbedding);
-                        btnEmbedding.setText("Stop preparing");
+                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop.preparing"));
                         btnClear.setDisable(true);
                     });
                 })
@@ -149,10 +150,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         Platform.runLater(() -> {
                             NodeUtils.enable(btnEmbedding);
                             if (pe.getStage() == Stage.EMBED_DATASET) {
-                                btnEmbedding.setText("Stop embedding");
+                                btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop"));
                             }
                             else if (pe.getStage() == Stage.REMOVE_DATASET) {
-                                btnEmbedding.setText("Stop removing embeddings");
+                                btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop.removing"));
                             }
                             else {
                                 log.debug("Unknown stage: %s".formatted(pe));
@@ -198,7 +199,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             enableAll();
                             this.toggleEmbeddingModel();
                             btnEmbedding.setDisable(doneEvent.getStage() == Stage.REMOVE_DATASET); // should be disabled for removing dataset because the dataset selection has been cleared
-                            btnEmbedding.setText("Start embedding");
+                            btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
                             btnClear.setDisable(doneEvent.getStage() == Stage.CLEAR_EMBEDDING);
                             lblSelectedFiles.setDisable(false);
                             lblEmbeddingStatus.setText(doneEvent.getMessage());
@@ -394,7 +395,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
             // init model provider and model selectors.
             super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-            lblSelectedFiles.setText("Synchronizing embedding state...");
+            lblSelectedFiles.setText(i18n.get("ai.dataset.embedding.synchronizing"));
             this.displaySelectedAndEmbeddedCountAsync(datasetMeta.getId(), isEmbedded -> {
                 log.debug("Is this dataset embedded: %s".formatted(isEmbedded));
                 embeddingContext.setEmbedded(isEmbedded);
@@ -435,8 +436,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         I18nHelper i18n = I18nHelper.getInstance();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("prefs.ai.dataset.create", "Create new dataset"))
-                .content("Input dataset name")
+                .title(i18n.get("prefs.ai.dataset.create"))
+                .content(i18n.get("dialog.input.dataset.name"))
                 .text(defaultNewName)
                 .width(400)
                 .build();
@@ -466,18 +467,18 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             return;
         }
         if (currentDatasetMeta == null) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.select.warning", "Please select a dataset first."));
+            DialogFactory.warnDialog(i18n.get("msg.dataset.select.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
         if (!currentDatasetMeta.isAllSetup()) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.setup.warning", "Setup dataset first"));
+            DialogFactory.warnDialog(i18n.get("msg.dataset.setup.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
         currentDatasetMeta.setStop(false);
         if (CollectionUtils.isEmpty(currentDatasetMeta.getFiles())) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.embed.warning", "Please select files to do embedding"));
+            DialogFactory.warnDialog(i18n.get("msg.dataset.embed.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
@@ -512,7 +513,6 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void clearEmbeddingForSelectedDataset() {
-        I18nHelper i18n = I18nHelper.getInstance();
         if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.clear.embedding"), i18n.get("msg.dataset.clear.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
@@ -536,8 +536,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         if (currentDatasetMeta == null) {
             return;
         }
-        I18nHelper i18n = I18nHelper.getInstance();
-        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.remove.confirm"), i18n.get("msg.dataset.remove.confirm", currentDatasetMeta.getName()))) {
+        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.remove"), i18n.get("msg.dataset.remove.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
             stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
             CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(currentDatasetMeta, true);
@@ -591,7 +590,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                     return;
                 }
                 int count = EmbeddingService.getInstance().countEmbeddedDocuments(datasetId);
-                this.safeChangeFileSelectionLabel("Selected %d files, %d have been embedded".formatted(currentDatasetMeta.size(), count));
+                this.safeChangeFileSelectionLabel(i18n.get("prefs.ai.dataset.status.embedded", currentDatasetMeta.size(), count));
                 consumer.accept(count > 0);
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e);

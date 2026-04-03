@@ -12,6 +12,7 @@ import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.fx.control.DatasetTableView;
+import com.mindolph.fx.dialog.DatasetSelectDialog;
 import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
@@ -62,6 +63,8 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
+
+    private I18nHelper i18n = I18nHelper.getInstance();
 
     public AiAgentPrefPane() {
         super("/preference/gen_ai_agent_pref_pane.fxml");
@@ -117,7 +120,7 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             if (cbAgent == null) {
                 return;
             }
-            I18nHelper i18n = I18nHelper.getInstance();
+
             if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.agent.remove.confirm", currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
@@ -185,11 +188,10 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void createNewAgent(String defaultNewName) {
-        I18nHelper i18n = I18nHelper.getInstance();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("prefs.ai.agent.create", "Create new agent"))
-                .content("Input agent name")
+                .title(i18n.get("prefs.ai.agent.create"))
+                .content(i18n.get("dialog.input.agent.name"))
                 .text(defaultNewName)
                 .width(400)
                 .build();
