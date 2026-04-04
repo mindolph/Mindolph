@@ -6,6 +6,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.editor.Editable;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.markdown.MarkdownEditor;
@@ -27,10 +28,10 @@ public class ShortcutsDialog extends BaseDialogController<Void> {
     private static final Logger log = LoggerFactory.getLogger(ShortcutsDialog.class);
 
     public ShortcutsDialog() {
-
+        I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Key Reference")
+                .title(i18n.get("dialog.shortcuts.title"))
                 .fxmlUri("dialog/shortcuts_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .icon(ButtonType.CLOSE, FontIconManager.getIns().getIcon(IconKey.CLOSE))

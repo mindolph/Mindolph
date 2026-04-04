@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.exporters.branch;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.exporters.BaseLiteralExportExtension;
@@ -35,10 +35,10 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
         File fileToSaveMap = null;
         if (out == null) {
             fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
-                    I18n.getIns().getString("TextExporter.saveDialogTitle"),
+                    I18nHelper.getInstance().get("mindmap.export.text.title"),
                     null,
                     ".txt",
-                    I18n.getIns().getString("TextExporter.filterDescription"),
+                    I18nHelper.getInstance().get("mindmap.export.text.filter"),
                     exportFileName);
             fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".txt");
             out = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
@@ -67,7 +67,7 @@ public class TextBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("TextExporter.exporterName");
+        return I18nHelper.getInstance().get("mindmap.export.text.name");
     }
 
     @Override

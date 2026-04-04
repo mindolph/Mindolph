@@ -13,6 +13,7 @@ import com.mindolph.genai.GenAiUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.SimpleProgressDialog;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
@@ -38,6 +39,8 @@ import static com.mindolph.genai.GenaiUiConstants.*;
 public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseModelProviderPrefPane.class);
+
+    I18nHelper i18n = I18nHelper.getInstance();
 
     public BaseModelProviderPrefPane(String fxmlResourceUri) {
         super(fxmlResourceUri);
@@ -121,15 +124,16 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 String langCode = safeGetSelectedLanguageCode(cbLanguage);
                 // require download
                 if (!LocalModelManager.getIns().doesModelExists(langCode, selectedModel)) {
-                    if (DialogFactory.yesNoConfirmDialog("Download model",
-                            "Model files are required for selected embedding model %s, do you want to download those files?".formatted(selectedModel.getName()))) {
-                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(), "Downloading",
-                                "Downloading model %s, it might takes \nseconds or minutes, depends on your network. Try to use proxy if it is necessary(General->Enable proxy).".formatted(selectedModel.getName()));
+                    if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.download.model"),
+                            i18n.get("msg.download.require.files", selectedModel.getName()))) {
+                        SimpleProgressDialog progressDialog = new SimpleProgressDialog(this.getScene().getWindow(),
+                                i18n.get("msg.download.in.progress.title"),
+                                i18n.get("msg.download.in.progress.desc", selectedModel.getName()));
                         Future<?> future = GlobalExecutor.submit(() -> {
                             try {
                                 boolean success = LocalModelManager.getIns().downloadModel(langCode, selectedModel);
                                 Platform.runLater(() -> {
-                                    DialogFactory.infoDialog("Download success");
+                                    DialogFactory.infoDialog(i18n.get("msg.download.success"));
                                     progressDialog.close();
                                 });
                             } catch (Exception e) {
@@ -139,7 +143,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                                     if (LocalModelManager.getIns().clearModel(langCode, selectedModel)) {
                                         log.info("Model files are deleted.");
                                     }
-                                    DialogFactory.errDialog("Download fail, " + e.getLocalizedMessage());
+                                    DialogFactory.errDialog(i18n.get("msg.download.failed") + e.getLocalizedMessage());
                                     progressDialog.close();
                                     cbModel.bounce();
                                 });

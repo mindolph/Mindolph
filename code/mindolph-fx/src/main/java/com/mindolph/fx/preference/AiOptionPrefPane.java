@@ -10,6 +10,7 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -160,20 +161,21 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
 
     @FXML
     protected void onTestConnection() {
+        I18nHelper i18n = I18nHelper.getInstance();
         NodeUtils.disable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
         GlobalExecutor.submit(() -> {
             try {
                 EmbeddingService.getInstance().testConnection();
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    DialogFactory.errDialog("Connect fail: %s".formatted(e.getMessage()));
+                    DialogFactory.errDialog(i18n.get("msg.connect.failed", e.getMessage()));
                 });
                 return;
             } finally {
                 NodeUtils.enable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
             }
             Platform.runLater(() -> {
-                DialogFactory.infoDialog("Connect success!");
+                DialogFactory.infoDialog(i18n.get("msg.connect.success"));
             });
         });
 

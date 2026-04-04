@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <padding>
-      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
-   </padding>
-   <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-         AnchorPane.topAnchor="0.0">
-      <Label fx:id="lbIcon" prefHeight="24" prefWidth="24"/>
-      <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-         <Label fx:id="lbFileName" text="File Name">
-            <font>
-               <Font size="15.0"/>
-            </font>
-         </Label>
-         <Label fx:id="lbFilePath" text="File Path" textFill="#373737">
-         </Label>
-      </VBox>
-   </HBox>
+    <padding>
+        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+    </padding>
+    <HBox spacing="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Label fx:id="lbIcon" prefHeight="24" prefWidth="24"/>
+        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="lbFileName" text="%recent.view.file.name">
+                <font>
+                    <Font size="15.0"/>
+                </font>
+            </Label>
+            <Label fx:id="lbFilePath" text="%recent.view.file.path" textFill="#373737">
+            </Label>
+        </VBox>
+    </HBox>
 </fx:root>

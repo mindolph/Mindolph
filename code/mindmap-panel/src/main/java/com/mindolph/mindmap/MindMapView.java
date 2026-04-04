@@ -13,6 +13,7 @@ import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;
@@ -59,6 +60,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -1209,6 +1211,10 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         selectAndUpdate(targetEl.getModel(), false);
     }
 
+
+    private Function<TopicNode, Boolean> canChangeSelection;
+
+
     public void removeAllSelection() {
         if (hasSelectedTopics()) {
             try {
@@ -1245,7 +1251,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
-    protected void updateStatusBarForTopic(TopicNode topic) {
+    public void updateStatusBarForTopic(TopicNode topic) {
         if (topic == null) return;
         ExtraNote note = (ExtraNote) topic.getExtras().get(ExtraType.NOTE);
         ExtraLink link = (ExtraLink) topic.getExtras().get(ExtraType.LINK);
@@ -1810,7 +1816,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                                 ImageVisualAttributeExtension.clearCachedImages(); // TODO this should be refactored to be more elegant.
                                 onMindMapModelChanged(true);
                             } catch (Exception ex) {
-                                DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+                                DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
                                 log.error("Unexpected error during image import from clipboard", ex);
                                 throw new RuntimeException(ex);
                             }

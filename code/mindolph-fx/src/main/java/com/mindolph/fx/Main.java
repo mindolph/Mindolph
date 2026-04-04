@@ -7,6 +7,7 @@ import com.mindolph.core.Env;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.fx.helper.WindowRestoreListener;
 import com.mindolph.fx.preference.Rectangle2DStringConverter;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.MessageTextBlockDialog;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -23,6 +24,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -32,9 +34,13 @@ import org.swiftboot.util.pref.StringConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
+import static com.mindolph.mfx.i18n.I18nHelper.LANG_PREF_KEY;
 import static com.mindolph.plantuml.constant.ShortcutConstants.KEY_PUML_COMMENT;
 import static javafx.scene.input.KeyCombination.ALT_DOWN;
 import static javafx.scene.input.KeyCombination.META_DOWN;
@@ -42,6 +48,9 @@ import static javafx.scene.input.KeyCombination.META_DOWN;
 public class Main extends Application implements WindowRestoreListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+
+    private static final List<String> bundleNames = List.of(
+            "i18n/mindmap-panel", "i18n/mindolph-base", "i18n/mindolph-genai","i18n/mindolph-mindmap", "i18n/messages");
 
     // SceneRestore as the window change events handler.
     private final WindowEventHandler windowEventHandler = SceneRestore.getInstance();
@@ -97,12 +106,27 @@ public class Main extends Application implements WindowRestoreListener {
         // so Thread.currentThread() is the FX application thread:
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
             log.error("Mindolph Error: ", throwable);
-            MessageTextBlockDialog dialog = new MessageTextBlockDialog(this.window, "Unexpected Exception",
-                    "An unexpected exception occurred",
+            MessageTextBlockDialog dialog = new MessageTextBlockDialog(this.window, I18nHelper.getInstance().get("app.exception.dialog.title"),
+                    I18nHelper.getInstance().get("app.exception.dialog.description"),
                     ExceptionUtils.getStackTrace(throwable),
                     false);
             dialog.showAndWait();
         });
+
+        // add resource files from all modules.
+        String languageCode = FxPreferences.getInstance().getPreference(LANG_PREF_KEY, "");
+        Locale locale = Locale.getDefault();
+        if (StringUtils.isNotBlank(languageCode)) {
+            if ("zh_CN".equals(languageCode)) {
+                locale = Locale.SIMPLIFIED_CHINESE;
+            } else if ("en".equals(languageCode)) {
+                locale = Locale.ENGLISH;
+            }
+        }
+        I18nHelper.getInstance().setLocale(locale);
+
+        I18nHelper.getInstance().addBundles(bundleNames);
+        I18nHelper.getInstance().reloadAllBundles();
 
         // register restore listeners to restore scene.
         SceneRestore.getInstance().setWindowRestoreListener(this);
@@ -114,8 +138,12 @@ public class Main extends Application implements WindowRestoreListener {
                 throw new RuntimeException("fxml file not found");
             }
             FXMLLoader loader = new FXMLLoader(resource);
+            // Load resource bundle for i18n
+            ResourceBundle resourceBundle = I18nHelper.getInstance().getResourceBundle();
+            loader.setResources(resourceBundle);
+
             Parent root = loader.load();
-            primaryStage.setTitle("Mindolph");
+            primaryStage.setTitle(I18nHelper.getInstance().get("app.title"));
             primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/icons/app_512.png")));
             scene = new Scene(root, 1100, 800);
             scene.getStylesheets().add(getClass().getResource("/style/app.css").toExternalForm());
@@ -166,7 +194,9 @@ public class Main extends Application implements WindowRestoreListener {
             SceneRestore.getInstance().restoreScene();
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
-            DialogFactory.errDialog("Failed to startup Mindolph for unexpected exception: \n" + e.getLocalizedMessage());
+            I18nHelper i18n = I18nHelper.getInstance();
+            String errorMsg = i18n.get("msg.startup.failed") + e.getLocalizedMessage();
+            DialogFactory.errDialog(errorMsg);
         }
     }
 

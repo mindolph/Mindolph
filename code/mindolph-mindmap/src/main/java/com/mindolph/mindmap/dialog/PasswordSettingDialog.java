@@ -3,6 +3,7 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.model.PasswordData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -27,7 +28,7 @@ public class PasswordSettingDialog extends BaseDialogController<PasswordData> {
     public PasswordSettingDialog(PasswordData origin) {
         dialog = new CustomDialogBuilder<PasswordData>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Set Password") // Utils.BUNDLE.getString("PasswordPanel.dialogPassword.set.title")
+                .title(I18nHelper.getInstance().get("mindmap.password.set.title"))
                 .fxmlUri("dialog/password_setting_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .defaultValue(origin)
@@ -47,7 +48,7 @@ public class PasswordSettingDialog extends BaseDialogController<PasswordData> {
 
     private void checkPasswords() {
         if (!pfPassword.getText().equals(pfPassword2.getText())) {
-            lbMessage.setText("Passwords don't match");
+            lbMessage.setText(I18nHelper.getInstance().get("mindmap.password.mismatch"));
         }
         else {
             lbMessage.setText(null);

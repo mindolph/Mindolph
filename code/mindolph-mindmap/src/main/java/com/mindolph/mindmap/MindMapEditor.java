@@ -1,23 +1,5 @@
 package com.mindolph.mindmap;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.swiftboot.collections.tree.Node;
-import org.swiftboot.collections.tree.Tree;
-
 import com.igormaznitsa.mindmap.model.Extra;
 import com.igormaznitsa.mindmap.model.ExtraFile;
 import com.igormaznitsa.mindmap.model.MMapURI;
@@ -25,6 +7,7 @@ import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
+import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.container.ScalableScrollPane;
 import com.mindolph.base.control.SearchBar;
 import com.mindolph.base.control.snippet.ImageSnippet;
@@ -37,9 +20,6 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
-
-import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
-
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
@@ -48,10 +28,25 @@ import com.mindolph.mindmap.model.BaseElement;
 import com.mindolph.mindmap.model.ModelManager;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapAnchor;
-
+import com.mindolph.mindmap.view.AttributesView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.input.TransferMode;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.swiftboot.collections.tree.Node;
+import org.swiftboot.collections.tree.Tree;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
 
 /**
  * @author mindolph.com@gmail.com
@@ -63,9 +58,15 @@ public class MindMapEditor extends BaseEditor {
     private static final Logger log = LoggerFactory.getLogger(MindMapEditor.class);
 
     @FXML
+    private FixedSplitPane fixedSplitPane;
+
+    @FXML
     private ScalableScrollPane scrollPane;
 
     private final MindMapView mindMapView;
+
+    @FXML
+    private AttributesView attributesView;
 
     public MindMapEditor(EditorContext editorContext, MindMapView mindMapView) {
         super("/mindmap_editor.fxml", editorContext);
@@ -73,6 +74,22 @@ public class MindMapEditor extends BaseEditor {
         super.fileType = SupportFileTypes.TYPE_MIND_MAP;
         this.mindMapView = mindMapView;
         this.mindMapView.setParentPane(this);
+
+        // a reference for saving mmd from the attribute view.
+        this.fixedSplitPane.setFixed(this.fixedSplitPane.getSecondary());
+        this.fixedSplitPane.setFixedSize(180);
+
+        fixedSplitPane.skinProperty().addListener((observable, oldValue, newValue) -> {
+            boolean openAttributePanelByDefault = this.mindMapView.getConfig().isOpenAttributePanelByDefault();
+            log.debug("Open attribute panel by default: " + openAttributePanelByDefault);
+            if (openAttributePanelByDefault) {
+                this.fixedSplitPane.showAll();
+            }
+            else {
+                this.fixedSplitPane.hideSecondary();
+            }
+        });
+        attributesView.setMindMapView(this.mindMapView);
 
         // invalidate the mind-map panel when become focused.
         this.focusedProperty().addListener((observableValue, wasFocused, isFocused) -> {
@@ -240,6 +257,19 @@ public class MindMapEditor extends BaseEditor {
                 mindMapView.selectionProperty().addListener((observable, oldValue, selectedTopics) -> {
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.CUT, !CollectionUtils.isEmpty(selectedTopics));
                     EventBus.getIns().notifyMenuStateChange(EventBus.MenuTag.COPY, !CollectionUtils.isEmpty(selectedTopics));
+                    if (!fixedSplitPane.isSecondaryHidden()) {
+                        // handle single selection.
+                        TopicNode newTopic = selectedTopics == null || selectedTopics.size() != 1 ? null : selectedTopics.getFirst();
+                        if (newTopic == null) {
+                            log.trace("Set note panel to empty");
+                            attributesView.loadAttributes(null);
+                        }
+                        else {
+                            TopicNode topic = selectedTopics.getFirst();
+                            log.debug("On selected topic: %s".formatted(StringUtils.abbreviate(topic.getText(), 100)));
+                            attributesView.loadAttributes(topic);
+                        }
+                    }
                 });
             });
         } catch (Exception e) {
@@ -328,17 +358,17 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public void undo() {
-        if (mindMapView.isFocused()) {
-            mindMapView.undo();
-        }
+//        if (mindMapView.isFocused()) {
+        mindMapView.undo();
+//        }
     }
 
     @Override
     public void redo() {
-        if (mindMapView.isFocused()) {
-            mindMapView.redo();
-        }
+//        if (mindMapView.isFocused()) {
+        mindMapView.redo();
     }
+//    }
 
     @Override
     public boolean copy() {
@@ -416,6 +446,19 @@ public class MindMapEditor extends BaseEditor {
         if (threadPoolService != null) threadPoolService.close();
         if (mindMapView != null) mindMapView.dispose();
         MindmapEvents.unsubscribeMmdSaveEvent(mindMapView);
+    }
+
+    public void toggleAttributePanel() {
+        if (fixedSplitPane.isSecondaryHidden()) {
+            fixedSplitPane.showAll();
+        }
+        else {
+            fixedSplitPane.hideSecondary();
+        }
+    }
+
+    public boolean isAttributePanelHidden() {
+        return fixedSplitPane.isSecondaryHidden();
     }
 
     @Override

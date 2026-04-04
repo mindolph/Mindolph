@@ -1,11 +1,15 @@
 package com.mindolph.base.control;
 
-import com.mindolph.base.plugin.*;
+import com.mindolph.base.plugin.BasePlugin;
+import com.mindolph.base.plugin.Generator;
+import com.mindolph.base.plugin.InputHelper;
+import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.core.constant.SupportFileTypes;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 
 import java.net.URL;
 import java.util.Collection;
@@ -19,6 +23,7 @@ import java.util.ResourceBundle;
  *
  * @author mindolph.com@gmail.com
  * @since 1.6
+ *
  */
 public class SmartCodeAreaDemo implements Initializable {
 
@@ -30,6 +35,31 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @FXML
     private Button btnGetCaretPosition;
+
+    @FXML
+    private ToggleButton tbtnDisableUndo;
+    @FXML
+    private ToggleButton tbtnDisableRedo;
+
+    @FXML
+    public void onUndo() {
+        smartCodeArea.undo();
+    }
+
+    @FXML
+    public void onRedo() {
+        smartCodeArea.redo();
+    }
+
+    @FXML
+    public void onDisableUndo() {
+
+    }
+
+    @FXML
+    public void onDisableRedo() {
+
+    }
 
     @FXML
     public void onEnabled() {
@@ -54,6 +84,16 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        smartCodeArea.disableUndoProperty().bind(tbtnDisableUndo.selectedProperty());
+        smartCodeArea.disableRedoProperty().bind(tbtnDisableRedo.selectedProperty());
+
+        smartCodeArea.disableUndoProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("disableUndo: " + newValue);
+        });
+        smartCodeArea.disableRedoProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("disableRedo: " + newValue);
+        });
+
         // register plugins TODO
         PluginManager.getIns().registerPlugin(new TestPlugin());
         smartCodeArea.appendText("""

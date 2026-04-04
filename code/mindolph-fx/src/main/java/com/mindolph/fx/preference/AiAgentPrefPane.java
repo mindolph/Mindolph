@@ -12,6 +12,8 @@ import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.fx.control.DatasetTableView;
+import com.mindolph.fx.dialog.DatasetSelectDialog;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -61,6 +63,8 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
+
+    private I18nHelper i18n = I18nHelper.getInstance();
 
     public AiAgentPrefPane() {
         super("/preference/gen_ai_agent_pref_pane.fxml");
@@ -116,7 +120,8 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             if (cbAgent == null) {
                 return;
             }
-            if (DialogFactory.yesNoConfirmDialog("Removing Agent", "Are you sure to remove the agent '%s'?".formatted(currentAgentMeta.getName()))) {
+
+            if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.agent.remove.confirm", currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
                 cbAgent.getSelectionModel().clearSelection();
@@ -185,14 +190,14 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     private void createNewAgent(String defaultNewName) {
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Create new agent")
-                .content("Input agent name")
+                .title(i18n.get("prefs.ai.agent.create"))
+                .content(i18n.get("dialog.input.agent.name"))
                 .text(defaultNewName)
                 .width(400)
                 .build();
         dialog.showAndWait().ifPresent(agentName -> {
             if (cbAgent.getItems().stream().anyMatch(p -> p.getValue().getName().equals(agentName))) {
-                DialogFactory.warnDialog("Dataset names %s already exists".formatted(agentName));
+                DialogFactory.warnDialog(i18n.get("msg.dataset.exists", agentName));
                 this.createNewAgent(agentName);
                 return;
             }

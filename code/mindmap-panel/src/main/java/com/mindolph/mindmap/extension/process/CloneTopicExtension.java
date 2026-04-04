@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.process;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -28,7 +28,7 @@ public class CloneTopicExtension extends BaseTopicExtension {
 
     @Override
     protected String getName(ExtensionContext context, TopicNode activeTopic) {
-        return context.getSelectedTopics().size() > 0 ? I18n.getIns().getString("MindMapPanel.menu.miCloneSelectedTopic") : I18n.getIns().getString("MindMapPanel.menu.miCloneTheTopic");
+        return context.getSelectedTopics().size() > 0 ? I18nHelper.getInstance().get("mindmap.menu.clone.selected") : I18nHelper.getInstance().get("mindmap.menu.clone.topic");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CloneTopicExtension extends BaseTopicExtension {
         if (toClone != null) {
             boolean cloneSubtree = false;
             if (toClone.hasChildren()) {
-                Boolean userChosen = DialogFactory.yesNoCancelConfirmDialog(I18n.getIns().getString("MindMapPanel.titleCloneTopicRequest"), I18n.getIns().getString("MindMapPanel.cloneTopicSubtreeRequestMsg"));
+                Boolean userChosen = DialogFactory.yesNoCancelConfirmDialog(I18nHelper.getInstance().get("mindmap.msg.clone.topic"), I18nHelper.getInstance().get("mindmap.msg.clone.subtree"));
                 if (userChosen == null) {
                     return;
                 }

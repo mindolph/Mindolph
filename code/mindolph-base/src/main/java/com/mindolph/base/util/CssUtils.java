@@ -15,6 +15,8 @@ import org.swiftboot.util.IoUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import static com.mindolph.mfx.util.FontUtils.fontPosture;
@@ -34,8 +36,13 @@ public class CssUtils {
 
     public static void applyFontCss(Parent root, String templateUri, String sansFontKey, String monoFontKey) {
         FxPreferences fxPreferences = FxPreferences.getInstance();
-        try {
-            String s = IoUtils.readAllToString(root.getClass().getResource(templateUri).openStream());
+        URL resource = root.getClass().getResource(templateUri);
+        if (resource == null) {
+            log.warn("No resource found for font css template: {}", templateUri);
+            return;
+        }
+        try (InputStream inputStream = resource.openStream()) {
+            String s = IoUtils.readAllToString(inputStream);
             Font defFont = FontConstants.DEFAULT_FONTS.get(sansFontKey);
             Font defFontMono = FontConstants.DEFAULT_FONTS.get(monoFontKey);
             Font fontSans = fxPreferences.getPreference(sansFontKey, Font.class, defFont);

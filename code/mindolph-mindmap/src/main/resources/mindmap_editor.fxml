@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.mindolph.base.container.FixedSplitPane?>
 <?import com.mindolph.base.container.ScalableScrollPane?>
+<?import com.mindolph.mindmap.view.AttributesView?>
 <?import javafx.scene.layout.*?>
 <fx:root prefHeight="400.0" prefWidth="600.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0"
          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
          xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <ScalableScrollPane fx:id="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-    </ScalableScrollPane>
+    <FixedSplitPane fx:id="fixedSplitPane" userData="EDITOR_SPLIT_PANE" fixedSize="300" layoutX="281.0" layoutY="71.0"
+                    orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" splitterPosition="0.75">
+        <primary>
+            <ScalableScrollPane fx:id="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            </ScalableScrollPane>
+        </primary>
+        <secondary>
+            <AttributesView fx:id="attributesView" VBox.vgrow="ALWAYS"/>
+        </secondary>
+    </FixedSplitPane>
+
 </fx:root>

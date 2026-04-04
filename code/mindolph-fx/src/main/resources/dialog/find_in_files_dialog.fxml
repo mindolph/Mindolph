@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import com.mindolph.base.control.DirBreadCrumb?>
 <?import com.mindolph.fx.control.FileFilterButtonGroup?>
 <?import javafx.geometry.Insets?>
@@ -13,13 +12,13 @@
         <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
         </padding>
-        <Label text="Search in folder: "/>
+        <Label text="%find.in.files.search.folder"/>
         <DirBreadCrumb fx:id="bcbDirPath"/>
         <HBox fx:id="hbKeywords" spacing="8.0" alignment="CENTER_LEFT">
-            <Label text="Keyword: "/>
+            <Label text="%find.in.files.keyword"/>
         </HBox>
         <HBox spacing="8.0" alignment="CENTER_LEFT">
-            <Label text="Filters: "/>
+            <Label text="%find.in.files.filters"/>
             <ToggleButton fx:id="tbCase" maxWidth="32.0" mnemonicParsing="false" selected="false">
             </ToggleButton>
             <FileFilterButtonGroup fx:id="fileFilterButtonGroup"/>

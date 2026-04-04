@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.attribute;
 import com.igormaznitsa.mindmap.model.Extra;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -28,8 +28,8 @@ public class ExtraFileExtension extends BaseTopicExtension {
         if (actionTopic == null) {
             return StringUtils.EMPTY;
         }
-        return actionTopic.getExtras().containsKey(Extra.ExtraType.FILE) ? I18n.getIns().getString("MindMapPanel.menu.miEditFile")
-                : I18n.getIns().getString("MindMapPanel.menu.miAddFile");
+        return actionTopic.getExtras().containsKey(Extra.ExtraType.FILE) ? I18nHelper.getInstance().get("mindmap.menu.edit.file")
+                : I18nHelper.getInstance().get("mindmap.menu.add.file");
     }
 
     @Override

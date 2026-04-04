@@ -1,5 +1,7 @@
 package com.mindolph.fx.dialog;
 
+import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_ACTIVE_WORKSPACE;
+
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
@@ -11,10 +13,17 @@ import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.FxmlUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,13 +35,6 @@ import javafx.scene.layout.AnchorPane;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
-import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_ACTIVE_WORKSPACE;
 
 /**
  * @author mindolph.com@gmail.com
@@ -54,17 +56,22 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         }
     }
 
-
     private static class ItemController extends AnchorPane implements Initializable, EventHandler<ActionEvent> {
+
         private static final Logger log = LoggerFactory.getLogger(ItemController.class);
+
         @FXML
         Label lblIcon;
+
         @FXML
         Label lbWorkspaceName;
+
         @FXML
         Label lbWorkspacePath;
+
         @FXML
         Button btnActions;
+
         private final WorkspaceMeta workspaceMeta;
 
         public ItemController(WorkspaceMeta workspaceMeta) {
@@ -80,6 +87,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
         MenuItem miRename;
         MenuItem miClose;
         MenuItem miOpenInSys;
+
         //        MenuItem miDelete;
 
         private void init() {
@@ -96,10 +104,10 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                     contextMenu.getItems().clear();
                     contextMenu.hide();
                 }
-                miRename = new MenuItem("Rename", FontIconManager.getIns().getIcon(IconKey.RENAME));
-                miClose = new MenuItem("Close", FontIconManager.getIns().getIcon(IconKey.CLOSE));
-                miOpenInSys = new MenuItem("Open in System", FontIconManager.getIns().getIcon(IconKey.SYSTEM));
-//                miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
+                miRename = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.rename"), FontIconManager.getIns().getIcon(IconKey.RENAME));
+                miClose = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
+                miOpenInSys = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+                //                miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
                 miRename.setOnAction(ItemController.this);
                 miClose.setOnAction(ItemController.this);
                 miOpenInSys.setOnAction(ItemController.this);
@@ -144,8 +152,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                             // reset scene and notify to update others.
                             WorkspaceMeta newWorkspaceMeta = WorkspaceManager.getIns().renameWorkspace(workspaceMeta, newNameFile);
                             SceneRestore.getInstance().saveScene(WorkspaceManager.getIns().getWorkspaceList());
-                            EventBus.getIns().notifyWorkspaceRenamed(
-                                    new WorkspaceRenameEvent(workspaceMeta, newWorkspaceMeta));
+                            EventBus.getIns().notifyWorkspaceRenamed(new WorkspaceRenameEvent(workspaceMeta, newWorkspaceMeta));
                         }
                     }
                 }

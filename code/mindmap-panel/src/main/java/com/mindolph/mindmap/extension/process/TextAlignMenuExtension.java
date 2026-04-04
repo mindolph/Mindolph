@@ -18,7 +18,7 @@ package com.mindolph.mindmap.extension.process;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.TextAlign;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -37,7 +37,7 @@ public class TextAlignMenuExtension extends BasePopupMenuItemExtension {
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {
-        Menu result = new Menu(I18n.getIns().getString("TextAlign.Extension.MenuTitle"), FontIconManager.getIns().getIcon(IconKey.ALIGN));
+        Menu result = new Menu(I18nHelper.getInstance().get("mindmap.menu.text.align"), FontIconManager.getIns().getIcon(IconKey.ALIGN));
         List<TopicNode> workTopics;
         if (activeTopic == null) {
             workTopics = context.getSelectedTopics();
@@ -49,9 +49,9 @@ public class TextAlignMenuExtension extends BasePopupMenuItemExtension {
 
         TextAlign sharedTextAlign = findSharedTextAlign(workTopics);
 
-        RadioMenuItem menuLeft = new RadioMenuItem(I18n.getIns().getString("TextAlign.Extension.MenuTitle.Left"));
-        RadioMenuItem menuCenter = new RadioMenuItem(I18n.getIns().getString("TextAlign.Extension.MenuTitle.Center"));
-        RadioMenuItem menuRight = new RadioMenuItem(I18n.getIns().getString("TextAlign.Extension.MenuTitle.Right"));
+        RadioMenuItem menuLeft = new RadioMenuItem(I18nHelper.getInstance().get("mindmap.menu.text.align.left"));
+        RadioMenuItem menuCenter = new RadioMenuItem(I18nHelper.getInstance().get("mindmap.menu.text.align.center"));
+        RadioMenuItem menuRight = new RadioMenuItem(I18nHelper.getInstance().get("mindmap.menu.text.align.right"));
         menuLeft.setGraphic(FontIconManager.getIns().getIcon(IconKey.ALIGN_LEFT));
         menuCenter.setGraphic(FontIconManager.getIns().getIcon(IconKey.ALIGN_CENTER));
         menuRight.setGraphic(FontIconManager.getIns().getIcon(IconKey.ALIGN_RIGHT));

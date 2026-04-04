@@ -1,0 +1,9 @@
+package com.mindolph.mindmap.view;
+
+/**
+ * @since 1.14
+ */
+public interface AttributesMode {
+    String MODE_DIALOG="DIALOG";
+    String MODE_PANEL ="PANEL";
+}

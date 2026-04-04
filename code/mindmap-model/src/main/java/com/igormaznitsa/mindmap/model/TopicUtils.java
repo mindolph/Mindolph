@@ -14,7 +14,7 @@ public class TopicUtils {
     public static <T extends Topic<T>> List<T> removeDuplicatedAndDescendants(List<T> topics) {
         List<T> result = new ArrayList<>();
         for (T t : topics) {
-            if (result.contains(t) || topics.stream().anyMatch(t2 -> t.isAncestor(t2))) {
+            if (result.contains(t) || topics.stream().anyMatch(t::isAncestor)) {
                 continue; // exclude if it has ancestor
             }
             result.add(t);

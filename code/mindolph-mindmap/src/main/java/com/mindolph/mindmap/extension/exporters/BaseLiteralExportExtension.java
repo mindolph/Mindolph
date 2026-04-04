@@ -1,6 +1,7 @@
 package com.mindolph.mindmap.extension.exporters;
 
 import com.igormaznitsa.mindmap.model.MindMap;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
@@ -21,7 +22,7 @@ public abstract class BaseLiteralExportExtension extends BaseExportExtension {
 
     @Override
     public List<String> getOptions() {
-        return Collections.singletonList("Include attributes");
+        return Collections.singletonList(I18nHelper.getInstance().get("mindmap.export.include.attributes"));
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
@@ -69,7 +70,6 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
-
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> super.requestFollowCaret());
@@ -84,8 +84,29 @@ public class ExtCodeArea extends CodeArea {
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
-    }
+        disableUndo.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+                ));
+            }
+        });
+        disableRedo.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+                ));
+            }
+        });
+        disablePaste.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                Nodes.addInputMap(this, InputMap.consume(
+                        EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+                ));
+            }
+        });
 
+    }
 
     public void refresh() {
         // DO NOTHING
@@ -106,11 +127,11 @@ public class ExtCodeArea extends CodeArea {
      */
     protected ContextMenu createContextMenu() {
         ContextMenu menu = new ContextMenu();
-        MenuItem miCut = new MenuItem("Cut", FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miCopy = new MenuItem("Copy", FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem("Paste", FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
-        CheckMenuItem miWordWrap = new CheckMenuItem("Word Wrap", FontIconManager.getIns().getIcon(IconKey.WRAP));
+        MenuItem miCut = new MenuItem(I18nHelper.getInstance().get("codearea.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem(I18nHelper.getInstance().get("codearea.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem(I18nHelper.getInstance().get("codearea.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem(I18nHelper.getInstance().get("codearea.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+        CheckMenuItem miWordWrap = new CheckMenuItem(I18nHelper.getInstance().get("codearea.menu.word.wrap"), FontIconManager.getIns().getIcon(IconKey.WRAP));
         miCut.setOnAction(event -> {
             this.cut();
         });
@@ -132,7 +153,6 @@ public class ExtCodeArea extends CodeArea {
         menu.getItems().addAll(miCut, miCopy, miPaste, miDelete, new SeparatorMenuItem(), miWordWrap);
         return menu;
     }
-
 
     public void addFeatures(FEATURE... features) {
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();
@@ -231,21 +251,21 @@ public class ExtCodeArea extends CodeArea {
         // which causes the paste action be performed twice.
         // so disable (by consuming key event)  PASTE shortcut on macOS to avoid conflict with global.
         if (disablePaste.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_EDITOR_PASTE)), Event::consume
+//            ));
         }
         // disable undo to avoid conflict with global shortcut
         if (disableUndo.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
+//            ));
         }
         // disable redo to avoid conflict with global shortcut
         if (disableRedo.get() && SystemUtils.IS_OS_MAC) {
-            inputMaps.add(InputMap.consume(
-                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
-            ));
+//            inputMaps.add(InputMap.consume(
+//                    EventPattern.keyPressed(sm.getKeyCombination(KEY_REDO)), Event::consume
+//            ));
         }
         Nodes.addInputMap(this, InputMap.sequence(inputMaps.toArray(new InputMap[]{})));
     }
@@ -405,7 +425,7 @@ public class ExtCodeArea extends CodeArea {
         if (!super.isEditable()) return;
         int endParLen = super.getParagraphLength(endParIndex);
         boolean isLastLine = endParIndex == super.getParagraphs().size() - 1;
-        int endLineLen = isLastLine ? endParLen : endParLen + 1;// condition for last line
+        int endLineLen = isLastLine ? endParLen : endParLen + 1; // condition for last line
         int startColIndex = isLastLine ? -1 : 0;
         this.deleteText(startParIndex, startColIndex, endParIndex, endLineLen);
     }
@@ -706,10 +726,11 @@ public class ExtCodeArea extends CodeArea {
         // delete current line
         LINE_DELETE,
         // move current line
-        LINES_MOVE
+        LINES_MOVE,
     }
 
     public static class Replacement {
+
         // substitute to be added in the head.
         String substitute;
         // targets to be trimmed in the head.

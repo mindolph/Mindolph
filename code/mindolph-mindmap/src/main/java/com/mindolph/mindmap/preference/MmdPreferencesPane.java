@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.event.EventBus;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
@@ -120,6 +121,8 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     @FXML
     private CheckBox ckbCopyParentColorToNewChild;
     @FXML
+    private CheckBox ckbOpenAttributePanelByDefault;
+    @FXML
     private CheckBox ckbSmartTextPaste;
     @FXML
     private CheckBox ckbTopicAttrByDblClicking;
@@ -134,7 +137,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
     private final Pair<ConnectorStyle, String> CS_ITEM_POLYLINE = new Pair<>(ConnectorStyle.POLYLINE, ThemeUtils.connectorTypeLabel(ConnectorStyle.POLYLINE.name()));
 
     // listeners for binding
-    private Map<ReadOnlyProperty, ChangeListener> listeners = new HashMap<>();
+    private final Map<ReadOnlyProperty<?>, ChangeListener<?>> listeners = new HashMap<>();
 
     // any preference has been changed.
     private boolean changed = false;
@@ -196,21 +199,22 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 contextMenu.getItems().clear();
                 contextMenu.hide();
             }
-            miDuplicate = new MenuItem("Duplicate", FontIconManager.getIns().getIcon(IconKey.CLONE));
-            miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
+            miDuplicate = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.duplicate"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+            miDelete = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setDisable(isPredefinedTheme(mindMapConfig.getThemeName()));
             miDuplicate.setOnAction(event1 -> {
+                I18nHelper i18n = I18nHelper.getInstance();
                 Dialog<String> nameDialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
-                        .title("New Theme Name")
-                        .content("Give a name for you own customized theme: ")
+                        .title(i18n.get("prefs.mindmap.theme.new.name"))
+                        .content(i18n.get("prefs.mindmap.theme.name.prompt"))
                         .width(480)
                         .text(ThemeUtils.themeLabel(mindMapConfig.getThemeName()) + "_copy").build();
                 Optional<String> optName = nameDialog.showAndWait();
                 if (optName.isPresent()) {
                     String newName = optName.get();
                     if (cbTheme.getItems().stream().anyMatch(themeKeyStringPair -> themeKeyStringPair.getValue().equals(newName))) {
-                        DialogFactory.errDialog("Theme %s already exists".formatted(newName));
+                        DialogFactory.errDialog(i18n.get("prefs.mindmap.theme.exists", newName));
                         return;
                     }
 
@@ -320,6 +324,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         this.bindPreference(ckbSmartTextPaste.selectedProperty(), mindMapConfig::setSmartTextPaste);
 //        super.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), PrefConstants.PREF_KEY_MMD_OPEN_TOPIC_ATTR_BY_DBL_CLICKING, true);
         this.bindPreference(ckbTopicAttrByDblClicking.selectedProperty(), mindMapConfig::setTopicAttrByDblClicking);
+        this.bindPreference(ckbOpenAttributePanelByDefault.selectedProperty(), mindMapConfig::setOpenAttributePanelByDefault);
     }
 
     /**
@@ -401,6 +406,7 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
         spnSelectionGap.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1f, 8f, theme.getSelectLineGap()));
         ckbSmartTextPaste.setSelected(mindMapConfig.isSmartTextPaste());
         ckbTopicAttrByDblClicking.setSelected(mindMapConfig.isTopicAttrByDblClicking());
+        ckbOpenAttributePanelByDefault.setSelected(mindMapConfig.isOpenAttributePanelByDefault());
         spnUndRedo.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 50, mindMapConfig.getMaxRedoUndo()));
     }
 

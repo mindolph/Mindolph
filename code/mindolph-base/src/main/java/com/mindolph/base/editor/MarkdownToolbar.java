@@ -5,6 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.control.ExtCodeArea.Replacement;
 import com.mindolph.base.dialog.TableDialog;
 import com.mindolph.base.dialog.TableOptions;
+import com.mindolph.base.util.NodeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.RadioDialogBuilder;
 import com.mindolph.mfx.util.ClipBoardUtils;
@@ -16,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,6 +71,8 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
     private Button btnImage;
     @FXML
     private Button btnComment;
+    @FXML
+    private HBox hBox;
 
     private final MarkdownCodeArea markdownCodeArea;
 
@@ -272,5 +276,13 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
                 "|" + StringUtils.join(separatorRow, "|") + "|"
         );
         return content + "\n";
+    }
+
+    public void disable() {
+        NodeUtils.disable(hBox.getChildren().toArray(new Button[]{}));
+    }
+
+    public void enable() {
+        NodeUtils.enable(hBox.getChildren().toArray(new Button[]{}));
     }
 }

@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.attributes;
 import com.igormaznitsa.mindmap.model.MMapURI;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.FxImageUtils;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
@@ -104,7 +104,7 @@ public class AttributeUtils {
                 String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
                 String fileName = FilenameUtils.getBaseName(selected.getName());
                 String filePath;
-                if (withFileLink && DialogFactory.yesNoConfirmDialog(I18n.getIns().getString("Images.Extension.Question.AddFilePath.Title"), I18n.getIns().getString("Images.Extension.Question.AddFilePath"))) {
+                if (withFileLink && DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.image.add.filepath.title"), I18nHelper.getInstance().get("mindmap.image.add.filepath.question"))) {
                     filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
                 }
                 else {
@@ -114,7 +114,7 @@ public class AttributeUtils {
                 context.doNotifyModelChanged(true);
             }
         } catch (Exception ex) {
-            DialogFactory.errDialog(I18n.getIns().getString("Images.Extension.Error"));
+            DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
         }
     }
 }

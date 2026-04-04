@@ -13,7 +13,8 @@
 
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
-<fx:root type="StackPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+         stylesheets="@/style/base/icon_button.css">
     <AnchorPane style="-fx-background-color: #D3D3D3FF;">
         <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
@@ -26,8 +27,7 @@
                 <ChoiceBox fx:id="cbProvider" prefWidth="120.0" />
                 <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button"
-                        stylesheets="@../style/icon_button.css">
+                <Button fx:id="btnClose" mnemonicParsing="false" styleClass="icon_button">
                     <HBox.margin>
                         <Insets/>
                     </HBox.margin>

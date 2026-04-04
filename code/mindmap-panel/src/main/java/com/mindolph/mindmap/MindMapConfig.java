@@ -37,6 +37,7 @@ public final class MindMapConfig implements EditorConfig, Serializable {
     private boolean copyColorInfoToNewChild = false;
     private boolean smartTextPaste = false;
     private boolean topicAttrByDblClicking = true;
+    private boolean openAttributePanelByDefault = false;
     private int maxRedoUndo = 20;
 
     public MindMapConfig(MindMapConfig cfg) {
@@ -162,6 +163,14 @@ public final class MindMapConfig implements EditorConfig, Serializable {
 
     public void setTopicAttrByDblClicking(boolean topicAttrByDblClicking) {
         this.topicAttrByDblClicking = topicAttrByDblClicking;
+    }
+
+    public boolean isOpenAttributePanelByDefault() {
+        return openAttributePanelByDefault;
+    }
+
+    public void setOpenAttributePanelByDefault(boolean openAttributePanelByDefault) {
+        this.openAttributePanelByDefault = openAttributePanelByDefault;
     }
 
     public int getMaxRedoUndo() {

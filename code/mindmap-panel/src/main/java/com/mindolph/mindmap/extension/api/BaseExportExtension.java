@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.api;
 
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.OptionsDialogBuilder;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.control.Dialog;
@@ -78,7 +78,7 @@ public abstract class BaseExportExtension extends BasePopupMenuItemExtension {
 
             } catch (Exception ex) {
                 log.error("Error during map export", ex);
-                DialogFactory.errDialog(I18n.getIns().getString("MindMapPanel.menu.errMsgCantExport"));
+                DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.export"));
             }
         });
         return result;

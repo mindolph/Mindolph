@@ -1,12 +1,13 @@
 package com.mindolph.mindmap.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Objects;
 
 public final class NoteEditorData {
     private String text;
-    private String password;
+    private String password; // if password is set, means encrypt the text when saving to mmd topic.
     private boolean encrypted;
     private String hint;
 
@@ -22,7 +23,8 @@ public final class NoteEditorData {
     }
 
     public boolean isEncrypted() {
-        return this.password != null && !this.password.trim().isEmpty();
+        return encrypted;
+//        return this.password != null && !this.password.trim().isEmpty();
     }
 
     public String getText() {
@@ -32,7 +34,6 @@ public final class NoteEditorData {
     public String getPassword() {
         return this.password;
     }
-
 
     public String getHint() {
         return this.isEncrypted() ? this.hint : null;
@@ -53,6 +54,14 @@ public final class NoteEditorData {
         return this;
     }
 
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+    }
+
+    public boolean hasChanges(NoteEditorData target) {
+        return !(Strings.CS.equals(this.text, target.getText()) && this.encrypted == target.isEncrypted());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,6 +79,8 @@ public final class NoteEditorData {
     public String toString() {
         return "NoteEditorData{" +
                 "text='" + StringUtils.abbreviateMiddle(text, "...", 50) + '\'' +
+                ", encrypted=" + encrypted +
+                ", hint='" + hint + '\'' +
                 '}';
     }
 }

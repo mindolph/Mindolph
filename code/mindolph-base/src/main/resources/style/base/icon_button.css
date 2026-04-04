@@ -1,0 +1,27 @@
+.icon_button {
+    -fx-padding: 4;
+    -fx-background-color: transparent;
+}
+
+.icon_button:hover {
+    -fx-background-color: lightgray;
+}
+
+.icon-toggle {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 4;
+    -fx-effect: null;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+}
+
+.icon-toggle:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon-toggle:selected {
+    -fx-background-color: #E1E1E1;
+    -fx-effect: innershadow(gaussian, #AAAAAA, 5, 0, 0, 1);
+}
+

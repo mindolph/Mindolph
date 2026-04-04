@@ -15,6 +15,7 @@ import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;
@@ -41,8 +42,10 @@ import com.mindolph.mindmap.extension.exporters.branch.MindMapBranchExporter;
 import com.mindolph.mindmap.extension.exporters.branch.TextBranchExporter;
 import com.mindolph.mindmap.extension.importers.*;
 import com.mindolph.mindmap.extension.manipulate.TopicColorExtension;
-import com.mindolph.mindmap.model.*;
-import com.mindolph.mindmap.util.CryptoUtils;
+import com.mindolph.mindmap.model.BaseElement;
+import com.mindolph.mindmap.model.FileLink;
+import com.mindolph.mindmap.model.NoteEditorData;
+import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.TopicNodeUtils;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -86,9 +89,6 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
     private static final Logger log = LoggerFactory.getLogger(ExtraMindMapView.class);
 
     private ContextMenu contextMenu;
-
-    // current editing note data for determining any changes.
-    private NoteEditorData editingNoteData = null;
 
     static {
         MindMapExtensionRegistry.getInstance().registerExtension(new ExtraFileExtension());
@@ -183,7 +183,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     }
                 } catch (Exception ex) {
                     log.error("Error during visual attribute processing", ex);
-                    DialogFactory.errDialog("Error occurred");
+                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.error.visual.attribute"));
                 }
             }
         }
@@ -244,9 +244,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, MANIPULATE, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, EXTRAS, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
 
-        Menu importMenu = new Menu(I18n.getIns().getString("MMDImporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
-        Menu exportMenu = new Menu(I18n.getIns().getString("MMDExporters.SubmenuName"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
-        Menu exportBranchesMenu = new Menu("Export branches as", FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu importMenu = new Menu(I18nHelper.getInstance().get("mindmap.import.submenu"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
+        Menu exportMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu exportBranchesMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.branches.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
 
         putAllItemsAsSection(ctxMenu, importMenu, findPopupMenuItems(this, IMPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         if (isModelNotEmpty) {
@@ -280,7 +280,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             String textToBeSummarized = null;
                             List<TopicNode> selectedTopics = getSelectedTopics();
                             boolean hasChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
-                            if (hasChildren && DialogFactory.yesNoConfirmDialog("Do you want all the sub topics of selected topics to be summarized either?")) {
+                            if (hasChildren && DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.ai.summarize.subtopics.confirm"))) {
                                 textToBeSummarized = selectedTopics.stream().map(selectedTopic -> {
                                     StringBuilder buf = new StringBuilder();
                                     getModel().traverseTopicTree(selectedTopic, t -> {
@@ -452,7 +452,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     String url = extraUri.asURI().toString();
                     DesktopUtils.openURL(url);
                 }
-                case NOTE -> editTopicNote(topic);
+                case NOTE -> {
+                    editTopicNote(topic);
+                }
                 case TOPIC -> {
                     TopicNode theTopic = getModel().findTopicForLink((ExtraTopic) extra);
                     if (theTopic == null) {
@@ -469,102 +471,41 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
     private void editTopicNote(TopicNode topic) {
         ExtraNote note = (ExtraNote) topic.getExtras().get(Extra.ExtraType.NOTE);
-        Consumer<NoteEditorData> callbackForNoteEdit = newNoteData -> {
-            log.debug("dialog result: " + newNoteData);
-            if (newNoteData != null) {
-                boolean changed = false;
-                if (newNoteData.getText().isEmpty()) {
-                    if (note != null) {
-                        topic.removeExtra(Extra.ExtraType.NOTE);
-                        changed = true;
-                    }
-                }
-                else {
-                    String newNoteText;
-                    if (newNoteData.isEncrypted()) {
-                        try {
-                            newNoteText = CryptoUtils.encrypt(newNoteData.getPassword(), newNoteData.getText());
-                        } catch (RuntimeException ex) {
-                            DialogFactory.warnDialog("Can't encrypt note!\nCheck JDK security policy for AES-256 support");
-                            log.error("Can't encrypt note", ex);
-                            return;
-                        }
-                    }
-                    else {
-                        newNoteText = newNoteData.getText();
-                    }
-
-                    log.debug("Original data: " + editingNoteData);
-                    if (editingNoteData == null
-                            || !newNoteText.equals(editingNoteData.getText())
-                            || editingNoteData.isEncrypted() != newNoteData.isEncrypted()) {
-                        topic.setExtra(new ExtraNote(newNoteText, newNoteData.isEncrypted(), newNoteData.getHint()));
-                        changed = true;
-                    }
-                }
-                if (changed) {
-                    onMindMapModelChanged(true);
-                    super.updateStatusBarForTopic(topic);
-                }
-            }
-            else {
-                log.warn("No data returned");
-            }
-        };
 
         // Handle saving during editing of note.
         MindmapEvents.subscribeNoteSaveEvent(topic, newNoteData -> {
             log.debug(newNoteData.getText());
-            callbackForNoteEdit.accept(newNoteData);
-            editingNoteData.setText(newNoteData.getText()); // reset original text for closing dialog positively.
             log.debug("Notify mmd editor to save file");
-            MindmapEvents.notifyMmdSave(this);
+            MindmapEvents.notifyMmdSaveEvent(this);
         });
-
+        String title;
+        // current editing note data for determining any changes.
+        NoteEditorData editingNoteData;
         if (note == null) {
             // create new
             editingNoteData = new NoteEditorData();
-            NoteDialog noteDialog = new NoteDialog(topic,
-                    String.format("Create Note of '%s'", topic.getText()), editingNoteData);
-            noteDialog.show(callbackForNoteEdit);
+            title = I18nHelper.getInstance().get("mindmap.note.create.title", topic.getText());
         }
         else {
             // edit
-            if (note.isEncrypted()) {
-                PasswordData passwordData = new PasswordData("", note.getHint());
-                passwordData = new PasswordDialog(passwordData).showAndWait();
-                if (passwordData != null && StringUtils.isNotBlank(passwordData.getPassword())) {
-                    StringBuilder decrypted = new StringBuilder();
-                    String pass = passwordData.getPassword().trim();
-                    try {
-                        if (CryptoUtils.decrypt(pass, note.getValue(), decrypted)) {
-                            String strDecrypted = decrypted.toString();
-                            log.trace(strDecrypted);
-                            editingNoteData = new NoteEditorData(strDecrypted, note.isEncrypted(), pass, note.getHint());
-                        }
-                        else {
-                            DialogFactory.errDialog("Wrong password!");
-                            return;
-                        }
-                    } catch (RuntimeException ex) {
-                        DialogFactory.errDialog("Can't decode encrypted text for error!\nEither broken data or current JDK security policy doesn't support AES-256!");
-                        log.error("Can't decode encrypted note", ex);
-                        return;
-                    }
-                }
-                else {
-                    return;
-                }
-            }
-            else {
-                editingNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, null);
-            }
-            new NoteDialog(topic,
-                    String.format("Edit note of '%s'", topic.getText()), editingNoteData)
-                    .show(callbackForNoteEdit);
+            editingNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, note.getHint());
+            title = I18nHelper.getInstance().get("mindmap.note.edit.title", topic.getText());
         }
-        // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.
-        MindmapEvents.unsubscribeNoteSaveEvent(topic);
+        NoteDialog noteDialog = new NoteDialog(topic, title, editingNoteData);
+        noteDialog.show(noteData -> {
+            // do nothing.
+        });
+        if (noteDialog.isChanged()) {
+            // notify to the attributes panel if the edited node is the selected node
+            if (getSelectedTopics().size() == 1 && getFirstSelectedTopic() == topic) {
+                log.debug("Notify that the topic has been changed.");
+                MindmapEvents.notifyTopicChangeEvent(topic);
+            }
+            onMindMapModelChanged(true);
+            super.updateStatusBarForTopic(topic);
+            // after dialog closed, unsubscribe to avoid conflict with next time note dialog shows.
+            MindmapEvents.unsubscribeNoteSaveEvent(topic);
+        }
     }
 
     private void editTopicLink(TopicNode topic) {

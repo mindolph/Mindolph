@@ -19,126 +19,126 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Tab text="Style">
+        <Tab text="%prefs.mindmap.tab.style">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <HBox HBox.hgrow="ALWAYS">
                         <VBox prefWidth="640">
-                            <PreferenceItem name="Theme:">
+                            <PreferenceItem name="%prefs.mindmap.theme">
                                 <ChoiceBox fx:id="cbTheme">
                                 </ChoiceBox>
                                 <Button fx:id="btnActions"/>
                             </PreferenceItem>
                             <Separator prefWidth="200.0"/>
-                            <PreferenceItem name="Show grid:">
+                            <PreferenceItem name="%prefs.mindmap.show.grid">
                                 <CheckBox fx:id="ckbShowGrid" mnemonicParsing="false"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Show collapsator when mouse hover:">
+                            <PreferenceItem name="%prefs.mindmap.show.collapsator.hover">
                                 <CheckBox fx:id="ckbShowCollapsatorOnMouseHover" mnemonicParsing="false"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Drop shadow:">
+                            <PreferenceItem name="%prefs.mindmap.drop.shadow">
                                 <CheckBox fx:id="ckbDropShadow"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Connector style:">
+                            <PreferenceItem name="%prefs.mindmap.connector.style">
                                 <ChoiceBox fx:id="cbConnectorStyle">
                                 </ChoiceBox>
                             </PreferenceItem>
                             <Separator prefWidth="200.0"/>
 
-                            <PreferenceItem name="Grid size:">
+                            <PreferenceItem name="%prefs.mindmap.grid.size">
                                 <Spinner fx:id="spnGridStep" editable="true"/>
                             </PreferenceItem>
 
-                            <PreferenceItem name="Topic connector width:">
+                            <PreferenceItem name="%prefs.mindmap.connector.width">
                                 <Spinner fx:id="spnConnectorWidth" editable="true"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Jump link width:">
+                            <PreferenceItem name="%prefs.mindmap.jump.link.width">
                                 <Spinner fx:id="spnJumpLinkWidth" editable="true"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Collapsator width:">
+                            <PreferenceItem name="%prefs.mindmap.collapsator.width">
                                 <Spinner fx:id="spnCollapsatorWidth" editable="true"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Collapsator size:">
+                            <PreferenceItem name="%prefs.mindmap.collapsator.size">
                                 <Spinner fx:id="spnCollapsatorSize" editable="true"/>
                             </PreferenceItem>
 
-                            <PreferenceItem name="Topic border width:">
+                            <PreferenceItem name="%prefs.mindmap.border.width">
                                 <Spinner fx:id="spnBorderWidth" editable="true"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Topic round radius:">
+                            <PreferenceItem name="%prefs.mindmap.round.radius">
                                 <Spinner fx:id="spnRoundRadius" editable="true"/>
                             </PreferenceItem>
 
-                            <PreferenceItem name="Selection frame width:">
+                            <PreferenceItem name="%prefs.mindmap.selection.frame.width">
                                 <Spinner fx:id="spnSelectionWidth" editable="true"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Selection frame gap:">
+                            <PreferenceItem name="%prefs.mindmap.selection.frame.gap">
                                 <Spinner fx:id="spnSelectionGap" editable="true"/>
                             </PreferenceItem>
 
                             <Separator prefWidth="200.0"/>
-                            <PreferenceItem name="1st level horizontal gap:">
+                            <PreferenceItem name="%prefs.mindmap.level1.hgap">
                                 <Slider fx:id="sld1stLevelHGap" max="210.0" min="10.0"
                                         majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
                                         showTickMarks="true" value="10.0"/>
                             </PreferenceItem>
-                            <PreferenceItem name="1st level vertical gap:">
+                            <PreferenceItem name="%prefs.mindmap.level1.vgap">
                                 <Slider fx:id="sld1stLevelVGap" max="210.0" min="10.0"
                                         majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
                                         showTickMarks="true" value="10.0"/>
                             </PreferenceItem>
-                            <PreferenceItem name="2nd level horizontal gap:">
+                            <PreferenceItem name="%prefs.mindmap.level2.hgap">
                                 <Slider fx:id="sld2ndLevelHGap" max="210.0" min="10.0"
                                         majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
                                         showTickMarks="true" value="10.0"/>
                             </PreferenceItem>
-                            <PreferenceItem name="2nd level vertical gap:">
+                            <PreferenceItem name="%prefs.mindmap.level2.vgap">
                                 <Slider fx:id="sld2ndLevelVGap" max="210.0" min="10.0"
                                         majorTickUnit="50" prefWidth="240.0" showTickLabels="true"
                                         showTickMarks="true" value="10.0"/>
                             </PreferenceItem>
                             <Separator prefWidth="200.0"/>
-                            <PreferenceItem name="Grid color:">
+                            <PreferenceItem name="%prefs.mindmap.grid.color">
                                 <ColorPicker fx:id="cpGridColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Background fill color:">
+                            <PreferenceItem name="%prefs.mindmap.bg.fill.color">
                                 <ColorPicker fx:id="cpBackgroundFillColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Topic border color">
+                            <PreferenceItem name="%prefs.mindmap.topic.border.color">
                                 <ColorPicker fx:id="cpTopicBorderColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Collapsator fill color:">
+                            <PreferenceItem name="%prefs.mindmap.collapsator.fill.color">
                                 <ColorPicker fx:id="cpCollapsatorFillColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Collapsator border color">
+                            <PreferenceItem name="%prefs.mindmap.collapsator.border.color">
                                 <ColorPicker fx:id="cpCollapsatorBorderColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Connector color:">
+                            <PreferenceItem name="%prefs.mindmap.connector.color">
                                 <ColorPicker fx:id="cpConnectorColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Jump link color:">
+                            <PreferenceItem name="%prefs.mindmap.jump.link.color">
                                 <ColorPicker fx:id="cpJumpLinkColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Root fill color:">
+                            <PreferenceItem name="%prefs.mindmap.root.fill.color">
                                 <ColorPicker fx:id="cpRootFillColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Root text color">
+                            <PreferenceItem name="%prefs.mindmap.root.text.color">
                                 <ColorPicker fx:id="cpRootTextColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="1st level fill color:">
+                            <PreferenceItem name="%prefs.mindmap.level1.fill.color">
                                 <ColorPicker fx:id="cp1stLevelColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="1st level text color:">
+                            <PreferenceItem name="%prefs.mindmap.level1.text.color">
                                 <ColorPicker fx:id="cp1stLevelTextColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="2nd level fill color:">
+                            <PreferenceItem name="%prefs.mindmap.level2.fill.color">
                                 <ColorPicker fx:id="cp2ndLevelColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="2nd level text color:">
+                            <PreferenceItem name="%prefs.mindmap.level2.text.color">
                                 <ColorPicker fx:id="cp2ndLevelTextColor"/>
                             </PreferenceItem>
-                            <PreferenceItem name="Selection frame color:">
+                            <PreferenceItem name="%prefs.mindmap.selection.frame.color">
                                 <ColorPicker fx:id="cpSelectionColor"/>
                             </PreferenceItem>
                         </VBox>
@@ -147,15 +147,15 @@
 
             </AnchorPane>
         </Tab>
-        <Tab text="Options">
+        <Tab text="%prefs.mindmap.tab.options">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <VBox layoutX="135.0" layoutY="137.0" prefHeight="200.0" prefWidth="100.0"
                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                       AnchorPane.topAnchor="0.0">
-                    <PreferenceItem name="Add default comment to root node">
+                    <PreferenceItem name="%prefs.mindmap.add.default.comment.root">
                         <CheckBox fx:id="ckbAddDefaultCommentToRoot"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Trim topic text before pasting:">
+                    <PreferenceItem name="%prefs.mindmap.trim.topic.text">
                         <CheckBox fx:id="ckbTrimTopicText"/>
                     </PreferenceItem>
                     <!--                               <PreferenceItem name="Prefer internal browser to open URL:">-->
@@ -168,19 +168,22 @@
                     <!--                                       <CheckBox fx:id="ckbUseRelevantPathForProjectFiles" />-->
                     <!--                                   </items>-->
                     <!--                               </PreferenceItem>-->
-                    <PreferenceItem name="Unfold collapsed drop target:">
+                    <PreferenceItem name="%prefs.mindmap.unfold.collapsed.target">
                         <CheckBox fx:id="ckbUnfoldCollapsedDropTarget"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Copy parent color info to new child:">
+                    <PreferenceItem name="%prefs.mindmap.copy.parent.color">
                         <CheckBox fx:id="ckbCopyParentColorToNewChild"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Smart text paste:">
+                    <PreferenceItem name="%prefs.mindmap.smart.text.paste">
                         <CheckBox fx:id="ckbSmartTextPaste"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Open topic attributes by double clicking:">
+                    <PreferenceItem name="%prefs.mindmap.topic.attr.dbl.click">
                         <CheckBox fx:id="ckbTopicAttrByDblClicking"/>
                     </PreferenceItem>
-                    <PreferenceItem name="Max size of undo/redo history(10-50):">
+                    <PreferenceItem name="%prefs.mindmap.topic.attr.panel.open.default">
+                        <CheckBox fx:id="ckbOpenAttributePanelByDefault"/>
+                    </PreferenceItem>
+                    <PreferenceItem name="%prefs.mindmap.undo.redo.max">
                         <Spinner fx:id="spnUndRedo" editable="true"/>
                     </PreferenceItem>
                 </VBox>

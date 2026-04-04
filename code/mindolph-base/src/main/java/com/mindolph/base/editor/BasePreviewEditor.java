@@ -55,7 +55,7 @@ public abstract class BasePreviewEditor extends BaseCodeAreaEditor implements Ed
     private final static double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
     // for refreshing preview
-    private EventSource<Void> refreshEventSource = new EventSource<>();
+    private final EventSource<Void> refreshEventSource = new EventSource<>();
 
     public BasePreviewEditor(String fxmlResourcePath, EditorContext editorContext, boolean acceptDraggingFiles) {
         super(fxmlResourcePath, editorContext, acceptDraggingFiles);

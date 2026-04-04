@@ -6,6 +6,7 @@ import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.DirBreadCrumb;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.control.FileFilterButtonGroup;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -44,10 +45,11 @@ public class FindInFilesDialog extends BaseDialogController<SearchParams> {
     private DirBreadCrumb bcbDirPath;
 
     public FindInFilesDialog(File workspaceDir, File dir) {
+        I18nHelper i18n = I18nHelper.getInstance();
         Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<SearchParams>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Find in Files")
+                .title(i18n.get("dialog.find.in.files"))
                 .fxmlUri("dialog/find_in_files_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

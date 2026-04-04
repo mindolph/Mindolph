@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.mindolph.mindmap.view.NotePanel?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml">
+    <VBox spacing="8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <NotePanel fx:id="notePanel" mode="PANEL" minHeight="80" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="12">
+            <!--            <Button fx:id="btnEmoticon" />-->
+            <TextField fx:id="tfUrl" promptText="URI" HBox.hgrow="ALWAYS" maxWidth="9999"/>
+<!--            <TextField fx:id="tfFile" promptText="File Link" HBox.hgrow="ALWAYS" maxWidth="9999"/>-->
+        </HBox>
+        <HBox spacing="12">
+
+        </HBox>
+    </VBox>
+</fx:root>

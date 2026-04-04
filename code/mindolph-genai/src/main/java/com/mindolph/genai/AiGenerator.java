@@ -1,5 +1,9 @@
 package com.mindolph.genai;
 
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
+import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
+
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
@@ -11,7 +15,6 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.core.constant.SceneStatePrefs;
@@ -19,7 +22,15 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
+import com.mindolph.mfx.util.GlobalExecutor;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -30,15 +41,6 @@ import javafx.scene.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
-import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.
@@ -78,20 +80,18 @@ public class AiGenerator implements Generator {
     }
 
     private void listenGenAiEvents() {
-        Consumer<String> onError = (msg) -> {
+        Consumer<String> onError = msg -> {
             Platform.runLater(() -> {
                 cancelConsumer.accept(false);
                 String err = "Failed to generate content: \n %s\n".formatted(msg);
-                if (inputPanel != null)
-                    inputPanel.onStop(err);
-                if (reframePanel != null)
-                    reframePanel.onStop(err);
+                if (inputPanel != null) inputPanel.onStop(err);
+                if (reframePanel != null) reframePanel.onStop(err);
             });
         };
         GenAiEvents.getIns().subscribeGenerateEvent(editorId, input -> {
             inputMap.put(editorId, input);
 
-            Consumer<StreamPartial> showReframePane = (streamToken) -> {
+            Consumer<StreamPartial> showReframePane = streamToken -> {
                 AiGenerator.this.removeFromParent(reframePanel);
                 AiGenerator.this.removeFromParent(inputPanel);
                 reframePanel = new AiReframePane(editorId, input, streamToken.outputTokens());
@@ -190,18 +190,18 @@ public class AiGenerator implements Generator {
     @Override
     public MenuItem generationMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem("Generate...", icon);
+        return new MenuItem(I18nHelper.getInstance().get("ai.menu.generate"), icon);
     }
 
     @Override
     public MenuItem summaryMenuItem() {
-        return new MenuItem("Summarize...", FontIconManager.getIns().getIcon(IconKey.MAGIC));
+        return new MenuItem(I18nHelper.getInstance().get("ai.menu.summarize"), FontIconManager.getIns().getIcon(IconKey.MAGIC));
     }
 
     @Override
     public StackPane showInputPanel(String defaultInput) {
         if (!checkSettings(GEN_AI_GENERATE_MODEL)) {
-            DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
+            DialogFactory.warnDialog(I18nHelper.getInstance().get("ai.msg.setup.required"));
             return null;
         }
         String prompt = defaultInput;
@@ -279,7 +279,6 @@ public class AiGenerator implements Generator {
         }
         return false;
     }
-
 
     @Override
     public void setOnCancel(Consumer<Boolean> consumer) {

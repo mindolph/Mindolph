@@ -18,7 +18,7 @@ package com.mindolph.mindmap.extension.exporters;
 
 import com.igormaznitsa.meta.common.utils.GetUtils;
 import com.igormaznitsa.mindmap.model.*;
-import com.mindolph.mindmap.I18n;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -224,10 +224,10 @@ public class MindmupExporter extends BaseExportExtension {
         OutputStream theOut = out;
         if (theOut == null) {
             fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
-                    I18n.getIns().getString("MindmupExporter.saveDialogTitle"),
+                    I18nHelper.getInstance().get("mindmap.export.mindmup.title"),
                     null,
                     ".mup",
-                    I18n.getIns().getString("MindmupExporter.filterDescription"),
+                    I18nHelper.getInstance().get("mindmap.export.mindmup.filter"),
                     exportFileName);
             fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".mup");
             theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
@@ -245,12 +245,12 @@ public class MindmupExporter extends BaseExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("MindmupExporter.exporterName");
+        return I18nHelper.getInstance().get("mindmap.export.mindmup.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18n.getIns().getString("MindmupExporter.exporterReference");
+        return I18nHelper.getInstance().get("mindmap.export.mindmup.reference");
     }
 
     @Override
