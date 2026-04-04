@@ -495,8 +495,8 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         noteDialog.show(noteData -> {
             // do nothing.
         });
-        if (noteDialog.isChanged()){
-            // notify if the edited node is the selected node
+        if (noteDialog.isChanged()) {
+            // notify to the attributes panel if the edited node is the selected node
             if (getSelectedTopics().size() == 1 && getFirstSelectedTopic() == topic) {
                 log.debug("Notify that the topic has been changed.");
                 MindmapEvents.notifyTopicChangeEvent(topic);

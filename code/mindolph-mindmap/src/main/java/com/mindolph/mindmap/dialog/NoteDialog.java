@@ -79,6 +79,10 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
     public void onPositive(NoteEditorData result) {
         // export data to mindmap when click the positive button.
         this.notePanel.exportNoteData();
-        MindmapEvents.notifyAttributesChangeEvent(this.topic);
+    }
+
+    @Override
+    public void onNegative(NoteEditorData result) {
+        this.result = this.origin;
     }
 }

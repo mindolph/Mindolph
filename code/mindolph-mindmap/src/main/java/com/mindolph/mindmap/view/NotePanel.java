@@ -92,8 +92,8 @@ public class NotePanel extends BaseView {
         // and the note toolbar and editor toolbar will be initialized after the mode is set.
         this.mode.addListener((observable, oldValue, newValue) -> {
             log.debug("Mode is changed to %s".formatted(newValue));
-            this.noteToolbar.setup(AttributesMode.MODE_PANEL.equals(this.mode.get()));
-            if (AttributesMode.MODE_PANEL.equals(this.mode.get())) {
+            this.noteToolbar.setup(this.isPanelMode());
+            if (this.isPanelMode()) {
                 // avoid conflict with global undo/redo in mind map when note editor is used as side pane, so disable the undo/redo feature in this case.
                 textArea.setDisableUndo(true);
                 textArea.setDisableRedo(true);
@@ -228,11 +228,11 @@ public class NotePanel extends BaseView {
                     if (loading) return;
                     btnSave.setDisable(oldValue.equals(newValue));
                     if (!Strings.CS.equals(oldValue, newValue)) {
-                        if (AttributesMode.MODE_DIALOG.equals(this.mode.get())) {
+                        if (this.isDialogMode()) {
                             log.debug("Do editing history in text area.");
                             this.textArea.doHistory();
                         }
-                        else if (AttributesMode.MODE_PANEL.equals(this.mode.get())) {
+                        else if (this.isPanelMode()) {
                             log.debug("Do editing history in external component.");
                             this.handleNoteData();
                             this.exportNoteData();
@@ -335,34 +335,8 @@ public class NotePanel extends BaseView {
                 // only try to decrypt if not in the Note dialog.
                 if (decrypt) {
                     log.debug("Show password dialog to decrypt the note");
-                    PasswordData passwordData = new PasswordData("", this.data.getHint());
-                    passwordData = new PasswordDialog(passwordData).showAndWait();
-                    if (passwordData != null && StringUtils.isNotBlank(passwordData.getPassword())) {
-                        StringBuilder buf = new StringBuilder();
-                        String pass = passwordData.getPassword().trim();
-                        try {
-                            if (CryptoUtils.decrypt(pass, this.data.getText(), buf)) {
-                                String strDecrypted = buf.toString();
-                                log.trace(strDecrypted);
-                                textArea.setText(strDecrypted);
-                                // password is required for saving anyway.
-                                this.data.setPassword(pass);
-                            }
-                            else {
-                                DialogFactory.errDialog("Wrong password!");
-                                this.displaySecretNote();
-                            }
-                        } catch (RuntimeException ex) {
-                            DialogFactory.errDialog("Can't decode encrypted text for error!\nEither broken data or current JDK security policy doesn't support AES-256!");
-                            log.error("Can't decode encrypted note", ex);
-                            this.displaySecretNote();
-                        }
-                    }
-                    else {
-                        // set the text area to avoid changes validation when closing the note dialog
-                        textArea.setText(this.data.getText());
-                        // Canceled. notify to close the dialog(if it's in dialog)
-                        return false;
+                    if (!this.requestPasswordToDecrypt()) {
+                        return false; // cancel the data loading for closing the dialog(for dialog mode)
                     }
                 }
                 else {
@@ -375,6 +349,48 @@ public class NotePanel extends BaseView {
         return true;
     }
 
+    /**
+     *
+     * @return false means cancel the decryption.
+     */
+    private boolean requestPasswordToDecrypt() {
+        PasswordData passwordData = new PasswordData("", this.data.getHint());
+        passwordData = new PasswordDialog(passwordData).showAndWait();
+        if (passwordData != null && StringUtils.isNotBlank(passwordData.getPassword())) {
+            StringBuilder buf = new StringBuilder();
+            String pass = passwordData.getPassword().trim();
+            try {
+                if (CryptoUtils.decrypt(pass, this.data.getText(), buf)) {
+                    String strDecrypted = buf.toString();
+                    log.trace(strDecrypted);
+                    textArea.setText(strDecrypted);
+                    // password is required for saving anyway.
+                    this.data.setPassword(pass);
+                }
+                else {
+                    DialogFactory.errDialog("Wrong password!");
+                    if (this.isDialogMode()) {
+                        return this.requestPasswordToDecrypt();
+                    }
+                    else {
+                        this.displaySecretNote();
+                    }
+                }
+            } catch (RuntimeException ex) {
+                DialogFactory.errDialog("Can't decode encrypted text for error!\nEither broken data or current JDK security policy doesn't support AES-256!");
+                log.error("Can't decode encrypted note", ex);
+                this.displaySecretNote();
+            }
+        }
+        else {
+            // set the text area to avoid changes validation when closing the note dialog
+            textArea.setText(this.data.getText());
+            // Canceled. notify to close the dialog(if it's in dialog)
+            return false;
+        }
+        return true;
+    }
+
     private void displaySecretNote() {
         log.debug("Selected note is protected, disable the editor and show the hint if exists");
         tbtnProtect.setSelected(true);
@@ -384,6 +400,7 @@ public class NotePanel extends BaseView {
 
     /**
      * Handle data from UI to the note data object, but not to the topic.
+     *
      * @return
      */
     public boolean handleNoteData() {
@@ -410,7 +427,7 @@ public class NotePanel extends BaseView {
                         return false;
                     }
                 }
-                log.debug("save data: " + this.data);
+                log.debug("update data with text in code area: " + newNoteText);
                 this.data.setText(newNoteText);
             }
             return true;
@@ -425,7 +442,7 @@ public class NotePanel extends BaseView {
      * Export note data to the topic.
      */
     public void exportNoteData() {
-        if (StringUtils.isBlank(this.data.getText())){
+        if (StringUtils.isBlank(this.data.getText())) {
             topic.removeExtra(Extra.ExtraType.NOTE);
         }
         else {
@@ -453,5 +470,13 @@ public class NotePanel extends BaseView {
 
     public void setMode(String mode) {
         this.mode.set(mode);
+    }
+
+    private boolean isDialogMode() {
+        return AttributesMode.MODE_DIALOG.equals(this.mode.get());
+    }
+
+    private boolean isPanelMode() {
+        return AttributesMode.MODE_PANEL.equals(this.mode.get());
     }
 }
