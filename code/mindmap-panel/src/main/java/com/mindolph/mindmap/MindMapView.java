@@ -462,16 +462,16 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
     }
 
-    public void setModel(MindMap<TopicNode> model, boolean notifyModelChangeListeners, boolean saveToHistory, boolean rootToCenter) {
+    public void setModel(MindMap<TopicNode> model, boolean notifyModelChanges, boolean saveToHistory, boolean rootToCenter) {
         log.debug("Set mind map model");
+        this.model = model;
+        this.setScale(1.0f);
         if (this.elementUnderEdit != null) {
             endEdit(null, false);
         }
 
         List<int[]> selectedPaths = this.selection.get().stream().map(Topic::getPositionPath).toList();
         this.selection.get().clear();
-        this.setScale(1.0f);
-        this.model = model;
         boolean selectionChanged = false;
         for (int[] posPath : selectedPaths) {
             TopicNode topic = this.model.findForPositionPath(posPath);
@@ -490,7 +490,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         }
         else {
             diagramEventHandler.onDiagramMeasured(rootToCenter);
-            if (notifyModelChangeListeners) {
+            if (notifyModelChanges) {
                 onMindMapModelChanged(saveToHistory);
             }
         }
@@ -1656,11 +1656,11 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 // move model from undo to redo
                 this.undoStorage.addToRedo(currentModelState.getAndSet(this.undoStorage.fromUndo()));
                 this.preventAddUndo.set(true);
-                try {
-                    this.setModel(new MindMap<>(new StringReader(this.currentModelState.get()), RootTopicCreator.defaultCreator), true, false, false);
+                try (Reader reader = new StringReader(this.currentModelState.get())) {
+                    this.setModel(new MindMap<>(reader, RootTopicCreator.defaultCreator), true, false, false);
 //                        this.title.setChanged(
 //                                this.undoStorage.hasUndo() || this.undoStorage.hasRemovedUndoStateForFullBuffer());
-                    log.debug("%s have undo".formatted(this.undoStorage.hasUndo() ? "still" : "not"));
+                    log.debug("%s have undo".formatted(this.undoStorage.hasUndo() ? "still" : "does not"));
                     undoAvailable.set(this.undoStorage.hasUndo());
                     redoAvailable.set(this.undoStorage.hasRedo());
                 } catch (IOException ex) {
@@ -1668,6 +1668,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 } finally {
                     this.preventAddUndo.set(false);
                 }
+                log.debug("%d topic selected after undo".formatted(this.selection.size()));
             }
             else {
                 log.debug("No undo records.");
@@ -1680,8 +1681,8 @@ public class MindMapView extends BaseScalableView implements Anchorable {
             if (this.undoStorage.hasRedo()) {
                 this.undoStorage.addToUndo(this.currentModelState.getAndSet(this.undoStorage.fromRedo()));
                 this.preventAddUndo.set(true);
-                try {
-                    this.setModel(new MindMap<>(new StringReader(this.currentModelState.get()), RootTopicCreator.defaultCreator), true, false, false);
+                try (Reader reader = new StringReader(this.currentModelState.get())) {
+                    this.setModel(new MindMap<>(reader, RootTopicCreator.defaultCreator), true, false, false);
 //                        this.title.setChanged(
 //                                this.undoStorage.hasUndo() || this.undoStorage.hasRemovedUndoStateForFullBuffer());
                     redoAvailable.set(this.undoStorage.hasRedo());

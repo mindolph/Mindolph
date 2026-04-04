@@ -37,7 +37,9 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
+
 import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
+
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.attributes.AttributeUtils;
@@ -204,6 +206,13 @@ public class MindMapEditor extends BaseEditor {
                         scrollPane.calculateAndUpdateViewportRectangle();
                         if (rootToCenter) {
                             mindMapView.rootToCentre();
+                        }
+                        // workaround for avoiding the root topic is selected automatically after undo/redo when any sub-topic is selected.
+                        if (editorContext.getFileData().getAnchor() == null && mindMapView.hasSelectedTopics()) {
+                            TopicNode firstSelected = mindMapView.getSelection().getFirst();
+                            if (firstSelected != null) {
+                                editorContext.getFileData().setAnchor(new MindMapAnchor(firstSelected.getText(), firstSelected.getParent() == null ? null : firstSelected.getParent().getText()));
+                            }
                         }
                         EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
                         this.outline();

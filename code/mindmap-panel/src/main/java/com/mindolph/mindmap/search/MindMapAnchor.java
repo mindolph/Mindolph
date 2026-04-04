@@ -14,6 +14,14 @@ public class MindMapAnchor implements Anchor {
     String text;
     String parentText;
 
+    public MindMapAnchor() {
+    }
+
+    public MindMapAnchor(String text, String parentText) {
+        this.text = text;
+        this.parentText = parentText;
+    }
+
     public String getText() {
         return text;
     }
