@@ -394,12 +394,12 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
 
 
     public T getFirst() {
-        return this.getChildren().isEmpty() ? null : this.getChildren().get(0);
+        return this.getChildren().isEmpty() ? null : this.getChildren().getFirst();
     }
 
 
     public T getLast() {
-        return this.getChildren().isEmpty() ? null : this.getChildren().get(this.getChildren().size() - 1);
+        return this.getChildren().isEmpty() ? null : this.getChildren().getLast();
     }
 
 
@@ -530,11 +530,11 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
     }
 
     public boolean isFirstChild(T t) {
-        return !this.getChildren().isEmpty() && this.getChildren().get(0) == t;
+        return !this.getChildren().isEmpty() && this.getChildren().getFirst() == t;
     }
 
     public boolean isLastChild(T t) {
-        return !this.getChildren().isEmpty() && this.getChildren().get(this.getChildren().size() - 1) == t;
+        return !this.getChildren().isEmpty() && this.getChildren().getLast() == t;
     }
 
     public boolean isLeaf() {
@@ -951,13 +951,13 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         List<T> path = getPath();
         int[] result = new int[path.size()];
 
-        T current = path.get(0);
+        T current = path.getFirst();
         int index = 1;
         while (index < path.size()) {
             T next = path.get(index);
-            int theindex = current.getChildren().indexOf(next);
-            result[index++] = theindex;
-            if (theindex < 0) {
+            int theIdx = current.getChildren().indexOf(next);
+            result[index++] = theIdx;
+            if (theIdx < 0) {
                 break;
             }
             current = next;
@@ -973,7 +973,7 @@ public class Topic<T extends Topic<T>> implements Serializable, Constants, Itera
         List<T> list = new ArrayList<>();
         T current = (T) this;
         do {
-            list.add(0, current);
+            list.addFirst(current);
             current = current.getParent();
         }
         while (current != null);

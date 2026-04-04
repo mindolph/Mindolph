@@ -224,6 +224,13 @@ public class MindMapEditor extends BaseEditor {
                         if (rootToCenter) {
                             mindMapView.rootToCentre();
                         }
+                        // workaround for avoiding the root topic is selected automatically after undo/redo when any sub-topic is selected.
+                        if (editorContext.getFileData().getAnchor() == null && mindMapView.hasSelectedTopics()) {
+                            TopicNode firstSelected = mindMapView.getSelection().getFirst();
+                            if (firstSelected != null) {
+                                editorContext.getFileData().setAnchor(new MindMapAnchor(firstSelected.getText(), firstSelected.getParent() == null ? null : firstSelected.getParent().getText()));
+                            }
+                        }
                         EventBus.getIns().notifyFileLoaded(editorContext.getFileData());
                         this.outline();
                         mindMapView.requestFocus();
