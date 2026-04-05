@@ -39,7 +39,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         Map<String, Object> params = super.formatParams(input.text(), outputParams);
         log.debug(String.valueOf(params));
         Prompt prompt = promptTemplate.apply(params);
-        log.info("prompt: %s".formatted(prompt.text()));
+        log.debug("prompt: %s".formatted(prompt.text()));
         ChatModel llm = buildAI(input);
         ChatMessage chatMessage = new UserMessage(prompt.text());
         ChatResponse aiMessage = llm.chat(chatMessage);
@@ -97,7 +97,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
         PromptTemplate promptTemplate = PromptTemplate.from(PROMPT_FORMAT_TEMPLATE);
         Map<String, Object> params = super.formatParams(input, outputParams);
         Prompt prompt = promptTemplate.apply(params);
-        log.info("prompt: '%s'".formatted(prompt.text()));
+        log.debug("prompt: '%s'".formatted(prompt.text()));
         return prompt;
     }
 
