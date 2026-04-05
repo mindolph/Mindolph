@@ -2,7 +2,7 @@ package com.mindolph.genai;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
-import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
+import static com.mindolph.core.constant.AiConstants.FILE_OUTPUT_MAPPING;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;

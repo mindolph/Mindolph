@@ -2,8 +2,8 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.llm.*;
-import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
-import com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import com.mindolph.core.constant.AiConstants.OutputAdjust;
+import com.mindolph.core.constant.AiConstants.OutputFormat;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.junit.jupiter.api.Test;

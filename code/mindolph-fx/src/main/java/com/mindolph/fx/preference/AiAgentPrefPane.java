@@ -13,7 +13,6 @@ import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.fx.control.DatasetTableView;
 import com.mindolph.fx.dialog.DatasetSelectDialog;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -31,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.genai.GenaiUiConstants.agentConverter;
+import static com.mindolph.genai.AiUiConstants.agentConverter;
 
 /**
  * @since 1.13.0
@@ -63,8 +62,6 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
-
-    private I18nHelper i18n = I18nHelper.getInstance();
 
     public AiAgentPrefPane() {
         super("/preference/gen_ai_agent_pref_pane.fxml");

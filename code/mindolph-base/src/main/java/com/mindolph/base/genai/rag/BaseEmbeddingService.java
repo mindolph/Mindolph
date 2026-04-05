@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.mindolph.core.constant.GenAiConstants.lookupModelMeta;
+import static com.mindolph.core.constant.AiConstants.lookupModelMeta;
 
 /**
  * base class for embedding service and rag service.

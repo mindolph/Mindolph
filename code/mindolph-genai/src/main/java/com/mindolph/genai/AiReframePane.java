@@ -6,8 +6,8 @@ import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiConstants;
-import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.core.constant.AiConstants;
+import com.mindolph.core.constant.AiConstants.OutputAdjust;
 import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
@@ -63,7 +63,7 @@ public class AiReframePane extends StackPane {
         btnDiscard.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
 
         btnKeep.setOnAction(event -> {
-            GenAiEvents.getIns().emitActionEvent(editorId, GenAiConstants.ActionType.KEEP);
+            GenAiEvents.getIns().emitActionEvent(editorId, AiConstants.ActionType.KEEP);
             this.onWorking();
         });
         btnRetry.setOnAction(event -> {
@@ -88,7 +88,7 @@ public class AiReframePane extends StackPane {
             adjustMenu.show(btnAdjust, event.getScreenX(), event.getScreenY());
         });
         btnDiscard.setOnAction(event -> {
-            GenAiEvents.getIns().emitActionEvent(editorId, GenAiConstants.ActionType.DISCARD);
+            GenAiEvents.getIns().emitActionEvent(editorId, AiConstants.ActionType.DISCARD);
             this.onWorking();
         });
     }
@@ -113,8 +113,8 @@ public class AiReframePane extends StackPane {
         };
         MenuItem miShorter = new MenuItem(I18nHelper.getInstance().get("ai.reframe.shorter"), FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
         MenuItem miLonger = new MenuItem(I18nHelper.getInstance().get("ai.reframe.longer"), FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
-        miShorter.setUserData(GenAiConstants.OutputAdjust.SHORTER);
-        miLonger.setUserData(GenAiConstants.OutputAdjust.LONGER);
+        miShorter.setUserData(AiConstants.OutputAdjust.SHORTER);
+        miLonger.setUserData(AiConstants.OutputAdjust.LONGER);
         miShorter.setOnAction(eventHandler);
         miLonger.setOnAction(eventHandler);
         menu.getItems().addAll(miShorter, miLonger);

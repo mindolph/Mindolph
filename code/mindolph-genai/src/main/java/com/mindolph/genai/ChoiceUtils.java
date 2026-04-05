@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
-import static com.mindolph.core.constant.GenAiConstants.LANGS_JSON;
-import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
-import static com.mindolph.genai.GenaiUiConstants.LANGUAGES_IN_JSON;
+import static com.mindolph.core.constant.AiConstants.LANGS_JSON;
+import static com.mindolph.core.constant.AiConstants.lookupLanguage;
+import static com.mindolph.genai.AiUiConstants.LANGUAGES_IN_JSON;
 
 /**
  * @since 1.11.1
@@ -31,7 +31,7 @@ public class ChoiceUtils {
 
     public static void selectOrUnselectLanguage(ChoiceBox<Pair<String, String>> choiceBox, String languageCode) {
         if (StringUtils.isNotBlank(languageCode)) {
-            String language = GenaiUiConstants.lookupLanguage(languageCode);
+            String language = AiUiConstants.lookupLanguage(languageCode);
             if (StringUtils.isNotBlank(language)) {
                 choiceBox.getSelectionModel().select(new Pair<>(languageCode, language));
             }

@@ -4,7 +4,7 @@ import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.LocalModelManager;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
@@ -13,7 +13,6 @@ import com.mindolph.genai.GenAiUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.SimpleProgressDialog;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
@@ -28,8 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.mindolph.core.constant.GenAiConstants.*;
-import static com.mindolph.genai.GenaiUiConstants.*;
+import static com.mindolph.core.constant.AiConstants.*;
+import static com.mindolph.genai.AiUiConstants.*;
 
 /**
  * Include choice boxes for LLM providers and their models.
@@ -40,7 +39,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseModelProviderPrefPane.class);
 
-    I18nHelper i18n = I18nHelper.getInstance();
+
 
     public BaseModelProviderPrefPane(String fxmlResourceUri) {
         super(fxmlResourceUri);
@@ -72,7 +71,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbProvider
      * @param cbLanguage
      * @param cbModel
-     * @param type       1 is chat model, 2 is embedding model, see {@link GenAiConstants}
+     * @param type       1 is chat model, 2 is embedding model, see {@link AiConstants}
      */
     private void initModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
                                             MChoiceBox<Pair<String, String>> cbLanguage,
@@ -92,8 +91,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             });
         }
         cbProvider.setConverter(new ProviderConverter());
-        List<GenAiModelProvider> filteredProviders = EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
-        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
+        List<GenAiModelProvider> filteredProviders = this.filteredProvidersByHavingModelsForType(type);
+        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(providerDisplayMapper).toList();
         cbProvider.getItems().add(null); // none select
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -174,7 +173,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
 
     // update the model component by provider and language choices.
     protected void updateModelComponent(ChoiceBox<Pair<String, ModelMeta>> cbModel, String providerName, int modelType, String langCode) {
-        Collection<ModelMeta> preDefinedModels = GenAiConstants.getFilteredPreDefinedModels(providerName, modelType);
+        Collection<ModelMeta> preDefinedModels = AiConstants.getFilteredPreDefinedModels(providerName, modelType);
 
         if (StringUtils.isNotBlank(langCode)) {
             preDefinedModels = preDefinedModels.stream().filter(mm ->
@@ -203,9 +202,13 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         }
     }
 
+    public List<GenAiModelProvider> filteredProvidersByHavingModelsForType(int type) {
+        return EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
+    }
+
     // Whether there are any specific type of models for the provider
     private boolean hasModelsForType(String providerName, int modelType) {
-        return CollectionUtils.isNotEmpty(GenAiConstants.getFilteredPreDefinedModels(providerName, modelType))
+        return CollectionUtils.isNotEmpty(AiConstants.getFilteredPreDefinedModels(providerName, modelType))
                 || CollectionUtils.isNotEmpty(LlmConfig.getIns().getFilteredCustomModels(providerName, modelType));
     }
 

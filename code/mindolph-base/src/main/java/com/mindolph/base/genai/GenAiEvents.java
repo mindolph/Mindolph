@@ -1,8 +1,8 @@
 package com.mindolph.base.genai;
 
 import com.mindolph.base.genai.llm.StreamPartial;
-import com.mindolph.core.constant.GenAiConstants.ActionType;
-import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.core.constant.AiConstants.ActionType;
+import com.mindolph.core.constant.AiConstants.OutputAdjust;
 import com.mindolph.core.constant.GenAiModelProvider;
 import org.reactfx.EventSource;
 

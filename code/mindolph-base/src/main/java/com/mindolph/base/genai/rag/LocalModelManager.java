@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static com.mindolph.core.constant.GenAiConstants.ALL_LANGUAGE_CODE;
+import static com.mindolph.core.constant.AiConstants.ALL_LANGUAGE_CODE;
 
 /**
  * @since 1.13.0

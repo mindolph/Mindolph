@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.mindolph.core.constant.GenAiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
+import static com.mindolph.core.constant.AiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
 import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 
 /**

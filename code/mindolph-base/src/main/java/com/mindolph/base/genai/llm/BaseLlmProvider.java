@@ -4,7 +4,7 @@ import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.base.util.NetworkUtils;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
-import static com.mindolph.core.constant.GenAiConstants.lookupLanguage;
+import static com.mindolph.core.constant.AiConstants.lookupLanguage;
 
 /**
  * @author mindolph.com@gmail.com
@@ -89,7 +89,7 @@ public abstract class BaseLlmProvider implements LlmProvider {
                         ? "your output must be in format: %s".formatted(outputParams.outputFormat().getName())
                         : StringUtils.EMPTY);
                 put("length", outputParams.outputAdjust() == null ? StringUtils.EMPTY :
-                        "output : " + (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
+                        "output : " + (outputParams.outputAdjust() == AiConstants.OutputAdjust.SHORTER ? "concisely" : "detailed"));
                 put("language", "the output language must be " + determineLanguage(outputParams));
             }
         };

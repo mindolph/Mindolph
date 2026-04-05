@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_LATEST_GENERATE_PROMPT;
-import static com.mindolph.core.constant.GenAiConstants.ActionType;
+import static com.mindolph.core.constant.AiConstants.ActionType;
 
 /**
  * An input panel for gen-ai.

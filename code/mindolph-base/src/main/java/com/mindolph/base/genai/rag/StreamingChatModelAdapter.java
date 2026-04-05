@@ -6,7 +6,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.LlmProvider;
 import com.mindolph.base.genai.llm.LlmProviderFactory;
 import com.mindolph.base.genai.llm.OutputParams;
-import com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import com.mindolph.core.constant.AiConstants.OutputFormat;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;

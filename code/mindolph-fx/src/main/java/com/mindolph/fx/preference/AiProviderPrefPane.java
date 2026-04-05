@@ -6,13 +6,12 @@ import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.dialog.CustomModelDialog;
-import com.mindolph.mfx.i18n.I18nHelper;
+import com.mindolph.genai.AiUiConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,11 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.core.constant.AiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
-import static com.mindolph.genai.GenaiUiConstants.*;
+import static com.mindolph.genai.AiUiConstants.*;
 
 /**
  * @since 1.13.0
@@ -73,7 +72,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         super.beforeLoading();
         // model providers
         cbProvider.setConverter(providerConverter);
-        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
+        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(providerDisplayMapper).toList();
         cbProvider.getItems().addAll(providerPairs);
 
         lvModels.setCellFactory(modelMetaListView -> {
@@ -199,7 +198,6 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         }
         else {
             if (currentProviderMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
-                I18nHelper i18n = I18nHelper.getInstance();
                 DialogFactory.warnDialog(i18n.get("msg.model.exists", newCustomModel.getName()));
                 this.createNewCustomModel(newCustomModel);
                 return; // already exists
@@ -214,7 +212,6 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     private void removeSelectedCustomModel() {
         ModelMeta modelMeta = lvModels.getSelectionModel().getSelectedItem();
         if (modelMeta != null && modelMeta.isCustom()) {
-            I18nHelper i18n = I18nHelper.getInstance();
             boolean sure = DialogFactory.okCancelConfirmDialog(i18n.get("msg.model.delete.confirm", modelMeta.getName()));
             if (sure) {
                 currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
@@ -228,21 +225,23 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         lbMaxOutputTokens.setVisible(model != null && (model.isInternal() || model.maxTokens() > 0));
         if (model != null) {
             if (model.isInternal()) {
-                String template = """
-                        Type: Internal embedding model
-                        Language code: %s
-                        Dimension: %d
-                        """;
-                lbMaxOutputTokens.setText(template.formatted(GenAiConstants.lookupLanguage(model.getLangCode()), model.getDimension()));
+//                String template = """
+//                        Type: Internal embedding model
+//                        Language code: %s
+//                        Dimension: %d
+//                        """;
+                String template = i18n.get("prefs.ai.provider.model.embedding.internal.details");
+                lbMaxOutputTokens.setText(template.formatted(AiUiConstants.lookupLanguage(model.getLangCode()), model.getDimension()));
             }
             else {
                 // external models
                 if (model.maxTokens() > 0) {
-                    String template = """
-                            Type: Chat model
-                            Is custom: %s
-                            Max output tokens: %s
-                            """;
+//                    String template = """
+//                            Type: Chat model
+//                            Is custom: %s
+//                            Max output tokens: %s
+//                            """;
+                    String template = i18n.get("prefs.ai.provider.model.chat.external.details");
                     lbMaxOutputTokens.setText(template.formatted(model.isCustom() ? "yes" : "no", displayGenAiTokens(model.maxTokens())));
                 }
             }

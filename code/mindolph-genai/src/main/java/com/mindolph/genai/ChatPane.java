@@ -3,7 +3,7 @@ package com.mindolph.genai;
 import com.mindolph.base.BaseView;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.genai.GenaiUiConstants.MessageType;
+import com.mindolph.genai.AiUiConstants.MessageType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

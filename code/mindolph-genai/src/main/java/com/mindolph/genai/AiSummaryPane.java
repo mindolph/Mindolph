@@ -8,7 +8,7 @@ import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiConstants.ActionType;
+import com.mindolph.core.constant.AiConstants.ActionType;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
-import static com.mindolph.core.constant.GenAiConstants.FILE_OUTPUT_MAPPING;
+import static com.mindolph.core.constant.AiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * @since 1.11

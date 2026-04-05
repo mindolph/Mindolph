@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author mindolph.com@gmail.com
  * @since 1.7
  */
-public interface GenAiConstants {
+public interface AiConstants {
 
     int MODEL_TYPE_CHAT = 1;
     int MODEL_TYPE_EMBEDDING = 2;
@@ -230,7 +230,7 @@ public interface GenAiConstants {
     }
 
     /**
-     * Lookup language by language coed, eg: zh-CN returns "Simplified Chinese (China)"
+     * Lookup language by language code, eg: zh-CN returns "Simplified Chinese (China)"
      *
      * @param langCode
      * @return

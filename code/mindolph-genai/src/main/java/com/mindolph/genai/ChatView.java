@@ -12,7 +12,7 @@ import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
-import com.mindolph.genai.GenaiUiConstants.MessageType;
+import com.mindolph.genai.AiUiConstants.MessageType;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.ShortcutConstants.KEY_AGENT_SEND;
-import static com.mindolph.genai.GenaiUiConstants.PAYLOAD_VECTOR_DB;
+import static com.mindolph.genai.AiUiConstants.PAYLOAD_VECTOR_DB;
 
 /**
  * @since 1.13.0
@@ -177,7 +177,7 @@ public class ChatView extends BaseView implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.initStateMachine();
-        agentSelector.setConverter(GenaiUiConstants.agentConverter);
+        agentSelector.setConverter(AiUiConstants.agentConverter);
         agentSelector.valueProperty().addListener((observable, oldSelectedAgent, selectedAgent) -> {
             if (selectedAgent == null || selectedAgent == oldSelectedAgent) {
                 return;

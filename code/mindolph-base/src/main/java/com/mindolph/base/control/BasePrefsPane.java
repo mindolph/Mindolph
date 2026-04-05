@@ -33,6 +33,8 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
 
     protected FxPreferences fxPreferences = FxPreferences.getInstance();
 
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
     // Binding of a preference key and Pref object.
     private final MultiValuedMap<String, Pref> bondPrefMap = new HashSetValuedHashMap<>();
 

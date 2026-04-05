@@ -1,7 +1,7 @@
 package com.mindolph.base.genai;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
+import com.mindolph.core.constant.AiConstants.OutputAdjust;
 import com.mindolph.core.constant.GenAiModelProvider;
 import org.apache.commons.lang3.StringUtils;
 

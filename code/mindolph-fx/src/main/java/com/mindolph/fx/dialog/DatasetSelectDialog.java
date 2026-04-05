@@ -4,7 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.core.llm.DatasetMeta;
-import com.mindolph.genai.GenaiUiConstants;
+import com.mindolph.genai.AiUiConstants;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -50,7 +50,7 @@ public class DatasetSelectDialog extends BaseDialogController<List<DatasetMeta>>
                     setText(null);
                 }
                 else {
-                    setText("%s (%s)".formatted(item.getName(), GenaiUiConstants.lookupLanguage(item.getLanguageCode())));
+                    setText("%s (%s)".formatted(item.getName(), AiUiConstants.lookupLanguage(item.getLanguageCode())));
                     if (item.getLanguageCode() == null || !item.getLanguageCode().equals(langCode)) {
                         this.setDisable(true);
                     }

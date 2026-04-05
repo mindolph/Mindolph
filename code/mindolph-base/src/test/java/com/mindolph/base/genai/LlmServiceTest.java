@@ -8,8 +8,8 @@ import com.mindolph.mfx.preference.FxPreferences;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static com.mindolph.core.constant.GenAiConstants.OutputAdjust;
-import static com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import static com.mindolph.core.constant.AiConstants.OutputAdjust;
+import static com.mindolph.core.constant.AiConstants.OutputFormat;
 
 /**
  * TODO doesn't work.

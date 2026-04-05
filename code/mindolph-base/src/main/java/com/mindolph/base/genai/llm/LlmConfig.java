@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.util.ConfigUtils;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
@@ -24,7 +24,7 @@ import java.util.*;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_PROVIDERS;
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_VECTOR_STORE_PROVIDER_ACTIVE;
-import static com.mindolph.core.constant.GenAiConstants.CUSTOM_MODEL_KEY;
+import static com.mindolph.core.constant.AiConstants.CUSTOM_MODEL_KEY;
 
 /**
  * Manage llm config in java preference.
@@ -91,7 +91,7 @@ public class LlmConfig {
     }
 
     public ModelMeta lookupModel(String providerName, String modelName) {
-        ModelMeta modelMeta = GenAiConstants.lookupModelMeta(providerName, modelName);
+        ModelMeta modelMeta = AiConstants.lookupModelMeta(providerName, modelName);
         if (modelMeta == null) {
             modelMeta = LlmConfig.getIns().lookupCustomModel(providerName, modelName);
         }
@@ -126,10 +126,7 @@ public class LlmConfig {
         if (providerMeta != null) {
             if (StringUtils.isBlank(providerMeta.aiModel()) || CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
                 Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
-                if (opt.isPresent()) {
-                    return new Tuple2<>(GenAiModelProvider.valueOf(providerName), opt.get().getName());
-                }
-                return null;
+                return opt.map(modelMeta -> new Tuple2<>(GenAiModelProvider.valueOf(providerName), modelMeta.getName())).orElse(null);
             }
             else {
                 return new Tuple2<>(GenAiModelProvider.valueOf(providerName), providerMeta.aiModel());

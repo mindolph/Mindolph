@@ -4,7 +4,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.mindolph.core.constant.GenAiConstants.MODEL_TYPE_CHAT;
-import static com.mindolph.core.constant.GenAiConstants.PROVIDER_MODELS;
+import static com.mindolph.core.constant.AiConstants.MODEL_TYPE_CHAT;
+import static com.mindolph.core.constant.AiConstants.PROVIDER_MODELS;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
-import static com.mindolph.genai.GenaiUiConstants.*;
+import static com.mindolph.genai.AiUiConstants.*;
 
 /**
  * @since 1.11.1
@@ -85,7 +85,7 @@ public abstract class BaseAiPane extends StackPane {
 
 
         // load all providers and pre-select the preferred provider from user preferences.
-        cbProvider.setConverter(GenaiUiConstants.providerConverter);
+        cbProvider.setConverter(AiUiConstants.providerConverter);
         List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -98,7 +98,7 @@ public abstract class BaseAiPane extends StackPane {
 
         this.reloadModels(providerName);
 
-        ModelMeta targetModel = GenAiConstants.lookupModelMeta(providerName, modelName);
+        ModelMeta targetModel = AiConstants.lookupModelMeta(providerName, modelName);
         if (targetModel == null) {
             Collection<ModelMeta> filteredCustomModels = LlmConfig.getIns().getFilteredCustomModels(providerName, MODEL_TYPE_CHAT);
             targetModel = filteredCustomModels.stream().filter(modelMeta -> modelMeta.getName().equals(modelName))
@@ -125,7 +125,7 @@ public abstract class BaseAiPane extends StackPane {
      */
     protected void reloadModels(String providerName) {
         // collect pre-defined models for the provider.
-        List<Pair<String, ModelMeta>> preModelPairs = GenAiConstants.getFilteredPreDefinedModels(providerName, MODEL_TYPE_CHAT)
+        List<Pair<String, ModelMeta>> preModelPairs = AiConstants.getFilteredPreDefinedModels(providerName, MODEL_TYPE_CHAT)
                 .stream().map(m -> new Pair<>(m.getName(), m)).sorted(MODEL_COMPARATOR).toList();
         List<Pair<String, ModelMeta>> allModelPairs = new ArrayList<>(preModelPairs);
 

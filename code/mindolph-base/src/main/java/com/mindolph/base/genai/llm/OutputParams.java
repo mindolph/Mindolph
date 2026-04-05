@@ -1,7 +1,7 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.core.constant.GenAiConstants.OutputAdjust;
-import com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import com.mindolph.core.constant.AiConstants.OutputAdjust;
+import com.mindolph.core.constant.AiConstants.OutputFormat;
 import org.apache.commons.lang3.StringUtils;
 
 /**

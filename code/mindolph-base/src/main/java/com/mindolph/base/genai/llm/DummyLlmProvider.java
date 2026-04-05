@@ -8,8 +8,8 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.core.constant.GenAiConstants;
-import com.mindolph.core.constant.GenAiConstants.OutputFormat;
+import com.mindolph.core.constant.AiConstants;
+import com.mindolph.core.constant.AiConstants.OutputFormat;
 
 /**
  * @author mindolph.com@gmail.com
@@ -106,10 +106,10 @@ public class DummyLlmProvider implements LlmProvider {
         String template = mkMap.get(outputParams.outputFormat().name(), length);
 
         String generated = template.formatted(input.text(), input.temperature(), chatId);
-        if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.SHORTER) {
+        if (outputParams.outputAdjust() == AiConstants.OutputAdjust.SHORTER) {
             generated = StringUtils.substring(generated, 0, StringUtils.lastIndexOf(generated, '\n') + 1);
         }
-        else if (outputParams.outputAdjust() == GenAiConstants.OutputAdjust.LONGER) {
+        else if (outputParams.outputAdjust() == AiConstants.OutputAdjust.LONGER) {
             switch (outputParams.outputFormat()) {
                 case TEXT:
                     generated = generated + "\nI can do more.";

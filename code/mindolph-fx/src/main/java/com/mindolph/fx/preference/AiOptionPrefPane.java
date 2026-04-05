@@ -33,8 +33,8 @@ import java.util.ResourceBundle;
 
 import static com.mindolph.base.constant.PrefConstants.*;
 import static com.mindolph.core.constant.VectorStoreProvider.PG_VECTOR;
-import static com.mindolph.genai.GenaiUiConstants.PAYLOAD_VECTOR_DB;
-import static com.mindolph.genai.GenaiUiConstants.vectorStoreConverter;
+import static com.mindolph.genai.AiUiConstants.PAYLOAD_VECTOR_DB;
+import static com.mindolph.genai.AiUiConstants.vectorStoreConverter;
 
 /**
  * @since 1.13.0

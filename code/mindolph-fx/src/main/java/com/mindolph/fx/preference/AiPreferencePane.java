@@ -1,7 +1,7 @@
 package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 /**
  * @author mindolph.com@gmail.com
- * @see GenAiConstants
+ * @see AiConstants
  * @see GenAiModelProvider
  * @since 1.7.1
  */

@@ -50,8 +50,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static com.mindolph.core.constant.GenAiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
-import static com.mindolph.genai.GenaiUiConstants.datasetConverter;
+import static com.mindolph.core.constant.AiConstants.SUPPORTED_EMBEDDING_FILE_TYPES;
+import static com.mindolph.genai.AiUiConstants.datasetConverter;
 
 /**
  * @since 1.13.0
@@ -99,8 +99,6 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
 
     // future after starting embedding
     private CompletableFuture<Boolean> futureOfEmbedding;
-
-    private I18nHelper i18n = I18nHelper.getInstance();
 
     public AiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");

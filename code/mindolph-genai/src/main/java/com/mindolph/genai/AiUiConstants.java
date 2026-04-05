@@ -3,23 +3,25 @@ package com.mindolph.genai;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.mindolph.core.constant.GenAiConstants;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ModelMetaBuilder;
+import com.mindolph.mfx.i18n.I18nHelper;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 /**
  * @since 1.11
  */
-public interface GenaiUiConstants {
+public interface AiUiConstants {
 
     enum MessageType {
         HUMAN, AI
@@ -34,7 +36,7 @@ public interface GenaiUiConstants {
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
 
-    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>(GenAiConstants.CUSTOM_MODEL_KEY, new ModelMetaBuilder().name(GenAiConstants.CUSTOM_MODEL_KEY).maxTokens(0).build());
+    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>(AiConstants.CUSTOM_MODEL_KEY, new ModelMetaBuilder().name(AiConstants.CUSTOM_MODEL_KEY).maxTokens(0).build());
 
     StringConverter<Pair<VectorStoreProvider, String>> vectorStoreConverter = new StringConverter<>() {
 
@@ -65,8 +67,8 @@ public interface GenaiUiConstants {
     StringConverter<Pair<String, AgentMeta>> agentConverter = new StringConverter<>() {
 
         @Override
-        public String toString(Pair<String, AgentMeta> paire) {
-            return paire == null ? "" : paire.getValue().getName();
+        public String toString(Pair<String, AgentMeta> pair) {
+            return pair == null ? "" : pair.getValue().getName();
         }
 
         @Override
@@ -103,17 +105,35 @@ public interface GenaiUiConstants {
         }
     }
 
-    static String lookupLanguage(String languageCode) {
-        if (StringUtils.isBlank(languageCode)) {
+    Function<GenAiModelProvider, Pair<GenAiModelProvider, String>> providerDisplayMapper = p ->{
+        // workaround for localize the Internal provider.
+        if (p.getType() == GenAiModelProvider.ProviderType.INTERNAL) {
+            return new Pair<>(p, I18nHelper.getInstance().get("prefs.ai.provider.internal"));
+        }
+        else {
+            return new Pair<>(p, p.getDisplayName());
+        }
+    };
+
+    /**
+     * for embedding model.
+     * @param langCode
+     * @return
+     */
+    static String lookupLanguage(String langCode) {
+        if (StringUtils.isBlank(langCode)) {
             return "Unknown";
+        }
+        if ("all".equals(langCode)){
+            return I18nHelper.getInstance().get("prefs.ai.provider.model.lang.all");
         }
         JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
         for (JsonElement lang : langs) {
-            if (lang.getAsJsonObject().get("code").getAsString().equals(languageCode)) {
+            if (lang.getAsJsonObject().get("code").getAsString().equals(langCode)) {
                 return lang.getAsJsonObject().get("name").getAsString();
             }
         }
-        return languageCode;
+        return langCode;
     }
 
     // Languages code and name mapping for embedding.

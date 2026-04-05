@@ -1,7 +1,7 @@
 package com.mindolph.fx.control;
 
 import com.mindolph.core.llm.DatasetMeta;
-import com.mindolph.genai.GenaiUiConstants;
+import com.mindolph.genai.AiUiConstants;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -51,7 +51,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
             log.debug("Select datasets: {}", datasetMetas);
             // force to convert lang code to language.
             datasetMetas.forEach(datasetMeta -> {
-                datasetMeta.setLanguageCode(GenaiUiConstants.lookupLanguage(datasetMeta.getLanguageCode()));
+                datasetMeta.setLanguageCode(AiUiConstants.lookupLanguage(datasetMeta.getLanguageCode()));
             });
             this.getItems().addAll(datasetMetas);
             super.refresh();

@@ -1,6 +1,6 @@
 package com.mindolph.genai;
 
-import com.mindolph.genai.GenaiUiConstants.MessageType;
+import com.mindolph.genai.AiUiConstants.MessageType;
 
 /**
  * Represent the partial of one chat message for streaming output.
