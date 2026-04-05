@@ -1,8 +1,35 @@
 # Change Logs
 
+### V1.14.0 Unstable Release
+
+* Mind Map
+	* Added an attribute panel for mind map topic nodes, enabling quick reading and editing of notes and URIs while browsing mind maps.
+	* Redesigned the toolbar buttons in the note editing dialog, unifying the previously various button styles into small icon buttons.
+
+* Internationalization(i18n) Support
+	* Added internationalization and multi-language features.
+	* Currently supports English and Simplified Chinese.
+
+
+### V1.13.5 Release
+
+* Features
+	* Let user switch model provider during AI generating or summarizing.
+
+* Improvements
+	* Update pre-set AI models.
+	* Minor performance optimization.
+
+* Bug Fixes
+	*  When performing undo/redo in a mind map, the root topic will be automatically selected even if any topic is chosen.
+	*  Failed to handle response from Moonshoot reasoning model. 
+	*  Moonshoot `kimi-k2.5` model requires fixed `temperature` and `top P` parameters.
+
+* Update dependencies.
+
 ### V1.13.4 Unstable Release
 
-Features: 
+* Features: 
 	* Add new `Clear embedding` support for embedded datasets.
 
 * Improvements

@@ -98,20 +98,20 @@ Mindolph 是一个开源的支持生成式AI的个人知识库管理软件，适
 
 #### 发行说明
 
-* 稳定版: [v1.12](release-notes/v1.12/v1.12_zh_CN.md)
+* 稳定版: [v1.13](release-notes/v1.13/v1.13_zh_CN.md)
 
-* 试用版: [v1.13](release-notes/v1.13/v1.13_zh_CN.md)
+* 试用版: [v1.14](release-notes/v1.14/v1.14_zh_CN.md)
 
 #### 下载
 
 |系统|类型|稳定版|不稳定版|备注|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13-x64.dmg)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4-x64.dmg)| Intel |
-|macOS|.dmg|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13-aarch64.dmg) |[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
-|Windows|.msi|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.msi)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.msi)| |
-|Debian/Ubuntu|.deb|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.deb)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.rpm)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.rpm)| |
-|Java Executable|.jar|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.jar)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.jar)| 请看 [如何运行](./INSTALL_zh_CN.md) |
+|macOS|.dmg|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5-x64.dmg)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0-x64.dmg)| Intel |
+|macOS|.dmg|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5-aarch64.dmg) |[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0-aarch64.dmg) | Apple Silicon </br>显示 PlantUML 图需要先安装 graphviz:</br>`brew install graphviz`|
+|Windows|.msi|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.msi)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.msi)| |
+|Debian/Ubuntu|.deb|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.deb)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.deb)|	显示 PlantUML 图需要先安装 graphviz:  </br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.rpm)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.rpm)| |
+|Java Executable|.jar|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.jar)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.jar)| 请看 [如何运行](./INSTALL_zh_CN.md) |
 
 
 
@@ -123,7 +123,6 @@ Mindolph 是基于 JavaFX 开发的, 更多详情请点击[code/README.md](../co
 
 计划:
 
-* 1.13：基于个人知识库的AI 智能体功能（预览）。
 * 1.14：改进AI 智能体功能和思维导图编辑器。
 
 ### 给我买杯咖啡吧

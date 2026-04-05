@@ -97,19 +97,19 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 
 #### Release Notes
 
-* Stable Version: [v1.12](docs/release-notes/v1.12/v1.12.md)
-* Unstable Version: [v1.13](docs/release-notes/v1.13/v1.13.md)
+* Stable Version: [v1.13](docs/release-notes/v1.13/v1.13.md)
+* Unstable Version: [v1.14](docs/release-notes/v1.14/v1.14.md)
 
 #### Downloads
 
 |Platform|Type|Stable|Unstable|Note|
 |----|----|----|----|----|
-|macOS|.dmg|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13-x64.dmg) |[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4-x64.dmg) | Intel |
-|macOS|.dmg|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13-aarch64.dmg) |[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
-|Windows|.msi|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.msi) |[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.msi) | |
-|Debian/Ubuntu|.deb|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.deb)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
-|Fedora|.rpm|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.rpm)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.rpm)| |
-|Java Executable|.jar|[v1.12.13](https://github.com/mindolph/Mindolph/releases/download/v1.12.13/Mindolph-1.12.13.jar)|[v1.13.4](https://github.com/mindolph/Mindolph/releases/download/v1.13.4/Mindolph-1.13.4.jar)| see [how to run](./docs/INSTALL.md) |
+|macOS|.dmg|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5-x64.dmg) |[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0-x64.dmg) | Intel |
+|macOS|.dmg|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5-aarch64.dmg) |[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0-aarch64.dmg) | Apple Silicon </br>for supporting PlantUML, install graphviz first:</br>`brew install graphviz`|
+|Windows|.msi|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.msi) |[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.msi) | |
+|Debian/Ubuntu|.deb|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.deb)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.deb)|	for supporting PlantUML, install graphviz first:</br>  `sudo apt install graphviz`|
+|Fedora|.rpm|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.rpm)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.rpm)| |
+|Java Executable|.jar|[v1.13.5](https://github.com/mindolph/Mindolph/releases/download/v1.13.5/Mindolph-1.13.5.jar)|[v1.14.0](https://github.com/mindolph/Mindolph/releases/download/v1.14.0/Mindolph-1.14.0.jar)| see [how to run](./docs/INSTALL.md) |
 
 
 [Change Logs](docs/change_logs.md)
@@ -121,7 +121,6 @@ Mindolph is developed based on JavaFX, see [code/README.md](code/README.md) for 
 
 Future Plan:  
 
-* 1.13: AI agent based on personal knowledge base (preview).
 * 1.14: Improvement of AI agent and Mind Map editor.
 
 ### Buy me a cup of coffee
