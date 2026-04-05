@@ -15,7 +15,7 @@ Mindolph is an open source personal knowledge management software with Gen-AI su
 ### Features
 * Create and manage your own files in separate workspaces with saving in your local storage, which means you have full control of your knowledge compared to cloud solutions.
 * Organize your files as a tree in your workspaces.
-* GenAI support for Mind Map, Markdown, PlantUML and plain text editors, you can generate or summarize text content by API of LLM. supported LLM providers:
+* AI support for Mind Map, Markdown, PlantUML and plain text editors, you can generate or summarize text content by API of LLM. Supported LLM providers:
 	* OpenAI  
 	* Ali Qwen  
 	* Ollama  
