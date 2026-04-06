@@ -217,7 +217,7 @@ public class AiGenerator implements Generator {
     @Override
     public StackPane showSummarizePanel(String input, Node bondEditor) {
         if (!checkSettings(GEN_AI_SUMMARIZE_MODEL)) {
-            DialogFactory.warnDialog("You have to set up the Gen-AI provider properly first.");
+            DialogFactory.warnDialog(I18nHelper.getInstance().get("ai.msg.setup.required"));
             return null;
         }
         summarizePanel = new AiSummaryPane(editorId, fileType, input, bondEditor);
