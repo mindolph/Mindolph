@@ -7,7 +7,7 @@
          xmlns:fx="http://javafx.com/fxml/1">
 
     <VBox>
-        <PreferenceItem name="Gen-AI provider:" labelMinWidth="180" labelPrefWidth="180">
+        <PreferenceItem name="Model provider:" labelMinWidth="180" labelPrefWidth="180">
             <ChoiceBox fx:id="cbProvider" prefWidth="140.0">
             </ChoiceBox>
         </PreferenceItem>

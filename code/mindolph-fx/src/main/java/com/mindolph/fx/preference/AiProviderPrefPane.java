@@ -6,12 +6,12 @@ import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.dialog.CustomModelDialog;
+import com.mindolph.genai.GenaiUiConstants;
 import com.mindolph.mfx.dialog.DialogFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -230,7 +230,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                         Language code: %s
                         Dimension: %d
                         """;
-                lbMaxOutputTokens.setText(template.formatted(GenAiConstants.lookupLanguage(model.getLangCode()), model.getDimension()));
+                lbMaxOutputTokens.setText(template.formatted(GenaiUiConstants.lookupLanguage(model.getLangCode()), model.getDimension()));
             }
             else {
                 // external models

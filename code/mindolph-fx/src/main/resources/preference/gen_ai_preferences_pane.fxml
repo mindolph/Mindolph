@@ -8,7 +8,7 @@
              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Tab fx:id="tabAgents" text="Agents">
         </Tab>
-        <Tab fx:id="tabProviders" text="Providers">
+        <Tab fx:id="tabProviders" text="Model Providers">
         </Tab>
         <Tab fx:id="tabDataset" text="Datasets">
         </Tab>
