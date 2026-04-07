@@ -79,6 +79,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
 
     private static final Logger log = LoggerFactory.getLogger(MindMapView.class);
     private final ShortcutManager sm = ShortcutManager.getIns();
+    protected final I18nHelper i18n = I18nHelper.getInstance();
 
     int MAX_TEXT_LEN = 96;
 
@@ -1816,7 +1817,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                                 ImageVisualAttributeExtension.clearCachedImages(); // TODO this should be refactored to be more elegant.
                                 onMindMapModelChanged(true);
                             } catch (Exception ex) {
-                                DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
+                                DialogFactory.errDialog(i18n.get("mindmap.msg.error.image.import"));
                                 log.error("Unexpected error during image import from clipboard", ex);
                                 throw new RuntimeException(ex);
                             }
