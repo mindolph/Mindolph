@@ -5,7 +5,6 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.genai.llm.OkHttpClientBuilder;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -20,6 +19,7 @@ import java.net.Proxy;
 import java.time.Duration;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_TIMEOUT;
+import static com.mindolph.core.constant.AiModelProvider.*;
 
 /**
  * @since 1.13.2
@@ -62,31 +62,34 @@ public interface LangChainSupport {
     String extractErrorMessageFromLLM(String llmMsg);
 
     /**
-     * Factory method to create the LangChainSupport implementation by the provider type.
+     * Factory method to create the LangChainSupport implementation by the provider id.
      *
-     * @param providerType
+     * @param providerId
      * @return
      */
-    static LangChainSupport createSupport(GenAiModelProvider providerType) {
-        switch (providerType) {
-            case OPEN_AI -> {
-                return new OpenAiLangChainSupport() {
-                };
-            }
-            case ALI_Q_WEN -> {
-                return new QwenLangChainSupport() {
-                };
-            }
-            case GEMINI -> {
-                return new GeminiLangChainSupport() {
-                };
-            }
-            case OLLAMA -> {
-                return new OllamaLangChainSupport() {
-                };
-            }
-            default -> throw new RuntimeException("Not supported provider:%s".formatted(providerType.name()));
+    static LangChainSupport createSupport(String providerId) {
+        if (providerId.equals(OPEN_AI.name())) {
+            return new OpenAiLangChainSupport() {
+            };
         }
+        else if (providerId.equals(ALI_Q_WEN.name())) {
+            return new QwenLangChainSupport() {
+            };
+        }
+        else if (providerId.equals(GEMINI.name())) {
+            return new GeminiLangChainSupport() {
+            };
+        }
+        else if (providerId.equals(OLLAMA.name())) {
+            return new OllamaLangChainSupport() {
+            };
+        }
+        else{
+            // return OpenAI like support by default.
+            return new OpenAiLangChainSupport() {
+            };
+        }
+//        throw new RuntimeException("Not supported provider:%s".formatted(providerId));
     }
 
     default ModelMeta determineModel(Input input, ModelMeta modelMeta) {

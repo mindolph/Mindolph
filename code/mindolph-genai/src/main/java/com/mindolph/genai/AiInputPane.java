@@ -4,8 +4,8 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.InputBuilder;
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
-import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_LATEST_GENERATE_PROMPT;
 import static com.mindolph.core.constant.AiConstants.ActionType;
+import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_LATEST_GENERATE_PROMPT;
 
 /**
  * An input panel for gen-ai.
@@ -51,7 +51,7 @@ public class AiInputPane extends BaseAiPane {
     @FXML
     private TextArea taInput;
     @FXML
-    private ChoiceBox<Pair<Float, Temperature>> cbTemperature;
+    private ChoiceBox<Pair<Double, Temperature>> cbTemperature;
     @FXML
     private Button btnGenerate;
     @FXML
@@ -68,7 +68,7 @@ public class AiInputPane extends BaseAiPane {
             taInput.positionCaret(defaultInput.length());
         }
 
-        String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
+        String providerDisplayName = LlmConfig.getIns().loadProviderMeta(super.providerName).getName();
         taInput.setPromptText("The prompt to generate content by %s".formatted(providerDisplayName));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
@@ -126,12 +126,12 @@ public class AiInputPane extends BaseAiPane {
         );
         cbTemperature.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Pair<Float, Temperature> object) {
+            public String toString(Pair<Double, Temperature> object) {
                 return object == null ? "" : object.getValue().display();
             }
 
             @Override
-            public Pair<Float, Temperature> fromString(String string) {
+            public Pair<Double, Temperature> fromString(String string) {
                 return null;
             }
         });
@@ -169,7 +169,7 @@ public class AiInputPane extends BaseAiPane {
         taInput.requestFocus();
     }
 
-    public record Temperature(float value, String display) {
+    public record Temperature(double value, String display) {
         // set 0.01 instead of 0.0 just because of hugging-face api require positive float value.
         public static final Temperature SAFE = new Temperature(0.01f, "Safe");
         public static final Temperature CREATIVE = new Temperature(0.25f, "Creative");

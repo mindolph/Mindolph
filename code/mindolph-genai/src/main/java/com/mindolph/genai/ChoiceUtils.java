@@ -3,19 +3,21 @@ package com.mindolph.genai;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
 import static com.mindolph.core.constant.AiConstants.LANGS_JSON;
 import static com.mindolph.core.constant.AiConstants.lookupLanguage;
 import static com.mindolph.genai.AiUiConstants.LANGUAGES_IN_JSON;
+import static com.mindolph.genai.AiUiConstants.aiProviderConverter;
 
 /**
  * @since 1.11.1
@@ -44,7 +46,7 @@ public class ChoiceUtils {
         }
     }
 
-    public static void selectOrUnselectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, GenAiModelProvider provider) {
+    public static void selectOrUnselectProvider(ChoiceBox<Pair<String, ProviderMeta>> cbProvider, String provider) {
         if (provider != null) {
             ChoiceUtils.selectProvider(cbProvider, provider);
         }
@@ -66,12 +68,12 @@ public class ChoiceUtils {
      * Select the target provider in the choice box.
      *
      * @param choiceBox The provider choice box
-     * @param provider
+     * @param providerId
      * @since 1.13.0
      */
-    public static void selectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> choiceBox, GenAiModelProvider provider) {
-        for (Pair<GenAiModelProvider, String> item : choiceBox.getItems()) {
-            if (item != null && item.getKey() == provider) {
+    public static void selectProvider(ChoiceBox<Pair<String, ProviderMeta>> choiceBox, String providerId) {
+        for (Pair<String, ProviderMeta> item : choiceBox.getItems()) {
+            if (item != null && item.getKey().equals(providerId)) {
                 choiceBox.getSelectionModel().select(item);
                 break;
             }
@@ -111,5 +113,11 @@ public class ChoiceUtils {
             String language = lookupLanguage(savedLangCode);
             choiceBox.getSelectionModel().select(new Pair<>(savedLangCode, language));
         }
+    }
+
+    public static void initProviders(ChoiceBox<Pair<String, ProviderMeta>> choiceBox, Map<String, ProviderMeta> metaMap){
+        choiceBox.setConverter(aiProviderConverter);
+        List<Pair<String, ProviderMeta>> providerPairs = metaMap.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList();
+        choiceBox.getItems().addAll(providerPairs);
     }
 }

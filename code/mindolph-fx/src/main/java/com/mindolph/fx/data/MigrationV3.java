@@ -2,7 +2,7 @@ package com.mindolph.fx.data;
 
 import com.google.gson.Gson;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.slf4j.Logger;
@@ -34,11 +34,11 @@ public class MigrationV3 implements Migration {
     }
 
     private static void fixProviders() {
-        Map<String, ProviderMeta> ProviderMeta = LlmConfig.getIns().loadAllProviderMetas();
+        Map<String, ProviderMeta> ProviderMeta = LlmConfig.getIns().loadConfiguredProviderMetas();
         Map<String, ProviderMeta> newProviderMeta = new HashMap<>();
         for (String k : ProviderMeta.keySet()) {
             ProviderMeta p = ProviderMeta.get(k);
-            GenAiModelProvider provider = GenAiModelProvider.fromName(k);
+            AiModelProvider provider = AiModelProvider.fromName(k);
             if (provider != null) {
                 log.info("Convert provider from %s to %s".formatted(k, provider.name()));
                 newProviderMeta.put(provider.name(), p);
@@ -55,7 +55,7 @@ public class MigrationV3 implements Migration {
         // it's the display name
         String activeProvider = FxPreferences.getInstance().getPreference(GEN_AI_PROVIDER_ACTIVE, String.class);
         if (activeProvider != null) {
-            GenAiModelProvider provider = GenAiModelProvider.fromName(activeProvider);
+            AiModelProvider provider = AiModelProvider.fromName(activeProvider);
             if (provider != null) {
                 FxPreferences.getInstance().savePreference(GEN_AI_PROVIDER_ACTIVE, provider.name());
             }

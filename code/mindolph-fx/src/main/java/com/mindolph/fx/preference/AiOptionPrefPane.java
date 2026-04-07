@@ -6,14 +6,14 @@ import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -64,12 +64,12 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
     private Button btnTestConnection;
 
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderGenerate;
+    protected MChoiceBox<Pair<String, ProviderMeta>> cbProviderGenerate;
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbModelGenerate;
 
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderSummarize;
+    protected MChoiceBox<Pair<String, ProviderMeta>> cbProviderSummarize;
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbModelSummarize;
 

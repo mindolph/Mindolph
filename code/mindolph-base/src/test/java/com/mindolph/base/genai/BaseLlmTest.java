@@ -22,8 +22,8 @@ public class BaseLlmTest {
 
         FxPreferences.getInstance().savePreference("general.proxy.enable", "false"); // disable by default.
         FxPreferences.getInstance().savePreference("general.proxy.type", "HTTP");
-        FxPreferences.getInstance().savePreference("general.proxy.host", "127.0.0.1");
-        FxPreferences.getInstance().savePreference("general.proxy.port", "2088");
+        FxPreferences.getInstance().savePreference("general.proxy.host", "192.168.1.66");
+        FxPreferences.getInstance().savePreference("general.proxy.port", "8080");
 
         String json = ClasspathResourceUtils.readResourceToString("api_keys.json");
 
@@ -40,7 +40,7 @@ public class BaseLlmTest {
         FxPreferences.getInstance().savePreference("general.proxy.enable", "false");
     }
 
-    protected String loadApiKey(String providerName) {
+    protected String loadApiKeyForTesting(String providerName) {
         if (props.has(providerName)) {
             return props.get(providerName).getAsJsonObject().get("apiKey").getAsString();
         }
@@ -48,7 +48,11 @@ public class BaseLlmTest {
     }
 
     protected ProviderMeta loadProviderMeta(String providerName, boolean useProxy) {
-        return new ProviderMeta(loadApiKey(providerName), null, null, useProxy, null);
+        return new ProviderMeta(loadApiKeyForTesting(providerName), null,null, useProxy, null);
+    }
+
+    protected ProviderMeta loadProviderMeta(String providerName, String baseUrl,  boolean useProxy) {
+        return new ProviderMeta(loadApiKeyForTesting(providerName), baseUrl, null, useProxy, null);
     }
 
     protected ModelMeta loadModelMeta(String modelName) {

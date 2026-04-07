@@ -8,7 +8,7 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.junit.jupiter.api.Test;
 
-import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.core.constant.AiModelProvider.*;
 
 /**
  * @since 1.7.5
@@ -22,7 +22,7 @@ public class LlmProviderTest extends BaseLlmTest {
     public void openai() {
         enableProxy();
         ProviderMeta providerMeta = loadProviderMeta(CHAT_GLM.name(), false);
-        ModelMeta modelMeta = loadModelMeta("non-exist");
+        ModelMeta modelMeta = loadModelMeta("gpt-4");
         OpenAiProvider provider = new OpenAiProvider(providerMeta, modelMeta);
         StreamPartial predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(predict);
@@ -55,7 +55,7 @@ public class LlmProviderTest extends BaseLlmTest {
         enableProxy();
         ProviderMeta providerMeta = loadProviderMeta(HUGGING_FACE.name(), false);
         ModelMeta modelMeta = loadModelMeta("mistralai/Mistral-7B-Instruct-v0.2");
-        HuggingFaceProvider2 provider = new HuggingFaceProvider2(providerMeta, modelMeta);
+        HuggingFaceProvider provider = new HuggingFaceProvider(providerMeta, modelMeta);
         StreamPartial predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(predict);
     }
@@ -65,7 +65,7 @@ public class LlmProviderTest extends BaseLlmTest {
         enableProxy();
         ProviderMeta providerMeta = loadProviderMeta(HUGGING_FACE.name(), false);
         ModelMeta modelMeta = loadModelMeta("mistralai/Mistral-7B-Instruct-v0.2");
-        HuggingFaceProvider2 provider = new HuggingFaceProvider2(providerMeta, modelMeta);
+        HuggingFaceProvider provider = new HuggingFaceProvider(providerMeta, modelMeta);
         provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT), streamToken -> {
             System.out.println(streamToken.text());
         });
@@ -121,6 +121,16 @@ public class LlmProviderTest extends BaseLlmTest {
         ProviderMeta providerMeta = loadProviderMeta(DEEP_SEEK.name(), false);
         ModelMeta modelMeta = loadModelMeta("deepseek-chat");
         DeepSeekProvider provider = new DeepSeekProvider(providerMeta, modelMeta);
+        StreamPartial predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
+        System.out.println(predict);
+    }
+
+    @Test
+    public void custom() {
+        disableProxy();
+        ProviderMeta providerMeta = loadProviderMeta("372055bb80274f1c8a790c0a99d2d51a", "http://127.0.0.1:3000/v1", false);
+        ModelMeta modelMeta = loadModelMeta("glm-4-flash");
+        CustomModelProvider provider = new CustomModelProvider(providerMeta, modelMeta);
         StreamPartial predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(predict);
     }

@@ -8,8 +8,12 @@
 
     <VBox>
         <PreferenceItem name="%prefs.ai.provider" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbProvider" prefWidth="140.0">
-            </ChoiceBox>
+            <HBox spacing="8">
+                <ChoiceBox fx:id="cbProvider" prefWidth="140.0">
+                </ChoiceBox>
+                <Button fx:id="btnAddProvider"/>
+                <Button fx:id="btnRemoveProvider" disable="true"/>
+            </HBox>
         </PreferenceItem>
         <PreferenceItem name="%prefs.ai.provider.api.key" labelMinWidth="180" labelPrefWidth="180">
             <TextField fx:id="tfApiKey" prefWidth="300.0"/>
@@ -27,8 +31,8 @@
             <VBox spacing="8">
                 <HBox spacing="8">
                     <ListView fx:id="lvModels" prefHeight="300"/>
-                    <Button fx:id="btnAdd"/>
-                    <Button fx:id="btnRemove" disable="true"/>
+                    <Button fx:id="btnAddModel"/>
+                    <Button fx:id="btnRemoveModel" disable="true"/>
                 </HBox>
                 <HBox spacing="8">
                     <Label fx:id="lbMaxOutputTokens" text="%prefs.ai.provider.model.max.tokens"/>

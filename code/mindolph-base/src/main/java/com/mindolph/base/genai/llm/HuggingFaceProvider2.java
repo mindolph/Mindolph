@@ -23,11 +23,12 @@ import java.util.function.Consumer;
  *
  * @author mindolph.com@gmail.com
  * @since 1.7.4
+ * @deprecated
  */
 public class HuggingFaceProvider2 extends BaseApiLlmProvider {
     private static final Logger log = LoggerFactory.getLogger(HuggingFaceProvider2.class);
 
-    String API_URL = "https://router.huggingface.co/models/%s";
+    String API_URL = "https://router.huggingface.co/v1/%s";
 
     String template = """
             {

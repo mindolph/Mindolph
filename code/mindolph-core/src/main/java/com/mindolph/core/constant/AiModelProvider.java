@@ -1,9 +1,11 @@
 package com.mindolph.core.constant;
 
+import org.apache.commons.lang3.Strings;
+
 /**
  * @author mindolph.com@gmail.com
  */
-public enum GenAiModelProvider {
+public enum AiModelProvider {
 
     OPEN_AI("OpenAI", ProviderType.PUBLIC),
     GEMINI("Gemini", ProviderType.PUBLIC),
@@ -19,19 +21,26 @@ public enum GenAiModelProvider {
     private final String name;
     private final ProviderType type;
 
-    GenAiModelProvider(String name, ProviderType type) {
+    public static boolean isRagSupportedByLangchain(String providerId) {
+        // NOTE: some providers are supported by LangChain4j but not with streaming like ChatGLM, they are excluded.
+        // some providers support like HuggingFace don't include some features like streaming, they are also excluded.
+        // the custom openai like apis should be able to do rag, they are included.
+        return !Strings.CS.equalsAny(providerId, DEEP_SEEK.name, CHAT_GLM.name, HUGGING_FACE.name);
+    }
+
+    AiModelProvider(String name, ProviderType type) {
         this.name = name;
         this.type = type;
     }
 
     /**
-     * @deprecated
      * @param name
      * @return
+     * @deprecated
      */
     @Deprecated
-    public static GenAiModelProvider fromName(String name) {
-        for (GenAiModelProvider vendor : GenAiModelProvider.values()) {
+    public static AiModelProvider fromName(String name) {
+        for (AiModelProvider vendor : AiModelProvider.values()) {
             if (vendor.name.equals(name)) {
                 return vendor;
             }
@@ -42,6 +51,7 @@ public enum GenAiModelProvider {
     /**
      * The workaround for get the KEY instead of the display name.
      * This method should be deprecated later.
+     *
      * @return
      * @deprecated use name()
      */
@@ -58,6 +68,13 @@ public enum GenAiModelProvider {
     }
 
     public enum ProviderType {
-        PUBLIC, PRIVATE, INTERNAL
+        // public apis
+        PUBLIC,
+        // private apis like ollma
+        PRIVATE,
+        // internal
+        INTERNAL,
+        // custom provider(public or private)
+        CUSTOM
     }
 }

@@ -93,7 +93,7 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
             AgentMeta am = item.getValue();
             log.debug("Agent name: %s".formatted(am.getName()));
             lblName.setText("%s (%s : %s)".formatted(am.getName(),
-                    am.getChatProvider() == null ? "" : am.getChatProvider().getDisplayName(), am.getChatModel() == null ? "" : am.getChatModel()));
+                    am.getChatProvider() == null ? "" : LlmConfig.getIns().loadProviderMeta(am.getChatProvider()).getName(), am.getChatModel() == null ? "" : am.getChatModel()));
         }
     }
 

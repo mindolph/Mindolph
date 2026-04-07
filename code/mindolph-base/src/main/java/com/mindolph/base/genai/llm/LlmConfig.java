@@ -5,13 +5,16 @@ import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.util.ConfigUtils;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
+import com.mindolph.core.constant.AiModelProvider.ProviderType;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
 import com.mindolph.core.util.GsonUtils;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,15 +57,75 @@ public class LlmConfig {
         return ins;
     }
 
+
+    /**
+     * all provider including pre-set ones and custom ones.
+     * @return
+     */
+    public Map<String, ProviderMeta> loadAllProviderMetas() {
+        List<AiModelProvider> preDefinedProviders = EnumUtils.getEnumList(AiModelProvider.class);
+        Map<String, ProviderMeta> providerKeyMetaMap = this.loadConfiguredProviderMetas();
+        // fill missing provides
+        preDefinedProviders.forEach(p -> {
+            // the name is the key of provider definition.
+            if (providerKeyMetaMap.containsKey(p.name())) {
+                // configured pre-defined providers
+                ProviderMeta pm = providerKeyMetaMap.get(p.name());
+                // fill missing name for old data??
+                pm.setId(p.name());// workaround for no id is stored.
+                pm.setName(p.getDisplayName()); // workaround for no name is stored(maybe).
+                pm.setType(p.getType().name());
+            }
+            else {
+                // custom providers
+                ProviderMeta pm = new ProviderMeta(p.name(), p.getDisplayName(), ProviderType.CUSTOM.name());
+                providerKeyMetaMap.put(p.name(), pm);
+            }
+        });
+
+        for (String k : providerKeyMetaMap.keySet()) {
+            if (preDefinedProviders.stream().noneMatch(p -> p.name().equals(k))) {
+                providerKeyMetaMap.get(k).setType(ProviderType.CUSTOM.name());
+            }
+        }
+        return providerKeyMetaMap;
+    }
+
+    /**
+     * Load all configured LLM providers meta, no data if never setup.
+     *
+     * @return Provider name -> Provider meta
+     */
+    public Map<String, ProviderMeta> loadConfiguredProviderMetas() {
+        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDERS, "{}");
+        Type collectionType = new TypeToken<Map<String, ProviderMeta>>() {
+        }.getType();
+        return new Gson().fromJson(json, collectionType);
+    }
+
+    public ProviderMeta loadProviderMeta(String providerId) {
+        Map<String, ProviderMeta> providers = loadConfiguredProviderMetas();
+        return providers.get(providerId);
+    }
+
+    public void removeCustomProvider(String providerId) {
+        Map<String, ProviderMeta> providers = loadConfiguredProviderMetas();
+        ProviderMeta pm = providers.get(providerId);
+        if (pm.isCustom()) {
+            providers.remove(providerId);
+        }
+        fxPreferences.savePreference(PrefConstants.GEN_AI_PROVIDERS, new Gson().toJson(providers));
+    }
+
     /**
      * Save provider meta, if the provider already exists, it will be overwritten.
      *
-     * @param provider
+     * @param providerId
      * @param providerMeta
      */
-    public void saveProviderMeta(GenAiModelProvider provider, ProviderMeta providerMeta) {
-        Map<String, ProviderMeta> providerPropsMap = this.loadAllProviderMetas();
-        providerPropsMap.put(provider.name(), providerMeta);
+    public void saveProviderMeta(String providerId, ProviderMeta providerMeta) {
+        Map<String, ProviderMeta> providerPropsMap = this.loadConfiguredProviderMetas();
+        providerPropsMap.put(providerId, providerMeta);
         String json = new Gson().toJson(providerPropsMap);
         fxPreferences.savePreference(GEN_AI_PROVIDERS, json);
     }
@@ -86,8 +149,10 @@ public class LlmConfig {
         return null;
     }
 
-    public ModelMeta lookupModel(GenAiModelProvider provider, String modelName) {
-        return lookupModel(provider.name(), modelName);
+    // Whether there are any specific type of models for the provider
+    public boolean hasModelsForType(String providerName, int modelType) {
+        return CollectionUtils.isNotEmpty(AiConstants.getFilteredPreDefinedModels(providerName, modelType))
+                || CollectionUtils.isNotEmpty(this.getFilteredCustomModels(providerName, modelType));
     }
 
     public ModelMeta lookupModel(String providerName, String modelName) {
@@ -99,7 +164,7 @@ public class LlmConfig {
     }
 
     public ModelMeta lookupCustomModel(String providerName, String modelName) {
-        Map<String, ProviderMeta> map = this.loadAllProviderMetas();
+        Map<String, ProviderMeta> map = this.loadConfiguredProviderMetas();
         ProviderMeta providerMeta = map.get(providerName);
         if (providerMeta != null) {
             for (ModelMeta modelMeta : providerMeta.customModels()) {
@@ -109,64 +174,6 @@ public class LlmConfig {
             }
         }
         return null;
-    }
-
-    /**
-     * Used for migration only.
-     *
-     * @return
-     */
-    @Deprecated(since = "1.13")
-    public Tuple2<GenAiModelProvider, String> getActiveProviderMeta() {
-        String providerName = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, String.class);
-        if (StringUtils.isBlank(providerName)) {
-            return null;
-        }
-        ProviderMeta providerMeta = this.loadProviderMeta(providerName);
-        if (providerMeta != null) {
-            if (StringUtils.isBlank(providerMeta.aiModel()) || CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
-                Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
-                return opt.map(modelMeta -> new Tuple2<>(GenAiModelProvider.valueOf(providerName), modelMeta.getName())).orElse(null);
-            }
-            else {
-                return new Tuple2<>(GenAiModelProvider.valueOf(providerName), providerMeta.aiModel());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Activate a custom model directly for active provider.
-     *
-     * @param provider
-     * @param modelMeta
-     * @since 1.11
-     * @deprecated
-     */
-    @Deprecated(since = "1.13")
-    public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
-        ProviderMeta providerMeta = this.loadProviderMeta(provider.name());
-        for (ModelMeta customModel : providerMeta.customModels()) {
-            customModel.setActive(customModel.getName().equals(modelMeta.getName()));
-        }
-        saveProviderMeta(provider, providerMeta);
-    }
-
-    /**
-     * Load all LLM providers.
-     *
-     * @return Provider name -> Provider properties
-     */
-    public Map<String, ProviderMeta> loadAllProviderMetas() {
-        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDERS, "{}");
-        Type collectionType = new TypeToken<Map<String, ProviderMeta>>() {
-        }.getType();
-        return new Gson().fromJson(json, collectionType);
-    }
-
-    public ProviderMeta loadProviderMeta(String providerName) {
-        Map<String, ProviderMeta> providers = loadAllProviderMetas();
-        return providers.get(providerName);
     }
 
 
@@ -285,42 +292,45 @@ public class LlmConfig {
         fxPreferences.savePreference(PrefConstants.GEN_AI_VECTOR_STORE_PROVIDERS, GsonUtils.newGson().toJson(map));
     }
 
-//    public List<DatasetMeta> getDatasetsFromAgentId(String agentId) {
-//        AgentMeta agentMeta = LlmConfig.getIns().loadAgent(agentId);
-//        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
-//        if (agentMeta.getDatasetIds() == null || agentMeta.getDatasetIds().isEmpty()) {
-//            return null;
-//        }
-//        return agentMeta.getDatasetIds().stream().map(datasetMap::get).toList();
-//    }
-//
-//    public List<DatasetMeta> getDatasetsFromIds(List<String> datasetIds) {
-//        Map<String, DatasetMeta> datasetMap = LlmConfig.getIns().loadAllDatasets();
-//        return datasetIds.stream().map(datasetMap::get).toList();
-//    }
-//
-//    public Map<String, DatasetMeta> loadAllDatasets() {
-//        String json = fxPreferences.getPreference(PrefConstants.GEN_AI_DATASETS, "{}");
-//        Type collectionType = new TypeToken<Map<String, DatasetMeta>>() {
-//        }.getType();
-//        return GsonUtils.newGson().fromJson(json, collectionType);
-//    }
-//
-//    public void saveDataset(String datasetId, DatasetMeta datasetMeta) {
-//        if (StringUtils.isBlank(datasetId) || datasetMeta == null) {
-//            throw new IllegalStateException("Agent id or agent is null");
-//        }
-//        Map<String, DatasetMeta> datasetMap = loadAllDatasets();
-//        datasetMeta.setId(datasetId);
-//        datasetMap.put(datasetId, datasetMeta);
-//        fxPreferences.savePreference(PrefConstants.GEN_AI_DATASETS, GsonUtils.newGson().toJson(datasetMap));
-//    }
-//
-//    public void removeDataset(String datasetId) {
-//        Map<String, DatasetMeta> datasetMap = this.loadAllDatasets();
-//        datasetMap.remove(datasetId);
-//        fxPreferences.savePreference(PrefConstants.GEN_AI_DATASETS, GsonUtils.newGson().toJson(datasetMap));
-//    }
 
+    /**
+     * Used for migration only.
+     *
+     * @return
+     */
+    @Deprecated(since = "1.13")
+    public Tuple2<AiModelProvider, String> getActiveProviderMeta() {
+        String providerName = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, String.class);
+        if (StringUtils.isBlank(providerName)) {
+            return null;
+        }
+        ProviderMeta providerMeta = this.loadProviderMeta(providerName);
+        if (providerMeta != null) {
+            if (StringUtils.isBlank(providerMeta.aiModel()) || CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
+                Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
+                return opt.map(modelMeta -> new Tuple2<>(AiModelProvider.valueOf(providerName), modelMeta.getName())).orElse(null);
+            }
+            else {
+                return new Tuple2<>(AiModelProvider.valueOf(providerName), providerMeta.aiModel());
+            }
+        }
+        return null;
+    }
 
+    /**
+     * Activate a custom model directly for active provider.
+     *
+     * @param provider
+     * @param modelMeta
+     * @since 1.11
+     * @deprecated
+     */
+    @Deprecated(since = "1.13")
+    public void activateCustomModel(AiModelProvider provider, ModelMeta modelMeta) {
+        ProviderMeta providerMeta = this.loadProviderMeta(provider.name());
+        for (ModelMeta customModel : providerMeta.customModels()) {
+            customModel.setActive(customModel.getName().equals(modelMeta.getName()));
+        }
+        saveProviderMeta(provider.name(), providerMeta);
+    }
 }

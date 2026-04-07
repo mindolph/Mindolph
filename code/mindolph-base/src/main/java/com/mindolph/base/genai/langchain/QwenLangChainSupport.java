@@ -3,7 +3,7 @@ package com.mindolph.base.genai.langchain;
 import com.google.gson.JsonParser;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -21,7 +21,7 @@ public interface QwenLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<ChatModel, OkHttpClientAdapter> buildChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.ALI_Q_WEN.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
+        logParameters(AiModelProvider.ALI_Q_WEN.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         QwenChatModelBuilder builder = new QwenChatModelBuilder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
@@ -34,7 +34,7 @@ public interface QwenLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<StreamingChatModel, OkHttpClientAdapter> buildStreamingChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.ALI_Q_WEN.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
+        logParameters(AiModelProvider.ALI_Q_WEN.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         QwenStreamingChatModelBuilder builder = new QwenStreamingChatModelBuilder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
@@ -46,7 +46,13 @@ public interface QwenLangChainSupport extends LangChainSupport {
 
     @Override
     default String extractErrorMessageFromLLM(String llmMsg) {
-        String message = JsonParser.parseString(llmMsg).getAsJsonObject().get("message").getAsString();
+        log.debug("Response: " + llmMsg);
+        String message;
+        try {
+            message = JsonParser.parseString(llmMsg).getAsJsonObject().get("message").getAsString();
+        } catch (Exception e) {
+            return llmMsg;
+        }
         if (StringUtils.isBlank(message)) {
             message = "Error occurred or user stopped.";
         }

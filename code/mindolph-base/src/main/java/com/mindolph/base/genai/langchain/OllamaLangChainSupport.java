@@ -3,7 +3,7 @@ package com.mindolph.base.genai.langchain;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.genai.llm.OkHttpClientBuilder;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -21,7 +21,7 @@ public interface OllamaLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<ChatModel, OkHttpClientAdapter> buildChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.HUGGING_FACE.name(), modelName, proxyEnabled, proxyMeta);
+        logParameters(AiModelProvider.OLLAMA.name(), modelName, proxyEnabled, proxyMeta);
         OllamaChatModel.OllamaChatModelBuilder builder = OllamaChatModel.builder()
                 .baseUrl(providerMeta.baseUrl())
                 .modelName(modelName)
@@ -36,7 +36,7 @@ public interface OllamaLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<StreamingChatModel, OkHttpClientAdapter> buildStreamingChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.HUGGING_FACE.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
+        logParameters(AiModelProvider.OLLAMA.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         OllamaStreamingChatModelBuilder builder = OllamaStreamingChatModel.builder()
                 .baseUrl(providerMeta.baseUrl())
                 .modelName(modelName)
@@ -50,7 +50,6 @@ public interface OllamaLangChainSupport extends LangChainSupport {
 
     @Override
     default String extractErrorMessageFromLLM(String llmMsg) {
-
         return llmMsg;
     }
 }

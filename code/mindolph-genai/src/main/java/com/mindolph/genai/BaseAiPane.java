@@ -5,8 +5,8 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.fxml.FXML;
@@ -16,18 +16,19 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.mindolph.core.constant.AiConstants.MODEL_TYPE_CHAT;
 import static com.mindolph.core.constant.AiConstants.PROVIDER_MODELS;
+import static com.mindolph.genai.AiUiConstants.MODEL_COMPARATOR;
+import static com.mindolph.genai.AiUiConstants.modelMetaConverter;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
-import static com.mindolph.genai.AiUiConstants.*;
 
 /**
  * @since 1.11.1
@@ -36,7 +37,7 @@ public abstract class BaseAiPane extends StackPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseAiPane.class);
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider;
+    protected ChoiceBox<Pair<String, ProviderMeta>> cbProvider;
     @FXML
     protected ChoiceBox<Pair<String, ModelMeta>> cbModel;
     @FXML
@@ -63,7 +64,7 @@ public abstract class BaseAiPane extends StackPane {
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
 
-        Tuple2<GenAiModelProvider, ModelMeta> generateModel = GenAiUtils.parseModelPreference(modelPrefKey);
+        Tuple2<String, ModelMeta> generateModel = GenAiUtils.parseModelPreference(modelPrefKey);
 
         if (generateModel == null) {
             log.warn("You haven't setup the default provider and model");
@@ -77,7 +78,7 @@ public abstract class BaseAiPane extends StackPane {
             }
         }
         else {
-            providerName = generateModel.a().name();
+            providerName = generateModel.a();
             modelName = generateModel.b().getName();
         }
 
@@ -85,16 +86,15 @@ public abstract class BaseAiPane extends StackPane {
 
 
         // load all providers and pre-select the preferred provider from user preferences.
-        cbProvider.setConverter(AiUiConstants.providerConverter);
-        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
-        cbProvider.getItems().addAll(providerPairs);
+        Map<String, ProviderMeta> providerKeyMetaMap = LlmConfig.getIns().loadAllProviderMetas();
+        ChoiceUtils.initProviders(cbProvider, providerKeyMetaMap);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 // change models
-                this.reloadModels(newValue.getKey().name());
+                this.reloadModels(newValue.getKey());
             }
         });
-        ChoiceUtils.selectProvider(cbProvider, GenAiModelProvider.valueOf(providerName));
+        ChoiceUtils.selectProvider(cbProvider, providerName);
 
         this.reloadModels(providerName);
 

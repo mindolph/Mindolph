@@ -1,6 +1,5 @@
 package com.mindolph.core.llm;
 
-import com.mindolph.core.constant.GenAiModelProvider;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -15,8 +14,8 @@ public class AgentMeta implements Serializable {
     private String name;
     private String description;
     private String languageCode;
-    private GenAiModelProvider embeddingProvider;
-    private GenAiModelProvider chatProvider;
+    private String embeddingProvider;
+    private String chatProvider;
     private String embeddingModel;
     private String chatModel;
     private String promptTemplate;
@@ -63,19 +62,19 @@ public class AgentMeta implements Serializable {
         this.languageCode = languageCode;
     }
 
-    public GenAiModelProvider getEmbeddingProvider() {
+    public String getEmbeddingProvider() {
         return embeddingProvider;
     }
 
-    public void setEmbeddingProvider(GenAiModelProvider embeddingProvider) {
+    public void setEmbeddingProvider(String embeddingProvider) {
         this.embeddingProvider = embeddingProvider;
     }
 
-    public GenAiModelProvider getChatProvider() {
+    public String getChatProvider() {
         return chatProvider;
     }
 
-    public void setChatProvider(GenAiModelProvider chatProvider) {
+    public void setChatProvider(String chatProvider) {
         this.chatProvider = chatProvider;
     }
 

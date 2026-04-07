@@ -7,28 +7,24 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 
 /**
- * HuggingFace requires proxy but LangChain doesn't support it yet.
- *
+ * OpenAI like custom model API provider.
+ * @since 1.14.1
  */
-public class HuggingFaceProvider extends OpenAiProvider {
+public class CustomModelProvider extends OpenAiProvider {
 
-    private static final String BASE_URL = "https://router.huggingface.co/v1";
-
-    public HuggingFaceProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
+    public CustomModelProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
         super(providerMeta, modelMeta);
     }
 
     @Override
     protected ChatModel buildAI(GenAiEvents.Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(BASE_URL);
         return buildChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
     @Override
     protected StreamingChatModel buildStreamingAI(GenAiEvents.Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(BASE_URL);
         return buildStreamingChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 }

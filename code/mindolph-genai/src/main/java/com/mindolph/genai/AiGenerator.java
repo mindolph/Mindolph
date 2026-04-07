@@ -1,9 +1,5 @@
 package com.mindolph.genai;
 
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
-import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
-import static com.mindolph.core.constant.AiConstants.FILE_OUTPUT_MAPPING;
-
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
@@ -15,8 +11,6 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
-import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -25,12 +19,6 @@ import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.GlobalExecutor;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -41,6 +29,15 @@ import javafx.scene.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
+import static com.mindolph.base.constant.PrefConstants.GEN_AI_SUMMARIZE_MODEL;
+import static com.mindolph.core.constant.AiConstants.FILE_OUTPUT_MAPPING;
 
 /**
  * Each generator is created for each editor.
@@ -259,22 +256,25 @@ public class AiGenerator implements Generator {
     }
 
     private boolean checkSettings(String modelPrefKey) {
-        Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
+        Tuple2<String, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
             return false;
         }
-        GenAiModelProvider provider = providerModel.a();
-        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
-        if (propsMap.containsKey(provider.name())) {
-            ProviderMeta props = propsMap.get(provider.name());
-            if (provider == null || props == null) return false;
-            log.debug("Provider: %s".formatted(provider));
-            log.trace(String.valueOf(props));
-            if (provider.getType() == ProviderType.PUBLIC) {
-                return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
+        String providerId = providerModel.a();
+        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadConfiguredProviderMetas();
+        if (propsMap.containsKey(providerId)) {
+            ProviderMeta meta = propsMap.get(providerId);
+            if (providerId == null || meta == null) return false;
+            log.debug("Provider: %s".formatted(providerId));
+            log.trace(String.valueOf(meta));
+            if (meta.isPublic()) {
+                return StringUtils.isNotBlank(meta.apiKey());
             }
-            else if (provider.getType() == ProviderType.PRIVATE) {
-                return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
+            else if (meta.isPrivate()) {
+                return StringUtils.isNotBlank(meta.baseUrl());
+            }
+            else if (meta.isCustom()) {
+                return StringUtils.isNotBlank(meta.baseUrl());
             }
         }
         return false;

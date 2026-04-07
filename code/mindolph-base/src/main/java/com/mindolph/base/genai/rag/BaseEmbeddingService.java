@@ -3,7 +3,7 @@ package com.mindolph.base.genai.rag;
 import com.mindolph.base.genai.event.AiEventBus;
 import com.mindolph.base.genai.event.PrepareEvent;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.DataSourceConfig;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
@@ -95,7 +95,7 @@ public abstract class BaseEmbeddingService {
     }
 
     protected EmbeddingModel createEmbeddingModel(String langCode, String modelName) {
-        ModelMeta modelMeta = lookupModelMeta(GenAiModelProvider.INTERNAL.name(),  modelName);
+        ModelMeta modelMeta = lookupModelMeta(AiModelProvider.INTERNAL.name(),  modelName);
         File modelFile = LocalModelManager.getIns().getModelFile(langCode, modelMeta);
         File tokenizerFile = LocalModelManager.getIns().getTokenizerFile(langCode, modelMeta);
         if (!modelFile.exists()) {

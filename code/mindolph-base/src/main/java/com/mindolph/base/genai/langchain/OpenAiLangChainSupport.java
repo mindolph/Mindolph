@@ -4,7 +4,6 @@ import com.google.gson.JsonParser;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.genai.llm.OkHttpClientBuilder;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -14,6 +13,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel.OpenAiChatModelBuilder;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @since 1.13.2
@@ -23,13 +23,15 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<ChatModel, OkHttpClientAdapter> buildChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.OPEN_AI.name(), modelName, proxyEnabled, proxyMeta);
+        double safeTemperature = Math.round(temperature * 100) / 100.0;
+        logParameters(providerMeta.getName(), modelName, proxyEnabled, proxyMeta);
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
                 .maxRetries(1)
                 .timeout(defaultTimeout())
-                .temperature(temperature);
+                .temperature(safeTemperature);
+        if (StringUtils.isNotBlank(providerMeta.baseUrl())) builder.baseUrl(providerMeta.baseUrl());
         if (modelMeta.maxTokens() != 0) builder.maxTokens(modelMeta.maxTokens());
         OkHttpClientBuilder httpClientBuilder = createHttpClientBuilder(providerMeta, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         builder.httpClientBuilder(httpClientBuilder);
@@ -39,12 +41,15 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<StreamingChatModel, OkHttpClientAdapter> buildStreamingChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(GenAiModelProvider.OPEN_AI.name(), modelName, proxyEnabled, proxyMeta);
+        // the temperature in json might be too long for some APIs.
+        double safeTemperature = Math.round(temperature * 100) / 100.0;
+        logParameters(providerMeta.getName(), modelName, proxyEnabled, proxyMeta);
         OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
                 .timeout(defaultTimeout())
-                .temperature(temperature);
+                .temperature(safeTemperature);
+        if (StringUtils.isNotBlank(providerMeta.baseUrl())) builder.baseUrl(providerMeta.baseUrl());
         if (modelMeta.maxTokens() != 0) builder.maxTokens(modelMeta.maxTokens());
         OkHttpClientBuilder httpClientBuilder = createHttpClientBuilder(providerMeta, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         builder.httpClientBuilder(httpClientBuilder);
@@ -53,6 +58,11 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
 
     @Override
     default String extractErrorMessageFromLLM(String llmMsg) {
-        return JsonParser.parseString(llmMsg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+        log.debug("Response: " + llmMsg);
+        try {
+            return JsonParser.parseString(llmMsg).getAsJsonObject().get("error").getAsJsonObject().get("message").getAsString();
+        } catch (Exception e) {
+            return llmMsg;
+        }
     }
 }

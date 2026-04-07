@@ -2,8 +2,8 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import javafx.fxml.FXML;
@@ -24,7 +24,7 @@ public abstract class BaseAiPrefPane extends BaseModelProviderPrefPane implement
 
     // for Embedding model
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbEmbeddingProvider;
+    protected MChoiceBox<Pair<String, ProviderMeta>> cbEmbeddingProvider;
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbEmbeddingModel;
 
@@ -42,7 +42,7 @@ public abstract class BaseAiPrefPane extends BaseModelProviderPrefPane implement
      * @param providerType
      * @param modelMeta
      */
-    protected void selectEmbeddingProviderAndModel(GenAiModelProvider providerType, String modelMeta) {
+    protected void selectEmbeddingProviderAndModel(String providerType, String modelMeta) {
         ChoiceUtils.selectOrUnselectProvider(this.cbEmbeddingProvider, providerType);
         ChoiceUtils.selectOrUnselectModel(this.cbEmbeddingModel, modelMeta);
     }

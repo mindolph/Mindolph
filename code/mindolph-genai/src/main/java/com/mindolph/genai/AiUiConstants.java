@@ -3,20 +3,18 @@ package com.mindolph.genai;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ModelMetaBuilder;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.i18n.I18nHelper;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
-import java.util.function.Function;
 
 /**
  * @since 1.11
@@ -35,8 +33,6 @@ public interface AiUiConstants {
     //     Comparator<Pair<String, String>> MODEL_COMPARATOR = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
     Comparator<Pair<String, ModelMeta>> MODEL_COMPARATOR =
             (o1, o2) -> o1.getValue().getName().compareTo(o2.getValue().getName());
-
-    Pair<String, ModelMeta> MODEL_CUSTOM_ITEM = new Pair<>(AiConstants.CUSTOM_MODEL_KEY, new ModelMetaBuilder().name(AiConstants.CUSTOM_MODEL_KEY).maxTokens(0).build());
 
     StringConverter<Pair<VectorStoreProvider, String>> vectorStoreConverter = new StringConverter<>() {
 
@@ -79,16 +75,18 @@ public interface AiUiConstants {
 
     StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new ModelMetaConverter();
 
-    StringConverter<Pair<GenAiModelProvider, String>> providerConverter = new ProviderConverter();
+    StringConverter<Pair<String, ProviderMeta>> aiProviderConverter = new AiProviderConverter();
 
-    class ProviderConverter extends StringConverter<Pair<GenAiModelProvider, String>> {
+    class AiProviderConverter extends StringConverter<Pair<String, ProviderMeta>> {
         @Override
-        public String toString(Pair<GenAiModelProvider, String> pair) {
-            return pair == null ? "" : pair.getValue();
+        public String toString(Pair<String, ProviderMeta> pair) {
+            return (pair == null || pair.getValue() == null) ? "" : AiModelProvider.ProviderType.INTERNAL.name().equals(pair.getValue().getType())
+                    ? I18nHelper.getInstance().get("prefs.ai.provider.internal")
+                    : pair.getValue().getName();
         }
 
         @Override
-        public Pair<GenAiModelProvider, String> fromString(String string) {
+        public Pair<String, ProviderMeta> fromString(String string) {
             return null;
         }
     }
@@ -105,18 +103,9 @@ public interface AiUiConstants {
         }
     }
 
-    Function<GenAiModelProvider, Pair<GenAiModelProvider, String>> providerDisplayMapper = p ->{
-        // workaround for localize the Internal provider.
-        if (p.getType() == GenAiModelProvider.ProviderType.INTERNAL) {
-            return new Pair<>(p, I18nHelper.getInstance().get("prefs.ai.provider.internal"));
-        }
-        else {
-            return new Pair<>(p, p.getDisplayName());
-        }
-    };
-
     /**
      * for embedding model.
+     *
      * @param langCode
      * @return
      */
@@ -124,7 +113,7 @@ public interface AiUiConstants {
         if (StringUtils.isBlank(langCode)) {
             return "Unknown";
         }
-        if ("all".equals(langCode)){
+        if ("all".equals(langCode)) {
             return I18nHelper.getInstance().get("prefs.ai.provider.model.lang.all");
         }
         JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);

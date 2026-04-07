@@ -43,7 +43,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
 
     public StreamingChatModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
-        String providerName = agentMeta.getChatProvider().name();
+        String providerName = agentMeta.getChatProvider();
         ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
         ModelMeta modelMeta = LlmConfig.getIns().lookupModel(providerName,  agentMeta.getChatModel());
         this.llmProvider = LlmProviderFactory.create(providerName, providerMeta, modelMeta);
@@ -64,7 +64,7 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
         Input input = new InputBuilder()
                 .text(collectedMsg)
                 .model(agentMeta.getChatModel())
-                .maxTokens(LlmConfig.getIns().lookupModel(agentMeta.getChatProvider().name(), agentMeta.getChatModel()).maxTokens())
+                .maxTokens(LlmConfig.getIns().lookupModel(agentMeta.getChatProvider(), agentMeta.getChatModel()).maxTokens())
                 .isStreaming(true)
                 .temperature(0.5f)
                 .createInput();

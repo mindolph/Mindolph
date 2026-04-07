@@ -7,6 +7,7 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.FixedSplitPane;
+import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.RagService;
 import com.mindolph.base.plugin.PluginEvent.EventType;
 import com.mindolph.base.plugin.PluginEventBus;
@@ -94,7 +95,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.READY)
                 .in(selectedAgent -> {
-                    lblAgent.setText("%s: %s".formatted(selectedAgent.getChatProvider().getDisplayName(), selectedAgent.getChatModel()));
+                    lblAgent.setText("%s: %s".formatted(LlmConfig.getIns().loadProviderMeta(selectedAgent.getChatProvider()).getName(), selectedAgent.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
                     taInput.setPromptText("Chat with your agent \"%s\", hit %s to send your message.".formatted(selectedAgent.getName(), ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));
@@ -227,10 +228,12 @@ public class ChatView extends BaseView implements Initializable {
             else if (pluginEvent.getEventType() == EventType.DATASET_PREF_CHANGED) {
                 if (pluginEvent.getPayload() instanceof DatasetMeta dm) {
                     // Only changes to the dataset contained in the agent will trigger an agent reload.
-                    log.debug("Dataset '%s'(%s) is changed".formatted(dm.getName(), dm.getId()));
-                    log.debug(StringUtils.join(currentAgentMeta.getDatasetIds(), ","));
-                    if (currentAgentMeta.getDatasetIds().contains(dm.getId())) {
-                        this.loadAgents();
+                    if (currentAgentMeta != null) {
+                        log.debug("Dataset '%s'(%s) is changed".formatted(dm.getName(), dm.getId()));
+                        log.debug(StringUtils.join(currentAgentMeta.getDatasetIds(), ","));
+                        if (currentAgentMeta.getDatasetIds().contains(dm.getId())) {
+                            this.loadAgents();
+                        }
                     }
                 }
             }

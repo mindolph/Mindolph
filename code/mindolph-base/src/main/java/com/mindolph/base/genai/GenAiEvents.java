@@ -3,7 +3,6 @@ package com.mindolph.base.genai;
 import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.core.constant.AiConstants.ActionType;
 import com.mindolph.core.constant.AiConstants.OutputAdjust;
-import com.mindolph.core.constant.GenAiModelProvider;
 import org.reactfx.EventSource;
 
 import java.util.HashMap;
@@ -63,11 +62,11 @@ public class GenAiEvents {
         });
     }
 
-    public record Input(GenAiModelProvider provider, String model, String text, float temperature, int maxTokens, OutputAdjust outputAdjust, String outputLanguage,
+    public record Input(String provider, String model, String text, double temperature, int maxTokens, OutputAdjust outputAdjust, String outputLanguage,
                         boolean isRetry, boolean isStreaming) {
     }
 
-    public record Output(GenAiModelProvider provider, String model, String generatedText, boolean isRetry) {
+    public record Output(String provider, String model, String generatedText, boolean isRetry) {
     }
 
     public record StreamOutput(StreamPartial streamPartial, boolean isRetry) {

@@ -1,7 +1,6 @@
 package com.mindolph.base.genai.llm;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ public class LlmService {
     private static LlmService ins;
     private boolean isStopped; // stopped by user
 
-    private final Map<GenAiModelProvider, LlmProvider> llmProviderMap = new HashMap<>();
+    private final Map<String, LlmProvider> llmProviderMap = new HashMap<>();
 
     public static synchronized LlmService getIns() {
         if (ins == null) {
@@ -32,7 +31,7 @@ public class LlmService {
     private LlmService() {
     }
 
-    private LlmProvider getLlmProvider(GenAiModelProvider provider, String modelName) {
+    private LlmProvider getLlmProvider(String provider, String modelName) {
         LlmProvider llmProvider;
         if (Boolean.parseBoolean(System.getenv("mock-llm"))) {
             log.warn("Using mock LLM provider");
@@ -42,10 +41,10 @@ public class LlmService {
         else {
             llmProvider = llmProviderMap.get(provider);
             if (llmProvider == null) {
-                ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
+                ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider);
                 ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider, modelName);
-                llmProvider = LlmProviderFactory.create(provider.name(), providerMeta, modelMeta);
-                log.info("Using llm provider %s and model %s".formatted(provider.name(), modelName));
+                llmProvider = LlmProviderFactory.create(provider, providerMeta, modelMeta);
+                log.info("Using llm provider %s and model %s".formatted(provider, modelName));
                 llmProviderMap.put(provider, llmProvider);
             }
         }

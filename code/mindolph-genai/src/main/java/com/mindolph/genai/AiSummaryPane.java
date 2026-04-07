@@ -9,7 +9,6 @@ import com.mindolph.base.genai.llm.LlmService;
 import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.AiConstants.ActionType;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.ClipBoardUtils;
@@ -66,7 +65,6 @@ public class AiSummaryPane extends BaseAiPane {
         this.toggleComponents(false);
         NodeUtils.disable(btnCopy); // disable copy button for the first time.
 
-        String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
         tfToBeSummarized.setText(StringUtils.abbreviate(toBeSummarized, 50));
         btnCopy.setGraphic(FontIconManager.getIns().getIcon(IconKey.COPY));
         btnSummarize.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));

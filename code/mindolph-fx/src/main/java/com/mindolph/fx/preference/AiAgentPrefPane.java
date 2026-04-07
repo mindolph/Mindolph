@@ -6,11 +6,11 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.fx.control.DatasetTableView;
 import com.mindolph.fx.dialog.DatasetSelectDialog;
 import com.mindolph.genai.ChoiceUtils;
@@ -57,7 +57,7 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     @FXML
     private MChoiceBox<Pair<String, String>> cbLanguage;
     @FXML
-    private MChoiceBox<Pair<GenAiModelProvider, String>> cbChatProvider;
+    private MChoiceBox<Pair<String, ProviderMeta>> cbChatProvider;
     @FXML
     private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 

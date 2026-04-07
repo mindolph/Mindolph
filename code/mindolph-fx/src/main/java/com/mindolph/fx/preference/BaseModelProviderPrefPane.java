@@ -5,8 +5,8 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.LocalModelManager;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
+import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.genai.GenAiUtils;
@@ -18,14 +18,15 @@ import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.mindolph.core.constant.AiConstants.*;
 import static com.mindolph.genai.AiUiConstants.*;
@@ -51,7 +52,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbLanguage
      * @param cbModel
      */
-    protected void initEmbeddingModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    protected void initEmbeddingModelRelatedComponents(MChoiceBox<Pair<String, ProviderMeta>> cbProvider,
                                                        MChoiceBox<Pair<String, String>> cbLanguage,
                                                        MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, cbLanguage, cbModel, MODEL_TYPE_EMBEDDING);
@@ -62,7 +63,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbProvider
      * @param cbModel
      */
-    protected void initChatModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    protected void initChatModelRelatedComponents(MChoiceBox<Pair<String, ProviderMeta>> cbProvider,
                                                   MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, null, cbModel, MODEL_TYPE_CHAT);
     }
@@ -73,7 +74,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbModel
      * @param type       1 is chat model, 2 is embedding model, see {@link AiConstants}
      */
-    private void initModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    private void initModelRelatedComponents(MChoiceBox<Pair<String, ProviderMeta>> cbProvider,
                                             MChoiceBox<Pair<String, String>> cbLanguage,
                                             MChoiceBox<Pair<String, ModelMeta>> cbModel,
                                             int type) {
@@ -84,15 +85,15 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 log.debug("Language changed to {}", newValue);
                 if (newValue == null) return;
                 if (cbProvider.getSelectionModel().getSelectedItem() != null) {
-                    this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getKey().name(), MODEL_TYPE_EMBEDDING, newValue.getKey());
+                    this.updateModelComponent(cbModel, cbProvider.getSelectionModel().getSelectedItem().getKey(), MODEL_TYPE_EMBEDDING, newValue.getKey());
                 }
                 // language changes does not trigger saving since it's used for filtering the models.
                 // super.saveChanges();
             });
         }
-        cbProvider.setConverter(new ProviderConverter());
-        List<GenAiModelProvider> filteredProviders = this.filteredProvidersByHavingModelsForType(type);
-        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(providerDisplayMapper).toList();
+        cbProvider.setConverter(aiProviderConverter);
+        Map<String, ProviderMeta> filteredProviders = this.filteredProvidersByHavingModelsForType(type);
+        List<Pair<String, ProviderMeta>> providerPairs = filteredProviders.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList();
         cbProvider.getItems().add(null); // none select
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -103,7 +104,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 super.saveChanges(true);
                 return;
             }
-            String providerName = newValue.getKey().name();
+            String providerName = newValue.getKey();
             Pair<String, String> lang = cbLanguage == null ? null : cbLanguage.getSelectionModel().getSelectedItem();
             this.updateModelComponent(cbModel, providerName, type, lang == null ? null : lang.getKey());
             super.saveChanges(false); // selecting provider is not decisive, no notification.
@@ -202,19 +203,16 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         }
     }
 
-    public List<GenAiModelProvider> filteredProvidersByHavingModelsForType(int type) {
-        return EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
+    public Map<String, ProviderMeta> filteredProvidersByHavingModelsForType(int type) {
+        Map<String, ProviderMeta> allProviders = LlmConfig.getIns().loadAllProviderMetas();
+        return allProviders.entrySet().stream()
+                .filter(e -> LlmConfig.getIns().hasModelsForType(e.getKey(), type))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    // Whether there are any specific type of models for the provider
-    private boolean hasModelsForType(String providerName, int modelType) {
-        return CollectionUtils.isNotEmpty(AiConstants.getFilteredPreDefinedModels(providerName, modelType))
-                || CollectionUtils.isNotEmpty(LlmConfig.getIns().getFilteredCustomModels(providerName, modelType));
-    }
-
-    protected void selectProviderAndModel(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
+    protected void selectProviderAndModel(ChoiceBox<Pair<String, ProviderMeta>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
         if (StringUtils.isNotBlank(prefKey)) {
-            Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(prefKey);
+            Tuple2<String, ModelMeta> providerModel = GenAiUtils.parseModelPreference(prefKey);
             if (providerModel != null) {
                 ChoiceUtils.selectOrUnselectProvider(cbProvider, providerModel.a());
                 ChoiceUtils.selectOrUnselectModel(cbModel, providerModel.b().getName());
@@ -223,14 +221,14 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
     }
 
     protected void saveProviderAndModelSelection(String prefKey,
-                                                 MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                 MChoiceBox<Pair<String, ProviderMeta>> cbProvider,
                                                  MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         if (!cbProvider.hasSelected() || !cbModel.hasSelected()) {
             super.fxPreferences.removePreference(prefKey);
             return;
         }
         super.fxPreferences.savePreference(prefKey,
-                "%s:%s".formatted(cbProvider.getSelectionModel().getSelectedItem().getKey().name(), cbModel.getSelectionModel().getSelectedItem().getValue().getName()));
+                "%s:%s".formatted(cbProvider.getSelectionModel().getSelectedItem().getKey(), cbModel.getSelectionModel().getSelectedItem().getValue().getName()));
     }
 
 

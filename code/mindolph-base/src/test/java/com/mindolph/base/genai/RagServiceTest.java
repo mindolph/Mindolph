@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.RagService;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -56,9 +56,9 @@ public class RagServiceTest extends BaseLlmTest {
         if (StringUtils.isNotBlank(json)) {
             super.props = JsonParser.parseString(json).getAsJsonObject();
             Map<String, ProviderMeta> propsMap = new HashMap<>();
-            String apiKey = loadApiKey(GenAiModelProvider.DEEP_SEEK.name());
+            String apiKey = loadApiKeyForTesting(AiModelProvider.DEEP_SEEK.name());
             ProviderMeta pp = new ProviderMeta(apiKey, "", "deepseek-chat", false);
-            propsMap.put(GenAiModelProvider.DEEP_SEEK.name(), pp);
+            propsMap.put(AiModelProvider.DEEP_SEEK.name(), pp);
             FxPreferences.getInstance().savePreference(PrefConstants.GEN_AI_PROVIDERS, new Gson().toJson(propsMap));
         }
     }

@@ -92,7 +92,7 @@ public abstract class BaseApiLlmProvider extends BaseLlmProvider {
         log.debug(formattedPrompt);
 
         // some models like kimi-k2.5 forces tht temperature.
-        float temperature = super.modelMeta.getTemperature() != null ? super.modelMeta.getTemperature() : input.temperature();
+        double temperature = super.modelMeta.getTemperature() != null ? super.modelMeta.getTemperature() : input.temperature();
         // format the JSON params
         String jsonParams;
         if (StringUtils.isNotBlank(modelName)) {

@@ -4,6 +4,7 @@ import dev.langchain4j.http.client.HttpClient;
 import dev.langchain4j.http.client.HttpClientBuilder;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,6 +132,11 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
             log.info("Build HTTP client to with proxy '%s'".formatted(Proxy.Type.valueOf(this.proxyType.toUpperCase())));
         }
         builder.retryOnConnectionFailure(false);
+        // with logger
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        builder.addInterceptor(logging);
+        // build the client
         OkHttpClient httpClient = builder.build();
         okHttpClientAdapter = new OkHttpClientAdapter(httpClient);
         return okHttpClientAdapter;

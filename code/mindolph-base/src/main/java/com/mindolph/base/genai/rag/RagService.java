@@ -1,12 +1,12 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
-import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.util.NetworkUtils;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
@@ -26,6 +26,7 @@ import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,11 +88,11 @@ public class RagService extends BaseEmbeddingService {
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             finished.accept(new RuntimeException("Vector store is not well setup"));
         }
-        log.info("use agent: {}, with chat model {}-{}",
-                agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel());
+        log.info("use agent: {}, with chat model {}:{}",
+                agentMeta.getName(), agentMeta.getChatProvider(), agentMeta.getChatModel());
 
         if (agentMeta.isAllSetup()) {
-            log.info("  and with embedding model: %s".formatted(agentMeta.getEmbeddingProvider().getDisplayName()), agentMeta.getEmbeddingModel());
+            log.info("  and with embedding model: %s".formatted(agentMeta.getEmbeddingProvider()), agentMeta.getEmbeddingModel());
         }
 
         GlobalExecutor.submit(() -> {
@@ -184,8 +185,8 @@ public class RagService extends BaseEmbeddingService {
         return true;
     }
 
-    public String extractErrorMessageFromLLM(GenAiModelProvider provider, String llmMsg) {
-        if (this.supportedByLangchain(provider) && langChainSupport != null) {
+    public String extractErrorMessageFromLLM(String provider, String llmMsg) {
+        if (AiModelProvider.isRagSupportedByLangchain(provider) && langChainSupport != null) {
             try {
                 return langChainSupport.extractErrorMessageFromLLM(llmMsg);
             } catch (Exception e) {
@@ -199,11 +200,14 @@ public class RagService extends BaseEmbeddingService {
     }
 
     private StreamingChatModel buildStreamingChatModel(AgentMeta agentMeta) {
-        GenAiModelProvider provider = agentMeta.getChatProvider();
-        if (this.supportedByLangchain(provider)) {
+        String provider = agentMeta.getChatProvider();
+        if (AiModelProvider.isRagSupportedByLangchain(provider)) {
             this.langChainSupport = LangChainSupport.createSupport(provider);
-            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
-            ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider.name(), agentMeta.getChatModel());
+            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider);
+            ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider, agentMeta.getChatModel());
+            if (modelMeta == null) {
+                throw new RuntimeException("No model defined: " + agentMeta.getChatModel());
+            }
             Boolean proxyEnabled = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
             ProxyMeta proxyMeta = NetworkUtils.getProxyMeta();
             // The Input is not for inputting but for compatible with the providers for Generate&Summarize features;
@@ -216,15 +220,6 @@ public class RagService extends BaseEmbeddingService {
             // TODO how about extracting err message like LangChainSupport?
             return new StreamingChatModelAdapter(agentMeta);
         }
-    }
-
-    private boolean supportedByLangchain(GenAiModelProvider genAiModelProvider) {
-        // NOTE: some providers are supported by LangChain4j but not with streaming like ChatGLM, they are excluded.
-        // some providers support like HuggingFace don't include some features like streaming, they are also excluded.
-        return GenAiModelProvider.ALI_Q_WEN == genAiModelProvider
-                || GenAiModelProvider.OPEN_AI == genAiModelProvider
-                || GenAiModelProvider.OLLAMA == genAiModelProvider
-                || GenAiModelProvider.GEMINI == genAiModelProvider;
     }
 
     private ContentRetriever buildContentRetriever(String agentId) {

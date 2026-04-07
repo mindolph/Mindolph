@@ -2,7 +2,7 @@ package com.mindolph.fx.preference;
 
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 /**
  * @author mindolph.com@gmail.com
  * @see AiConstants
- * @see GenAiModelProvider
+ * @see AiModelProvider
  * @since 1.7.1
  */
 public class AiPreferencePane extends BasePrefsPane implements Initializable {

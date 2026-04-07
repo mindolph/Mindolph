@@ -82,6 +82,7 @@ public class OkHttpClientAdapter implements HttpClient {
         }
         try {
             String jsonMessage = response.body().string();
+            log.debug("Response: " + jsonMessage);
             JsonElement bodyElement = JsonParser.parseString(jsonMessage);
             if (bodyElement.isJsonObject()) {
                 JsonObject messageElement = bodyElement.getAsJsonObject().get("error").getAsJsonObject();
@@ -96,6 +97,7 @@ public class OkHttpClientAdapter implements HttpClient {
 
     @Override
     public void execute(HttpRequest httpRequest, ServerSentEventParser serverSentEventParser, ServerSentEventListener serverSentEventListener) {
+        // log.debug(httpRequest.body().toString());
         EventSource.Factory factory = EventSources.createFactory(okHttpClient);
         Request okHttpRequest = createOkRequestFromLangchainRequest(httpRequest);
         eventSource = factory.newEventSource(okHttpRequest, new EventSourceListener() {
