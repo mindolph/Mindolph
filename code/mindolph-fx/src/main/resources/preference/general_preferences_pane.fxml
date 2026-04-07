@@ -5,18 +5,13 @@
 <fx:root prefHeight="450.0" prefWidth="1000.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <VBox prefWidth="555.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="0.0">
+          AnchorPane.topAnchor="0.0" spacing="8">
         <PreferenceItem name="%prefs.general.confirm.quitting" labelMinWidth="280">
             <CheckBox fx:id="cbConfirmBeforeQuitting" mnemonicParsing="false"/>
         </PreferenceItem>
         <PreferenceItem name="%prefs.general.open.last.files" labelMinWidth="280">
             <CheckBox fx:id="cbOpenLastFiles" mnemonicParsing="false"/>
         </PreferenceItem>
-        <!--            <PreferenceItem name="Enable auto-creation .projectKnowledge folder:">-->
-        <!--               <items>-->
-        <!--                  <CheckBox fx:id="ckbEnableAutoCreateProjectFolder" />-->
-        <!--               </items>-->
-        <!--            </PreferenceItem>-->
         <PreferenceItem name="%prefs.general.show.hidden.files" labelMinWidth="280">
             <CheckBox fx:id="ckbShowHiddenFiles"/>
         </PreferenceItem>

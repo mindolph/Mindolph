@@ -183,7 +183,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                     }
                 } catch (Exception ex) {
                     log.error("Error during visual attribute processing", ex);
-                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.error.visual.attribute"));
+                    DialogFactory.errDialog(i18n.get("mindmap.error.visual.attribute"));
                 }
             }
         }
@@ -244,9 +244,9 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, MANIPULATE, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         putAllItemsAsSection(ctxMenu, null, findPopupMenuItems(this, EXTRAS, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
 
-        Menu importMenu = new Menu(I18nHelper.getInstance().get("mindmap.import.submenu"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
-        Menu exportMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
-        Menu exportBranchesMenu = new Menu(I18nHelper.getInstance().get("mindmap.export.branches.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu importMenu = new Menu(i18n.get("mindmap.import.submenu"), FontIconManager.getIns().getIcon(IconKey.IMPORT));
+        Menu exportMenu = new Menu(i18n.get("mindmap.export.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
+        Menu exportBranchesMenu = new Menu(i18n.get("mindmap.export.branches.submenu"), FontIconManager.getIns().getIcon(IconKey.EXPORT));
 
         putAllItemsAsSection(ctxMenu, importMenu, findPopupMenuItems(this, IMPORT, isFullScreen, tmpList, topicUnderMouse, extensionMenuItems));
         if (isModelNotEmpty) {
@@ -280,7 +280,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             String textToBeSummarized = null;
                             List<TopicNode> selectedTopics = getSelectedTopics();
                             boolean hasChildren = selectedTopics.stream().anyMatch(Topic::hasChildren);
-                            if (hasChildren && DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.ai.summarize.subtopics.confirm"))) {
+                            if (hasChildren && DialogFactory.yesNoConfirmDialog(i18n.get("mindmap.ai.summarize.subtopics.confirm"))) {
                                 textToBeSummarized = selectedTopics.stream().map(selectedTopic -> {
                                     StringBuilder buf = new StringBuilder();
                                     getModel().traverseTopicTree(selectedTopic, t -> {
@@ -484,12 +484,12 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
         if (note == null) {
             // create new
             editingNoteData = new NoteEditorData();
-            title = I18nHelper.getInstance().get("mindmap.note.create.title", topic.getText());
+            title = i18n.get("mindmap.note.create.title", topic.getText());
         }
         else {
             // edit
             editingNoteData = new NoteEditorData(note.getValue(), note.isEncrypted(), null, note.getHint());
-            title = I18nHelper.getInstance().get("mindmap.note.edit.title", topic.getText());
+            title = i18n.get("mindmap.note.edit.title", topic.getText());
         }
         NoteDialog noteDialog = new NoteDialog(topic, title, editingNoteData);
         noteDialog.show(noteData -> {
@@ -544,11 +544,11 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             String title;
             FileLink fileLink;
             if (extraFile == null) {
-                title = "Add File Link";
+                title = i18n.get("mindmap.dialog.file.add");
                 fileLink = null; // the data will be loaded from preferences later in dialog initialization.
             }
             else {
-                title = "Edit File Link";
+                title = i18n.get("mindmap.dialog.file.edit");
                 MMapURI mUri = extraFile.getValue();
                 boolean isOpenInSystem = Boolean.parseBoolean(mUri.getParameters().getProperty(FILELINK_ATTR_OPEN_IN_SYSTEM, "false"));
                 int line = FilePathWithLine.strToLine(mUri.getParameters().getProperty(FILELINK_ATTR_LINE, null));
@@ -661,7 +661,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
             };
             ExtraTopic link = (ExtraTopic) topic.getExtras().get(Extra.ExtraType.TOPIC);
             TopicNode topicForLink = model.findTopicForLink(link);
-            TopicTreeDialog dialog = new TopicTreeDialog("Select Topic", getModel(), topic, topicForLink);
+            TopicTreeDialog dialog = new TopicTreeDialog(i18n.get("mindmap.dialog.link.topic"), getModel(), topic, topicForLink);
             dialog.show(callback);
         }
     }
@@ -674,7 +674,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
 
         ColorDialog.ColorSet colorSet = new ColorDialog.ColorSet(borderColor, fillColor, textColor);
 
-        ColorDialog colorDialog = new ColorDialog(String.format("Edit Colors for %d Topic(s)", topics.size()), colorSet, config);
+        ColorDialog colorDialog = new ColorDialog(i18n.get("mindmap.dialog.color.edit", topics.size()), colorSet, config);
         colorDialog.show(newColorSet -> {
 
             for (TopicNode topic : topics) {
