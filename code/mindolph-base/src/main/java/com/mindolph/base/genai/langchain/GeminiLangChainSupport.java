@@ -23,7 +23,7 @@ public interface GeminiLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<ChatModel, OkHttpClientAdapter> buildChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        logParameters(AiModelProvider.GEMINI.name(), modelName, proxyEnabled, proxyMeta);
+        logParameters(AiModelProvider.GEMINI.name(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         GoogleAiGeminiChatModelBuilder builder = GoogleAiGeminiChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)

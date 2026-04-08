@@ -43,10 +43,10 @@ public class StreamingChatModelAdapter implements StreamingChatModel {
 
     public StreamingChatModelAdapter(AgentMeta agentMeta) {
         this.agentMeta = agentMeta;
-        String providerName = agentMeta.getChatProvider();
-        ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerName);
-        ModelMeta modelMeta = LlmConfig.getIns().lookupModel(providerName,  agentMeta.getChatModel());
-        this.llmProvider = LlmProviderFactory.create(providerName, providerMeta, modelMeta);
+        String providerId = agentMeta.getChatProvider();
+        ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerId);
+        ModelMeta modelMeta = LlmConfig.getIns().lookupModel(providerId,  agentMeta.getChatModel());
+        this.llmProvider = LlmProviderFactory.create(providerId, providerMeta, modelMeta);
     }
 
     @Override

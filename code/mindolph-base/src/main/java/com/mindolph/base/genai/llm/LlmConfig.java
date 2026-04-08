@@ -155,17 +155,17 @@ public class LlmConfig {
                 || CollectionUtils.isNotEmpty(this.getFilteredCustomModels(providerName, modelType));
     }
 
+
     public ModelMeta lookupModel(String providerName, String modelName) {
         ModelMeta modelMeta = AiConstants.lookupModelMeta(providerName, modelName);
         if (modelMeta == null) {
-            modelMeta = LlmConfig.getIns().lookupCustomModel(providerName, modelName);
+            modelMeta = this.lookupCustomModel(providerName, modelName);
         }
         return modelMeta;
     }
 
-    public ModelMeta lookupCustomModel(String providerName, String modelName) {
-        Map<String, ProviderMeta> map = this.loadConfiguredProviderMetas();
-        ProviderMeta providerMeta = map.get(providerName);
+    public ModelMeta lookupCustomModel(String providerId, String modelName) {
+        ProviderMeta providerMeta = this.loadProviderMeta(providerId);
         if (providerMeta != null) {
             for (ModelMeta modelMeta : providerMeta.customModels()) {
                 if (modelMeta.getName().equals(modelName)) {

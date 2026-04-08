@@ -24,7 +24,7 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
     default Tuple2<ChatModel, OkHttpClientAdapter> buildChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
         double safeTemperature = Math.round(temperature * 100) / 100.0;
-        logParameters(providerMeta.getName(), modelName, proxyEnabled, proxyMeta);
+        logParameters(providerMeta.getName(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
@@ -41,9 +41,9 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
     @Override
     default Tuple2<StreamingChatModel, OkHttpClientAdapter> buildStreamingChatModel(ProviderMeta providerMeta, ModelMeta modelMeta, double temperature, ProxyMeta proxyMeta, boolean proxyEnabled) {
         String modelName = modelMeta.getName();
-        // the temperature in json might be too long for some APIs.
+        // the temperature in JSON might be too long for some APIs.
         double safeTemperature = Math.round(temperature * 100) / 100.0;
-        logParameters(providerMeta.getName(), modelName, proxyEnabled, proxyMeta);
+        logParameters(providerMeta.getName(), modelName, proxyEnabled && providerMeta.useProxy(), proxyMeta);
         OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
