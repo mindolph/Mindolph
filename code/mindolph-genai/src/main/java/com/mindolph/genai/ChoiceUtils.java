@@ -116,6 +116,7 @@ public class ChoiceUtils {
     }
 
     public static void initProviders(ChoiceBox<Pair<String, ProviderMeta>> choiceBox, Map<String, ProviderMeta> metaMap){
+        choiceBox.getItems().clear();
         choiceBox.setConverter(aiProviderConverter);
         List<Pair<String, ProviderMeta>> providerPairs = metaMap.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList();
         choiceBox.getItems().addAll(providerPairs);

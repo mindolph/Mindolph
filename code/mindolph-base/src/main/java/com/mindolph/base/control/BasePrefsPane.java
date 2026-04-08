@@ -156,7 +156,9 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      * @since 1.7
      */
     protected <T, R> void bindPreference(Property<T> property, String prefName, R defaultValue,
-                                         Function<T, R> saveConverter, Function<R, T> loadConverter, Consumer<T> onPropertyChange) {
+                                         Function<T, R> saveConverter,
+                                         Function<R, T> loadConverter,
+                                         Consumer<T> onPropertyChange) {
         bondPrefMap.put(prefName, new Pref<>(property, defaultValue, loadConverter));
         ChangeListener<T> changeListener = (observable, oldValue, newValue) -> {
             if (onPropertyChange != null) {

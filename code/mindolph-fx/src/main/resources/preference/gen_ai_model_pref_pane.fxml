@@ -15,6 +15,9 @@
                 <Button fx:id="btnRemoveProvider" disable="true"/>
             </HBox>
         </PreferenceItem>
+        <PreferenceItem name="%prefs.ai.provider.name" labelMinWidth="180" labelPrefWidth="180">
+            <TextField fx:id="tfName" prefWidth="240.0"/>
+        </PreferenceItem>
         <PreferenceItem name="%prefs.ai.provider.api.key" labelMinWidth="180" labelPrefWidth="180">
             <TextField fx:id="tfApiKey" prefWidth="300.0"/>
         </PreferenceItem>

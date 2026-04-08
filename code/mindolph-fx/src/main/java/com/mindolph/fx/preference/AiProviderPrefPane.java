@@ -52,6 +52,8 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     @FXML
     private Button btnRemoveProvider;
     @FXML
+    private TextField tfName;
+    @FXML
     private TextField tfApiKey;
     @FXML
     private TextField tfBaseUrl;
@@ -79,10 +81,8 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         super.beforeLoading();
-        this.providerKeyMetaMap = LlmConfig.getIns().loadAllProviderMetas();
 
-        // model providers without filtering.
-        ChoiceUtils.initProviders(cbProvider, this.providerKeyMetaMap);
+        this.initProviders();
 
         btnAddProvider.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveProvider.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
@@ -120,6 +120,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                 providerName -> new Pair<>(providerName, providerKeyMetaMap.get(providerName)),
                 selected -> {
 //                    super.beforeLoading();
+                    if (selected == null) return;
                     ProviderMeta pm = selected.getValue();
 
                     this.currentProviderMeta = pm;
@@ -128,6 +129,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                         log.debug("Load models for ai provider: %s - %s".formatted(pm.getId(), pm.getName()));
                         this.currentProviderId = pm.getId();
 
+                        tfName.setDisable(!pm.isCustom());
                         btnRemoveProvider.setDisable(!pm.isCustom());
                         tfApiKey.setDisable(pm.isInternal());
                         tfBaseUrl.setDisable(pm.isInternal() || pm.isPublic());
@@ -136,9 +138,13 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                         // Specific to disable the proxy support for OLLAMA since the LangChain4j is not supported it yet.
                         cbUseProxy.setDisable("OLLAMA".equals(pm.getId()) || "ALI_Q_WEN".equals(pm.getId()));
 
+                        tfName.setText(pm.getName());
                         tfApiKey.setText(pm.apiKey());
                         tfBaseUrl.setText(pm.baseUrl());
                         cbUseProxy.setSelected(pm.useProxy());
+
+                        String hint = currentProviderMeta.isCustom() ? "eg: https://api.example.com/v1" : (currentProviderMeta.isPrivate() ? "eg: http://127.0.0.1:11434" : StringUtils.EMPTY);
+                        tfBaseUrl.setPromptText(hint);
 
                         // init all pre-set models and custom models
                         showAllModels(currentProviderId);
@@ -146,6 +152,11 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
 //                    super.afterLoading();
                 });
 
+        tfName.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                super.saveChanges();
+            }
+        });
         // Dynamic preference can't use bindPreference.
         tfApiKey.textProperty().addListener((observable, oldValue, newValue) -> {
             super.saveChanges();
@@ -179,6 +190,13 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         cbProvider.getSelectionModel().select(selectIdx);
 
         super.afterLoading();
+    }
+
+    private void initProviders() {
+        this.providerKeyMetaMap = LlmConfig.getIns().loadAllProviderMetas();
+
+        // model providers without filtering.
+        ChoiceUtils.initProviders(cbProvider, this.providerKeyMetaMap);
     }
 
     private void showAllModels(String providerName) {
@@ -305,9 +323,19 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
 
     private void saveCurrentProvider() {
         log.debug("save current provider %s".formatted(currentProviderId));
+        boolean isNameChanged = !currentProviderMeta.getName().equals(tfName.getText());
+        currentProviderMeta.setName(tfName.getText());
         currentProviderMeta.setApiKey(tfApiKey.getText());
         currentProviderMeta.setBaseUrl(tfBaseUrl.getText());
         currentProviderMeta.setUseProxy(cbUseProxy.isSelected());
         LlmConfig.getIns().saveProviderMeta(currentProviderId, currentProviderMeta);
+
+        // reload providers list if name has been changed.
+        if (isNameChanged) {
+            super.beforeLoading();
+            this.initProviders();
+            cbProvider.getSelectionModel().select(new Pair<>(currentProviderId, currentProviderMeta));
+            super.afterLoading();
+        }
     }
 }
