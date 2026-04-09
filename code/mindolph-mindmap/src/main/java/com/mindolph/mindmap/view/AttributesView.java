@@ -58,15 +58,26 @@ public class AttributesView extends BaseView {
             // lost focus
             if (isFocused != oldValue && !isFocused) {
                 Extra<?> link = topic.getExtras().get(Extra.ExtraType.LINK);
-                if ((link == null && StringUtils.isEmpty(tfUrl.getText())) ||
-                        (link != null && Strings.CS.equals(tfUrl.getText(), link.getAsString()))) {
+                boolean noChanges = (link == null && StringUtils.isEmpty(tfUrl.getText())) ||
+                        (link != null && Strings.CS.equals(tfUrl.getText(), link.getAsString()));
+                if (noChanges) {
                     return;
                 }
-                try {
-                    topic.setExtra(new ExtraLink(tfUrl.getText()));
-                    MindmapEvents.notifyAttributesChangeEvent(this.topic);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
+                else {
+                    try {
+                        if (StringUtils.isBlank(tfUrl.getText())) {
+                            log.debug("Remove file link attribute");
+                            topic.removeExtra(Extra.ExtraType.LINK);
+                            MindmapEvents.notifyAttributesChangeEvent(this.topic);
+                        }
+                        else {
+                            topic.setExtra(new ExtraLink(tfUrl.getText()));
+                            MindmapEvents.notifyAttributesChangeEvent(this.topic);
+
+                        }
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
