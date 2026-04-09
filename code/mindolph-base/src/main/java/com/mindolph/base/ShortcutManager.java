@@ -2,6 +2,7 @@ package com.mindolph.base;
 
 import com.mindolph.base.shortcut.ShortcutKey;
 import com.mindolph.core.constant.TextConstants;
+import com.mindolph.mfx.i18n.I18nHelper;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
@@ -164,7 +165,9 @@ public class ShortcutManager {
             buf.append("## ").append(category).append(TextConstants.LINE_SEPARATOR);
             List<ShortcutKey> shortcutKeys = categorized.get(category);
             for (ShortcutKey shortcutKey : shortcutKeys) {
-                buf.append("* ").append(shortcutKey.getName()).append("    :    ").append(shortcutMap.get(shortcutKey).getDisplayText()).append(TextConstants.LINE_SEPARATOR);
+                String label = I18nHelper.getInstance().get(shortcutKey.getKey());
+                String shortcut = shortcutMap.get(shortcutKey).getDisplayText();
+                buf.append("* ").append(label).append("    :    ```").append(shortcut).append(" ```").append(TextConstants.LINE_SEPARATOR);
             }
         }
         return buf.toString();
