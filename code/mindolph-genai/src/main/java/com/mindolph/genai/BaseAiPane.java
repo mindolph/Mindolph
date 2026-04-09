@@ -140,6 +140,7 @@ public abstract class BaseAiPane extends StackPane {
     }
 
     protected void toggleComponents(boolean isGenerating) {
+        cbProvider.setDisable(isGenerating);
         cbModel.setDisable(isGenerating);
         cbLanguage.setDisable(isGenerating);
     }
