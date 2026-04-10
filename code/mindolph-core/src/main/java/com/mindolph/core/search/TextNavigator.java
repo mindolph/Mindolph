@@ -1,7 +1,6 @@
 package com.mindolph.core.search;
 
 import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,10 +36,10 @@ public class TextNavigator {
             int last = 0;
             ranges.clear();
             while (matcher.find()) {
-                ranges.add(Range.between(last, matcher.start()));
+                ranges.add(Range.of(last, matcher.start()));
                 last = matcher.end();
             }
-            ranges.add(Range.between(last, text.length()));
+            ranges.add(Range.of(last, text.length()));
         }
         if (resetCursor) cursor = null; // reset the cursor
     }
@@ -91,7 +90,7 @@ public class TextNavigator {
      */
     public TextLocation locateNext(String keyword, boolean caseSensitive) {
         if (cursor == null) cursor = 0;
-        int start = this.locate(keyword, caseSensitive ? StringUtils::indexOf : StringUtils::indexOfIgnoreCase);
+        int start = this.locate(keyword, caseSensitive ? Strings.CS::indexOf : Strings.CI::indexOf);
         int end = start + keyword.length() - 1;
         cursor = end + 1;
         return this.convert(start, end);

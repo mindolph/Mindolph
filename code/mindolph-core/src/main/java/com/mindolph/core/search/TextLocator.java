@@ -76,7 +76,7 @@ public class TextLocator {
     private void reset(int curRow, int curCol) {
         int lastRow = Math.min(curRow, lines.size() - 1); // here is for CodeArea.
         this.startRow = curRow == -1 ? lines.size() - 1 : lastRow; // -1 to set start/end row to last line, or given row.
-        this.startCol = curCol == -1 ? lines.get(lines.size() - 1).length() - 1 : curCol; // -1 to set start/end column to last of last line, or given column
+        this.startCol = curCol == -1 ? lines.getLast().length() - 1 : curCol; // -1 to set start/end column to last of last line, or given column
         this.endRow = this.startRow;
         this.endCol = this.startCol;
     }
