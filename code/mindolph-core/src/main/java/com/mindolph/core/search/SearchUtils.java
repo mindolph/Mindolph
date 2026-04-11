@@ -1,6 +1,7 @@
 package com.mindolph.core.search;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -13,7 +14,7 @@ public class SearchUtils {
     private static final String GRAPHICAL_LINE_BREAKER = "⏎";
 
     public static String normalizeSpace(String text) {
-        String replaced = StringUtils.replace(text, "\n", GRAPHICAL_LINE_BREAKER);
+        String replaced = Strings.CS.replace(text, "\n", GRAPHICAL_LINE_BREAKER);
         return StringUtils.normalizeSpace(replaced);
     }
 

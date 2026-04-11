@@ -19,7 +19,6 @@ package com.mindolph.mindmap.extension.exporters;
 import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
@@ -289,10 +288,10 @@ public class ORGMODEExporter extends BaseExportExtension {
         OutputStream theOut = out;
         if (theOut == null) {
             fileToSaveMap = DialogUtils.selectFileToSaveForFileFilter(
-                    I18nHelper.getInstance().get("mindmap.export.orgmode.title"),
+                    i18n.get("mindmap.export.orgmode.title"),
                     null,
                     ".org",
-                    I18nHelper.getInstance().get("mindmap.export.orgmode.filter"),
+                    i18n.get("mindmap.export.orgmode.filter"),
                     exportFileName);
             fileToSaveMap = MindMapUtils.checkFileAndExtension(fileToSaveMap, ".org");
             theOut = fileToSaveMap == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSaveMap, false));
@@ -310,12 +309,12 @@ public class ORGMODEExporter extends BaseExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.orgmode.name");
+        return i18n.get("mindmap.export.orgmode.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.orgmode.reference");
+        return i18n.get("mindmap.export.orgmode.reference");
     }
 
     @Override

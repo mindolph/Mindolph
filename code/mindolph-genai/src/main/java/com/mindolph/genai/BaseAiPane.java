@@ -18,6 +18,7 @@ import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +56,8 @@ public abstract class BaseAiPane extends StackPane {
     protected final String fileType;
     protected String providerName;
     protected String modelName;
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     public BaseAiPane(String res, Object editorId, String fileType, String modelPrefKey) {
         this.editorId = editorId;
@@ -107,7 +110,7 @@ public abstract class BaseAiPane extends StackPane {
 
         cbModel.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                lbMsg.setText("Max output tokens: %s".formatted(displayGenAiTokens(newValue.getValue().maxTokens())));
+                lbMsg.setText(i18n.get("ai.max.output.token", displayGenAiTokens(newValue.getValue().maxTokens())));
             }
         });
         if (targetModel != null) {
@@ -140,6 +143,7 @@ public abstract class BaseAiPane extends StackPane {
     }
 
     protected void toggleComponents(boolean isGenerating) {
+        cbProvider.setDisable(isGenerating);
         cbModel.setDisable(isGenerating);
         cbLanguage.setDisable(isGenerating);
     }

@@ -1,7 +1,6 @@
 package com.mindolph.mindmap.extension.exporters.branch;
 
 import com.igormaznitsa.mindmap.model.*;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.exporters.BaseLiteralExportExtension;
@@ -38,10 +37,10 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
         File fileToSave = null;
         if (out == null) {
             fileToSave = DialogUtils.selectFileToSaveForFileFilter(
-                    I18nHelper.getInstance().get("mindmap.export.asciidoc.title"),
+                    i18n.get("mindmap.export.asciidoc.title"),
                     null,
                     ".asciidoc",
-                    I18nHelper.getInstance().get("mindmap.export.asciidoc.filter"),
+                    i18n.get("mindmap.export.asciidoc.filter"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".asciidoc");
             out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
@@ -148,7 +147,7 @@ public class AsciiDocBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode activeTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.asciidoc.name");
+        return i18n.get("mindmap.export.asciidoc.name");
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.mindolph.base.control.TreeVisitor;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.ControlUtils;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.application.Platform;
@@ -61,7 +60,7 @@ public class TopicTreeDialog extends BaseDialogController<TopicNode> {
             Platform.runLater(() -> treeView.requestFocus());
         });
         dialog.setOnCloseRequest(dialogEvent -> {
-            if (!confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.topic.link.changed"))) {
+            if (!confirmClosing(i18n.get("mindmap.dialog.topic.link.changed"))) {
                 dialogEvent.consume();
             }
         });

@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.attributes;
 import com.igormaznitsa.mindmap.model.MMapURI;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.FxImageUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
@@ -31,6 +31,8 @@ public class AttributeUtils {
     public static final String ATTR_IMAGE_KEY = "mmd.image";
     public static final String ATTR_IMAGE_NAME = "mmd.image.name";
     public static final String ATTR_IMAGE_URI_KEY = "mmd.image.uri";
+
+    static I18nHelper i18n = I18nHelper.getInstance();
 
     /**
      * @param image
@@ -104,7 +106,7 @@ public class AttributeUtils {
                 String rescaledImageAsBase64 = FxImageUtils.imageToBase64(scaledImage);
                 String fileName = FilenameUtils.getBaseName(selected.getName());
                 String filePath;
-                if (withFileLink && DialogFactory.yesNoConfirmDialog(I18nHelper.getInstance().get("mindmap.image.add.filepath.title"), I18nHelper.getInstance().get("mindmap.image.add.filepath.question"))) {
+                if (withFileLink && DialogFactory.yesNoConfirmDialog(i18n.get("mindmap.image.add.filepath.title"), i18n.get("mindmap.image.add.filepath.question"))) {
                     filePath = MMapURI.makeFromFilePath(context.getWorkspaceDir(), selected.getAbsolutePath(), null).toString();
                 }
                 else {
@@ -114,7 +116,7 @@ public class AttributeUtils {
                 context.doNotifyModelChanged(true);
             }
         } catch (Exception ex) {
-            DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
+            DialogFactory.errDialog(i18n.get("mindmap.msg.error.image.import"));
         }
     }
 }

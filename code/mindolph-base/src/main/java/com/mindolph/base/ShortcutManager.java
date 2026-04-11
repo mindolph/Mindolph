@@ -2,6 +2,7 @@ package com.mindolph.base;
 
 import com.mindolph.base.shortcut.ShortcutKey;
 import com.mindolph.core.constant.TextConstants;
+import org.swiftboot.util.I18nHelper;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
@@ -32,6 +33,10 @@ public class ShortcutManager {
     private static final Map<ShortcutKey, KeyCodeCombination> shortcutMap = new LinkedHashMap<>();
 
     private static final Map<ShortcutKey, KeyCombination> modifierMap = new LinkedHashMap<>();
+
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
 
     private ShortcutManager() {
     }
@@ -164,7 +169,9 @@ public class ShortcutManager {
             buf.append("## ").append(category).append(TextConstants.LINE_SEPARATOR);
             List<ShortcutKey> shortcutKeys = categorized.get(category);
             for (ShortcutKey shortcutKey : shortcutKeys) {
-                buf.append("* ").append(shortcutKey.getName()).append("    :    ").append(shortcutMap.get(shortcutKey).getDisplayText()).append(TextConstants.LINE_SEPARATOR);
+                String label = i18n.get(shortcutKey.getKey());
+                String shortcut = shortcutMap.get(shortcutKey).getDisplayText();
+                buf.append("* ").append(label).append("    :    ```").append(shortcut).append(" ```").append(TextConstants.LINE_SEPARATOR);
             }
         }
         return buf.toString();

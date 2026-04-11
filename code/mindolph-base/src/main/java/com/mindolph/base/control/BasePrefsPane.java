@@ -1,6 +1,5 @@
 package com.mindolph.base.control;
 
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -16,6 +15,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.net.URL;
 import java.util.Collection;
@@ -53,7 +53,7 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
         fxmlloader.setController(this);
         // Set resource bundle for i18n
         try {
-            ResourceBundle resourceBundle = I18nHelper.getInstance().getResourceBundle();
+            ResourceBundle resourceBundle = i18n.getResourceBundle();
             fxmlloader.setResources(resourceBundle);
         } catch (Exception e) {
             log.warn("Failed to load resource bundle for " + fxmlResourceUri, e);

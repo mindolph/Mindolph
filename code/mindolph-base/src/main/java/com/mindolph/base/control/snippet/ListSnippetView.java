@@ -9,7 +9,7 @@ import com.mindolph.core.AppManager;
 import com.mindolph.core.model.Snippet;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -46,10 +46,12 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
 
     private final ListView<Snippet> listView;
 
-    private final MenuItem miNew = new MenuItem(I18nHelper.getInstance().get("snippet.menu.new"), FontIconManager.getIns().getIcon(IconKey.PLUS));
-    private final MenuItem miEdit = new MenuItem(I18nHelper.getInstance().get("snippet.menu.edit"), FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
-    private final MenuItem miClone = new MenuItem(I18nHelper.getInstance().get("snippet.menu.clone"), FontIconManager.getIns().getIcon(IconKey.CLONE));
-    private final MenuItem miRemove = new MenuItem(I18nHelper.getInstance().get("snippet.menu.remove"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
+    private final MenuItem miNew = new MenuItem(i18n.get("snippet.menu.new"), FontIconManager.getIns().getIcon(IconKey.PLUS));
+    private final MenuItem miEdit = new MenuItem(i18n.get("snippet.menu.edit"), FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+    private final MenuItem miClone = new MenuItem(i18n.get("snippet.menu.clone"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+    private final MenuItem miRemove = new MenuItem(i18n.get("snippet.menu.remove"), FontIconManager.getIns().getIcon(IconKey.DELETE));
 
     // event to SnippetView after snippet changes
     private final EventSource<Snippet> snippetChanged = new EventSource<>();

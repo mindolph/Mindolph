@@ -1,12 +1,15 @@
 package com.mindolph.mindmap.extension.api;
 
 import com.mindolph.mindmap.model.TopicNode;
+import org.swiftboot.util.I18nHelper;
 
 /**
  * extension with popup menu item.
  *
  */
 public abstract class BasePopupMenuItemExtension implements PopUpMenuItemExtension {
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     public BasePopupMenuItemExtension() {
     }

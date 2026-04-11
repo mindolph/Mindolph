@@ -50,7 +50,6 @@ import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.GlobalExecutor;
@@ -802,15 +801,15 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 contextMenu.getItems().add(miNew);
             }
             if (isFile) {
-                miOpenFile = new MenuItem(I18nHelper.getInstance().get("workspace.menu.open"));
+                miOpenFile = new MenuItem(i18n.get("workspace.menu.open"));
                 miOpenFile.setMnemonicParsing(false);
                 miOpenFile.setOnAction(this);
                 contextMenu.getItems().add(miOpenFile);
 
-                Menu miCopy = new Menu(I18nHelper.getInstance().get("workspace.menu.copy"));
-                miCopyFile = new MenuItem(I18nHelper.getInstance().get("workspace.menu.copy.file"), FontIconManager.getIns().getIcon(IconKey.FILE));
-                miCopyPathAbsolute = new MenuItem(I18nHelper.getInstance().get("workspace.menu.copy.path.absolute", StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32)));
-                miCopyPathRelative = new MenuItem(I18nHelper.getInstance().get("workspace.menu.copy.path.relative", StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32)));
+                Menu miCopy = new Menu(i18n.get("workspace.menu.copy"));
+                miCopyFile = new MenuItem(i18n.get("workspace.menu.copy.file"), FontIconManager.getIns().getIcon(IconKey.FILE));
+                miCopyPathAbsolute = new MenuItem(i18n.get("workspace.menu.copy.path.absolute", StringUtils.abbreviateMiddle(treeItem.getValue().getFile().getPath(), "...", 32)));
+                miCopyPathRelative = new MenuItem(i18n.get("workspace.menu.copy.path.relative", StringUtils.abbreviateMiddle(treeItem.getValue().getFileRelativePath(), "...", 32)));
                 miCopyPathAbsolute.setMnemonicParsing(false);
                 miCopyPathRelative.setMnemonicParsing(false);
                 miCopyFile.setOnAction(this);
@@ -820,46 +819,46 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 contextMenu.getItems().add(miCopy);
             }
             if (isFolder && isSingleSelected) {
-                miPasteFile = new MenuItem(I18nHelper.getInstance().get("workspace.menu.paste"));
+                miPasteFile = new MenuItem(i18n.get("workspace.menu.paste"));
                 miPasteFile.setDisable(!Clipboard.getSystemClipboard().hasFiles());
                 miPasteFile.setOnAction(this);
                 contextMenu.getItems().add(miPasteFile);
             }
             if (isSingleSelected) {
-                miRename = new MenuItem(I18nHelper.getInstance().get("workspace.menu.rename"), FontIconManager.getIns().getIcon(IconKey.RENAME));
+                miRename = new MenuItem(i18n.get("workspace.menu.rename"), FontIconManager.getIns().getIcon(IconKey.RENAME));
                 miRename.setOnAction(this);
                 contextMenu.getItems().addAll(miRename);
             }
-            miMoveTo = new MenuItem(I18nHelper.getInstance().get("workspace.menu.move.to"), FontIconManager.getIns().getIcon(IconKey.MOVE_FOLDER));
+            miMoveTo = new MenuItem(i18n.get("workspace.menu.move.to"), FontIconManager.getIns().getIcon(IconKey.MOVE_FOLDER));
             miMoveTo.setOnAction(this);
             contextMenu.getItems().add(miMoveTo);
             if (isFolder && isSingleSelected) {
-                miReload = new MenuItem(I18nHelper.getInstance().get("workspace.menu.reload"), FontIconManager.getIns().getIcon(IconKey.REFRESH));
+                miReload = new MenuItem(i18n.get("workspace.menu.reload"), FontIconManager.getIns().getIcon(IconKey.REFRESH));
                 miReload.setOnAction(this);
                 contextMenu.getItems().addAll(miReload);
             }
             else if (nodeData.isFile() && isSingleSelected) {
-                miClone = new MenuItem(I18nHelper.getInstance().get("workspace.menu.clone"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+                miClone = new MenuItem(i18n.get("workspace.menu.clone"), FontIconManager.getIns().getIcon(IconKey.CLONE));
                 miClone.setOnAction(this);
                 contextMenu.getItems().add(miClone);
             }
-            miDelete = new MenuItem(I18nHelper.getInstance().get("workspace.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+            miDelete = new MenuItem(i18n.get("workspace.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setOnAction(this);
             contextMenu.getItems().addAll(miDelete);
             if (!nodeData.isMindMap() && isSingleSelected) {
-                miOpenInSystem = new MenuItem(I18nHelper.getInstance().get("workspace.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+                miOpenInSystem = new MenuItem(i18n.get("workspace.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
                 miOpenInSystem.setOnAction(this);
                 contextMenu.getItems().add(miOpenInSystem);
             }
             if (isFolder && isSingleSelected) {
-                miCollapseAll = new MenuItem(I18nHelper.getInstance().get("workspace.menu.collapse.all"), FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
+                miCollapseAll = new MenuItem(i18n.get("workspace.menu.collapse.all"), FontIconManager.getIns().getIcon(IconKey.COLLAPSE_FOLDERS));
                 miCollapseAll.setOnAction(this);
-                miFindFiles = new MenuItem(I18nHelper.getInstance().get("workspace.menu.find.in.files"), FontIconManager.getIns().getIcon(IconKey.SEARCH));
+                miFindFiles = new MenuItem(i18n.get("workspace.menu.find.in.files"), FontIconManager.getIns().getIcon(IconKey.SEARCH));
                 miFindFiles.setOnAction(this);
                 contextMenu.getItems().addAll(miCollapseAll, new SeparatorMenuItem(), miFindFiles);
             }
             if (isSingleSelected) {
-                miUsage = new MenuItem(I18nHelper.getInstance().get("workspace.menu.find.usage"));
+                miUsage = new MenuItem(i18n.get("workspace.menu.find.usage"));
                 miUsage.setOnAction(this);
                 contextMenu.getItems().add(miUsage);
             }
@@ -868,19 +867,19 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     private Menu createMenuNew() {
-        Menu miNew = new Menu(I18nHelper.getInstance().get("workspace.menu.new"));
-        MenuItem miFolder = new MenuItem(I18nHelper.getInstance().get("workspace.menu.new.folder"), FontIconManager.getIns().getIcon(IconKey.FOLDER));
-        MenuItem miMindMap = new MenuItem(I18nHelper.getInstance().get("workspace.menu.new.mindmap"), FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
-        MenuItem miMarkdown = new MenuItem(I18nHelper.getInstance().get("workspace.menu.new.markdown"), FontIconManager.getIns().getIcon(IconKey.FILE_MD));
-        Menu plantUmlMenu = new Menu(I18nHelper.getInstance().get("workspace.menu.new.plantuml"), FontIconManager.getIns().getIcon(IconKey.FILE_PUML));
-        MenuItem miCsvFile = new MenuItem(I18nHelper.getInstance().get("workspace.menu.new.csv"), FontIconManager.getIns().getIcon(IconKey.FILE_CSV));
+        Menu miNew = new Menu(i18n.get("workspace.menu.new"));
+        MenuItem miFolder = new MenuItem(i18n.get("workspace.menu.new.folder"), FontIconManager.getIns().getIcon(IconKey.FOLDER));
+        MenuItem miMindMap = new MenuItem(i18n.get("workspace.menu.new.mindmap"), FontIconManager.getIns().getIcon(IconKey.FILE_MMD));
+        MenuItem miMarkdown = new MenuItem(i18n.get("workspace.menu.new.markdown"), FontIconManager.getIns().getIcon(IconKey.FILE_MD));
+        Menu plantUmlMenu = new Menu(i18n.get("workspace.menu.new.plantuml"), FontIconManager.getIns().getIcon(IconKey.FILE_PUML));
+        MenuItem miCsvFile = new MenuItem(i18n.get("workspace.menu.new.csv"), FontIconManager.getIns().getIcon(IconKey.FILE_CSV));
         for (Template template : PlantUmlTemplates.getIns().getTemplates()) {
             MenuItem mi = new MenuItem(template.getTitle());
             mi.setUserData(template);
             mi.setOnAction(this);
             plantUmlMenu.getItems().add(mi);
         }
-        MenuItem miTextFile = new MenuItem(I18nHelper.getInstance().get("workspace.menu.new.text"), FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
+        MenuItem miTextFile = new MenuItem(i18n.get("workspace.menu.new.text"), FontIconManager.getIns().getIcon(IconKey.FILE_TXT));
         miFolder.setUserData(TYPE_FOLDER);
         miMindMap.setUserData(TYPE_MIND_MAP);
         miMarkdown.setUserData(TYPE_MARKDOWN);

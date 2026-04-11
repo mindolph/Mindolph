@@ -2,6 +2,9 @@ package com.mindolph.base.shortcut;
 
 public final class ShortcutKey {
     private String key;
+    /**
+     * @deprecated with i18n
+     */
     private String name;
     private String category;
 

@@ -19,7 +19,6 @@ package com.mindolph.mindmap.extension.attribute;
 import com.igormaznitsa.mindmap.model.Extra;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -44,8 +43,8 @@ public class ExtraNoteExtension extends BaseTopicExtension {
         if (activeTopic == null) {
             return StringUtils.EMPTY;
         }
-        return activeTopic.getExtras().containsKey(Extra.ExtraType.NOTE) ? I18nHelper.getInstance().get("mindmap.menu.edit.note") :
-                I18nHelper.getInstance().get("mindmap.menu.add.note");
+        return activeTopic.getExtras().containsKey(Extra.ExtraType.NOTE) ? i18n.get("mindmap.menu.edit.note") :
+                i18n.get("mindmap.menu.add.note");
     }
 
     @Override

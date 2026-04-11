@@ -81,7 +81,7 @@ public class AiSummaryPane extends BaseAiPane {
         btnCopy.setOnAction(event -> {
             if (StringUtils.isNotBlank(taOutput.getText())) {
                 ClipBoardUtils.textToClipboard(taOutput.getText());
-                lbMsg.setText("%d bytes copied to Clipboard".formatted(taOutput.getText().length()));
+                lbMsg.setText(i18n.get("ai.summary.msg.copy.to.clipboard", taOutput.getText().length()));
             }
         });
 
@@ -101,7 +101,7 @@ public class AiSummaryPane extends BaseAiPane {
 
     private void starToSummarize(String txtToBeSummarized) {
         if (cbModel.getValue() == null) {
-            DialogFactory.warnDialog("Please select a model to summarize your selected content.");
+            DialogFactory.warnDialog(i18n.get("ai.summary.msg.select.model"));
             return;
         }
         ModelMeta modelMeta = cbModel.getValue().getValue();
@@ -116,7 +116,7 @@ public class AiSummaryPane extends BaseAiPane {
                 %s
                 ```
                 """.formatted(
-                StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : "summarize following content concisely:",
+                StringUtils.isNotBlank(taInput.getText()) ? taInput.getText() : i18n.get("ai.summary.prompt.default"),
                 txtToBeSummarized);
         Input input = new InputBuilder().provider(super.cbProvider.getValue().getKey()).model(modelMeta.getName()).text(prompt).temperature(0.5f)
                 .outputLanguage(cbLanguage.getValue().getKey())
@@ -132,7 +132,7 @@ public class AiSummaryPane extends BaseAiPane {
                         // accept streaming output (even with `stop` one).
                         if (streamToken.isStop()) {
                             Platform.runLater(() -> {
-                                onStop("Done with %d tokens.".formatted(streamToken.outputTokens()));
+                                onStop(i18n.get("ai.msg.done", streamToken.outputTokens()));
                             });
                         }
                         else {
@@ -145,7 +145,7 @@ public class AiSummaryPane extends BaseAiPane {
     }
 
     public void onStop(String reason) {
-        btnSummarize.setText("Re-summarize");
+        btnSummarize.setText(i18n.get("ai.summary.button.resummarize"));
         lbMsg.setText(reason);
         toggleComponents(false);
         bondEditor.setDisable(false);

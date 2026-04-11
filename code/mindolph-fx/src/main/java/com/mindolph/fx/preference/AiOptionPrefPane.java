@@ -161,7 +161,6 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
 
     @FXML
     protected void onTestConnection() {
-        I18nHelper i18n = I18nHelper.getInstance();
         NodeUtils.disable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
         GlobalExecutor.submit(() -> {
             try {

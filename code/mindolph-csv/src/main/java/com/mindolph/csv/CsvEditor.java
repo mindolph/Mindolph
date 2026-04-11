@@ -21,7 +21,7 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FontUtils;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
@@ -417,14 +417,14 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private ContextMenu createRowContextMenu() {
         rowContextMenu = new ContextMenu();
-        MenuItem miInsertBefore = new MenuItem(I18nHelper.getInstance().get("csv.menu.insert.before"));
+        MenuItem miInsertBefore = new MenuItem(i18n.get("csv.menu.insert.before"));
         miInsertBefore.setGraphic(MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_ROW_PLUS_BEFORE, DEFAULT_ICON_SIZE));
-        MenuItem miInsertAfter = new MenuItem(I18nHelper.getInstance().get("csv.menu.insert.after"));
+        MenuItem miInsertAfter = new MenuItem(i18n.get("csv.menu.insert.after"));
         miInsertAfter.setGraphic(MaterialDesignIconFactory.get().createIcon(MaterialDesignIcon.TABLE_ROW_PLUS_AFTER, DEFAULT_ICON_SIZE));
-        MenuItem miCopy = new MenuItem(I18nHelper.getInstance().get("csv.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem(I18nHelper.getInstance().get("csv.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miCut = new MenuItem(I18nHelper.getInstance().get("csv.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miDelete = new MenuItem(I18nHelper.getInstance().get("csv.menu.delete.row"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+        MenuItem miCopy = new MenuItem(i18n.get("csv.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem(i18n.get("csv.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miCut = new MenuItem(i18n.get("csv.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miDelete = new MenuItem(i18n.get("csv.menu.delete.row"), FontIconManager.getIns().getIcon(IconKey.DELETE));
         miInsertBefore.setOnAction(event -> {
             this.insertNewRow(ROW_CURRENT); // replace current actually
         });
@@ -454,11 +454,11 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private ContextMenu createCellContextMenu() {
         cellContextMenu = new ContextMenu();
-        MenuItem miEdit = new MenuItem(I18nHelper.getInstance().get("csv.menu.edit.cell"), FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
-        MenuItem miCut = new MenuItem(I18nHelper.getInstance().get("csv.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miCopy = new MenuItem(I18nHelper.getInstance().get("csv.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem(I18nHelper.getInstance().get("csv.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miDelete = new MenuItem(I18nHelper.getInstance().get("csv.menu.delete.cell"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+        MenuItem miEdit = new MenuItem(i18n.get("csv.menu.edit.cell"), FontIconManager.getIns().getIcon(IconKey.EDIT_TEXT));
+        MenuItem miCut = new MenuItem(i18n.get("csv.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem(i18n.get("csv.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem(i18n.get("csv.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem(i18n.get("csv.menu.delete.cell"), FontIconManager.getIns().getIcon(IconKey.DELETE));
         miDelete.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         miEdit.setOnAction(event -> {
             if (focusedCell != null) {

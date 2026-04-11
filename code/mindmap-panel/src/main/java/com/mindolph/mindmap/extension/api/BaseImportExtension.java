@@ -2,7 +2,6 @@ package com.mindolph.mindmap.extension.api;
 
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.mfx.dialog.impl.MessageTextBlockDialog;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.util.DialogUtils;
@@ -49,7 +48,7 @@ public abstract class BaseImportExtension extends BasePopupMenuItemExtension {
             } catch (Exception ex) {
                 log.error("Failed to import to mind map", ex);
                 MessageTextBlockDialog dialog = new MessageTextBlockDialog(DEFAULT_WINDOW, "Import Failed",
-                        I18nHelper.getInstance().get("mindmap.msg.error.import"),
+                        i18n.get("mindmap.msg.error.import"),
                         ExceptionUtils.getStackTrace(ex),
                         false);
                 dialog.showAndWait();

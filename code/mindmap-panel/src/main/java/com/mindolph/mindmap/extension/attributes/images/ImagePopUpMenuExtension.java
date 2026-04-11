@@ -7,7 +7,7 @@ import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.FileDialogBuilder;
 import com.mindolph.mfx.util.AwtImageUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.dialog.AddImageChooseDialog;
 import com.mindolph.mindmap.dialog.ImagePreviewDialog;
 import com.mindolph.mindmap.extension.ContextMenuSection;
@@ -39,11 +39,11 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
 
         MenuItem result;
         if (hasAttribute) {
-            result = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.remove.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+            result = new MenuItem(i18n.get("mindmap.menu.remove.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
 //            result.setToolTipText(BUNDLE.getString("Images.Extension.MenuTitle.Remove.Tooltip"));
             result.setOnAction(e -> {
-                Boolean toBeRemoved = new ConfirmDialogBuilder().title(I18nHelper.getInstance().get("mindmap.image.remove.dialog.title")).positive("Remove").cancel().asDefault()
-                        .content(I18nHelper.getInstance().get("mindmap.image.remove.dialog.text"))
+                Boolean toBeRemoved = new ConfirmDialogBuilder().title(i18n.get("mindmap.image.remove.dialog.title")).positive("Remove").cancel().asDefault()
+                        .content(i18n.get("mindmap.image.remove.dialog.text"))
                         .showAndWait();
                 if (toBeRemoved != null && toBeRemoved) {
                     AttributeUtils.setImageAttribute(context.getSelectedTopics(), null, null, null);
@@ -53,14 +53,14 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
             });
         }
         else {
-            result = new MenuItem(I18nHelper.getInstance().get("mindmap.menu.add.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+            result = new MenuItem(i18n.get("mindmap.menu.add.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
 //            result.setToolTipText(BUNDLE.getString("Images.Extension.MenuTitle.Add.Tooltip"));
             result.setOnAction(e -> {
                 Image image = Clipboard.getSystemClipboard().getImage();
                 boolean loadFromFile = true;
                 // Use image from clipboard if exists and user choose to.
                 if (image != null) {
-                    Integer imageSource = new AddImageChooseDialog(I18nHelper.getInstance().get("mindmap.image.select.dialog.title"), lastSelectedImportIndex).showAndWait();
+                    Integer imageSource = new AddImageChooseDialog(i18n.get("mindmap.image.select.dialog.title"), lastSelectedImportIndex).showAndWait();
                     if (imageSource == null) {
                         loadFromFile = false;
                     }
@@ -77,7 +77,7 @@ public class ImagePopUpMenuExtension extends BasePopupMenuItemExtension {
                                     AttributeUtils.setImageAttribute(context.getSelectedTopics(), rescaledImageAsBase64, filePath, null);
                                     context.doNotifyModelChanged(true);
                                 } catch (Exception ex) {
-                                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.msg.error.image.import"));
+                                    DialogFactory.errDialog(i18n.get("mindmap.msg.error.image.import"));
                                     log.error("Unexpected error during image import from clipboard", ex);
                                 }
                             }

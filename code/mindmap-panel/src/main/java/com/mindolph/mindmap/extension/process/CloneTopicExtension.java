@@ -3,7 +3,6 @@ package com.mindolph.mindmap.extension.process;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -28,7 +27,7 @@ public class CloneTopicExtension extends BaseTopicExtension {
 
     @Override
     protected String getName(ExtensionContext context, TopicNode activeTopic) {
-        return context.getSelectedTopics().size() > 0 ? I18nHelper.getInstance().get("mindmap.menu.clone.selected") : I18nHelper.getInstance().get("mindmap.menu.clone.topic");
+        return context.getSelectedTopics().size() > 0 ? i18n.get("mindmap.menu.clone.selected") : i18n.get("mindmap.menu.clone.topic");
     }
 
     @Override
@@ -37,7 +36,7 @@ public class CloneTopicExtension extends BaseTopicExtension {
         if (toClone != null) {
             boolean cloneSubtree = false;
             if (toClone.hasChildren()) {
-                Boolean userChosen = DialogFactory.yesNoCancelConfirmDialog(I18nHelper.getInstance().get("mindmap.msg.clone.topic"), I18nHelper.getInstance().get("mindmap.msg.clone.subtree"));
+                Boolean userChosen = DialogFactory.yesNoCancelConfirmDialog(i18n.get("mindmap.msg.clone.topic"), i18n.get("mindmap.msg.clone.subtree"));
                 if (userChosen == null) {
                     return;
                 }

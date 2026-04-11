@@ -7,6 +7,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.constant.SupportFileTypes;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
@@ -48,6 +49,8 @@ public abstract class BaseEditor extends AnchorPane implements Editable {
     protected boolean needRefresh = false;
 
     protected boolean isChanged = false;
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     public BaseEditor(String fxmlResourcePath, EditorContext editorContext) {
         this.editorContext = editorContext;

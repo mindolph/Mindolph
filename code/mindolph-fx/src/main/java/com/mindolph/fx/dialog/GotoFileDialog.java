@@ -13,7 +13,6 @@ import com.mindolph.core.model.FileMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.control.FileFilterButtonGroup;
 import com.mindolph.fx.util.DisplayUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -65,7 +64,6 @@ public class GotoFileDialog extends BaseDialogController<Void> {
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
     public GotoFileDialog() {
-        I18nHelper i18n = I18nHelper.getInstance();
         Integer iconSize = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_GLOBAL_ICON_SIZE, 16);
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)

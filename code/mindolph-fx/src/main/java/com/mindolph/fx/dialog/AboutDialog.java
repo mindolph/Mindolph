@@ -2,7 +2,6 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.Env;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
@@ -24,7 +23,6 @@ public class AboutDialog extends BaseDialogController<Void> {
     private Label lbJvm;
 
     public AboutDialog() {
-        I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title(i18n.get("dialog.about.title"))

@@ -3,7 +3,7 @@ package com.mindolph.mindmap.dialog;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.model.PasswordData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

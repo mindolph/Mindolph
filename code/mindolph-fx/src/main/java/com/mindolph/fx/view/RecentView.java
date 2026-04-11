@@ -12,7 +12,6 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.AsyncUtils;
 
@@ -96,10 +95,10 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
 
     private ContextMenu createItemContextMenu() {
         itemContextMenu = new ContextMenu();
-        miOpenFile = new MenuItem(I18nHelper.getInstance().get("recent.menu.open"));
+        miOpenFile = new MenuItem(i18n.get("recent.menu.open"));
         miOpenFile.setMnemonicParsing(false);
         miOpenFile.setOnAction(this);
-        miRemove = new MenuItem(I18nHelper.getInstance().get("recent.menu.remove"));
+        miRemove = new MenuItem(i18n.get("recent.menu.remove"));
         miRemove.setMnemonicParsing(false);
         miRemove.setOnAction(this);
         itemContextMenu.getItems().addAll(miOpenFile, miRemove);

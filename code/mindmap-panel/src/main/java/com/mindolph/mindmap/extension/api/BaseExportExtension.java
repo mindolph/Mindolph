@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.api;
 
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.OptionsDialogBuilder;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.model.TopicNode;
 import javafx.scene.control.Dialog;

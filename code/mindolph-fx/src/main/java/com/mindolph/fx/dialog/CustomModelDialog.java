@@ -7,7 +7,6 @@ import com.mindolph.core.llm.ModelMetaBuilder;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -28,7 +27,7 @@ public class CustomModelDialog extends BaseDialogController<ModelMeta> {
     public CustomModelDialog(ModelMeta defaultCustomModel) {
         dialog = new CustomDialogBuilder<ModelMeta>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(I18nHelper.getInstance().get("dialog.custom.model"))
+                .title(i18n.get("dialog.custom.model"))
                 .fxmlUri("dialog/custom_model_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

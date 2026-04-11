@@ -23,7 +23,7 @@
             </padding>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Label fx:id="lbIcon"/>
-                <Label fx:id="lbTitle" text="Summarize selected content:"/>
+                <Label fx:id="lbTitle" text="%ai.summary.title"/>
                 <ChoiceBox fx:id="cbProvider" prefWidth="120.0" />
                 <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
@@ -37,7 +37,7 @@
                 <VBox.margin>
                     <Insets/>
                 </VBox.margin>
-                <TextArea fx:id="taInput" prefHeight="50.0" prefWidth="480.0" text="summarize following content concisely:" />
+                <TextArea fx:id="taInput" prefHeight="50.0" prefWidth="480.0" text="%ai.summary.prompt.default" />
             </VBox>
             <VBox>
                 <VBox.margin>
@@ -50,7 +50,7 @@
                     <Insets/>
                 </VBox.margin>
                 <TextArea fx:id="taOutput" editable="false" prefHeight="128.0" prefWidth="480.0"
-                          promptText="Summarized content." wrapText="true"/>
+                          promptText="%ai.summary.result.hint" wrapText="true"/>
                 <AnchorPane>
                     <VBox.margin>
                         <Insets/>
@@ -63,15 +63,15 @@
                 <padding>
                     <Insets bottom="5.0" top="5.0"/>
                 </padding>
-                <Label fx:id="lbLanguage" text="Language:" />
+                <Label fx:id="lbLanguage" text="%ai.name.language" />
                 <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnCopy" mnemonicParsing="false" text="Copy" disable="true"/>
-                <Button fx:id="btnSummarize" mnemonicParsing="false" text="Summarize"/>
+                <Button fx:id="btnCopy" mnemonicParsing="false" text="%ai.summary.button.copy" disable="true"/>
+                <Button fx:id="btnSummarize" mnemonicParsing="false" text="%ai.summary.button.summarize"/>
             </HBox>
             <HBox fx:id="hbGenerating" maxWidth="500.0">
                 <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Summarizing"/>
+                <Button fx:id="btnStop" mnemonicParsing="false" text="%ai.summary.button.summarize.stop"/>
             </HBox>
             <Pane maxWidth="500.0" VBox.vgrow="ALWAYS">
                 <Label fx:id="lbMsg" maxWidth="500.0" wrapText="true"/>

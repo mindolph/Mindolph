@@ -34,7 +34,7 @@ import com.mindolph.fx.print.ImagePrintable;
 import com.mindolph.fx.print.MindMapPrintable;
 import com.mindolph.fx.print.PrintPreviewDialog;
 import com.mindolph.fx.print.Printable;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.fx.view.*;
 import com.mindolph.genai.ChatView;
 import com.mindolph.markdown.MarkdownEditor;
@@ -292,7 +292,7 @@ public class MainController extends BaseController implements Initializable,
             workspaceView.loadWorkspaces(workspaceList);
         }
         else {
-            String message = I18nHelper.getInstance().get("msg.workspace.creation.prompt",
+            String message = i18n.get("msg.workspace.creation.prompt",
                     "Before starting to use Mindolph, you should create your first workspace, do you want to proceed?");
             if (DialogFactory.yesNoConfirmDialog(message)) {
                 onMenuNewWorkspace();
@@ -386,7 +386,7 @@ public class MainController extends BaseController implements Initializable,
         String keyword = searchParams.getKeywords();
         SearchResultPane searchResultPane = new SearchResultPane();
         searchResultPane.init(searchParams);
-        String title = I18nHelper.getInstance().get("search.results.title", length(keyword) < 10 ? keyword : abbreviate(keyword, 10));
+        String title = i18n.get("search.results.title", length(keyword) < 10 ? keyword : abbreviate(keyword, 10));
         fileTabView.loadContentToTab(searchResultPane, title);
     }
 
@@ -455,12 +455,12 @@ public class MainController extends BaseController implements Initializable,
         File saveDir = DialogFactory.openSaveFileDialog(workspaceView.getScene().getWindow(), SystemUtils.getUserHome());
         if (saveDir != null) {
             if (saveDir.exists()) {
-                String msg = I18nHelper.getInstance().get("msg.workspace.exists", saveDir);
+                String msg = i18n.get("msg.workspace.exists", saveDir);
                 DialogFactory.warnDialog(msg);
             }
             else {
                 if (!saveDir.mkdirs()) {
-                    DialogFactory.warnDialog(I18nHelper.getInstance().get("msg.workspace.create.failed"));
+                    DialogFactory.warnDialog(i18n.get("msg.workspace.create.failed"));
                     return;
                 }
                 openWorkspace(saveDir, true);
@@ -554,7 +554,6 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuPrint(ActionEvent event) {
         Editable editor = getCurrentEditor();
         Printable printable = null;
-        I18nHelper i18n = I18nHelper.getInstance();
         if (editor instanceof MindMapEditor) {
             MindMap<TopicNode> model = new MindMap<>(((MindMapEditor) editor).getMindMapModel());
             Printer firstPrinter = PrinterManager.getInstance().getFirstPrinter();
@@ -597,8 +596,8 @@ public class MainController extends BaseController implements Initializable,
     public void onMenuExit(ActionEvent event) {
         Boolean requireConfirm = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_CONFIRM_BEFORE_QUITTING, true);
         if (requireConfirm) {
-            String confirmMsg = I18nHelper.getInstance().get("msg.confirm.quit");
-            String quitBtn = I18nHelper.getInstance().get("button.quit");
+            String confirmMsg = i18n.get("msg.confirm.quit");
+            String quitBtn = i18n.get("button.quit");
             Boolean quit = new ConfirmDialogBuilder().positive(quitBtn).cancel().asDefault().content(confirmMsg).showAndWait();
             if (quit == null || !quit) {
                 return;
@@ -694,7 +693,6 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onCreateCollection() {
-        I18nHelper i18n = I18nHelper.getInstance();
         if (fileTabView.getAllOpenedFiles().isEmpty()) {
             DialogFactory.warnDialog(i18n.get("msg.workspace.no.open.files"));
             return;
@@ -732,7 +730,6 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onSaveCollection() {
         // save the current collection with opened files
-        I18nHelper i18n = I18nHelper.getInstance();
         String activeCollectionName = this.jcm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName)) {
             log.warn("No active collection found");
@@ -758,7 +755,6 @@ public class MainController extends BaseController implements Initializable,
     @FXML
     public void onRemoveCollection() {
         // remove the current user defined collection.
-        I18nHelper i18n = I18nHelper.getInstance();
         String activeCollectionName = this.jcm.getActiveCollectionName();
         if (StringUtils.isBlank(activeCollectionName) || "default".equalsIgnoreCase(activeCollectionName)) {
             DialogFactory.warnDialog(i18n.get("msg.collection.remove.default"));
@@ -781,7 +777,6 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onRenameCollection() {
-        I18nHelper i18n = I18nHelper.getInstance();
         String activeCollectionName = this.jcm.getActiveCollectionName();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
@@ -860,7 +855,6 @@ public class MainController extends BaseController implements Initializable,
 
     @FXML
     public void onMenuCheckUpdate() {
-        I18nHelper i18n = I18nHelper.getInstance();
         ReleaseUtils.getLatestReleaseVersion(latest -> {
             if (latest == null || StringUtils.isBlank(latest.getVersion())) {
                 showCheckUpdatesToast(i18n.get("msg.update.check.failed"));

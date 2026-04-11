@@ -15,7 +15,6 @@ import com.mindolph.base.util.LayoutUtils;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.TimeUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;

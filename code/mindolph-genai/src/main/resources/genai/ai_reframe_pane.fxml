@@ -22,10 +22,10 @@
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
             <Label fx:id="lbIcon"/>
-            <Button fx:id="btnKeep" mnemonicParsing="false" text="Keep"/>
-            <Button fx:id="btnRetry" mnemonicParsing="false" text="Retry"/>
-            <Button fx:id="btnAdjust" mnemonicParsing="false" text="Adjust"/>
-            <Button fx:id="btnDiscard" mnemonicParsing="false" text="Discard"/>
+            <Button fx:id="btnKeep" mnemonicParsing="false" text="%ai.reframe.button.keep"/>
+            <Button fx:id="btnRetry" mnemonicParsing="false" text="%ai.reframe.button.retry"/>
+            <Button fx:id="btnAdjust" mnemonicParsing="false" text="%ai.reframe.button.adjust"/>
+            <Button fx:id="btnDiscard" mnemonicParsing="false" text="%ai.reframe.button.discard"/>
          </HBox>
          <Label fx:id="lbMsg" maxHeight="1.0" prefHeight="0.0"/>
       </VBox>

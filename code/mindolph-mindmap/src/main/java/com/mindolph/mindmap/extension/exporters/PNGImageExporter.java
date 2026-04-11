@@ -20,7 +20,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.AwtImageUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -75,7 +74,7 @@ public final class PNGImageExporter extends BaseExportExtension {
 
     @Override
     public List<String> getOptions() {
-        return Arrays.asList(I18nHelper.getInstance().get("mindmap.export.png.expand.all"), I18nHelper.getInstance().get("mindmap.export.png.draw.bg"));
+        return Arrays.asList(i18n.get("mindmap.export.png.expand.all"), i18n.get("mindmap.export.png.draw.bg"));
     }
 
     @Override
@@ -94,7 +93,7 @@ public final class PNGImageExporter extends BaseExportExtension {
         if (image == null) {
             if (out == null) {
                 log.error("Can't render map as image");
-                DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.export.png.error.rendering"));
+                DialogFactory.errDialog(i18n.get("mindmap.export.png.error.rendering"));
                 return;
             }
             else {
@@ -110,10 +109,10 @@ public final class PNGImageExporter extends BaseExportExtension {
         File fileToSave = null;
         if (out == null) {
             fileToSave = DialogUtils.selectFileToSaveForFileFilter(
-                    I18nHelper.getInstance().get("mindmap.export.png.title"),
+                    i18n.get("mindmap.export.png.title"),
                     null,
                     ".png",
-                    I18nHelper.getInstance().get("mindmap.export.png.filter"),
+                    i18n.get("mindmap.export.png.filter"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".png");
             if (fileToSave != null) {
@@ -138,12 +137,12 @@ public final class PNGImageExporter extends BaseExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.png.name");
+        return i18n.get("mindmap.export.png.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.png.reference");
+        return i18n.get("mindmap.export.png.reference");
     }
 
     @Override

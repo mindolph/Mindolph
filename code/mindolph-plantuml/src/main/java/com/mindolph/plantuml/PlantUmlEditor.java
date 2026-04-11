@@ -16,7 +16,6 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
 
 import java.awt.image.BufferedImage;
@@ -151,7 +150,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         log.info("Total pages: " + indicator.totalPages);
         ToggleGroup toggleGroup = new ToggleGroup();
         for (int i = 0; i < indicator.totalPages; i++) {
-            RadioMenuItem miPageX = new RadioMenuItem(I18nHelper.getInstance().get("plantuml.msg.page.info", i + 1, indicator.totalPages, indicator.pages.get(i).title));
+            RadioMenuItem miPageX = new RadioMenuItem(i18n.get("plantuml.msg.page.info", i + 1, indicator.totalPages, indicator.pages.get(i).title));
             miPageX.setToggleGroup(toggleGroup);
             miPageX.setUserData(i);
             miPageX.setGraphic(FontIconManager.getIns().getIcon(IconKey.PAGE));
@@ -164,20 +163,20 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             });
             contextMenu.getItems().add(miPageX);
         }
-        MenuItem miExport = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miCopyImage = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.image"));
+        MenuItem miExport = new MenuItem(i18n.get("plantuml.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miCopyImage = new MenuItem(i18n.get("plantuml.menu.copy.image"));
         miCopyImage.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putImage(image);
             Clipboard.getSystemClipboard().setContent(content);
         });
-        MenuItem miCopyAscii = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.ascii"));
+        MenuItem miCopyAscii = new MenuItem(i18n.get("plantuml.menu.copy.ascii"));
         miCopyAscii.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(this.convertPageToString(FileFormat.ATXT));
             Clipboard.getSystemClipboard().setContent(content);
         });
-        MenuItem miCopyScript = new MenuItem(I18nHelper.getInstance().get("plantuml.menu.copy.script"));
+        MenuItem miCopyScript = new MenuItem(i18n.get("plantuml.menu.copy.script"));
         miCopyScript.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(this.convertPageToString(null));
@@ -194,7 +193,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     getScene().getWindow(),
                     file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".jpg",
-                    new FileChooser.ExtensionFilter(I18nHelper.getInstance().get("dialog.save.as.filter"), "*.jpg")
+                    new FileChooser.ExtensionFilter(i18n.get("dialog.save.as.filter"), "*.jpg")
             );
             Image image = previewPane.getImage();
             try {
@@ -392,7 +391,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(
                                     editorContext.getFileData().getFile(),
-                                    new StatusMsg(I18nHelper.getInstance().get("plantuml.msg.page.error", curPage + 1), "See the description", image)
+                                    new StatusMsg(i18n.get("plantuml.msg.page.error", curPage + 1), "See the description", image)
                             );
                         });
                     } catch (IOException e) {
@@ -415,7 +414,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     String title = indicator.page < indicator.pages.size() ? indicator.pages.get(indicator.page).title : StringUtils.EMPTY;
                     EventBus.getIns().notifyStatusMsg(
                             editorContext.getFileData().getFile(),
-                            new StatusMsg(I18nHelper.getInstance().get("plantuml.msg.page.info", indicator.page + 1, indicator.totalPages, title))
+                            new StatusMsg(i18n.get("plantuml.msg.page.info", indicator.page + 1, indicator.totalPages, title))
                     );
                 });
                 log.trace(String.valueOf(reader.generateDiagramDescription()));
@@ -460,7 +459,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             return title;
         }
         else {
-            return I18nHelper.getInstance().get("plantuml.msg.unnamed");
+            return i18n.get("plantuml.msg.unnamed");
         }
     }
 
