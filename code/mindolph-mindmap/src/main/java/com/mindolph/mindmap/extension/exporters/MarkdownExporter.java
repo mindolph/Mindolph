@@ -1,6 +1,5 @@
 package com.mindolph.mindmap.extension.exporters;
 
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.exporters.branch.MarkdownBranchExporter;
@@ -40,7 +39,7 @@ public class MarkdownExporter extends MarkdownBranchExporter {
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.markdown.reference");
+        return i18n.get("mindmap.export.markdown.reference");
     }
 
     @Override

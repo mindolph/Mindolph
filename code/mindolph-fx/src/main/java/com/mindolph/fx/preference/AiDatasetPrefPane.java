@@ -19,7 +19,6 @@ import com.mindolph.core.meta.WorkspaceList;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
 import com.mindolph.fx.control.WorkspaceSelector;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.fx.view.FileSelectView;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
@@ -431,7 +430,6 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void createNewDataset(String defaultNewName) {
-        I18nHelper i18n = I18nHelper.getInstance();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title(i18n.get("prefs.ai.dataset.create"))
@@ -457,7 +455,6 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void embedCurrentDataset() {
-        I18nHelper i18n = I18nHelper.getInstance();
         btnEmbedding.setDisable(true); // MUST disable it.
         if (stateMachine.isState(EmbeddingState.EMBEDDING)) {
             // try to stop the embedding.

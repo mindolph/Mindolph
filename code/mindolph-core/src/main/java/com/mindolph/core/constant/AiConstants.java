@@ -1,18 +1,12 @@
 package com.mindolph.core.constant;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ModelMetaBuilder;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+import org.swiftboot.util.I18nHelper;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * @author mindolph.com@gmail.com
@@ -236,90 +230,55 @@ public interface AiConstants {
      * @return
      */
     static String lookupLanguage(String langCode) {
-        Map<String, String> mapped = new Gson().fromJson(LANGS_JSON, JsonArray.class).asList()
-                .stream().map(je -> (JsonObject) je).toList()
-                .stream().collect(Collectors.toMap(jo -> jo.get("code").getAsString(), jo -> jo.get("name").getAsString()));
-        return mapped.getOrDefault(langCode, "the same language that I just said to you.");
+        for (String[] pair : LANGS) {
+            if (pair[0].equals(langCode)) {
+                return I18nHelper.getInstance().get(pair[1]);
+            }
+        }
+        return I18nHelper.getInstance().get("ai.lang.as-is");
+    }
+
+    static String[][] allLanguages() {
+        return Arrays.stream(LANGS).map(pair -> new String[]{pair[0], I18nHelper.getInstance().get(pair[1])}).toList().toArray(new String[0][]);
     }
 
     // Languages code and name mapping for generating llm content.
-    String LANGS_JSON = """
-            [
-                {"code": "as-is", "name": "the same language that I just said to you"},
-                {"code": "en-US", "name": "American English"},
-                {"code": "en-GB", "name": "British English"},
-                {"code": "en-AU", "name": "Australian English"},
-                {"code": "zh-CN", "name": "Simplified Chinese (China)"},
-                {"code": "zh-TW", "name": "Traditional Chinese (Taiwan)"},
-                {"code": "zh-HK", "name": "Traditional Chinese (Hong Kong)"},
-                {
-                    "code": "hi",
-                    "name": "Hindi"
-                },
-                {"code": "es-ES", "name": "European Spanish"},
-                {"code": "es-MX", "name": "Mexican Spanish"},
-                {"code": "es-AR", "name": "Argentinian Spanish"},
-                {"code": "fr-FR", "name": "European French"},
-                {"code": "fr-CA", "name": "Canadian French"},
-                {"code": "fr-BE", "name": "Belgian French"},
-                {"code": "ar-SA", "name": "Saudi Arabic"},
-                {"code": "ar-EG", "name": "Egyptian Arabic"},
-                {"code": "ar-MA", "name": "Moroccan Arabic"},
-                {
-                    "code": "bn",
-                    "name": "Bengali"
-                },
-                {
-                    "code": "ru",
-                    "name": "Russian"
-                },
-                {"code": "pt-PT", "name": "European Portuguese"},
-                {"code": "pt-BR", "name": "Brazilian Portuguese"},
-                {
-                    "code": "id",
-                    "name": "Indonesian"
-                },
-                {
-                    "code": "ur",
-                    "name": "Urdu"
-                },
-                {
-                    "code": "ja",
-                    "name": "Japanese"
-                },
-                {"code": "de-DE", "name": "Standard German"},
-                {"code": "de-AT", "name": "Austrian German"},
-                {"code": "de-CH", "name": "Swiss German"},
-                {
-                    "code": "sw",
-                    "name": "Swahili"
-                },
-                {
-                    "code": "mr",
-                    "name": "Marathi"
-                },
-                {
-                    "code": "te",
-                    "name": "Telugu"
-                },
-                {
-                    "code": "tr",
-                    "name": "Turkish"
-                },
-                {
-                    "code": "ta",
-                    "name": "Tamil"
-                },
-                {
-                    "code": "vi",
-                    "name": "Vietnamese"
-                },
-                {
-                    "code": "ko",
-                    "name": "Korean"
-                }
-            ]
-            """;
+    String[][] LANGS = new String[][]{
+            {"as-is", "ai.lang.as-is"},
+            {"en-US", "ai.lang.en-US"},
+            {"en-GB", "ai.lang.en-GB"},
+            {"en-AU", "ai.lang.en-AU"},
+            {"zh-CN", "ai.lang.zh-CN"},
+            {"zh-TW", "ai.lang.zh-TW"},
+            {"zh-HK", "ai.lang.zh-HK"},
+            {"hi", "ai.lang.hi"},
+            {"es-ES", "ai.lang.es-ES"},
+            {"es-MX", "ai.lang.es-MX"},
+            {"es-AR", "ai.lang.es-AR"},
+            {"fr-FR", "ai.lang.fr-FR"},
+            {"fr-CA", "ai.lang.fr-CA"},
+            {"fr-BE", "ai.lang.fr-BE"},
+            {"ar-SA", "ai.lang.ar-SA"},
+            {"ar-EG", "ai.lang.ar-EG"},
+            {"ar-MA", "ai.lang.ar-MA"},
+            {"bn", "ai.lang.bn"},
+            {"ru", "ai.lang.ru"},
+            {"pt-PT", "ai.lang.pt-PT"},
+            {"pt-BR", "ai.lang.pt-BR"},
+            {"id", "ai.lang.id"},
+            {"ur", "ai.lang.ur"},
+            {"ja", "ai.lang.ja"},
+            {"de-DE", "ai.lang.de-DE"},
+            {"de-AT", "ai.lang.de-AT"},
+            {"de-CH", "ai.lang.de-CH"},
+            {"sw", "ai.lang.sw"},
+            {"mr", "ai.lang.mr"},
+            {"te", "ai.lang.te"},
+            {"tr", "ai.lang.tr"},
+            {"ta", "ai.lang.ta"},
+            {"vi", "ai.lang.vi"},
+            {"ko", "ai.lang.ko"}
+    };
 
     enum ActionType {
         CANCEL, // cancel the generation
@@ -361,7 +320,4 @@ public interface AiConstants {
             put(SupportFileTypes.TYPE_PLANTUML, OutputFormat.PLANTUML);
         }
     };
-
-//    record ProviderInfo(String name, String model) {
-//    }
 }

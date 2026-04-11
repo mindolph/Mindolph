@@ -27,7 +27,6 @@ import com.mindolph.core.template.HtmlBuilder;
 import com.mindolph.core.util.FileNameUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextBlockDialog;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mfx.util.GlobalExecutor;
@@ -409,11 +408,11 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miViewSource = new MenuItem(I18nHelper.getInstance().get("markdown.menu.view.source"));
-        MenuItem miRefresh = new MenuItem(I18nHelper.getInstance().get("markdown.menu.refresh"), FontIconManager.getIns().getIcon(IconKey.REFRESH));
-        MenuItem miExportHtml = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.html"), FontIconManager.getIns().getIcon(IconKey.BROWSE));
-        MenuItem miExportImage = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
-        MenuItem miExportPdf = new MenuItem(I18nHelper.getInstance().get("markdown.menu.export.pdf"), FontIconManager.getIns().getIcon(IconKey.PDF));
+        MenuItem miViewSource = new MenuItem(i18n.get("markdown.menu.view.source"));
+        MenuItem miRefresh = new MenuItem(i18n.get("markdown.menu.refresh"), FontIconManager.getIns().getIcon(IconKey.REFRESH));
+        MenuItem miExportHtml = new MenuItem(i18n.get("markdown.menu.export.html"), FontIconManager.getIns().getIcon(IconKey.BROWSE));
+        MenuItem miExportImage = new MenuItem(i18n.get("markdown.menu.export.image"), FontIconManager.getIns().getIcon(IconKey.IMAGE));
+        MenuItem miExportPdf = new MenuItem(i18n.get("markdown.menu.export.pdf"), FontIconManager.getIns().getIcon(IconKey.PDF));
 
         miViewSource.setOnAction(e -> {
             Node document = parser.parse(codeArea.getText());

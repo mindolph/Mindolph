@@ -2,7 +2,7 @@ package com.mindolph.mindmap.extension.attributes.emoticon;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.dialog.EmoticonDialog;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -19,7 +19,7 @@ public class EmoticonPopUpMenuExtension extends BasePopupMenuItemExtension {
 
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode activeTopic) {
-        MenuItem menuItem = new MenuItem(I18nHelper.getInstance().get("mindmap.emoticons.menu.title"), FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
+        MenuItem menuItem = new MenuItem(i18n.get("mindmap.emoticons.menu.title"), FontIconManager.getIns().getIcon(IconKey.EMOTICONS));
 //        result.setToolTipText(BUNDLE.getString("Emoticons.MenuTooltip"));
         menuItem.setOnAction(e -> {
             EmoticonDialog dialog = new EmoticonDialog(AttributeUtils.getIconAttribute(activeTopic));

@@ -7,7 +7,7 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.FileChangedEventHandler;
 import com.mindolph.base.event.FileSavedEventHandler;
 import com.mindolph.core.constant.SupportFileTypes;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;

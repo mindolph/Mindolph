@@ -4,7 +4,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.SearchService;
 import com.mindolph.fx.control.FileTreeView;
@@ -49,7 +48,6 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
     private List<File> foundFiles;
 
     public UsageDialog(SearchParams searchParams) {
-        I18nHelper i18n = I18nHelper.getInstance();
         this.searchParams = searchParams;
         dialog = new CustomDialogBuilder<SearchParams>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
@@ -83,7 +81,6 @@ public class UsageDialog extends BaseDialogController<SearchParams> {
         log.debug("reSearch()");
         progressIndicator.setVisible(true);
         IOFileFilter newFileFilter = searchParams.getSearchFilter();
-        I18nHelper i18n = I18nHelper.getInstance();
         AsyncUtils.fxAsync(
                 () -> {
                     foundFiles = SearchService.getIns().searchLinksInFilesIn(searchParams.getSearchInDir(), newFileFilter, searchParams);

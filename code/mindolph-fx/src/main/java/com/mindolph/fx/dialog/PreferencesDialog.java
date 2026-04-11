@@ -5,7 +5,6 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.fx.preference.FontPreferencesPane;
 import com.mindolph.fx.preference.AiPreferencePane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
 import com.mindolph.mfx.container.SideTabPane;
 import com.mindolph.mfx.dialog.BaseDialogController;
@@ -62,7 +61,6 @@ public class PreferencesDialog extends BaseDialogController<Void> {
     private static int lastActivatedTabIndex = 0;
 
     public PreferencesDialog() {
-        I18nHelper i18n = I18nHelper.getInstance();
         String title = i18n.get("dialog.preferences.title");
         String resetBtn = i18n.get("dialog.preferences.reset.default");
         String closeBtn = i18n.get("dialog.preferences.close");

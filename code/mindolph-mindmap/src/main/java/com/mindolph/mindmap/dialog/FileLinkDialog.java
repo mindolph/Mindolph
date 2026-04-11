@@ -6,7 +6,6 @@ import com.mindolph.base.util.MindolphFileUtils;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.model.FileLink;
 import javafx.application.Platform;
@@ -62,7 +61,7 @@ public class FileLinkDialog extends BaseDialogController<FileLink> {
         dialog.setOnShown(event -> Platform.runLater(() -> textField.requestFocus()));
 
         dialog.setOnCloseRequest(dialogEvent -> {
-            if (!confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.link.changed"))) {
+            if (!confirmClosing(i18n.get("mindmap.dialog.link.changed"))) {
                 dialogEvent.consume();
             }
         });

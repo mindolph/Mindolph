@@ -10,7 +10,6 @@ import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -161,7 +160,6 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
 
     @FXML
     protected void onTestConnection() {
-        I18nHelper i18n = I18nHelper.getInstance();
         NodeUtils.disable(btnTestConnection, cbVectorStoreProvider, tfHost, spPort, tfDatabase, tfUsername, tfPassword);
         GlobalExecutor.submit(() -> {
             try {

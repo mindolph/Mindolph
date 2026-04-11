@@ -4,7 +4,6 @@ import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.base.event.OpenFileEvent;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.fx.control.FileTreeView;
 import com.mindolph.fx.control.FileTreeView.FileTreeViewData;
@@ -48,7 +47,6 @@ public class FileReferenceDialog extends BaseDialogController<Boolean> {
     private List<File> foundFiles;
 
     public FileReferenceDialog(SearchParams searchParams, List<File> foundFiles) {
-        I18nHelper i18n = I18nHelper.getInstance();
         this.searchParams = searchParams;
         this.foundFiles = foundFiles;
         dialog = new CustomDialogBuilder<Boolean>()

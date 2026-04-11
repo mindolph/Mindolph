@@ -5,7 +5,6 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.event.EventBus;
 import com.mindolph.core.WorkspaceManager;
 import com.mindolph.core.meta.WorkspaceMeta;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -29,7 +28,6 @@ public class WorkspaceManagementDialog extends BaseDialogController<Void> {
     private ListView<WorkspaceMeta> lvWorkspaces;
 
     public WorkspaceManagementDialog() {
-        I18nHelper i18n = I18nHelper.getInstance();
         dialog = new CustomDialogBuilder<Void>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title(i18n.get("dialog.workspace.management"))

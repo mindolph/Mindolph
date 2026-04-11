@@ -25,7 +25,6 @@ import com.mindolph.base.util.GeometryConvertUtils;
 import com.mindolph.mfx.util.AwtConvertUtils;
 import com.mindolph.mfx.util.FontUtils;
 import com.mindolph.mfx.util.FxImageUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.MindMapConfig;
 import com.mindolph.mindmap.MindMapContext;
 import com.mindolph.mindmap.extension.api.BaseExportExtension;
@@ -128,7 +127,7 @@ public class SVGImageExporter extends BaseExportExtension {
 
     @Override
     public List<String> getOptions() {
-        return Arrays.asList(I18nHelper.getInstance().get("mindmap.export.svg.expand.all"), I18nHelper.getInstance().get("mindmap.export.svg.draw.bg"));
+        return Arrays.asList(i18n.get("mindmap.export.svg.expand.all"), i18n.get("mindmap.export.svg.draw.bg"));
     }
 
     @Override
@@ -203,9 +202,9 @@ public class SVGImageExporter extends BaseExportExtension {
         File fileToSave = null;
         if (out == null) {
             fileToSave = DialogUtils.selectFileToSaveForFileFilter(
-                    I18nHelper.getInstance().get("mindmap.export.svg.title"), null,
+                    i18n.get("mindmap.export.svg.title"), null,
                     ".svg",
-                    I18nHelper.getInstance().get("mindmap.export.svg.filter"),
+                    i18n.get("mindmap.export.svg.filter"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".svg");
             out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
@@ -277,12 +276,12 @@ public class SVGImageExporter extends BaseExportExtension {
     @Override
 
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.svg.name");
+        return i18n.get("mindmap.export.svg.name");
     }
 
     @Override
     public String getReference(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.svg.reference");
+        return i18n.get("mindmap.export.svg.reference");
     }
 
     @Override

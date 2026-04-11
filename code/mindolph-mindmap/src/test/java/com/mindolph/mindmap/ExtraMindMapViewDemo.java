@@ -3,7 +3,7 @@ package com.mindolph.mindmap;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.container.ScalableScrollPane;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.view.AttributesView;
@@ -48,6 +48,8 @@ public class ExtraMindMapViewDemo extends Application implements Initializable {
     private ExtraMindMapView extraMindMapView;
     private MindMapConfig mindMapConfig;
     private MindMap<TopicNode> mindMap;
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -121,9 +123,9 @@ public class ExtraMindMapViewDemo extends Application implements Initializable {
         // for i18n
         FxPreferences.getInstance().init(ExtraMindMapViewDemo.class);
         List<String> bundleNames = List.of("i18n/mindmap-panel", "i18n/mindolph-base");
-        I18nHelper.getInstance().addBundles(bundleNames);
-        I18nHelper.getInstance().reloadAllBundles();
-        System.out.println(I18nHelper.getInstance().get("search.bar.find"));
+        i18n.addBundles(bundleNames);
+        i18n.reloadAllBundles();
+        System.out.println(i18n.get("search.bar.find"));
         // for Markdown editor.
         ShortcutManager sm = ShortcutManager.getIns();
         if (SystemUtils.IS_OS_MAC) {
@@ -137,7 +139,7 @@ public class ExtraMindMapViewDemo extends Application implements Initializable {
         }
         // start
         Parent root = FXMLLoader.load(getClass().getResource("/extra_mind_map_view_demo.fxml"),
-                I18nHelper.getInstance().getResourceBundle());
+                i18n.getResourceBundle());
         Scene scene = new Scene(root, 800, 600);
         stage.setTitle("Hello Extra Mind Map");
         stage.setScene(scene);

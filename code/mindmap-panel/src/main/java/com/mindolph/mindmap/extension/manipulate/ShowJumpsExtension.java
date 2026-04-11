@@ -3,7 +3,7 @@ package com.mindolph.mindmap.extension.manipulate;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BasePopupMenuItemExtension;
@@ -17,7 +17,7 @@ public class ShowJumpsExtension extends BasePopupMenuItemExtension {
     @Override
     public MenuItem makeMenuItem(ExtensionContext context, TopicNode topic) {
         MindMap<TopicNode> model = context.getModel();
-        CheckMenuItem result = new CheckMenuItem(I18nHelper.getInstance().get("mindmap.menu.show.jumps"));
+        CheckMenuItem result = new CheckMenuItem(i18n.get("mindmap.menu.show.jumps"));
         result.setGraphic(FontIconManager.getIns().getIcon(IconKey.SHOW_JUMPS));
         result.setSelected(Boolean.parseBoolean(model.getAttribute(MindMapConstants.MODEL_ATTR_SHOW_JUMPS)));
         result.setOnAction(e -> {

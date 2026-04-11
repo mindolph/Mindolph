@@ -19,7 +19,6 @@ package com.mindolph.mindmap.extension.importers;
 import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.util.ColorUtils;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -47,7 +46,7 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
 
     @Override
     public MindMap<TopicNode> doImport(ExtensionContext context) throws Exception {
-        File file = this.selectFileForExtension(I18nHelper.getInstance().get("mindmap.import.mindmup.title"), null, "mup", "Mindmup files (.mup)");
+        File file = this.selectFileForExtension(i18n.get("mindmap.import.mindmup.title"), null, "mup", "Mindmup files (.mup)");
 
         if (file == null) {
             return null;
@@ -60,7 +59,7 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
 
         Number formatVersion = parsedJson.getNumber("formatVersion");
         if (formatVersion == null) {
-            DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.import.mindmup.error.wrong.format"));
+            DialogFactory.errDialog(i18n.get("mindmap.import.mindmup.error.wrong.format"));
         }
         else {
             resultedMap = MindMapUtils.createModelWithRoot();
@@ -224,12 +223,12 @@ public class Mindmup2MindMapImporter extends BaseImportExtension {
 
     @Override
     public String getName(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.mindmup.name");
+        return i18n.get("mindmap.import.mindmup.name");
     }
 
     @Override
     public String getReference(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.mindmup.reference");
+        return i18n.get("mindmap.import.mindmup.reference");
     }
 
     @Override

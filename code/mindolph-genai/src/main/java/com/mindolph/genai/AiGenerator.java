@@ -22,7 +22,7 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.GlobalExecutor;
 
@@ -71,6 +71,8 @@ public class AiGenerator implements Generator {
     private AiInputPane inputPanel;
     private AiSummaryPane summarizePanel;
     private AiReframePane reframePanel;
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     public AiGenerator(Plugin plugin, Object editorId, String fileType) {
         this.plugin = plugin;
@@ -190,18 +192,18 @@ public class AiGenerator implements Generator {
     @Override
     public MenuItem generationMenuItem(String selectedText) {
         Text icon = FontIconManager.getIns().getIcon(IconKey.MAGIC);
-        return new MenuItem(I18nHelper.getInstance().get("ai.menu.generate"), icon);
+        return new MenuItem(i18n.get("ai.menu.generate"), icon);
     }
 
     @Override
     public MenuItem summaryMenuItem() {
-        return new MenuItem(I18nHelper.getInstance().get("ai.menu.summarize"), FontIconManager.getIns().getIcon(IconKey.MAGIC));
+        return new MenuItem(i18n.get("ai.menu.summarize"), FontIconManager.getIns().getIcon(IconKey.MAGIC));
     }
 
     @Override
     public StackPane showInputPanel(String defaultInput) {
         if (!checkSettings(GEN_AI_GENERATE_MODEL)) {
-            DialogFactory.warnDialog(I18nHelper.getInstance().get("ai.msg.setup.required"));
+            DialogFactory.warnDialog(i18n.get("ai.msg.setup.required"));
             return null;
         }
         String prompt = defaultInput;
@@ -217,7 +219,7 @@ public class AiGenerator implements Generator {
     @Override
     public StackPane showSummarizePanel(String input, Node bondEditor) {
         if (!checkSettings(GEN_AI_SUMMARIZE_MODEL)) {
-            DialogFactory.warnDialog(I18nHelper.getInstance().get("ai.msg.setup.required"));
+            DialogFactory.warnDialog(i18n.get("ai.msg.setup.required"));
             return null;
         }
         summarizePanel = new AiSummaryPane(editorId, fileType, input, bondEditor);

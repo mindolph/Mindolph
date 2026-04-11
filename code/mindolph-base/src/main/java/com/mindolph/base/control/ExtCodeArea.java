@@ -5,7 +5,7 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
@@ -70,6 +70,8 @@ public class ExtCodeArea extends CodeArea {
     // used to control the merging of editing history.
     private final EventSource<String> historySource = new EventSource<>();
 
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
     public ExtCodeArea() {
         // auto scroll when caret goes out of viewport.
         super.caretPositionProperty().addListener((observableValue, integer, t1) -> super.requestFollowCaret());
@@ -127,11 +129,11 @@ public class ExtCodeArea extends CodeArea {
      */
     protected ContextMenu createContextMenu() {
         ContextMenu menu = new ContextMenu();
-        MenuItem miCut = new MenuItem(I18nHelper.getInstance().get("codearea.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
-        MenuItem miCopy = new MenuItem(I18nHelper.getInstance().get("codearea.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
-        MenuItem miPaste = new MenuItem(I18nHelper.getInstance().get("codearea.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
-        MenuItem miDelete = new MenuItem(I18nHelper.getInstance().get("codearea.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
-        CheckMenuItem miWordWrap = new CheckMenuItem(I18nHelper.getInstance().get("codearea.menu.word.wrap"), FontIconManager.getIns().getIcon(IconKey.WRAP));
+        MenuItem miCut = new MenuItem(i18n.get("codearea.menu.cut"), FontIconManager.getIns().getIcon(IconKey.CUT));
+        MenuItem miCopy = new MenuItem(i18n.get("codearea.menu.copy"), FontIconManager.getIns().getIcon(IconKey.COPY));
+        MenuItem miPaste = new MenuItem(i18n.get("codearea.menu.paste"), FontIconManager.getIns().getIcon(IconKey.PASTE));
+        MenuItem miDelete = new MenuItem(i18n.get("codearea.menu.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+        CheckMenuItem miWordWrap = new CheckMenuItem(i18n.get("codearea.menu.word.wrap"), FontIconManager.getIns().getIcon(IconKey.WRAP));
         miCut.setOnAction(event -> {
             this.cut();
         });

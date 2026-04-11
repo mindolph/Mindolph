@@ -3,6 +3,7 @@ package com.mindolph.genai;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.GenAiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -10,10 +11,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_OUTPUT_LANGUAGE;
-import static com.mindolph.core.constant.AiConstants.LANGS_JSON;
 import static com.mindolph.core.constant.AiConstants.lookupLanguage;
 import static com.mindolph.genai.AiUiConstants.LANGUAGES_IN_JSON;
 
@@ -101,8 +102,8 @@ public class ChoiceUtils {
      * @param choiceBox
      */
     public static void loadLanguagesToAndSelectDefault(ChoiceBox<Pair<String, String>> choiceBox) {
-        JsonArray langs = new Gson().fromJson(LANGS_JSON, JsonArray.class);
-        List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
+        String[][] langCodeNameMap = AiConstants.allLanguages();
+        List<Pair<String, String>> list = Arrays.stream(langCodeNameMap).map(e -> new Pair<>(e[0], e[1])).toList();
         choiceBox.getItems().clear();
         choiceBox.getItems().addAll(list);
         String savedLangCode = FxPreferences.getInstance().getPreference(GEN_AI_OUTPUT_LANGUAGE, list.stream().findFirst().get().getKey());

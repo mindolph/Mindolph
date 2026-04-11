@@ -13,7 +13,7 @@ import com.mindolph.core.search.SearchUtils;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
 import com.mindolph.mfx.util.PointUtils;
 import com.mindolph.mfx.util.RectangleUtils;

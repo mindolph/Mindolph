@@ -16,7 +16,6 @@ import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.AwtImageUtils;
 
 import java.awt.image.BufferedImage;

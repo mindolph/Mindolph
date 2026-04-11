@@ -17,7 +17,6 @@
 package com.mindolph.mindmap.extension.importers;
 
 import com.igormaznitsa.mindmap.model.MindMap;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.model.TopicNode;
@@ -34,7 +33,7 @@ public class Text2MindMapImporter extends BaseImportExtension {
 
     @Override
     public MindMap<TopicNode> doImport(ExtensionContext context) throws Exception {
-        File file = this.selectFileForExtension(I18nHelper.getInstance().get("mindmap.import.text2mindmap.title"), null, "txt", "text files (.txt)");
+        File file = this.selectFileForExtension(i18n.get("mindmap.import.text2mindmap.title"), null, "txt", "text files (.txt)");
         MindMap<TopicNode> result = null;
         if (file != null) {
             List<String> lines = FileUtils.readLines(file, "UTF-8");
@@ -144,12 +143,12 @@ public class Text2MindMapImporter extends BaseImportExtension {
 
     @Override
     public String getName(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.text2mindmap.name");
+        return i18n.get("mindmap.import.text2mindmap.name");
     }
 
     @Override
     public String getReference(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.text2mindmap.reference");
+        return i18n.get("mindmap.import.text2mindmap.reference");
     }
 
     @Override

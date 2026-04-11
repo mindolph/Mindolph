@@ -1,10 +1,10 @@
 package com.mindolph.base;
 
-import com.mindolph.mfx.i18n.I18nHelper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -21,6 +21,8 @@ public abstract class BaseView extends AnchorPane {
      */
     protected BooleanProperty active = new SimpleBooleanProperty(true);
 
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
     protected boolean loading = false;
 
     public BaseView(String fxmlUri) {
@@ -29,7 +31,7 @@ public abstract class BaseView extends AnchorPane {
 
     public BaseView(String fxmlUri, boolean active) {
         this.active.set(active);
-        ResourceBundle resourceBundle = I18nHelper.getInstance().getResourceBundle();
+        ResourceBundle resourceBundle = i18n.getResourceBundle();
         FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource(fxmlUri));
         fxmlloader.setResources(resourceBundle);
         fxmlloader.setRoot(this);

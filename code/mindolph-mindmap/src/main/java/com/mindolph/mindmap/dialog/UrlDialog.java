@@ -5,7 +5,6 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.DesktopUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -45,7 +44,7 @@ public class UrlDialog extends BaseDialogController<String> {
             Platform.runLater(() -> textField.requestFocus());
         });
         dialog.setOnCloseRequest(dialogEvent -> {
-            if (!confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.uri.changed"))) {
+            if (!confirmClosing(i18n.get("mindmap.dialog.uri.changed"))) {
                 dialogEvent.consume();
             }
         });

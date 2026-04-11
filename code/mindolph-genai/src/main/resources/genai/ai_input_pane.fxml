@@ -21,7 +21,7 @@
          </padding>
          <HBox alignment="CENTER_LEFT" spacing="10.0">
             <Label fx:id="lbIcon" />
-            <Label fx:id="lbTitle" text="Generate content with AI" />
+            <Label fx:id="lbTitle" text="%ai.generate.title" />
             <ChoiceBox fx:id="cbProvider" prefWidth="120.0" />
             <ChoiceBox fx:id="cbModel" prefWidth="180.0" />
             <Pane HBox.hgrow="ALWAYS" />
@@ -35,7 +35,7 @@
             <VBox.margin>
                <Insets />
             </VBox.margin>
-            <TextArea fx:id="taInput" prefHeight="64.0" prefWidth="480.0" promptText="Describe what you'd like to create" />
+            <TextArea fx:id="taInput" prefHeight="64.0" prefWidth="480.0" promptText="%ai.generate.prompt.hint" />
             <AnchorPane>
                <VBox.margin>
                   <Insets />
@@ -47,16 +47,16 @@
             <padding>
                <Insets bottom="5.0" top="5.0" />
             </padding>
-            <Label fx:id="lbLanguage" text="Language:" />
+            <Label fx:id="lbLanguage" text="%ai.name.language" />
             <ChoiceBox fx:id="cbLanguage" prefWidth="200.0" />
             <Label fx:id="lbTemperature" />
             <ChoiceBox fx:id="cbTemperature" prefWidth="100.0" />
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnGenerate" mnemonicParsing="false" text="Generate" />
+            <Button fx:id="btnGenerate" mnemonicParsing="false" text="%ai.generate.button.generate" />
          </HBox>
          <HBox fx:id="hbGenerating" maxWidth="500.0" managed="false" visible="false">
             <Pane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
-            <Button fx:id="btnStop" mnemonicParsing="false" text="Stop Generating" />
+            <Button fx:id="btnStop" mnemonicParsing="false" text="%ai.generate.button.generate.stop" />
          </HBox>
          <Pane maxWidth="500.0" VBox.vgrow="ALWAYS">
             <Label fx:id="lbMsg" maxWidth="500.0" wrapText="true" />

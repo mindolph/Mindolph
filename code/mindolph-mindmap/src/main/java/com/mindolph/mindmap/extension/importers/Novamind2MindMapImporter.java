@@ -19,7 +19,6 @@ package com.mindolph.mindmap.extension.importers;
 import com.igormaznitsa.meta.common.utils.GetUtils;
 import com.igormaznitsa.mindmap.model.*;
 import com.mindolph.base.util.ColorUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.constant.StandardTopicAttribute;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
@@ -183,7 +182,7 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
 
     @Override
     public MindMap<TopicNode> doImport(ExtensionContext context) throws Exception {
-        File file = this.selectFileForExtension(I18nHelper.getInstance().get("mindmap.import.novamind.title"), null, "nm5", "Novamind files (.nm5)");
+        File file = this.selectFileForExtension(i18n.get("mindmap.import.novamind.title"), null, "nm5", "Novamind files (.nm5)");
 
         if (file == null) {
             return null;
@@ -220,12 +219,12 @@ public class Novamind2MindMapImporter extends BaseImportExtension {
 
     @Override
     public String getName(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.novamind.name");
+        return i18n.get("mindmap.import.novamind.name");
     }
 
     @Override
     public String getReference(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.novamind.reference");
+        return i18n.get("mindmap.import.novamind.reference");
     }
 
     @Override

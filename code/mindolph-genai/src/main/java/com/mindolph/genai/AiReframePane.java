@@ -8,7 +8,7 @@ import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.constant.AiConstants;
 import com.mindolph.core.constant.AiConstants.OutputAdjust;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.FxmlUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -49,13 +49,15 @@ public class AiReframePane extends StackPane {
 
     private ContextMenu adjustMenu;
 
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
     public AiReframePane(Object editorId, Input input, int outputTokens) {
         this.editorId = editorId;
         this.input = input;
         FxmlUtils.loadUri("/genai/ai_reframe_pane.fxml", this);
 
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
-        lbMsg.setText("Done with %d tokens".formatted(outputTokens));
+        lbMsg.setText(i18n.get("ai.msg.done", outputTokens));
 
         btnKeep.setGraphic(FontIconManager.getIns().getIcon(IconKey.YES));
         btnRetry.setGraphic(FontIconManager.getIns().getIcon(IconKey.REFRESH));
@@ -111,8 +113,8 @@ public class AiReframePane extends StackPane {
             );
             onWorking();
         };
-        MenuItem miShorter = new MenuItem(I18nHelper.getInstance().get("ai.reframe.shorter"), FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
-        MenuItem miLonger = new MenuItem(I18nHelper.getInstance().get("ai.reframe.longer"), FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
+        MenuItem miShorter = new MenuItem(i18n.get("ai.reframe.shorter"), FontIconManager.getIns().getIcon(IconKey.SHORT_TEXT));
+        MenuItem miLonger = new MenuItem(i18n.get("ai.reframe.longer"), FontIconManager.getIns().getIcon(IconKey.LONG_TEXT));
         miShorter.setUserData(AiConstants.OutputAdjust.SHORTER);
         miLonger.setUserData(AiConstants.OutputAdjust.LONGER);
         miShorter.setOnAction(eventHandler);

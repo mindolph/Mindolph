@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import static com.mindolph.base.constant.PrefConstants.GEN_AI_GENERATE_MODEL;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_LATEST_GENERATE_PROMPT;
@@ -69,7 +70,7 @@ public class AiInputPane extends BaseAiPane {
         }
 
         String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
-        taInput.setPromptText("The prompt to generate content by %s".formatted(providerDisplayName));
+        taInput.setPromptText(i18n.get("ai.generate.prompt.hint", providerDisplayName));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         lbTemperature.setGraphic(FontIconManager.getIns().getIcon(IconKey.TEMPERATURE));
@@ -90,7 +91,7 @@ public class AiInputPane extends BaseAiPane {
             if (StringUtils.isNotBlank(taInput.getText())) {
                 Pair<String, ModelMeta> selectedModel = cbModel.getSelectionModel().getSelectedItem();
                 if (selectedModel == null) {
-                    DialogFactory.warnDialog("Please select a model to generate content.");
+                    DialogFactory.warnDialog(i18n.get("ai.generate.msg.select.model"));
                     return;
                 }
                 lbMsg.setText(null);
@@ -118,11 +119,11 @@ public class AiInputPane extends BaseAiPane {
         });
 
         cbTemperature.getItems().addAll(
-                new Pair<>(Temperature.SAFE.value, Temperature.SAFE),
-                new Pair<>(Temperature.CREATIVE.value, Temperature.CREATIVE),
-                new Pair<>(Temperature.ADVENTUROUS.value, Temperature.ADVENTUROUS),
-                new Pair<>(Temperature.UNCHARTED.value, Temperature.UNCHARTED),
-                new Pair<>(Temperature.CHAOS.value, Temperature.CHAOS)
+                new Pair<>(Temperature.DETERMINISTIC.value, Temperature.DETERMINISTIC),
+                new Pair<>(Temperature.PRECISE.value, Temperature.PRECISE),
+                new Pair<>(Temperature.BALANCED.value, Temperature.BALANCED),
+                new Pair<>(Temperature.FLEXIBLE.value, Temperature.FLEXIBLE),
+                new Pair<>(Temperature.CREATIVE.value, Temperature.CREATIVE)
         );
         cbTemperature.setConverter(new StringConverter<>() {
             @Override
@@ -135,7 +136,7 @@ public class AiInputPane extends BaseAiPane {
                 return null;
             }
         });
-        cbTemperature.setValue(new Pair<>(Temperature.SAFE.value, Temperature.SAFE));
+        cbTemperature.setValue(new Pair<>(Temperature.BALANCED.value, Temperature.BALANCED));
 
         // for escaping
         PaneUtils.escapablePanes(() -> GenAiEvents.getIns().emitActionEvent(editorId, ActionType.CANCEL),
@@ -171,11 +172,11 @@ public class AiInputPane extends BaseAiPane {
 
     public record Temperature(float value, String display) {
         // set 0.01 instead of 0.0 just because of hugging-face api require positive float value.
-        public static final Temperature SAFE = new Temperature(0.01f, "Safe");
-        public static final Temperature CREATIVE = new Temperature(0.25f, "Creative");
-        public static final Temperature ADVENTUROUS = new Temperature(0.5f, "Adventurous");
-        public static final Temperature UNCHARTED = new Temperature(0.75f, "Uncharted");
-        public static final Temperature CHAOS = new Temperature(1.0f, "Chaos");
+        public static final Temperature DETERMINISTIC = new Temperature(0.01f, I18nHelper.getInstance().get("ai.temperature.deterministic"));
+        public static final Temperature PRECISE = new Temperature(0.25f, I18nHelper.getInstance().get("ai.temperature.precise"));
+        public static final Temperature BALANCED = new Temperature(0.5f, I18nHelper.getInstance().get("ai.temperature.balanced"));
+        public static final Temperature FLEXIBLE = new Temperature(0.75f, I18nHelper.getInstance().get("ai.temperature.flexible"));
+        public static final Temperature CREATIVE = new Temperature(1.0f, I18nHelper.getInstance().get("ai.temperature.creative"));
 
         @NotNull
         @Override

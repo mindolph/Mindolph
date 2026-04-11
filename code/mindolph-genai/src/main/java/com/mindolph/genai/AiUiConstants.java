@@ -10,7 +10,7 @@ import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ModelMetaBuilder;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;

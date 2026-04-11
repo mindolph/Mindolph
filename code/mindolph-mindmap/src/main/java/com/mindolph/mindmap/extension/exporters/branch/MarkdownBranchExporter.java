@@ -4,7 +4,6 @@ import com.igormaznitsa.mindmap.model.ConvertUtils;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
 import com.mindolph.mindmap.extension.exporters.BaseLiteralExportExtension;
@@ -39,10 +38,10 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
         File fileToSave = null;
         if (out == null) {
             fileToSave = DialogUtils.selectFileToSaveForFileFilter(
-                    I18nHelper.getInstance().get("mindmap.export.markdown.title"),
+                    i18n.get("mindmap.export.markdown.title"),
                     null,
                     ".md",
-                    I18nHelper.getInstance().get("mindmap.export.markdown.filter"),
+                    i18n.get("mindmap.export.markdown.filter"),
                     exportFileName);
             fileToSave = MindMapUtils.checkFileAndExtension(fileToSave, ".md");
             out = fileToSave == null ? null : new BufferedOutputStream(new FileOutputStream(fileToSave, false));
@@ -70,7 +69,7 @@ public class MarkdownBranchExporter extends BaseLiteralExportExtension {
 
     @Override
     public String getName(ExtensionContext context, TopicNode actionTopic) {
-        return I18nHelper.getInstance().get("mindmap.export.markdown.name");
+        return i18n.get("mindmap.export.markdown.name");
     }
 
     @Override

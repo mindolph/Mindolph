@@ -23,7 +23,6 @@ import com.igormaznitsa.mindmap.model.ExtraTopic;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.util.ColorUtils;
 import com.mindolph.mfx.util.AwtImageUtils;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.constant.MindMapConstants;
 import com.mindolph.mindmap.extension.api.BaseImportExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -166,7 +165,7 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
 
     @Override
     public MindMap<TopicNode> doImport(ExtensionContext context) throws Exception {
-        File file = this.selectFileForExtension(I18nHelper.getInstance().get("mindmap.import.freemind.title"), null, "mm", "Freemind files (.mm)");
+        File file = this.selectFileForExtension(i18n.get("mindmap.import.freemind.title"), null, "mm", "Freemind files (.mm)");
 
         if (file == null) {
             return null;
@@ -305,13 +304,13 @@ public class Freemind2MindMapImporter extends BaseImportExtension {
     @Override
 
     public String getName(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.freemind.name");
+        return i18n.get("mindmap.import.freemind.name");
     }
 
     @Override
 
     public String getReference(ExtensionContext context) {
-        return I18nHelper.getInstance().get("mindmap.import.freemind.reference");
+        return i18n.get("mindmap.import.freemind.reference");
     }
 
     @Override

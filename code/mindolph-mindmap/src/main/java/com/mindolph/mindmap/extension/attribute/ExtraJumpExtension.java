@@ -19,7 +19,6 @@ package com.mindolph.mindmap.extension.attribute;
 import com.igormaznitsa.mindmap.model.Extra;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.extension.ContextMenuSection;
 import com.mindolph.mindmap.extension.api.BaseTopicExtension;
 import com.mindolph.mindmap.extension.api.ExtensionContext;
@@ -44,8 +43,8 @@ public class ExtraJumpExtension extends BaseTopicExtension {
         if (activeTopic == null) {
             return StringUtils.EMPTY;
         }
-        return activeTopic.getExtras().containsKey(Extra.ExtraType.TOPIC) ? I18nHelper.getInstance().get("mindmap.menu.edit.jump") :
-                I18nHelper.getInstance().get("mindmap.menu.add.jump");
+        return activeTopic.getExtras().containsKey(Extra.ExtraType.TOPIC) ? i18n.get("mindmap.menu.edit.jump") :
+                i18n.get("mindmap.menu.add.jump");
     }
 
 

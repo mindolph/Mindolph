@@ -12,7 +12,6 @@ import com.mindolph.base.util.NodeUtils;
 import com.mindolph.core.search.SearchParams;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.BrowseUtils;
 import com.mindolph.mindmap.dialog.NoteToolbar;
 import com.mindolph.mindmap.dialog.PasswordDialog;
@@ -158,7 +157,7 @@ public class NotePanel extends BaseView {
                 }
             }
             else {
-                if (DialogFactory.okCancelConfirmDialog(I18nHelper.getInstance().get("mindmap.password.reset.title"), I18nHelper.getInstance().get("mindmap.password.reset.confirm"))) {
+                if (DialogFactory.okCancelConfirmDialog(i18n.get("mindmap.password.reset.title"), i18n.get("mindmap.password.reset.confirm"))) {
                     this.data.setPassword(null);
                     this.data.setHint(null);
                 }
@@ -209,13 +208,13 @@ public class NotePanel extends BaseView {
         });
         this.btnExport.setOnAction(actionEvent -> {
             File file = DialogFactory.openSaveFileDialog(NotePanel.this.getScene().getWindow(), SystemUtils.getUserHome()
-                    , null, new FileChooser.ExtensionFilter(I18nHelper.getInstance().get("mindmap.note.export.filter"), "*.txt"));
+                    , null, new FileChooser.ExtensionFilter(i18n.get("mindmap.note.export.filter"), "*.txt"));
             if (file != null && !file.exists()) {
                 try {
                     FileUtils.writeStringToFile(file, textArea.getText(), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
-                    DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.note.export.error"));
+                    DialogFactory.errDialog(i18n.get("mindmap.note.export.error"));
                 }
             }
         });

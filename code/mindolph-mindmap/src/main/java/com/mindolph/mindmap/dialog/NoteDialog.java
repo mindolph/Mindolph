@@ -5,7 +5,6 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mindmap.event.MindmapEvents;
 import com.mindolph.mindmap.model.NoteEditorData;
 import com.mindolph.mindmap.model.TopicNode;
@@ -68,7 +67,7 @@ public class NoteDialog extends BaseDialogController<NoteEditorData> {
         dialog.setOnCloseRequest(dialogEvent -> {
             this.notePanel.handleNoteData();
             if (this.origin.hasChanges(this.result)) {
-                if (!super.confirmClosing(I18nHelper.getInstance().get("mindmap.dialog.note.changed"))) {
+                if (!super.confirmClosing(i18n.get("mindmap.dialog.note.changed"))) {
                     dialogEvent.consume(); // keep the dialog open
                 }
             }

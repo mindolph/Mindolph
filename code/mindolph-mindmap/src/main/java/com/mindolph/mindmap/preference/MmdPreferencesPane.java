@@ -5,7 +5,6 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.control.BasePrefsPane;
 import com.mindolph.base.event.EventBus;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
@@ -199,11 +198,10 @@ public class MmdPreferencesPane extends BasePrefsPane implements Initializable {
                 contextMenu.getItems().clear();
                 contextMenu.hide();
             }
-            miDuplicate = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.duplicate"), FontIconManager.getIns().getIcon(IconKey.CLONE));
-            miDelete = new MenuItem(I18nHelper.getInstance().get("prefs.mindmap.theme.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
+            miDuplicate = new MenuItem(i18n.get("prefs.mindmap.theme.duplicate"), FontIconManager.getIns().getIcon(IconKey.CLONE));
+            miDelete = new MenuItem(i18n.get("prefs.mindmap.theme.delete"), FontIconManager.getIns().getIcon(IconKey.DELETE));
             miDelete.setDisable(isPredefinedTheme(mindMapConfig.getThemeName()));
             miDuplicate.setOnAction(event1 -> {
-                I18nHelper i18n = I18nHelper.getInstance();
                 Dialog<String> nameDialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
                         .title(i18n.get("prefs.mindmap.theme.new.name"))

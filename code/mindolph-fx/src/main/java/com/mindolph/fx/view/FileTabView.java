@@ -24,7 +24,6 @@ import com.mindolph.fx.editor.EditorFactory;
 import com.mindolph.markdown.MarkdownEditor;
 import com.mindolph.mfx.dialog.ConfirmDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.DesktopUtils;
 import com.mindolph.mfx.util.GlobalExecutor;
@@ -316,12 +315,12 @@ public class FileTabView extends BaseView {
         Object selectedTabUserData = selectedTab.getUserData();
         if (selectedTabUserData != null) log.debug(((NodeData) selectedTabUserData).getFile().getPath());
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem miClose = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
-        MenuItem miCloseOthers = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close.others"));
-        MenuItem miCloseAll = new MenuItem(I18nHelper.getInstance().get("filetab.menu.close.all"));
-        MenuItem miSaveAs = new MenuItem(I18nHelper.getInstance().get("filetab.menu.save.as"));
-        MenuItem miSelectInTree = new MenuItem(I18nHelper.getInstance().get("filetab.menu.select.in.tree"), FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
-        MenuItem miOpenInSystem = new MenuItem(I18nHelper.getInstance().get("filetab.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+        MenuItem miClose = new MenuItem(i18n.get("filetab.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
+        MenuItem miCloseOthers = new MenuItem(i18n.get("filetab.menu.close.others"));
+        MenuItem miCloseAll = new MenuItem(i18n.get("filetab.menu.close.all"));
+        MenuItem miSaveAs = new MenuItem(i18n.get("filetab.menu.save.as"));
+        MenuItem miSelectInTree = new MenuItem(i18n.get("filetab.menu.select.in.tree"), FontIconManager.getIns().getIcon(IconKey.WORKSPACE_TREE));
+        MenuItem miOpenInSystem = new MenuItem(i18n.get("filetab.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
 
         // actions
         miSaveAs.setOnAction(event -> {
@@ -362,12 +361,12 @@ public class FileTabView extends BaseView {
         Editable editor = tabEditorMap.get(selectedTab);
         if (editor != null) {
             if (editor instanceof BasePreviewEditor previewEditor) {
-                MenuItem miChangeSplitterOrientation = new MenuItem(I18nHelper.getInstance().get("filetab.menu.change.splitter"));
-                Menu mViewMode = new Menu(I18nHelper.getInstance().get("filetab.menu.view.mode"));
+                MenuItem miChangeSplitterOrientation = new MenuItem(i18n.get("filetab.menu.change.splitter"));
+                Menu mViewMode = new Menu(i18n.get("filetab.menu.view.mode"));
                 ToggleGroup toggleGroup = new ToggleGroup();
-                RadioMenuItem miTextOnly = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.text.only"), FontIconManager.getIns().getIcon(IconKey.CODE));
-                RadioMenuItem miPreviewOnly = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.preview.only"), FontIconManager.getIns().getIcon(IconKey.PREVIEW));
-                RadioMenuItem miBoth = new RadioMenuItem(I18nHelper.getInstance().get("filetab.menu.both"));
+                RadioMenuItem miTextOnly = new RadioMenuItem(i18n.get("filetab.menu.text.only"), FontIconManager.getIns().getIcon(IconKey.CODE));
+                RadioMenuItem miPreviewOnly = new RadioMenuItem(i18n.get("filetab.menu.preview.only"), FontIconManager.getIns().getIcon(IconKey.PREVIEW));
+                RadioMenuItem miBoth = new RadioMenuItem(i18n.get("filetab.menu.both"));
                 miBoth.setSelected(true);
                 miTextOnly.setToggleGroup(toggleGroup);
                 miPreviewOnly.setToggleGroup(toggleGroup);
@@ -412,7 +411,7 @@ public class FileTabView extends BaseView {
             }
 
             if (editor instanceof MarkdownEditor mde) {
-                CheckMenuItem miAutoScroll = new CheckMenuItem(I18nHelper.getInstance().get("filetab.menu.auto.scroll"));
+                CheckMenuItem miAutoScroll = new CheckMenuItem(i18n.get("filetab.menu.auto.scroll"));
                 miAutoScroll.setSelected(true);
                 miAutoScroll.setOnAction(actionEvent -> {
                     mde.setIsAutoScroll(miAutoScroll.isSelected());
@@ -420,7 +419,7 @@ public class FileTabView extends BaseView {
                 contextMenu.getItems().add(miAutoScroll);
             }
             else if (editor instanceof PlantUmlEditor pue) {
-                CheckMenuItem miAutoSwitch = new CheckMenuItem(I18nHelper.getInstance().get("plantuml.menu.auto.switch"));
+                CheckMenuItem miAutoSwitch = new CheckMenuItem(i18n.get("plantuml.menu.auto.switch"));
                 miAutoSwitch.setSelected(true);
                 miAutoSwitch.setOnAction(actionEvent -> {
                     pue.setAutoSwitch(miAutoSwitch.isSelected());
@@ -428,7 +427,7 @@ public class FileTabView extends BaseView {
                 contextMenu.getItems().add(miAutoSwitch);
             }
             else if (editor instanceof MindMapEditor mme) {
-                CheckMenuItem miShowAttributePanel = new CheckMenuItem(I18nHelper.getInstance().get("mindmap.menu.show.attribute.panel"));
+                CheckMenuItem miShowAttributePanel = new CheckMenuItem(i18n.get("mindmap.menu.show.attribute.panel"));
                 miShowAttributePanel.setSelected(!mme.isAttributePanelHidden());
                 miShowAttributePanel.setOnAction(actionEvent -> {
                     mme.toggleAttributePanel();
@@ -773,9 +772,9 @@ public class FileTabView extends BaseView {
         }
         if (editor.isChanged()) {
             Boolean needSave = new ConfirmDialogBuilder()
-                    .title(I18nHelper.getInstance().get("msg.confirm.unsaved.file.title"))
-                    .content(I18nHelper.getInstance().get("msg.confirm.unsaved.file", fileData.getName()))
-                    .positive(I18nHelper.getInstance().get("button.save"))
+                    .title(i18n.get("msg.confirm.unsaved.file.title"))
+                    .content(i18n.get("msg.confirm.unsaved.file", fileData.getName()))
+                    .positive(i18n.get("button.save"))
                     .asDefault()
                     .no()
                     .cancel()

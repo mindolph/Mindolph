@@ -153,7 +153,7 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                         SmartCodeArea.this.onCompleted();
                         String textToBeSummarized = SmartCodeArea.super.getSelectedText();
                         if (StringUtils.isBlank(textToBeSummarized)) {
-                            if (!DialogFactory.okCancelConfirmDialog("", "No text is selected for summarization, use entire content of the file")) {
+                            if (!DialogFactory.okCancelConfirmDialog(i18n.get("ai.summary.selection.title"), i18n.get("ai.summary.selection.msg"))) {
                                 return;
                             }
                             textToBeSummarized = SmartCodeArea.super.getText();

@@ -13,7 +13,7 @@ import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.TextDialogBuilder;
-import com.mindolph.mfx.i18n.I18nHelper;
+import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.FxmlUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * @see WorkspaceManagementDialog
  */
 public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     @Override
     protected void updateItem(WorkspaceMeta item, boolean empty) {
@@ -59,6 +60,8 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
     private static class ItemController extends AnchorPane implements Initializable, EventHandler<ActionEvent> {
 
         private static final Logger log = LoggerFactory.getLogger(ItemController.class);
+
+        protected I18nHelper i18n = I18nHelper.getInstance();
 
         @FXML
         Label lblIcon;
@@ -104,9 +107,9 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                     contextMenu.getItems().clear();
                     contextMenu.hide();
                 }
-                miRename = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.rename"), FontIconManager.getIns().getIcon(IconKey.RENAME));
-                miClose = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
-                miOpenInSys = new MenuItem(I18nHelper.getInstance().get("workspace.list.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
+                miRename = new MenuItem(i18n.get("workspace.list.menu.rename"), FontIconManager.getIns().getIcon(IconKey.RENAME));
+                miClose = new MenuItem(i18n.get("workspace.list.menu.close"), FontIconManager.getIns().getIcon(IconKey.CLOSE));
+                miOpenInSys = new MenuItem(i18n.get("workspace.list.menu.open.in.system"), FontIconManager.getIns().getIcon(IconKey.SYSTEM));
                 //                miDelete = new MenuItem("Delete", FontIconManager.getIns().getIcon(IconKey.DELETE));
                 miRename.setOnAction(ItemController.this);
                 miClose.setOnAction(ItemController.this);
