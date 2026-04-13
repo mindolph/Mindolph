@@ -1333,6 +1333,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 }
                 else if (TYPE_CSV.equals(fileType)) {
                     newFile = createEmptyFile(fileName, selectedData, "csv");
+                    if (newFile != null) {
+                        try {
+                            FileUtils.writeStringToFile(newFile, fileName, StandardCharsets.UTF_8);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
                 else {
                     log.warn("Not supported file type?");

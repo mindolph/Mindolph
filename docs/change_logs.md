@@ -1,5 +1,15 @@
 # Change Logs
 
+### V1.13.6 Release
+* Improvements:
+	* Use file name as default content in the first cell for a new created CSV file.
+
+* Bug Fixes:
+	* The model provider choice box should be disabled in the `Generate`&`Summarize` dialog when it is running.
+	* Language in internal embedding model details is incorrect.
+	* Failed to call some LLM apis after packaging to installer.  
+	* Remove deprecated pre-defined models for Qwen.
+
 ### V1.14.0 Unstable Release
 
 * Mind Map
