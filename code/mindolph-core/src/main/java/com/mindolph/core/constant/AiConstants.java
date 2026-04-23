@@ -163,6 +163,7 @@ public interface AiConstants {
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-chat", 2000));
 
             // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
+            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.1", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5-turbo", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5", 131072));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.7", 131072));
@@ -183,7 +184,7 @@ public interface AiConstants {
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-flash", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-9b", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4", 4095));
-            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
+//            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", 8192));

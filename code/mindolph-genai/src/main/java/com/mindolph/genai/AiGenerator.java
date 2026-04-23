@@ -263,21 +263,25 @@ public class AiGenerator implements Generator {
     private boolean checkSettings(String modelPrefKey) {
         Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
+            log.warn("Parse modek key from preference fail: %s".formatted(modelPrefKey));
             return false;
         }
         GenAiModelProvider provider = providerModel.a();
-        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
-        if (propsMap.containsKey(provider.name())) {
-            ProviderMeta props = propsMap.get(provider.name());
-            if (provider == null || props == null) return false;
+        Map<String, ProviderMeta> metaMap = LlmConfig.getIns().loadAllProviderMetas();
+        if (metaMap.containsKey(provider.name())) {
+            ProviderMeta meta = metaMap.get(provider.name());
+            if (provider == null || meta == null) return false;
             log.debug("Provider: %s".formatted(provider));
-            log.trace(String.valueOf(props));
+            log.trace(String.valueOf(meta));
             if (provider.getType() == ProviderType.PUBLIC) {
-                return StringUtils.isNotBlank(props.apiKey()) && StringUtils.isNotBlank(props.aiModel());
+                return StringUtils.isNotBlank(meta.apiKey()) ;
             }
             else if (provider.getType() == ProviderType.PRIVATE) {
-                return StringUtils.isNotBlank(props.baseUrl()) && StringUtils.isNotBlank(props.aiModel());
+                return StringUtils.isNotBlank(meta.baseUrl());
             }
+        }
+        else {
+            log.warn("Provider not found: %s".formatted(provider.name()));
         }
         return false;
     }

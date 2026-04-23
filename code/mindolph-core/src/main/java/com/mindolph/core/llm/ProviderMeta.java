@@ -16,17 +16,16 @@ public class ProviderMeta {
     private boolean useProxy;
     private List<ModelMeta> customModels;
 
-    public ProviderMeta(String apiKey, String baseUrl, String aiModel, boolean useProxy,
+    public ProviderMeta(String apiKey, String baseUrl,  boolean useProxy,
                         List<ModelMeta> customModels) {
         this.apiKey = apiKey;
         this.baseUrl = baseUrl;
-        this.aiModel = aiModel;
         this.useProxy = useProxy;
         this.customModels = customModels;
     }
 
-    public ProviderMeta(String apiKey, String baseUrl, String aiModel, boolean useProxy) {
-        this(apiKey, baseUrl, aiModel, useProxy, List.of());
+    public ProviderMeta(String apiKey, String baseUrl, boolean useProxy) {
+        this(apiKey, baseUrl, useProxy, List.of());
     }
 
     public String apiKey() {

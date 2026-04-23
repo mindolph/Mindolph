@@ -32,8 +32,8 @@ import java.util.ResourceBundle;
 import static com.mindolph.core.constant.AiConstants.PROVIDER_MODELS;
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
-import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 import static com.mindolph.genai.AiUiConstants.*;
+import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
 
 /**
  * @since 1.13.0
@@ -120,7 +120,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                         ProviderMeta providerMeta = map.get(currentProviderName);
                         if (providerMeta == null) {
                             // init for a vendor who had never been set up.
-                            providerMeta = new ProviderMeta("", "", MODEL_CUSTOM_ITEM.getValue().getName(), false);
+                            providerMeta = new ProviderMeta("", "", false);
                         }
                         this.currentProviderMeta = providerMeta;
                         tfApiKey.setText(providerMeta.apiKey());
