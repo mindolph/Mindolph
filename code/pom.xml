@@ -45,12 +45,12 @@
         <richtextfx.version>0.11.7</richtextfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
 <!--        <reactor.version>3.5.3</reactor.version>-->
-        <jsoup.version>1.22.1</jsoup.version>
+        <jsoup.version>1.22.2</jsoup.version>
         <json.version>20251224</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>1.12.2</langchain4j.version>
-        <langchain4j.community.version>1.12.2-beta22</langchain4j.community.version>
-        <dashscope.version>2.22.13</dashscope.version>
+        <langchain4j.version>1.13.1</langchain4j.version>
+        <langchain4j.community.version>1.13.0-beta23</langchain4j.community.version>
+        <dashscope.version>2.22.16</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.42</lombok.version>
         <directory-watcher.version>0.19.1</directory-watcher.version>
