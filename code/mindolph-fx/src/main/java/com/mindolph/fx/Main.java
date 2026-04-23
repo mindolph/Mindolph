@@ -39,8 +39,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static com.mindolph.base.constant.PrefConstants.GENERAL_LANGUAGE;
 import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
-import static com.mindolph.mfx.i18n.I18nHelper.LANG_PREF_KEY;
 import static com.mindolph.plantuml.constant.ShortcutConstants.KEY_PUML_COMMENT;
 import static javafx.scene.input.KeyCombination.ALT_DOWN;
 import static javafx.scene.input.KeyCombination.META_DOWN;
@@ -114,7 +114,7 @@ public class Main extends Application implements WindowRestoreListener {
         });
 
         // add resource files from all modules.
-        String languageCode = FxPreferences.getInstance().getPreference(LANG_PREF_KEY, "");
+        String languageCode = FxPreferences.getInstance().getPreference(GENERAL_LANGUAGE, "");
         Locale locale = Locale.getDefault();
         if (StringUtils.isNotBlank(languageCode)) {
             if ("zh_CN".equals(languageCode)) {
