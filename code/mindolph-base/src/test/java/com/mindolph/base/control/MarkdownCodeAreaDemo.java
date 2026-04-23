@@ -1,5 +1,7 @@
 package com.mindolph.base.control;
 
+import com.mindolph.base.ShortcutManager;
+import com.mindolph.base.editor.MarkdownCodeArea;
 import com.mindolph.base.plugin.BasePlugin;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.InputHelper;
@@ -10,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
@@ -19,21 +23,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
+import static javafx.scene.input.KeyCombination.META_DOWN;
+
 /**
- * test enable/disable code area
- * test richtextfx
+ * test key event handler
  *
  * @author mindolph.com@gmail.com
- * @since 1.6
+ * @since 1.14.1
  *
  */
-public class SmartCodeAreaDemo implements Initializable {
+public class MarkdownCodeAreaDemo implements Initializable {
 
     @FXML
     private VBox vbox;
 
     @FXML
-    private SmartCodeArea smartCodeArea;
+    private MarkdownCodeArea mdCodeArea;
 
     @FXML
     private Button btnEnable;
@@ -46,14 +52,19 @@ public class SmartCodeAreaDemo implements Initializable {
     @FXML
     private ToggleButton tbtnDisableRedo;
 
+    static {
+        // testing for macOS
+        ShortcutManager.getIns().addShortCut(KEY_MD_COMMENT, new KeyCodeCombination(KeyCode.SLASH, META_DOWN));
+    }
+
     @FXML
     public void onUndo() {
-        smartCodeArea.undo();
+        mdCodeArea.undo();
     }
 
     @FXML
     public void onRedo() {
-        smartCodeArea.redo();
+        mdCodeArea.redo();
     }
 
     @FXML
@@ -68,12 +79,12 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @FXML
     public void onEnabled() {
-        if (smartCodeArea.isDisabled()) {
-            smartCodeArea.setDisable(false);
+        if (mdCodeArea.isDisabled()) {
+            mdCodeArea.setDisable(false);
             btnEnable.setText("Disable");
         }
         else {
-            smartCodeArea.setDisable(true);
+            mdCodeArea.setDisable(true);
             btnEnable.setText("Enable");
         }
     }
@@ -81,7 +92,7 @@ public class SmartCodeAreaDemo implements Initializable {
     @FXML
     private void onGetCaretPosition() {
         Platform.runLater(() -> {
-            int caretPosition = smartCodeArea.getCaretPosition();
+            int caretPosition = mdCodeArea.getCaretPosition();
             System.out.println("caretPosition: " + caretPosition);
             btnEnable.requestFocus();
         });
@@ -89,23 +100,25 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         vbox.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             System.out.println("Got event: " + event);
         });
 
-        smartCodeArea.disableUndoProperty().bind(tbtnDisableUndo.selectedProperty());
-        smartCodeArea.disableRedoProperty().bind(tbtnDisableRedo.selectedProperty());
+        mdCodeArea.disableUndoProperty().bind(tbtnDisableUndo.selectedProperty());
+        mdCodeArea.disableRedoProperty().bind(tbtnDisableRedo.selectedProperty());
 
-        smartCodeArea.disableUndoProperty().addListener((observable, oldValue, newValue) -> {
+        mdCodeArea.disableUndoProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("disableUndo: " + newValue);
         });
-        smartCodeArea.disableRedoProperty().addListener((observable, oldValue, newValue) -> {
+        mdCodeArea.disableRedoProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("disableRedo: " + newValue);
         });
 
         // register plugins TODO
         PluginManager.getIns().registerPlugin(new TestPlugin());
-        smartCodeArea.appendText("""
+        mdCodeArea.appendText("""
                 foo
                 
                 

@@ -34,7 +34,6 @@ import com.mindolph.fx.print.ImagePrintable;
 import com.mindolph.fx.print.MindMapPrintable;
 import com.mindolph.fx.print.PrintPreviewDialog;
 import com.mindolph.fx.print.Printable;
-import org.swiftboot.util.I18nHelper;
 import com.mindolph.fx.view.*;
 import com.mindolph.genai.ChatView;
 import com.mindolph.markdown.MarkdownEditor;

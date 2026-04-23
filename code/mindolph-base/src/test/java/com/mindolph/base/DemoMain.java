@@ -89,6 +89,11 @@ public class DemoMain extends Application {
     }
 
     @FXML
+    private void onMarkdownCodeArea() {
+        loadUriToStage("/control/markdown_code_area_demo.fxml").show();
+    }
+
+    @FXML
     private void onFont() {
         String path = "/System/Library/Fonts/Supplemental/AppleMyungjo.ttf";
         File f = new File(path);

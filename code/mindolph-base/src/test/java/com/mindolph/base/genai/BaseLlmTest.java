@@ -48,7 +48,7 @@ public class BaseLlmTest {
     }
 
     protected ProviderMeta loadProviderMeta(String providerName, boolean useProxy) {
-        return new ProviderMeta(loadApiKey(providerName), null, null, useProxy, null);
+        return new ProviderMeta(loadApiKey(providerName), null, useProxy, null);
     }
 
     protected ModelMeta loadModelMeta(String modelName) {

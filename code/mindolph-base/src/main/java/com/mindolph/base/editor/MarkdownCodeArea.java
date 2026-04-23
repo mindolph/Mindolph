@@ -5,6 +5,7 @@ import com.mindolph.base.constant.ShortcutConstants;
 import com.mindolph.base.control.HighlightCodeArea;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.util.DebugUtils;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -58,10 +59,13 @@ public class MarkdownCodeArea extends HighlightCodeArea {
 
 
         super.addFeatures(TAB_INDENT, QUOTE, DOUBLE_QUOTE, BACK_QUOTE, AUTO_INDENT);
-        InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT)), keyEvent -> {
-            super.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  ")); // TODO add tail with trimming
-        });
-        Nodes.addInputMap(this, comment);
+        KeyCodeCombination commentShortcut = ShortcutManager.getIns().getKeyCombination(ShortcutConstants.KEY_MD_COMMENT);
+        if (commentShortcut != null) {
+            InputMap<KeyEvent> comment = InputMap.consume(EventPattern.keyPressed(commentShortcut), keyEvent -> {
+                super.addOrTrimHeadToParagraphsIfAdded(new Replacement("> ", "  ")); // TODO add tail with trimming
+            });
+            Nodes.addInputMap(this, comment);
+        }
     }
 
     @Override

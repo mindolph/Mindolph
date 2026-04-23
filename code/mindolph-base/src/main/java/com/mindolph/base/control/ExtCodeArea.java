@@ -5,12 +5,12 @@ import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.constant.TextConstants;
-import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.BoundsUtils;
 import com.mindolph.mfx.util.TextUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -29,6 +29,7 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.time.Duration;
 import java.util.*;
@@ -86,7 +87,23 @@ public class ExtCodeArea extends CodeArea {
         historySource.reduceSuccessions((s, s2) -> s2, Duration.ofMillis(HISTORY_MERGE_DELAY_IN_MILLIS))
                 .subscribe(s -> this.getUndoManager().preventMerge());
 
+        // TBD
+        EventHandler<KeyEvent> disableUndoHandler = event -> {
+            System.out.println("####");
+            if (sm.getKeyCombination(KEY_UNDO).match(event)) {
+                event.consume();
+                getParent().fireEvent(event.copyFor(getParent(), getParent()));
+            }
+        };
+
         disableUndo.addListener((observable, oldValue, newValue) -> {
+//            if (newValue) {
+//                log.warn("Disable undo");
+//                this.addEventFilter(KeyEvent.KEY_PRESSED, disableUndoHandler);
+//            }
+//            else {
+//                this.removeEventFilter(KeyEvent.KEY_PRESSED, disableUndoHandler);
+//            }
             if (newValue) {
                 Nodes.addInputMap(this, InputMap.consume(
                         EventPattern.keyPressed(sm.getKeyCombination(KEY_UNDO)), Event::consume
@@ -637,6 +654,10 @@ public class ExtCodeArea extends CodeArea {
         int curParIdx = this.getCurrentParagraph();
         Paragraph<Collection<String>, String, Collection<String>> paragraph = this.getParagraph(curParIdx);
         return paragraph.getText();
+    }
+
+    protected boolean hasTextSelected() {
+        return StringUtils.isNotEmpty(super.getSelectedText());
     }
 
     // @since 1.7

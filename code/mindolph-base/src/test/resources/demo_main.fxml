@@ -20,6 +20,7 @@
       <Button mnemonicParsing="false" onAction="#onCanvasDemo" text="Canvas Demo"/>
       <Button mnemonicParsing="false" onAction="#onExtTableView" text="Ext Table View"/>
       <Button mnemonicParsing="false" onAction="#onSmartCodeArea" text="SmartCodeArea Demo"/>
+      <Button mnemonicParsing="false" onAction="#onMarkdownCodeArea" text="MarkdownCodeArea Demo"/>
       <Button mnemonicParsing="false" onAction="#onFont" text="Font"/>
       <Button mnemonicParsing="false" onAction="#onSyncScroll" text="Sync Scroll"/>
       <Button mnemonicParsing="false" onAction="#onIconView" text="IconView Demo"/>

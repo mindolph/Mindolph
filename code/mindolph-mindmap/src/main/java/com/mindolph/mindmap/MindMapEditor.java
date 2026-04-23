@@ -6,6 +6,7 @@ import com.igormaznitsa.mindmap.model.MMapURI;
 import com.igormaznitsa.mindmap.model.MindMap;
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
+import com.mindolph.base.ShortcutManager;
 import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.container.FixedSplitPane;
 import com.mindolph.base.container.ScalableScrollPane;
@@ -31,6 +32,7 @@ import com.mindolph.mindmap.search.MindMapAnchor;
 import com.mindolph.mindmap.view.AttributesView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +48,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.mindolph.base.constant.ShortcutConstants.KEY_REDO;
+import static com.mindolph.base.constant.ShortcutConstants.KEY_UNDO;
 import static com.mindolph.mindmap.constant.MindMapConstants.FILELINK_ATTR_OPEN_IN_SYSTEM;
 
 /**
@@ -90,6 +94,22 @@ public class MindMapEditor extends BaseEditor {
             }
         });
         attributesView.setMindMapView(this.mindMapView);
+
+        // Because the RichTextFX CodeArea it includes for editing notes listens for and processes undo/redo shortcuts,
+        // but in reality, undo/redo should be handled uniformly by the top-level mind map editor,
+        // not by CodeArea alone (otherwise, the note's undo/redo will be treated as a new mind map edit, resulting in redundant history items)
+        // the note editor's undo/redo should be disabled. Instead, the shortcut events should be intercepted here to directly perform undo/redo operations on the mind map.
+        // (Interestingly, once the shortcuts are intercepted and processed here, the note editor doesn't need to actually intercept and consume the events.)
+        attributesView.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (ShortcutManager.getIns().getKeyCombination(KEY_UNDO).match(event)) {
+                event.consume();
+                mindMapView.undo();
+            }
+            else if(ShortcutManager.getIns().getKeyCombination(KEY_REDO).match(event)) {
+                event.consume();
+                mindMapView.redo();
+            }
+        });
 
         // invalidate the mind-map panel when become focused.
         this.focusedProperty().addListener((observableValue, wasFocused, isFocused) -> {
