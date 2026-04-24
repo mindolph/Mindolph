@@ -1,8 +1,6 @@
 package com.mindolph.base.util;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
@@ -13,17 +11,184 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * Invoke http SSE endpoint by OkHTTP client.
+ * Invoke http endpoint by OkHTTP client, including SSE support.
  *
  * @since 1.11
  */
 public class OkHttpUtils {
 
     private static final Logger log = LoggerFactory.getLogger(OkHttpUtils.class);
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType FORM = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+
+    /**
+     * Execute a GET request and return the response body as a string.
+     *
+     * @param client  the OkHttpClient instance
+     * @param url     the request URL
+     * @param headers optional headers
+     * @return the response body string, or null if the request failed
+     */
+    public static String get(OkHttpClient client, String url, Map<String, String> headers) {
+        Request.Builder builder = new Request.Builder().url(url).get();
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return execute(client, builder.build());
+    }
+
+    /**
+     * Execute a GET request without extra headers.
+     */
+    public static String get(OkHttpClient client, String url) {
+        return get(client, url, null);
+    }
+
+    /**
+     * Execute a POST request with a JSON body.
+     *
+     * @param client  the OkHttpClient instance
+     * @param url     the request URL
+     * @param json    the JSON body string
+     * @param headers optional headers
+     * @return the response body string, or null if the request failed
+     */
+    public static String post(OkHttpClient client, String url, String json, Map<String, String> headers) {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request.Builder builder = new Request.Builder().url(url).post(body);
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return execute(client, builder.build());
+    }
+
+    /**
+     * Execute a POST request with a JSON body and no extra headers.
+     */
+    public static String post(OkHttpClient client, String url, String json) {
+        return post(client, url, json, null);
+    }
+
+    /**
+     * Execute a POST request with form data.
+     *
+     * @param client  the OkHttpClient instance
+     * @param url     the request URL
+     * @param form    the form parameters
+     * @param headers optional headers
+     * @return the response body string, or null if the request failed
+     */
+    public static String postForm(OkHttpClient client, String url, Map<String, String> form, Map<String, String> headers) {
+        FormBody.Builder formBuilder = new FormBody.Builder();
+        if (form != null) {
+            form.forEach(formBuilder::add);
+        }
+        Request.Builder builder = new Request.Builder().url(url).post(formBuilder.build());
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return execute(client, builder.build());
+    }
+
+    /**
+     * Execute a POST request with form data and no extra headers.
+     */
+    public static String postForm(OkHttpClient client, String url, Map<String, String> form) {
+        return postForm(client, url, form, null);
+    }
+
+    /**
+     * Execute a PUT request with a JSON body.
+     *
+     * @param client  the OkHttpClient instance
+     * @param url     the request URL
+     * @param json    the JSON body string
+     * @param headers optional headers
+     * @return the response body string, or null if the request failed
+     */
+    public static String put(OkHttpClient client, String url, String json, Map<String, String> headers) {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request.Builder builder = new Request.Builder().url(url).put(body);
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return execute(client, builder.build());
+    }
+
+    /**
+     * Execute a PUT request with a JSON body and no extra headers.
+     */
+    public static String put(OkHttpClient client, String url, String json) {
+        return put(client, url, json, null);
+    }
+
+    /**
+     * Execute a DELETE request.
+     *
+     * @param client  the OkHttpClient instance
+     * @param url     the request URL
+     * @param headers optional headers
+     * @return the response body string, or null if the request failed
+     */
+    public static String delete(OkHttpClient client, String url, Map<String, String> headers) {
+        Request.Builder builder = new Request.Builder().url(url).delete();
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return execute(client, builder.build());
+    }
+
+    /**
+     * Execute a DELETE request without extra headers.
+     */
+    public static String delete(OkHttpClient client, String url) {
+        return delete(client, url, null);
+    }
+
+    /**
+     * Execute a request and return the response body as a string.
+     *
+     * @param client  the OkHttpClient instance
+     * @param request the prepared request
+     * @return the response body string, or null if the request failed
+     */
+    public static String execute(OkHttpClient client, Request request) {
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                log.error("Request failed: {} {}", response.code(), response.message());
+                log.debug(response.body() != null ? response.body().string(): null);
+                return null;
+            }
+            return response.body() != null ? response.body().string() : null;
+        } catch (IOException e) {
+            log.error("Request execution failed", e);
+            return null;
+        }
+    }
+
+    /**
+     * Execute a request and return the raw Response object.
+     * <p>
+     * The caller is responsible for closing the response body.
+     *
+     * @param client  the OkHttpClient instance
+     * @param request the prepared request
+     * @return the Response object, or null if the request failed
+     */
+    public static Response executeRaw(OkHttpClient client, Request request) {
+        try {
+            return client.newCall(request).execute();
+        } catch (IOException e) {
+            log.error("Request execution failed", e);
+            return null;
+        }
+    }
 
     /**
      * @param client
