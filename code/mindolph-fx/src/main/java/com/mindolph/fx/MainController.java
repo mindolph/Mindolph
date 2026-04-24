@@ -698,8 +698,8 @@ public class MainController extends BaseController implements Initializable,
         }
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Create a new collection with all opened files")
-                .content("New Collection Name")
+                .title(i18n.get("msg.collection.create.title"))
+                .content(i18n.get("msg.collection.create.content"))
                 .width(500)
                 .build();
         Optional<String> optColName = dialog.showAndWait();
@@ -720,8 +720,8 @@ public class MainController extends BaseController implements Initializable,
             this.loadCollections();
 
             Platform.runLater(() -> {
-                Notifications.create().title("Create collection")
-                        .text("Collection '%s' is created with %d files successfully.".formatted(newColName, fileTabView.getAllOpenedFiles().size())).showWarning();
+                Notifications.create().title(i18n.get("msg.collection.create.title"))
+                        .text(i18n.get("msg.collection.create.msg", newColName, fileTabView.getAllOpenedFiles().size())).showWarning();
             });
         }
     }
@@ -746,8 +746,8 @@ public class MainController extends BaseController implements Initializable,
         first.ifPresent(menuItem -> menuItem.setText("%s(%d)".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())));
 
         Platform.runLater(() -> {
-            Notifications.create().title("Save collection")
-                    .text("Collection '%s' is saved with %d files successfully.".formatted(activeCollectionName, fileTabView.getAllOpenedFiles().size())).showWarning();
+            Notifications.create().title(i18n.get("msg.collection.save.title"))
+                    .text(i18n.get("msg.collection.save.msg", activeCollectionName, fileTabView.getAllOpenedFiles().size())).showWarning();
         });
     }
 
@@ -768,8 +768,8 @@ public class MainController extends BaseController implements Initializable,
             menuCollections.getItems().removeIf(mi -> activeCollectionName.equals(mi.getUserData()));
             this.resetCollectionSelection("default");
             Platform.runLater(() -> {
-                Notifications.create().title("Remove collection")
-                        .text("Collection '%s' is removed successfully.".formatted(activeCollectionName)).showWarning();
+                Notifications.create().title(i18n.get("msg.collection.remove.title"))
+                        .text(i18n.get("msg.collection.remove.msg", activeCollectionName)).showWarning();
             });
         }
     }
@@ -779,8 +779,8 @@ public class MainController extends BaseController implements Initializable,
         String activeCollectionName = this.jcm.getActiveCollectionName();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Rename Collection %s".formatted(activeCollectionName))
-                .content("Input a new name")
+                .title(i18n.get("msg.collection.rename.title", activeCollectionName))
+                .content(i18n.get("msg.collection.rename.content"))
                 .text(activeCollectionName)
                 .width(500)
                 .build();
@@ -869,7 +869,7 @@ public class MainController extends BaseController implements Initializable,
 
             if (currentVersion.compareTo(latest.getVersion()) < 0) {
                 if (StringUtils.isNotBlank(latest.getUrl())) {
-                    String msg = "Found new release %s, current version is %s, do you wan to download and install?".formatted(latest.getVersion(), currentVersion);
+                    String msg = i18n.get("msg.update.available.content", latest.getVersion(), currentVersion);
                     Platform.runLater(() -> {
                         if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.update.available"), msg)) {
                             DesktopUtils.openURL(latest.getUrl());
@@ -879,7 +879,7 @@ public class MainController extends BaseController implements Initializable,
                 }
             }
 
-            showCheckUpdatesToast("You already have the latest version installed.");
+            showCheckUpdatesToast(i18n.get("msg.update.check.updated"));
         });
     }
 

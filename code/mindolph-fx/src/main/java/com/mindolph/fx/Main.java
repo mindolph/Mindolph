@@ -50,7 +50,8 @@ public class Main extends Application implements WindowRestoreListener {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final List<String> bundleNames = List.of(
-            "i18n/mindmap-panel", "i18n/mindolph-base", "i18n/mindolph-genai","i18n/mindolph-mindmap", "i18n/mindolph-plantuml","i18n/mindolph-core", "i18n/messages");
+            "i18n/mindmap-panel", "i18n/mindolph-base", "i18n/mindolph-genai","i18n/mindolph-mindmap", "i18n/mindolph-csv",
+            "i18n/mindolph-markdown", "i18n/mindolph-plantuml","i18n/mindolph-core", "i18n/messages");
 
     // SceneRestore as the window change events handler.
     private final WindowEventHandler windowEventHandler = SceneRestore.getInstance();
