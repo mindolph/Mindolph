@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * PlantUML General
  * @author mindolph.com@gmail.com
  */
 public class GeneralSnippetGroup extends BasePlantUmlSnippetGroup {
@@ -111,7 +112,7 @@ public class GeneralSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "General&Styles";
+        return i18n.get("plantuml.snippet.general");
     }
 
     @Override

@@ -949,7 +949,7 @@ public class Tupadr3SpriteMaterialSnippetGroup extends BasePlantUmlSnippetGroup 
 
     @Override
     public String getTitle() {
-        return "Sprites Material";
+        return i18n.get("plantuml.snippet.tupadr3.material");
     }
 
     @Override

@@ -192,7 +192,7 @@ public class ProcessingSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Processing&Builtin Functions";
+        return i18n.get("plantuml.snippet.processing");
     }
 
     @Override

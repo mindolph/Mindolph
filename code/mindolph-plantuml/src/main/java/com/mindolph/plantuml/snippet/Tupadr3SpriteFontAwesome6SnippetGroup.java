@@ -1894,7 +1894,7 @@ public class Tupadr3SpriteFontAwesome6SnippetGroup extends BasePlantUmlSnippetGr
 
     @Override
     public String getTitle() {
-        return "Sprites FontAwesome 6";
+        return i18n.get("plantuml.snippet.tupadr3.fontawesome6");
     }
 
     @Override

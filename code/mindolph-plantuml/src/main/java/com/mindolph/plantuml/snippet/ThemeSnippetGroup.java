@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class ThemeSnippetGroup extends BasePlantUmlSnippetGroup {
     @Override
     public String getTitle() {
-        return "Theme";
+        return i18n.get("plantuml.snippet.theme");
     }
 
     @Override

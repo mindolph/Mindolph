@@ -13,7 +13,7 @@ public class DiagramSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "UML Diagram";
+        return i18n.get("plantuml.snippet.diagram");
     }
 
     @Override

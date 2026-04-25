@@ -142,8 +142,8 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             Dialog<String> dialog = new TextDialogBuilder()
                     .owner(DialogFactory.DEFAULT_WINDOW)
-                    .title("Clone %s".formatted(selectedItem.getTitle()))
-                    .content("Input a snippet name")
+                    .title(i18n.get("snippet.clone.title", selectedItem.getTitle()))
+                    .content(i18n.get("snippet.clone.content"))
                     .text(selectedItem.getTitle())
                     .width(400)
                     .build();
@@ -162,7 +162,8 @@ public class ListSnippetView extends AnchorPane implements SnippetViewable<Snipp
             Snippet<?> selectedItem = listView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 log.info("Remove snippet '%s'".formatted(selectedItem.getTitle()));
-                if (DialogFactory.yesNoConfirmDialog("Are you sure you want to remove snippet '%s'?".formatted(selectedItem.getTitle()))) {
+                if (DialogFactory.yesNoConfirmDialog(i18n.get("snippet.remove.title", selectedItem.getTitle()),
+                        i18n.get("snippet.remove.content", selectedItem.getTitle()))) {
                     appManager.deleteSnippets(fileType, Collections.singletonList(selectedItem));
                     snippetChanged.push(null);
                 }

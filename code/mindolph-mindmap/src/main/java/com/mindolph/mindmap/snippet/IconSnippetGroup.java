@@ -13,7 +13,7 @@ public class IconSnippetGroup extends BaseSnippetGroup<ImageSnippet> {
 
     @Override
     public String getTitle() {
-        return "Emoticon";
+        return i18n.get("mindmap.snippet.emoticon");
     }
 
     @Override
