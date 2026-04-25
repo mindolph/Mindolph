@@ -13,7 +13,6 @@ import com.mindolph.core.llm.VectorStoreMeta;
 import com.mindolph.genai.ChoiceUtils;
 import com.mindolph.mfx.control.MChoiceBox;
 import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.i18n.I18nHelper;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
