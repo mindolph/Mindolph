@@ -7,7 +7,6 @@ import com.mindolph.core.Env;
 import com.mindolph.fx.helper.SceneRestore;
 import com.mindolph.fx.helper.WindowRestoreListener;
 import com.mindolph.fx.preference.Rectangle2DStringConverter;
-import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.dialog.impl.MessageTextBlockDialog;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -29,6 +28,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 import org.swiftboot.util.pref.StringConverter;
 
 import java.io.IOException;
@@ -39,8 +39,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static com.mindolph.base.constant.PrefConstants.GENERAL_LANGUAGE;
 import static com.mindolph.base.constant.ShortcutConstants.KEY_MD_COMMENT;
-import static com.mindolph.mfx.i18n.I18nHelper.LANG_PREF_KEY;
 import static com.mindolph.plantuml.constant.ShortcutConstants.KEY_PUML_COMMENT;
 import static javafx.scene.input.KeyCombination.ALT_DOWN;
 import static javafx.scene.input.KeyCombination.META_DOWN;
@@ -50,7 +50,8 @@ public class Main extends Application implements WindowRestoreListener {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final List<String> bundleNames = List.of(
-            "i18n/mindmap-panel", "i18n/mindolph-base", "i18n/mindolph-genai","i18n/mindolph-mindmap", "i18n/mindolph-plantuml","i18n/mindolph-core", "i18n/messages");
+            "i18n/mindmap-panel", "i18n/mindolph-base", "i18n/mindolph-genai", "i18n/mindolph-mindmap", "i18n/mindolph-csv",
+            "i18n/mindolph-markdown", "i18n/mindolph-plantuml", "i18n/mindolph-core", "i18n/messages");
 
     // SceneRestore as the window change events handler.
     private final WindowEventHandler windowEventHandler = SceneRestore.getInstance();
@@ -114,12 +115,13 @@ public class Main extends Application implements WindowRestoreListener {
         });
 
         // add resource files from all modules.
-        String languageCode = FxPreferences.getInstance().getPreference(LANG_PREF_KEY, "");
+        String languageCode = FxPreferences.getInstance().getPreference(GENERAL_LANGUAGE, "");
         Locale locale = Locale.getDefault();
         if (StringUtils.isNotBlank(languageCode)) {
             if ("zh_CN".equals(languageCode)) {
                 locale = Locale.SIMPLIFIED_CHINESE;
-            } else if ("en".equals(languageCode)) {
+            }
+            else if ("en".equals(languageCode)) {
                 locale = Locale.ENGLISH;
             }
         }

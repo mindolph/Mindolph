@@ -105,12 +105,18 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     inputHelperManager.consume(keyEvent, extractLastWordFromCaret());
                     if (!keyEvent.isConsumed()) {
                         // line break implicitly
-                        this.replaceSelection("\n");
+                        if (super.hasTextSelected()) {
+                            // try to avoid weired exception from RichTextFX
+                            super.replaceSelection("\n");
+                        }
+                        else {
+                            super.insertText("\n");
+                        }
                     }
                 }
                 else {
                     // line break implicitly
-                    this.replaceSelection("\n");
+                    super.replaceSelection("\n");
                 }
             }
         }));

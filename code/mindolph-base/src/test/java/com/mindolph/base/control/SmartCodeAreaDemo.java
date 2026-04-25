@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.Collection;
@@ -26,6 +28,9 @@ import java.util.ResourceBundle;
  *
  */
 public class SmartCodeAreaDemo implements Initializable {
+
+    @FXML
+    private VBox vbox;
 
     @FXML
     private SmartCodeArea smartCodeArea;
@@ -84,6 +89,10 @@ public class SmartCodeAreaDemo implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        vbox.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            System.out.println("Got event: " + event);
+        });
+
         smartCodeArea.disableUndoProperty().bind(tbtnDisableUndo.selectedProperty());
         smartCodeArea.disableRedoProperty().bind(tbtnDisableRedo.selectedProperty());
 

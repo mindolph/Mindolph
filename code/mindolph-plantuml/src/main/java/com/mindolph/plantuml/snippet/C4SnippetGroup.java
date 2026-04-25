@@ -11,7 +11,7 @@ public class C4SnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "C4 Model";
+        return i18n.get("plantuml.snippet.c4");
     }
 
     @Override

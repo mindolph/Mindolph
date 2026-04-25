@@ -10,7 +10,7 @@
          xmlns:fx="http://javafx.com/fxml/1">
     <VBox>
         <PreferenceItem name="%prefs.ai.agent" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbAgent" prefWidth="140.0">
+            <ChoiceBox fx:id="cbAgent" prefWidth="240.0">
             </ChoiceBox>
             <Button fx:id="btnAddAgent"/>
             <Button fx:id="btnRemoveAgent"/>

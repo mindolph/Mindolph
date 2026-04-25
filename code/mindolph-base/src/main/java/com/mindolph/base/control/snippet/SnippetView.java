@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class SnippetView extends BaseView {
     public SnippetView() {
         super("/control/snippet_view.fxml", false);
         tfKeyword = TextFields.createClearableTextField();
-        tfKeyword.setPromptText("filter snippets");
+        tfKeyword.setPromptText(i18n.get("snippet.filter.hint"));
         tfKeyword.textProperty().addListener((observableValue, s, newKeyword) -> {
             this.filter(newKeyword);
         });
@@ -213,9 +214,9 @@ public class SnippetView extends BaseView {
                 if (snippetGroup != null) {
                     if (StringUtils.isNotEmpty(keyword)) {
                         ObservableList<Snippet> filteredSnippets;
-                        List<?> filtered = snippetGroup.snippets.stream().filter(snippet -> StringUtils.containsIgnoreCase(snippet.getTitle(), keyword)
-                                        || (snippet.getDescription() != null && StringUtils.containsIgnoreCase(snippet.getDescription(), keyword))
-                                        || (snippet.getCode() != null && StringUtils.containsIgnoreCase(snippet.getCode(), keyword)))
+                        List<?> filtered = snippetGroup.snippets.stream().filter(snippet -> Strings.CI.equals(snippet.getTitle(), keyword)
+                                        || (snippet.getDescription() != null && Strings.CI.equals(snippet.getDescription(), keyword))
+                                        || (snippet.getCode() != null && Strings.CI.equals(snippet.getCode(), keyword)))
                                 .toList();
                         filteredSnippets = FXCollections.observableList(filtered.stream()
                                 .map((Function<Object, Snippet>) o -> (Snippet) o).toList());

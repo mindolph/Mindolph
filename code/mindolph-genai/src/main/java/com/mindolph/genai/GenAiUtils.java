@@ -5,14 +5,16 @@ import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.swiftboot.util.CalcUtils;
 
 /**
  * @since 1.11.4
  */
 public class GenAiUtils {
 
-    public static String displayGenAiTokens(int tokenCount) {
-        return "%sK".formatted(tokenCount / 1024);
+
+    public static String displayGenAiTokens(long tokenCount) {
+        return CalcUtils.countToDisplaySize(tokenCount, 0);
     }
 
     /**

@@ -1,5 +1,18 @@
 # Change Logs
 
+### V1.14.1 Unstable Release
+* Improvements
+	* i18n refactor.
+	* Update GLM models.
+	* Add app launch statistics metrics.  
+
+* Bug Fixes
+	* undo/redo doesn't work on note editor of mind map topic attribute view.
+
+* Update JavaFX to 25.0.3 and other dependencies.  
+
+* Merge bug fixes from stable version.
+
 ### V1.13.6 Release
 * Improvements:
 	* Use file name as default content in the first cell for a new created CSV file.

@@ -6,32 +6,34 @@
 <AnchorPane prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <VBox
             fx:id="vbox"
-            layoutX="140.0"
-            layoutY="42.0"
             prefHeight="360.0"
-            prefWidth="400.0"
+            prefWidth="450.0"
             spacing="4.0"
             AnchorPane.bottomAnchor="0.0"
             AnchorPane.leftAnchor="0.0"
             AnchorPane.rightAnchor="0.0"
             AnchorPane.topAnchor="0.0"
     >
-        <PreferenceItem name="Type: " labelPrefWidth="150">
-            <RadioButton fx:id="rdTypeText" selected="true" text="%snippet.dialog.type.text"/>
-            <RadioButton fx:id="rdTypeImage" text="%snippet.dialog.type.image"/>
+        <PreferenceItem name="%snippet.custom.dialog.type.label" labelMinWidth="120" labelPrefWidth="120">
+            <RadioButton fx:id="rdTypeText" selected="true" text="%snippet.custom.dialog.type.text"/>
+            <RadioButton fx:id="rdTypeImage" text="%snippet.custom.dialog.type.image"/>
         </PreferenceItem>
-        <PreferenceItem name="Title: " labelPrefWidth="150">
-            <TextField fx:id="tfTitle" promptText="Input title for this snippet" prefWidth="240.0"/>
+        <PreferenceItem name="%snippet.custom.dialog.title.label" labelMinWidth="120" labelPrefWidth="120">
+            <TextField fx:id="tfTitle" promptText="%snippet.custom.dialog.title.hint" prefWidth="280"/>
         </PreferenceItem>
-        <PreferenceItem fx:id="itemCode" name="Code Text: " labelPrefWidth="150" prefHeight="240">
-            <TextArea fx:id="taCode" prefHeight="240" prefWidth="280.0" promptText="Input code for this snippet"/>
+        <PreferenceItem fx:id="itemCode" name="%snippet.custom.dialog.codetext.label" labelMinWidth="120" labelPrefWidth="120"
+                        prefHeight="240">
+            <TextArea fx:id="taCode" prefHeight="240" prefWidth="280.0"
+                      promptText="%snippet.custom.dialog.codetext.hint"/>
         </PreferenceItem>
-        <PreferenceItem fx:id="itemDesc" name="Description: " labelPrefWidth="150" prefHeight="180">
+        <PreferenceItem fx:id="itemDesc" name="%snippet.custom.dialog.description.label" labelMinWidth="120" labelPrefWidth="120"
+                        prefHeight="180">
             <TextArea fx:id="taDesc" prefHeight="180" prefWidth="280.0"
-                      promptText="Input description for this snippet"/>
+                      promptText="%snippet.custom.dialog.description.hint"/>
         </PreferenceItem>
-        <PreferenceItem fx:id="itemImage" name="Image: " labelPrefWidth="150" prefHeight="240">
-            <HBox prefWidth="240" maxWidth="240" prefHeight="240" maxHeight="240" spacing="4"
+        <PreferenceItem fx:id="itemImage" name="%snippet.custom.dialog.image.label" labelMinWidth="120" labelPrefWidth="120"
+                        prefHeight="240">
+            <HBox prefWidth="280" maxWidth="240" prefHeight="240" maxHeight="240" spacing="4"
                   style="-fx-border-width: 1; -fx-border-color: lightgray;">
                 <Button
                         fx:id="btnIconImage"
@@ -40,7 +42,7 @@
                         prefHeight="240"
                         maxHeight="240"
                         style="-fx-background-color: lightgray"
-                        text="%snippet.dialog.click.to.choose"
+                        text="%snippet.custom.dialog.image.hint"
                 />
             </HBox>
         </PreferenceItem>

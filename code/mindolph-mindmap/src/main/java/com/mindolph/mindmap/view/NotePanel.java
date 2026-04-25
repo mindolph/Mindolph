@@ -94,8 +94,8 @@ public class NotePanel extends BaseView {
             this.noteToolbar.setup(this.isPanelMode());
             if (this.isPanelMode()) {
                 // avoid conflict with global undo/redo in mind map when note editor is used as side pane, so disable the undo/redo feature in this case.
-                textArea.setDisableUndo(true);
-                textArea.setDisableRedo(true);
+//                textArea.setDisableUndo(true);
+//                textArea.setDisableRedo(true);
             }
         });
         this.noteToolbar = new NoteToolbar(textArea);
@@ -258,7 +258,6 @@ public class NotePanel extends BaseView {
             btnBrowse.setDisable(!UrlUtils.isValid(selectedText));
         });
         textArea.setParentPane(paneCode);
-
         searchBar.setSearchPrevEventHandler(searchParams -> {
             TextSearchOptions textSearchOptions = new TextSearchOptions();
             textSearchOptions.setCaseSensitive(searchParams.isCaseSensitive());
@@ -367,7 +366,7 @@ public class NotePanel extends BaseView {
                     this.data.setPassword(pass);
                 }
                 else {
-                    DialogFactory.errDialog("Wrong password!");
+                    DialogFactory.errDialog(i18n.get("mindmap.password.wrong"));
                     if (this.isDialogMode()) {
                         return this.requestPasswordToDecrypt();
                     }
@@ -376,7 +375,7 @@ public class NotePanel extends BaseView {
                     }
                 }
             } catch (RuntimeException ex) {
-                DialogFactory.errDialog("Can't decode encrypted text for error!\nEither broken data or current JDK security policy doesn't support AES-256!");
+                DialogFactory.errDialog(i18n.get("mindmap.note.decrypt.fail"));
                 log.error("Can't decode encrypted note", ex);
                 this.displaySecretNote();
             }
@@ -394,7 +393,7 @@ public class NotePanel extends BaseView {
         log.debug("Selected note is protected, disable the editor and show the hint if exists");
         tbtnProtect.setSelected(true);
         textArea.setDisable(true);
-        textArea.setText("**[Encrypted note]**");
+        textArea.setText(i18n.get("mindmap.note.mask"));
     }
 
     /**
@@ -421,7 +420,7 @@ public class NotePanel extends BaseView {
                         newNoteText = CryptoUtils.encrypt(this.data.getPassword(), this.textArea.getText());
                         this.data.setEncrypted(true);
                     } catch (RuntimeException ex) {
-                        DialogFactory.warnDialog("Can't encrypt note!\nCheck JDK security policy for AES-256 support");
+                        DialogFactory.warnDialog(i18n.get("mindmap.note.encrypt.fail"));
                         log.error("Can't encrypt note", ex);
                         return false;
                     }

@@ -5,6 +5,7 @@ import com.mindolph.base.plugin.PluginManager;
 import com.mindolph.core.Env;
 import com.mindolph.fx.Main;
 import com.mindolph.fx.data.DataMigrator;
+import com.mindolph.fx.util.MetricsUtils;
 import com.mindolph.genai.GenAiPlugin;
 import com.mindolph.markdown.MarkdownPlugin;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -29,5 +30,6 @@ public class Launcher {
         PluginManager.getIns().registerPlugin(new MindMapPlugin());
         PluginManager.getIns().registerPlugin(new MarkdownPlugin());
         Application.launch(Main.class, args);
+        MetricsUtils.launch();
     }
 }

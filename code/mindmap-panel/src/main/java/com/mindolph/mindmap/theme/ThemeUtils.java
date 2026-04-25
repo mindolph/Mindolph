@@ -1,5 +1,7 @@
 package com.mindolph.mindmap.theme;
 
+import org.swiftboot.util.I18nHelper;
+
 import static com.mindolph.mindmap.theme.ThemeType.*;
 
 /**
@@ -24,14 +26,15 @@ public class ThemeUtils {
 
 
     public static String themeLabel(String themeName) {
+        I18nHelper i18n = I18nHelper.getInstance();
         if (CLASSIC.name().equals(themeName)) {
-            return "Classic";
+            return i18n.get("mindmap.theme.label.classic");
         }
         else if (LIGHT.name().equals(themeName)) {
-            return "Light";
+            return i18n.get("mindmap.theme.label.light");
         }
         else if (DARK.name().equals(themeName)) {
-            return "Dark";
+            return i18n.get("mindmap.theme.label.dark");
         }
         else {
             return themeName;
@@ -47,10 +50,10 @@ public class ThemeUtils {
 
     public static String connectorTypeLabel(String connectorTypeName) {
         if (ConnectorStyle.BEZIER.name().equals(connectorTypeName)) {
-            return "Bezier";
+            return I18nHelper.getInstance().get("mindmap.connector.style.bezier");
         }
         else if (ConnectorStyle.POLYLINE.name().equals(connectorTypeName)) {
-            return "Polyline";
+            return I18nHelper.getInstance().get("mindmap.connector.style.polyline");
         }
         else {
             return connectorTypeName;

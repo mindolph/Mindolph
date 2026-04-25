@@ -284,7 +284,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                         mouseDragSelection.update(point);
                         repaint();
                     }
-                    EventBus.getIns().notifyStatusMsg(file, new StatusMsg("%d topics are selected".formatted(selection.get().size())));
+                    EventBus.getIns().notifyStatusMsg(file, new StatusMsg(i18n.get("mindmap.statusbar.topics.selected", selection.get().size())));
                 })
                 .out(payload -> {
                     // this will be called while selecting.
@@ -341,7 +341,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                         Point2D point = translateMousePos((MouseEvent) payload);
                         BaseElement element = findTopicUnderPoint(point);
                         selectSiblings(element);
-                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg("%d topics are selected".formatted(selection.get().size())));
+                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg(i18n.get("mindmap.statusbar.topics.selected", selection.get().size())));
                     }
                     else if (draggedElement != null) {
                         this.endDragging();
@@ -349,7 +349,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                     else {
                         // end of area selection.
                         mouseDragSelection = null;
-                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg("%d topics are selected".formatted(selection.get().size())));
+                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg(i18n.get("mindmap.statusbar.topics.selected", selection.get().size())));
                         repaint();
                     }
                 })
@@ -1544,7 +1544,7 @@ public class MindMapView extends BaseScalableView implements Anchorable {
         if (draggedTopic != null && destinationTopic != null && draggedTopic != destinationTopic) {
             log.debug("Make link from %s to %s".formatted(draggedTopic.getText(), destinationTopic.getText()));
             if (destinationTopic.getExtras().containsKey(ExtraType.TOPIC)) {
-                if (DialogFactory.yesNoConfirmDialog("One link already exists, keep the original one?")) {
+                if (DialogFactory.yesNoConfirmDialog(i18n.get("mindmap.msg.drop.topic"))) {
                     return false;
                 }
             }
@@ -1802,8 +1802,8 @@ public class MindMapView extends BaseScalableView implements Anchorable {
                 Image image = clipboard.getImage();
                 Boolean allowedToPasteImage = true;
                 if (AttributeUtils.hasImageAttributes(getSelectedTopics())) {
-                    allowedToPasteImage = new ConfirmDialogBuilder().title("Remove existing image").positive("Remove").cancel().asDefault()
-                            .content("There is at least one topic that contains images, are you sure to remove the existing image first before continuing?")
+                    allowedToPasteImage = new ConfirmDialogBuilder().title(i18n.get("mindmap.image.remove.title")).positive(i18n.get("common.button.remove")).cancel().asDefault()
+                            .content(i18n.get("mindmap.image.remove.content"))
                             .showAndWait();
                 }
                 if (allowedToPasteImage != null && allowedToPasteImage) {

@@ -317,6 +317,6 @@ public class ColorSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Color";
+        return i18n.get("plantuml.snippet.color");
     }
 }

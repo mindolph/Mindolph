@@ -25,7 +25,7 @@ public class CustomSnippetGroup extends BaseSnippetGroup<Snippet<?>> {
 
     @Override
     public String getTitle() {
-        return "Custom";
+        return i18n.get("snippet.group.custom.title");
     }
 
     @Override

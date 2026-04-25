@@ -86,6 +86,6 @@ public class CreoleSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Creole";
+        return i18n.get("plantuml.snippet.creole");
     }
 }

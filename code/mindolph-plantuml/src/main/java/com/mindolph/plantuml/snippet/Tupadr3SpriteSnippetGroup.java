@@ -1819,7 +1819,7 @@ public class Tupadr3SpriteSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Sprites Devicons&Govicons&Weather";
+        return i18n.get("plantuml.snippet.tupadr3.misc");
     }
 
     @Override

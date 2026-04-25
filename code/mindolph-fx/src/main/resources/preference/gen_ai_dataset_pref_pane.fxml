@@ -11,7 +11,7 @@
 
     <VBox>
         <PreferenceItem name="%prefs.ai.dataset" labelMinWidth="180" labelPrefWidth="180">
-            <ChoiceBox fx:id="cbDataset" prefWidth="140.0">
+            <ChoiceBox fx:id="cbDataset" prefWidth="240.0">
             </ChoiceBox>
             <Button fx:id="btnAddDataset"/>
             <Button fx:id="btnRemoveDataset" disable="true"/>
