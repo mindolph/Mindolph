@@ -62,7 +62,7 @@ public class EmoticonDialog extends BaseDialogController<String> implements Even
         origin = iconName;
         dialog = new CustomDialogBuilder<String>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Emoticons")
+                .title(i18n.get("mindmap.emoticons.dialog.title"))
                 .fxmlUri("dialog/emoticon_dialog.fxml")
                 .defaultValue(iconName)
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
@@ -72,7 +72,7 @@ public class EmoticonDialog extends BaseDialogController<String> implements Even
                 .build();
 
         dialog.setOnCloseRequest(dialogEvent -> {
-            if (!confirmClosing("Icon has benn changed, are you sure to close the dialog?")) {
+            if (!confirmClosing(i18n.get("mindmap.emoticons.dialog.confirm"))) {
                 dialogEvent.consume();
             }
         });

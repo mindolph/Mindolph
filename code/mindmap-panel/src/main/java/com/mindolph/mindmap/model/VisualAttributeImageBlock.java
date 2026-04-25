@@ -69,7 +69,7 @@ public class VisualAttributeImageBlock extends Block {
                 else {
                     item.updateImage(cfg);
                 }
-                x += item.getWidth();
+                x += (int) item.getWidth();
                 maxheight = Math.max(maxheight, item.getHeight());
                 index++;
             }

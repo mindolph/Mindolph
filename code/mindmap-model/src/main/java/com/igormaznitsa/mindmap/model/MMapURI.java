@@ -206,7 +206,7 @@ public class MMapURI implements Serializable {
         }
 
         for (int i = 0; i < parsedNormalized.length; i++) {
-            if ((i == 0 && buffer.length() > 0) || i > 0) {
+            if ((i == 0 && !buffer.isEmpty()) || i > 0) {
                 buffer.append('/');
             }
             buffer.append(parsedNormalized[i]);

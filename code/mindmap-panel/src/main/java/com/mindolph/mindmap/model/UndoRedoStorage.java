@@ -24,17 +24,17 @@ public final class UndoRedoStorage<T> {
     }
 
     public T fromUndo() {
-        return this.undoItems.isEmpty() ? null : this.undoItems.remove(this.undoItems.size() - 1);
+        return this.undoItems.isEmpty() ? null : this.undoItems.removeLast();
     }
 
     public T fromRedo() {
-        return this.redoItems.isEmpty() ? null : this.redoItems.remove(this.redoItems.size() - 1);
+        return this.redoItems.isEmpty() ? null : this.redoItems.removeLast();
     }
 
     public void addToRedo(T val) {
         this.redoItems.add(val);
         while (this.redoItems.size() > maxSize) {
-            this.redoItems.remove(0);
+            this.redoItems.removeFirst();
         }
     }
 
@@ -59,7 +59,7 @@ public final class UndoRedoStorage<T> {
         this.undoItems.add(val);
         while (this.undoItems.size() > maxSize) {
             this.hasUndoStateRemovedForFullBuffer = true;
-            this.undoItems.remove(0);
+            this.undoItems.removeFirst();
         }
     }
 
