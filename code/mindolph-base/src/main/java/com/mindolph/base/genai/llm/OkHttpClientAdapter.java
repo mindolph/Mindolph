@@ -49,7 +49,7 @@ public class OkHttpClientAdapter implements HttpClient {
 
     @Override
     public SuccessfulHttpResponse execute(HttpRequest httpRequest) throws HttpException, RuntimeException {
-        Request request = createOkRequestFromLangchainRequest(httpRequest);
+        Request request = createOkHttpRequestFromLangchainRequest(httpRequest);
         log.debug(request.toString());
         try (Response response = okHttpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
@@ -95,9 +95,9 @@ public class OkHttpClientAdapter implements HttpClient {
 
 
     @Override
-    public void execute(HttpRequest httpRequest, ServerSentEventParser serverSentEventParser, ServerSentEventListener serverSentEventListener) {
+    public void execute(HttpRequest httpRequest, ServerSentEventParser serverSentEventParser, ServerSentEventListener sseListener) {
         EventSource.Factory factory = EventSources.createFactory(okHttpClient);
-        Request okHttpRequest = createOkRequestFromLangchainRequest(httpRequest);
+        Request okHttpRequest = createOkHttpRequestFromLangchainRequest(httpRequest);
         eventSource = factory.newEventSource(okHttpRequest, new EventSourceListener() {
             @Override
             public void onOpen(@NotNull EventSource eventSource, @NotNull Response response) {
@@ -107,10 +107,10 @@ public class OkHttpClientAdapter implements HttpClient {
             @Override
             public void onEvent(@NotNull EventSource eventSource, @Nullable String id, @Nullable String type, @NotNull String data) {
                 if (log.isTraceEnabled()) log.trace("onEvent id:%s type:%s payload:%s%n".formatted(id, type, data));
-                if (serverSentEventListener != null) {
+                if (sseListener != null) {
                     try {
                         ServerSentEvent event = new ServerSentEvent(type, data);
-                        serverSentEventListener.onEvent(event);
+                        sseListener.onEvent(event);
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
                         eventSource.cancel(); // STOP the event source if exception is captured from callback. onFailure() will be called.
@@ -121,7 +121,7 @@ public class OkHttpClientAdapter implements HttpClient {
             @Override
             public void onClosed(@NotNull EventSource eventSource) {
                 log.debug("SSE connection closed from server");
-                if (serverSentEventListener != null) serverSentEventListener.onClose();
+                if (sseListener != null) sseListener.onClose();
             }
 
             @Override
@@ -138,20 +138,20 @@ public class OkHttpClientAdapter implements HttpClient {
                         if (t == null) {
                             t = new RuntimeException(resMsg);
                         }
-                        if (serverSentEventListener != null) serverSentEventListener.onError(t);
+                        if (sseListener != null) sseListener.onError(t);
                     } catch (Exception e) {
 //                        throw new RuntimeException(e);
-                        if (serverSentEventListener != null) serverSentEventListener.onError(e);
+                        if (sseListener != null) sseListener.onError(e);
                     }
                 }
                 else {
                     if (t == null) {
                         log.error("SSE failure without any information");
-                        if (serverSentEventListener != null) serverSentEventListener.onError(t);
+                        if (sseListener != null) sseListener.onError(t);
                     }
                     else {
                         log.error("SSE failure with exception", t);
-                        if (serverSentEventListener != null) serverSentEventListener.onError(t);
+                        if (sseListener != null) sseListener.onError(t);
                     }
                 }
             }
@@ -170,9 +170,11 @@ public class OkHttpClientAdapter implements HttpClient {
 
 
     @NotNull
-    private static Request createOkRequestFromLangchainRequest(HttpRequest httpRequest) {
+    private static Request createOkHttpRequestFromLangchainRequest(HttpRequest httpRequest) {
         RequestBody requestBody = RequestBody.create(httpRequest.body(), JSON);
         Request.Builder requestBuilder = new Request.Builder();
+        log.debug("Request: " + httpRequest.url());
+        log.debug("Includes headers: " + StringUtils.join(httpRequest.headers().keySet(), ", "));
         requestBuilder.url(httpRequest.url());
         for (String key : httpRequest.headers().keySet()) {
             List<String> headers = httpRequest.headers().get(key);
