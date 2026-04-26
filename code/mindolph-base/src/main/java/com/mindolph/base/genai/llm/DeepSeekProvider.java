@@ -36,7 +36,8 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
                 "stream": false,
                 "temperature": %s,
                 "max_tokens": %d,
-                "top_p": 0.8
+                "top_p": 0.8,
+                "thinking": {"type": "disabled"}
             }
             """;
 
@@ -50,7 +51,8 @@ public class DeepSeekProvider extends BaseOpenAiLikeApiLlmProvider {
                 "stream": true,
                 "temperature": %s,
                 "max_tokens": %d,
-                "top_p": 0.8
+                "top_p": 0.8,
+                "thinking": {"type": "disabled"}
             }
             """;
 

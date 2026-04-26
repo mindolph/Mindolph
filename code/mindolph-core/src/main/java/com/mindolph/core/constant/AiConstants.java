@@ -187,6 +187,8 @@ public interface AiConstants {
 //            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
+            put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-flash", 393216));
+            put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-pro", 393216));
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", 8192));
             put(GenAiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
