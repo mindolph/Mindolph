@@ -37,7 +37,9 @@ public class ChatGlmProvider extends BaseOpenAiLikeApiLlmProvider {
                 "temperature": %s,
                 "top_p": 0.8,
                 "max_tokens": %d,
-                "thinking": "disabled"
+                "thinking": {
+                    "type": "disabled"
+                }
             }
             """;
 

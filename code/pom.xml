@@ -49,7 +49,7 @@
         <json.version>20251224</json.version>
         <flexmark.version>0.64.8</flexmark.version>
         <langchain4j.version>1.13.1</langchain4j.version>
-        <langchain4j.community.version>1.13.0-beta23</langchain4j.community.version>
+        <langchain4j.community.version>1.13.1-beta23</langchain4j.community.version>
         <dashscope.version>2.22.16</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.42</lombok.version>
@@ -57,7 +57,7 @@
         <okhttp3.version>4.12.0</okhttp3.version>
 <!--        <onnxruntime.version>1.24.1</onnxrunt/ime.version>-->
 <!--        <tokenizers.version>0.36.0</tokenizers.version>-->
-        <onnxruntime.version>1.24.3</onnxruntime.version>
+        <onnxruntime.version>1.25.0</onnxruntime.version>
         <tokenizers.version>0.36.0</tokenizers.version>
         <postgresql.version>42.7.10</postgresql.version>
     </properties>

@@ -96,6 +96,8 @@ public interface AiConstants {
 //            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // Qwen https://help.aliyun.com/zh/model-studio/models?spm=a2c4g.11186623.help-menu-2400256.d_0_0_2.677b394evAGcfh
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-flash", 65536));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-plus", 65536));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-flash", 65536));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-plus", 65536));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", 65536));
@@ -162,7 +164,9 @@ public interface AiConstants {
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-longcontext-chat", 2000));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-1.8b-chat", 2000));
 
-            // ChatGLM https://www.bigmodel.cn/console/modelcenter/square
+            // ChatGLM Models: https://www.bigmodel.cn/console/modelcenter/square
+            // API: https://docs.bigmodel.cn/cn/api/introduction
+            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.1", 131072));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5-turbo", 131072));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5", 131072));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4.7", 131072));
@@ -183,13 +187,16 @@ public interface AiConstants {
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-flash", 4095));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-9b", 4095));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4", 4095));
-            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
+//            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
+            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-flash", 393216));
+            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-pro", 393216));
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", 8192));
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", 65536));
 
             // Moonshot https://platform.moonshot.cn/docs/introduction#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8
+            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.6", 262144, 1.0f));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", 262144, 1.0f));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144));

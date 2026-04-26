@@ -35,7 +35,8 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "stream": false,
                 "temperature": %s,
-                "top_p": 0.95
+                "top_p": 0.95,
+                "thinking": {"type": "disabled"}
             }
             """; // max token can not post to api
 
@@ -49,7 +50,8 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 "stream": true,
                 "temperature": %s,
                 "top_p": 0.95,
-                "include_usage": true
+                "include_usage": true,
+                "thinking": {"type": "disabled"}
             }
             """;// max token can not post to api
 
