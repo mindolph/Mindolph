@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -91,7 +90,7 @@ public class FontSelectDialog extends BaseDialogController<Font> {
         log.debug("Load dialog with font: " + font);
         dialog = new CustomDialogBuilder<Font>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Select Font")
+                .title(i18n.get("font.dialog.title"))
                 .fxmlUri("dialog/font_select_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .defaultValue(font)
@@ -102,17 +101,17 @@ public class FontSelectDialog extends BaseDialogController<Font> {
 
 //        String[] availableFontFamilyNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         cbFontFamily.setConverter(fontFamilyConverter);
-        cbFontFamily.getItems().addAll(families.stream().map(family -> new Pair<>(family, family)).collect(Collectors.toList()));
+        cbFontFamily.getItems().addAll(families.stream().map(family -> new Pair<>(family, family)).toList());
         cbFontFamily.setValue(new Pair<>(font.getFamily(), font.getFamily()));
 
         List<Pair<FontWeight, String>> styles = Arrays.asList(
-                new Pair<>(FontWeight.NORMAL, "Regular"),
-                new Pair<>(FontWeight.BOLD, "Bold")
+                new Pair<>(FontWeight.NORMAL, i18n.get("font.weight.regular")),
+                new Pair<>(FontWeight.BOLD, i18n.get("font.weight.bold"))
         );
         cbFontStyle.setConverter(fontStyleConverter);
         cbFontStyle.getItems().addAll(styles);
         cbFontStyle.setValue(styles.stream().filter(pair -> pair.getKey() == FontUtils.fontWeight(font.getStyle()))
-                .findFirst().orElse(new Pair<>(FontWeight.NORMAL, "Regular")));
+                .findFirst().orElse(new Pair<>(FontWeight.NORMAL, i18n.get("font.weight.regular"))));
 
         cbItalic.setSelected(FontUtils.fontPosture(font.getStyle()) == FontPosture.ITALIC);
 
@@ -150,7 +149,7 @@ public class FontSelectDialog extends BaseDialogController<Font> {
         Pair<Integer, Integer> fontSize = cbFontSize.getSelectionModel().getSelectedItem();
         boolean italic = cbItalic.isSelected();
         if (fontSize == null) {
-            DialogFactory.errDialog("Font size not selected");
+            DialogFactory.errDialog(i18n.get("font.dialog.msg.size.not.selected"));
             return;
         }
         Font font = Font.font(fontFamily.getKey(), fontStyle.getKey(), italic ? FontPosture.ITALIC : FontPosture.REGULAR, fontSize.getKey());
