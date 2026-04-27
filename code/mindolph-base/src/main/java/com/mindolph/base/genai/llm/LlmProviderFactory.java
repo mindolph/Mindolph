@@ -21,7 +21,7 @@ public class LlmProviderFactory {
                 llmProvider = new GeminiProvider(providerMeta, modelMeta);
             }
             else if (ALI_Q_WEN.name().equals(providerName)) {
-                llmProvider = new QwenProvider(providerMeta, modelMeta);
+                llmProvider = new QwenProvider2(providerMeta, modelMeta);
             }
             else if (OLLAMA.name().equals(providerName)) {
                 llmProvider = new OllamaProvider(providerMeta, modelMeta);

@@ -28,6 +28,8 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
         OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
+                .sendThinking(false)
+                .returnThinking(false)
                 .maxRetries(1)
                 .timeout(defaultTimeout())
                 .temperature(safeTemperature);
@@ -47,6 +49,8 @@ public interface OpenAiLangChainSupport extends LangChainSupport {
         OpenAiStreamingChatModelBuilder builder = OpenAiStreamingChatModel.builder()
                 .apiKey(providerMeta.apiKey())
                 .modelName(modelName)
+                .sendThinking(false)
+                .returnThinking(false)
                 .timeout(defaultTimeout())
                 .temperature(safeTemperature);
         if (StringUtils.isNotBlank(providerMeta.baseUrl())) builder.baseUrl(providerMeta.baseUrl());

@@ -84,7 +84,7 @@ public interface LangChainSupport {
             return new OllamaLangChainSupport() {
             };
         }
-        else{
+        else {
             // return OpenAI like support by default.
             return new OpenAiLangChainSupport() {
             };
@@ -114,6 +114,7 @@ public interface LangChainSupport {
     default OkHttpClientBuilder createHttpClientBuilder(ProviderMeta providerMeta, boolean proxyEnabled, ProxyMeta proxyMeta) {
         OkHttpClientBuilder okHttpClientBuilder = new OkHttpClientBuilder();
         okHttpClientBuilder.connectTimeout(defaultTimeout());
+        okHttpClientBuilder.readTimeout(Duration.ofMillis(0)); // NEVER timeout for SSE
         if (providerMeta.useProxy() && proxyEnabled && proxyMeta != null) {
             okHttpClientBuilder
                     .setProxyType(proxyMeta.type().toUpperCase())

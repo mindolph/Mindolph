@@ -260,6 +260,7 @@ public class AiGenerator implements Generator {
     private boolean checkSettings(String modelPrefKey) {
         Tuple2<String, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
+            log.warn("Failed to parse model from pref key: " + modelPrefKey);
             return false;
         }
         String providerId = providerModel.a();
@@ -267,16 +268,22 @@ public class AiGenerator implements Generator {
         if (propsMap.containsKey(providerId)) {
             ProviderMeta meta = propsMap.get(providerId);
             if (providerId == null || meta == null) return false;
-            log.debug("Provider: %s".formatted(providerId));
+            log.debug("Check provider: %s".formatted(providerId));
             log.trace(String.valueOf(meta));
             if (meta.isPublic()) {
+                log.warn("The public provider must has api-key setup");
                 return StringUtils.isNotBlank(meta.apiKey());
             }
             else if (meta.isPrivate()) {
+                log.warn("The private provider must has base-url setup");
                 return StringUtils.isNotBlank(meta.baseUrl());
             }
             else if (meta.isCustom()) {
+                log.warn("The custom provider must has base-url setup");
                 return StringUtils.isNotBlank(meta.baseUrl());
+            }
+            else {
+                return true;
             }
         }
         return false;

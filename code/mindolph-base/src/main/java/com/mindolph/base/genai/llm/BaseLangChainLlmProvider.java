@@ -59,7 +59,7 @@ public abstract class BaseLangChainLlmProvider extends BaseLlmProvider {
                 if (stopStreaming) {
                     throw new RuntimeException("user stop streaming");
                 }
-                log.debug("Partial: %s (stop? %s)".formatted(s, stopStreaming));
+                log.debug("Partial: %s (stop? %s) %d".formatted(s, stopStreaming, System.currentTimeMillis()));
                 buffer.append(s);
                 consumer.accept(new StreamPartial(s, false, false));
             }

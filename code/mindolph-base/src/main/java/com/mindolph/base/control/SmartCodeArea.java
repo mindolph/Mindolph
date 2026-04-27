@@ -176,6 +176,8 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
                     generator.setOnStreaming((streamOutput, pane) -> {
                         Platform.runLater(() -> {
                             if (!streamOutput.streamPartial().isStop()) {
+                                if (log.isTraceEnabled())
+                                    log.trace("Display partial '%s'".formatted(streamOutput.streamPartial().text()));
                                 if (StringUtils.isNotBlank(SmartCodeArea.this.getSelectedText())) {
                                     SmartCodeArea.this.replaceSelection(streamOutput.streamPartial().text());
                                 }

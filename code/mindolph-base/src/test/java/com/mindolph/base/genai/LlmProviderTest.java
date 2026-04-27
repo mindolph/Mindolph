@@ -85,7 +85,7 @@ public class LlmProviderTest extends BaseLlmTest {
         disableProxy();
         ProviderMeta providerMeta = loadProviderMeta(ALI_Q_WEN.name(), false);
         ModelMeta modelMeta = loadModelMeta("qwen-turbo");
-        QwenProvider provider = new QwenProvider(providerMeta, modelMeta);
+        QwenProvider2 provider = new QwenProvider2(providerMeta, modelMeta);
 
         StreamPartial predict = provider.predict(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT));
         System.out.println(predict);
@@ -95,8 +95,8 @@ public class LlmProviderTest extends BaseLlmTest {
     public void qwenStream() {
         disableProxy();
         ProviderMeta providerMeta = loadProviderMeta(ALI_Q_WEN.name(), false);
-        ModelMeta modelMeta = loadModelMeta("qwen-turbo");
-        QwenProvider provider = new QwenProvider(providerMeta, modelMeta);
+        ModelMeta modelMeta = loadModelMeta("qwen2.5-7b-instruct");
+        QwenProvider2 provider = new QwenProvider2(providerMeta, modelMeta);
         provider.stream(testInput, new OutputParams(OutputAdjust.SHORTER, OutputFormat.TEXT),
                 streamToken -> System.out.println(streamToken.text()));
         waitUntilStreamDone(20);

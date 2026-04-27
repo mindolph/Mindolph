@@ -1,5 +1,6 @@
 package com.mindolph.base.genai.llm;
 
+import com.mindolph.core.Env;
 import dev.langchain4j.http.client.HttpClient;
 import dev.langchain4j.http.client.HttpClientBuilder;
 import okhttp3.Credentials;
@@ -132,10 +133,14 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
             log.info("Build HTTP client to with proxy '%s'".formatted(Proxy.Type.valueOf(this.proxyType.toUpperCase())));
         }
         builder.retryOnConnectionFailure(false);
-        // with logger
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        builder.addInterceptor(logging);
+        // with logger intercept for debugging.
+        // NOTE: this interceptor will cause the Langchain4j streaming not work which means you can't see streaming for OpenAI, HuggingFace etc.
+        // Enable it explicitly in DEV mode with env var `enableOkHttpLogger`.
+        if (Env.isDevelopment && "true".equals(System.getenv("enableOkHttpLogger"))) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(logging);
+        }
         // build the client
         OkHttpClient httpClient = builder.build();
         okHttpClientAdapter = new OkHttpClientAdapter(httpClient);

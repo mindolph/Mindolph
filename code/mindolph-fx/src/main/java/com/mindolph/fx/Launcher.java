@@ -17,7 +17,7 @@ import javafx.application.Application;
  * disable-reopen=true|false
  * disable-window-resize=true|false
  * mock-llm=true|false
- *
+ * <p>
  * If more log output required, add -Dlogback.configurationFile=logback-debug.xml to application arguments.
  * Add -Djdk.gtk.version=2 to JVM options if CJK input method is used on Linux.
  *
@@ -31,7 +31,10 @@ public class Launcher {
         if ("false".equals(dev)) {
             Env.isDevelopment = false;
         }
-        System.out.println("Mode: " + (Env.isDevelopment ? "development" : "test"));
+        if (Env.isDevelopment) {
+            System.out.println("Mode: development");
+        }
+
         FxPreferences.getInstance().init(Launcher.class);
         DataMigrator dataMigrator = new DataMigrator();
         dataMigrator.fixData();

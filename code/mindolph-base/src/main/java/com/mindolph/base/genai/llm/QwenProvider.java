@@ -10,6 +10,7 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 /**
  * @author mindolph.com@gmail.com
  * @since 1.7.2
+ * @deprecated QwenProvider2
  */
 public class QwenProvider extends BaseLangChainLlmProvider implements QwenLangChainSupport {
 
