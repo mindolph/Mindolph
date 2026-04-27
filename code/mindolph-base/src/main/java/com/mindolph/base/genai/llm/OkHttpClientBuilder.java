@@ -141,6 +141,9 @@ public class OkHttpClientBuilder implements HttpClientBuilder {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(logging);
         }
+        else {
+            log.debug("Logging for OKHttp client is not activated.");
+        }
         // build the client
         OkHttpClient httpClient = builder.build();
         okHttpClientAdapter = new OkHttpClientAdapter(httpClient);

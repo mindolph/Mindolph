@@ -264,7 +264,7 @@ public class AiGenerator implements Generator {
             return false;
         }
         String providerId = providerModel.a();
-        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadConfiguredProviderMetas();
+        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
         if (propsMap.containsKey(providerId)) {
             ProviderMeta meta = propsMap.get(providerId);
             if (providerId == null || meta == null) return false;

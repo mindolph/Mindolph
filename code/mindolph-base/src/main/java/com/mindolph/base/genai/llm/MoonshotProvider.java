@@ -35,10 +35,11 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "stream": false,
                 "temperature": %s,
+                "max_completion_tokens": %s,
                 "top_p": 0.95,
                 "thinking": {"type": "disabled"}
             }
-            """; // max token can not post to api
+            """;
 
     String streamTemplate = """
             {
@@ -49,11 +50,12 @@ public class MoonshotProvider extends BaseOpenAiLikeApiLlmProvider {
                 ],
                 "stream": true,
                 "temperature": %s,
+                "max_completion_tokens": %s,
                 "top_p": 0.95,
                 "include_usage": true,
                 "thinking": {"type": "disabled"}
             }
-            """;// max token can not post to api
+            """;
 
     public MoonshotProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
         super(providerMeta, modelMeta);

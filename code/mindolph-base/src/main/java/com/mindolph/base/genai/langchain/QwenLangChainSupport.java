@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @since 1.13.2
+ * @deprecated OpenAiLangChainSupport
  */
 public interface QwenLangChainSupport extends LangChainSupport {
 

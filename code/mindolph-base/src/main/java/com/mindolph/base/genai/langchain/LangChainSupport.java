@@ -73,7 +73,7 @@ public interface LangChainSupport {
             };
         }
         else if (providerId.equals(ALI_Q_WEN.name())) {
-            return new QwenLangChainSupport() {
+            return new OpenAiLangChainSupport() {
             };
         }
         else if (providerId.equals(GEMINI.name())) {

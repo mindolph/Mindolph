@@ -41,7 +41,7 @@ public class LlmService {
         else {
             llmProvider = llmProviderMap.get(provider);
             if (llmProvider == null) {
-                ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider);
+                ProviderMeta providerMeta = LlmConfig.getIns().loadAllProviderMetas().get(provider);
                 ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider, modelName);
                 llmProvider = LlmProviderFactory.create(provider, providerMeta, modelMeta);
                 log.info("Using llm provider %s and model %s".formatted(provider, modelName));
