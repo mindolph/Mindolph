@@ -59,15 +59,15 @@ public class FontPreferencesPane extends BasePrefsPane implements Initializable 
             lastActivatedChoiceIndex = cbText.getItems().indexOf(newChoice);
         });
         cbText.getItems().addAll(Arrays.asList(
-                new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), "Mind Map Topic"),
-                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT, TYPE_MIND_MAP), "Mind Map Note Editor"),
-                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT_MONO, TYPE_MIND_MAP), "Mind Map Note Editor Code"),
-                new Pair<>(new PrefKey(KEY_PUML_EDITOR_MONO, TYPE_PLANTUML), "PlantUML Editor"),
-                new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), "PlantUML Editor Descriptive&Comment"),
-                new Pair<>(new PrefKey(KEY_MD_EDITOR, TYPE_MARKDOWN), "Markdown Editor"),
-                new Pair<>(new PrefKey(KEY_MD_EDITOR_MONO, TYPE_MARKDOWN), "Markdown Code"),
-                new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), "Plain Text Editor"),
-                new Pair<>(new PrefKey(KEY_CSV_EDITOR, TYPE_PLAIN_TEXT), "CSV Editor")
+                new Pair<>(new PrefKey(KEY_MMD_TOPIC_FONT, TYPE_MIND_MAP), i18n.get("prefs.font.mindmap.topic")),
+                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT, TYPE_MIND_MAP), i18n.get("prefs.font.mindmap.editor.note")),
+                new Pair<>(new PrefKey(KEY_MMD_NOTE_FONT_MONO, TYPE_MIND_MAP), i18n.get("prefs.font.mindmap.editor.note.code")),
+                new Pair<>(new PrefKey(KEY_PUML_EDITOR_MONO, TYPE_PLANTUML), i18n.get("prefs.font.puml.editor.code")),
+                new Pair<>(new PrefKey(KEY_PUML_EDITOR, TYPE_PLANTUML), i18n.get("prefs.font.puml.editor.descriptive")),
+                new Pair<>(new PrefKey(KEY_MD_EDITOR, TYPE_MARKDOWN), i18n.get("prefs.font.md.editor")),
+                new Pair<>(new PrefKey(KEY_MD_EDITOR_MONO, TYPE_MARKDOWN), i18n.get("prefs.font.md.editor.code")),
+                new Pair<>(new PrefKey(KEY_TXT_EDITOR, TYPE_PLAIN_TEXT), i18n.get("prefs.font.plain.editor.plain")),
+                new Pair<>(new PrefKey(KEY_CSV_EDITOR, TYPE_PLAIN_TEXT), i18n.get("prefs.font.sheet.editor"))
         ));
         cbText.getSelectionModel().select(lastActivatedChoiceIndex);
     }

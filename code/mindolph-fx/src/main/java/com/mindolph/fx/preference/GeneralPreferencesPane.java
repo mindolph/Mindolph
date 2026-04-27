@@ -14,6 +14,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
 import java.net.URL;
@@ -141,7 +142,9 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
             choiceBoxCell.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(Pair<Orientation, String> object) {
-                    return (object == null) ? "" : object.getValue();
+                    return (object == null) ? "" : (
+                            i18n.get("prefs.general.orientation." + StringUtils.lowerCase(object.getValue()))
+                    );
                 }
 
                 @Override

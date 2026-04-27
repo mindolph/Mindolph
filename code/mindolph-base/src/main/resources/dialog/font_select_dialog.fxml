@@ -24,7 +24,7 @@
             </padding>
             <ChoiceBox fx:id="cbFontFamily" prefWidth="250.0" HBox.hgrow="ALWAYS"/>
             <ChoiceBox fx:id="cbFontStyle" prefWidth="150.0"/>
-            <CheckBox fx:id="cbItalic" mnemonicParsing="false" prefWidth="80.0" text="%font.dialog.italic"/>
+            <CheckBox fx:id="cbItalic" mnemonicParsing="false" prefWidth="80.0" text="%font.style.italic"/>
             <ChoiceBox fx:id="cbFontSize" prefWidth="150.0"/>
         </HBox>
         <TextArea fx:id="textArea" text="%font.dialog.preview" wrapText="true" editable="false" VBox.vgrow="ALWAYS"/>

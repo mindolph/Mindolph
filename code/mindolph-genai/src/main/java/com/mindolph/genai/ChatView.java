@@ -81,7 +81,7 @@ public class ChatView extends BaseView implements Initializable {
                 .state(ChatState.LOADING)
                 .in(payload -> {
                     Platform.runLater(() -> {
-                        lblAgent.setText("Loading...");
+                        lblAgent.setText(i18n.get("ai.agent.loading"));
                         piAgent.setVisible(true);
                         piAgent.setManaged(true);
                         taInput.setDisable(true);
@@ -89,7 +89,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.LOAD_FAILED)
                 .in(payload -> {
-                    lblAgent.setText("Fail to load agent: %s".formatted(payload.getName()));
+                    lblAgent.setText(i18n.get("ai.agent.loading.fail", payload.getName()));
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })
@@ -98,7 +98,7 @@ public class ChatView extends BaseView implements Initializable {
                     lblAgent.setText("%s: %s".formatted(LlmConfig.getIns().loadProviderMeta(selectedAgent.getChatProvider()).getName(), selectedAgent.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
-                    taInput.setPromptText("Chat with your agent \"%s\", hit %s to send your message.".formatted(selectedAgent.getName(), ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));
+                    taInput.setPromptText(i18n.get("ai.agent.prompt.hint", selectedAgent.getName(), ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));
                     taInput.requestFocus();
                     btnSend.setGraphic(FontIconManager.getIns().getIcon(IconKey.SEND));
                     btnSend.setDisable(true);
@@ -108,14 +108,14 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.SWITCHING)
                 .in(payload -> {
-                    lblAgent.setText("Switching...");
+                    lblAgent.setText(i18n.get("ai.agent.switching"));
                     piAgent.setVisible(true);
                     piAgent.setManaged(true);
                     taInput.setDisable(true);
                 })
                 .state(ChatState.SWITCH_FAILED)
                 .in(payload -> {
-                    lblAgent.setText("Fail");
+                    lblAgent.setText(i18n.get("ai.agent.switching.fail", payload.getName() ));
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })
@@ -203,7 +203,7 @@ public class ChatView extends BaseView implements Initializable {
                     Platform.runLater(() -> {
                         chatStateMachine.postWithPayloadOnState(ChatState.LOAD_FAILED, ChatState.LOADING, ChatState.SWITCH_FAILED, ChatState.SWITCHING, selectedAgentMeta);
 //                        DialogFactory.errDialog("Failed to use agent: \n%s".formatted(e.getLocalizedMessage()));
-                        Notifications.create().title("Use Agent").text("Failed to use agent: \n%s".formatted(e.getLocalizedMessage())).showWarning();
+                        Notifications.create().title(i18n.get("ai.agent.rag.fail.title")).text(i18n.get("ai.agent.rag.fail.msg", e.getLocalizedMessage())).showWarning();
                     });
                     return;
                 }
@@ -211,7 +211,8 @@ public class ChatView extends BaseView implements Initializable {
                 Platform.runLater(() -> {
                     if (currentAgentMeta == null || !selectedAgentMeta.getId().equals(currentAgentMeta.getId())) {
                         chatPane.clearChatHistory();
-                        ChatPartial cp = new ChatPartial("I'm %s, ask me anything.".formatted(selectedAgentMeta.getName()), MessageType.AI, true);
+                        log.warn(i18n.get("ai.agent.greeting", selectedAgentMeta.getName()));
+                        ChatPartial cp = new ChatPartial(i18n.get("ai.agent.greeting", selectedAgentMeta.getName()), MessageType.AI, true);
                         chatPane.appendChatPartial(cp);
                     }
                     chatStateMachine.postWithPayload(ChatState.READY, selectedAgentMeta);
@@ -282,7 +283,7 @@ public class ChatView extends BaseView implements Initializable {
         }
         else {
             if (currentAgentMeta == null) {
-                DialogFactory.infoDialog("Please choose an agent you want to chat with");
+                DialogFactory.infoDialog(i18n.get("ai.agent.no.agent.selected"));
                 return;
             }
             if (StringUtils.isNotBlank(taInput.getText())) {
@@ -329,7 +330,7 @@ public class ChatView extends BaseView implements Initializable {
                                     // the STOP action might cause the LLM provider response with error, so only exception from LLM provider (which means in state STREAMING) shows error to user.
                                     if (chatStateMachine.isState(ChatState.STREAMING)) {
                                         String errMsg = RagService.getInstance().extractErrorMessageFromLLM(currentAgentMeta.getChatProvider(), e.getLocalizedMessage());
-                                        Notifications.create().title("Error from agent").text(errMsg).hideAfter(Duration.seconds(15)).show();
+                                        Notifications.create().title(i18n.get("ai.agent.error")).text(errMsg).hideAfter(Duration.seconds(15)).show();
                                         chatPane.endWaiting();
                                         RagService.getInstance().stop(); // make sure the http connection is closed.
                                     }
