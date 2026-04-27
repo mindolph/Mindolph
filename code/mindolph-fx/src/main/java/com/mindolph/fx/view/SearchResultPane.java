@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.textfield.TextFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class SearchResultPane extends AnchorPane {
     private ProgressIndicator progressIndicator;
     @FXML
     private DirBreadCrumb bcbDirPath;
+
+    private I18nHelper i18n = I18nHelper.getInstance();
 
     private final TreeItem<FileTreeViewData> rootItem;
 
@@ -167,7 +170,7 @@ public class SearchResultPane extends AnchorPane {
 
     private void updateSearchResult() {
 //        label.setText("Found %d files in folder %s".formatted(foundFiles.size(), searchParams.getSearchInDir()));
-        label.setText("Found %d files.".formatted(foundFiles.size()));
+        label.setText(i18n.get("search.results.msg", foundFiles.size()));
         rootItem.getChildren().clear();
         for (FoundFile foundFile : foundFiles) {
             TreeItem<FileTreeViewData> item = new TreeItem<>(new FileTreeViewData(true, foundFile.getFile()));

@@ -182,7 +182,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
         if (StringUtils.isBlank(this.getOutlinePattern()) || outlinePattern == null) {
             Tree tree = new Tree();
             tree.init("");
-            tree.getRootNode().addChild(new Node(new OutlineItemData("No outlines for this file")));
+            tree.getRootNode().addChild(new Node(new OutlineItemData(i18n.get("outline.empty"))));
             EventBus.getIns().notifyOutline(tree);
             return;
         }

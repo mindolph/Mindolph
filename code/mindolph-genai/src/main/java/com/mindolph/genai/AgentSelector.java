@@ -18,6 +18,7 @@ import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.net.URL;
 import java.util.Map;
@@ -33,8 +34,10 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
 
     private static final Logger log = LoggerFactory.getLogger(AgentSelector.class);
 
+    private I18nHelper i18n = I18nHelper.getInstance();
+
     public AgentSelector() {
-        super.setPromptText("Choose an Agent");
+        super.setPromptText(i18n.get("ai.agent.select"));
         super.setCellFactory(comboBox -> new ListCell<>() {
             @Override
             protected void updateItem(Pair<String, AgentMeta> item, boolean empty) {
