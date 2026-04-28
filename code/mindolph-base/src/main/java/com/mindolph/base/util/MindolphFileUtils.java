@@ -5,6 +5,7 @@ import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.DesktopUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class MindolphFileUtils {
         try {
             DesktopUtils.openInSystem(file, false);
         } catch (Exception e) {
-            DialogFactory.warnDialog("Can't open this file in system");
+            DialogFactory.warnDialog(I18nHelper.getInstance().get("open.file.in.system.fail"));
         }
     }
 }

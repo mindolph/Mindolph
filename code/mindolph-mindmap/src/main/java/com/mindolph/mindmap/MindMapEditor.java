@@ -31,6 +31,7 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapAnchor;
 import com.mindolph.mindmap.view.AttributesView;
 import javafx.application.Platform;
+import org.swiftboot.util.I18nHelper;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
@@ -148,7 +149,7 @@ public class MindMapEditor extends BaseEditor {
                         TopicNode topic = ele.getModel();
                         ExtraFile extraFile = (ExtraFile) topic.getExtras().get(Extra.ExtraType.FILE);
                         if (extraFile != null) {
-                            if (!DialogFactory.okCancelConfirmDialog("File already exist in this topic, are you sure to replace?")) {
+                            if (!DialogFactory.okCancelConfirmDialog(I18nHelper.getInstance().get("mindmap.confirm.replace.file.link"))) {
                                 return;
                             }
                         }
@@ -175,10 +176,10 @@ public class MindMapEditor extends BaseEditor {
 
     @Override
     public Map<String, SearchBar.ExtraOption> createSearchOptions(boolean[] enables) {
-        SearchBar.ExtraOption opTopic = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.TOPIC), true, "In Topic");
-        SearchBar.ExtraOption opNote = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.NOTE), true, "In Note");
-        SearchBar.ExtraOption opFileLink = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.FILE_LINK), true, "In File Link");
-        SearchBar.ExtraOption opUri = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.URI), true, "In URI");
+        SearchBar.ExtraOption opTopic = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.TOPIC), true, I18nHelper.getInstance().get("mindmap.search.in.topic"));
+        SearchBar.ExtraOption opNote = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.NOTE), true, I18nHelper.getInstance().get("mindmap.search.in.note"));
+        SearchBar.ExtraOption opFileLink = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.FILE_LINK), true, I18nHelper.getInstance().get("mindmap.search.in.file.link"));
+        SearchBar.ExtraOption opUri = new SearchBar.ExtraOption(FontIconManager.getIns().getIcon(IconKey.URI), true, I18nHelper.getInstance().get("mindmap.search.in.uri"));
         LinkedHashMap<String, SearchBar.ExtraOption> extraOptions = new LinkedHashMap<>() {
             {
                 put(IconID.ICON_FIND_IN_TOPIC.name(), opTopic);
@@ -315,7 +316,7 @@ public class MindMapEditor extends BaseEditor {
         }
         for (TopicNode childTopic : rootTopic.getChildren()) {
             String content = StringUtils.isNotBlank(childTopic.getText()) ? StringUtils.abbreviate(childTopic.getText(), 30)
-                    : "[Empty Topic]";
+                    : I18nHelper.getInstance().get("mindmap.empty.topic");
             MindMapAnchor mindMapAnchor = new MindMapAnchor();
             mindMapAnchor.setText(childTopic.getText());
             mindMapAnchor.setParentText(rootTopic.getText());

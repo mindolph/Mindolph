@@ -430,7 +430,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                                     DesktopUtils.openInSystem(theFile, false);
                                 } catch (Exception e) {
                                     log.error(e.getMessage(), e);
-                                    DialogFactory.warnDialog("Unable to open file in system");
+                                    DialogFactory.warnDialog(i18n.get("mindmap.error.open.file.system"));
                                 }
                             }
                             else {
@@ -440,7 +440,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             }
                         }
                         else {
-                            Platform.runLater(() -> DialogFactory.warnDialog("File not found: " + canonicalFile));
+                            Platform.runLater(() -> DialogFactory.warnDialog(i18n.get("mindmap.error.file.not.found", canonicalFile)));
                         }
                     } catch (IOException e) {
                         log.error(e.getMessage(), e);
@@ -457,7 +457,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                 case TOPIC -> {
                     TopicNode theTopic = getModel().findTopicForLink((ExtraTopic) extra);
                     if (theTopic == null) {
-                        DialogFactory.warnDialog("No topic found");
+                        DialogFactory.warnDialog(i18n.get("mindmap.error.no.topic.found"));
                     }
                     else {
                         // detected
@@ -515,7 +515,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                 url = link.getAsString();
             }
 
-            new UrlDialog(String.format("URL of topic %s", topic.getText()), url).show(resultURL -> {
+            new UrlDialog(i18n.get("mindmap.dialog.url.title", topic.getText()), url).show(resultURL -> {
                 log.debug("URL: %s".formatted(resultURL));
                 boolean hasLinkAlready = topic.getExtras().containsKey(Extra.ExtraType.LINK);
                 if (resultURL == null || (hasLinkAlready && resultURL.trim().equals(topic.getExtras().get(Extra.ExtraType.LINK).getAsString()))) {
@@ -595,7 +595,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
                             valueChanged = true;
                         }
                         else {
-                            DialogFactory.errDialog(String.format("File doesn't exit: %s", result.getFilePathWithLine().getPath()));
+                            DialogFactory.errDialog(i18n.get("mindmap.error.file.not.exist", result.getFilePathWithLine().getPath()));
                             valueChanged = false;
                         }
                     } catch (IOException e) {
@@ -703,7 +703,7 @@ public class ExtraMindMapView extends MindMapView implements ExtensionContext {
     @Override
     public void openFile(File file, boolean preferSystemBrowser) {
         if (!file.exists()) {
-            DialogFactory.warnDialog("File doesn't exist any more");
+            DialogFactory.warnDialog(i18n.get("mindmap.error.file.not.exist.anymore"));
             return;
         }
         EventBus.getIns().notifyOpenFile(new OpenFileEvent(file, true));
