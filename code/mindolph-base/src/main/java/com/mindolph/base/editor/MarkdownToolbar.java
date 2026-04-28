@@ -22,6 +22,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 import org.swiftboot.util.UrlUtils;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import static com.mindolph.core.constant.SyntaxConstants.BLANK_CHARS;
 public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(MarkdownToolbar.class);
+    private static final I18nHelper i18n = I18nHelper.getInstance();
 
     @FXML
     private Button btnBullet;
@@ -185,10 +187,10 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
         else if (node == btnTable) {
             if (markdownCodeArea.getSelection().getLength() > 0) {
                 Dialog<String> dialog = new RadioDialogBuilder<String>().owner(DialogFactory.DEFAULT_WINDOW)
-                        .title("Choose Separator")
-                        .content("Choose separator to split columns: ")
-                        .option(BLANK_CHARS, "Blank characters")
-                        .option("\t+", "Only Tab character")
+                        .title(i18n.get("markdown.table.separator.title"))
+                        .content(i18n.get("markdown.table.separator.content"))
+                        .option(BLANK_CHARS, i18n.get("markdown.table.separator.option.blank"))
+                        .option("\t+", i18n.get("markdown.table.separator.option.tab"))
                         .defaultValue(BLANK_CHARS)
                         .build();
 
@@ -279,10 +281,10 @@ public class MarkdownToolbar extends ScrollPane implements EventHandler<ActionEv
     }
 
     public void disable() {
-        NodeUtils.disable(hBox.getChildren().toArray(new Button[]{}));
+        NodeUtils.disable(hBox.getChildren().toArray(new javafx.scene.Node[0]));
     }
 
     public void enable() {
-        NodeUtils.enable(hBox.getChildren().toArray(new Button[]{}));
+        NodeUtils.enable(hBox.getChildren().toArray(new javafx.scene.Node[0]));
     }
 }

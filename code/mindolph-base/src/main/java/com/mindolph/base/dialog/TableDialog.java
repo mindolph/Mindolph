@@ -27,7 +27,7 @@ public class TableDialog extends BaseDialogController<TableOptions> {
     public TableDialog(TableOptions initOptions) {
         dialog = new CustomDialogBuilder<TableOptions>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Create Table")
+                .title(i18n.get("table.dialog.title"))
                 .fxmlUri("dialog/table_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))

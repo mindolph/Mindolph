@@ -34,7 +34,7 @@ public interface ShortcutConstants {
     ShortcutKey KEY_REDO = ShortcutKey.newShortcutKey("global.redo", "redo");
 
     // markdown
-    ShortcutKey KEY_MD_COMMENT = new ShortcutKey("md.comment", "comment line", "Markdown");
+    ShortcutKey KEY_MD_COMMENT = new ShortcutKey("md.comment", "comment line", "shortcut.category.markdown");
 
     // AI Agent
     ShortcutKey KEY_AGENT_SEND = ShortcutKey.newShortcutKey("ai.agent.send", "send");

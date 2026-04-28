@@ -22,7 +22,7 @@ public final class ShortcutKey {
      * @return
      */
     public static ShortcutKey newShortcutKey(String key, String name) {
-        return new ShortcutKey(key, name, "Global");
+        return new ShortcutKey(key, name, "shortcut.category.global");
     }
 
     public String getKey() {

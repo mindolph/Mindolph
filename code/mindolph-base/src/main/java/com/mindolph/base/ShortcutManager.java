@@ -166,7 +166,7 @@ public class ShortcutManager {
 
         StringBuilder buf = new StringBuilder();
         for (String category : categorized.keySet()) {
-            buf.append("## ").append(category).append(TextConstants.LINE_SEPARATOR);
+            buf.append("## ").append(i18n.get(category)).append(TextConstants.LINE_SEPARATOR);
             List<ShortcutKey> shortcutKeys = categorized.get(category);
             for (ShortcutKey shortcutKey : shortcutKeys) {
                 String label = i18n.get(shortcutKey.getKey());
