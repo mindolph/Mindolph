@@ -1,6 +1,7 @@
 package com.mindolph.base.genai.rag;
 
 import com.mindolph.base.constant.PrefConstants;
+import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.genai.langchain.LangChainSupport;
@@ -26,8 +27,10 @@ import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,6 +46,7 @@ import java.util.function.Consumer;
 public class RagService extends BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(RagService.class);
+    private static final I18nHelper i18n = I18nHelper.getInstance();
 
     private static RagService instance;
 
@@ -79,13 +83,13 @@ public class RagService extends BaseEmbeddingService {
      */
     public void useAgent(AgentMeta agentMeta, Consumer<Object> finished) {
         if (!agentMeta.isAllNecessarySetup()) {
-            finished.accept(new RuntimeException("Agent is not well setup"));
+            finished.accept(new RuntimeException(i18n.get("rag.agent.not.well.setup")));
             return;
         }
         // load here for the config might be changed on the fly.
         super.loadVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
-            finished.accept(new RuntimeException("Vector store is not well setup"));
+            finished.accept(new RuntimeException(i18n.get("rag.vector.store.not.well.setup")));
         }
         log.info("use agent: {}, with chat model {}-{}",
                 agentMeta.getName(), agentMeta.getChatProvider().getDisplayName(), agentMeta.getChatModel());
@@ -106,7 +110,7 @@ public class RagService extends BaseEmbeddingService {
                             this.streamingChatModel = this.buildStreamingChatModel(agentMeta);
                             this.contentRetriever = this.buildContentRetriever(agentMeta.getId());
                             if (this.contentRetriever == null) {
-                                finished.accept(new RuntimeException("Unable to use this agent"));
+                                finished.accept(new RuntimeException(i18n.get("rag.unable.to.use.agent")));
                                 return;
                             }
                             agent = AiServices.builder(Agent.class)
@@ -116,7 +120,7 @@ public class RagService extends BaseEmbeddingService {
                                     .chatMemory(chatMemory)
                                     .build();
                             log.debug(errorOrMessage.toString());
-                            finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                            finished.accept(i18n.get("rag.switched.to.agent", agentMeta.getName()));
                         }
                     });
                 }
@@ -128,7 +132,7 @@ public class RagService extends BaseEmbeddingService {
                             .systemMessageProvider(o -> agentMeta.getPromptTemplate())
                             .chatMemory(chatMemory);
                     agent = builder.build();
-                    finished.accept("Switched to agent %s".formatted(agentMeta.getName()));
+                    finished.accept(i18n.get("rag.switched.to.agent", agentMeta.getName()));
                 }
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e);
@@ -144,15 +148,15 @@ public class RagService extends BaseEmbeddingService {
             embeddingStore = super.createEmbeddingStore(embeddingModel, true, false);
         } catch (Exception e) {
             log.error("Failed create embedding store", e);
-            throw new RuntimeException("Failed to prepare embedding store, check vector store setting or network", e);
+            throw new RuntimeException(i18n.get("rag.failed.prepare.embedding.store"), e);
         }
-        completed.accept("RAG model is ready");
+        completed.accept(i18n.get("rag.model.ready"));
     }
 
     public void chat(String message, Consumer<TokenStream> consumer) {
         log.info("Human: {}", message);
         if (agent == null) {
-            throw new RuntimeException("Use agent before chatting");
+            throw new RuntimeException(i18n.get("rag.use.agent.before.chatting"));
         }
         this.agentChatFuture = GlobalExecutor.submit(() -> {
             try {
@@ -204,6 +208,9 @@ public class RagService extends BaseEmbeddingService {
             this.langChainSupport = LangChainSupport.createSupport(provider);
             ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
             ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider.name(), agentMeta.getChatModel());
+            if (modelMeta == null) {
+                throw new RuntimeException(i18n.get("rag.no.model.defined", agentMeta.getChatModel()));
+            }
             Boolean proxyEnabled = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
             ProxyMeta proxyMeta = NetworkUtils.getProxyMeta();
             // The Input is not for inputting but for compatible with the providers for Generate&Summarize features;
@@ -231,11 +238,11 @@ public class RagService extends BaseEmbeddingService {
         List<String> docIds = this.findDocIdsByAgent(agentId);
         if (docIds == null || docIds.isEmpty()) {
             log.warn("No docs found for agent {}, the agent might not work.", agentId);
-            throw new RuntimeException("No docs found for agent, try to setup the datasets for the agent.");
+            throw new RuntimeException(i18n.get("rag.no.docs.found.for.agent"));
         }
         if (embeddingStore == null || embeddingModel == null) {
             log.warn("No embedding store or embedding model for agent {}", agentId);
-            throw new RuntimeException("No embedding store or embedding model for agent");
+            throw new RuntimeException(i18n.get("rag.no.embedding.store.or.model.for.agent"));
         }
         log.debug("Build content retriever with filter on doc ids: {}.", StringUtils.join(docIds, ","));
         return EmbeddingStoreContentRetriever.builder()

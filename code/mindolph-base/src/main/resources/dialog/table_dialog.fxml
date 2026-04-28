@@ -14,9 +14,9 @@
 
       <HBox prefHeight="40.0" prefWidth="240.0" spacing="8.0">
          <Spinner fx:id="spRows" prefWidth="80.0" editable="false"/>
-         <Label text="row(s)" prefWidth="80"/>
+         <Label text="%markdown.toolbar.table.rows" prefWidth="80"/>
          <Spinner fx:id="spCols" prefWidth="80.0" editable="false"/>
-         <Label text="column(s)" prefWidth="80"/>
+         <Label text="%markdown.toolbar.table.cols" prefWidth="80"/>
       </HBox>
    </VBox>
 </AnchorPane>

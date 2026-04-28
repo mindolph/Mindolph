@@ -15,8 +15,10 @@
             AnchorPane.topAnchor="0.0"
     >
         <PreferenceItem name="%snippet.custom.dialog.type.label" labelMinWidth="120" labelPrefWidth="120">
-            <RadioButton fx:id="rdTypeText" selected="true" text="%snippet.custom.dialog.type.text"/>
-            <RadioButton fx:id="rdTypeImage" text="%snippet.custom.dialog.type.image"/>
+            <HBox>
+                <RadioButton fx:id="rdTypeText" text="%snippet.custom.dialog.type.text" selected="true" />
+                <RadioButton fx:id="rdTypeImage" text="%snippet.custom.dialog.type.image"/>
+            </HBox>
         </PreferenceItem>
         <PreferenceItem name="%snippet.custom.dialog.title.label" labelMinWidth="120" labelPrefWidth="120">
             <TextField fx:id="tfTitle" promptText="%snippet.custom.dialog.title.hint" prefWidth="280"/>

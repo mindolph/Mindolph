@@ -2,6 +2,7 @@ package com.mindolph.base.dialog;
 
 import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.util.Arrays;
@@ -11,12 +12,12 @@ import java.util.List;
  * @author mindolph.com@gmail.com
  */
 public interface DialogFileFilters {
-    ExtensionFilter MMD_EXTENSION_FILTER =  new ExtensionFilter("Mind Map file(*.mmd)", "*.mmd");
-    ExtensionFilter MARKDOWN_EXTENSION_FILTER =  new ExtensionFilter("Markdown File(*.md)", "*.md");
-    ExtensionFilter PUML_EXTENSION_FILTER =  new ExtensionFilter("PlantUML file(*.puml)", "*.puml");
-    ExtensionFilter TXT_EXTENSION_FILTER =  new ExtensionFilter("Text File(*.txt)", "*.txt");
-    ExtensionFilter IMAGE_EXTENSION_FILTER =  new ExtensionFilter("Image File(*.jpg, *.jpeg, *.png, *.gif)", "*.jpg", "*.jpeg" , "*.png", "*.gif");
-    ExtensionFilter IMAGE_JPEG_EXTENSION_FILTER =  new ExtensionFilter("JPEG File(*.jpg)", "*.jpg");
+    ExtensionFilter MMD_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.mmd"), "*.mmd");
+    ExtensionFilter MARKDOWN_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.markdown"), "*.md");
+    ExtensionFilter PUML_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.puml"), "*.puml");
+    ExtensionFilter TXT_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.txt"), "*.txt");
+    ExtensionFilter IMAGE_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.image.with.pattern"), "*.jpg", "*.jpeg" , "*.png", "*.gif");
+    ExtensionFilter IMAGE_JPEG_EXTENSION_FILTER =  new ExtensionFilter(I18nHelper.getInstance().get("file.filter.jpeg"), "*.jpg");
 
     List<ExtensionFilter> EXTENSION_FILTER_LIST = Arrays.asList(
             MMD_EXTENSION_FILTER,

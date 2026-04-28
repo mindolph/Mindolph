@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 import org.swiftboot.util.JsonUtils;
 
 import java.io.File;
@@ -107,7 +108,7 @@ public class SnippetDialog extends BaseDialogController<Snippet<?>> {
             log.debug("Load image");
             File defaultDir = SystemUtils.getUserHome();
             File file = DialogFactory.openFileDialog(DialogFactory.DEFAULT_WINDOW, defaultDir,
-                    new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg"));
+                    new FileChooser.ExtensionFilter(I18nHelper.getInstance().get("file.filter.image"), "*.png", "*.jpg"));
             if (file != null && file.exists()) {
                 if (log.isTraceEnabled()) log.trace(file.getAbsolutePath());
                 updateSnippet(this.loadImage(file));

@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.ClasspathResourceUtils;
 import org.swiftboot.util.IdUtils;
+import org.swiftboot.util.I18nHelper;
 import org.swiftboot.util.NumberFormatUtils;
 
 import java.io.File;
@@ -52,6 +53,7 @@ import static com.mindolph.core.constant.SupportFileTypes.TYPE_MIND_MAP;
 public class EmbeddingService extends BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(EmbeddingService.class);
+    private static final I18nHelper i18n = I18nHelper.getInstance();
 
     private static final EmbeddingService ins = new EmbeddingService();
 
@@ -82,12 +84,12 @@ public class EmbeddingService extends BaseEmbeddingService {
                 List<EmbeddingDocEntity> documents = this.findDocuments(datasetMeta.getId());
                 if (embeddingStore == null) {
                     log.warn("EmbeddingStore is not built");
-                    AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Embedding store is not built", false));
+                    AiEventBus.getInstance().emitEvent(new DoneEvent(stage, i18n.get("embedding.store.not.built"), false));
                     return false;
                 }
                 else {
                     log.info("Try to unembed %d documents...".formatted(documents.size()));
-                    ProgressEvent progressEvent = new ProgressEvent(stage, "Removing embedded document...%.1f%%".formatted(0f), null, 0, 0f);
+                    ProgressEvent progressEvent = new ProgressEvent(stage, i18n.get("embedding.progress.unembed", 0f), null, 0, 0f);
                     AiEventBus.getInstance().emitEvent(progressEvent);
 
                     Integer successCount = this.unembedFiles(documents, event -> {
@@ -95,10 +97,10 @@ public class EmbeddingService extends BaseEmbeddingService {
                         AiEventBus.getInstance().emitEvent(event);
                     });
                     if (successCount == documents.size()) {
-                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Un-embedding done with %d successes of %d files.".formatted(successCount, documents.size()), true));
+                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, i18n.get("embedding.unembed.done", successCount, documents.size()), true));
                     }
                     else {
-                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, "Un-embedding fail with %d successes of %d files.".formatted(successCount, documents.size()), false));
+                        AiEventBus.getInstance().emitEvent(new DoneEvent(stage, i18n.get("embedding.unembed.fail", successCount, documents.size()), false));
                     }
                     return successCount == documents.size();
                 }
@@ -119,16 +121,16 @@ public class EmbeddingService extends BaseEmbeddingService {
     public CompletableFuture<Boolean> embedDataset(DatasetMeta datasetMeta, Predicate<EmbeddingDocEntity> filter) {
         if (datasetMeta.getFiles() == null || datasetMeta.getFiles().isEmpty()) {
             log.warn("No files to be embedded");
-            throw new RuntimeException("No files to be embedded");
+            throw new RuntimeException(i18n.get("embedding.no.files.to.embed"));
         }
         // load here for the config might be changed on the fly.
         super.loadVectorStorePrefs();
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             log.debug("Vector store: %s".formatted(vectorStoreMeta));
-            throw new RuntimeException("Vector store is not well setup");
+            throw new RuntimeException(i18n.get("embedding.vector.store.not.well.setup"));
         }
         if (!datasetMeta.isAllSetup()) {
-            throw new RuntimeException("Dataset is not well setup for embedding");
+            throw new RuntimeException(i18n.get("embedding.dataset.not.well.setup"));
         }
         return GlobalExecutor.submitCompletable(() -> {
             try {
@@ -138,12 +140,12 @@ public class EmbeddingService extends BaseEmbeddingService {
                 List<EmbeddingDocEntity> toBeUnembedded = documents.stream().filter(filter).toList();
                 if (toBeUnembedded.isEmpty()) {
                     // Keep doing embedding
-                    AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, "No embedded data needs to be deleted.", false));
+                    AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, i18n.get("embedding.no.embedded.data.to.delete"), false));
                 }
-                AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, "Begin embedding.", false));
+                AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, i18n.get("embedding.begin"), false));
                 if (embeddingStore == null) {
                     log.warn("EmbeddingStore is not built");
-                    AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, "Embedding store is not built"));
+                    AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, i18n.get("embedding.store.not.built")));
                     return false;
                 }
                 else {
@@ -158,7 +160,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                         return false;
                     }
                     log.info("Start to embed files (%d): %s".formatted(datasetMeta.getFiles().size(), StringUtils.join(datasetMeta.getFiles(), ", ")));
-                    AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, "Embedding...%.1f%%".formatted(0f), true, null, 0, 0f));
+                    AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, i18n.get("embedding.progress.embed", 0f), true, null, 0, 0f));
                     return this.embedDataset(datasetMeta);
                 }
             } catch (Exception e) {
@@ -182,7 +184,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 BigDecimal ratio = BigDecimal.valueOf(deletedCount).divide(new BigDecimal(toBeEmbedded.size()), 3, RoundingMode.HALF_UP);
                 Double percent = NumberFormatUtils.toPercent(ratio.doubleValue(), 1);
 
-                ProgressEvent progressEvent = new ProgressEvent(null, "Removing embedded document...%.1f%%".formatted(percent), new File(docEntity.file_path()), deletedCount, ratio.floatValue());
+                ProgressEvent progressEvent = new ProgressEvent(null, i18n.get("embedding.progress.unembed", percent), new File(docEntity.file_path()), deletedCount, ratio.floatValue());
                 onProgress.accept(progressEvent);
             }
         }
@@ -208,7 +210,7 @@ public class EmbeddingService extends BaseEmbeddingService {
                 File file = selectedFiles.get(i);
                 if (datasetMeta.isStop()) {
                     log.info("Embedding is stopped by user");
-                    AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, "Embedding is stopped", false));
+                    AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, i18n.get("embedding.stopped"), false));
                     break;
                 }
                 BigDecimal ratio = BigDecimal.valueOf(i + 1).divide(new BigDecimal(total), 3, RoundingMode.HALF_UP);
@@ -229,22 +231,22 @@ public class EmbeddingService extends BaseEmbeddingService {
                     }
                 }
                 Double percent = NumberFormatUtils.toPercent(ratio.doubleValue(), 1);
-                AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, "Embedding...%.1f%%".formatted(percent), success, file, successCount, ratio.floatValue()));
+                AiEventBus.getInstance().emitEvent(new ProgressEvent(Stage.EMBED_DATASET, i18n.get("embedding.progress.embed", percent), success, file, successCount, ratio.floatValue()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, "Failed: %s".formatted(e.getMessage()), false));
+            AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, i18n.get("embedding.failed", e.getMessage()), false));
             return false;
         }
 //            if (!datasetMeta.isStop()) {
-        AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, "Embedding done with %d successes of %d files.".formatted(successCount, total)));
+        AiEventBus.getInstance().emitEvent(new DoneEvent(Stage.EMBED_DATASET, i18n.get("embedding.done", successCount, total)));
 //            }
         return true;
     }
 
     public void loadEmbeddingStoreIfNotExist(DatasetMeta datasetMeta) {
         // make sure that the state is transmitted to 'preparing' (for re-embedding scenario).
-        AiEventBus.getInstance().emitEvent(new PrepareEvent("Prepare..."));
+        AiEventBus.getInstance().emitEvent(new PrepareEvent(i18n.get("embedding.prepare")));
         if (embeddingModel == null) {
             log.debug("Create embedding model instance");
             embeddingModel = super.createEmbeddingModel(

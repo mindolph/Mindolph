@@ -2,6 +2,7 @@ package com.mindolph.base.genai.llm;
 
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
+import org.swiftboot.util.I18nHelper;
 
 import static com.mindolph.core.constant.GenAiModelProvider.*;
 import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
@@ -10,7 +11,9 @@ import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
  * @since 1.13.0
  */
 public class LlmProviderFactory {
-    
+
+    private static final I18nHelper i18n = I18nHelper.getInstance();
+
     public static LlmProvider create(String providerName, ProviderMeta providerMeta, ModelMeta modelMeta) {
         if (providerMeta != null) {
             LlmProvider llmProvider = null;
@@ -44,7 +47,7 @@ public class LlmProviderFactory {
             return llmProvider;
         }
         else {
-            throw new RuntimeException("LLM provider setup is not completed: %s".formatted(providerName));
+            throw new RuntimeException(i18n.get("llm.provider.setup.not.completed", providerName));
         }
     }
 }

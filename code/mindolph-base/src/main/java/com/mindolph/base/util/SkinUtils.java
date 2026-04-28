@@ -29,6 +29,6 @@ public class SkinUtils {
     }
 
     public static VirtualFlow<?> getVirtualFlow(SkinBase<?> skin) {
-        return (VirtualFlow<?>) skin.getChildren().get(0);
+        return (VirtualFlow<?>) skin.getChildren().getFirst();
     }
 }
