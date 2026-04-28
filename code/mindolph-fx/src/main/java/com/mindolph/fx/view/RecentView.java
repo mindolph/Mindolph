@@ -122,7 +122,7 @@ public class RecentView extends BaseView implements EventHandler<ActionEvent> {
         NodeData selectedData = listView.getSelectionModel().getSelectedItem();
         File file = selectedData.getFile();
         if (!file.exists()) {
-            DialogFactory.infoDialog("The file has already been deleted or moved");
+            DialogFactory.infoDialog(i18n.get("recent.err.file.deleted"));
             removeRecentFile(file);
         }
         else {

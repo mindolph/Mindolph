@@ -130,8 +130,8 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
             if (event.getSource() == miRename) {
                 Dialog<String> dialog = new TextDialogBuilder()
                         .owner(DialogFactory.DEFAULT_WINDOW)
-                        .title("Rename %s".formatted(workspaceMeta.getName()))
-                        .content("Input a workspace name")
+                        .title(i18n.get("workspace.list.rename.title", workspaceMeta.getName()))
+                        .content(i18n.get("workspace.list.rename.content"))
                         .text(FilenameUtils.getBaseName(workspaceMeta.getName()))
                         .width(400)
                         .build();
@@ -142,7 +142,7 @@ public class WorkspaceListCell extends ListCell<WorkspaceMeta> {
                     File origFile = new File(workspaceMeta.getBaseDirPath());
                     File newNameFile = new File(origFile.getParentFile(), newName);
                     if (newNameFile.exists()) {
-                        DialogFactory.errDialog("Folder %s already exists".formatted(newName));
+                        DialogFactory.errDialog(i18n.get("workspace.list.err.folder.exists", newName));
                     }
                     else {
                         if (origFile.renameTo(newNameFile)) {

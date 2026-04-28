@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class DatasetTableView extends TableView<DatasetMeta> {
 
 
     private static final Logger log = LoggerFactory.getLogger(DatasetTableView.class);
+    private final I18nHelper i18n = I18nHelper.getInstance();
 
     public DatasetTableView() {
     }
@@ -29,10 +31,10 @@ public class DatasetTableView extends TableView<DatasetMeta> {
     }
 
     public void init() {
-        TableColumn<DatasetMeta, String> colName = new TableColumn<>("Name");
-        TableColumn<DatasetMeta, String> colFiles = new TableColumn<>("Files");
-        TableColumn<DatasetMeta, String> colLang = new TableColumn<>("Language");
-        TableColumn<DatasetMeta, String> colStatus = new TableColumn<>("Status");
+        TableColumn<DatasetMeta, String> colName = new TableColumn<>(i18n.get("dataset.col.name"));
+        TableColumn<DatasetMeta, String> colFiles = new TableColumn<>(i18n.get("dataset.col.files"));
+        TableColumn<DatasetMeta, String> colLang = new TableColumn<>(i18n.get("dataset.col.language"));
+        TableColumn<DatasetMeta, String> colStatus = new TableColumn<>(i18n.get("dataset.col.status"));
         colName.setPrefWidth(120);
         colFiles.setPrefWidth(40);
         colLang.setPrefWidth(120);

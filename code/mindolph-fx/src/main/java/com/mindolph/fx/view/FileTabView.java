@@ -346,7 +346,7 @@ public class FileTabView extends BaseView {
             try {
                 DesktopUtils.openInSystem(file, false);
             } catch (Exception e) {
-                DialogFactory.warnDialog("Can't open this file in system");
+                DialogFactory.warnDialog(i18n.get("filetab.err.open.in.system"));
             }
         });
         if (selectedTabUserData instanceof NodeData data && ((NodeData) selectedTabUserData).isFile()) {
@@ -499,7 +499,7 @@ public class FileTabView extends BaseView {
                 }
             } catch (Exception e) {
                 log.error(e.getLocalizedMessage(), e);
-                DialogFactory.errDialog("Failed to save file: " + e.getLocalizedMessage());
+                DialogFactory.errDialog(i18n.get("filetab.err.save.file", e.getLocalizedMessage()));
                 return;
             }
             // Add new file tree item to the parent tree item by file path.
@@ -593,7 +593,7 @@ public class FileTabView extends BaseView {
             tabEditorMap.get(tab).save();
         } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
-            DialogFactory.errDialog("Saving file %s failed.".formatted(fileData.getFile()));
+            DialogFactory.errDialog(i18n.get("filetab.err.save.file.failed", fileData.getFile()));
         }
     }
 
@@ -607,7 +607,7 @@ public class FileTabView extends BaseView {
                         tabEditorMap.get(tab).save();
                     } catch (IOException e) {
                         log.error(e.getLocalizedMessage(), e);
-                        DialogFactory.errDialog("Saving file %s failed.".formatted(nodeData.getFile()));
+                        DialogFactory.errDialog(i18n.get("filetab.err.save.file.failed", nodeData.getFile()));
                     }
                 }
             }
@@ -787,7 +787,7 @@ public class FileTabView extends BaseView {
                     editor.save();
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
-                    DialogFactory.errDialog("File save failed");
+                    DialogFactory.errDialog(i18n.get("filetab.err.file.save.failed"));
                     return false;
                 }
             }
