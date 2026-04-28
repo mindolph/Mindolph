@@ -5,6 +5,7 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.CalcUtils;
 
@@ -32,7 +33,11 @@ public class GenAiUtils {
             if (ArrayUtils.isEmpty(split) || split.length != 2) {
                 return null;
             }
-            return new Tuple2<>(GenAiModelProvider.valueOf(split[0]), new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
+            GenAiModelProvider genAiModelProvider = EnumUtils.getEnum(GenAiModelProvider.class, split[0]);
+            if (genAiModelProvider == null) {
+                return null;
+            }
+            return new Tuple2<>(genAiModelProvider, new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
         }
         return null;
     }
