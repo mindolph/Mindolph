@@ -25,6 +25,7 @@ import org.reactfx.AwaitingEventStream;
 import org.reactfx.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class WorkspaceViewCell extends TreeCell<NodeData> {
 
     private static final Logger log = LoggerFactory.getLogger(WorkspaceViewCell.class);
+
+    private final I18nHelper i18n = I18nHelper.getInstance();
 
     private static final Font defaultFont = Font.font("Roboto", FontWeight.NORMAL, FontPosture.REGULAR, Font.getDefault().getSize());
     private static final Font boldFont = FontUtils.newFontWithWeight(defaultFont, FontWeight.BOLD);
@@ -155,8 +158,8 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                         log.debug("try to copy file {} to {}", file, destFile);
                         if (destFile.exists()) {
                             if (!yesToAll && !noToAll) {
-                                multiConfirmation = DialogFactory.multiConfirmDialog("Confirm Overwrite",
-                                        "File %s already exists, are you sure to overwrite it?".formatted(file.getName()));
+                                multiConfirmation = DialogFactory.multiConfirmDialog(i18n.get("workspace.view.confirm.overwrite"),
+                                        i18n.get("workspace.view.confirm.overwrite.msg", file.getName()));
                                 if (multiConfirmation == null) {
                                     break;// quit coping files
                                 }
@@ -165,7 +168,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                                 try {
                                     FileUtils.copyFile(file, destFile);
                                 } catch (IOException e) {
-                                    DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
+                                    DialogFactory.errDialog(i18n.get("workspace.view.err.copy.file", file.getName(), destFile.getAbsolutePath()));
                                 }
                                 log.debug("copy file {} with overwrite done", file);
                             }
@@ -176,7 +179,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                             try {
                                 FileUtils.copyFile(file, destFile);
                             } catch (IOException e) {
-                                DialogFactory.errDialog("Failed to copy file %s to %s".formatted(file.getName(), destFile.getAbsolutePath()));
+                                    DialogFactory.errDialog(i18n.get("workspace.view.err.copy.file", file.getName(), destFile.getAbsolutePath()));
                             }
                             log.debug("copy file {} done", file);
                             NodeData destNodeData = new NodeData(destFile);

@@ -5,6 +5,7 @@ import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.FontUtils;
 import javafx.fxml.FXML;
+import org.swiftboot.util.I18nHelper;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
@@ -77,7 +78,7 @@ public class AwtFontSelectDialog extends BaseDialogController<Font> {
         super.result = font;
         dialog = new CustomDialogBuilder<Font>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Select Font")
+                .title(I18nHelper.getInstance().get("mindmap.dialog.font.select.title"))
                 .fxmlUri("dialog/font_select_dialog.fxml")
                 .buttons(ButtonType.CLOSE)
                 .defaultValue(font)
@@ -91,14 +92,14 @@ public class AwtFontSelectDialog extends BaseDialogController<Font> {
         cbFontFamily.setValue(new Pair<>(font.getFamily(), font.getFamily()));
 
         List<Pair<Integer, String>> styles = Arrays.asList(
-                new Pair<>(Font.PLAIN, "Plain"),
-                new Pair<>(Font.BOLD, "Bold"),
-                new Pair<>(Font.ITALIC, "Italic"),
-                new Pair<>(Font.BOLD | Font.ITALIC, "Bold+Italic")
+                new Pair<>(Font.PLAIN, I18nHelper.getInstance().get("mindmap.font.style.plain")),
+                new Pair<>(Font.BOLD, I18nHelper.getInstance().get("mindmap.font.style.bold")),
+                new Pair<>(Font.ITALIC, I18nHelper.getInstance().get("mindmap.font.style.italic")),
+                new Pair<>(Font.BOLD | Font.ITALIC, I18nHelper.getInstance().get("mindmap.font.style.bold.italic"))
         );
         cbFontStyle.setConverter(fontStyleConverter);
         cbFontStyle.getItems().addAll(styles);
-        cbFontStyle.setValue(styles.stream().filter(pair -> pair.getKey().equals(font.getStyle())).findFirst().orElse(new Pair<>(Font.PLAIN, "Plain")));
+        cbFontStyle.setValue(styles.stream().filter(pair -> pair.getKey().equals(font.getStyle())).findFirst().orElse(new Pair<>(Font.PLAIN, I18nHelper.getInstance().get("mindmap.font.style.plain"))));
 
         List<Pair<Integer, Integer>> size = new ArrayList<>();
         for (int i = 8; i < 32; i++) {
@@ -130,7 +131,7 @@ public class AwtFontSelectDialog extends BaseDialogController<Font> {
         Pair<Integer, String> fontStyle = cbFontStyle.getSelectionModel().getSelectedItem();
         Pair<Integer, Integer> fontSize = cbFontSize.getSelectionModel().getSelectedItem();
         if (fontSize == null) {
-            DialogFactory.errDialog("Font size not selected");
+            DialogFactory.errDialog(I18nHelper.getInstance().get("mindmap.error.font.size.not.selected"));
         }
         Font awtFont = new Font(fontFamily.getKey(), fontStyle.getKey(), fontSize.getKey());
         javafx.scene.text.Font fxFont = FontUtils.awtFontToFxFont(awtFont);

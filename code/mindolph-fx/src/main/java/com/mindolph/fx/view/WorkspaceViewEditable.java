@@ -484,7 +484,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
 //            treeView.refresh();
 //        }
         if (!failedFiles.isEmpty()) {
-            DialogFactory.warnDialog("Failed files: \n" + StringUtils.join(failedFiles, LINE_SEPARATOR));
+            DialogFactory.warnDialog(i18n.get("workspace.err.move.failed", StringUtils.join(failedFiles, LINE_SEPARATOR)));
         }
         return newFiles;
     }
@@ -535,7 +535,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
      */
     public void loadWorkspace(WorkspaceMeta workspaceMeta) {
         if (!workspaceMeta.exists()) {
-            DialogFactory.errDialog("The workspace '%s' does not exist, it might has been moved or deleted from storage.".formatted(workspaceMeta.getName()));
+            DialogFactory.errDialog(i18n.get("workspace.err.not.exist", workspaceMeta.getName()));
             return;
         }
         EventBus.getIns().subscribeWorkspaceLoaded(1, workspaceDataTreeItem -> {
@@ -741,7 +741,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     public TreeItem<NodeData> addFile(TreeItem<NodeData> parent, NodeData fileData) {
         TreeItem<NodeData> fileItem = new TreeItem<>(fileData);
         if (parent == null) {
-            log.warn("This file doesn't belong to any workspace or folder.");
+            log.warn(i18n.get("workspace.err.not.belong"));
         }
         else {
             if (parent.getChildren().stream()
@@ -761,7 +761,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             NodeData nodeData = selectedValue.get();
             if (nodeData.isFile()) {
                 if (!nodeData.getFile().exists()) {
-                    DialogFactory.errDialog("File doesn't exist, it might be deleted or moved externally.");
+                    DialogFactory.errDialog(i18n.get("workspace.err.file.not.exist"));
                     removeTreeNode(nodeData, true);
                     EventBus.getIns().notifyDeletedFile(nodeData);
                     return;
@@ -1097,7 +1097,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             Optional<NodeData> optSelected = treeView.getSelectedData();
             if (optSelected.isPresent()) {
                 WorkspaceMeta meta = new WorkspaceMeta(activeWorkspaceData.getFile().getPath());
-                WorkspaceDialog workspaceDialog = new WorkspaceDialog("Move selected file(s) to", WorkspaceManager.getIns().getWorkspaceList(), meta);
+                WorkspaceDialog workspaceDialog = new WorkspaceDialog(i18n.get("workspace.dialog.move.to"), WorkspaceManager.getIns().getWorkspaceList(), meta);
                 WorkspaceDialog.Selection selection = workspaceDialog.showAndWait();
                 if (selection != null) {
                     boolean isSameWorkspace = selection.workspaceMeta().contains(activeWorkspaceData.getFile());
@@ -1144,7 +1144,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             try {
                 for (NodeData sn : selectedNodes) {
                     if (sn.getFile().isDirectory() && !isFolderEmpty(sn.getFile())) {
-                        DialogFactory.errDialog("The folder you want to delete is not empty");
+                        DialogFactory.errDialog(i18n.get("workspace.err.folder.not.empty"));
                         return;
                     }
                 }
@@ -1152,8 +1152,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                 log.error(e.getLocalizedMessage(), e);
                 return;
             }
-            String summary = "Are you sure to delete %s".formatted(selectedNodes.size() == 1 ? selectedData.getName() : "%d selected files".formatted(selectedNodes.size()));
-            Boolean needDelete = new ConfirmDialogBuilder().positive("Delete").cancel().asDefault().content(summary).showAndWait();
+            String summary = i18n.get("workspace.confirm.delete", selectedNodes.size() == 1 ? selectedData.getName() : i18n.get("workspace.confirm.delete.selected.files", selectedNodes.size()));
+            Boolean needDelete = new ConfirmDialogBuilder().positive(i18n.get("button.delete")).cancel().asDefault().content(summary).showAndWait();
             if (needDelete != null && needDelete) {
                 for (TreeItem<NodeData> curItem : List.copyOf(treeView.getSelectionModel().getSelectedItems())) {
                     NodeData sn = curItem.getValue();
@@ -1169,7 +1169,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
                         FileUtils.delete(sn.getFile());
                     } catch (IOException e) {
                         log.error(e.getLocalizedMessage(), e);
-                        DialogFactory.errDialog("Delete file failed: " + e.getLocalizedMessage());
+                        DialogFactory.errDialog(i18n.get("workspace.err.delete.failed", e.getLocalizedMessage()));
                         return;
                     }
                     // note: the file change monitor will remove tree item, so don't do it here.
@@ -1216,8 +1216,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         String oldFileName = selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName();
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Clone %s".formatted(selectedData.getName()))
-                .content("Input a new name")
+                .title(i18n.get("workspace.clone.title", selectedData.getName()))
+                .content(i18n.get("workspace.clone.content"))
                 .text("%s_copy".formatted(oldFileName))
                 .width(400)
                 .build();
@@ -1228,7 +1228,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             // TODO allow separator if folder is reloaded automatically.
             if (FileNameUtils.containsSeparator(newName)) {
                 // let user try again
-                DialogFactory.errDialog("Please input valid folder name");
+                DialogFactory.errDialog(i18n.get("workspace.err.invalid.folder.name"));
                 this.requestCloneFile(selectedData, consumer);
                 return;
             }
@@ -1240,7 +1240,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     private void requestNewFolder(NodeData selectedData, Consumer<File> consumer) {
-        Dialog<String> dialog = new TextDialogBuilder().owner(DialogFactory.DEFAULT_WINDOW).title("New Folder Name").width(300).build();
+        Dialog<String> dialog = new TextDialogBuilder().owner(DialogFactory.DEFAULT_WINDOW).title(i18n.get("workspace.new.folder.title")).width(300).build();
         dialog.setGraphic(FontIconManager.getIns().getIconForFile(TYPE_FOLDER, 32));
         Optional<String> opt = dialog.showAndWait();
         if (opt.isPresent()) {
@@ -1249,7 +1249,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             // TODO allow separator if folder is reloaded automatically.
             if (FileNameUtils.containsSeparator(folderName)) {
                 // let user try again
-                DialogFactory.errDialog("Please input valid folder name");
+                DialogFactory.errDialog(i18n.get("workspace.err.invalid.folder.name"));
                 this.requestNewFolder(selectedData, consumer);
                 return;
             }
@@ -1266,7 +1266,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     private void requestNewFile(MenuItem source, NodeData selectedData, String fileType, Consumer<File> consumer) {
         log.debug("New %s File".formatted(source.getText()));
         log.debug("source: %s from %s".formatted(source.getText(), source.getParentMenu() == null ? "" : source.getParentMenu().getText()));
-        Dialog<String> dialog = new TextDialogBuilder().owner(DialogFactory.DEFAULT_WINDOW).width(300).title("New %s Name".formatted(source.getText())).build();
+        Dialog<String> dialog = new TextDialogBuilder().owner(DialogFactory.DEFAULT_WINDOW).width(300).title(i18n.get("workspace.new.file.title", source.getText())).build();
         String iconType = String.valueOf(source.getUserData() instanceof Template ? source.getParentMenu().getUserData() : source.getUserData());
         dialog.setGraphic(FontIconManager.getIns().getIconForFile(iconType, 32));
         Optional<String> opt = dialog.showAndWait();
@@ -1276,7 +1276,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             // TODO allow separator if folder is reloaded automatically.
             if (FileNameUtils.containsSeparator(fileName)) {
                 // let user try again
-                DialogFactory.errDialog("Please input valid file name");
+                DialogFactory.errDialog(i18n.get("workspace.err.invalid.file.name"));
                 this.requestNewFile(source, selectedData, fileType, consumer);
                 return;
             }
@@ -1365,14 +1365,14 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
 //        String cloneFileName = "%s_copy.%s".formatted(FilenameUtils.getBaseName(file.getName()), FilenameUtils.getExtension(file.getName()));
         File cloneFile = new File(targetDir, newFileName);
         if (cloneFile.exists()) {
-            DialogFactory.errDialog("File %s already exists".formatted(newFileName));
+            DialogFactory.errDialog(i18n.get("workspace.err.file.exists", newFileName));
             return;
         }
         try {
             FileUtils.copyFile(file, cloneFile);
         } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
-            DialogFactory.errDialog("Clone file failed: " + e.getLocalizedMessage());
+            DialogFactory.errDialog(i18n.get("workspace.err.clone.failed", e.getLocalizedMessage()));
             return;
         }
         NodeData newFileData = new NodeData(cloneFile);
@@ -1388,8 +1388,8 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         }
         Dialog<String> dialog = new TextDialogBuilder()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title("Rename %s".formatted(selectedData.getName()))
-                .content("Input a new name")
+                .title(i18n.get("workspace.rename.title", selectedData.getName()))
+                .content(i18n.get("workspace.rename.content"))
                 .text(selectedData.isFile() ? FilenameUtils.getBaseName(selectedData.getFile().getPath()) : selectedData.getName())
                 .width(400)
                 .build();
@@ -1403,13 +1403,13 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
             }
             if (FileNameUtils.containsSeparator(newName)) {
                 // let user try input again.
-                DialogFactory.errDialog("Please input valid file name");
+                DialogFactory.errDialog(i18n.get("workspace.err.invalid.file.name"));
                 this.requestRenameFolderOrFile(selectedData, consumer);
                 return;
             }
             File newNameFile = new File(origFile.getParentFile(), newName);
             if (newNameFile.exists()) {
-                DialogFactory.errDialog("Folder or file %s already exists".formatted(newName));
+                DialogFactory.errDialog(i18n.get("workspace.err.folder.or.file.exists", newName));
                 this.requestRenameFolderOrFile(selectedData, consumer);
             }
             else {
@@ -1424,7 +1424,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     private void launchFindInFilesDialog(NodeData selectedData) {
         if (selectedData != null && !selectedData.isFile()) {
             if (!selectedData.getFile().exists()) {
-                DialogFactory.errDialog("The workspace or folder you selected doesn't exist, probably be deleted externally.");
+                DialogFactory.errDialog(i18n.get("workspace.err.workspace.not.exist"));
             }
             else {
                 SearchParams searchParams = new FindInFilesDialog(selectedData.getWorkspaceData().getFile(), selectedData.getFile()).showAndWait();
@@ -1463,7 +1463,7 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
         fileName = FileNameUtils.appendFileExtensionIfAbsent(fileName, extension);
         File newFile = new File(parentNodeData.getFile(), fileName);
         if (newFile.exists()) {
-            DialogFactory.errDialog("File %s already existed!".formatted(fileName));
+            DialogFactory.errDialog(i18n.get("workspace.err.file.existed", fileName));
             return null;
         }
         try {
@@ -1549,6 +1549,6 @@ public class WorkspaceViewEditable extends BaseView implements EventHandler<Acti
     }
 
     private String createDefaultNote() {
-        return "This file is created by Mindolph at " + TimeUtils.createTimestamp();
+        return i18n.get("workspace.default.note", TimeUtils.createTimestamp());
     }
 }
