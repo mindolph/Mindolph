@@ -8,7 +8,6 @@ import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
-import com.mindolph.core.llm.ModelMetaBuilder;
 import com.mindolph.core.llm.ProviderMeta;
 import org.swiftboot.util.I18nHelper;
 import javafx.util.Pair;
@@ -104,6 +103,7 @@ public interface AiUiConstants {
         }
     }
 
+
     /**
      * for embedding model.
      *
@@ -115,7 +115,7 @@ public interface AiUiConstants {
             return "Unknown";
         }
         if ("all".equals(langCode)) {
-            return I18nHelper.getInstance().get("prefs.ai.provider.model.lang.all");
+            return I18nHelper.getInstance().get("prefs.ai.embedding.lang.all");
         }
         JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
         for (JsonElement lang : langs) {
@@ -129,60 +129,60 @@ public interface AiUiConstants {
     // Languages code and name mapping for embedding.
     String LANGUAGES_IN_JSON = """
             [
-                {"code": "en", "name": "English"},
-                {"code": "zh", "name": "Chinese"},
+                {"code": "en", "name": "prefs.ai.embedding.lang.en"},
+                {"code": "zh", "name": "prefs.ai.embedding.lang.zh"},
                 {
                     "code": "hi",
-                    "name": "Hindi"
+                    "name": "prefs.ai.embedding.lang.hi"
                 },
-                {"code": "es", "name": "Spanish"},
-                {"code": "fr", "name": "French"},
-                {"code": "ar", "name": "Arabic"},
+                {"code": "es", "name": "prefs.ai.embedding.lang.es"},
+                {"code": "fr", "name": "prefs.ai.embedding.lang.fr"},
+                {"code": "ar", "name": "prefs.ai.embedding.lang.ar"},
                 {
                     "code": "bn",
-                    "name": "Bengali"
+                    "name": "prefs.ai.embedding.lang.bn"
                 },
                 {
                     "code": "ru",
-                    "name": "Russian"
+                    "name": "prefs.ai.embedding.lang.ru"
                 },
-                {"code": "pt", "name": "Portuguese"},
+                {"code": "pt", "name": "prefs.ai.embedding.lang.pt"},
                 {
                     "code": "id",
-                    "name": "Indonesian"
+                    "name": "prefs.ai.embedding.lang.id"
                 },
                 {
                     "code": "ur",
-                    "name": "Urdu"
+                    "name": "prefs.ai.embedding.lang.ur"
                 },
                 {
                     "code": "ja",
-                    "name": "Japanese"
+                    "name": "prefs.ai.embedding.lang.ja"
                 },
-                {"code": "de", "name": "German"},
+                {"code": "de", "name": "prefs.ai.embedding.lang.de"},
                 {
                     "code": "mr",
-                    "name": "Marathi"
+                    "name": "prefs.ai.embedding.lang.mr"
                 },
                 {
                     "code": "te",
-                    "name": "Telugu"
+                    "name": "prefs.ai.embedding.lang.te"
                 },
                 {
                     "code": "tr",
-                    "name": "Turkish"
+                    "name": "prefs.ai.embedding.lang.tr"
                 },
                 {
                     "code": "ta",
-                    "name": "Tamil"
+                    "name": "prefs.ai.embedding.lang.ta"
                 },
                 {
                     "code": "vi",
-                    "name": "Vietnamese"
+                    "name": "prefs.ai.embedding.lang.vi"
                 },
                 {
                     "code": "ko",
-                    "name": "Korean"
+                    "name": "prefs.ai.embedding.lang.ko"
                 }
             ]
             """;

@@ -291,8 +291,7 @@ public class MainController extends BaseController implements Initializable,
             workspaceView.loadWorkspaces(workspaceList);
         }
         else {
-            String message = i18n.get("msg.workspace.creation.prompt",
-                    "Before starting to use Mindolph, you should create your first workspace, do you want to proceed?");
+            String message = i18n.get("msg.workspace.creation.prompt");
             if (DialogFactory.yesNoConfirmDialog(message)) {
                 onMenuNewWorkspace();
             }
@@ -885,7 +884,7 @@ public class MainController extends BaseController implements Initializable,
 
     private void showCheckUpdatesToast(String msg) {
         Platform.runLater(() -> {
-            Notifications.create().title("Check updates").text(msg).showWarning();
+            Notifications.create().title(i18n.get("msg.update.title")).text(msg).showWarning();
         });
     }
 

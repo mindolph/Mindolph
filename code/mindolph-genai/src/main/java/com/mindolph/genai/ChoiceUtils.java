@@ -10,6 +10,7 @@ import com.mindolph.mfx.preference.FxPreferences;
 import javafx.scene.control.ChoiceBox;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,14 +28,17 @@ public class ChoiceUtils {
 
     public static void loadEmbeddingLanguages(ChoiceBox<Pair<String, String>> choiceBox) {
         JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
-        List<Pair<String, String>> list = langs.asList().stream().map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(), ((JsonObject) e).get("name").getAsString())).toList();
+        List<Pair<String, String>> list = langs.asList().stream()
+                .map(e -> new Pair<>(((JsonObject) e).get("code").getAsString(),
+                        localizeLanguageName(((JsonObject) e).get("name").getAsString())))
+                .toList();
         choiceBox.getItems().clear();
         choiceBox.getItems().addAll(list);
     }
 
     public static void selectOrUnselectLanguage(ChoiceBox<Pair<String, String>> choiceBox, String languageCode) {
         if (StringUtils.isNotBlank(languageCode)) {
-            String language = AiUiConstants.lookupLanguage(languageCode);
+            String language = localizeLanguageName(AiUiConstants.lookupLanguage(languageCode));
             if (StringUtils.isNotBlank(language)) {
                 choiceBox.getSelectionModel().select(new Pair<>(languageCode, language));
             }
@@ -121,5 +125,14 @@ public class ChoiceUtils {
         choiceBox.setConverter(aiProviderConverter);
         List<Pair<String, ProviderMeta>> providerPairs = metaMap.entrySet().stream().map(e -> new Pair<>(e.getKey(), e.getValue())).toList();
         choiceBox.getItems().addAll(providerPairs);
+    }
+
+
+    private static String localizeLanguageName(String languageNameOrKey) {
+        if (StringUtils.isBlank(languageNameOrKey)) {
+            return languageNameOrKey;
+        }
+        String localized = I18nHelper.getInstance().get(languageNameOrKey);
+        return StringUtils.isBlank(localized) ? languageNameOrKey : localized;
     }
 }

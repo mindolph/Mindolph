@@ -97,7 +97,7 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
                 pair -> {
                     VectorStoreProvider provider = pair.getKey();
                     log.debug("Load vector store provider: {}", provider.name());
-                    NodeUtils.enable(tfHost, spPort, tfDatabase, tfUsername, tfPassword);
+                    NodeUtils.enable(tfHost, spPort, tfDatabase, tfUsername, tfPassword, btnTestConnection);
                     VectorStoreMeta vectorStoreMeta = LlmConfig.getIns().loadVectorStorePrefs(provider);
                     if (vectorStoreMeta != null) {
                         tfHost.setText(vectorStoreMeta.getHost());

@@ -22,7 +22,7 @@ public class MetricsUtils {
     public static void launch() {
         try (ExecutorService executorService = Executors.newSingleThreadExecutor()) {
             executorService.submit(() -> {
-                log.debug("Try to send metrics..");
+                log.info("Try to send metrics..");
                 String template = """
                             {
                                 "api_key": "${api_key}",
@@ -37,16 +37,20 @@ public class MetricsUtils {
                         new String[]{"api_key", "event_name"},
                         new String[]{"phc_BgtKQaRdRWsduqwaTabPFm7EDpq95CxbRQGpERYxbmMj", "app-launch"});
                 log.debug(json);
-                RequestBody body = RequestBody.create(json, OkHttpUtils.JSON);
-                Request.Builder builder = new Request.Builder().url("https://us.i.posthog.com/i/v0/e/").post(body);
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(Duration.ofSeconds(30))
-                        .readTimeout(Duration.ofMinutes(10))
-                        .writeTimeout(Duration.ofMinutes(5))
-                        .build();
-                if (OkHttpUtils.execute(client, builder.build()) == null) {
-                    log.warn("Failed to send metrics");
-                    return;
+                try {
+                    RequestBody body = RequestBody.create(json, OkHttpUtils.JSON);
+                    Request.Builder builder = new Request.Builder().url("https://us.i.posthog.com/i/v0/e/").post(body);
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(Duration.ofSeconds(30))
+                            .readTimeout(Duration.ofMinutes(10))
+                            .writeTimeout(Duration.ofMinutes(5))
+                            .build();
+                    if (OkHttpUtils.execute(client, builder.build()) == null) {
+                        log.warn("Failed to send metrics");
+                        return;
+                    }
+                } catch (Exception e) {
+                    log.warn(e.getLocalizedMessage(), e);
                 }
                 log.info("Metrics sent");
             });

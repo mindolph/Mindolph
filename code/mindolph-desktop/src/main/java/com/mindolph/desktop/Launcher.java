@@ -29,7 +29,7 @@ public class Launcher {
         PluginManager.getIns().registerPlugin(new GenAiPlugin());
         PluginManager.getIns().registerPlugin(new MindMapPlugin());
         PluginManager.getIns().registerPlugin(new MarkdownPlugin());
-        Application.launch(Main.class, args);
         MetricsUtils.launch();
+        Application.launch(Main.class, args);
     }
 }
