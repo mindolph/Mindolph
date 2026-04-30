@@ -8,47 +8,47 @@
     <HBox alignment="BASELINE_LEFT">
         <Button fx:id="btnUml" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="startuml tag"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.uml"/>
             </tooltip>
         </Button>
         <Button fx:id="btnEntity" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Entity"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.entity"/>
             </tooltip>
         </Button>
         <Button fx:id="btnActor" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Actor"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.actor"/>
             </tooltip>
         </Button>
         <Button fx:id="btnRectangle" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Rectangle"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.rectangle"/>
             </tooltip>
         </Button>
         <Button fx:id="btnOutline1" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Outline 1"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.outline1"/>
             </tooltip>
         </Button>
         <Button fx:id="btnOutline2" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Outline 2"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.outline2"/>
             </tooltip>
         </Button>
         <Button fx:id="btnOutline3" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Outline 3"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.outline3"/>
             </tooltip>
         </Button>
         <Button fx:id="btnLineComment" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Line comment"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.line.comment"/>
             </tooltip>
         </Button>
         <Button fx:id="btnBlockComment" mnemonicParsing="false" styleClass="icon_button">
             <tooltip>
-                <Tooltip text="Block Comment"/>
+                <Tooltip text="%plantuml.toolbar.tooltip.block.comment"/>
             </tooltip>
         </Button>
     </HBox>

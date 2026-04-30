@@ -64,6 +64,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IoUtils;
@@ -280,7 +281,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
             }
 
             IIOMetadataNode comNode = new IIOMetadataNode("com");
-            comNode.setUserObject(comment.getBytes("UTF-8"));
+            comNode.setUserObject(comment.getBytes(StandardCharsets.UTF_8));
             markerSequence.appendChild(comNode);
 
 //            root.appendChild(markerSequence);
@@ -370,7 +371,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 log.debug("Page starts from row %d to row %d".formatted(startRow, endRow));
                 // Show error image if error occurs, but continue next page
                 String errMsg = StringUtils.trim(block.getDiagram().getWarningOrError());
-                if (StringUtils.contains(errMsg, "(Error)")) {
+                if (Strings.CS.contains(errMsg, "(Error)")) {
                     log.debug("encounter error in this plantuml");
                     indicator.addPage(new Page(errMsg, startRow, endRow));
                     int curPage = reader.getBlocks().indexOf(block);
@@ -391,7 +392,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(
                                     editorContext.getFileData().getFile(),
-                                    new StatusMsg(i18n.get("plantuml.msg.page.error", curPage + 1), "See the description", image)
+                                    new StatusMsg(i18n.get("plantuml.msg.page.error", curPage + 1), i18n.get("plantuml.msg.see.description"), image)
                             );
                         });
                     } catch (IOException e) {
@@ -445,7 +446,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 .filter(string -> string.trim().startsWith("title") || string.trim().startsWith("caption"))
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(prediction)) {
-            String title = prediction.get(0);
+            String title = prediction.getFirst();
             if (title.startsWith("title")) {
                 title = StringUtils.substringAfter(title, "title");
                 if (StringUtils.isBlank(title)) {

@@ -49,6 +49,6 @@ public class SkinparamSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Skinparam";
+        return i18n.get("plantuml.snippet.skinparam");
     }
 }
