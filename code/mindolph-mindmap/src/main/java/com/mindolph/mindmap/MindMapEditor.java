@@ -31,7 +31,6 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapAnchor;
 import com.mindolph.mindmap.view.AttributesView;
 import javafx.application.Platform;
-import org.swiftboot.util.I18nHelper;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
@@ -41,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
 import org.swiftboot.collections.tree.Tree;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,6 +111,13 @@ public class MindMapEditor extends BaseEditor {
                 mindMapView.redo();
             }
         });
+        // TODO see NotePanel
+//        ShortcutManager.getIns().listen(KEY_UNDO, shortcutKey -> {
+//            mindMapView.undo();
+//        });
+//        ShortcutManager.getIns().listen(KEY_REDO, shortcutKey -> {
+//            mindMapView.redo();
+//        });
 
         // invalidate the mind-map panel when become focused.
         this.focusedProperty().addListener((observableValue, wasFocused, isFocused) -> {

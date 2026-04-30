@@ -124,8 +124,15 @@ public class NotePanel extends BaseView {
         btnRedo = noteToolbar.getBtnRedo();
         btnBrowse = noteToolbar.getBtnBrowse();
         btnExport = noteToolbar.getBtnExport();
-        btnUndo.setOnAction(event -> textArea.undo());
+        btnUndo.setOnAction(event -> textArea.undo()); // works for dialog mode.
         btnRedo.setOnAction(event -> textArea.redo());
+        // very hard to update the button's state from MindMapView, keep it disabled for now. TODO
+//        btnUndo.setOnAction(event -> {
+//            ShortcutManager.getIns().fireShortcut(ShortcutConstants.KEY_UNDO);
+//        });
+//        btnRedo.setOnAction(event -> {
+//            ShortcutManager.getIns().fireShortcut(ShortcutConstants.KEY_REDO);
+//        });
         btnBrowse.setOnAction(event -> {
             String selectedText = textArea.getSelectedText();
             try {
@@ -195,7 +202,7 @@ public class NotePanel extends BaseView {
         });
         this.btnImport = noteToolbar.getBtnImport();
         this.btnExport = noteToolbar.getBtnExport();
-        btnImport.setOnAction(actionEvent -> {
+        this.btnImport.setOnAction(actionEvent -> {
             File selectedFile = DialogFactory.openFileDialog(NotePanel.this.getScene().getWindow(), SystemUtils.getUserHome());
             if (selectedFile != null) {
                 try {

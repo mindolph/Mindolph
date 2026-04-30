@@ -2,18 +2,20 @@ package com.mindolph.base;
 
 import com.mindolph.base.shortcut.ShortcutKey;
 import com.mindolph.core.constant.TextConstants;
-import org.swiftboot.util.I18nHelper;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import org.apache.commons.lang3.SystemUtils;
+import org.reactfx.EventSource;
 import org.swiftboot.collections.CollectionUtils;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.mindolph.base.constant.ShortcutConstants.*;
@@ -34,9 +36,9 @@ public class ShortcutManager {
 
     private static final Map<ShortcutKey, KeyCombination> modifierMap = new LinkedHashMap<>();
 
+    private final EventSource<ShortcutKey> eventSource = new EventSource<>();
 
     protected I18nHelper i18n = I18nHelper.getInstance();
-
 
     private ShortcutManager() {
     }
@@ -159,6 +161,29 @@ public class ShortcutManager {
                 });
         return hasConflict.get();
     }
+
+
+    /**
+     * Listen the mimicking of shortcut keystroke.
+     *
+     * @param shortcutKey
+     * @param consumer
+     * @since 1.14.2
+     */
+    public void listen(ShortcutKey shortcutKey, Consumer<ShortcutKey> consumer) {
+        eventSource.subscribe(consumer);
+    }
+
+    /**
+     * For some scenarios, mimic the shortcut keystroke.
+     *
+     * @param shortcutKey
+     * @since 1.14.2
+     */
+    public void fireShortcut(ShortcutKey shortcutKey) {
+        eventSource.push(shortcutKey);
+    }
+
 
     public String exportToMarkdown() {
         LinkedHashMap<String, List<ShortcutKey>> categorized =
