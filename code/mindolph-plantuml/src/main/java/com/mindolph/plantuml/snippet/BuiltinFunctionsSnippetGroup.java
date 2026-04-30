@@ -124,6 +124,6 @@ public class BuiltinFunctionsSnippetGroup extends BasePlantUmlSnippetGroup {
 
     @Override
     public String getTitle() {
-        return "Builtin Functions";
+        return i18n.get("plantuml.snippet.builtin.functions");
     }
 }

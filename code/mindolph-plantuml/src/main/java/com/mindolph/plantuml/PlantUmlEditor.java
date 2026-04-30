@@ -391,7 +391,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         Platform.runLater(() -> {
                             EventBus.getIns().notifyStatusMsg(
                                     editorContext.getFileData().getFile(),
-                                    new StatusMsg(i18n.get("plantuml.msg.page.error", curPage + 1), "See the description", image)
+                                    new StatusMsg(i18n.get("plantuml.msg.page.error", curPage + 1), i18n.get("plantuml.msg.see.description"), image)
                             );
                         });
                     } catch (IOException e) {

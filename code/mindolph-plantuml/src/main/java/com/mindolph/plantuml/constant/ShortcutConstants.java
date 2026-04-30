@@ -7,5 +7,5 @@ import com.mindolph.base.shortcut.ShortcutKey;
  */
 public interface ShortcutConstants {
 
-    ShortcutKey KEY_PUML_COMMENT = new ShortcutKey("puml.comment", "comment line", "PlantUML");
+    ShortcutKey KEY_PUML_COMMENT = new ShortcutKey("puml.comment", "puml.comment", "shortcut.category.plantuml");
 }

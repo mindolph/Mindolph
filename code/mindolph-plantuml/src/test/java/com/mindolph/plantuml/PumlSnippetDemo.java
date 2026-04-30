@@ -15,7 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +62,9 @@ public class PumlSnippetDemo extends Application implements Initializable {
         snippetView.reload(groups, SupportFileTypes.TYPE_PLANTUML);
         EventBus.getIns().subscribeSnippetApply(snippet -> {
             String code = snippet.getCode();
-            if (StringUtils.contains(code, "⨁")) {
+            if (Strings.CS.contains(code, "⨁")) {
                 String old = textArea.getSelectedText();
-                String replaced = StringUtils.replace(code, "⨁", old);
+                String replaced = Strings.CS.replace(code, "⨁", old);
                 textArea.replaceSelection(replaced);
             }
             else {
