@@ -1,5 +1,19 @@
 # Change Logs
 
+### V1.14.2 Unstable Release
+
+* Improvements:
+	* Disable the thinking mode for AI models by default.  
+	* Update Qwen model `qwen3.6-flash` and `qwen3.6-plus`.  
+	* Update Moonshot model `kimi-k2.6`.
+	* Update DeepSeek models `deepseek-v4-flash` and `deepseek-v4-pro`.
+	* Update more i18n translations.
+
+* Bug Fixes:
+	* Test connection button should be disabled when no embedding store type is selected.
+
+* Update dependencies.
+
 ### V1.14.1 Unstable Release
 * Improvements
 	* i18n refactor.
