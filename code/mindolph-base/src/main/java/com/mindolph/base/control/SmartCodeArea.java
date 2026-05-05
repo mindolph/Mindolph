@@ -359,7 +359,14 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
 
     @Override
     protected void handleInputMethodEvent(InputMethodEvent event) {
-        super.handleInputMethodEvent(event);
+        // WORKAROUND: the RichTextFX generates java.lang.IndexOutOfBoundsException randomly here for no reasons, so just catch it and ignore it.
+        try {
+            super.handleInputMethodEvent(event);
+        } catch (Exception e) {
+            log.warn(e.getLocalizedMessage());
+            // JUST IGNORE
+            return;
+        }
 //        if (!isInputHelperEnabled()) {
 //            log.debug("'%s'%n", event.getCommitted());
 //            return;
