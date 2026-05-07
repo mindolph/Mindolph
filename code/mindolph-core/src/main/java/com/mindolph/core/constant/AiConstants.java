@@ -75,15 +75,15 @@ public interface AiConstants {
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-mini", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-nano", 32768));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4", 8192));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4-turbo", 4096));
+//            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4-turbo", 4096));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o", 16384));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o-mini", 16384));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo", 4096));
-            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
+//            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo", 4096));
+//            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
             // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-pro-preview", 65536));
-            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-flash-lite-preview", 65536));
+            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-flash-lite", 65536));
 //            put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-pro-preview", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-flash-preview", 65536));
             put(GenAiModelProvider.GEMINI.name(), new ModelMeta("gemini-2.5-pro", 65536));
@@ -110,19 +110,19 @@ public interface AiConstants {
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-30b-a3b", 16384));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-14b", 16384));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-8b", 16384));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-4b", 16384));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-1.7b", 16384));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-0.6b", 16384));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-omni-7b", 2048));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct-1m", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct-1m", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-72b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-32b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-3b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-1.5b-instruct", 8192));
-            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-0.5b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-4b", 16384));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-1.7b", 16384));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-0.6b", 16384));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-omni-7b", 2048));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct-1m", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct-1m", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-72b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-32b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-14b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-7b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-3b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-1.5b-instruct", 8192));
+//            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2.5-0.5b-instruct", 8192));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2-72b-instruct", 6144));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2-57b-a14b-instruct", 6144));
 //            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen2-7b-instruct", 6144));
@@ -181,12 +181,12 @@ public interface AiConstants {
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-z1-flash", 32768));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-plus", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-airx", 4095));
-            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-air", 4095));
+//            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-air", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-long", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-flashx", 4095));
-            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-flash", 4095));
+//            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-flash", 4095));
             put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4-9b", 4095));
-            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4", 4095));
+//            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-4", 4095));
 //            put(GenAiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-3-turbo", 4095));
 
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
