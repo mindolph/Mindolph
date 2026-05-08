@@ -60,6 +60,8 @@ public interface AiConstants {
     MultiValuedMap<String, ModelMeta> PROVIDER_MODELS = new HashSetValuedHashMap<>() {
         {
             // GPT https://platform.openai.com/docs/models
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.5", 128000));
+            put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.5-pro", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4-pro", 128000));
             put(GenAiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.4-mini", 128000));
@@ -98,8 +100,16 @@ public interface AiConstants {
             // Qwen https://help.aliyun.com/zh/model-studio/models?spm=a2c4g.11186623.help-menu-2400256.d_0_0_2.677b394evAGcfh
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-flash", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-plus", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-27b", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-35b-a3b", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-flash", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-plus", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-omni-flash", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-omni-plus", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-35b-a3b", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-27b", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-122b-a10b", 65536));
+            put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-397b-a17b", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", 65536));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-omni-flash", 16384));
             put(GenAiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-next-80b-a3b-instruct", 16384));
