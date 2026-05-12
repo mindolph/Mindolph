@@ -8,7 +8,7 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.junit.jupiter.api.Test;
 
-import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.core.constant.AiModelProvider.*;
 
 /**
  * @since 1.7.5

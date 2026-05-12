@@ -5,7 +5,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.rag.LocalModelManager;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.genai.ChoiceUtils;
@@ -51,7 +51,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbLanguage
      * @param cbModel
      */
-    protected void initEmbeddingModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    protected void initEmbeddingModelRelatedComponents(MChoiceBox<Pair<AiModelProvider, String>> cbProvider,
                                                        MChoiceBox<Pair<String, String>> cbLanguage,
                                                        MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, cbLanguage, cbModel, MODEL_TYPE_EMBEDDING);
@@ -62,7 +62,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbProvider
      * @param cbModel
      */
-    protected void initChatModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    protected void initChatModelRelatedComponents(MChoiceBox<Pair<AiModelProvider, String>> cbProvider,
                                                   MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         this.initModelRelatedComponents(cbProvider, null, cbModel, MODEL_TYPE_CHAT);
     }
@@ -73,7 +73,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
      * @param cbModel
      * @param type       1 is chat model, 2 is embedding model, see {@link AiConstants}
      */
-    private void initModelRelatedComponents(MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+    private void initModelRelatedComponents(MChoiceBox<Pair<AiModelProvider, String>> cbProvider,
                                             MChoiceBox<Pair<String, String>> cbLanguage,
                                             MChoiceBox<Pair<String, ModelMeta>> cbModel,
                                             int type) {
@@ -91,8 +91,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
             });
         }
         cbProvider.setConverter(new ProviderConverter());
-        List<GenAiModelProvider> filteredProviders = this.filteredProvidersByHavingModelsForType(type);
-        List<Pair<GenAiModelProvider, String>> providerPairs = filteredProviders.stream().map(providerDisplayMapper).toList();
+        List<AiModelProvider> filteredProviders = this.filteredProvidersByHavingModelsForType(type);
+        List<Pair<AiModelProvider, String>> providerPairs = filteredProviders.stream().map(providerDisplayMapper).toList();
         cbProvider.getItems().add(null); // none select
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -202,8 +202,8 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
         }
     }
 
-    public List<GenAiModelProvider> filteredProvidersByHavingModelsForType(int type) {
-        return EnumUtils.getEnumList(GenAiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
+    public List<AiModelProvider> filteredProvidersByHavingModelsForType(int type) {
+        return EnumUtils.getEnumList(AiModelProvider.class).stream().filter(provider -> hasModelsForType(provider.name(), type)).toList();
     }
 
     // Whether there are any specific type of models for the provider
@@ -212,9 +212,9 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
                 || CollectionUtils.isNotEmpty(LlmConfig.getIns().getFilteredCustomModels(providerName, modelType));
     }
 
-    protected void selectProviderAndModel(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
+    protected void selectProviderAndModel(ChoiceBox<Pair<AiModelProvider, String>> cbProvider, ChoiceBox<Pair<String, ModelMeta>> cbModel, String prefKey) {
         if (StringUtils.isNotBlank(prefKey)) {
-            Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(prefKey);
+            Tuple2<AiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(prefKey);
             if (providerModel != null) {
                 ChoiceUtils.selectOrUnselectProvider(cbProvider, providerModel.a());
                 ChoiceUtils.selectOrUnselectModel(cbModel, providerModel.b().getName());
@@ -223,7 +223,7 @@ public class BaseModelProviderPrefPane extends BaseLoadingSavingPrefsPane {
     }
 
     protected void saveProviderAndModelSelection(String prefKey,
-                                                 MChoiceBox<Pair<GenAiModelProvider, String>> cbProvider,
+                                                 MChoiceBox<Pair<AiModelProvider, String>> cbProvider,
                                                  MChoiceBox<Pair<String, ModelMeta>> cbModel) {
         if (!cbProvider.hasSelected() || !cbModel.hasSelected()) {
             super.fxPreferences.removePreference(prefKey);

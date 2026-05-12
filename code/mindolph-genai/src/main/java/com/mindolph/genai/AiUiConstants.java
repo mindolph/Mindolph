@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
@@ -79,16 +79,16 @@ public interface AiUiConstants {
 
     StringConverter<Pair<String, ModelMeta>> modelMetaConverter = new ModelMetaConverter();
 
-    StringConverter<Pair<GenAiModelProvider, String>> providerConverter = new ProviderConverter();
+    StringConverter<Pair<AiModelProvider, String>> providerConverter = new ProviderConverter();
 
-    class ProviderConverter extends StringConverter<Pair<GenAiModelProvider, String>> {
+    class ProviderConverter extends StringConverter<Pair<AiModelProvider, String>> {
         @Override
-        public String toString(Pair<GenAiModelProvider, String> pair) {
+        public String toString(Pair<AiModelProvider, String> pair) {
             return pair == null ? "" : pair.getValue();
         }
 
         @Override
-        public Pair<GenAiModelProvider, String> fromString(String string) {
+        public Pair<AiModelProvider, String> fromString(String string) {
             return null;
         }
     }
@@ -105,9 +105,9 @@ public interface AiUiConstants {
         }
     }
 
-    Function<GenAiModelProvider, Pair<GenAiModelProvider, String>> providerDisplayMapper = p -> {
+    Function<AiModelProvider, Pair<AiModelProvider, String>> providerDisplayMapper = p -> {
         // workaround for localize the Internal provider.
-        if (p.getType() == GenAiModelProvider.ProviderType.INTERNAL) {
+        if (p.getType() == AiModelProvider.ProviderType.INTERNAL) {
             return new Pair<>(p, I18nHelper.getInstance().get("prefs.ai.provider.internal"));
         }
         else {

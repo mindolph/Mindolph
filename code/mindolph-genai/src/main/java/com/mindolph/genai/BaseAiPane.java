@@ -5,7 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.util.converter.PairStringStringConverter;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.util.FxmlUtils;
@@ -37,7 +37,7 @@ public abstract class BaseAiPane extends StackPane {
 
     private static final Logger log = LoggerFactory.getLogger(BaseAiPane.class);
     @FXML
-    protected ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider;
+    protected ChoiceBox<Pair<AiModelProvider, String>> cbProvider;
     @FXML
     protected ChoiceBox<Pair<String, ModelMeta>> cbModel;
     @FXML
@@ -66,7 +66,7 @@ public abstract class BaseAiPane extends StackPane {
         lbIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));
         btnClose.setGraphic(FontIconManager.getIns().getIcon(IconKey.CLOSE));
 
-        Tuple2<GenAiModelProvider, ModelMeta> generateModel = GenAiUtils.parseModelPreference(modelPrefKey);
+        Tuple2<AiModelProvider, ModelMeta> generateModel = GenAiUtils.parseModelPreference(modelPrefKey);
 
         if (generateModel == null) {
             log.warn("You haven't setup the default provider and model");
@@ -89,7 +89,7 @@ public abstract class BaseAiPane extends StackPane {
 
         // load all providers and pre-select the preferred provider from user preferences.
         cbProvider.setConverter(AiUiConstants.providerConverter);
-        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
+        List<Pair<AiModelProvider, String>> providerPairs = EnumUtils.getEnumList(AiModelProvider.class).stream().map(p -> new Pair<>(p, p.getDisplayName())).toList();
         cbProvider.getItems().addAll(providerPairs);
         cbProvider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -97,7 +97,7 @@ public abstract class BaseAiPane extends StackPane {
                 this.reloadModels(newValue.getKey().name());
             }
         });
-        ChoiceUtils.selectProvider(cbProvider, GenAiModelProvider.valueOf(providerName));
+        ChoiceUtils.selectProvider(cbProvider, AiModelProvider.valueOf(providerName));
 
         this.reloadModels(providerName);
 

@@ -1,7 +1,7 @@
 package com.mindolph.core.llm;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.swiftboot.util.PathUtils;
 
@@ -19,7 +19,7 @@ public class DatasetMeta implements Serializable {
 
     private String id;
     private String name;
-    private GenAiModelProvider provider;
+    private AiModelProvider provider;
     private String embeddingModel;
     private String languageCode;
     private List<File> files;
@@ -99,11 +99,11 @@ public class DatasetMeta implements Serializable {
         this.name = name;
     }
 
-    public GenAiModelProvider getProvider() {
+    public AiModelProvider getProvider() {
         return provider;
     }
 
-    public void setProvider(GenAiModelProvider provider) {
+    public void setProvider(AiModelProvider provider) {
         this.provider = provider;
     }
 

@@ -4,8 +4,8 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import org.swiftboot.util.I18nHelper;
 
-import static com.mindolph.core.constant.GenAiModelProvider.*;
-import static com.mindolph.core.constant.GenAiModelProvider.MOONSHOT;
+import static com.mindolph.core.constant.AiModelProvider.*;
+import static com.mindolph.core.constant.AiModelProvider.MOONSHOT;
 
 /**
  * @since 1.13.0

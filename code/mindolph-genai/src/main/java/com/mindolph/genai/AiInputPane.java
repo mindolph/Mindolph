@@ -5,7 +5,7 @@ import com.mindolph.base.constant.IconKey;
 import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.base.genai.InputBuilder;
 import com.mindolph.base.util.NodeUtils;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.SupportFileTypes;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.dialog.DialogFactory;
@@ -69,7 +69,7 @@ public class AiInputPane extends BaseAiPane {
             taInput.positionCaret(defaultInput.length());
         }
 
-        String providerDisplayName = GenAiModelProvider.valueOf(super.providerName).getDisplayName();
+        String providerDisplayName = AiModelProvider.valueOf(super.providerName).getDisplayName();
         taInput.setPromptText(i18n.get("ai.generate.prompt.hint", providerDisplayName));
 
 //        lbModel.setGraphic(FontIconManager.getIns().getIcon(IconKey.MAGIC));

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.mfx.preference.FxPreferences;
 import javafx.scene.control.ChoiceBox;
@@ -49,7 +49,7 @@ public class ChoiceUtils {
         }
     }
 
-    public static void selectOrUnselectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider, GenAiModelProvider provider) {
+    public static void selectOrUnselectProvider(ChoiceBox<Pair<AiModelProvider, String>> cbProvider, AiModelProvider provider) {
         if (provider != null) {
             ChoiceUtils.selectProvider(cbProvider, provider);
         }
@@ -74,8 +74,8 @@ public class ChoiceUtils {
      * @param provider
      * @since 1.13.0
      */
-    public static void selectProvider(ChoiceBox<Pair<GenAiModelProvider, String>> choiceBox, GenAiModelProvider provider) {
-        for (Pair<GenAiModelProvider, String> item : choiceBox.getItems()) {
+    public static void selectProvider(ChoiceBox<Pair<AiModelProvider, String>> choiceBox, AiModelProvider provider) {
+        for (Pair<AiModelProvider, String> item : choiceBox.getItems()) {
             if (item != null && item.getKey() == provider) {
                 choiceBox.getSelectionModel().select(item);
                 break;

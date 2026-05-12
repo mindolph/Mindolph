@@ -3,7 +3,7 @@ package com.mindolph.core.constant;
 /**
  * @author mindolph.com@gmail.com
  */
-public enum GenAiModelProvider {
+public enum AiModelProvider {
 
     OPEN_AI("OpenAI", ProviderType.PUBLIC),
     GEMINI("Gemini", ProviderType.PUBLIC),
@@ -19,7 +19,7 @@ public enum GenAiModelProvider {
     private final String name;
     private final ProviderType type;
 
-    GenAiModelProvider(String name, ProviderType type) {
+    AiModelProvider(String name, ProviderType type) {
         this.name = name;
         this.type = type;
     }
@@ -30,8 +30,8 @@ public enum GenAiModelProvider {
      * @return
      */
     @Deprecated
-    public static GenAiModelProvider fromName(String name) {
-        for (GenAiModelProvider vendor : GenAiModelProvider.values()) {
+    public static AiModelProvider fromName(String name) {
+        for (AiModelProvider vendor : AiModelProvider.values()) {
             if (vendor.name.equals(name)) {
                 return vendor;
             }

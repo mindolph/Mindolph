@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.util.ConfigUtils;
 import com.mindolph.core.constant.AiConstants;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.*;
 import com.mindolph.core.util.GsonUtils;
@@ -60,7 +60,7 @@ public class LlmConfig {
      * @param provider
      * @param providerMeta
      */
-    public void saveProviderMeta(GenAiModelProvider provider, ProviderMeta providerMeta) {
+    public void saveProviderMeta(AiModelProvider provider, ProviderMeta providerMeta) {
         Map<String, ProviderMeta> providerPropsMap = this.loadAllProviderMetas();
         providerPropsMap.put(provider.name(), providerMeta);
         String json = new Gson().toJson(providerPropsMap);
@@ -86,7 +86,7 @@ public class LlmConfig {
         return null;
     }
 
-    public ModelMeta lookupModel(GenAiModelProvider provider, String modelName) {
+    public ModelMeta lookupModel(AiModelProvider provider, String modelName) {
         return lookupModel(provider.name(), modelName);
     }
 
@@ -117,7 +117,7 @@ public class LlmConfig {
      * @return
      */
     @Deprecated(since = "1.13")
-    public Tuple2<GenAiModelProvider, String> getActiveProviderMeta() {
+    public Tuple2<AiModelProvider, String> getActiveProviderMeta() {
         String providerName = fxPreferences.getPreference(PrefConstants.GEN_AI_PROVIDER_ACTIVE, String.class);
         if (StringUtils.isBlank(providerName)) {
             return null;
@@ -126,10 +126,10 @@ public class LlmConfig {
         if (providerMeta != null) {
             if (StringUtils.isBlank(providerMeta.aiModel()) || CUSTOM_MODEL_KEY.equals(providerMeta.aiModel())) {
                 Optional<ModelMeta> opt = providerMeta.customModels().stream().filter(ModelMeta::active).findFirst();
-                return opt.map(modelMeta -> new Tuple2<>(GenAiModelProvider.valueOf(providerName), modelMeta.getName())).orElse(null);
+                return opt.map(modelMeta -> new Tuple2<>(AiModelProvider.valueOf(providerName), modelMeta.getName())).orElse(null);
             }
             else {
-                return new Tuple2<>(GenAiModelProvider.valueOf(providerName), providerMeta.aiModel());
+                return new Tuple2<>(AiModelProvider.valueOf(providerName), providerMeta.aiModel());
             }
         }
         return null;
@@ -144,7 +144,7 @@ public class LlmConfig {
      * @deprecated
      */
     @Deprecated(since = "1.13")
-    public void activateCustomModel(GenAiModelProvider provider, ModelMeta modelMeta) {
+    public void activateCustomModel(AiModelProvider provider, ModelMeta modelMeta) {
         ProviderMeta providerMeta = this.loadProviderMeta(provider.name());
         for (ModelMeta customModel : providerMeta.customModels()) {
             customModel.setActive(customModel.getName().equals(modelMeta.getName()));

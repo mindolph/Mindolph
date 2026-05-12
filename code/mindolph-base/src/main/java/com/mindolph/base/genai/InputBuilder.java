@@ -2,7 +2,7 @@ package com.mindolph.base.genai;
 
 import com.mindolph.base.genai.GenAiEvents.Input;
 import com.mindolph.core.constant.AiConstants.OutputAdjust;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -16,7 +16,7 @@ public class InputBuilder {
     private String outputLanguage;
     private boolean isRetry;
     private boolean isStreaming;
-    private GenAiModelProvider provider;
+    private AiModelProvider provider;
     private String model = StringUtils.EMPTY;
 
     public InputBuilder text(String text) {
@@ -54,7 +54,7 @@ public class InputBuilder {
         return this;
     }
 
-    public InputBuilder provider(GenAiModelProvider provider) {
+    public InputBuilder provider(AiModelProvider provider) {
         this.provider = provider;
         return this;
     }

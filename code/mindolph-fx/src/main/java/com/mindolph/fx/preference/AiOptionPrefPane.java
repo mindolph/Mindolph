@@ -6,7 +6,7 @@ import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
 import com.mindolph.base.util.NodeUtils;
 import com.mindolph.base.util.converter.PairStringStringConverter;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.VectorStoreProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.VectorStoreMeta;
@@ -63,12 +63,12 @@ public class AiOptionPrefPane extends BaseModelProviderPrefPane implements Initi
     private Button btnTestConnection;
 
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderGenerate;
+    protected MChoiceBox<Pair<AiModelProvider, String>> cbProviderGenerate;
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbModelGenerate;
 
     @FXML
-    protected MChoiceBox<Pair<GenAiModelProvider, String>> cbProviderSummarize;
+    protected MChoiceBox<Pair<AiModelProvider, String>> cbProviderSummarize;
     @FXML
     protected MChoiceBox<Pair<String, ModelMeta>> cbModelSummarize;
 

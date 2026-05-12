@@ -5,7 +5,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.genai.llm.OkHttpClientBuilder;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
@@ -67,7 +67,7 @@ public interface LangChainSupport {
      * @param providerType
      * @return
      */
-    static LangChainSupport createSupport(GenAiModelProvider providerType) {
+    static LangChainSupport createSupport(AiModelProvider providerType) {
         switch (providerType) {
             case OPEN_AI -> {
                 return new OpenAiLangChainSupport() {

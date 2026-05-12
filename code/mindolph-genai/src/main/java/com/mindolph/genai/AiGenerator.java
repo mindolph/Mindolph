@@ -15,8 +15,8 @@ import com.mindolph.base.genai.llm.OutputParams;
 import com.mindolph.base.genai.llm.StreamPartial;
 import com.mindolph.base.plugin.Generator;
 import com.mindolph.base.plugin.Plugin;
-import com.mindolph.core.constant.GenAiModelProvider;
-import com.mindolph.core.constant.GenAiModelProvider.ProviderType;
+import com.mindolph.core.constant.AiModelProvider;
+import com.mindolph.core.constant.AiModelProvider.ProviderType;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -261,12 +261,12 @@ public class AiGenerator implements Generator {
     }
 
     private boolean checkSettings(String modelPrefKey) {
-        Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
+        Tuple2<AiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
             log.warn("Parse model key from preference fail: %s".formatted(modelPrefKey));
             return false;
         }
-        GenAiModelProvider provider = providerModel.a();
+        AiModelProvider provider = providerModel.a();
         Map<String, ProviderMeta> metaMap = LlmConfig.getIns().loadAllProviderMetas();
         if (metaMap.containsKey(provider.name())) {
             ProviderMeta meta = metaMap.get(provider.name());

@@ -6,7 +6,7 @@ import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
 import com.mindolph.base.util.NetworkUtils;
 import com.mindolph.core.config.ProxyMeta;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.AgentMeta;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.llm.ModelMeta;
@@ -184,7 +184,7 @@ public class RagService extends BaseEmbeddingService {
         return true;
     }
 
-    public String extractErrorMessageFromLLM(GenAiModelProvider provider, String llmMsg) {
+    public String extractErrorMessageFromLLM(AiModelProvider provider, String llmMsg) {
         if (this.supportedByLangchain(provider) && langChainSupport != null) {
             try {
                 return langChainSupport.extractErrorMessageFromLLM(llmMsg);
@@ -199,7 +199,7 @@ public class RagService extends BaseEmbeddingService {
     }
 
     private StreamingChatModel buildStreamingChatModel(AgentMeta agentMeta) {
-        GenAiModelProvider provider = agentMeta.getChatProvider();
+        AiModelProvider provider = agentMeta.getChatProvider();
         if (this.supportedByLangchain(provider)) {
             this.langChainSupport = LangChainSupport.createSupport(provider);
             ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider.name());
@@ -221,13 +221,13 @@ public class RagService extends BaseEmbeddingService {
         }
     }
 
-    private boolean supportedByLangchain(GenAiModelProvider genAiModelProvider) {
+    private boolean supportedByLangchain(AiModelProvider aiModelProvider) {
         // NOTE: some providers are supported by LangChain4j but not with streaming like ChatGLM, they are excluded.
         // some providers support like HuggingFace don't include some features like streaming, they are also excluded.
-        return GenAiModelProvider.ALI_Q_WEN == genAiModelProvider
-                || GenAiModelProvider.OPEN_AI == genAiModelProvider
-                || GenAiModelProvider.OLLAMA == genAiModelProvider
-                || GenAiModelProvider.GEMINI == genAiModelProvider;
+        return AiModelProvider.ALI_Q_WEN == aiModelProvider
+                || AiModelProvider.OPEN_AI == aiModelProvider
+                || AiModelProvider.OLLAMA == aiModelProvider
+                || AiModelProvider.GEMINI == aiModelProvider;
     }
 
     private ContentRetriever buildContentRetriever(String agentId) {

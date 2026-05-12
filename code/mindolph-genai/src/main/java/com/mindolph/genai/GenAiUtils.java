@@ -1,6 +1,6 @@
 package com.mindolph.genai;
 
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
@@ -26,18 +26,18 @@ public class GenAiUtils {
      * @return
      * @since 1.13.0
      */
-    public static Tuple2<GenAiModelProvider, ModelMeta> parseModelPreference(String prefKey) {
+    public static Tuple2<AiModelProvider, ModelMeta> parseModelPreference(String prefKey) {
         String preferenceValue = FxPreferences.getInstance().getPreference(prefKey, String.class);
         if (StringUtils.isNotBlank(preferenceValue)) {
             String[] split = StringUtils.split(preferenceValue, ":");
             if (ArrayUtils.isEmpty(split) || split.length != 2) {
                 return null;
             }
-            GenAiModelProvider genAiModelProvider = EnumUtils.getEnum(GenAiModelProvider.class, split[0]);
-            if (genAiModelProvider == null) {
+            AiModelProvider aiModelProvider = EnumUtils.getEnum(AiModelProvider.class, split[0]);
+            if (aiModelProvider == null) {
                 return null;
             }
-            return new Tuple2<>(genAiModelProvider, new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
+            return new Tuple2<>(aiModelProvider, new ModelMeta(split[1], 0)); // maxTokens doesn't work here.
         }
         return null;
     }

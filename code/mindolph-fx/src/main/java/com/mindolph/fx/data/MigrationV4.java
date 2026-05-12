@@ -2,7 +2,7 @@ package com.mindolph.fx.data;
 
 import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.llm.LlmConfig;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.preference.FxPreferences;
 
@@ -24,7 +24,7 @@ public class MigrationV4 implements Migration {
     }
 
     private static void migrateActiveModel() {
-        Tuple2<GenAiModelProvider, String> providerModel = LlmConfig.getIns().getActiveProviderMeta();
+        Tuple2<AiModelProvider, String> providerModel = LlmConfig.getIns().getActiveProviderMeta();
         if (providerModel != null) {
             FxPreferences.getInstance().savePreference(PrefConstants.GEN_AI_GENERATE_MODEL, "%s:%s".formatted(providerModel.a(), providerModel.b()));
             FxPreferences.getInstance().savePreference(PrefConstants.GEN_AI_SUMMARIZE_MODEL, "%s:%s".formatted(providerModel.a(), providerModel.b()));

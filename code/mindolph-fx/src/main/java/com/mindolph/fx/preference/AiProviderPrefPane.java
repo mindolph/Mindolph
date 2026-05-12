@@ -6,7 +6,7 @@ import com.mindolph.base.control.BaseLoadingSavingPrefsPane;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.plugin.PluginEvent;
 import com.mindolph.base.plugin.PluginEventBus;
-import com.mindolph.core.constant.GenAiModelProvider;
+import com.mindolph.core.constant.AiModelProvider;
 import com.mindolph.core.constant.SceneStatePrefs;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import static com.mindolph.core.constant.AiConstants.PROVIDER_MODELS;
-import static com.mindolph.core.constant.GenAiModelProvider.*;
+import static com.mindolph.core.constant.AiModelProvider.*;
 import static com.mindolph.core.constant.SceneStatePrefs.GEN_AI_PROVIDER_ACTIVE;
 import static com.mindolph.genai.AiUiConstants.*;
 import static com.mindolph.genai.GenAiUtils.displayGenAiTokens;
@@ -43,7 +43,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     private static final Logger log = LoggerFactory.getLogger(AiProviderPrefPane.class);
 
     @FXML
-    private ChoiceBox<Pair<GenAiModelProvider, String>> cbProvider;
+    private ChoiceBox<Pair<AiModelProvider, String>> cbProvider;
     @FXML
     private TextField tfApiKey;
     @FXML
@@ -72,7 +72,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         super.beforeLoading();
         // model providers
         cbProvider.setConverter(providerConverter);
-        List<Pair<GenAiModelProvider, String>> providerPairs = EnumUtils.getEnumList(GenAiModelProvider.class).stream().map(providerDisplayMapper).toList();
+        List<Pair<AiModelProvider, String>> providerPairs = EnumUtils.getEnumList(AiModelProvider.class).stream().map(providerDisplayMapper).toList();
         cbProvider.getItems().addAll(providerPairs);
 
         lvModels.setCellFactory(modelMetaListView -> {
@@ -103,7 +103,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                 selected -> {
 //                    super.beforeLoading();
                     Map<String, ProviderMeta> map = LlmConfig.getIns().loadAllProviderMetas();
-                    GenAiModelProvider provider = selected.getKey();
+                    AiModelProvider provider = selected.getKey();
                     if (provider != null) {
                         log.debug("Load models for gen-ai provider: %s".formatted(provider.name()));
                         this.currentProviderName = provider.name();
@@ -165,7 +165,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
 
         // pre-select latest selected provider
         String latestProviderKey = super.fxPreferences.getPreferenceAlias(SceneStatePrefs.GEN_AI_PROVIDER_LATEST, GEN_AI_PROVIDER_ACTIVE, String.class);
-        int selectIdx = cbProvider.getItems().stream().map(Pair::getKey).map(GenAiModelProvider::name).toList().indexOf(latestProviderKey);
+        int selectIdx = cbProvider.getItems().stream().map(Pair::getKey).map(AiModelProvider::name).toList().indexOf(latestProviderKey);
         log.debug("pre-select provider item %s at index %s".formatted(latestProviderKey, selectIdx));
         cbProvider.getSelectionModel().select(selectIdx);
 
@@ -261,6 +261,6 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         currentProviderMeta.setApiKey(tfApiKey.getText());
         currentProviderMeta.setBaseUrl(tfBaseUrl.getText());
         currentProviderMeta.setUseProxy(cbUseProxy.isSelected());
-        LlmConfig.getIns().saveProviderMeta(GenAiModelProvider.valueOf(currentProviderName), currentProviderMeta);
+        LlmConfig.getIns().saveProviderMeta(AiModelProvider.valueOf(currentProviderName), currentProviderMeta);
     }
 }
