@@ -48,8 +48,8 @@
         <jsoup.version>1.22.2</jsoup.version>
         <json.version>20251224</json.version>
         <flexmark.version>0.64.8</flexmark.version>
-        <langchain4j.version>1.13.1</langchain4j.version>
-        <langchain4j.community.version>1.13.1-beta23</langchain4j.community.version>
+        <langchain4j.version>1.14.1</langchain4j.version>
+        <langchain4j.community.version>1.14.1-beta24</langchain4j.community.version>
         <dashscope.version>2.22.16</dashscope.version>
         <!-- Just because dashscope need it and the old version doesn't work with JDK 24 -->
         <lombok.version>1.18.42</lombok.version>
@@ -516,6 +516,11 @@
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
+                <version>${okhttp3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-sse</artifactId>
                 <version>${okhttp3.version}</version>
             </dependency>
 <!--            <dependency>-->

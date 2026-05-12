@@ -85,7 +85,7 @@ public class AiGenerator implements Generator {
         Consumer<String> onError = msg -> {
             Platform.runLater(() -> {
                 cancelConsumer.accept(false);
-                String err = "Failed to generate content: \n %s\n".formatted(msg);
+                String err = i18n.get("ai.generate.msg.fail", msg);
                 if (inputPanel != null) inputPanel.onStop(err);
                 if (reframePanel != null) reframePanel.onStop(err);
             });
@@ -107,7 +107,7 @@ public class AiGenerator implements Generator {
                         beforeGenerateConsumer.accept(null);
                 });
                 if (streamOutputConsumer == null) {
-                    onError.accept("Not support stream generation");
+                    onError.accept(i18n.get("ai.generate.msg.not.support"));
                     return;
                 }
                 LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),
@@ -263,7 +263,7 @@ public class AiGenerator implements Generator {
     private boolean checkSettings(String modelPrefKey) {
         Tuple2<GenAiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
-            log.warn("Parse modek key from preference fail: %s".formatted(modelPrefKey));
+            log.warn("Parse model key from preference fail: %s".formatted(modelPrefKey));
             return false;
         }
         GenAiModelProvider provider = providerModel.a();
@@ -274,7 +274,7 @@ public class AiGenerator implements Generator {
             log.debug("Provider: %s".formatted(provider));
             log.trace(String.valueOf(meta));
             if (provider.getType() == ProviderType.PUBLIC) {
-                return StringUtils.isNotBlank(meta.apiKey()) ;
+                return StringUtils.isNotBlank(meta.apiKey());
             }
             else if (provider.getType() == ProviderType.PRIVATE) {
                 return StringUtils.isNotBlank(meta.baseUrl());

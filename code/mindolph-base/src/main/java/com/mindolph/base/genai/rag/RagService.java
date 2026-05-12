@@ -4,7 +4,6 @@ import com.mindolph.base.constant.PrefConstants;
 import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.genai.llm.LlmConfig;
 import com.mindolph.base.genai.llm.OkHttpClientAdapter;
-import com.mindolph.base.genai.langchain.LangChainSupport;
 import com.mindolph.base.util.NetworkUtils;
 import com.mindolph.core.config.ProxyMeta;
 import com.mindolph.core.constant.GenAiModelProvider;
@@ -27,10 +26,8 @@ import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.swiftboot.util.I18nHelper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +43,6 @@ import java.util.function.Consumer;
 public class RagService extends BaseEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(RagService.class);
-    private static final I18nHelper i18n = I18nHelper.getInstance();
 
     private static RagService instance;
 

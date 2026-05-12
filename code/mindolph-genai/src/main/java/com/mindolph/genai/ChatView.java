@@ -114,7 +114,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.SWITCH_FAILED)
                 .in(payload -> {
-                    lblAgent.setText(i18n.get("ai.agent.switching.fail", payload.getName() ));
+                    lblAgent.setText(i18n.get("ai.agent.switching.fail", payload.getName()));
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })
@@ -228,10 +228,12 @@ public class ChatView extends BaseView implements Initializable {
             else if (pluginEvent.getEventType() == EventType.DATASET_PREF_CHANGED) {
                 if (pluginEvent.getPayload() instanceof DatasetMeta dm) {
                     // Only changes to the dataset contained in the agent will trigger an agent reload.
-                    log.debug("Dataset '%s'(%s) is changed".formatted(dm.getName(), dm.getId()));
-                    log.debug(StringUtils.join(currentAgentMeta.getDatasetIds(), ","));
-                    if (currentAgentMeta.getDatasetIds().contains(dm.getId())) {
-                        this.loadAgents();
+                    if (currentAgentMeta != null) {
+                        log.debug("Dataset '%s'(%s) is changed".formatted(dm.getName(), dm.getId()));
+                        log.debug(StringUtils.join(currentAgentMeta.getDatasetIds(), ","));
+                        if (currentAgentMeta.getDatasetIds().contains(dm.getId())) {
+                            this.loadAgents();
+                        }
                     }
                 }
             }

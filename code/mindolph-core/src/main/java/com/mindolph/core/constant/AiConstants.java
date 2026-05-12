@@ -208,9 +208,9 @@ public interface AiConstants {
             // Moonshot https://platform.moonshot.cn/docs/introduction#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.6", 262144, 1.0f));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", 262144, 0.6f));
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144, 0.6f));
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144, 0.6f));
-            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking-turbo", 262144, 0.6f));
+//            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144, 0.6f));
+//            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144, 0.6f));
+//            put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking-turbo", 262144, 0.6f));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-8k", 8192, 0f));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-32k", 32768, 0f));
             put(GenAiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-128k", 131072, 0f));
