@@ -59,6 +59,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.VersionUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -866,7 +867,7 @@ public class MainController extends BaseController implements Initializable,
 
             currentVersion = "v" + currentVersion;
 
-            if (currentVersion.compareTo(latest.getVersion()) < 0) {
+            if (VersionUtils.lessThan(currentVersion, latest.getVersion())) {
                 if (StringUtils.isNotBlank(latest.getUrl())) {
                     String msg = i18n.get("msg.update.available.content", latest.getVersion(), currentVersion);
                     Platform.runLater(() -> {
@@ -877,7 +878,6 @@ public class MainController extends BaseController implements Initializable,
                     return;
                 }
             }
-
             showCheckUpdatesToast(i18n.get("msg.update.check.updated"));
         });
     }

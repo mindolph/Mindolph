@@ -82,7 +82,7 @@ public class AiGenerator implements Generator {
         Consumer<String> onError = msg -> {
             Platform.runLater(() -> {
                 cancelConsumer.accept(false);
-                String err = "Failed to generate content: \n %s\n".formatted(msg);
+                String err = i18n.get("ai.generate.msg.fail", msg);
                 if (inputPanel != null) inputPanel.onStop(err);
                 if (reframePanel != null) reframePanel.onStop(err);
             });
@@ -104,7 +104,7 @@ public class AiGenerator implements Generator {
                         beforeGenerateConsumer.accept(null);
                 });
                 if (streamOutputConsumer == null) {
-                    onError.accept("Not support stream generation");
+                    onError.accept(i18n.get("ai.generate.msg.not.support"));
                     return;
                 }
                 LlmService.getIns().stream(input, new OutputParams(input.outputAdjust(), FILE_OUTPUT_MAPPING.get(fileType), input.outputLanguage()),

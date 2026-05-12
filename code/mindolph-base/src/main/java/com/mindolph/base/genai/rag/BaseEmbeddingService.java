@@ -17,6 +17,7 @@ import dev.langchain4j.store.embedding.pgvector.MetadataStorageMode;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.sql.Connection;
@@ -40,6 +41,8 @@ public abstract class BaseEmbeddingService {
     private static final int CONNECT_TIME_IN_SECOND = 10;
 
     protected VectorStoreMeta vectorStoreMeta;
+
+    protected I18nHelper i18n = I18nHelper.getInstance();
 
     public BaseEmbeddingService() {
         DriverManager.setLoginTimeout(5);
@@ -100,21 +103,21 @@ public abstract class BaseEmbeddingService {
         File tokenizerFile = LocalModelManager.getIns().getTokenizerFile(langCode, modelMeta);
         if (!modelFile.exists()) {
             // download
-            AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx model..."));
+            AiEventBus.getInstance().emitEvent(new PrepareEvent(i18n.get("embedding.onnx.downloading.model")));
         }
         if (!tokenizerFile.exists()) {
             // download
-            AiEventBus.getInstance().emitEvent(new PrepareEvent("Downloading onnx tokenizer..."));
+            AiEventBus.getInstance().emitEvent(new PrepareEvent(i18n.get("embedding.onnx.downloading.tokenizer")));
         }
         log.debug("Model file: %s".formatted(modelFile.getPath()));
         log.debug("Tokenizer file: %s".formatted(tokenizerFile.getPath()));
         PoolingMode poolingMode = PoolingMode.MEAN;
-        AiEventBus.getInstance().emitEvent(new PrepareEvent("Loading onnx model tokenizer..."));
+        AiEventBus.getInstance().emitEvent(new PrepareEvent(i18n.get("embedding.onnx.loading")));
         return new OnnxEmbeddingModel(modelFile.getPath(), tokenizerFile.getPath(), poolingMode);
     }
 
     protected EmbeddingStore<TextSegment> createEmbeddingStore(EmbeddingModel embeddingModel, boolean createTable, boolean dropTable) {
-        AiEventBus.getInstance().emitEvent(new PrepareEvent("Preparing embedding store..."));
+        AiEventBus.getInstance().emitEvent(new PrepareEvent(i18n.get("embedding.vector.store.prepare")));
         try {
             return PgVectorEmbeddingStore.builder()
                     .host(vectorStoreMeta.getHost())

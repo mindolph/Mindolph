@@ -115,7 +115,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.SWITCH_FAILED)
                 .in(payload -> {
-                    lblAgent.setText(i18n.get("ai.agent.switching.fail", payload.getName() ));
+                    lblAgent.setText(i18n.get("ai.agent.switching.fail", payload.getName()));
                     piAgent.setVisible(false);
                     piAgent.setManaged(false);
                 })

@@ -51,4 +51,6 @@ public interface PrefConstants {
     String PREF_KEY_MD_SANS_FONT_FILE = "md.fontFilePath.sans";
     String PREF_KEY_MD_MONO_FONT_FILE = "md.fontFilePath.mono";
 
+    String USER_METRICS_ID ="user.metrics.id";
+
 }
