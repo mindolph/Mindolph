@@ -1,5 +1,19 @@
 # Change Logs
 
+### V1.14.3 Unstable Release
+
+* Improvements:
+	* Update i18n for AI generation and embedding.
+	* Update new models for OpenAI(`gpt-5.5`,`gpt-5.5-pro`) and Qwen(`qwen3.6-27b` etc).  
+	* Removed deprecated models for OpenAI, Qwen, Moonshot and ChatGLM.  
+	* Add more infomration to metrics.  
+
+* Bug Fixes:
+	* Checking update doesn't work well.
+	* Workaround for RichTextFX weired exceptions.
+
+* Update langchain4j
+
 ### V1.14.2 Unstable Release
 
 * Improvements:
