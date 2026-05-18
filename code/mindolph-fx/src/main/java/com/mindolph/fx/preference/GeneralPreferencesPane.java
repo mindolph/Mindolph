@@ -29,9 +29,10 @@ import static com.mindolph.base.constant.PrefConstants.*;
  */
 public class GeneralPreferencesPane extends BasePrefsPane implements Initializable {
 
-    private static final String PLANT_UML = "Plant UML";
-    private static final String MARKDOWN = "Markdown";
-    private static final String MIND_MAP = "Mind Map";
+    private static final String MIND_MAP = "prefs.orientation.mmd";
+    private static final String PLANT_UML = "prefs.orientation.puml";
+    private static final String MARKDOWN = "prefs.orientation.md";
+
     @FXML
     private CheckBox cbConfirmBeforeQuitting;
     @FXML
@@ -130,13 +131,13 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
         colOrientation.setEditable(true);
         colOrientation.setPrefWidth(180);
 
-        colEditor.setCellValueFactory(param -> {
-            Label label = new Label(param.getValue().editor());
+        colEditor.setCellValueFactory(cell -> {
+            Label label = new Label(i18n.get(cell.getValue().editor()));
             label.setPadding(new Insets(4));
             return new SimpleObjectProperty<>(label);
         });
 
-        colOrientation.setCellValueFactory(param -> {
+        colOrientation.setCellValueFactory(cell -> {
             ChoiceBox<Pair<Orientation, String>> choiceBoxCell = new ChoiceBox<>();
             choiceBoxCell.setMinWidth(120);
             choiceBoxCell.setPadding(new Insets(4));
@@ -154,15 +155,15 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 }
             });
             choiceBoxCell.getItems().addAll(Arrays.stream(Orientation.values()).map(e -> new Pair<>(e, e.toString())).toList());
-            choiceBoxCell.getSelectionModel().select(new Pair<>(param.getValue().orientation, param.getValue().orientation.toString()));
+            choiceBoxCell.getSelectionModel().select(new Pair<>(cell.getValue().orientation, cell.getValue().orientation.toString()));
             choiceBoxCell.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (PLANT_UML.equals(param.getValue().editor)) {
+                if (PLANT_UML.equals(cell.getValue().editor)) {
                     fxPreferences.savePreference(GENERAL_EDITOR_ORIENTATION_PUML, newValue.getKey());
                 }
-                else if (MARKDOWN.equals(param.getValue().editor)) {
+                else if (MARKDOWN.equals(cell.getValue().editor)) {
                     fxPreferences.savePreference(GENERAL_EDITOR_ORIENTATION_MD, newValue.getKey());
                 }
-                else if(MIND_MAP.equals(param.getValue().editor)){
+                else if (MIND_MAP.equals(cell.getValue().editor)) {
                     fxPreferences.savePreference(GENERAL_EDITOR_ORIENTATION_MMD, newValue.getKey());
                 }
             });
