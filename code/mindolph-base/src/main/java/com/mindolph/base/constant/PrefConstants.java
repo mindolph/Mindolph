@@ -9,6 +9,7 @@ public interface PrefConstants {
     String GENERAL_OPEN_LAST_FILES = "general.openLastFiles";
     String GENERAL_KNOWLEDGE_FOLDER_GENERATION_ALLOWED = "general.knowledgeFolderGenerationAllowed";
     String GENERAL_SHOW_HIDDEN_FILES = "general.showHiddenFiles";
+    String GENERAL_EDITOR_ORIENTATION_MMD = "general.editorOrientation.mmd";
     String GENERAL_EDITOR_ORIENTATION_PUML = "general.editorOrientation.puml";
     String GENERAL_EDITOR_ORIENTATION_MD = "general.editorOrientation.md";
     String GENERAL_EDITOR_ENABLE_INPUT_HELPER = "general.enableInputHelper";

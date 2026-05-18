@@ -1,9 +1,5 @@
 package com.mindolph.plantuml;
 
-import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
-import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
-import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_START;
-
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -17,25 +13,6 @@ import com.mindolph.core.constant.TextConstants;
 import com.mindolph.core.search.TextLocation;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mfx.util.AwtImageUtils;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -48,13 +25,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
-
-import javax.imageio.*;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.*;
-
 import net.sourceforge.plantuml.BlockUml;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -70,6 +40,32 @@ import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IoUtils;
 import org.swiftboot.util.TextUtils;
 import org.w3c.dom.NodeList;
+
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_PUML_EDITOR_MONO;
+import static com.mindolph.plantuml.constant.PlantUmlConstants.DIAGRAM_KEYWORDS_START;
 
 /**
  * @author mindolph.com@gmail.com
@@ -87,9 +83,6 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     private PlantUmlToolbar plantUmlToolbar;
 
     private final ContextMenu contextMenu = new ContextMenu();
-
-    private final AtomicLong scrollStartTime = new AtomicLong(0);
-    private final double SCROLL_SPEED_THRESHOLD = 1.75; // the threshold of scroll speed between scroll and swipe.
 
     private final Indicator indicator = new Indicator();
 

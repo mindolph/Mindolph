@@ -120,14 +120,14 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     @FXML
     private VBox vbToolbar;
 
-    private MarkdownToolbar markdownToolbar;
+    private final MarkdownToolbar markdownToolbar;
 
     @FXML
     private WebView webView;
 
     private WebEngine webEngine;
     private String html;
-    private ContextMenu contextMenu;
+    private final ContextMenu contextMenu;
 
     // markdown parser and renderer
     private final Parser parser;

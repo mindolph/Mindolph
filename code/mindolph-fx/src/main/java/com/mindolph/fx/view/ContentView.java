@@ -267,6 +267,16 @@ public class ContentView extends BaseView {
         if (statusBar.isVisible()) {
             if (statusMsg != null) {
                 lbMsgBar.setText(statusMsg.getMsg());
+                // WORKAROUND: MindMap editor with attribute view should not show the floating content.
+                if (editor instanceof MindMapEditor mme) {
+                    if (!mme.isAttributePanelHidden()) {
+                        // clear
+                        this.hyperlink.setText(null);
+                        this.floatingContent = null;
+                        this.updateFloatingPane();
+                        return;
+                    }
+                }
                 this.hyperlink.setText(statusMsg.getTitle());
                 if (statusMsg.getContent() != this.floatingContent) {
                     this.floatingContent = statusMsg.getContent();

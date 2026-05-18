@@ -33,7 +33,7 @@
         <Separator prefWidth="200.0"/>
         <PreferenceItem name="%prefs.general.default.orientation" prefHeight="130.0" minHeight="110"
                         labelMinWidth="280">
-            <TableView fx:id="tvOrientation" minHeight="80.0" minWidth="220.0" prefHeight="80.0" prefWidth="320.0">
+            <TableView fx:id="tvOrientation" minHeight="120.0" minWidth="220.0" prefHeight="120.0" prefWidth="320.0">
             </TableView>
         </PreferenceItem>
         <PreferenceItem name="%prefs.general.enable.input.helper" labelMinWidth="280">
