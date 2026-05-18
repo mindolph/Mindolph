@@ -31,7 +31,9 @@ import com.mindolph.mindmap.model.TopicNode;
 import com.mindolph.mindmap.search.MindMapAnchor;
 import com.mindolph.mindmap.view.AttributesView;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Orientation;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import org.apache.commons.collections4.CollectionUtils;
@@ -93,6 +95,11 @@ public class MindMapEditor extends BaseEditor {
             else {
                 this.fixedSplitPane.hideSecondary();
             }
+            // Orientation
+            if (editorContext.getOrientation() != null) {
+                log.debug("open editor on orientation: %s".formatted(editorContext.getOrientation()));
+                fixedSplitPane.setOrientation(editorContext.getOrientation());
+            }
         });
         attributesView.setMindMapView(this.mindMapView);
 
@@ -106,7 +113,7 @@ public class MindMapEditor extends BaseEditor {
                 event.consume();
                 mindMapView.undo();
             }
-            else if(ShortcutManager.getIns().getKeyCombination(KEY_REDO).match(event)) {
+            else if (ShortcutManager.getIns().getKeyCombination(KEY_REDO).match(event)) {
                 event.consume();
                 mindMapView.redo();
             }
@@ -487,6 +494,16 @@ public class MindMapEditor extends BaseEditor {
 
     public boolean isAttributePanelHidden() {
         return fixedSplitPane.isSecondaryHidden();
+    }
+
+    public void toggleAttributePanelOrientation() {
+        if (!isAttributePanelHidden()) {
+            fixedSplitPane.toggleOrientation();
+        }
+    }
+
+    public ObjectProperty<Orientation> orientationProperty() {
+        return fixedSplitPane.orientationProperty();
     }
 
     @Override

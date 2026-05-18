@@ -360,8 +360,40 @@ public class FileTabView extends BaseView {
         }
         Editable editor = tabEditorMap.get(selectedTab);
         if (editor != null) {
-            if (editor instanceof BasePreviewEditor previewEditor) {
+            if (editor instanceof BasePreviewEditor || editor instanceof MindMapEditor) {
                 MenuItem miChangeSplitterOrientation = new MenuItem(i18n.get("filetab.menu.change.splitter"));
+                miChangeSplitterOrientation.setOnAction(event -> {
+                    Editable selectedEditor = tabEditorMap.get(selectedTab);
+                    if (selectedEditor instanceof BasePreviewEditor bpe) {
+                        bpe.toggleOrientation();
+                    }
+                    else if (selectedEditor instanceof MindMapEditor mme) {
+                        mme.toggleAttributePanelOrientation();
+                    }
+                });
+                Orientation orientation;
+                if (editor instanceof BasePreviewEditor previewEditor) {
+                    previewEditor.orientationObjectProperty()
+                            .addListener((observable, oldValue, newValue) -> {
+                                Text icon = newValue == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
+                                miChangeSplitterOrientation.setGraphic(icon);
+                            });
+                    orientation = previewEditor.getOrientation();
+                }
+                else {
+                    MindMapEditor mme = (MindMapEditor) editor;
+                    mme.orientationProperty().addListener((observableValue, orientation1, t1) -> {
+                        Text icon = t1 == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
+                        miChangeSplitterOrientation.setGraphic(icon);
+                    });
+                    orientation = mme.orientationProperty().get();
+                }
+                Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
+                miChangeSplitterOrientation.setGraphic(icon);
+                contextMenu.getItems().addAll(new SeparatorMenuItem(), miChangeSplitterOrientation);
+            }
+
+            if (editor instanceof BasePreviewEditor) {
                 Menu mViewMode = new Menu(i18n.get("filetab.menu.view.mode"));
                 ToggleGroup toggleGroup = new ToggleGroup();
                 RadioMenuItem miTextOnly = new RadioMenuItem(i18n.get("filetab.menu.text.only"), FontIconManager.getIns().getIcon(IconKey.CODE));
@@ -373,12 +405,6 @@ public class FileTabView extends BaseView {
                 miBoth.setToggleGroup(toggleGroup);
                 mViewMode.getItems().addAll(miTextOnly, miPreviewOnly, miBoth);
 
-                miChangeSplitterOrientation.setOnAction(event -> {
-                    Editable selectedEditor = tabEditorMap.get(selectedTab);
-                    if (selectedEditor instanceof BasePreviewEditor bpe) {
-                        bpe.toggleOrientation();
-                    }
-                });
                 miTextOnly.setOnAction(event -> {
                     Editable selectedEditor = tabEditorMap.get(selectedTab);
                     if (selectedEditor instanceof BasePreviewEditor bpe) {
@@ -397,17 +423,7 @@ public class FileTabView extends BaseView {
                         bpe.changeViewMode(Editable.ViewMode.BOTH);
                     }
                 });
-                previewEditor.orientationObjectProperty()
-                        .addListener((observable, oldValue, newValue) -> {
-                            Orientation orientation = previewEditor.getOrientation();
-                            Text icon =
-                                    orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
-                            miChangeSplitterOrientation.setGraphic(icon);
-                        });
-                Orientation orientation = previewEditor.getOrientation();
-                Text icon = orientation == Orientation.HORIZONTAL ? FontIconManager.getIns().getIcon(IconKey.SWITCH_VERTICAL) : FontIconManager.getIns().getIcon(IconKey.SWITCH_HORIZONTAL);
-                miChangeSplitterOrientation.setGraphic(icon);
-                contextMenu.getItems().addAll(new SeparatorMenuItem(), miChangeSplitterOrientation, mViewMode);
+                contextMenu.getItems().addAll(new SeparatorMenuItem(), mViewMode);
             }
 
             if (editor instanceof MarkdownEditor mde) {

@@ -57,6 +57,7 @@ public class EditorFactory {
                     config.loadFromPreferences();
                     configMap.put(extension, config);
                 }
+                editorContext.setOrientation(FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_EDITOR_ORIENTATION_MMD, Orientation.class, Orientation.VERTICAL));
                 MindMap<TopicNode> mindMapModel = ModelManager.loadMmdFile(editorContext);
                 return new MindMapEditor(editorContext, new ExtraMindMapView(mindMapModel, (MindMapConfig) config));
             case TYPE_MARKDOWN:

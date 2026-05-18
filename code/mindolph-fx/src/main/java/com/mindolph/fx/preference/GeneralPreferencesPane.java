@@ -31,6 +31,7 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
 
     private static final String PLANT_UML = "Plant UML";
     private static final String MARKDOWN = "Markdown";
+    private static final String MIND_MAP = "Mind Map";
     @FXML
     private CheckBox cbConfirmBeforeQuitting;
     @FXML
@@ -161,14 +162,19 @@ public class GeneralPreferencesPane extends BasePrefsPane implements Initializab
                 else if (MARKDOWN.equals(param.getValue().editor)) {
                     fxPreferences.savePreference(GENERAL_EDITOR_ORIENTATION_MD, newValue.getKey());
                 }
+                else if(MIND_MAP.equals(param.getValue().editor)){
+                    fxPreferences.savePreference(GENERAL_EDITOR_ORIENTATION_MMD, newValue.getKey());
+                }
             });
             return new SimpleObjectProperty<>(choiceBoxCell);
         });
         tvOrientation.getColumns().add(colEditor);
         tvOrientation.getColumns().add(colOrientation);
         FxPreferences fxPreferences = FxPreferences.getInstance();
+        tvOrientation.getItems().add(new OrientationItem(MIND_MAP, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_MMD, Orientation.class, Orientation.HORIZONTAL)));
         tvOrientation.getItems().add(new OrientationItem(PLANT_UML, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_PUML, Orientation.class, Orientation.VERTICAL)));
         tvOrientation.getItems().add(new OrientationItem(MARKDOWN, fxPreferences.getPreference(GENERAL_EDITOR_ORIENTATION_MD, Orientation.class, Orientation.HORIZONTAL)));
+
         super.bindPreference(cbEnableInputHelper.selectedProperty(), PrefConstants.GENERAL_EDITOR_ENABLE_INPUT_HELPER, true);
 
         // proxy
