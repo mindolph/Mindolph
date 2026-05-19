@@ -15,6 +15,7 @@ public enum AiModelProvider {
     CHAT_GLM("ChatGLM", ProviderType.PUBLIC),
     DEEP_SEEK("DeepSeek", ProviderType.PUBLIC),
     MOONSHOT("Moonshot", ProviderType.PUBLIC),
+    QIANFAN("Qianfan", ProviderType.PUBLIC),
     INTERNAL("Internal", ProviderType.INTERNAL);
 
 

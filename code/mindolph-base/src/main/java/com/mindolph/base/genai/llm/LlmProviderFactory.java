@@ -41,6 +41,9 @@ public class LlmProviderFactory {
             else if (MOONSHOT.name().equals(providerName)) {
                 llmProvider = new MoonshotProvider(providerMeta, modelMeta);
             }
+            else if (QIANFAN.name().equals(providerName)){
+                llmProvider = new QianfanProvider(providerMeta, modelMeta);
+            }
             else {
                 llmProvider = new CustomModelProvider(providerMeta, modelMeta);
 //                throw new RuntimeException("No llm provider setup: %s".formatted(providerName));

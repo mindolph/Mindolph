@@ -116,10 +116,10 @@ public interface AiConstants {
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-235b-a22b-instruct-2507", 16384));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-30b-a3b-instruct-2507", 16384));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-235b-a22b", 16384));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-32b", 16384));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-30b-a3b", 16384));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-14b", 16384));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-8b", 16384));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-32b", 8192));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-30b-a3b", 8192));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-14b", 8192));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-8b", 8192));
 //            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-4b", 16384));
 //            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-1.7b", 16384));
 //            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-0.6b", 16384));
@@ -214,6 +214,11 @@ public interface AiConstants {
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-8k", 8192));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-32k", 32768));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-128k", 131072));
+
+            // Baidu Qianfan
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0", 65536));
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-128k", 12288));
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-32k", 12288));
 
             // Internal
             put(AiModelProvider.INTERNAL.name(), MM_BGE_SMALL_EN_1_5);

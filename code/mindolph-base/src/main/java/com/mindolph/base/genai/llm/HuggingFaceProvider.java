@@ -1,10 +1,7 @@
 package com.mindolph.base.genai.llm;
 
-import com.mindolph.base.genai.GenAiEvents;
 import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.chat.StreamingChatModel;
 
 /**
  * HuggingFace requires proxy but LangChain doesn't support it yet.
@@ -19,17 +16,9 @@ public class HuggingFaceProvider extends OpenAiProvider {
     }
 
     @Override
-    protected ChatModel buildAI(GenAiEvents.Input input) {
-        ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(BASE_URL);
-        return buildChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
+    public String getBaseUrl() {
+        return BASE_URL;
     }
 
-    @Override
-    protected StreamingChatModel buildStreamingAI(GenAiEvents.Input input) {
-        ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(BASE_URL);
-        return buildStreamingChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
-    }
 }
 
