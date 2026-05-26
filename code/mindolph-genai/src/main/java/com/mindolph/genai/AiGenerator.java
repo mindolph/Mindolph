@@ -260,6 +260,11 @@ public class AiGenerator implements Generator {
         }
     }
 
+    /**
+     *
+     * @param modelPrefKey
+     * @return
+     */
     private boolean checkSettings(String modelPrefKey) {
         Tuple2<AiModelProvider, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
@@ -270,7 +275,7 @@ public class AiGenerator implements Generator {
         Map<String, ProviderMeta> metaMap = LlmConfig.getIns().loadAllProviderMetas();
         if (metaMap.containsKey(provider.name())) {
             ProviderMeta meta = metaMap.get(provider.name());
-            if (provider == null || meta == null) return false;
+            if (meta == null) return false;
             log.debug("Provider: %s".formatted(provider));
             log.trace(String.valueOf(meta));
             if (provider.getType() == ProviderType.PUBLIC) {
