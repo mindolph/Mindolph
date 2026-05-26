@@ -228,7 +228,7 @@ public interface AiConstants {
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("moonshot-v1-128k", MT_128K, 0f));
 
             // Baidu Qianfan
-            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0", 65536));
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0", MT_64K));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-128k", 12288));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-32k", 12288));
 
