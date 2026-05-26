@@ -16,7 +16,6 @@ import com.mindolph.core.llm.ModelMeta;
 import com.mindolph.core.llm.ProviderMeta;
 import com.mindolph.core.util.Tuple2;
 import com.mindolph.mfx.dialog.DialogFactory;
-import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.preference.FxPreferences;
 import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
@@ -29,6 +28,7 @@ import javafx.scene.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.swiftboot.util.I18nHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -257,6 +257,11 @@ public class AiGenerator implements Generator {
         }
     }
 
+    /**
+     *
+     * @param modelPrefKey
+     * @return
+     */
     private boolean checkSettings(String modelPrefKey) {
         Tuple2<String, ModelMeta> providerModel = GenAiUtils.parseModelPreference(modelPrefKey);
         if (providerModel == null) {
@@ -264,11 +269,11 @@ public class AiGenerator implements Generator {
             return false;
         }
         String providerId = providerModel.a();
-        Map<String, ProviderMeta> propsMap = LlmConfig.getIns().loadAllProviderMetas();
-        if (propsMap.containsKey(providerId)) {
-            ProviderMeta meta = propsMap.get(providerId);
-            if (providerId == null || meta == null) return false;
-            log.debug("Check provider: %s".formatted(providerId));
+        Map<String, ProviderMeta> metaMap = LlmConfig.getIns().loadAllProviderMetas();
+        if (metaMap.containsKey(providerId)) {
+            ProviderMeta meta = metaMap.get(providerId);
+            if (meta == null) return false;
+            log.debug("Check Provider: %s".formatted(providerId));
             log.trace(String.valueOf(meta));
             if (meta.isPublic()) {
                 log.warn("The public provider must has api-key setup");
@@ -285,6 +290,9 @@ public class AiGenerator implements Generator {
             else {
                 return true;
             }
+        }
+        else {
+            log.warn("Provider not found: %s".formatted(providerId));
         }
         return false;
     }
