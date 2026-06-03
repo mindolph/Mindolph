@@ -96,6 +96,7 @@ public interface AiConstants {
 //            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
             // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
+            put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.5-flash", MT_64K));
             put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-pro-preview", MT_64K));
             put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.1-flash-lite", MT_64K));
 //            put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3-pro-preview", 65536));
@@ -110,6 +111,9 @@ public interface AiConstants {
 //            put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-1.5-flash-8b", 8192));
 
             // Qwen https://help.aliyun.com/zh/model-studio/models?spm=a2c4g.11186623.help-menu-2400256.d_0_0_2.677b394evAGcfh
+            // https://bailian.console.aliyun.com/cn-beijing?spm=a2c4g.11186623.0.0.5a763011P9pO0F&tab=model#/model-market/all?providers=qwen&capabilities=TG
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-plus", MT_64K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-max", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-flash", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-plus", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-27b", MT_64K));
@@ -217,8 +221,8 @@ public interface AiConstants {
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", MT_8K));
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", MT_64K));
 
-            // Moonshot https://platform.moonshot.cn/docs/introduction#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8
-            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.6", MT_256K, 1.0f));
+            // Moonshot https://platform.kimi.com/docs/models
+            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.6", MT_256K, 0.6f));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", MT_256K, 0.6f));
 //            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144, 0.6f));
 //            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-thinking", 262144, 0.6f));
