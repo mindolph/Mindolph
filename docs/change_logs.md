@@ -1,5 +1,19 @@
 # Change Logs
 
+
+### V1.14.4 Unstable Release
+
+* Feature
+	* Allow to change the orientation of the splitter of Mind Map editor.
+* Improvement:
+	* Hide floating information when the attribute view of the Mind Map editor is showing.
+	* Update i18n for the general preferences panel.
+	* Update models for Gemini and Qwen.
+	* Remove deprecating models from Qwen.
+* Bug Fixes
+	* Temperature parameters are restricted on the Kimi models.
+	* Incorrect max output token for Qwen model `qwen-flash`.
+
 ### V1.14.3 Unstable Release
 
 * Improvements:
