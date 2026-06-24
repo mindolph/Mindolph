@@ -89,7 +89,7 @@ public interface AiConstants {
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-mini", MT_32K));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4.1-nano", MT_32K));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4", MT_8K));
-            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4-turbo", MT_4K));
+//            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4-turbo", 4096));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o", MT_16K));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-4o-mini", MT_16K));
 //            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo", 4096));
@@ -126,6 +126,7 @@ public interface AiConstants {
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-27b", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-122b-a10b", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.5-397b-a17b", MT_64K));
+            // deprecated on 2026-09-08
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-max", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-omni-flash", MT_16K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-next-80b-a3b-instruct", MT_16K));
@@ -172,6 +173,7 @@ public interface AiConstants {
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-mt-flash", MT_8K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-mt-lite", MT_8K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-mt-turbo", MT_8K));
+            // deprecated on 2026-09-08
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-coder-plus", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3-coder-flash", MT_64K));
 //            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen-coder-plus", 8192));
@@ -192,6 +194,7 @@ public interface AiConstants {
 
             // ChatGLM Models: https://www.bigmodel.cn/console/modelcenter/square
             // API: https://docs.bigmodel.cn/cn/api/introduction
+            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.2", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.1", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5-turbo", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5", MT_128K));
@@ -218,10 +221,11 @@ public interface AiConstants {
             // DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-flash", MT_384K));
             put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-v4-pro", MT_384K));
-            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", MT_8K));
-            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", MT_64K));
+//            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-chat", MT_8K));
+//            put(AiModelProvider.DEEP_SEEK.name(), new ModelMeta("deepseek-reasoner", MT_64K));
 
             // Moonshot https://platform.kimi.com/docs/models
+            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.7-code", MT_32K, 0.6f));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.6", MT_256K, 0.6f));
             put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2.5", MT_256K, 0.6f));
 //            put(AiModelProvider.MOONSHOT.name(), new ModelMeta("kimi-k2-turbo-preview", 262144, 0.6f));
