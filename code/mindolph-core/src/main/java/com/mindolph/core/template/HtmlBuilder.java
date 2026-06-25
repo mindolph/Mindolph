@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,7 +39,9 @@ public final class HtmlBuilder {
                 return document.scrollingElement.scrollTop;
             }
             function setScrollPos(xPos, yPos) {
+                document.documentElement.style.scrollBehavior = 'smooth';
                 window.scrollTo(xPos, yPos);
+                document.documentElement.style.scrollBehavior = 'auto';
             }
             console.log("scripts are ready");
             """;
@@ -134,7 +137,7 @@ public final class HtmlBuilder {
     }
 
     /**
-     * Class name for rendering markdown.
+     * Class name for rendering Markdown.
      *
      * @param className
      * @return
@@ -181,7 +184,7 @@ public final class HtmlBuilder {
                 String src = img.attr("src");
                 if (!PathUtils.isAbsolutePath(src)) {
                     // is relative path
-                    src = StringUtils.startsWith(src, "./") ? StringUtils.substring(src, 2) : src;
+                    src = Strings.CS.startsWith(src, "./") ? StringUtils.substring(src, 2) : src;
                     src = new File(resourceBaseDir, src).getPath();
                 }
                 log.trace("find markdown resource: " + src);
@@ -309,11 +312,6 @@ public final class HtmlBuilder {
                     <html>
                     <head>
                     <meta charset="utf-8"/>
-                    <style>
-                    html {
-                        scroll-behavior: smooth;
-                    }
-                    </style>
                     <title>%s</title>
                     %s
                     %s
@@ -336,7 +334,7 @@ public final class HtmlBuilder {
         String fontFileUri;
         if (SystemUtils.IS_OS_WINDOWS) {
             // for Windows file URI: replace it's '\' to '/' and add an extra '/' as prefix.
-            fontFileUri = "/" + StringUtils.replace(fontFile.getPath(), "\\", "/");
+            fontFileUri = "/" + Strings.CS.replace(fontFile.getPath(), "\\", "/");
         }
         else {
             fontFileUri = fontFile.getPath();

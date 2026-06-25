@@ -1,11 +1,5 @@
 package com.mindolph.markdown;
 
-import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
-import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
-import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
-import static com.mindolph.base.constant.PrefConstants.*;
-import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
-
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
@@ -40,23 +34,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -93,6 +70,29 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLAnchorElement;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
+import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR_MONO;
+import static com.mindolph.base.constant.MarkdownConstants.HEADING_PATTERN;
+import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_MONO_FONT_FILE;
+import static com.mindolph.base.constant.PrefConstants.PREF_KEY_MD_SANS_FONT_FILE;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
 
 /**
  * @author mindolph.com@gmail.com
@@ -248,6 +248,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // NOTE: The webview might not be ready when a file is opened with scrolling.
         codeScrollPane.estimatedScrollYProperty()
                 .addListener((ov, oldY, newY) -> {
                     //            System.out.printf("A: %d-%s%n", Thread.currentThread().getId(), Thread.currentThread().getName());
@@ -268,6 +269,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         window.setMember("scrollListener", this);
                         window.setMember("hoverListener", this);
                         window.setMember("clickListener", this);
+                        // Since the listener of estimatedScrollYProperty() might not be triggered
+                        // when a file is opened with scrolling, emit the scroll event here to make sure that
+                        // the scrolling is synced.
+                        scrollEventCode.push(codeScrollPane.getEstimatedScrollY());
                     }
                 });
 

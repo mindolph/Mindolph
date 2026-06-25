@@ -12,6 +12,11 @@ public class ScrollSwitch {
     protected AtomicBoolean firstScrolling = new AtomicBoolean(false);
     protected AtomicBoolean secondScrolling = new AtomicBoolean(false);
 
+    /**
+     * Scroll primary panel.
+     *
+     * @param runnable
+     */
     public void scrollFirst(Runnable runnable) {
         if (!secondScrolling.get()) {
             firstScrolling.set(true);
@@ -27,6 +32,11 @@ public class ScrollSwitch {
         }
     }
 
+    /**
+     * Scroll secondary panel.
+     *
+     * @param runnable
+     */
     public void scrollSecond(Runnable runnable) {
         if (!firstScrolling.get()) {
             secondScrolling.set(true);
