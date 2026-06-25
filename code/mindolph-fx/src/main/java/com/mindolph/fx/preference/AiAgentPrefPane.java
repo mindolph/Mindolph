@@ -133,8 +133,10 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
                 super.saveChanges(true);
             }
         });
-        tfName.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges(currentAgentMeta);
+        tfName.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                super.saveChanges(currentAgentMeta);
+            }
         });
         tfDescription.textProperty().addListener((observable, oldValue, newValue) -> {
             super.saveChanges(false);

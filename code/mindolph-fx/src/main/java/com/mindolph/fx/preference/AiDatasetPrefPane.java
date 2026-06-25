@@ -295,8 +295,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             });
         });
 
-        tfName.textProperty().addListener((observable, oldValue, newValue) -> {
-            super.saveChanges(true, currentDatasetMeta);
+        tfName.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                super.saveChanges(true, currentDatasetMeta);
+            }
         });
 
         btnEmbedding.setOnAction(event -> {

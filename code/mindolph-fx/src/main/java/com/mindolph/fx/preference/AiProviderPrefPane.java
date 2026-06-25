@@ -223,7 +223,10 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                 .width(400)
                 .build();
         dialog.showAndWait().ifPresent(providerName -> {
-            if (cbProvider.getItems().stream().anyMatch(p -> p.getValue().getName().equals(providerName))) {
+            // check existence first.
+            if (cbProvider.getItems().stream()
+                    .filter(p -> p.getValue().getName() != null)
+                    .anyMatch(p -> p.getValue().getName().equals(providerName))) {
                 DialogFactory.warnDialog(i18n.get("msg.provider.exists", providerName));
                 this.createNewProvider();
                 return;
