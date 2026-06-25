@@ -39,9 +39,10 @@ public final class HtmlBuilder {
                 return document.scrollingElement.scrollTop;
             }
             function setScrollPos(xPos, yPos) {
-                document.documentElement.style.scrollBehavior = 'smooth';
-                window.scrollTo(xPos, yPos);
-                document.documentElement.style.scrollBehavior = 'auto';
+                //document.documentElement.style.scrollBehavior = 'smooth';
+                // scroll smoothly
+                window.scrollTo({left: xPos, top: yPos, behavior: "smooth",});
+                //document.documentElement.style.scrollBehavior = 'auto';
             }
             console.log("scripts are ready");
             """;
