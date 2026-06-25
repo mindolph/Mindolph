@@ -17,7 +17,9 @@
             return document.scrollingElement.scrollTop;
         }
         function setScrollPos(xPos, yPos) {
+            document.documentElement.style.scrollBehavior = 'smooth';
             window.scrollTo(xPos, yPos);
+            document.documentElement.style.scrollBehavior = 'auto';
         }
         console.log("scripts are ready");
 
