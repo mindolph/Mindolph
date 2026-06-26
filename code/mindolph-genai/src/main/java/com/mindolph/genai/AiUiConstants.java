@@ -123,7 +123,7 @@ public interface AiUiConstants {
      */
     static String lookupLanguage(String langCode) {
         if (StringUtils.isBlank(langCode)) {
-            return "Unknown";
+            return I18nHelper.getInstance().get("prefs.ai.embedding.lang.unknown");
         }
         if ("all".equals(langCode)) {
             return I18nHelper.getInstance().get("prefs.ai.embedding.lang.all");
@@ -131,7 +131,7 @@ public interface AiUiConstants {
         JsonArray langs = new Gson().fromJson(LANGUAGES_IN_JSON, JsonArray.class);
         for (JsonElement lang : langs) {
             if (lang.getAsJsonObject().get("code").getAsString().equals(langCode)) {
-                return lang.getAsJsonObject().get("name").getAsString();
+                return I18nHelper.getInstance().get(lang.getAsJsonObject().get("name").getAsString());
             }
         }
         return langCode;

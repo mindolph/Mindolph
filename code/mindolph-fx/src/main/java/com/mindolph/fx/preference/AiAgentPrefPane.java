@@ -111,14 +111,14 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
         btnAddAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveAgent.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddAgent.setOnAction(event -> {
-            this.createNewAgent("My Agent");
+            this.createNewAgent(i18n.get("prefs.ai.agent.create.default.name"));
         });
         btnRemoveAgent.setOnAction(event -> {
             if (cbAgent == null) {
                 return;
             }
 
-            if (DialogFactory.yesNoConfirmDialog(i18n.get("msg.agent.remove.confirm", currentAgentMeta.getName()))) {
+            if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.agent.remove.confirm", currentAgentMeta.getName()))) {
                 beforeLoading();
                 LlmConfig.getIns().removeAgent(currentAgentMeta.getId());
                 cbAgent.getSelectionModel().clearSelection();

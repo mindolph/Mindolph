@@ -111,7 +111,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         disableAll();
                         NodeUtils.enable(cbDataset, btnAddDataset);
                         clearAll();
-                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
+                        btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.start"));
                         stateMachineReady.push(null); // notify that sm is ready.
                     });
                 })
@@ -120,7 +120,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                     Platform.runLater(() -> {
                         this.enableAll();
                         this.toggleEmbeddingModel();
-                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
+                        btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.start"));
                         lblEmbeddingStatus.setText(i18n.get(""));
                         lblSelectedFiles.setDisable(false);
                         pbProgress.setVisible(false);
@@ -138,7 +138,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         fileSelectView.clearEmbeddingStatusLabels();
                         // It also can be interrupted during the preparing status.
                         NodeUtils.enable(btnEmbedding);
-                        btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop.preparing"));
+                        btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.stop.preparing"));
                         btnClear.setDisable(true);
                     });
                 })
@@ -147,10 +147,10 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                         Platform.runLater(() -> {
                             NodeUtils.enable(btnEmbedding);
                             if (pe.getStage() == Stage.EMBED_DATASET) {
-                                btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop"));
+                                btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.stop"));
                             }
                             else if (pe.getStage() == Stage.REMOVE_DATASET) {
-                                btnEmbedding.setText(i18n.get("ai.dataset.embedding.stop.removing"));
+                                btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.stop.removing"));
                             }
                             else {
                                 log.debug("Unknown stage: %s".formatted(pe));
@@ -196,7 +196,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             enableAll();
                             this.toggleEmbeddingModel();
                             btnEmbedding.setDisable(doneEvent.getStage() == Stage.REMOVE_DATASET); // should be disabled for removing dataset because the dataset selection has been cleared
-                            btnEmbedding.setText(i18n.get("ai.dataset.embedding.start"));
+                            btnEmbedding.setText(i18n.get("prefs.ai.dataset.embedding.start"));
                             btnClear.setDisable(doneEvent.getStage() == Stage.CLEAR_EMBEDDING);
                             lblSelectedFiles.setDisable(false);
                             lblEmbeddingStatus.setText(doneEvent.getMessage());
@@ -252,7 +252,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         btnAddDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.PLUS));
         btnRemoveDataset.setGraphic(FontIconManager.getIns().getIcon(IconKey.DELETE));
         btnAddDataset.setOnAction(event -> {
-            this.createNewDataset("My Dataset");
+            this.createNewDataset(i18n.get("prefs.ai.dataset.create.default.name"));
         });
         btnRemoveDataset.setOnAction(event -> {
             this.removeSelectedDataset();
@@ -392,7 +392,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             ChoiceUtils.selectOrUnselectLanguage(cbLanguage, currentDatasetMeta.getLanguageCode());
             // init model provider and model selectors.
             super.selectEmbeddingProviderAndModel(currentDatasetMeta.getProvider(), currentDatasetMeta.getEmbeddingModel());
-            lblSelectedFiles.setText(i18n.get("ai.dataset.embedding.synchronizing"));
+            lblSelectedFiles.setText(i18n.get("prefs.ai.dataset.embedding.synchronizing"));
             this.displaySelectedAndEmbeddedCountAsync(datasetMeta.getId(), isEmbedded -> {
                 log.debug("Is this dataset embedded: %s".formatted(isEmbedded));
                 embeddingContext.setEmbedded(isEmbedded);
@@ -490,7 +490,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             futureOfEmbedding.thenApply(success -> {
                 if (!success) {
                     // stop here since the state could be DONE already? BED?
-                    stateMachine.postWithPayload(EmbeddingState.DONE, new DoneEvent(Stage.EMBED_DATASET, "Embedding failed."));
+                    stateMachine.postWithPayload(EmbeddingState.DONE, new DoneEvent(Stage.EMBED_DATASET, i18n.get("prefs.ai.dataset.embedding.fail")));
                 }
                 else {
                     this.displaySelectedAndEmbeddedCountAsync(currentDatasetMeta.getId(), aBoolean -> {
@@ -508,9 +508,9 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     }
 
     private void clearEmbeddingForSelectedDataset() {
-        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.clear.embedding"), i18n.get("msg.dataset.clear.confirm", currentDatasetMeta.getName()))) {
+        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.clear.embedding"), i18n.get("prefs.ai.dataset.clear.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
-            stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
+            stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent(i18n.get("prefs.ai.dataset.embedding.start.removing")));
             CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(this.currentDatasetMeta, false);
             completableFuture.thenAccept(success -> {
                 log.debug("Unembedding done with success %s".formatted(success));
@@ -531,9 +531,9 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         if (currentDatasetMeta == null) {
             return;
         }
-        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.remove"), i18n.get("msg.dataset.remove.confirm", currentDatasetMeta.getName()))) {
+        if (DialogFactory.yesNoConfirmDialog(i18n.get("prefs.ai.dataset.remove"), i18n.get("prefs.ai.dataset.remove.confirm", currentDatasetMeta.getName()))) {
             super.beforeLoading();
-            stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent("Start to remove embedded data..."));
+            stateMachine.postWithPayload(EmbeddingState.PREPARING, new PrepareEvent(i18n.get("prefs.ai.dataset.embedding.start.removing")));
             CompletableFuture<Boolean> completableFuture = EmbeddingService.getInstance().unembedDataset(currentDatasetMeta, true);
             completableFuture.thenAccept(success -> {
                 log.debug("Unembedding done with success %s".formatted(success));
@@ -580,7 +580,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         return GlobalExecutor.submitCompletable(() -> {
             try {
                 if (!EmbeddingService.getInstance().testTableExistence()) {
-                    this.safeChangeFileSelectionLabel("You have never done any embedding yet");
+                    this.safeChangeFileSelectionLabel(i18n.get("prefs.ai.dataset.embedding.not.yet"));
                     consumer.accept(false);
                     return;
                 }
