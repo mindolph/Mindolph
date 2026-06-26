@@ -24,14 +24,14 @@ public class OpenAiProvider extends BaseLangChainLlmProvider implements OpenAiLa
     @Override
     protected ChatModel buildAI(Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(getBaseUrl());
+        super.providerMeta.setBaseUrl(getBaseUrl(providerMeta.getId()));
         return buildChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
     @Override
     protected StreamingChatModel buildStreamingAI(Input input) {
         ModelMeta actualModelMeta = determineModel(input, super.modelMeta);
-        super.providerMeta.setBaseUrl(getBaseUrl());
+        super.providerMeta.setBaseUrl(getBaseUrl(providerMeta.getId()));
         return buildStreamingChatModel(super.providerMeta, actualModelMeta, input.temperature(), super.proxyMeta, super.proxyEnabled).a();
     }
 
@@ -43,6 +43,7 @@ public class OpenAiProvider extends BaseLangChainLlmProvider implements OpenAiLa
     /**
      * All OpenAI compatible providers must overwrite this method to provide base URL.
      * @return
+     * @deprecated
      */
     public String getBaseUrl() {
         // null for OpenAI itself.

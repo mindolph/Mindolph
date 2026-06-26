@@ -10,14 +10,14 @@ import com.mindolph.core.llm.ProviderMeta;
  */
 public class QianfanProvider extends OpenAiProvider {
 
-    private static final String BASE_URL = "https://qianfan.baidubce.com/v2";
+//    private static final String BASE_URL = "https://qianfan.baidubce.com/v2";
 
     public QianfanProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
         super(providerMeta, modelMeta);
     }
 
-    @Override
-    public String getBaseUrl() {
-        return BASE_URL;
-    }
+//    @Override
+//    public String getBaseUrl() {
+//        return BASE_URL;
+//    }
 }

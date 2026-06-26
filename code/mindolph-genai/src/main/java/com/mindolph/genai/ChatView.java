@@ -95,7 +95,7 @@ public class ChatView extends BaseView implements Initializable {
                 })
                 .state(ChatState.READY)
                 .in(selectedAgent -> {
-                    lblAgent.setText("%s: %s".formatted(LlmConfig.getIns().loadProviderMeta(selectedAgent.getChatProvider()).getName(), selectedAgent.getChatModel()));
+                    lblAgent.setText("%s/%s".formatted(LlmConfig.getIns().loadProviderMeta(selectedAgent.getChatProvider()).getName(), selectedAgent.getChatModel()));
                     chatPane.setDisable(false);
                     taInput.setDisable(false);
                     taInput.setPromptText(i18n.get("ai.agent.prompt.hint", selectedAgent.getName(), ShortcutManager.getIns().getKeyCombination(KEY_AGENT_SEND)));

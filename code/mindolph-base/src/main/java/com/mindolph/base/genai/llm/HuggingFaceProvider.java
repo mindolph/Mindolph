@@ -9,16 +9,16 @@ import com.mindolph.core.llm.ProviderMeta;
  */
 public class HuggingFaceProvider extends OpenAiProvider {
 
-    private static final String BASE_URL = "https://router.huggingface.co/v1";
+//    private static final String BASE_URL = "https://router.huggingface.co/v1";
 
     public HuggingFaceProvider(ProviderMeta providerMeta, ModelMeta modelMeta) {
         super(providerMeta, modelMeta);
     }
 
-    @Override
-    public String getBaseUrl() {
-        return BASE_URL;
-    }
+//    @Override
+//    public String getBaseUrl() {
+//        return BASE_URL;
+//    }
 
 }
 

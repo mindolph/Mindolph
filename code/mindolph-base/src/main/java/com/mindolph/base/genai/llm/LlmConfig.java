@@ -105,7 +105,15 @@ public class LlmConfig {
 
     public ProviderMeta loadProviderMeta(String providerId) {
         Map<String, ProviderMeta> providers = loadConfiguredProviderMetas();
-        return providers.get(providerId);
+        ProviderMeta providerMeta = providers.get(providerId);
+        // workaround
+        if (StringUtils.isBlank(providerMeta.getId())){
+            AiModelProvider provider = AiModelProvider.valueOf(providerId);
+            providerMeta.setId(providerId);
+            providerMeta.setName(provider.getDisplayName());
+            providerMeta.setType(provider.getType().name());
+        }
+        return providerMeta;
     }
 
     public void removeCustomProvider(String providerId) {

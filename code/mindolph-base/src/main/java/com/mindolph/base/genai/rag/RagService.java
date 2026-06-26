@@ -87,7 +87,7 @@ public class RagService extends BaseEmbeddingService {
         if (vectorStoreMeta == null || !vectorStoreMeta.isAllSetup()) {
             finished.accept(new RuntimeException(i18n.get("rag.vector.store.not.well.setup")));
         }
-        log.info("use agent: {}, with chat model {}:{}",
+        log.info("use agent: {}, with chat model {}/{}",
                 agentMeta.getName(), agentMeta.getChatProvider(), agentMeta.getChatModel());
 
         if (agentMeta.isAllSetup()) {
@@ -199,18 +199,19 @@ public class RagService extends BaseEmbeddingService {
     }
 
     private StreamingChatModel buildStreamingChatModel(AgentMeta agentMeta) {
-        String provider = agentMeta.getChatProvider();
-        if (AiModelProvider.isRagSupportedByLangchain(provider)) {
-            this.langChainSupport = LangChainSupport.createSupport(provider);
-            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(provider);
-            ModelMeta modelMeta = LlmConfig.getIns().lookupModel(provider, agentMeta.getChatModel());
+        String providerId = agentMeta.getChatProvider();
+        if (AiModelProvider.isRagSupportedByLangchain(providerId)) {
+            this.langChainSupport = LangChainSupport.createSupport(providerId);
+            ProviderMeta providerMeta = LlmConfig.getIns().loadProviderMeta(providerId);
+            ModelMeta modelMeta = LlmConfig.getIns().lookupModel(providerId, agentMeta.getChatModel());
             if (modelMeta == null) {
                 throw new RuntimeException(i18n.get("rag.no.model.defined", agentMeta.getChatModel()));
             }
             Boolean proxyEnabled = FxPreferences.getInstance().getPreference(PrefConstants.GENERAL_PROXY_ENABLE, false);
             ProxyMeta proxyMeta = NetworkUtils.getProxyMeta();
             // The Input is not for inputting but for compatible with the providers for Generate&Summarize features;
-            // TODO temperature should be parameterized.
+            // TODO temperature should be parameterized from user.
+            // float temperature = modelMeta.getTemperature() != null ? modelMeta.getTemperature() : 0.5f;
             Tuple2<StreamingChatModel, OkHttpClientAdapter> tuple = langChainSupport.buildStreamingChatModel(providerMeta, modelMeta, 0.5f, proxyMeta, proxyEnabled);
             this.okHttpClientAdapter = tuple.b();
             return tuple.a();

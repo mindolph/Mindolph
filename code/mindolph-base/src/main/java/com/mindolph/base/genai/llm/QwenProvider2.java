@@ -10,15 +10,15 @@ import com.mindolph.core.llm.ProviderMeta;
  */
 public class QwenProvider2 extends OpenAiProvider {
 
-    private static final String BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
+//    private static final String BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 
     public QwenProvider2(ProviderMeta providerMeta, ModelMeta modelMeta) {
         super(providerMeta, modelMeta);
     }
 
-    @Override
-    public String getBaseUrl() {
-        return BASE_URL;
-    }
+//    @Override
+//    public String getBaseUrl() {
+//        return BASE_URL;
+//    }
 
 }

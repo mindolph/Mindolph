@@ -34,7 +34,7 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
 
     private static final Logger log = LoggerFactory.getLogger(AgentSelector.class);
 
-    private I18nHelper i18n = I18nHelper.getInstance();
+    private final I18nHelper i18n = I18nHelper.getInstance();
 
     public AgentSelector() {
         super.setPromptText(i18n.get("ai.agent.select"));
@@ -95,8 +95,10 @@ public class AgentSelector extends ComboBox<Pair<String, AgentMeta>> {
             lblIcon.setGraphic(FontIconManager.getIns().getIcon(IconKey.GEN_AI));
             AgentMeta am = item.getValue();
             log.debug("Agent name: %s".formatted(am.getName()));
-            lblName.setText("%s (%s : %s)".formatted(am.getName(),
-                    am.getChatProvider() == null ? "" : LlmConfig.getIns().loadProviderMeta(am.getChatProvider()).getName(), am.getChatModel() == null ? "" : am.getChatModel()));
+            String provider = am.getChatProvider() == null ? "" : LlmConfig.getIns().loadProviderMeta(am.getChatProvider()).getName();
+            String model = am.getChatModel() == null ? "" : am.getChatModel();
+            log.debug("Agent model: %s/%s".formatted(provider, model));
+            lblName.setText("%s (%s/%s)".formatted(am.getName(), provider, model));
         }
     }
 
