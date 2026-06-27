@@ -1,5 +1,34 @@
 # Change Logs
 
+### V1.15.0 Unstable Release
+* Features
+	* Custom AI model provider(OpenAI Compatible).   
+	* Support Baidu Qianfan AI models.   
+
+* Improvements
+	* Agent with custom model provider.
+	* Allow to edit the name of an agent or a dataset.   
+	* Add more models to Qianfan, Moonshot, ChatGLM.   
+	* Remove deprecated models from DeepSeek.   
+
+* Bug Fixes
+  * Max output tokens is incorrect for some Qwen models. 
+  * Max output token is not applied to Moonshot api. 
+  * Model provider setting check for Generate/Summarize is incorrect in some cases.
+
+* Update dependencies and refactor.
+
+### V1.14.5 Release
+
+* Improvement:
+	* Add more models to Moonshot, ChatGLM.   
+	* Remove deprecated models from DeepSeek, OpenAI.
+
+* Bug Fixes
+  * Automatic preview synchronization while editing Markdown files was not working correctly after updating to the latest version of JavaFX. 
+  * Opening a Markdown file with scrolling content does not automatically synchronize with the preview.
+  * Missing i18n resources. 
+
 
 ### V1.14.4 Unstable Release
 
