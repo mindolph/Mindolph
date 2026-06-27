@@ -60,6 +60,7 @@ public class LlmConfig {
 
     /**
      * all provider including pre-set ones and custom ones.
+     *
      * @return
      */
     public Map<String, ProviderMeta> loadAllProviderMetas() {
@@ -107,7 +108,7 @@ public class LlmConfig {
         Map<String, ProviderMeta> providers = loadConfiguredProviderMetas();
         ProviderMeta providerMeta = providers.get(providerId);
         // workaround
-        if (StringUtils.isBlank(providerMeta.getId())){
+        if (providerMeta != null && StringUtils.isBlank(providerMeta.getId())) {
             AiModelProvider provider = AiModelProvider.valueOf(providerId);
             providerMeta.setId(providerId);
             providerMeta.setName(provider.getDisplayName());
@@ -141,12 +142,12 @@ public class LlmConfig {
     /**
      * Get filtered custom models of the provider for the type.
      *
-     * @param providerName
+     * @param providerId
      * @param modelType
      * @return
      */
-    public Collection<ModelMeta> getFilteredCustomModels(String providerName, int modelType) {
-        ProviderMeta providerMeta = this.loadProviderMeta(providerName);
+    public Collection<ModelMeta> getFilteredCustomModels(String providerId, int modelType) {
+        ProviderMeta providerMeta = this.loadProviderMeta(providerId);
         if (providerMeta != null) {
             List<ModelMeta> customModels = providerMeta.customModels();
             if (customModels != null && !customModels.isEmpty()) {
