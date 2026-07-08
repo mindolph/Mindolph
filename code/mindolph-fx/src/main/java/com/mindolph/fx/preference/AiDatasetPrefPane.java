@@ -167,7 +167,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             if (Stage.EMBED_DATASET.equals(progress.getStage())) {
                                 log.debug("progress: %.1f at file %s".formatted(progress.getRatio(), progress.getFile()));
                                 pbProgress.setProgress(progress.getRatio());
-                                fileSelectView.findAndUpdateName(progress.getFile(), progress.isSuccess() ? "embedded" : "fail");
+                                fileSelectView.findAndUpdateName(progress.getFile(), progress.isSuccess() ?
+                                        i18n.get("prefs.ai.dataset.embedding.file.status.embedded") : i18n.get("prefs.ai.dataset.embedding.file.status.fail"));
                                 fileSelectView.refresh();
                             }
                         }
@@ -183,7 +184,8 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                             if (Stage.REMOVE_DATASET.equals(progress.getStage())) {
                                 log.debug("progress: %.1f at file %s".formatted(progress.getRatio(), progress.getFile()));
                                 pbProgress.setProgress(progress.getRatio());
-                                fileSelectView.findAndUpdateName(progress.getFile(), progress.isSuccess() ? "never" : "fail");
+                                fileSelectView.findAndUpdateName(progress.getFile(), progress.isSuccess() ?
+                                        i18n.get("prefs.ai.dataset.embedding.file.status.never") : i18n.get("prefs.ai.dataset.embedding.file.status.fail"));
                                 fileSelectView.refresh();
                             }
                         }

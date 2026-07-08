@@ -6,12 +6,12 @@ import com.mindolph.base.event.EventBus;
 import com.mindolph.base.genai.rag.EmbeddingDocEntity;
 import com.mindolph.base.genai.rag.EmbeddingService;
 import com.mindolph.core.WorkspaceManager;
-import com.mindolph.mfx.dialog.DialogFactory;
-import com.mindolph.mfx.util.GlobalExecutor;
 import com.mindolph.core.config.WorkspaceConfig;
 import com.mindolph.core.llm.DatasetMeta;
 import com.mindolph.core.meta.WorkspaceMeta;
 import com.mindolph.core.model.NodeData;
+import com.mindolph.mfx.dialog.DialogFactory;
+import com.mindolph.mfx.util.GlobalExecutor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.CheckBoxTreeItem;
@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.collections.tree.Node;
 import org.swiftboot.collections.tree.Tree;
+import org.swiftboot.util.I18nHelper;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -53,6 +54,8 @@ public class FileSelectView extends CheckTreeView<NodeData> {
     // all files in the tree view (for retrieving embedding status)
     private final List<File> allFiles = new ArrayList<>();
 
+    protected I18nHelper i18n = I18nHelper.getInstance();
+
     public FileSelectView() {
         rootItem = new CheckBoxTreeItem<>(new NodeData("Workspace Stub"));
         rootItem.setExpanded(true);
@@ -68,7 +71,7 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                 }
                 else {
                     if (item.getFile().isFile()) {
-                        String status = StringUtils.isBlank(item.getLabel())?"": "(%s)".formatted(item.getLabel());
+                        String status = StringUtils.isBlank(item.getLabel()) ? "" : "(%s)".formatted(item.getLabel());
                         setText("%s  %s  %s".formatted(item.getName(), FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(item.getFile())), status));
                     }
                     else {
@@ -134,10 +137,11 @@ public class FileSelectView extends CheckTreeView<NodeData> {
                 Platform.runLater(() -> {
                     for (File file : allFiles) {
                         if (embeddedMap.containsKey(file.getPath())) {
-                            this.findAndUpdateName(file, embeddedMap.get(file.getPath()).embedded() ? "embedded" : "fail");
+                            this.findAndUpdateName(file, embeddedMap.get(file.getPath()).embedded() ?
+                                    i18n.get("prefs.ai.dataset.embedding.file.status.embedded") : i18n.get("prefs.ai.dataset.embedding.file.status.fail"));
                         }
                         else {
-                            this.findAndUpdateName(file, "never");
+                            this.findAndUpdateName(file, i18n.get("prefs.ai.dataset.embedding.file.status.never"));
                         }
                     }
                     super.refresh();
