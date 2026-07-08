@@ -219,7 +219,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
                 .owner(DialogFactory.DEFAULT_WINDOW)
                 .title(i18n.get("prefs.ai.provider.create"))
                 .content(i18n.get("dialog.input.provider.name"))
-                .text("my provider")
+                .text(i18n.get("prefs.ai.provider.create.default.name"))
                 .width(400)
                 .build();
         dialog.showAndWait().ifPresent(providerName -> {
