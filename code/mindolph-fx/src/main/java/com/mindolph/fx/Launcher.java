@@ -17,6 +17,8 @@ import javafx.application.Application;
  * disable-reopen=true|false
  * disable-window-resize=true|false
  * mock-llm=true|false
+ * locale: force locale
+ *
  * <p>
  * If more log output required, add -Dlogback.configurationFile=logback-debug.xml to application arguments.
  * Add -Djdk.gtk.version=2 to JVM options if CJK input method is used on Linux.

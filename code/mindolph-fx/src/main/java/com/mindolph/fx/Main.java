@@ -115,20 +115,22 @@ public class Main extends Application implements WindowRestoreListener {
         });
 
         // add resource files from all modules.
-        String languageCode = FxPreferences.getInstance().getPreference(GENERAL_LANGUAGE, "");
+        String forceLocale = System.getenv("locale");
         Locale locale = Locale.getDefault();
-        if (StringUtils.isNotBlank(languageCode)) {
-            if ("zh_CN".equals(languageCode)) {
-                locale = Locale.SIMPLIFIED_CHINESE;
-            }
-            else if ("en".equals(languageCode)) {
-                locale = Locale.ENGLISH;
+        if (StringUtils.isNotBlank(forceLocale)) {
+            locale = Locale.of(forceLocale);
+        }
+        else {
+            String languageCode = FxPreferences.getInstance().getPreference(GENERAL_LANGUAGE, "");
+            if (StringUtils.isNotBlank(languageCode)) {
+                if ("zh_CN".equals(languageCode)) {
+                    locale = Locale.SIMPLIFIED_CHINESE;
+                }
+                else if ("en".equals(languageCode)) {
+                    locale = Locale.ENGLISH;
+                }
             }
         }
-//        I18nHelper.getInstance().setLocale(locale);
-//        I18nHelper.getInstance().addBundles(bundleNames);
-//        I18nHelper.getInstance().reloadAllBundles();
-
         I18nHelper.getInstance().setLocale(locale);
         I18nHelper.getInstance().addBundles(bundleNames);
         I18nHelper.getInstance().reloadAllBundles();
