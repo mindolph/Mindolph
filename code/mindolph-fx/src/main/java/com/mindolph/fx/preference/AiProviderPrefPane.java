@@ -198,7 +198,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
         }
         else {
             if (currentProviderMeta.customModels().stream().anyMatch(mm -> mm.getName().equals(newCustomModel.getName()))) {
-                DialogFactory.warnDialog(i18n.get("msg.model.exists", newCustomModel.getName()));
+                DialogFactory.warnDialog(i18n.get("prefs.ai.provider.model.exists", newCustomModel.getName()));
                 this.createNewCustomModel(newCustomModel);
                 return; // already exists
             }
@@ -212,7 +212,7 @@ public class AiProviderPrefPane extends BaseLoadingSavingPrefsPane implements In
     private void removeSelectedCustomModel() {
         ModelMeta modelMeta = lvModels.getSelectionModel().getSelectedItem();
         if (modelMeta != null && modelMeta.isCustom()) {
-            boolean sure = DialogFactory.okCancelConfirmDialog(i18n.get("msg.model.delete.confirm", modelMeta.getName()));
+            boolean sure = DialogFactory.okCancelConfirmDialog(i18n.get("prefs.ai.provider.model.remove.confirm", modelMeta.getName()));
             if (sure) {
                 currentProviderMeta.customModels().removeIf(mm -> mm.getName().equals(modelMeta.getName()));
                 super.saveChanges();

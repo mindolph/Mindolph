@@ -439,7 +439,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                 .build();
         dialog.showAndWait().ifPresent(datasetName -> {
             if (cbDataset.getItems().stream().anyMatch(p -> p.getValue().getName().equals(datasetName))) {
-                DialogFactory.warnDialog(i18n.get("msg.dataset.exists", datasetName));
+                DialogFactory.warnDialog(i18n.get("prefs.ai.dataset.exists", datasetName));
                 this.createNewDataset(datasetName);
                 return;
             }
@@ -462,18 +462,18 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             return;
         }
         if (currentDatasetMeta == null) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.select.warning"));
+            DialogFactory.warnDialog(i18n.get("prefs.ai.dataset.select.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
         if (!currentDatasetMeta.isAllSetup()) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.setup.warning"));
+            DialogFactory.warnDialog(i18n.get("prefs.ai.dataset.setup.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
         currentDatasetMeta.setStop(false);
         if (CollectionUtils.isEmpty(currentDatasetMeta.getFiles())) {
-            DialogFactory.warnDialog(i18n.get("msg.dataset.embed.warning"));
+            DialogFactory.warnDialog(i18n.get("prefs.ai.dataset.embed.warning"));
             btnEmbedding.setDisable(false);
             return;
         }
