@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author unknown
+ * @author mindolph
  */
 public class DatasetSelectDialog extends BaseDialogController<List<DatasetMeta>> {
 
@@ -30,7 +30,7 @@ public class DatasetSelectDialog extends BaseDialogController<List<DatasetMeta>>
     public DatasetSelectDialog(List<DatasetMeta> datasets, String langCode) {
         dialog = new CustomDialogBuilder<List<DatasetMeta>>()
                 .owner(DialogFactory.DEFAULT_WINDOW)
-                .title(i18n.get("dialog.datasets"))
+                .title(i18n.get("prefs.ai.agent.datasets.select"))
                 .fxmlUri("dialog/datasets_dialog.fxml")
                 .buttons(ButtonType.OK, ButtonType.CANCEL)
                 .icon(ButtonType.OK, FontIconManager.getIns().getIcon(IconKey.OK))
