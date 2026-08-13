@@ -1,9 +1,5 @@
 package com.mindolph.csv;
 
-import static com.mindolph.base.FontIconManager.DEFAULT_ICON_SIZE;
-import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.mindolph.base.EditorContext;
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.FontConstants;
@@ -21,22 +17,10 @@ import com.mindolph.core.search.Anchor;
 import com.mindolph.core.search.TextSearchOptions;
 import com.mindolph.csv.undo.UndoService;
 import com.mindolph.csv.undo.UndoServiceImpl;
-import org.swiftboot.util.I18nHelper;
 import com.mindolph.mfx.util.ClipBoardUtils;
 import com.mindolph.mfx.util.FontUtils;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.utils.MaterialDesignIconFactory;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -65,6 +49,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IoUtils;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
+import static com.mindolph.base.FontIconManager.DEFAULT_ICON_SIZE;
+import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 /**
  * @author mindolph.com@gmail.com
  * @since 1.2.0
@@ -80,6 +78,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
     private ContextMenu cellContextMenu;
 
     private final CSVFormat csvFormat;
+    private final CSVFormat pasteCsvFormat = CSVFormat.DEFAULT.builder().setIgnoreSurroundingSpaces(true).get();
     private Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory;
     private EventHandler<TableColumn.CellEditEvent<Row, String>> commitEditCallback;
 
@@ -153,11 +152,18 @@ public class CsvEditor extends BaseEditor implements Initializable {
         AnchorPane.setRightAnchor(tableView, 0d);
         AnchorPane.setTopAnchor(tableView, 0d);
         AnchorPane.setBottomAnchor(tableView, 0d);
-        tableView.setPlaceholder(new Label("No content of this CSV file"));
+        tableView.setPlaceholder(new Label(i18n.get("csv.table.no.content")));
         tableView.setOnKeyReleased(keyEvent -> {
-            log.debug("Key pressed: " + keyEvent.getCode());
+            log.debug("Key pressed: %s".formatted(keyEvent.getCode()));
             if (keyEvent.getCode() == KeyCode.DELETE) {
+                List<TablePosition> selectedCells = tableView.getSelectedCells().stream().toList();
                 tableView.setAllSelectedCells(EMPTY);
+                for (TablePosition pos : selectedCells) {
+                    if (pos.getRow() == 0) {
+                        TableColumn<Row, ?> column = tableView.getColumns().get(pos.getColumn());
+                        column.setText(EMPTY);
+                    }
+                }
                 this.saveToCache();
                 keyEvent.consume();
             }
@@ -248,8 +254,8 @@ public class CsvEditor extends BaseEditor implements Initializable {
                                 ObservableList<TablePosition> selectedCells = tableView.getSelectedCells();
                                 String msg =
                                         selectedCells.size() == 1
-                                                ? "Selected cell (%d,%d)".formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)
-                                                : "Selected %d cells".formatted(selectedCells.size());
+                                                ? i18n.get("csv.table.selected.cell").formatted(selectedCellPos.getRowIdx() + 1, selectedCellPos.getColIdx() + 1)
+                                                : i18n.get("csv.table.selected.cells").formatted(selectedCells.size());
                                 EventBus.getIns()
                                         .notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(msg))
                                         .notifyMenuStateChange(MenuTag.COPY, !textCell.getTableView().getSelectionModel().isEmpty())
@@ -268,7 +274,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                     if (CollectionUtils.isEmpty(dragEvent.getDragboard().getFiles())) {
                         return;
                     }
-                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().get(0));
+                    Optional<String> optPath = super.getRelatedPathInCurrentWorkspace(dragEvent.getDragboard().getFiles().getFirst());
                     if (optPath.isPresent()) {
                         if (textCell.getTableRow().getIndex() <= tableView.getStubRowIdx()) {
                             dragEvent.acceptTransferModes(TransferMode.LINK);
@@ -386,7 +392,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
         // update column title with records.
         ObservableList<TableColumn<Row, ?>> columns = tableView.getColumns();
         if (!records.isEmpty()) {
-            CSVRecord headers = records.get(0);
+            CSVRecord headers = records.getFirst();
             List<String> headerList = headers.stream().toList();
             for (int i = 0; i < headerList.size(); i++) {
                 String header = headerList.get(i);
@@ -500,7 +506,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
             if (StringUtils.isNotBlank(text) && !StringUtils.containsOnly(text, ", ")) {
                 try {
                     StringReader stringReader = new StringReader(text);
-                    CSVParser parsed = csvFormat.parse(stringReader);
+                    CSVParser parsed = pasteCsvFormat.parse(stringReader);
                     List<CSVRecord> records = parsed.getRecords();
                     log.debug("Paste %d rows".formatted(records.size()));
                     TablePosition startCell = tableView.getFocusModel().getFocusedCell();
@@ -645,7 +651,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                             .map(StringEscapeUtils::escapeCsv)
                             .collect(Collectors.joining(","));
                 })
-                .reduce((s, s2) -> "%s\n%s".formatted(s, s2));
+                .reduce("%s\n%s"::formatted);
         return reduced.orElse(EMPTY);
     }
 
@@ -675,9 +681,43 @@ public class CsvEditor extends BaseEditor implements Initializable {
     @Override
     public void save() throws IOException {
         log.info("Save cache to file: %s".formatted(editorContext.getFileData().getFile()));
-        FileUtils.write(editorContext.getFileData().getFile(), super.convertByOs(this.text), StandardCharsets.UTF_8);
+        String csv = trimEmptyTrailingColumns(this.text);
+        FileUtils.write(editorContext.getFileData().getFile(), super.convertByOs(csv), StandardCharsets.UTF_8);
         super.isChanged = false;
         fileSavedEventHandler.onFileSaved(this.editorContext.getFileData());
+    }
+
+    // (OpenCode) remove empty columns at the end of the csv content before saving to file.
+    private String trimEmptyTrailingColumns(String csv) throws IOException {
+        if (StringUtils.isBlank(csv)) {
+            return csv;
+        }
+        List<CSVRecord> records = csvFormat.parse(new StringReader(csv)).getRecords();
+        if (records.isEmpty()) {
+            return csv;
+        }
+        // find the max column index that contains at least one non-blank cell.
+        int maxNonEmptyColIdx = -1;
+        for (CSVRecord record : records) {
+            for (int i = 0; i < record.size(); i++) {
+                if (StringUtils.isNotBlank(record.get(i))) {
+                    maxNonEmptyColIdx = Math.max(maxNonEmptyColIdx, i);
+                }
+            }
+        }
+        if (maxNonEmptyColIdx < 0) {
+            return csv;
+        }
+        int columnsToKeep = maxNonEmptyColIdx + 1;
+        return records.stream()
+                .map(record -> {
+                    List<String> cells = record.stream().toList();
+                    return cells.subList(0, Math.min(cells.size(), columnsToKeep)).stream()
+                            .map(s -> s == null ? EMPTY : s)
+                            .map(StringEscapeUtils::escapeCsv)
+                            .collect(Collectors.joining(","));
+                })
+                .collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -706,7 +746,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
                                 })
                                 .filter(Objects::nonNull)
                                 .map(StringEscapeUtils::escapeCsv)
-                                .collect(Collectors.joining(", "))
+                                .collect(Collectors.joining(","))
                 )
                 .collect(Collectors.joining(LINE_SEPARATOR));
     }
