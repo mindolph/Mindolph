@@ -1,5 +1,22 @@
 # Change Logs
 
+### V1.14.6 Release
+
+* Improvements
+	* Improved overall performance of the CSV editor.
+	* Improved the performance of the Markdown editor.
+	* Auto-removes empty trailing columns before saving in the CSV editor.
+	* Updated support model list for almost all LLM providers.
+
+* Bug Fixes
+	* Fixed deleting cells in the first row not updating the table header in the CSV editor.
+	* Fixed paste functionality not working correctly when copied cells contain commas (,) in the CSV editor.
+	* Fixed inability to export images from PlantUML with transparent background — now uses PNG as export format.
+	* Fixed various missing internationalization resources.
+
+* Updated dependencies
+
+
 ### V1.15.0 Unstable Release
 * Features
 	* Custom AI model provider(OpenAI Compatible).   
