@@ -34,6 +34,8 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.KeepType;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -85,6 +87,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.mindolph.base.constant.FontConstants.KEY_MD_EDITOR;
@@ -139,6 +142,32 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     private final EventSource<Double> scrollEventCode = new EventSource<>();
     private final EventSource<Double> scrollEventPreview = new EventSource<>();
 
+    private volatile boolean disposed = false;
+
+    private final ChangeListener<Document> documentListener = (observable, oldValue, newValue) -> {
+        if (newValue != null) interceptLinks(newValue);
+    };
+    private final ChangeListener<Number> loadProgressListener = (observable, oldValue, newValue) ->
+            log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP)));
+    private final ChangeListener<Throwable> loadExceptionListener = (observableValue, throwable, t1) -> {
+        if (t1 != null) log.error("Markdown Preview Error", t1);
+    };
+    private final ChangeListener<Worker.State> loadStateListener = (observableValue, state, newState) -> {
+        if (disposed) {
+            return;
+        }
+        JSObject window = (JSObject) webView.getEngine().executeScript("window");
+        if (window == null) {
+            log.warn("web window is null");
+        }
+        else {
+            window.setMember("scrollListener", this);
+            window.setMember("hoverListener", this);
+            window.setMember("clickListener", this);
+            scrollEventCode.push(codeScrollPane.getEstimatedScrollY());
+        }
+    };
+
     public MarkdownEditor(EditorContext editorContext) {
         super("/editor/markdown_editor.fxml", editorContext, true);
         super.fileType = SupportFileTypes.TYPE_MARKDOWN;
@@ -171,19 +200,9 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         URL cssUri = getCssResourceURI();
         log.debug("Set webview with css: %s".formatted(cssUri));
         webEngine.setUserStyleSheetLocation(cssUri.toString());
-        webEngine.getLoadWorker().progressProperty()
-                .addListener((observable, oldValue, newValue) ->
-                        log.trace("Loaded %s%%".formatted(BigDecimal.valueOf(newValue.doubleValue()).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP)))
-                );
-        webEngine.getLoadWorker().exceptionProperty()
-                .addListener((observableValue, throwable, t1) -> {
-                    if (t1 != null) log.error("Markdown Preview Error", t1);
-                });
-
-        webEngine.documentProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) interceptLinks(newValue);
-                });
+        webEngine.getLoadWorker().progressProperty().addListener(loadProgressListener);
+        webEngine.getLoadWorker().exceptionProperty().addListener(loadExceptionListener);
+        webEngine.documentProperty().addListener(documentListener);
 
         contextMenu = createContextMenu();
         webView.setOnMouseClicked(mouseEvent -> {
@@ -194,6 +213,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                 contextMenu.hide();
             }
         });
+
+        // method onWebviewScroll() will be called when scrolling webview.
+        webView.getEngine().getLoadWorker().stateProperty()
+                .addListener(loadStateListener);
 
         // see https://github.com/vsch/flexmark-java/wiki/Extensions
         MutableDataSet options = new MutableDataSet()
@@ -258,23 +281,6 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     scrollEventCode.push(newY);
                 });
 
-        // method onWebviewScroll() will be called when scrolling webview.
-        webView.getEngine().getLoadWorker().stateProperty()
-                .addListener((observableValue, state, newState) -> {
-                    JSObject window = (JSObject) webView.getEngine().executeScript("window");
-                    if (window == null) {
-                        log.warn("web window is null");
-                    }
-                    else {
-                        window.setMember("scrollListener", this);
-                        window.setMember("hoverListener", this);
-                        window.setMember("clickListener", this);
-                        // Since the listener of estimatedScrollYProperty() might not be triggered
-                        // when a file is opened with scrolling, emit the scroll event here to make sure that
-                        // the scrolling is synced.
-                        scrollEventCode.push(codeScrollPane.getEstimatedScrollY());
-                    }
-                });
 
         // listen for console output for debugging.
         if (Env.isDevelopment) {
@@ -607,11 +613,36 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
 
     @Override
     public void dispose() {
+        // capture the executor before super.dispose() in case it is cleared there.
+        ExecutorService executorService = threadPoolService;
         super.dispose();
-        webEngine.getLoadWorker().cancel();
-        webEngine.load(null);
-        webEngine = null;
+        if (webEngine != null) {
+            disposed = true;
+            // remove listeners to break the reference from the WebEngine back to this editor.
+            webEngine.getLoadWorker().progressProperty().removeListener(loadProgressListener);
+            webEngine.getLoadWorker().exceptionProperty().removeListener(loadExceptionListener);
+            webEngine.getLoadWorker().stateProperty().removeListener(loadStateListener);
+            webEngine.documentProperty().removeListener(documentListener);
+            // remove the JS bridge members so the page no longer holds a strong reference to this editor.
+            try {
+                JSObject window = (JSObject) webEngine.executeScript("window");
+                if (window != null) {
+                    window.removeMember("scrollListener");
+                    window.removeMember("hoverListener");
+                    window.removeMember("clickListener");
+                }
+            } catch (Exception e) {
+                log.warn("Failed to clean up webview JS bridge: %s".formatted(e.getMessage()));
+            }
+            webEngine.getLoadWorker().cancel();
+            webEngine.load(null);
+            webEngine = null;
+        }
         webView = null;
+        // shut down the single thread executor to avoid thread and memory leak.
+        if (executorService != null) {
+            executorService.shutdown();
+        }
     }
 
     @Override
