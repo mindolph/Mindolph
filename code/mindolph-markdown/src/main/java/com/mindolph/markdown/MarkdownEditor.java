@@ -439,7 +439,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     .markdown("markdown-body")
                     .build(timestamp);
             //            html = this.wrap(this.fixTheImageUrl(html));
-            new TextBlockDialog(getScene().getWindow(), "Source", finalHtml, true).showAndWait();
+            new TextBlockDialog(getScene().getWindow(), i18n.get("markdown.view.source.dialog.title"), finalHtml, true).showAndWait();
         });
         miRefresh.setOnAction(e -> {
             timestamp = String.valueOf(System.currentTimeMillis());
@@ -463,7 +463,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     getScene().getWindow(),
                     file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".html",
-                    new FileChooser.ExtensionFilter("HTML file", "*.html")
+                    new FileChooser.ExtensionFilter(i18n.get("markdown.export.html.filter"), "*.html")
             );
             if (htmlFile != null) {
                 try {
@@ -475,7 +475,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             FileUtils.copyFile(oriImageFile, destImgFile);
                         }
                     }
-                    EventBus.getIns().notifyStatusMsg(htmlFile, new StatusMsg("HTML file exported to: %s".formatted(htmlFile.getPath())));
+                    EventBus.getIns().notifyStatusMsg(htmlFile, new StatusMsg(i18n.get("markdown.export.html.success", htmlFile.getPath())));
                 } catch (IOException ex) {
                     log.error(ex.getLocalizedMessage(), ex);
                 }
@@ -500,7 +500,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                     getScene().getWindow(),
                     file.getParentFile(),
                     FilenameUtils.getBaseName(file.getName()) + ".pdf",
-                    new FileChooser.ExtensionFilter("PDF file", "*.pdf")
+                    new FileChooser.ExtensionFilter(i18n.get("markdown.export.pdf.filter"), "*.pdf")
             );
             if (pdfFile != null && pdfFile.getParentFile().exists()) {
                 log.info("Export to pdf file: %s".formatted(pdfFile));
@@ -540,9 +540,9 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                         }
                     } catch (Throwable e) {
                         log.error("Failed to export to PDF", e);
-                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg("Failed to export to PDF: %s".formatted(e.getLocalizedMessage())));
+                        EventBus.getIns().notifyStatusMsg(file, new StatusMsg(i18n.get("markdown.export.pdf.fail", e.getLocalizedMessage())));
                     }
-                    String success = "PDF file exported to: %s".formatted(pdfFile.getPath());
+                    String success = i18n.get("markdown.export.pdf.success", pdfFile.getPath());
                     log.info(success);
                     EventBus.getIns().notifyStatusMsg(file, new StatusMsg(success));
                 });
