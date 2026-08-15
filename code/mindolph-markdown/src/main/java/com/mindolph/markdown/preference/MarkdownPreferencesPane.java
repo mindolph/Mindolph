@@ -55,7 +55,7 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
         btnSelectSans.setOnAction(actionEvent -> {
             File defaultDir = sansFontFile.exists() ? sansFontFile.getParentFile() : SystemUtils.getUserHome();
             File file = DialogFactory.openFileDialog(getScene().getWindow(), defaultDir,
-                    new FileChooser.ExtensionFilter("TrueType Font(*.ttf)", "*.ttf"));
+                    new FileChooser.ExtensionFilter(i18n.get("markdown.preference.font.filter"), "*.ttf"));
             if (file != null && file.exists()) {
                 tfSansFontFile.setText(file.getPath());
             }
@@ -63,7 +63,7 @@ public class MarkdownPreferencesPane extends BasePrefsPane implements Initializa
         btnSelectMono.setOnAction(actionEvent -> {
             File defaultDir = monoFontFile.exists() ? monoFontFile.getParentFile() : SystemUtils.getUserHome();
             File file = DialogFactory.openFileDialog(getScene().getWindow(), defaultDir,
-                    new FileChooser.ExtensionFilter("TrueType Font(*.ttf)", "*.ttf"));
+                    new FileChooser.ExtensionFilter(i18n.get("markdown.preference.font.filter"), "*.ttf"));
             if (file != null && file.exists()) {
                 tfMonoFontFile.setText(file.getPath());
             }
