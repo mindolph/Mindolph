@@ -249,6 +249,8 @@ public interface AiConstants {
             // Baidu Qianfan
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.1", MT_128K));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0", MT_64K));
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0-thinking-preview", MT_64K));
+            put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-5.0-thinking-latest", MT_64K));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-128k", 12288));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-4.5-turbo-32k", 12288));
             put(AiModelProvider.QIANFAN.name(), new ModelMeta("ernie-speed-pro-128k", MT_4K));
