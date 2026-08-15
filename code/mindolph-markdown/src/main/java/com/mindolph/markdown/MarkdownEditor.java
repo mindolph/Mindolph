@@ -55,10 +55,7 @@ import javafx.util.Callback;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.*;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CharacterHit;
 import org.reactfx.EventSource;
@@ -69,7 +66,6 @@ import org.swiftboot.util.IoUtils;
 import org.swiftboot.util.PathUtils;
 import org.swiftboot.util.UrlUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLAnchorElement;
 
@@ -322,6 +318,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     // NOTE: this method will be called from JavaScript inside the webview.
+    // Only happend when hover on links.
     public void onHover(String content) {
         log.debug("Hover content: %s".formatted(content));
         EventBus.getIns().notifyStatusMsg(editorContext.getFileData().getFile(), new StatusMsg(content));
@@ -344,13 +341,19 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
     }
 
     private void interceptLinks(Document document) {
-        NodeList linkNodeList = document.getElementsByTagName("a");
-        for (int i = 0; i < linkNodeList.getLength(); i++) {
-            org.w3c.dom.Node item = linkNodeList.item(i);
-            EventTarget eventTarget = (EventTarget) item;
-            eventTarget.addEventListener("click",
-                    evt -> {
-                        HTMLAnchorElement anchorElement = (HTMLAnchorElement) evt.getCurrentTarget();
+        EventTarget root = (EventTarget) document.getDocumentElement();
+        if (root == null) {
+            log.warn("document element is null, skip intercepting links");
+            return;
+        }
+        // use a single delegated listener on the document instead of one listener per anchor element.
+        root.addEventListener("click",
+                evt -> {
+                    org.w3c.dom.Node target = (org.w3c.dom.Node) evt.getTarget();
+                    while (target != null && !(target instanceof HTMLAnchorElement)) {
+                        target = target.getParentNode();
+                    }
+                    if (target instanceof HTMLAnchorElement anchorElement) {
                         String href = anchorElement.getHref();
                         if (UrlUtils.isValid(href)) {
                             // handle opening URL outside JavaFX WebView
@@ -358,10 +361,10 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
                             DesktopUtils.openURL(href);
                             evt.preventDefault();
                         }
-                    },
-                    false
-            );
-        }
+                    }
+                },
+                false
+        );
     }
 
     private URL getCssResourceURI() {
@@ -411,6 +414,7 @@ public class MarkdownEditor extends BasePreviewEditor implements Initializable {
         // uncomment to convert soft-breaks to hard breaks
         // options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
 
+        // TODO might wait for long time.
         Node document = parser.parse(codeArea.getText());
         String html = renderer.render(document);
         callback.call(html);
