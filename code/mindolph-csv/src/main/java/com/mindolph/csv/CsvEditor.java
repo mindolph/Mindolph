@@ -45,6 +45,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.text.StringEscapeUtils;
 import org.reactfx.EventSource;
+import org.reactfx.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.swiftboot.util.IoUtils;
@@ -58,6 +59,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.mindolph.base.FontIconManager.DEFAULT_ICON_SIZE;
 import static com.mindolph.core.constant.TextConstants.LINE_SEPARATOR;
@@ -86,6 +88,7 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private final UndoService<String> undoService;
     private final EventSource<Void> prepareSearchingEvent = new EventSource<>();
+    private Subscription searchingSubscription;
     private CellPos selectedCellPos;
     private CsvNavigator csvNavigator;
 
@@ -105,7 +108,16 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 s -> "%s[%d]".formatted(StringUtils.abbreviateMiddle(s, ".", 5), s.length())
         );
         csvFormat = CSVFormat.DEFAULT.builder().get();
-
+        searchingSubscription = prepareSearchingEvent.subscribe(unused -> {
+            // todo only available for searching
+            int rowSize = tableView.getColumnSize(); // excludes index column.
+            if (csvNavigator == null) {
+                csvNavigator = new CsvNavigator(tableView.stream().toList(), rowSize);
+            }
+            else {
+                csvNavigator.setData(tableView.stream().toList(), rowSize);
+            }
+        });
         this.refresh();
     }
 
@@ -178,16 +190,6 @@ public class CsvEditor extends BaseEditor implements Initializable {
         this.undoService.push(this.text);
         this.applyStyles();
         this.initTableView();
-        prepareSearchingEvent.subscribe(unused -> {
-            // todo only available for searching
-            int rowSize = tableView.getColumnSize(); // excludes index column.
-            if (csvNavigator == null) {
-                csvNavigator = new CsvNavigator(tableView.stream().toList(), rowSize);
-            }
-            else {
-                csvNavigator.setData(tableView.stream().toList(), rowSize);
-            }
-        });
         this.outline();
     }
 
@@ -320,11 +322,15 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     // this is call when editing committed
     private void onCellDataChanged(TablePosition<Row, String> tablePosition, String text) {
-        this.onCellDataChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text);
+        this.onCellDataChanged(tablePosition.getRow(), tablePosition.getTableColumn(), text, true);
     }
 
     // this is called when pasting text to cell.
     private void onCellDataChanged(int rowIdx, TableColumn<Row, String> column, String newText) {
+        this.onCellDataChanged(rowIdx, column, newText, true);
+    }
+
+    private void onCellDataChanged(int rowIdx, TableColumn<Row, String> column, String newText, boolean refresh) {
         log.debug("onDataChanged()");
         log.debug("stubRowIdx: %d - stubColIdx: %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
         int colIdx = tableView.getColumns().indexOf(column);
@@ -349,7 +355,9 @@ public class CsvEditor extends BaseEditor implements Initializable {
                 stubCol.setOnEditCommit(commitEditCallback);
             }
         }
-        tableView.refresh();
+        if (refresh) {
+            tableView.refresh();
+        }
     }
 
     @Override
@@ -406,11 +414,12 @@ public class CsvEditor extends BaseEditor implements Initializable {
         }
         // init data content
         List<Row> rows = new ArrayList<>();
+        int rowIdx = 0;
         for (CSVRecord record : records) {
             if (log.isTraceEnabled())
                 log.trace("* " + record.stream().map("'%s'"::formatted).collect(Collectors.joining(",")));
             Row newRow = ExtTableView.createRow(tableView.getColumnSize());
-            newRow.setIndex(records.indexOf(record));
+            newRow.setIndex(rowIdx++);
             for (int i = 0; i < record.size(); i++) {
                 newRow.getData().set(i, record.get(i));
             }
@@ -516,9 +525,10 @@ public class CsvEditor extends BaseEditor implements Initializable {
                         for (int j = 0; j < record.size(); j++) {
                             String newValue = record.get(j);
                             TableColumn<Row, String> column = (TableColumn<Row, String>) tableView.getColumns().get(startCell.getColumn() + j);
-                            this.onCellDataChanged(startCell.getRow() + i, column, newValue);
+                            this.onCellDataChanged(startCell.getRow() + i, column, newValue, false);
                         }
                     }
+                    this.tableView.refresh();
                     this.saveToCache();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -642,17 +652,20 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     private String rowsToCsv(ObservableList<Row> rows) {
         log.debug("convert rows to csv without stub row %d and col %d".formatted(tableView.getStubRowIdx(), tableView.getStubColIdx()));
-        Optional<String> reduced = rows.stream()
-                .filter(row -> row.getIndex() != tableView.getStubRowIdx()) // exclude stub row
+        int stubRowIdx = tableView.getStubRowIdx();
+        int stubColIdx = tableView.getStubColIdx();
+        return rows.stream()
+                .filter(row -> row.getIndex() != stubRowIdx) // exclude stub row
                 .map(row -> {
-                    return row.getData().stream()
-                            .filter(e -> row.getData().indexOf(e) < tableView.getStubColIdx()) // exclude stub column
+                    List<String> data = row.getData();
+                    return IntStream.range(0, data.size())
+                            .filter(i -> i < stubColIdx) // exclude stub column
+                            .mapToObj(data::get)
                             .map(s -> s == null ? EMPTY : s)
                             .map(StringEscapeUtils::escapeCsv)
                             .collect(Collectors.joining(","));
                 })
-                .reduce("%s\n%s"::formatted);
-        return reduced.orElse(EMPTY);
+                .collect(Collectors.joining("\n"));
     }
 
     private boolean saveToCache() {
@@ -726,6 +739,16 @@ public class CsvEditor extends BaseEditor implements Initializable {
 
     @Override
     public void dispose() {
+        if (searchingSubscription != null) {
+            searchingSubscription.unsubscribe();
+            searchingSubscription = null;
+        }
+        this.undoService.forgetHistory();
+        if (tableView != null) {
+            tableView.getItems().clear();
+            tableView.getColumns().clear();
+        }
+        this.csvNavigator = null;
     }
 
     @Override

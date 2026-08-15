@@ -16,6 +16,8 @@ import java.util.function.Function;
 public class UndoServiceImpl<T> implements UndoService<T> {
 
     private static final Logger log = LoggerFactory.getLogger(UndoServiceImpl.class);
+    public static final int MAX_HISTORY = 20;
+
     private final List<Command<T>> queue = new LinkedList<>();
     private int currentPos = 0; // point to the element that current on UI
 
@@ -46,7 +48,11 @@ public class UndoServiceImpl<T> implements UndoService<T> {
         }
         queue.add(new Command<>(t));
         currentPos = queue.size() - 1;
-        log.debug(printQueue());
+        if (queue.size() > MAX_HISTORY) {
+            queue.removeFirst();
+            currentPos -= 1;
+        }
+        if (log.isDebugEnabled()) log.debug(printQueue());
     }
 
     @Override
@@ -60,7 +66,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
         currentPos -= 1;
         applier.accept(cmd.getCommand());
         isPerforming.set(false);
-        log.debug(printQueue());
+        if (log.isDebugEnabled()) log.debug(printQueue());
         return true;
     }
 
@@ -75,7 +81,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
         currentPos += 1;
         applier.accept(cmd.getCommand());
         isPerforming.set(false);
-        log.debug(printQueue());
+        if (log.isDebugEnabled()) log.debug(printQueue());
         return true;
     }
 
@@ -102,7 +108,7 @@ public class UndoServiceImpl<T> implements UndoService<T> {
     @Override
     public void forgetHistory() {
         queue.clear();
-        log.debug(printQueue());
+        if (log.isDebugEnabled()) log.debug(printQueue());
     }
 
     @Override
