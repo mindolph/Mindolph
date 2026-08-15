@@ -56,9 +56,6 @@ public class CsvMatcher extends BaseSearchMatcher {
                                 break; // stop read more cells because it's no need, just go to next row.
                             }
                         }
-                        else {
-                            System.out.println("Not match in " + cellText);
-                        }
                     }
                 }
             }
