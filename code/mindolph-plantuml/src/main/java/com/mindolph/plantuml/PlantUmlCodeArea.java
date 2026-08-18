@@ -11,6 +11,8 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -27,6 +29,8 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
      * Pattern for highlighting.
      */
     protected static Pattern patternMajor;
+
+    private static final Logger log = LoggerFactory.getLogger(PlantUmlCodeArea.class);
 
     public PlantUmlCodeArea() {
         super();
@@ -74,7 +78,13 @@ public class PlantUmlCodeArea extends HighlightCodeArea {
                                                                                                     matcherMajor.group("YAML") != null ? "yaml" :
                                                                                             null; /* never happens */
             assert styleClass != null;
-            System.out.printf("matched %s: (pos: %d-%d) - %s %n", styleClass, matcherMajor.start(), matcherMajor.end(), DebugUtils.visible(StringUtils.substring(text, matcherMajor.start(), matcherMajor.end())));
+            if (log.isDebugEnabled()) {
+                int start = matcherMajor.start();
+                int end = matcherMajor.end();
+                // compute snippet only when debug enabled to avoid allocations on hot path
+                String snippet = DebugUtils.visible(StringUtils.substring(text, start, end));
+                log.debug("matched {}: (pos: {}-{}) - {}", styleClass, start, end, snippet);
+            }
             super.append(styleClass, matcherMajor.start(), matcherMajor.end());
         }
 

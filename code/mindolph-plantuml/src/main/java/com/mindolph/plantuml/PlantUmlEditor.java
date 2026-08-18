@@ -280,10 +280,12 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
         // The FileFormat uses AWT resources, so it should be run in Swing thread, otherwise it will be blocked.
         SwingUtilities.invokeLater(() -> {
             SourceStringReader reader = new SourceStringReader(codeArea.getText());
+            List<BlockUml> blocks = reader.getBlocks();
 
             // retrieve title info from all pages.
             indicator.pages.clear();
-            for (BlockUml block : reader.getBlocks()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                BlockUml block = blocks.get(i);
                 int startRow = block.getData().getFirst().getLocation().getPosition();
                 int endRow = block.getData().getLast().getLocation().getPosition();
                 log.debug("Page starts from row %d to row %d".formatted(startRow, endRow));
@@ -292,7 +294,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                 if (Strings.CS.contains(errMsg, "(Error)")) {
                     log.debug("encounter error in this plantuml");
                     indicator.addPage(new Page(errMsg, startRow, endRow));
-                    int curPage = reader.getBlocks().indexOf(block);
+                    int curPage = i;
                     indicator.errPages.add(curPage);
                     log.debug("Found error for page: %d".formatted(curPage));
                     if (curPage != indicator.page) {
@@ -321,7 +323,7 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                     indicator.addPage(new Page(this.extractDiagramTitle(block.getDefinition(false)), startRow, endRow));
                 }
             }
-            indicator.totalPages = reader.getBlocks().size();
+            indicator.totalPages = blocks.size();
             indicator.fitPage();
             log.debug("total pages %d, current page %d, error page count %d".formatted(indicator.totalPages, indicator.page, indicator.errPages.size()));
             if (indicator.isEmpty()) {
@@ -346,14 +348,14 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
                         } catch (IOException e) {
                             log.error(e.getLocalizedMessage(), e);
                         }
-                        previewConsumer.call(image);
+                        Platform.runLater(() -> previewConsumer.call(image));
                     }
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
             }
             else {
-                previewConsumer.call(null);
+                Platform.runLater(() -> previewConsumer.call(null));
             }
         });
     }
@@ -434,6 +436,20 @@ public class PlantUmlEditor extends BasePreviewEditor implements Initializable {
     @Override
     public void dispose() {
         super.dispose();
+        // Shutdown thread pool to avoid thread leakage
+        try {
+            if (threadPoolService != null) {
+                try {
+                    threadPoolService.shutdownNow();
+                } catch (Exception ex) {
+                    log.warn("Error while shutting down threadPoolService", ex);
+                }
+                threadPoolService = null;
+            }
+        } catch (Throwable t) {
+            log.warn("Failed to shutdown threadPoolService safely", t);
+        }
+
         image = null;
         previewPane.setImage(null);
     }
