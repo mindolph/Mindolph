@@ -155,7 +155,7 @@ public class ShortcutManager {
     public boolean hasConflict() {
         AtomicBoolean hasConflict = new AtomicBoolean(false);
         shortcutMap.entrySet().stream().collect(
-                        Collectors.groupingBy(shortcutKeyKeyCodeCombinationEntry -> shortcutKeyKeyCodeCombinationEntry.getKey().getCategory(), LinkedHashMap::new, Collectors.toList()))
+                        Collectors.groupingBy(entry -> entry.getKey().getCategory(), LinkedHashMap::new, Collectors.toList()))
                 .forEach((s, entries) -> {
                     hasConflict.set(hasConflict.get() | CollectionUtils.hasDuplicate(entries.stream().map(Map.Entry::getValue).toList()));
                 });

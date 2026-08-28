@@ -170,6 +170,11 @@ public class MarkdownCodeAreaDemo implements Initializable {
                 public void updateContextText(Object editorId, String text) {
 
                 }
+
+                @Override
+                public void clear(Object editorId) {
+
+                }
             });
         }
 

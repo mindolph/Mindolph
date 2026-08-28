@@ -13,6 +13,7 @@ import java.util.List;
  * @since 1.6
  */
 public class PlantUmlInputHelper implements InputHelper {
+
     private static final Logger log = LoggerFactory.getLogger(PlantUmlInputHelper.class);
 
     private final List<String> preDefinedWords = new ArrayList<>();
@@ -33,6 +34,11 @@ public class PlantUmlInputHelper implements InputHelper {
 
     @Override
     public void updateContextText(Object editorId, String text) {
+        // DO NOTHING.
+    }
+
+    @Override
+    public void clear(Object editorId) {
         // DO NOTHING.
     }
 

@@ -157,6 +157,12 @@ public class SmartCodeAreaDemo implements Initializable {
                 public void updateContextText(Object editorId, String text) {
 
                 }
+
+                @Override
+                public void clear(Object editorId) {
+
+                }
+
             });
         }
 

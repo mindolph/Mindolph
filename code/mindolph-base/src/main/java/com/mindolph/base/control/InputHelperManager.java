@@ -341,6 +341,16 @@ public class InputHelperManager {
         }
     }
 
+    public void destroy() {
+        if (supportedPlugins != null) {
+            supportedPlugins.forEach(p -> {
+                p.getInputHelper().ifPresent(helper -> {
+                    helper.clear(this.editorId);
+                });
+            });
+        }
+    }
+
     /**
      * Handle use selected a candidate word.
      *

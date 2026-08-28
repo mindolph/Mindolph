@@ -1,6 +1,7 @@
 package com.mindolph.base.control;
 
 import com.mindolph.core.util.DebugUtils;
+import javafx.application.Platform;
 import org.apache.commons.lang3.IntegerRange;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -13,6 +14,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.concurrent.CompletableFuture;
 
 /**
  *
@@ -36,8 +38,13 @@ public abstract class HighlightCodeArea extends SearchableCodeArea {
 
     @Override
     public void refresh() {
-        StyleSpans<Collection<String>> styleSpans = computeHighlighting(this.getText());
-        this.setStyleSpans(0, styleSpans);
+        CompletableFuture.supplyAsync(() -> computeHighlighting(this.getText())).thenAccept(styleSpans -> {
+            Platform.runLater(() -> {
+                this.setStyleSpans(0, styleSpans);
+            });
+        });
+//        StyleSpans<Collection<String>> styleSpans = computeHighlighting(this.getText());
+//        this.setStyleSpans(0, styleSpans);
     }
 
     @Override

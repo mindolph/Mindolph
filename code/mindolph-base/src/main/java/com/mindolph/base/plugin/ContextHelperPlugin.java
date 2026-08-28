@@ -67,5 +67,9 @@ public class ContextHelperPlugin extends BasePlugin {
             return RegExUtils.replaceAll(text, "[\\s\\r,.()=\"'`\\[\\]\\\\/\\-\\?:#\\!\\^&%\\$]", " ");
         }
 
+        @Override
+        public void clear(Object editorId) {
+            contextWordsMap.remove(editorId);
+        }
     }
 }
