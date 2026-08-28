@@ -276,6 +276,11 @@ public class EventBus {
         return this;
     }
 
+    public EventBus unsubscribeStatusMsgEvent(File file) {
+        this.unsubscribe(statusMsgEvents, file);
+        return this;
+    }
+
     public EventBus notifyOpenedFileChange(List<File> openedFiles) {
         openedFileChange.push(openedFiles);
         return this;
@@ -383,8 +388,8 @@ public class EventBus {
      * Emit event with payload <code>p</code> to all it's consumers.
      *
      * @param map Mapping from target to event source.
-     * @param t Target for event emitting.
-     * @param p Payload for event emitting.
+     * @param t   Target for event emitting.
+     * @param p   Payload for event emitting.
      * @param <T> Type of target
      * @param <P> Type of payload
      */
@@ -401,11 +406,11 @@ public class EventBus {
      * Subscribe event for target <code>t</code> with <code>consumer</code>.
      * Invoking this method again to same target registers multiple consumers.
      *
-     * @param map Mapping from target to event source.
-     * @param t Target for event emitting.
+     * @param map      Mapping from target to event source.
+     * @param t        Target for event emitting.
      * @param consumer Consumer for handling event to target
-     * @param <T> Type of target
-     * @param <P> Type of payload
+     * @param <T>      Type of target
+     * @param <P>      Type of payload
      */
     private <T, P> void subscribe(Map<T, EventSource<P>> map, T t, Consumer<P> consumer) {
         if (!map.containsKey(t)) {
@@ -425,7 +430,9 @@ public class EventBus {
      * @param <P>
      */
     private <T, P> void unsubscribe(Map<T, EventSource<P>> map, T t) {
-        map.remove(t);
+        if (map != null && t != null) {
+            map.remove(t);
+        }
     }
 
 

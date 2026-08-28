@@ -362,7 +362,7 @@ public abstract class BaseCodeAreaEditor extends BaseEditor {
     /**
      *
      * @param heading
-     * @param level starts from 1
+     * @param level        starts from 1
      * @param textLocation
      */
     private record HeadingLocation(String heading, int level, TextLocation textLocation) {

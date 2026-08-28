@@ -67,6 +67,12 @@ public class SmartCodeArea extends ExtCodeArea implements Anchorable {
     }
 
     @Override
+    public void dispose() {
+        super.dispose();
+        inputHelperManager.destroy();
+    }
+
+    @Override
     public void addFeatures(FEATURE... features) {
         super.addFeatures(features);
         List<InputMap<KeyEvent>> inputMaps = new ArrayList<>();

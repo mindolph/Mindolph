@@ -24,4 +24,11 @@ public interface InputHelper {
      * @param text
      */
     void updateContextText(Object editorId, String text);
+
+    /**
+     * Be called when editor is destroyed.
+     *
+     * @param editorId
+     */
+    void clear(Object editorId);
 }

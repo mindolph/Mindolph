@@ -712,6 +712,7 @@ public class FileTabView extends BaseView {
         openedFileMap.remove(fileData);
         tabEditorMap.remove(tab);
         EventBus.getIns().unsubscribeFileLoaded(fileData);
+        EventBus.getIns().unsubscribeStatusMsgEvent(fileData.getFile());
         EventBus.getIns().notifyOpenedFileChange(
                 tabPane.getTabs().stream()
                         .filter(tab1 -> tab1.getUserData() instanceof NodeData && ((NodeData) tab1.getUserData()).isFile())
