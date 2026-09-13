@@ -109,7 +109,13 @@ public class LlmConfig {
         ProviderMeta providerMeta = providers.get(providerId);
         // workaround
         if (providerMeta != null && StringUtils.isBlank(providerMeta.getId())) {
-            AiModelProvider provider = AiModelProvider.valueOf(providerId);
+            AiModelProvider provider;
+            try {
+                provider = AiModelProvider.valueOf(providerId);
+            } catch (IllegalArgumentException e) {
+                log.warn("No provider meta found for: %s".formatted(providerId), e);
+                return null;
+            }
             providerMeta.setId(providerId);
             providerMeta.setName(provider.getDisplayName());
             providerMeta.setType(provider.getType().name());

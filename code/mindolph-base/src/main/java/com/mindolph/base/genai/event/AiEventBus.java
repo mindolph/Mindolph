@@ -31,4 +31,8 @@ public class AiEventBus {
     public void subscribeEventOnce(Consumer<Event> eventConsumer) {
         this.eventSource.subscribeForOne(eventConsumer);
     }
+
+    public void unsubscribe(Consumer<Event> eventConsumer) {
+        this.eventSource.removeObserver(eventConsumer);
+    }
 }

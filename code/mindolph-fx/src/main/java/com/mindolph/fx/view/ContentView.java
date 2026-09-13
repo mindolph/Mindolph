@@ -129,10 +129,10 @@ public class ContentView extends BaseView {
             log.debug("No content to floating panel");
             floatingPaneState.post("HIDE");
         }
-        else if (floatingContent instanceof Image) {
+        else if (floatingContent instanceof Image img) {
             ImageView iv = new ImageView();
             iv.imageProperty().addListener((observableValue, image, t1) -> updateFloatingPane(t1.getWidth(), t1.getHeight()));
-            iv.setImage((Image) floatingContent);
+            iv.setImage(img);
             floatPane.getChildren().add(iv);
             iv.focusedProperty().addListener((observableValue, aBoolean, t1) -> {
                 log.debug("focused: " + t1);

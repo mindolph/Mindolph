@@ -68,4 +68,18 @@ public class AiPreferencePane extends BasePrefsPane implements Initializable {
     protected void onSave(boolean notify, Object payload) {
         // DO NOTHING
     }
+
+    @Override
+    public void destroy() {
+        this.destroyTabContent(tabAgents);
+        this.destroyTabContent(tabProviders);
+        this.destroyTabContent(tabDataset);
+        this.destroyTabContent(tabOptions);
+    }
+
+    private void destroyTabContent(Tab tab) {
+        if (tab.getContent() != null && tab.getContent() instanceof BasePrefsPane bpp) {
+            bpp.destroy();
+        }
+    }
 }

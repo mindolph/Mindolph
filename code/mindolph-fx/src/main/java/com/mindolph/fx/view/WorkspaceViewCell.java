@@ -106,7 +106,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
                     dragHoverEventSource = new EventSource<>();
                 }
                 AwaitingEventStream<Integer> accum = dragHoverEventSource.reduceSuccessions(Integer::sum, Duration.ofMillis(1500));
-                accum.subscribe(integer -> {
+                accum.subscribeFor(1, integer -> {
                     if (isDragHover && getTreeItem() != null && !getTreeItem().isExpanded())
                         getTreeItem().setExpanded(true);
                     this.setBorder(null); // remove hover border
@@ -196,6 +196,7 @@ public class WorkspaceViewCell extends TreeCell<NodeData> {
             else {
                 log.warn("no string");
             }
+            draggingNodeDatas = null;
             dragEvent.consume();
         });
     }

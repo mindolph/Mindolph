@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static com.mindolph.genai.AiUiConstants.agentConverter;
 
@@ -62,6 +63,8 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
     private MChoiceBox<Pair<String, ModelMeta>> cbChatModel;
 
     private AgentMeta currentAgentMeta;
+
+    private Consumer<PluginEvent<?>> pluginEventHandler;
 
     public AiAgentPrefPane() {
         super("/preference/gen_ai_agent_pref_pane.fxml");
@@ -166,15 +169,17 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             this.disableAll();
         }
 
-        // listen to the changes from dataset management
-        PluginEventBus.getIns().subscribePreferenceChanges(pluginEvent -> {
+        pluginEventHandler = pluginEvent -> {
             if (pluginEvent.getEventType() == PluginEvent.EventType.DATASET_PREF_CHANGED) {
                 if (currentAgentMeta != null) {
                     List<DatasetMeta> datasetMetas = LlmConfig.getIns().getDatasetsFromIds(currentAgentMeta.getDatasetIds());
                     tvDatasets.replaceAll(datasetMetas);
                 }
             }
-        });
+        };
+
+        // listen to the changes from dataset management
+        PluginEventBus.getIns().subscribePreferenceChanges(pluginEventHandler);
     }
 
     private void reloadAgents() {
@@ -226,6 +231,12 @@ public class AiAgentPrefPane extends BaseAiPrefPane implements Initializable {
             log.debug("No current agent meta to save.");
         }
         super.onSave(notify, payload);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        PluginEventBus.getIns().unsubscribePreferenceChanges(pluginEventHandler);
     }
 
     private AgentMeta saveCurrentAgent() {

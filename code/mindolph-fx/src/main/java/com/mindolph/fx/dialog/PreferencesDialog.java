@@ -2,8 +2,8 @@ package com.mindolph.fx.dialog;
 
 import com.mindolph.base.FontIconManager;
 import com.mindolph.base.constant.IconKey;
-import com.mindolph.fx.preference.FontPreferencesPane;
 import com.mindolph.fx.preference.AiPreferencePane;
+import com.mindolph.fx.preference.FontPreferencesPane;
 import com.mindolph.fx.preference.GeneralPreferencesPane;
 import com.mindolph.markdown.preference.MarkdownPreferencesPane;
 import com.mindolph.mfx.container.SideTabPane;
@@ -11,12 +11,13 @@ import com.mindolph.mfx.dialog.BaseDialogController;
 import com.mindolph.mfx.dialog.CustomDialogBuilder;
 import com.mindolph.mfx.dialog.DialogFactory;
 import com.mindolph.mindmap.preference.MmdPreferencesPane;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * All preference dialog for Mindolph.
@@ -24,6 +25,8 @@ import javafx.scene.control.Tab;
  * @author mindolph.com@gmail.com
  */
 public class PreferencesDialog extends BaseDialogController<Void> {
+
+    private static final Logger log = LoggerFactory.getLogger(PreferencesDialog.class);
 
     @FXML
     private SideTabPane tabPane;
@@ -105,6 +108,11 @@ public class PreferencesDialog extends BaseDialogController<Void> {
             tabPane.setTabIcon(tabMarkdown, FontIconManager.getIns().getIcon(IconKey.FILE_MD));
             tabPane.setTabIcon(tabAi, FontIconManager.getIns().getIcon(IconKey.MAGIC));
             this.selectTab(lastActivatedTabIndex);
+        });
+
+        super.dialog.setOnHidden(dialogEvent -> {
+            log.debug("Destroy the panels");
+            aiPreferences.destroy();
         });
     }
 

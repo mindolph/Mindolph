@@ -59,6 +59,7 @@ public class ShortcutsDialog extends BaseDialogController<Void> {
         // change view mode here since it requires everything is ready.
         EventBus.getIns().subscribeFileLoaded(nodeData, nodeData1 -> {
             markdownEditor.changeViewMode(Editable.ViewMode.PREVIEW_ONLY);
+            EventBus.getIns().unsubscribeFileLoaded(nodeData1);
         });
         GlobalExecutor.submit(() -> {
             try {

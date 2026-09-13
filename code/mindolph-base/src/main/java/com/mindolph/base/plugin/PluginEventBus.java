@@ -36,4 +36,8 @@ public class PluginEventBus {
     public void emitPreferenceChanges(EventType eventType, Object payload) {
         preferenceChangeEvent.push(new PluginEvent<>(eventType, payload));
     }
+
+    public void unsubscribePreferenceChanges(Consumer<PluginEvent<?>> consumer) {
+        preferenceChangeEvent.removeObserver(consumer);
+    }
 }

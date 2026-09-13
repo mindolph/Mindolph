@@ -99,6 +99,9 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
     // future after starting embedding
     private CompletableFuture<Boolean> futureOfEmbedding;
 
+    // Handle the event from AI components.
+    private Consumer<Event> aiEventHandler;
+
     public AiDatasetPrefPane() {
         super("/preference/gen_ai_dataset_pref_pane.fxml");
     }
@@ -320,7 +323,7 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
             this.clearEmbeddingForSelectedDataset();
         });
 
-        AiEventBus.getInstance().subscribeEvent(event -> {
+        aiEventHandler = event -> {
             if (event instanceof PrepareEvent pe) {
                 stateMachine.postWithPayload(EmbeddingState.PREPARING, pe);
             }
@@ -369,7 +372,9 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
                     log.warn("Unknown stage");
                 }
             }
-        });
+        };
+
+        AiEventBus.getInstance().subscribeEvent(aiEventHandler);
         this.initStateMachine();
     }
 
@@ -558,6 +563,12 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         super.onSave(notify, payload);
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        AiEventBus.getInstance().unsubscribe(aiEventHandler);
+    }
+
     private DatasetMeta saveCurrentDataset() {
 //        if (isLoading.get()) {
 //            return null;
@@ -635,5 +646,6 @@ public class AiDatasetPrefPane extends BaseAiPrefPane implements Initializable {
         lblEmbeddingStatus.setText("");
         currentDatasetMeta = null;
     }
+
 
 }

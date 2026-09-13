@@ -339,6 +339,10 @@ public abstract class BasePrefsPane extends AnchorPane implements Initializable 
      */
     protected abstract void onSave(boolean notify, Object payload);
 
+    public  void destroy(){
+        // do nothing
+    }
+
     public static class Pref<T, R> {
         Property<T> property;
         Object defaultValue;
