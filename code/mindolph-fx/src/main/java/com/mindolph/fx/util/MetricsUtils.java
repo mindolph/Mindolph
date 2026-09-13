@@ -53,8 +53,8 @@ public class MetricsUtils {
                     Request.Builder builder = new Request.Builder().url("https://us.i.posthog.com/i/v0/e/").post(body);
                     OkHttpClient client = new OkHttpClient.Builder()
                             .connectTimeout(Duration.ofSeconds(30))
-                            .readTimeout(Duration.ofMinutes(10))
-                            .writeTimeout(Duration.ofMinutes(5))
+                            .readTimeout(Duration.ofSeconds(15))
+                            .writeTimeout(Duration.ofSeconds(30))
                             .build();
                     if (OkHttpUtils.execute(client, builder.build()) == null) {
                         log.warn("Failed to send metrics");

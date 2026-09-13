@@ -74,6 +74,7 @@ public interface AiConstants {
         {
             // GPT https://platform.openai.com/docs/models
             // Deprecation: https://developers.openai.com/api/docs/deprecations
+            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-6-astra", 128000));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.6-luna", 128000));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.6-terra", 128000));
             put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-5.6", 128000));
@@ -101,6 +102,7 @@ public interface AiConstants {
 //            put(AiModelProvider.OPEN_AI.name(), new ModelMeta("gpt-3.5-turbo-instruct", 4096));
 
             // Gemini https://ai.google.dev/gemini-api/docs/models/gemini
+            put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.8-flash", MT_64K));
             put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.7-flash", MT_64K));
             put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.6-flash", MT_64K));
             put(AiModelProvider.GEMINI.name(), new ModelMeta("gemini-3.5-flash", MT_64K));
@@ -120,10 +122,12 @@ public interface AiConstants {
 
             // Qwen https://help.aliyun.com/zh/model-studio/models?spm=a2c4g.11186623.help-menu-2400256.d_0_0_2.677b394evAGcfh
             // https://bailian.console.aliyun.com/cn-beijing?spm=a2c4g.11186623.0.0.5a763011P9pO0F&tab=model#/model-market/all?providers=qwen&capabilities=TG
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.8-max", MT_64K));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-flash", MT_64K));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-plus", MT_64K));
-            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-max", MT_64K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.8-2.4t-a95b", MT_128K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.8-flash", MT_128K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.8-max", MT_128K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-flash", MT_128K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-plus", MT_128K));
+            put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.7-max", MT_128K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-flash", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-plus", MT_64K));
             put(AiModelProvider.ALI_Q_WEN.name(), new ModelMeta("qwen3.6-27b", MT_64K));
@@ -204,6 +208,8 @@ public interface AiConstants {
 
             // ChatGLM Models: https://www.bigmodel.cn/console/modelcenter/square
             // API: https://docs.bigmodel.cn/cn/api/introduction
+            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.3", MT_128K));
+            put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.3-flash", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.2", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5.1", MT_128K));
             put(AiModelProvider.CHAT_GLM.name(), new ModelMeta("glm-5-turbo", MT_128K));

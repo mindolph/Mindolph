@@ -37,6 +37,7 @@ import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_NAVIGATE_KEYWORD;
 import static com.mindolph.core.constant.SceneStatePrefs.MINDOLPH_NAVIGATE_OPTIONS;
@@ -61,6 +62,8 @@ public class GotoFileDialog extends BaseDialogController<Void> {
 
     private WorkspaceList workspaceList;
 
+    private EventStream<Tuple2<Change<String>, Change<String>>> searchEventStream;
+
     private final FxPreferences fxPreferences = FxPreferences.getInstance();
 
     public GotoFileDialog() {
@@ -80,14 +83,18 @@ public class GotoFileDialog extends BaseDialogController<Void> {
 
         dialog.setOnShown(event -> Platform.runLater(tfKeywords::requestFocus));
 
+        // Handler for searching.
+        Consumer<Tuple2<Change<String>, Change<String>>> searchHandler = tuple2 -> GotoFileDialog.this.searchFiles(StringUtils.trim(tfKeywords.getText()), fileFilterButtonGroup.getSelectedFileType());
+        dialog.setOnHidden(event -> {
+            this.searchEventStream.removeObserver(searchHandler);
+        });
+
         // merge events to trigger the search
         EventStream<Change<String>> textChanged = EventStreams.changesOf(tfKeywords.textProperty());
         EventStream<Change<String>> optionChanged = EventStreams.changesOf(fileFilterButtonGroup.selectedFileTypeProperty());
-        EventStream<Tuple2<Change<String>, Change<String>>> combine = EventStreams.combine(textChanged, optionChanged);
-        combine.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(400))
-                .subscribe(tuple2 -> {
-                    searchFiles(StringUtils.trim(tfKeywords.getText()), fileFilterButtonGroup.getSelectedFileType());
-                });
+        this.searchEventStream = EventStreams.combine(textChanged, optionChanged);
+        this.searchEventStream.pausable().reduceSuccessions((tuple2, tuple22) -> tuple22, Duration.ofMillis(400))
+                .subscribe(searchHandler);
 
         String lastKeyword = fxPreferences.getPreference(MINDOLPH_NAVIGATE_KEYWORD, String.class);
         tfKeywords.setText(lastKeyword);
