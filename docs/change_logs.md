@@ -1,5 +1,22 @@
 # Change Logs
 
+### V1.15.1 Unstable Release
+
+* Improvements
+	* Update support model list for Baidu Qianfan.
+
+* Bug Fixes
+	* Missing i18n resources.
+* Merged improvements and bug fixes from stable version.
+
+
+### V1.14.7 Release
+
+* Improvement
+	* Update with new models for some LLM providers. 
+	* Optimized performance and memory usage.
+	* Optimized performance of PlantUML editor
+
 ### V1.14.6 Release
 
 * Improvements
